@@ -142,6 +142,11 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         return _repository.getFolders().iterator();
     }
 
+    @Override
+    public Iterator<TenantContext> getActiveTenantContextIterator() {
+        return _contexts.asMap().values().iterator();
+    }
+
     private String getStandardizedTenantName(final String tenantId) {
         String standardizedTenantId = tenantId.trim().toLowerCase();
 

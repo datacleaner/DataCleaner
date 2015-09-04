@@ -34,4 +34,6 @@ public interface TenantContextFactory {
     public TenantContext getContext(String tenantId);
 
     public Iterator<RepositoryFolder> getRepositoryFolderIterator();
+
+    public Iterator<TenantContext> getActiveTenantContextIterator();
 }

@@ -23,7 +23,7 @@ import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.metamodel.datahub.DataHubDataContext;
 
 public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
-        implements Datastore, UsernameDatastore {
+        implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
     private final String _host;
@@ -87,9 +87,9 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     }
 
     @Override
-    public DatastoreConnection openConnection() {
+    public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
-        return connection;
+        return (UpdateableDatastoreConnection)connection;
     }
 
     @Override

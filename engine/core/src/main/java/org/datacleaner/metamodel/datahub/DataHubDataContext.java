@@ -28,8 +28,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.metamodel.AbstractDataContext;
-import org.apache.metamodel.DataContext;
+import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.jdbc.dialects.IQueryRewriter;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
@@ -39,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.UrlEscapers;
 
-public class DataHubDataContext extends AbstractDataContext implements DataContext {
+public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
 
     private DataHubConnection _connection;
@@ -69,6 +71,11 @@ public class DataHubDataContext extends AbstractDataContext implements DataConte
             }
         }
         return schemas;
+    }
+
+    @Override
+    public void executeUpdate(UpdateScript script) {
+        // TODO Auto-generated method stub
     }
 
     @Override
@@ -130,6 +137,11 @@ public class DataHubDataContext extends AbstractDataContext implements DataConte
     @Override
     protected Schema getSchemaByNameInternal(String name) {
         return _schemas.get(name);
+    }
+
+    public IQueryRewriter getQueryRewriter() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

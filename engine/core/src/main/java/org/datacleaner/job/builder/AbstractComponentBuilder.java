@@ -794,30 +794,30 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                     _outputDataStreams.clear();
                     _outputDataStreamJobs.clear();
                     _outputDataStreams.addAll(newStreams);
-                }
-
-                // if the stream names are the same then it's better to see
-                // if we can incrementally update the existing streams
-                // instead of replacing it all
-                for (int i = 0; i < outputDataStreams.length; i++) {
-                    final OutputDataStream existingStream = _outputDataStreams.get(i);
-                    final OutputDataStream newStream = newStreams.get(i);
-                    if (isOutputDataStreamConsumed(existingStream)) {
-                        final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(existingStream);
+                } else {
+                    // if the stream names are the same then it's better to see
+                    // if we can incrementally update the existing streams
+                    // instead of replacing it all
+                    for (int i = 0; i < outputDataStreams.length; i++) {
+                        final OutputDataStream existingStream = _outputDataStreams.get(i);
                         final Table table = existingStream.getTable();
+                        final OutputDataStream newStream = newStreams.get(i);
                         if (table instanceof MutableTable) {
-                            // update the table
                             final MutableTable mutableTable = (MutableTable) table;
-                            updateStream(mutableTable, existingJobBuilder, newStream);
+                            if (isOutputDataStreamConsumed(existingStream)) {
+                                final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(existingStream);
+                                // update the table
+                                updateStream(mutableTable, existingJobBuilder, newStream);
+                            } else {
+                                updateStream(mutableTable, null, newStream);
+                            }
                         } else {
                             _outputDataStreams.set(i, newStream);
                         }
-                    } else {
-                        _outputDataStreams.set(i, newStream);
                     }
                 }
             }
-            return Collections.unmodifiableList(_outputDataStreams);
+            return new ArrayList<>(_outputDataStreams);
         }
 
         // component isn't capable of having output data streams
@@ -862,14 +862,18 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         // now do the updates
         for (Column column : columnsToRemove) {
-            jobBuilder.removeSourceColumn(column);
+            if (jobBuilder != null) {
+                jobBuilder.removeSourceColumn(column);
+            }
             existingTable.removeColumn(column);
         }
         for (Column column : columnsToAdd) {
             final MutableColumn newColumn = new MutableColumn(column.getName(), column.getType())
                     .setTable(existingTable);
             existingTable.addColumn(newColumn);
-            jobBuilder.addSourceColumn(newColumn);
+            if (jobBuilder != null) {
+                jobBuilder.addSourceColumn(newColumn);
+            }
         }
     }
 

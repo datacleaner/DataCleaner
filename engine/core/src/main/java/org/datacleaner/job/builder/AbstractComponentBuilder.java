@@ -866,7 +866,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             existingTable.removeColumn(column);
         }
         for (Column column : columnsToAdd) {
-            MutableColumn newColumn = new MutableColumn(column.getName(), column.getType());
+            final MutableColumn newColumn = new MutableColumn(column.getName(), column.getType())
+                    .setTable(existingTable);
             existingTable.addColumn(newColumn);
             jobBuilder.addSourceColumn(newColumn);
         }

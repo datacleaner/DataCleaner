@@ -21,7 +21,6 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskListener;

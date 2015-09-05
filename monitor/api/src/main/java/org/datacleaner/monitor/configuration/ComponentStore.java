@@ -19,16 +19,20 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import java.util.List;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * Class ComponentStore.
+ *
+ * @since 11.8.15
  */
-public interface TenantContextFactory {
+public interface ComponentStore {
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
+    public ComponentStoreHolder get(String instanceId);
 
-    public Iterable<TenantContext> getActiveTenantContexts();
+    public void store(final ComponentStoreHolder configuration);
+
+    public boolean remove(String instanceId);
+
+    public List<ComponentStoreHolder> getList();
 }

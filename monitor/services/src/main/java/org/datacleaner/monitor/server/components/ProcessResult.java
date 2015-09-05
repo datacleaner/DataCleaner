@@ -17,18 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.server.components;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * @Since 7/31/15
  */
-public interface TenantContextFactory {
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
-
-    public Iterable<TenantContext> getActiveTenantContexts();
+public class ProcessResult {
+    @JsonProperty
+    Object result;
 }

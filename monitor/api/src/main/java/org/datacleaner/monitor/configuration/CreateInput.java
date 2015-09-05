@@ -19,16 +19,14 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * @Since 7/31/15
+ *
+ * Simple holder for configuration data. It is used for creating components.
  */
-public interface TenantContextFactory {
-
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
-
-    public Iterable<TenantContext> getActiveTenantContexts();
+public class CreateInput {
+    @JsonProperty
+    public ComponentConfiguration configuration;
 }

@@ -19,16 +19,29 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * Class ComponentsFactory
+ * @since 18.8.15
  */
-public interface TenantContextFactory {
+public class ComponentHandlerFactory {
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
+    /**
+     * Creates new Handler from configuration
+     * @param tenantContext
+     * @param componentName
+     * @param configuration
+     * @return
+     * @throws RuntimeException
+     */
+    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName, ComponentConfiguration configuration)
+            throws RuntimeException {
+        ComponentHandler handler = new ComponentHandler(
+                tenantContext.getConfiguration(),
+                componentName);
+        handler.createComponent(configuration);
 
-    public Iterable<TenantContext> getActiveTenantContexts();
+        return handler;
+    }
 }

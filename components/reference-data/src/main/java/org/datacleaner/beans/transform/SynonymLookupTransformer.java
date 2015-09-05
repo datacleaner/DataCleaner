@@ -46,8 +46,6 @@ import org.datacleaner.reference.SynonymCatalogConnection;
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with
  * it's master term.
- * 
- * 
  */
 @Named("Synonym lookup")
 @Alias("Synonym replacement")

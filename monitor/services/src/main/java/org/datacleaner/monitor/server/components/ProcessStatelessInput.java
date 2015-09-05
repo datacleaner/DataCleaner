@@ -17,18 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.server.components;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.monitor.configuration.ComponentConfiguration;
+
+import java.io.Serializable;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * Crate for a component processing input.
+ * @since 9. 7. 2015
  */
-public interface TenantContextFactory {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ProcessStatelessInput implements Serializable {
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
+    @JsonProperty
+    public ComponentConfiguration configuration;
+    @JsonProperty
+    public JsonNode data;
 
-    public Iterable<TenantContext> getActiveTenantContexts();
 }

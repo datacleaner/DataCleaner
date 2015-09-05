@@ -17,18 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.server.components;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import java.io.Serializable;
 
 /**
- * Factory object for {@link TenantContext} objects
+ * This interface specifies a component results provider.
+ * @since 14. 07. 2015
  */
-public interface TenantContextFactory {
-
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
-
-    public Iterable<TenantContext> getActiveTenantContexts();
+public interface ComponentResultsProvider {
+    public Serializable getComponentResults();
+    public boolean exists(String name);
 }

@@ -161,7 +161,7 @@ public class DelegatingConverter implements Converter<Object> {
     public void initializeAll(InjectionManager injectionManager) {
         if (injectionManager != null) {
             for (Converter<?> converter : _converters) {
-                Field[] fields = ReflectionUtils.getFields(converter.getClass(), Inject.class);
+                Field[] fields = ReflectionUtils.getAllFields(converter.getClass(), Inject.class);
                 for (Field field : fields) {
                     final Object value;
                     if (field.getType() == Converter.class) {

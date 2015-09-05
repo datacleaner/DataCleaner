@@ -19,17 +19,15 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
+import com.google.common.base.Strings;
+import com.google.inject.Inject;
+import java.awt.*;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
-import javax.swing.JComponent;
-import javax.swing.JPasswordField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.guice.Nullable;
@@ -45,9 +43,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.HelpIcon;
 import org.jdesktop.swingx.JXTextField;
-
-import com.google.common.base.Strings;
-import com.google.inject.Inject;
 
 /**
  * Datastore dialog for Salesforce.com datastores

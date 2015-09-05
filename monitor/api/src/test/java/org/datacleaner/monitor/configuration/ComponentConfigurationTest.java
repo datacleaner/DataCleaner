@@ -19,16 +19,31 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.junit.Test;
 
-/**
- * Factory object for {@link TenantContext} objects
- */
-public interface TenantContextFactory {
+import static junit.framework.TestCase.*;
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
+public class ComponentConfigurationTest {
+    private ComponentConfiguration componentConfiguration = new ComponentConfiguration();
+    private String propertyName = "propertyName";
 
-    public Iterable<TenantContext> getActiveTenantContexts();
+    @Test
+    public void testGetProperties() throws Exception {
+        assertNotNull(componentConfiguration.getProperties());
+    }
+
+    @Test
+    public void testGetColumns() throws Exception {
+        assertNotNull(componentConfiguration.getColumns());
+    }
+
+    @Test
+    public void testGetProperty() throws Exception {
+        assertNull(componentConfiguration.getProperty(propertyName));
+    }
+
+    @Test
+    public void testGetPropertiesNames() throws Exception {
+        assertNotNull(componentConfiguration.getPropertiesNames());
+    }
 }

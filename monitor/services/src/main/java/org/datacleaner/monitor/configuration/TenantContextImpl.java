@@ -54,6 +54,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     private final String _tenantId;
     private final Repository _repository;
     private final ConfigurationCache _configurationCache;
+    private final ComponentStore _componentStore;
     private final JobEngineManager _jobEngineManager;
     private final LoadingCache<JobIdentifier, JobContext> _jobCache;
 
@@ -62,8 +63,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      * 
      * @param tenantId
      * @param repository
-     * @param injectionManagerFactory
-     *            the injection manager factory applicable to the whole
+     * @param environment
+     *            Contains the injection manager factory applicable to the whole
      *            application. This injection manager will be decorated/wrapped
      *            with a {@link TenantInjectionManagerFactory} in order to
      *            provide tenant-specific injection options.
@@ -86,6 +87,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
                 .withInjectionManagerFactory(tenantInjectionManagerFactory);
 
         _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
+        _componentStore = new ComponentStoreImpl(_repository, _tenantId);
         _jobCache = buildJobCache();
     }
 
@@ -186,6 +188,11 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         logger.debug("onConfigurationChanged() invoked on tenant: {}", _tenantId);
         _configurationCache.clearCache();
         _jobCache.invalidateAll();
+    }
+
+    @Override
+    public ComponentStore getComponentStore() {
+        return _componentStore;
     }
 
 }

@@ -19,15 +19,10 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-
+import javax.swing.*;
 import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.Renderer;

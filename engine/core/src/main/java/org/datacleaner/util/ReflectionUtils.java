@@ -424,10 +424,10 @@ public final class ReflectionUtils {
         return result.toArray(new Method[result.size()]);
     }
 
-    public static Field[] getFields(Class<?> clazz, Class<? extends Annotation> withAnnotation) {
+    public static Field[] getAllFields(Class<?> clazz, Class<? extends Annotation> withAnnotation) {
         List<Field> result = new ArrayList<Field>();
 
-        Field[] fields = getFields(clazz);
+        Field[] fields = getAllFields(clazz);
         for (Field field : fields) {
             if (isAnnotationPresent(field, withAnnotation)) {
                 result.add(field);
@@ -561,22 +561,46 @@ public final class ReflectionUtils {
      * @param clazz
      * @return
      */
-    public static Field[] getFields(Class<?> clazz) {
+    public static Field[] getAllFields(Class<?> clazz) {
         List<Field> allFields = new ArrayList<>();
         addFields(allFields, clazz);
         return allFields.toArray(new Field[allFields.size()]);
     }
 
+    /**
+     * Gets non-synthetic fields of a class, including private fields in super-classes.
+     *
+     * @param clazz
+     * @return
+     */
+    public static Field[] getNonSyntheticFields(Class<?> clazz) {
+        List<Field> fieldList = new ArrayList<>();
+        addFields(fieldList, clazz, true);
+
+        return fieldList.toArray(new Field[fieldList.size()]);
+    }
+
     private static void addFields(List<Field> allFields, Class<?> clazz) {
+        addFields(allFields, clazz, false);
+    }
+
+    private static void addFields(List<Field> allFields, Class<?> clazz, boolean excludeSynthetic) {
         if (clazz == Object.class) {
             return;
         }
+
         Field[] f = clazz.getDeclaredFields();
+
         for (Field field : f) {
+            if (excludeSynthetic && field.isSynthetic()) {
+                continue;
+            }
+
             allFields.add(field);
         }
+
         Class<?> superclass = clazz.getSuperclass();
-        addFields(allFields, superclass);
+        addFields(allFields, superclass, excludeSynthetic);
     }
 
     public static <E> E newInstance(Class<? extends E> clazz) {

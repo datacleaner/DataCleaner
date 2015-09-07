@@ -21,6 +21,7 @@ package org.datacleaner.connection;
 
 import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.metamodel.datahub.DataHubDataContext;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 
 public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         implements UpdateableDatastore, UsernameDatastore {
@@ -33,10 +34,10 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final String _tenantName;
     private final boolean _https;
     private final boolean _acceptUnverifiedSslPeers;
-    private final String _securityMode;
+    private final DataHubSecurityMode _securityMode;
 
     public DataHubDatastore(String name, String host, Integer port, String username, String password, String tenantName,
-            boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+            boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
         super(name);
         _host = host;
         _port = port;
@@ -45,7 +46,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         _tenantName = tenantName;
         _https = https;
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
-        _securityMode = securityMode;
+        _securityMode = dataHubSecurityMode;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return _acceptUnverifiedSslPeers;
     }
 
-    public String getSecurityMode() {
+    public DataHubSecurityMode getSecurityMode() {
         return _securityMode;
     }
 

@@ -19,8 +19,6 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,6 +40,8 @@ import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.net.UrlEscapers;
 
 /**
  * Datahub dataset
@@ -122,6 +122,7 @@ public class DataHubDataSet extends AbstractDataSet {
         String uri = _uri + createParams(firstRow, maxRows);
 
         HttpGet request = new HttpGet(uri);
+        System.out.println(uri);
         request.addHeader("Accept", "application/json");
 
         HttpResponse response = executeRequest(request);
@@ -147,24 +148,18 @@ public class DataHubDataSet extends AbstractDataSet {
         return URLEncodedUtils.format(params, "utf-8");
     }
 
-    private static String encodeUrl(String url) {
-        try {
-            return URLEncoder.encode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     private static List<SelectItem> getSelectItems(Query query) {
         return query.getSelectClause().getItems();
     }
 
     private String createEncodedUri(DataHubConnection connection, Table table) {
+        String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
         return connection.getRepositoryUrl() + "/datastores/"
-                + encodeUrl(((DataHubSchema) table.getSchema()).getDatastoreName()) + ".query?";
+                + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".query?";
     }
 
     private String getQueryString(Query query, Table table) {
+        query.getOrderByClause();
         String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }

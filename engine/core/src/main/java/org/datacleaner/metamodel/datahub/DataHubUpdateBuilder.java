@@ -41,7 +41,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
     public void execute() throws MetaModelException {
         String query = createSqlStatement();
         System.out.println("Executing query: " + query);
-        _callback.executeUpdate(query);
+        _callback.executeUpdate(getTable(), query);
     }
 
     private String createSqlStatement() {

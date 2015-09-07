@@ -111,7 +111,7 @@ public class DataHubDatastoreDialog
                 /* _contextPathTextField.getText(), */_httpsCheckBox
                         .isSelected(),
                 _acceptUnverifiedSslPeersCheckBox.isSelected(),
-                _securityModeSelector.getSelectedItem().toString());
+                DataHubSecurityMode.valueOf(_securityModeSelector.getSelectedItem().toString()));
     }
 
     private void updateUrlLabel() {
@@ -221,7 +221,7 @@ public class DataHubDatastoreDialog
             _portTextField.setText(originalDatastore.getPort() + "");
             _httpsCheckBox.setSelected(originalDatastore.https());
             _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
-            if(originalDatastore.getSecurityMode().equalsIgnoreCase(DataHubSecurityMode.CAS.toString())) {
+            if(originalDatastore.getSecurityMode().equals(DataHubSecurityMode.CAS)) {
                 _securityModeSelector.setSelectedIndex(1);
             } else {
                 _securityModeSelector.setSelectedIndex(0);
@@ -299,11 +299,11 @@ public class DataHubDatastoreDialog
         final boolean https = _httpsCheckBox.isSelected();
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox
                 .isSelected();
-        final String securityMode = _securityModeSelector.getSelectedItem().toString();
+        final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
         return new DataHubDatastore(name, host, port, username, password,
                 tenantName, https, acceptUnverifiedSslPeersCheckBox,
-                securityMode);
+                DataHubSecurityMode.valueOf(securityMode));
     }
 
     @Override

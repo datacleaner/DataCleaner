@@ -91,8 +91,8 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         return new DataHubUpdateBuilder(this, table);
     }
 
-    public void executeUpdate(String query) {
-        // TODO Auto-generated method stub
+    public void executeUpdate(Table table, String query) {
+        _dataContext.executeUpdate(table, query);
         
     }
 

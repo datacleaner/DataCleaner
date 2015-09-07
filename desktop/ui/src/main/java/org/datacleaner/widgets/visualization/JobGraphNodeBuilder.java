@@ -150,9 +150,8 @@ class JobGraphNodeBuilder {
         for (JobGraphLink link : allLinks) {
             boolean removeable = true;
 
-            if (link.getRequirement() != null || link.getOutputDataStream() != null) {
-                // only links without requirements and output data streams are
-                // candidates for removal
+            if (link.getRequirement() != null) {
+                // only links without requirements are candidates for removal
                 removeable = false;
             }
 
@@ -331,7 +330,8 @@ class JobGraphNodeBuilder {
                             public JobGraphLink createLink(Object from, Object to, ComponentRequirement requirement,
                                     FilterOutcome filterOutcome) {
                                 if (sourceTables.contains(from)) {
-                                    // replace "from" with "vertex" and add the outputDataStream
+                                    // replace "from" with "vertex" and add the
+                                    // outputDataStream
                                     return new JobGraphLink(vertex, to, requirement, filterOutcome, outputDataStream);
                                 }
                                 return new JobGraphLink(from, to, requirement, filterOutcome, null);

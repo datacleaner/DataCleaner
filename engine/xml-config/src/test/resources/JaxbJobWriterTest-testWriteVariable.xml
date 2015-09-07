@@ -28,7 +28,7 @@
             <descriptor ref="Convert to date"/>
             <properties>
                 <property name="Null replacement" value="2000-01-01T00:00:00 0"/>
-                <property name="Time zone" value="Europe/Berlin"/>
+                <property name="Time zone" value="Europe/Copenhagen"/>
                 <property name="Date masks" ref="var_datemask"/>
             </properties>
             <input ref="col_datestring"/>

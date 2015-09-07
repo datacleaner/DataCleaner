@@ -26,6 +26,7 @@
 			<properties>
 				<property name="Date masks" ref="var_datemask" />
 				<property name="Null replacement" value="2000-01-01" />
+				<property name="Time zone" value="Europe/Copenhagen"/>
 			</properties>
 			<input ref="col_1" />
 			<output id="col_2" name="Typed date column" />

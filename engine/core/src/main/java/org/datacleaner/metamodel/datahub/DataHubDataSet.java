@@ -165,7 +165,6 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String getQueryString(Query query, Table table) {
-        query.getOrderByClause();
         String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }

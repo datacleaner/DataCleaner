@@ -40,18 +40,11 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Datahub dataset
- * 
- * @author hetty
- *
  */
 public class DataHubDataSet extends AbstractDataSet {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDataSet.class);
 
     private static final int PAGE_SIZE = 10000;
 

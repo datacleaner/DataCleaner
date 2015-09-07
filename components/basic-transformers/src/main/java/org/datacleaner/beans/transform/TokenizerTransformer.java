@@ -39,8 +39,8 @@ import org.apache.metamodel.util.HasName;
 
 /**
  * Tokenizes values into a configurable amount of tokens.
- * 
- * 
+ *
+ *
  */
 @Named("Tokenizer")
 @Description("Tokenizes a String value (splits into substrings).")

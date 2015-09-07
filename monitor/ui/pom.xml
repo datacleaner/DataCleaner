@@ -9,7 +9,7 @@
 	<packaging>war</packaging>
 
 	<build>
-		<plugins>
+        <plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
@@ -109,7 +109,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 

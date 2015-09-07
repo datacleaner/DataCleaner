@@ -129,8 +129,9 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _valueColorMap.put("PURPLE", WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
         _valueColorMap.put("CYAN", WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT);
         _valueColorMap.put("BLUE", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
-        _valueColorMap.put("NOT_PROCESSED", WidgetUtils.BG_COLOR_LESS_DARK);
         _valueColorMap.put("GREY", WidgetUtils.BG_COLOR_MEDIUM);
+        _valueColorMap.put("GRAY", WidgetUtils.BG_COLOR_MEDIUM);
+        _valueColorMap.put("NOT_PROCESSED", WidgetUtils.BG_COLOR_LESS_DARK);
         _valueColorMap.put("FAILURE", WidgetUtils.BG_COLOR_DARKEST);
     }
 

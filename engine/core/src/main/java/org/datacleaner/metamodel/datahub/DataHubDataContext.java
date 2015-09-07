@@ -19,14 +19,14 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DATASTORES_PATH;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.SCHEMA_EXTENSION;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

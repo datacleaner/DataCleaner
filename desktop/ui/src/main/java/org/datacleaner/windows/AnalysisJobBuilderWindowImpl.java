@@ -143,11 +143,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private class WindowAnalysisJobChangeListener implements AnalysisJobChangeListener {
         @Override
         public void onActivation(final AnalysisJobBuilder builder) {
-            builder.getAnalyzerChangeListeners().add(_analyzerChangeListener);
-            builder.getTransformerChangeListeners().add(_transformerChangeListener);
-            builder.getFilterChangeListeners().add(_filterChangeListener);
-            builder.getSourceColumnListeners().add(_sourceColumnChangeListener);
-            builder.getAnalysisJobChangeListeners().add(this);
+            builder.addAnalyzerChangeListener(_analyzerChangeListener);
+            builder.addTransformerChangeListener(_transformerChangeListener);
+            builder.addFilterChangeListener(_filterChangeListener);
+            builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
+            builder.addAnalysisJobChangeListener(this);
+
+            // We'll need to listen to already added output data stream job builders
             for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
                 onActivation(analysisJobBuilder);
             }
@@ -155,11 +157,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         @Override
         public void onDeactivation(final AnalysisJobBuilder builder) {
-            builder.getAnalyzerChangeListeners().remove(_analyzerChangeListener);
-            builder.getTransformerChangeListeners().remove(_transformerChangeListener);
-            builder.getFilterChangeListeners().remove(_filterChangeListener);
-            builder.getSourceColumnListeners().remove(_sourceColumnChangeListener);
-            builder.getAnalysisJobChangeListeners().remove(this);
+            builder.removeAnalyzerChangeListener(_analyzerChangeListener);
+            builder.removeTransformerChangeListener(_transformerChangeListener);
+            builder.removeFilterChangeListener(_filterChangeListener);
+            builder.removeSourceColumnChangeListener(_sourceColumnChangeListener);
+            builder.removeAnalysisJobChangeListener(this);
         }
     }
 

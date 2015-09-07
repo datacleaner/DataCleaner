@@ -1072,23 +1072,85 @@ public final class AnalysisJobBuilder implements Closeable {
         return _defaultRequirement;
     }
 
+    public void addSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener){
+        _sourceColumnListeners.add(sourceColumnChangeListener);
+    }
+
+    public void removeSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener){
+        _sourceColumnListeners.remove(sourceColumnChangeListener);
+    }
+
+    public void addTransformerChangeListener(TransformerChangeListener transformerChangeListener){
+        _transformerChangeListeners.add(transformerChangeListener);
+    }
+
+    public void removeTransformerChangeListener(TransformerChangeListener transformerChangeListener){
+        _transformerChangeListeners.remove(transformerChangeListener);
+    }
+
+    public void addAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener){
+        _analyzerChangeListeners.add(analyzerChangeListener);
+    }
+
+    public void removeAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener){
+        _analyzerChangeListeners.remove(analyzerChangeListener);
+    }
+
+    public void addFilterChangeListener(FilterChangeListener filterChangeListener){
+        _filterChangeListeners.add(filterChangeListener);
+    }
+
+    public void removeFilterChangeListener(FilterChangeListener filterChangeListener){
+        _filterChangeListeners.remove(filterChangeListener);
+    }
+
+    public void addAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener){
+        _analysisJobChangeListeners.add(analysisJobChangeListener);
+    }
+
+    public void removeAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener){
+        _analysisJobChangeListeners.remove(analysisJobChangeListener);
+    }
+
+    /**
+     * @deprecated Use {@link #addSourceColumnChangeListener(SourceColumnChangeListener)}
+     * and {@link #removeSourceColumnChangeListener(SourceColumnChangeListener)}
+     */
+    @Deprecated
     public List<SourceColumnChangeListener> getSourceColumnListeners() {
         return _sourceColumnListeners;
     }
 
+    /**
+     * @deprecated Use {@link #addAnalyzerChangeListener(AnalyzerChangeListener)}
+     * and {@link #removeAnalyzerChangeListener(AnalyzerChangeListener)}
+     */
+    @Deprecated
     public List<AnalyzerChangeListener> getAnalyzerChangeListeners() {
         return _analyzerChangeListeners;
     }
 
+    /**
+     * @deprecated Use {@link #addTransformerChangeListener(TransformerChangeListener)}
+     * and {@link #removeTransformerChangeListener(TransformerChangeListener)}
+     */
+    @Deprecated
     public List<TransformerChangeListener> getTransformerChangeListeners() {
         return _transformerChangeListeners;
     }
 
+    /**
+     * @deprecated Use {@link #addFilterChangeListener(FilterChangeListener)}
+     * and {@link #removeFilterChangeListener(FilterChangeListener)}
+     */
+    @Deprecated
     public List<FilterChangeListener> getFilterChangeListeners() {
         return _filterChangeListeners;
     }
 
-    public List<AnalysisJobChangeListener> getAnalysisJobChangeListeners() { return _analysisJobChangeListeners; }
+    private List<AnalysisJobChangeListener> getAnalysisJobChangeListeners() {
+        return _analysisJobChangeListeners;
+    }
 
     public List<Table> getSourceTables() {
         final List<Table> tables = new ArrayList<>();
@@ -1287,6 +1349,9 @@ public final class AnalysisJobBuilder implements Closeable {
         return builder;
     }
 
+    /**
+     * This gets all job builders from consumed {@link OutputDataStream}s. This only pertains to immediate children.
+     */
     public List<AnalysisJobBuilder> getConsumedOutputDataStreamsJobBuilders(){
         List<AnalysisJobBuilder> consumedOutputDataStreamJobBuilders = new ArrayList<>();
         for(ComponentBuilder builder : getComponentBuilders()){

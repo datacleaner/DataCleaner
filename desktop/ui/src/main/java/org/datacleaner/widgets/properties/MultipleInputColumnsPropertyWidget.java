@@ -125,8 +125,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
         _firstUpdate = true;
         _dataType = propertyDescriptor.getTypeArgument(0);
-        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().addSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
         setLayout(new VerticalLayout(2));
 
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
@@ -366,8 +366,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
     }
 
     @Override

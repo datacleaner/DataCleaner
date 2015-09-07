@@ -94,8 +94,9 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
      * @return
      */
     private List<AnalyzerChangeListener> getAllListeners() {
+        @SuppressWarnings("deprecation")
         List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        List<AnalyzerChangeListener> list = new ArrayList<AnalyzerChangeListener>(globalChangeListeners.size()
+        List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size()
                 + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);

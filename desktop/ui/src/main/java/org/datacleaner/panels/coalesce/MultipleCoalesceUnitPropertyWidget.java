@@ -77,8 +77,8 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
         _unitContainerPanel = new DCPanel();
         _unitContainerPanel.setLayout(new VerticalLayout(2));
 
-        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().addSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
 
         _unitPropertyWidget = createUnitPropertyWidget();
 
@@ -130,8 +130,8 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
     }
 
     public void removeCoalesceUnit() {

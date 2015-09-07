@@ -105,6 +105,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
      * @return
      */
     private List<FilterChangeListener> getAllListeners() {
+        @SuppressWarnings("deprecation")
         List<FilterChangeListener> globalChangeListeners = getAnalysisJobBuilder().getFilterChangeListeners();
         List<FilterChangeListener> list = new ArrayList<FilterChangeListener>(globalChangeListeners.size()
                 + _localChangeListeners.size());

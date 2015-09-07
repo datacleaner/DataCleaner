@@ -206,6 +206,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
      * @return
      */
     private List<TransformerChangeListener> getAllListeners() {
+        @SuppressWarnings("deprecation")
         List<TransformerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getTransformerChangeListeners();
 
         List<TransformerChangeListener> list = new ArrayList<TransformerChangeListener>(globalChangeListeners.size()

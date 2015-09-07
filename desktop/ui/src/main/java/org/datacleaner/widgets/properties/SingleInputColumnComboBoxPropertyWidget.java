@@ -64,8 +64,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
                 fireValueChanged();
             }
         });
-        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().addSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
         _dataType = propertyDescriptor.getTypeArgument(0);
 
         updateComponents();
@@ -167,8 +167,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
+        getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().removeTransformerChangeListener(this);
 
         for (InputColumn<?> column : _inputColumns) {
             if (column instanceof MutableInputColumn) {

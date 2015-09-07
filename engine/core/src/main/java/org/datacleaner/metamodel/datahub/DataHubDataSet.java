@@ -38,6 +38,7 @@ import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.OrderByClause;
 import org.apache.metamodel.query.OrderByItem.Direction;
 import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectClause;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
@@ -160,14 +161,36 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String getQueryString(Query query, Table table) {
-        final OrderByClause orderByClause = query.getOrderByClause();
-        if(orderByClause.isEmpty()) {
-            query.orderBy(table.getColumnByName("id"), Direction.ASC);
+        final SelectClause selectClause = query.getSelectClause();
+        if (isPlainSelectOfColumns(selectClause)) {
+            addOrderByClauseIfMissing(query, table);            
         }
         String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }
 
+
+    /**
+     * Checks if the select clause is a plain select of columns and not a function e.g. SELECT COUNT (*)
+     * @param selectClause
+     * @return true 
+     */
+    private boolean isPlainSelectOfColumns(SelectClause selectClause) {
+        final boolean hasMultipleSelectItems = selectClause.getItems().size() != 1;
+        if(hasMultipleSelectItems) {
+            return true;
+        }
+        final boolean itemIsNotAFunction = selectClause.getItem(0).getFunction() == null;
+        return itemIsNotAFunction;
+    }
+
+    private void addOrderByClauseIfMissing(Query query, Table table) {
+        final OrderByClause orderByClause = query.getOrderByClause();
+        if(orderByClause.isEmpty()) {
+            query.orderBy(table.getColumnByName("id"), Direction.ASC);
+        }
+    }
+    
     private HttpResponse executeRequest(HttpGet request) {
         MonitorHttpClient httpClient = _connection.getHttpClient();
         HttpResponse response;

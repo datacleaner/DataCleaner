@@ -943,7 +943,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         throw new ComponentConfigurationException("No such variable: " + variableRef);
                     }
                     
-                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + "." + descriptor.getDisplayName() + "." + configuredProperty.getName(), variableRef);
+                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + "." + configuredProperty.getName(), variableRef);
                 }
 
                 final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();

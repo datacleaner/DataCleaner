@@ -20,6 +20,16 @@
 			<input ref="col_1" />
 			<output id="col_match" name="Matches date mask?" />
 		</transformer>
+		
+		<transformer>
+            <descriptor ref="Date mask matcher"/>
+            <properties>
+                <property name="Date masks" value="[yy-dd-MM]"/>
+                <property name="Output type" value="TRUE_FALSE"/>
+            </properties>
+            <input ref="col_1" />
+            <output id="col_match2" name="Matches date mask?"/>
+        </transformer>
 
 		<transformer>
 			<descriptor ref="Convert to date" />

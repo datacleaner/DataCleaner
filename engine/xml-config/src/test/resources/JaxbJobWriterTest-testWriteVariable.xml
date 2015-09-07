@@ -25,6 +25,15 @@
             <output id="col_matchesdatemask" name="Matches date mask?"/>
         </transformer>
         <transformer>
+            <descriptor ref="Date mask matcher"/>
+            <properties>
+                <property name="Date masks" value="[yy-dd-MM]"/>
+                <property name="Output type" value="TRUE_FALSE"/>
+            </properties>
+            <input ref="col_datestring"/>
+            <output id="col_matchesdatemask2" name="Matches date mask?"/>
+        </transformer>
+        <transformer>
             <descriptor ref="Convert to date"/>
             <properties>
                 <property name="Null replacement" value="2000-01-01T00:00:00 0"/>

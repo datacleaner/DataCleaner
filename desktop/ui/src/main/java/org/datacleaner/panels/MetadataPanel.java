@@ -62,7 +62,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        _analysisJobBuilder.addSourceColumnChangeListener(this);
 
         _table = new DCTable(COLUMN_NAMES);
         _table.setColumnControlVisible(false);

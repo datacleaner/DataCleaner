@@ -90,6 +90,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalysisJobChangeListener;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -139,6 +140,150 @@ import org.slf4j.LoggerFactory;
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
         WindowListener {
 
+    private class WindowAnalysisJobChangeListener implements AnalysisJobChangeListener {
+        @Override
+        public void onActivation(final AnalysisJobBuilder builder) {
+            builder.addAnalyzerChangeListener(_analyzerChangeListener);
+            builder.addTransformerChangeListener(_transformerChangeListener);
+            builder.addFilterChangeListener(_filterChangeListener);
+            builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
+            builder.addAnalysisJobChangeListener(this);
+
+            // We'll need to listen to already added output data stream job builders
+            for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
+                onActivation(analysisJobBuilder);
+            }
+        }
+
+        @Override
+        public void onDeactivation(final AnalysisJobBuilder builder) {
+            builder.removeAnalyzerChangeListener(_analyzerChangeListener);
+            builder.removeTransformerChangeListener(_transformerChangeListener);
+            builder.removeFilterChangeListener(_filterChangeListener);
+            builder.removeSourceColumnChangeListener(_sourceColumnChangeListener);
+            builder.removeAnalysisJobChangeListener(this);
+        }
+    }
+
+    private class WindowAnalyzerChangeListener implements AnalyzerChangeListener {
+        @Override
+        public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+            if (_classicView != null) {
+                _classicView.addAnalyzer(analyzerJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRemove(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+            if (_classicView != null) {
+                _classicView.removeAnalyzer(analyzerJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onConfigurationChanged(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRequirementChanged(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+            _graph.refresh();
+        }
+    }
+
+    private class WindowTransformerChangeListener implements TransformerChangeListener {
+
+        @Override
+        public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
+            if (_classicView != null) {
+                _classicView.addTransformer(transformerJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRemove(final TransformerComponentBuilder<?> transformerJobBuilder) {
+            if (_classicView != null) {
+                _classicView.removeTransformer(transformerJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+                List<MutableInputColumn<?>> outputColumns) {
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRequirementChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
+            _graph.refresh();
+        }
+
+        @Override
+        public void onConfigurationChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
+            updateStatusLabel();
+            _graph.refresh();
+        }
+    }
+
+    private class WindowFilterChangeListener implements FilterChangeListener {
+
+        @Override
+        public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+            if (_classicView != null) {
+                _classicView.addFilter(filterJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRemove(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+            if (_classicView != null) {
+                _classicView.removeFilter(filterJobBuilder);
+            }
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onConfigurationChanged(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRequirementChanged(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+            _graph.refresh();
+        }
+    }
+
+    private class WindowSourceColumnChangeListener implements SourceColumnChangeListener {
+
+        @Override
+        public void onAdd(final InputColumn<?> sourceColumn) {
+            onSourceColumnsChanged();
+            updateStatusLabel();
+            _graph.refresh();
+        }
+
+        @Override
+        public void onRemove(final InputColumn<?> sourceColumn) {
+            onSourceColumnsChanged();
+            updateStatusLabel();
+            _graph.refresh();
+        }
+    }
+
+
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -178,6 +323,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCPanel _contentContainerPanel;
     private final JComponent _editingContentView;
     private final UsageLogger _usageLogger;
+    private final AnalyzerChangeListener _analyzerChangeListener = new WindowAnalyzerChangeListener();
+    private final TransformerChangeListener _transformerChangeListener = new WindowTransformerChangeListener();
+    private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
+    private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
+    private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
     private JobClassicView _classicView;
     private FileObject _jobFilename;
     private Datastore _datastore;
@@ -230,10 +380,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory,
                 usageLogger);
 
-        _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
-        _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
-        _analysisJobBuilder.getFilterChangeListeners().add(createFilterChangeListener());
-        _analysisJobBuilder.getSourceColumnListeners().add(createSourceColumnChangeListener());
+        _analysisJobChangeListener.onActivation(_analysisJobBuilder);
 
         _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
@@ -619,10 +766,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     private void cleanupForWindowClose() {
-        _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
-        _analysisJobBuilder.getFilterChangeListeners().remove(this);
-        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        _analysisJobChangeListener.onDeactivation(_analysisJobBuilder);
         _analysisJobBuilder.close();
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
@@ -1072,133 +1216,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     protected boolean isCentered() {
         return true;
-    }
-
-    private AnalyzerChangeListener createAnalyzerChangeListener() {
-        return new AnalyzerChangeListener() {
-
-            @Override
-            public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.addAnalyzer(analyzerJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.removeAnalyzer(analyzerJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onConfigurationChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRequirementChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                _graph.refresh();
-            }
-        };
-    }
-
-    private TransformerChangeListener createTransformerChangeListener() {
-        return new TransformerChangeListener() {
-
-            @Override
-            public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.addTransformer(transformerJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.removeTransformer(transformerJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-                    List<MutableInputColumn<?>> outputColumns) {
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
-                _graph.refresh();
-            }
-
-            @Override
-            public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
-                updateStatusLabel();
-                _graph.refresh();
-            }
-        };
-    }
-
-    private FilterChangeListener createFilterChangeListener() {
-        return new FilterChangeListener() {
-
-            @Override
-            public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.addFilter(filterJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder) {
-                if (_classicView != null) {
-                    _classicView.removeFilter(filterJobBuilder);
-                }
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onConfigurationChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
-                _graph.refresh();
-            }
-        };
-    }
-
-    private SourceColumnChangeListener createSourceColumnChangeListener() {
-        return new SourceColumnChangeListener() {
-
-            @Override
-            public void onAdd(InputColumn<?> sourceColumn) {
-                onSourceColumnsChanged();
-                updateStatusLabel();
-                _graph.refresh();
-            }
-
-            @Override
-            public void onRemove(InputColumn<?> sourceColumn) {
-                onSourceColumnsChanged();
-                updateStatusLabel();
-                _graph.refresh();
-            }
-        };
     }
 
     @Override

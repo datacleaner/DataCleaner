@@ -72,8 +72,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         _radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
         _radioGroup.setOpaque(false);
 
-        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().addSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().addTransformerChangeListener(this);
         _propertyDescriptor = propertyDescriptor;
         _dataType = propertyDescriptor.getTypeArgument(0);
 
@@ -259,8 +259,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
-        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
+        getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
+        getAnalysisJobBuilder().removeTransformerChangeListener(this);
 
         for (InputColumn<?> column : _inputColumns) {
             if (column instanceof MutableInputColumn) {

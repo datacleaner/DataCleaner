@@ -263,8 +263,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -280,8 +280,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -297,8 +297,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
     }
@@ -363,7 +363,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     }
 
     private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
-            Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter) {
+            Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter,
+            Map<String, String> componentMetadataProperties) {
 
         // sort the properties in order to make the result deterministic
         configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(configuredProperties);
@@ -371,20 +372,26 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         List<Property> result = new ArrayList<Property>();
         for (ConfiguredPropertyDescriptor property : configuredProperties) {
             if (!property.isInputColumn()) {
-                Object value = configuration.getProperty(property);
-                String stringValue = stringConverter.serialize(value, property.getCustomConverter());
-
                 final Property propertyType = new Property();
                 propertyType.setName(property.getName());
 
-                if (stringValue != null && stringValue.indexOf('\n') != -1) {
-                    // multi-line values are put as simple content of the
-                    // property
-                    propertyType.setValue(stringValue);
+                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX
+                        + property.getName();
+                if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
+                    propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
                 } else {
-                    // single-line values are preferred as an attribute for
-                    // backwards compatibility
-                    propertyType.setValueAttribute(stringValue);
+                    Object value = configuration.getProperty(property);
+                    String stringValue = stringConverter.serialize(value, property.getCustomConverter());
+
+                    if (stringValue != null && stringValue.indexOf('\n') != -1) {
+                        // multi-line values are put as simple content of the
+                        // property
+                        propertyType.setValue(stringValue);
+                    } else {
+                        // single-line values are preferred as an attribute for
+                        // backwards compatibility
+                        propertyType.setValueAttribute(stringValue);
+                    }
                 }
                 result.add(propertyType);
             }

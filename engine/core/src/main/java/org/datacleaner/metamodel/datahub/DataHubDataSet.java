@@ -35,7 +35,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.data.AbstractDataSet;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.GroupByClause;
+import org.apache.metamodel.query.OrderByClause;
+import org.apache.metamodel.query.OrderByItem.Direction;
 import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectClause;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
@@ -158,10 +162,40 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String getQueryString(Query query, Table table) {
+        if (isPlainSelectOfColumns(query)) {
+            addOrderByClauseIfMissing(query, table);            
+        }
         String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }
 
+
+    /**
+     * Checks if the select clause is a plain select of columns and not a function e.g. SELECT COUNT (*)
+     * @param query
+     * @return true 
+     */
+    private boolean isPlainSelectOfColumns(Query query) {
+        GroupByClause groupByClause = query.getGroupByClause();
+        if (!groupByClause.isEmpty()) {
+            return false;
+        }
+        final SelectClause selectClause = query.getSelectClause();
+        for (SelectItem selectItem : selectClause.getItems()) {
+            if (selectItem.getFunction() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void addOrderByClauseIfMissing(Query query, Table table) {
+        final OrderByClause orderByClause = query.getOrderByClause();
+        if(orderByClause.isEmpty()) {
+            query.orderBy(table.getColumnByName("id"), Direction.ASC);
+        }
+    }
+    
     private HttpResponse executeRequest(HttpGet request) {
         MonitorHttpClient httpClient = _connection.getHttpClient();
         HttpResponse response;

@@ -112,7 +112,12 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         if (value == null) {
             return _nullValueAnnotation != null;
         }
-        return _annotations.containsKey(value);
+        final RowAnnotation annotation = _annotations.get(value);
+        if (annotation == null) {
+            return false;
+        }
+        
+        return annotationFactory.hasSampleRows(annotation);
     }
 
     @Override

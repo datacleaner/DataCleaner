@@ -153,7 +153,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         return result;
     }
 
-    public String getTicket(final String requestedService, final String casServiceUrl,
+    private String getTicket(final String requestedService, final String casServiceUrl,
             final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
@@ -172,7 +172,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         return _httpClient.execute(req, context);
     }
 
-    public String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
+    private String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
         final HttpPost ticketServiceRequest = new HttpPost(casServiceUrl);
         ticketServiceRequest.setEntity(new StringEntity("username=" + _username + "&password=" + _password));
         final HttpResponse casResponse = executeHttpRequest(ticketServiceRequest, null);

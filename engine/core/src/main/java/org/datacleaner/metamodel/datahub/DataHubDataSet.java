@@ -19,9 +19,11 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.AccessControlException;
+import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.datacleaner.metamodel.datahub.DataHubConnection.QUERY_EXTENSION;
+import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +56,12 @@ public class DataHubDataSet extends AbstractDataSet {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDataSet.class);
 
     private static final int PAGE_SIZE = 10000;
+    
+    private static final String JSON_CONTENT_TYPE = "application/json";
+    
+    private static final String QUERY_PARAM = "q";
+    private static final String FIRST_ROW_PARAM = "f";
+    private static final String MAX_ROW_PARAM = "m";
 
     private final DataHubConnection _connection;
     private final Query _query;
@@ -122,7 +130,7 @@ public class DataHubDataSet extends AbstractDataSet {
         String uri = _uri + createParams(firstRow, maxRows);
 
         HttpGet request = new HttpGet(uri);
-        request.addHeader("Accept", "application/json");
+        request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
         HttpResponse response = executeRequest(request);
 
@@ -141,18 +149,10 @@ public class DataHubDataSet extends AbstractDataSet {
 
     private String createParams(final Integer firstRow, final Integer maxRows) {
         List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("q", _queryString));
-        params.add(new BasicNameValuePair("f", firstRow.toString()));
-        params.add(new BasicNameValuePair("m", maxRows.toString()));
+        params.add(new BasicNameValuePair(QUERY_PARAM, _queryString));
+        params.add(new BasicNameValuePair(FIRST_ROW_PARAM, firstRow.toString()));
+        params.add(new BasicNameValuePair(MAX_ROW_PARAM, maxRows.toString()));
         return URLEncodedUtils.format(params, "utf-8");
-    }
-
-    private static String encodeUrl(String url) {
-        try {
-            return URLEncoder.encode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private static List<SelectItem> getSelectItems(Query query) {
@@ -160,8 +160,8 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String createEncodedUri(DataHubConnection connection, Table table) {
-        return connection.getRepositoryUrl() + "/datastores/"
-                + encodeUrl(((DataHubSchema) table.getSchema()).getDatastoreName()) + ".query?";
+        return connection.getRepositoryUrl() + DataHubConnection.DATASTORES_PATH + "/"
+                + urlPathSegmentEscaper().escape(((DataHubSchema) table.getSchema()).getDatastoreName()) + QUERY_EXTENSION;
     }
 
     private String getQueryString(Query query, Table table) {
@@ -178,16 +178,8 @@ public class DataHubDataSet extends AbstractDataSet {
             throw new IllegalStateException(e);
         }
 
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 403) {
-            throw new AccessControlException("You are not authorized to access the service");
-        }
-        if (statusCode == 404) {
-            throw new AccessControlException("Could not connect to Datahub: not found");
-        }
-        if (statusCode != 200) {
-            throw new IllegalStateException("Unexpected response status code: " + statusCode);
-        }
+        validateReponseStatusCode(response);
+        
         return response;
     }
 

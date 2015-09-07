@@ -19,7 +19,12 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.security.AccessControlException;
+import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
+import static org.datacleaner.metamodel.datahub.DataHubConnection.DATASTORES_PATH;
+import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
+import static org.datacleaner.metamodel.datahub.DataHubConnection.SCHEMA_EXTENSION;
+import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +43,6 @@ import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.net.UrlEscapers;
-
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
 
@@ -54,8 +57,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     private Map<String, DataHubSchema> getDatahubSchemas() {
         Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
         for (final String datastoreName : getDataStoreNames()) {
-            final String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
-                    + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".schemas";
+            final String uri = _connection.getRepositoryUrl() + DATASTORES_PATH + "/"
+                    + urlPathSegmentEscaper().escape(datastoreName) + SCHEMA_EXTENSION;
             logger.debug("request {}", uri);
             final HttpGet request = new HttpGet(uri);
             final HttpResponse response = executeRequest(request);
@@ -88,7 +91,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     private List<String> getDataStoreNames() {
-        String uri = _connection.getRepositoryUrl() + "/datastores";
+        String uri = _connection.getRepositoryUrl() + DATASTORES_PATH;
         logger.debug("request {}", uri);
         HttpGet request = new HttpGet(uri);
         HttpResponse response = executeRequest(request);
@@ -101,10 +104,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         }
     }
 
-    public Schema testGetMainSchema() {
-        return getDefaultSchema();
-    }
-
     private HttpResponse executeRequest(HttpGet request) {
 
         MonitorHttpClient httpClient = _connection.getHttpClient();
@@ -115,16 +114,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
             throw new IllegalStateException(e);
         }
 
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 403) {
-            throw new AccessControlException("You are not authorized to access the service");
-        }
-        if (statusCode == 404) {
-            throw new AccessControlException("Could not connect to Datahub: not found");
-        }
-        if (statusCode != 200) {
-            throw new IllegalStateException("Unexpected response status code: " + statusCode);
-        }
+        validateReponseStatusCode(response);
+        
         return response;
     }
 
@@ -135,7 +126,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     @Override
     protected String getDefaultSchemaName() {
-        return "MDM";
+        return DEFAULT_SCHEMA;
     }
 
     @Override

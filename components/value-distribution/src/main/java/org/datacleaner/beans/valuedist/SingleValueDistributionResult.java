@@ -75,6 +75,22 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         _nullCount = 0;
     }
 
+    public SingleValueDistributionResult(String groupName, ValueCountList topValues, int uniqueValueCount,
+            int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+            InputColumn<?>[] highlightedColumns) {
+        this(groupName, topValues, null, null, uniqueValueCount, distinctCount, totalCount, annotations,
+                nullValueAnnotation, annotationFactory, highlightedColumns);
+    }
+
+    public SingleValueDistributionResult(String groupName, ValueCountList topValues, Collection<String> uniqueValues,
+            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+            InputColumn<?>[] highlightedColumns) {
+        this(groupName, topValues, null, uniqueValues, uniqueValueCount, distinctCount, totalCount, annotations,
+                nullValueAnnotation, annotationFactory, highlightedColumns);
+    }
+
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
             int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
             RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,

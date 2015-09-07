@@ -33,14 +33,12 @@ import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
-import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
-import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.storage.CollectionFactory;
-import org.datacleaner.storage.CollectionFactoryImpl;
-import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.NullTolerableComparator;
@@ -90,10 +88,6 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
 
     @Inject
     @Provided
-    CollectionFactory _collectionFactory;
-
-    @Inject
-    @Provided
     RowAnnotationFactory _annotationFactory;
 
     private final Map<String, ValueDistributionGroup> _valueDistributionGroups;
@@ -106,9 +100,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * @param topFrequentValues
      * @param bottomFrequentValues
      */
-    public ValueDistributionAnalyzer(InputColumn<?> column, boolean recordUniqueValues, Integer topFrequentValues,
-            Integer bottomFrequentValues) {
-        this(column, null, recordUniqueValues, topFrequentValues, bottomFrequentValues);
+    public ValueDistributionAnalyzer(InputColumn<?> column, boolean recordUniqueValues) {
+        this(column, null, recordUniqueValues);
     }
 
     /**
@@ -120,15 +113,11 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * @param topFrequentValues
      * @param bottomFrequentValues
      */
-    public ValueDistributionAnalyzer(InputColumn<?> column, InputColumn<String> groupColumn,
-            boolean recordUniqueValues, Integer topFrequentValues, Integer bottomFrequentValues) {
+    public ValueDistributionAnalyzer(InputColumn<?> column, InputColumn<String> groupColumn, boolean recordUniqueValues) {
         this();
         _column = column;
         _groupColumn = groupColumn;
         _recordUniqueValues = recordUniqueValues;
-        _topFrequentValues = topFrequentValues;
-        _bottomFrequentValues = bottomFrequentValues;
-        _collectionFactory = new CollectionFactoryImpl(new InMemoryStorageProvider());
         _annotationFactory = RowAnnotations.getDefaultFactory();
     }
 
@@ -179,7 +168,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
                     } else {
                         inputColumns = new InputColumn[] { _column, _groupColumn };
                     }
-                    valueDistributionGroup = new ValueDistributionGroup(group, _collectionFactory, _annotationFactory,
+                    valueDistributionGroup = new ValueDistributionGroup(group, _annotationFactory,
                             _recordDrillDownInformation, inputColumns);
                     _valueDistributionGroups.put(group, valueDistributionGroup);
                 }
@@ -193,8 +182,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         if (_groupColumn == null) {
             logger.info("getResult() invoked, processing single group");
             final ValueDistributionGroup valueDistributionGroup = getValueDistributionGroup(_column.getName());
-            final SingleValueDistributionResult ungroupedResult = valueDistributionGroup.createResult(
-                    _topFrequentValues, _bottomFrequentValues, _recordUniqueValues);
+            final SingleValueDistributionResult ungroupedResult = valueDistributionGroup
+                    .createResult(_recordUniqueValues);
             return ungroupedResult;
         } else {
             logger.info("getResult() invoked, processing {} groups", _valueDistributionGroups.size());
@@ -202,8 +191,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
             final SortedSet<SingleValueDistributionResult> groupedResults = new TreeSet<SingleValueDistributionResult>();
             for (String group : _valueDistributionGroups.keySet()) {
                 final ValueDistributionGroup valueDistributibutionGroup = getValueDistributionGroup(group);
-                final SingleValueDistributionResult result = valueDistributibutionGroup.createResult(
-                        _topFrequentValues, _bottomFrequentValues, _recordUniqueValues);
+                final SingleValueDistributionResult result = valueDistributibutionGroup
+                        .createResult(_recordUniqueValues);
                 groupedResults.add(result);
             }
             return new GroupedValueDistributionResult(_column, _groupColumn, groupedResults);
@@ -214,19 +203,15 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         _annotationFactory = annotationFactory;
     }
 
-    public void setCollectionFactory(CollectionFactory collectionFactory) {
-        _collectionFactory = collectionFactory;
-    }
-
     /**
      * 
-     * @param bottomFrequentValues
+     * @param collectionFactory
      * @deprecated use of this property is no longer adviced. It will be phased
      *             out in later versions of DataCleaner
      */
     @Deprecated
-    public void setBottomFrequentValues(Integer bottomFrequentValues) {
-        _bottomFrequentValues = bottomFrequentValues;
+    public void setCollectionFactory(CollectionFactory collectionFactory) {
+        // do nothing
     }
 
     public void setColumn(InputColumn<?> column) {
@@ -243,17 +228,5 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
 
     public void setRecordUniqueValues(boolean recordUniqueValues) {
         _recordUniqueValues = recordUniqueValues;
-    }
-
-    /**
-     * 
-     * @param topFrequentValues
-     * 
-     * @deprecated use of this property is no longer adviced. It will be phased
-     *             out in later versions of DataCleaner
-     */
-    @Deprecated
-    public void setTopFrequentValues(Integer topFrequentValues) {
-        _topFrequentValues = topFrequentValues;
     }
 }

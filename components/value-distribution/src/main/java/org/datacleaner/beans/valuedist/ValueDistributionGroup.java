@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.result.SingleValueFrequency;
-import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.ValueCountListImpl;
-import org.datacleaner.storage.CollectionFactory;
+import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationImpl;
@@ -49,69 +49,61 @@ class ValueDistributionGroup {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueDistributionGroup.class);
 
-    private final Map<String, Integer> _counterMap;
     private final Map<String, RowAnnotation> _annotationMap;
     private final RowAnnotation _nullValueAnnotation;
     private final RowAnnotationFactory _annotationFactory;
     private final String _groupName;
     private final boolean _recordAnnotations;
     private final InputColumn<?>[] _inputColumns;
-    private int _totalCount;
+    private final AtomicInteger _totalCount;
 
-    public ValueDistributionGroup(String groupName, CollectionFactory collectionFactory,
-            RowAnnotationFactory annotationFactory, boolean recordAnnotations, InputColumn<?>[] inputColumns) {
+    public ValueDistributionGroup(String groupName, RowAnnotationFactory annotationFactory, boolean recordAnnotations,
+            InputColumn<?>[] inputColumns) {
         _groupName = groupName;
         _annotationFactory = annotationFactory;
         _recordAnnotations = recordAnnotations;
         _inputColumns = inputColumns;
+        _totalCount = new AtomicInteger();
+        _annotationMap = new HashMap<String, RowAnnotation>();
         if (recordAnnotations) {
-            _annotationMap = new HashMap<String, RowAnnotation>();
-            _counterMap = null;
             _nullValueAnnotation = _annotationFactory.createAnnotation();
         } else {
-            _annotationMap = null;
-            _counterMap = collectionFactory.createMap(String.class, Integer.class);
             _nullValueAnnotation = new RowAnnotationImpl();
         }
     }
 
-    public synchronized void run(InputRow row, String value, int distinctCount) {
+    public void run(InputRow row, String value, int distinctCount) {
         if (value == null) {
             if (_recordAnnotations) {
                 _annotationFactory.annotate(row, distinctCount, _nullValueAnnotation);
             } else {
-                ((RowAnnotationImpl)_nullValueAnnotation).incrementRowCount(distinctCount);
+                ((RowAnnotationImpl) _nullValueAnnotation).incrementRowCount(distinctCount);
             }
-        } else if (_recordAnnotations) {
-            RowAnnotation annotation = _annotationMap.get(value);
-            if (annotation == null) {
-                annotation = _annotationFactory.createAnnotation();
-                _annotationMap.put(value, annotation);
-            }
-            _annotationFactory.annotate(row, distinctCount, annotation);
-
         } else {
-            Integer count = _counterMap.get(value);
-            if (count == null) {
-                count = 0;
+            RowAnnotation annotation;
+            synchronized (this) {
+                annotation = _annotationMap.get(value);
+                if (annotation == null) {
+                    if (_recordAnnotations) {
+                        annotation = _annotationFactory.createAnnotation();
+                    } else {
+                        annotation = new RowAnnotationImpl();
+                    }
+                    _annotationMap.put(value, annotation);
+                }
             }
-            count = count + distinctCount;
-            _counterMap.put(value, count);
+
+            if (_recordAnnotations) {
+                _annotationFactory.annotate(row, distinctCount, annotation);
+            } else {
+                ((RowAnnotationImpl) annotation).incrementRowCount(distinctCount);
+            }
         }
-        _totalCount += distinctCount;
+        _totalCount.addAndGet(distinctCount);
     }
 
-    public SingleValueDistributionResult createResult(Integer topFrequentValues, Integer bottomFrequentValues,
-            boolean recordUniqueValues) {
-        final ValueCountListImpl topValues;
-        final ValueCountListImpl bottomValues;
-        if (topFrequentValues == null || bottomFrequentValues == null) {
-            topValues = ValueCountListImpl.createFullList();
-            bottomValues = null;
-        } else {
-            topValues = ValueCountListImpl.createTopList(topFrequentValues);
-            bottomValues = ValueCountListImpl.createBottomList(bottomFrequentValues);
-        }
+    public SingleValueDistributionResult createResult(boolean recordUniqueValues) {
+        final ValueCountListImpl topValues = ValueCountListImpl.createFullList();
 
         final List<String> uniqueValues;
         if (recordUniqueValues) {
@@ -121,38 +113,19 @@ class ValueDistributionGroup {
         }
 
         int uniqueCount = 0;
-        final int entryCount;
+        final int entryCount = _annotationMap.size();
+        final Set<Entry<String, RowAnnotation>> entrySet = _annotationMap.entrySet();
 
-        if (_recordAnnotations) {
-            entryCount = _annotationMap.size();
-            final Set<Entry<String, RowAnnotation>> entrySet = _annotationMap.entrySet();
-
-            int i = 0;
-            for (Entry<String, RowAnnotation> entry : entrySet) {
-                if (i % 100000 == 0 && i != 0) {
-                    logger.info("Processing unique value entry no. {}", i);
-                }
-                final String value = entry.getKey();
-                final RowAnnotation annotation = entry.getValue();
-                final int count = annotation.getRowCount();
-                uniqueCount = countValue(recordUniqueValues, topValues, bottomValues, uniqueValues, uniqueCount, value,
-                        count);
-                i++;
+        int i = 0;
+        for (Entry<String, RowAnnotation> entry : entrySet) {
+            if (i % 100000 == 0 && i != 0) {
+                logger.info("Processing unique value entry no. {}", i);
             }
-        } else {
-            entryCount = _counterMap.size();
-            final Set<Entry<String, Integer>> entrySet = _counterMap.entrySet();
-            int i = 0;
-            for (Entry<String, Integer> entry : entrySet) {
-                if (i % 100000 == 0 && i != 0) {
-                    logger.info("Processing unique value entry no. {}", i);
-                }
-                final String value = entry.getKey();
-                final Integer count = entry.getValue();
-                uniqueCount = countValue(recordUniqueValues, topValues, bottomValues, uniqueValues, uniqueCount, value,
-                        count);
-                i++;
-            }
+            final String value = entry.getKey();
+            final RowAnnotation annotation = entry.getValue();
+            final int count = annotation.getRowCount();
+            uniqueCount = countValue(recordUniqueValues, topValues, uniqueValues, uniqueCount, value, count);
+            i++;
         }
 
         final int distinctCount;
@@ -162,23 +135,16 @@ class ValueDistributionGroup {
             distinctCount = entryCount;
         }
 
-        final Map<String, RowAnnotation> annotations;
-        if (_recordAnnotations) {
-            annotations = _annotationMap;
-        } else {
-            annotations = null;
-        }
-
         if (recordUniqueValues) {
-            return new SingleValueDistributionResult(_groupName, topValues, bottomValues, uniqueValues, uniqueCount,
-                    distinctCount, _totalCount, annotations, _nullValueAnnotation, _annotationFactory, _inputColumns);
+            return new SingleValueDistributionResult(_groupName, topValues, uniqueValues, uniqueCount, distinctCount,
+                    _totalCount.get(), _annotationMap, _nullValueAnnotation, _annotationFactory, _inputColumns);
         } else {
-            return new SingleValueDistributionResult(_groupName, topValues, bottomValues, uniqueCount, distinctCount,
-                    _totalCount, annotations, _nullValueAnnotation, _annotationFactory, _inputColumns);
+            return new SingleValueDistributionResult(_groupName, topValues, uniqueCount, distinctCount,
+                    _totalCount.get(), _annotationMap, _nullValueAnnotation, _annotationFactory, _inputColumns);
         }
     }
 
-    private int countValue(boolean recordUniqueValues, ValueCountListImpl topValues, ValueCountListImpl bottomValues,
+    private int countValue(boolean recordUniqueValues, ValueCountListImpl valueCountList,
             final List<String> uniqueValues, int uniqueCount, final String value, final int count) {
         if (count == 1) {
             if (recordUniqueValues) {
@@ -187,10 +153,7 @@ class ValueDistributionGroup {
             uniqueCount++;
         } else {
             ValueFrequency vc = new SingleValueFrequency(value, count);
-            topValues.register(vc);
-            if (bottomValues != null) {
-                bottomValues.register(vc);
-            }
+            valueCountList.register(vc);
         }
         return uniqueCount;
     }

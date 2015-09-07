@@ -35,6 +35,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.data.AbstractDataSet;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.GroupByClause;
 import org.apache.metamodel.query.OrderByClause;
 import org.apache.metamodel.query.OrderByItem.Direction;
 import org.apache.metamodel.query.Query;
@@ -161,8 +162,7 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String getQueryString(Query query, Table table) {
-        final SelectClause selectClause = query.getSelectClause();
-        if (isPlainSelectOfColumns(selectClause)) {
+        if (isPlainSelectOfColumns(query)) {
             addOrderByClauseIfMissing(query, table);            
         }
         String queryString = query.toSql();
@@ -172,16 +172,21 @@ public class DataHubDataSet extends AbstractDataSet {
 
     /**
      * Checks if the select clause is a plain select of columns and not a function e.g. SELECT COUNT (*)
-     * @param selectClause
+     * @param query
      * @return true 
      */
-    private boolean isPlainSelectOfColumns(SelectClause selectClause) {
-        final boolean hasMultipleSelectItems = selectClause.getItems().size() != 1;
-        if(hasMultipleSelectItems) {
-            return true;
+    private boolean isPlainSelectOfColumns(Query query) {
+        GroupByClause groupByClause = query.getGroupByClause();
+        if (!groupByClause.isEmpty()) {
+            return false;
         }
-        final boolean itemIsNotAFunction = selectClause.getItem(0).getFunction() == null;
-        return itemIsNotAFunction;
+        final SelectClause selectClause = query.getSelectClause();
+        for (SelectItem selectItem : selectClause.getItems()) {
+            if (selectItem.getFunction() != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void addOrderByClauseIfMissing(Query query, Table table) {

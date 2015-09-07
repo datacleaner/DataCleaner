@@ -18,7 +18,7 @@
         <transformer>
             <descriptor ref="Date mask matcher"/>
             <properties>
-				<property name="Date masks" ref="var_datemask" />
+                <property name="Date masks" ref="var_datemask"/>
                 <property name="Output type" value="TRUE_FALSE"/>
             </properties>
             <input ref="col_datestring"/>
@@ -29,7 +29,7 @@
             <properties>
                 <property name="Null replacement" value="2000-01-01T00:00:00 0"/>
                 <property name="Time zone" value="Europe/Berlin"/>
-                <property name="Date masks" value="[yyyy-MM-dd]"/>
+                <property name="Date masks" ref="var_datemask"/>
             </properties>
             <input ref="col_datestring"/>
             <output id="col_typeddatecolumn" name="Typed date column"/>

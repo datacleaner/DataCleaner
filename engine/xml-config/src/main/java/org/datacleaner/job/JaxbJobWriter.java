@@ -264,7 +264,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties()));
+                    job.getMetadataProperties(), job.getDescriptor()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -281,7 +281,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties()));
+                    job.getMetadataProperties(), job.getDescriptor()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -298,7 +298,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties()));
+                    job.getMetadataProperties(), job.getDescriptor()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
     }
@@ -372,7 +372,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
     private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
             Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter,
-            Map<String, String> componentMetadataProperties) {
+            Map<String, String> componentMetadataProperties, ComponentDescriptor<?> componentDescriptor) {
 
         // sort the properties in order to make the result deterministic
         configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(configuredProperties);
@@ -383,8 +383,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 final Property propertyType = new Property();
                 propertyType.setName(property.getName());
 
-                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX
-                        + property.getName();
+                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + "."
+                        + componentDescriptor.getDisplayName() + "." + property.getName();
                 if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
                 } else {

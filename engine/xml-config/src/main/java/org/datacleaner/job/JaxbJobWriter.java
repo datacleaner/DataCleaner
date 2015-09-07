@@ -68,6 +68,8 @@ import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
 import org.datacleaner.job.jaxb.TransformerType;
+import org.datacleaner.job.jaxb.VariableType;
+import org.datacleaner.job.jaxb.VariablesType;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -107,6 +109,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
+
         final Job job = new Job();
         configureJobType(analysisJob, job, true);
 
@@ -130,8 +133,22 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             }
         }
 
+        final VariablesType variablesType = new VariablesType();
+        final Map<String, String> variables = analysisJob.getMetadata().getVariables();
+        if ((variables != null) && (variables.size() > 0)) {
+            for (Map.Entry<String, String> variableEntry : variables.entrySet()) {
+                final VariableType variableType = new VariableType();
+                variableType.setId(variableEntry.getKey());
+                variableType.setValue(variableEntry.getValue());
+                variablesType.getVariable().add(variableType);
+            }
+        }
+
         final SourceType sourceType = new SourceType();
         sourceType.setColumns(new ColumnsType());
+        if ((variables != null) && (variables.size() > 0)) {
+            sourceType.setVariables(variablesType);
+        }
         jobType.setSource(sourceType);
 
         final Datastore datastore = analysisJob.getDatastore();
@@ -246,8 +263,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -263,8 +280,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -280,8 +297,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter));
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
-            elementType
-                    .setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter));
+            elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
     }
@@ -293,12 +310,20 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         final MetadataProperties result = new MetadataProperties();
         final Set<Entry<String, String>> entries = metadataProperties.entrySet();
         for (Entry<String, String> entry : entries) {
+            if (entry.getKey().startsWith(JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX)) {
+                continue;
+            }
             final org.datacleaner.job.jaxb.MetadataProperties.Property property = new org.datacleaner.job.jaxb.MetadataProperties.Property();
             property.setName(entry.getKey());
             property.setValue(entry.getValue());
             result.getProperty().add(property);
         }
-        return result;
+
+        if (result.getProperty().isEmpty()) {
+            return null;
+        } else {
+            return result;
+        }
     }
 
     private List<InputType> createInputConfiguration(final ComponentConfiguration configuration,
@@ -346,7 +371,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     }
 
     private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
-            Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter) {
+            Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter,
+            Map<String, String> componentMetadataProperties) {
 
         // sort the properties in order to make the result deterministic
         configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(configuredProperties);
@@ -354,20 +380,26 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         List<Property> result = new ArrayList<Property>();
         for (ConfiguredPropertyDescriptor property : configuredProperties) {
             if (!property.isInputColumn()) {
-                Object value = configuration.getProperty(property);
-                String stringValue = stringConverter.serialize(value, property.getCustomConverter());
-
                 final Property propertyType = new Property();
                 propertyType.setName(property.getName());
 
-                if (stringValue != null && stringValue.indexOf('\n') != -1) {
-                    // multi-line values are put as simple content of the
-                    // property
-                    propertyType.setValue(stringValue);
+                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX
+                        + property.getName();
+                if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
+                    propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
                 } else {
-                    // single-line values are preferred as an attribute for
-                    // backwards compatibility
-                    propertyType.setValueAttribute(stringValue);
+                    Object value = configuration.getProperty(property);
+                    String stringValue = stringConverter.serialize(value, property.getCustomConverter());
+
+                    if (stringValue != null && stringValue.indexOf('\n') != -1) {
+                        // multi-line values are put as simple content of the
+                        // property
+                        propertyType.setValue(stringValue);
+                    } else {
+                        // single-line values are preferred as an attribute for
+                        // backwards compatibility
+                        propertyType.setValueAttribute(stringValue);
+                    }
                 }
                 result.add(propertyType);
             }
@@ -529,7 +561,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             analyzerType.setName(analyzerJob.getName());
             setDescriptor(analyzerType, analyzerJob.getDescriptor());
             final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
-            
+
             for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
                 outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());

@@ -54,6 +54,8 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -216,7 +218,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("        <data-context ref=_db_/>", lines[8]);
             assertEquals("        <columns>", lines[9]);
             assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
-            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>", lines[11]);
+            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>",
+                    lines[11]);
             assertEquals("        </columns>", lines[12]);
             assertEquals("    </source>", lines[13]);
             assertEquals("    <transformation/>", lines[14]);
@@ -343,7 +346,7 @@ public class JaxbJobWriterTest extends TestCase {
 
         }
     }
-    
+
     public void testReadAndWriteOutputDataStreamsJob() throws Exception {
         Datastore ds = TestHelper.createSampleDatabaseDatastore("my database");
         SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
@@ -363,6 +366,19 @@ public class JaxbJobWriterTest extends TestCase {
         }
 
         assertMatchesBenchmark(job, "JaxbJobWriterTest-testReadAndWriteOutputDataStreamsJob.xml");
+    }
+
+    public void testWriteVariable() throws Exception {
+        final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner", true);
+        CsvDatastore datastore = new CsvDatastore("date-datastore", "src/test/resources/example-dates.csv");
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        JaxbJobReader reader = new JaxbJobReader(configuration);
+        File file = new File("src/test/resources/example-job-variables.xml");
+        AnalysisJobBuilder ajb = reader.create(file);
+
+        assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testWriteVariable.xml");
     }
 
     /**

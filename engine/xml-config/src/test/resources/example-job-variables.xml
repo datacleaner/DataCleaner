@@ -20,12 +20,23 @@
 			<input ref="col_1" />
 			<output id="col_match" name="Matches date mask?" />
 		</transformer>
+		
+		<transformer>
+            <descriptor ref="Date mask matcher"/>
+            <properties>
+                <property name="Date masks" value="[yy-dd-MM]"/>
+                <property name="Output type" value="TRUE_FALSE"/>
+            </properties>
+            <input ref="col_1" />
+            <output id="col_match2" name="Matches date mask?"/>
+        </transformer>
 
 		<transformer>
 			<descriptor ref="Convert to date" />
 			<properties>
 				<property name="Date masks" ref="var_datemask" />
 				<property name="Null replacement" value="2000-01-01" />
+				<property name="Time zone" value="Europe/Copenhagen"/>
 			</properties>
 			<input ref="col_1" />
 			<output id="col_2" name="Typed date column" />

@@ -310,12 +310,20 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         final MetadataProperties result = new MetadataProperties();
         final Set<Entry<String, String>> entries = metadataProperties.entrySet();
         for (Entry<String, String> entry : entries) {
+            if (entry.getKey().startsWith(JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX)) {
+                continue;
+            }
             final org.datacleaner.job.jaxb.MetadataProperties.Property property = new org.datacleaner.job.jaxb.MetadataProperties.Property();
             property.setName(entry.getKey());
             property.setValue(entry.getValue());
             result.getProperty().add(property);
         }
-        return result;
+
+        if (result.getProperty().isEmpty()) {
+            return null;
+        } else {
+            return result;
+        }
     }
 
     private List<InputType> createInputConfiguration(final ComponentConfiguration configuration,

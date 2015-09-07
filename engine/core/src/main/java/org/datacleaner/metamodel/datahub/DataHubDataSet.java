@@ -35,6 +35,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.data.AbstractDataSet;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.OrderByClause;
+import org.apache.metamodel.query.OrderByItem.Direction;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Table;
@@ -158,6 +160,10 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private String getQueryString(Query query, Table table) {
+        final OrderByClause orderByClause = query.getOrderByClause();
+        if(orderByClause.isEmpty()) {
+            query.orderBy(table.getColumnByName("id"), Direction.ASC);
+        }
         String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }

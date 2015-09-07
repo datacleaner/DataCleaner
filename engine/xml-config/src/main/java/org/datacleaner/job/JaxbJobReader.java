@@ -106,7 +106,7 @@ import com.google.common.collect.Lists;
 
 public class JaxbJobReader implements JobReader<InputStream> {
 
-    public static final String DATACLEANER_JAXB_VARIABLE_PREFIX = "datacleaner.jaxb.variable";
+    public static final String DATACLEANER_JAXB_VARIABLE_PREFIX = "datacleaner.jaxb.variable.";
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
@@ -943,7 +943,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         throw new ComponentConfigurationException("No such variable: " + variableRef);
                     }
                     
-                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + "." + configuredProperty.getName(), variableRef);
+                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                 }
 
                 final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();

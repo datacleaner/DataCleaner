@@ -383,7 +383,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 final Property propertyType = new Property();
                 propertyType.setName(property.getName());
 
-                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + "."
+                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX
                         + property.getName();
                 if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));

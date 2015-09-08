@@ -21,7 +21,7 @@
             </properties>
             <input ref="col_firstname"/>
             <input ref="col_lastname"/>
-            <output id="col_concatoffirstnamelastname" name="Concat of FIRSTNAME,LASTNAME"/>
+            <output id="col_concatoffirstnamelastname3" name="Concat of FIRSTNAME,LASTNAME"/>
         </transformer>
     </transformation>
     <analysis>
@@ -31,14 +31,14 @@
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ALL_FIELDS"/>
             </properties>
-            <input ref="col_concatoffirstnamelastname"/>
+            <input ref="col_concatoffirstnamelastname3"/>
             <input ref="col_reportsto"/>
             <output-data-stream name="Complete rows">
                 <job>
                     <source>
                         <columns>
                             <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
-                            <column id="col_reportsto" path="REPORTSTO" type="INTEGER"/>
+                            <column id="col_reportsto2" path="REPORTSTO" type="INTEGER"/>
                         </columns>
                     </source>
                     <transformation/>
@@ -53,7 +53,7 @@
                             <properties>
 <property name="Descriptive statistics" value="false"/>
                             </properties>
-                            <input ref="col_reportsto"/>
+                            <input ref="col_reportsto2"/>
                         </analyzer>
                     </analysis>
                 </job>
@@ -62,8 +62,8 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
-                            <column id="col_reportsto" path="REPORTSTO" type="INTEGER"/>
+                            <column id="col_concatoffirstnamelastname2" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
+                            <column id="col_reportsto3" path="REPORTSTO" type="INTEGER"/>
                         </columns>
                     </source>
                     <transformation/>
@@ -71,14 +71,14 @@
                         <analyzer>
                             <descriptor ref="String analyzer"/>
                             <properties/>
-                            <input ref="col_concatoffirstnamelastname"/>
+                            <input ref="col_concatoffirstnamelastname2"/>
                         </analyzer>
                         <analyzer>
                             <descriptor ref="Number analyzer"/>
                             <properties>
 <property name="Descriptive statistics" value="false"/>
                             </properties>
-                            <input ref="col_reportsto"/>
+                            <input ref="col_reportsto3"/>
                         </analyzer>
                     </analysis>
                 </job>

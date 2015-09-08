@@ -124,6 +124,10 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     }
 
     private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, boolean includeMetadata) {
+        configureJobType(analysisJob, jobType, null, includeMetadata);
+    }
+    
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, BiMap<InputColumn<?>, String> columnMappings, boolean includeMetadata) {
         if (includeMetadata) {
             try {
                 JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
@@ -162,7 +166,10 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             sourceType.setDataContext(dataContextType);
         }
         // mappings for lookup of ID's
-        final BiMap<InputColumn<?>, String> columnMappings = HashBiMap.create(50);
+        if (columnMappings == null) {
+            columnMappings = HashBiMap.create(50);  
+        }
+        
         final Map<FilterOutcome, String> outcomeMappings = new LinkedHashMap<FilterOutcome, String>();
 
         // mappings for lookup of component's elements
@@ -188,7 +195,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         }
 
         // adds all components to the job and their corresponding mappings
-        addComponents(jobType, analysisJob, transformerMappings, filterMappings, analyzerMappings);
+        addComponents(jobType, analysisJob, columnMappings, transformerMappings, filterMappings, analyzerMappings);
 
         // add all transformed columns to their originating components and the
         // mappings
@@ -525,7 +532,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return id;
     }
 
-    private void addComponents(final JobType jobType, final AnalysisJob analysisJob,
+    private void addComponents(final JobType jobType, final AnalysisJob analysisJob, final BiMap<InputColumn<?>, String> columnMappings,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings) {
         final TransformationType transformationType = new TransformationType();
@@ -566,7 +573,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
                 outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
                 final JobType childJobType = new JobType();
-                configureJobType(outputDataStreamJob.getJob(), childJobType, false);
+                configureJobType(outputDataStreamJob.getJob(), childJobType, columnMappings, false);
                 outputDataStreamType.setJob(childJobType);
                 analyzerType.getOutputDataStream().add(outputDataStreamType);
             }

@@ -124,7 +124,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     }
 
     private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, boolean includeMetadata) {
-        configureJobType(analysisJob, jobType, null, includeMetadata);
+        final BiMap<InputColumn<?>, String> columnMappings = HashBiMap.create(50);
+        configureJobType(analysisJob, jobType, columnMappings, includeMetadata);
     }
     
     private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, BiMap<InputColumn<?>, String> columnMappings, boolean includeMetadata) {
@@ -165,11 +166,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             }
             sourceType.setDataContext(dataContextType);
         }
-        // mappings for lookup of ID's
-        if (columnMappings == null) {
-            columnMappings = HashBiMap.create(50);  
-        }
-        
+
         final Map<FilterOutcome, String> outcomeMappings = new LinkedHashMap<FilterOutcome, String>();
 
         // mappings for lookup of component's elements

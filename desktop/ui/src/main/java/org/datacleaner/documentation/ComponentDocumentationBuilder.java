@@ -74,7 +74,7 @@ public class ComponentDocumentationBuilder {
     public ComponentDocumentationBuilder(boolean breadcrumbs) {
         _breadcrumbs = breadcrumbs;
         _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-        
+
         final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(), "");
         _freemarkerConfiguration.setTemplateLoader(templateLoader);
         try {
@@ -94,8 +94,7 @@ public class ComponentDocumentationBuilder {
      *            the target {@link OutputStream} to write to
      * @throws IOException
      */
-    public void write(ComponentDescriptor<?> componentDescriptor, OutputStream outputStream)
-            throws IOException {
+    public void write(ComponentDescriptor<?> componentDescriptor, OutputStream outputStream) throws IOException {
 
         final Map<String, Object> data = new HashMap<>();
 
@@ -111,8 +110,10 @@ public class ComponentDocumentationBuilder {
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
                 for (ConfiguredPropertyDescriptor property : properties) {
                     final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
-                    // we do not show hidden properties in docs
-                    if (hiddenProperty == null) {
+                    final Deprecated deprecatedProperty = property.getAnnotation(Deprecated.class);
+                    
+                    // we do not show hidden or deprecated properties in docs
+                    if (hiddenProperty == null && deprecatedProperty == null) {
                         final ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
                                 property);
                         propertyList.add(wrapper);

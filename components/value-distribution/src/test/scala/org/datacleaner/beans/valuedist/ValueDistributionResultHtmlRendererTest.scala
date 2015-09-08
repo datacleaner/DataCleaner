@@ -34,7 +34,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("Traffic light", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, false, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, false);
     analyzer.run(new MockInputRow().put(col1, "green"), 10);
     analyzer.run(new MockInputRow().put(col1, "BLUE"), 8);
     analyzer.run(new MockInputRow().put(col1, "orange"), 5);
@@ -71,7 +71,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("email", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, false, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, false);
     analyzer.run(new MockInputRow().put(col1, "kasper@eobjects.dk"), 1);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen@humaninference.com"), 1);
     analyzer.run(new MockInputRow().put(col1, "foo@bar"), 2);
@@ -109,7 +109,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     val col1 = new MockInputColumn[String]("email username", classOf[String]);
     val col2 = new MockInputColumn[String]("email domain", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, col2, true, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, col2, true);
 
     analyzer.run(new MockInputRow().put(col1, "kasper").put(col2, "eobjects.dk"), 4);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen").put(col2, "eobjects.dk"), 2);
@@ -182,7 +182,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("email username", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, true, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, true);
 
     analyzer.run(new MockInputRow().put(col1, "kasper"), 6);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen"), 3);

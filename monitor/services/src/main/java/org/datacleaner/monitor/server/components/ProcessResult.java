@@ -17,31 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.server.components;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-final class TextFileSynonym implements Synonym, Serializable {
+/**
+ * @Since 7/31/15
+ */
 
-	private static final long serialVersionUID = 1L;
-
-	private final String[] _synonyms;
-	private final boolean _caseSensitive;
-
-	public TextFileSynonym(String line, boolean caseSensitive) {
-		String[] split = line.split("\\,");
-		_synonyms = split;
-		_caseSensitive = caseSensitive;
-	}
-
-	@Override
-	public String getMasterTerm() {
-		return _synonyms[0];
-	}
-
-	@Override
-	public ReferenceValues<String> getSynonyms() {
-		return new SimpleStringReferenceValues(_synonyms, _caseSensitive);
-	}
-
+public class ProcessResult {
+    @JsonProperty
+    Object result;
 }

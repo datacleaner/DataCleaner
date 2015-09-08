@@ -154,9 +154,7 @@ public class ConsumeRowHandler {
                 .getInjectionManagerFactory();
         final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
                 analysisJob);
-        final ReferenceDataActivationManager referenceDataActivationManager = new ReferenceDataActivationManager();
-
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
                 rowConsumeConfiguration.includeNonDistributedTasks);
         SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(analysisJob);
@@ -174,19 +172,25 @@ public class ConsumeRowHandler {
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
-            publisher = rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
-            if (publisher == null) {
+            @SuppressWarnings("deprecation")
+            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
+                    .getRowProcessingPublisher(rowConsumeConfiguration.table);
+            if (tablePublisher == null) {
                 throw new IllegalArgumentException("Job does not consume records from table: "
                         + rowConsumeConfiguration.table);
             }
+            publisher = tablePublisher;
         } else {
-            final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
-                    .getRowProcessingPublishers();
-            if (publisherCollection.size() > 1) {
-                throw new IllegalArgumentException(
-                        "Job consumes multiple tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+            Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            publisher = publishers.iterator().next();
+            for (RowProcessingPublisher aPublisher : publishers) {
+                if (aPublisher != publisher) {
+                    if (aPublisher.getStream().isSourceTable()) {
+                        throw new IllegalArgumentException(
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                    }
+                }
             }
-            publisher = publisherCollection.iterator().next();
         }
 
         final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();

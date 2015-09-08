@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -8,11 +7,13 @@
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
-		<hadoop.version>2.6.0</hadoop.version>
-		<easymock.version>3.3.1</easymock.version>
+		<hadoop.version>2.7.1</hadoop.version>
+		<spark.version>1.4.1</spark.version>
+		<easymock.version>3.4</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
-		<metamodel.version>4.3.5</metamodel.version>
+		<curator.version>2.6.0</curator.version>
+		<metamodel.version>4.4.0-RC1</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
@@ -20,6 +21,11 @@
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
+		<jackson.version>2.4.6</jackson.version>
+		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<javax.jsp.version>2.0</javax.jsp.version>
+		<javax.el.version>2.2.4</javax.el.version>
+		<javax.annotation.version>1.2</javax.annotation.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -28,13 +34,14 @@
 		<artifactId>oss-parent</artifactId>
 		<version>9</version>
 	</parent>
+
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>4.1-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
-		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.</description>
+		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	<modules>
@@ -89,11 +96,87 @@
 				<module>monitor</module>
 			</modules>
 		</profile>
+        <profile>
+            <id>code-coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.5.201505241946</version>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                            <element>BUNDLE</element>
+                                            <limits>
+                                                <limit>
+                                                    <counter>INSTRUCTION</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.01</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>BRANCH</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.00</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>METHOD</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.00</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.00</minimum>
+                                                </limit>
+                                                <limit>
+                                                    <counter>COMPLEXITY</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0.00</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 	</profiles>
 	<developers>
 		<developer>
 			<name>Kasper Sørensen</name>
 			<email>i.am.kasper.sorensen@gmail.com</email>
+		</developer>
+		<developer>
+			<name>Dennis Du Krøger</name>
+		</developer>
+		<developer>
+			<name>Claudia Peşu</name>
+		</developer>
+		<developer>
+			<name>Tomasz Guziałek</name>
 		</developer>
 	</developers>
 	<contributors>
@@ -186,7 +269,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!-- Ensures java 6 compatibility -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
@@ -255,7 +337,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5</version><!--$NO-MVN-MAN-VER$-->
+				<version>2.5</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
@@ -286,7 +368,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.3.1</version>
 				<executions>
 					<execution>
 						<id>enforce-versions</id>
@@ -301,6 +382,8 @@
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
+										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
+										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson</exclude>
 										<exclude>org.eobjects.metamodel</exclude>
 									</excludes>
@@ -375,6 +458,11 @@
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
@@ -493,9 +581,19 @@
 
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.4</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-core</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-hadoop</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
@@ -506,6 +604,11 @@
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-csv</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-json</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
@@ -551,6 +654,21 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-client</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-auth</artifactId>
 				<version>${hadoop.version}</version>
 			</dependency>
@@ -558,6 +676,12 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -567,6 +691,16 @@
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-mapreduce-client-core</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-server-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-server-resourcemanager</artifactId>
 				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
@@ -601,7 +735,26 @@
 				<artifactId>httpmime</artifactId>
 				<version>${httpcomponents.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>${javax.jsp.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>javax.el-api</artifactId>
+				<version>${javax.el.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>javax.annotation-api</artifactId>
+				<version>${javax.annotation.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${javax.servlet.version}</version>
+			</dependency>
 			<dependency>
 				<artifactId>xml-apis</artifactId>
 				<groupId>xml-apis</groupId>
@@ -664,6 +817,14 @@
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-log4j12</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty.aggregate</groupId>
+						<artifactId>jetty-all</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -690,7 +851,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.1</version>
+				<version>2.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -715,6 +876,26 @@
 						<artifactId>maven-scm-provider-svnexe</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-client</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-framework</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-recipes</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-test</artifactId>
+				<version>${curator.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>
@@ -756,9 +937,9 @@
 				<artifactId>scala-actors</artifactId>
 				<version>${scala.version}</version>
 			</dependency>
-			
-			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
-			by HTTP components (4.x) at some point. -->
+
+			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be
+				replaced by HTTP components (4.x) at some point. -->
 			<dependency>
 				<groupId>commons-httpclient</groupId>
 				<artifactId>commons-httpclient</artifactId>
@@ -784,6 +965,22 @@
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->
@@ -812,7 +1009,7 @@
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-			
+
 			<!-- Test dependencies -->
 			<dependency>
 				<groupId>junit</groupId>

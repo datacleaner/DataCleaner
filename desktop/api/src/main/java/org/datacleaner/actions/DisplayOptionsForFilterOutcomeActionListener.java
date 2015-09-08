@@ -108,7 +108,7 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
     protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
         final Component component = componentBuilder.getComponentInstance();
         if (component instanceof PrecedingComponentConsumer) {
-            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, null, true);
+            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, true);
             helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
             ((PrecedingComponentConsumer) component).configureForFilterOutcome(analysisJobBuilder,
                     _filterJobBuilder.getDescriptor(), _categoryName);

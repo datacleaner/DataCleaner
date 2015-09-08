@@ -20,6 +20,7 @@
 package org.datacleaner.beans.filter;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.reference.Dictionary;
@@ -33,7 +34,8 @@ public class DictionaryLookupFilterTest extends TestCase {
 		InputColumn<String> column = new MockInputColumn<String>("col", String.class);
 		Dictionary dictionary = new SimpleDictionary("my dictionary", "foo", "bar", "baz");
 		
-		DictionaryFilter filter = new DictionaryFilter(column, dictionary);
+		DictionaryFilter filter = new DictionaryFilter(column, dictionary, new DataCleanerConfigurationImpl());
+		filter.init();
 		assertEquals(DictionaryFilter.Category.VALID, filter.categorize(new MockInputRow().put(column, "foo")));
 		assertEquals(DictionaryFilter.Category.INVALID, filter.categorize(new MockInputRow().put(column, "foo ")));
 		assertEquals(DictionaryFilter.Category.INVALID, filter.categorize(new MockInputRow().put(column, "foo bar")));
@@ -42,5 +44,6 @@ public class DictionaryLookupFilterTest extends TestCase {
 		assertEquals(DictionaryFilter.Category.VALID, filter.categorize(new MockInputRow().put(column, "baz")));
 		assertEquals(DictionaryFilter.Category.INVALID, filter.categorize(new MockInputRow().put(column, null)));
 		assertEquals(DictionaryFilter.Category.INVALID, filter.categorize(new MockInputRow().put(column, "")));
+		filter.close();
 	}
 }

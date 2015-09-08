@@ -279,7 +279,7 @@ public class AnalysisJobBuilderTest extends TestCase {
             ajb.setDatastore(datastore);
 
             SourceColumnChangeListener listener1 = EasyMock.createMock(SourceColumnChangeListener.class);
-            ajb.getSourceColumnListeners().add(listener1);
+            ajb.addSourceColumnChangeListener(listener1);
 
             Column column = ajb.getDatastoreConnection().getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL");
             MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
@@ -300,7 +300,7 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             // scene 2: add transformer
             TransformerChangeListener listener2 = EasyMock.createMock(TransformerChangeListener.class);
-            ajb.getTransformerChangeListeners().add(listener2);
+            ajb.addTransformerChangeListener(listener2);
 
             final TransformerDescriptor<EmailStandardizerTransformer> descriptor = Descriptors
                     .ofTransformer(EmailStandardizerTransformer.class);

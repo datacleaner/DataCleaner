@@ -21,6 +21,7 @@ package org.datacleaner.job.builder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +34,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
@@ -92,8 +94,9 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
      * @return
      */
     private List<AnalyzerChangeListener> getAllListeners() {
+        @SuppressWarnings("deprecation")
         List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        List<AnalyzerChangeListener> list = new ArrayList<AnalyzerChangeListener>(globalChangeListeners.size()
+        List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size()
                 + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
@@ -141,7 +144,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
-        if (!_multipleJobsSupported) {
+        if (!isMultipleJobsSupported()) {
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
             final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
@@ -233,7 +236,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     @Override
     public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
-        if (_multipleJobsSupported && configuredProperty == _inputProperty) {
+        if (isMultipleJobsSupported() && configuredProperty == _inputProperty) {
             if (_inputColumns.isEmpty()) {
                 Object propertyValue = super.getConfiguredProperty(configuredProperty);
                 if (propertyValue != null) {
@@ -288,10 +291,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             final InputColumn<?> dummyValue;
 
             _inputColumns.clear();
-            if (ReflectionUtils.isArray(value)) {
+            if (value == null) {
+                dummyValue = null;
+            } else if (ReflectionUtils.isArray(value)) {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
-                    InputColumn<?> inputColumn = (InputColumn<?>) Array.get(value, i);
+                    final InputColumn<?> inputColumn = (InputColumn<?>) Array.get(value, i);
                     _inputColumns.add(inputColumn);
                 }
                 if (_inputColumns.isEmpty()) {
@@ -300,7 +305,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                     dummyValue = _inputColumns.iterator().next();
                 }
             } else {
-                InputColumn<?> col = (InputColumn<?>) value;
+                final InputColumn<?> col = (InputColumn<?>) value;
                 _inputColumns.add(col);
                 dummyValue = col;
             }
@@ -351,6 +356,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     public boolean isMultipleJobsSupported() {
         return _multipleJobsSupported;
+    }
+
+    @Override
+    public List<OutputDataStream> getOutputDataStreams() {
+        if (isMultipleJobsSupported()) {
+            return Collections.emptyList();
+        }
+        return super.getOutputDataStreams();
     }
 
     /**

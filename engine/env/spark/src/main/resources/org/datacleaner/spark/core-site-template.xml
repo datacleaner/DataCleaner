@@ -1,0 +1,6 @@
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${HDFS_HOSTNAME}:${HDFS_PORT}</value>
+    </property>
+</configuration>

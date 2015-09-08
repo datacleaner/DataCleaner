@@ -19,8 +19,7 @@
  */
 package org.datacleaner.reference;
 
-import org.datacleaner.api.Close;
-import org.datacleaner.api.Initialize;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * A string pattern defines a pattern to which you can match strings to see if
@@ -32,21 +31,16 @@ import org.datacleaner.api.Initialize;
  * <li>The pattern ".*@.*" which is a simple way to identify strings with an
  * '@'-sign in them (potential email).</li>
  * </ul>
- * 
- * A string pattern can have methods annotated with @Initialize and @Close.
- * These will be called before and after a job is executed where the given
- * string pattern is used.
- * 
- * Note: String patterns should be thread-safe!! Make sure to make sensible use
- * of synchronized blocks if there are race conditions in the string pattern
- * implementation.
- * 
- * @see Initialize
- * @see Close
- * 
- * 
  */
 public interface StringPattern extends ReferenceData {
 
-	public boolean matches(String string);
+    /**
+     * Opens a connection to the {@link StringPattern}. Keep the connection open
+     * while using the synonym catalog in a session, job or so. Close it when
+     * you don't expect more interaction.
+     * 
+     * @param configuration
+     * @return
+     */
+    public StringPatternConnection openConnection(DataCleanerConfiguration configuration);
 }

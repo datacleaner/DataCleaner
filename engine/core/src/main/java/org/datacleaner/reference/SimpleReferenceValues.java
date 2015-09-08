@@ -20,57 +20,23 @@
 package org.datacleaner.reference;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.metamodel.util.BaseObject;
 
 /**
- * Simple array/in-memory based implementation of the {@link ReferenceValues}
- * interface.
- * 
- * 
- * 
- * @param <E>
- *            the type of values
+ * @deprecated since DataCleaner 4.1 this is no longer used, but for
+ *             deserialization compatibility it is retained.
  */
-public final class SimpleReferenceValues<E> extends BaseObject implements ReferenceValues<E>, Serializable {
+@Deprecated
+public class SimpleReferenceValues implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final E[] _values;
+    private final Object[] _values;
 
-	@SafeVarargs
-    public SimpleReferenceValues(E... values) {
-		_values = values;
-	}
+    public SimpleReferenceValues(Object... values) {
+        _values = values;
+    }
 
-	@Override
-	public boolean containsValue(E value) {
-		if (value == null) {
-			for (E v : _values) {
-				if (v == null) {
-					return true;
-				}
-			}
-		} else {
-			for (E v : _values) {
-				if (value.equals(v)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public Collection<E> getValues() {
-		return Arrays.asList(_values);
-	}
-
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		identifiers.add(_values);
-	}
+    public Object[] getValues() {
+        return _values;
+    };
 }

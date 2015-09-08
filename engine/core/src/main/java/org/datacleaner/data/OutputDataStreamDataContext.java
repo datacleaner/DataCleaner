@@ -19,11 +19,14 @@
  */
 package org.datacleaner.data;
 
+import java.util.List;
+
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.QueryPostprocessDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.EmptyDataSet;
+import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.schema.AbstractSchema;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
@@ -74,4 +77,9 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
         return new EmptyDataSet(columns);
     }
 
+    @Override
+    protected Number executeCountQuery(final Table table, final List<FilterItem> whereItems,
+            final boolean functionApproximationAllowed) {
+        return -1;
+    }
 }

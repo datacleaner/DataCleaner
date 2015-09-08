@@ -36,8 +36,6 @@ import org.datacleaner.util.NamedPatternMatch;
 
 /**
  * Tokenizes/standardizes the components of an email: Username and Domain
- * 
- * 
  */
 @Named("Email standardizer")
 @Description("Retrieve the username or domain from an email address.")

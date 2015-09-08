@@ -21,9 +21,7 @@ package org.datacleaner.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -139,13 +137,17 @@ public class ReflectionUtilsTest extends TestCase {
     }
 
     public void testGetFields() throws Exception {
-        Field[] fields = ReflectionUtils.getFields(ClassA.class);
-        assertEquals(1, fields.length);
+        int nonSyntheticFieldsCountInA = 1;
+        Field[] fields = ReflectionUtils.getNonSyntheticFields(ClassA.class);
+        assertEquals(nonSyntheticFieldsCountInA, fields.length);
 
         assertEquals(ClassA.class, fields[0].getDeclaringClass());
         assertEquals("a", fields[0].getName());
 
-        fields = ReflectionUtils.getFields(ClassB.class);
+        fields = ReflectionUtils.getAllFields(ClassA.class);
+        assertTrue(fields.length >= nonSyntheticFieldsCountInA);
+
+        fields = ReflectionUtils.getNonSyntheticFields(ClassB.class);
         assertEquals(2, fields.length);
 
         assertEquals(ClassB.class, fields[0].getDeclaringClass());

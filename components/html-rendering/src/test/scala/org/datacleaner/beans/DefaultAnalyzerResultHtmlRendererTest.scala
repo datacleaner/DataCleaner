@@ -44,7 +44,7 @@ class DefaultAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     Assert.assertEquals("[MetricDescriptorImpl[name=Elite], MetricDescriptorImpl[name=Foo]]", resultMetrics.toString());
     
     val job = new ImmutableAnalyzerJob(null, descriptor, new ImmutableComponentConfiguration(null),
-      null, null)
+      null, null, null)
 
     val renderer = new DefaultAnalyzerResultHtmlRenderer();
 

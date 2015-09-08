@@ -63,6 +63,7 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
     private final List<FileFilter> _chooseableFileFilters = new ArrayList<>();
     private volatile FileFilter _selectedFileFilter;
     private volatile File _directory;
+    private boolean _textFieldUpdating = false;
     private int _fileSelectionMode = JFileChooser.FILES_ONLY;
 
     /**
@@ -135,12 +136,17 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                final File file = getFile();
-                if (file == null) {
-                    final String text = _textField.getText();
-                    notifyListeners(text);
-                } else {
-                    notifyListeners(file);
+                _textFieldUpdating = true;
+                try {
+                    final File file = getFile();
+                    if (file == null) {
+                        final String text = _textField.getText();
+                        notifyListeners(text);
+                    } else {
+                        notifyListeners(file);
+                    }
+                } finally {
+                    _textFieldUpdating = false;
                 }
             }
         });
@@ -177,8 +183,22 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
     public String getFilename() {
         return _textField.getText();
     }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        
+        _browseButton.setEnabled(enabled);
+        _textField.setEnabled(enabled);
+    }
+    
 
     public void setFilename(String filename) {
+        if (_textFieldUpdating) {
+            // ignore this event - it's a call back from listeners that reacted
+            // to a text field change.
+            return;
+        }
         _textField.setText(filename);
     }
 

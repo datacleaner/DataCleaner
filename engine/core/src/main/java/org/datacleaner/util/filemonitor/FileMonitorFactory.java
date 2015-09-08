@@ -20,13 +20,17 @@
 package org.datacleaner.util.filemonitor;
 
 import java.io.File;
+import java.nio.file.WatchService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Factory that creates file monitors.
+ * 
+ * @deprecated use {@link WatchService} instead
  */
+@Deprecated
 public class FileMonitorFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(FileMonitorFactory.class);

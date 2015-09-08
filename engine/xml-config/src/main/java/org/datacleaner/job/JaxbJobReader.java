@@ -49,6 +49,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
@@ -67,6 +68,7 @@ import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.MutableAnalysisJobMetadata;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
@@ -84,6 +86,7 @@ import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
+import org.datacleaner.job.jaxb.OutputDataStreamType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
@@ -97,10 +100,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Lists;
 
 public class JaxbJobReader implements JobReader<InputStream> {
+
+    public static final String DATACLEANER_JAXB_VARIABLE_PREFIX = "datacleaner.jaxb.variable.";
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
@@ -440,35 +446,78 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
                         getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
                 analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
+            } else {
+                if (variables.size() > 0) {
+                    final MutableAnalysisJobMetadata mutableAnalysisJobMetadata = new MutableAnalysisJobMetadata();
+                    mutableAnalysisJobMetadata.getVariables().putAll(variables);
+                    analysisJobBuilder.setAnalysisJobMetadata(mutableAnalysisJobMetadata);    
+                }
             }
 
             // map column id's to input columns
             final Map<String, InputColumn<?>> inputColumns = readSourceColumns(sourceColumnMapping, analysisJobBuilder,
                     source);
 
-            final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
-            final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
-
-            final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
-
-            // iterate to create all the initial component builders without any
-            // wiring
-            final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
-            for (ComponentType componentType : allComponentTypes) {
-                final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder,
-                        descriptorProvider, componentType);
-
-                initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType,
-                        componentBuilder);
-            }
-
-            wireInputColumns(inputColumns, componentBuilders);
-
-            wireRequirements(componentBuilders);
+            configureComponents(job, variables, analysisJobBuilder, inputColumns);
 
             return analysisJobBuilder;
         } finally {
             datastoreConnection.close();
+        }
+    }
+
+    private void configureComponents(JobType job, final Map<String, String> variables,
+            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns) {
+        final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
+        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+
+        final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
+
+        // iterate to create all the initial component builders without any
+        // wiring
+        final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
+        for (ComponentType componentType : allComponentTypes) {
+            final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder, descriptorProvider,
+                    componentType);
+
+            initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType, componentBuilder);
+        }
+
+        wireInputColumns(inputColumns, componentBuilders);
+
+        wireRequirements(componentBuilders);
+
+        wireOutputDataStreams(componentBuilders);
+    }
+
+    private void wireOutputDataStreams(Map<ComponentType, ComponentBuilder> componentBuilders) {
+        for (Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
+            final ComponentType componentType = entry.getKey();
+            final ComponentBuilder componentBuilder = entry.getValue();
+            for (OutputDataStreamType outputDataStreamType : componentType.getOutputDataStream()) {
+                final String name = outputDataStreamType.getName();
+                final OutputDataStream outputDataStream = componentBuilder.getOutputDataStream(name);
+                final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
+                        .getOutputDataStreamJobBuilder(outputDataStream);
+                final JobType job = outputDataStreamType.getJob();
+
+                final List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
+
+                final List<MetaModelInputColumn> sourceColumns = outputDataStreamJobBuilder.getSourceColumns();
+
+                // map column id's to input columns
+                final Map<String, InputColumn<?>> inputColumns = new HashMap<>();
+
+                for (ColumnType sourceColumnPath : sourceColumnTypes) {
+                    for (InputColumn<?> inputColumn : sourceColumns) {
+                        if (inputColumn.getName().equals(sourceColumnPath.getPath())) {
+                            inputColumns.put(sourceColumnPath.getId(), inputColumn);
+                        }
+                    }
+                }
+
+                configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns);
+            }
         }
     }
 
@@ -790,7 +839,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
 
         // check for compound component requirements
-        final List<String> tokens = Splitter.on(" OR ").omitEmptyStrings().trimResults().splitToList(ref);
+        final List<String> tokens = Lists.newArrayList(Splitter.on(" OR ").omitEmptyStrings().trimResults().split(ref));
         if (tokens.size() > 1) {
             final List<FilterOutcome> list = new ArrayList<>(tokens.size());
             for (final String token : tokens) {
@@ -811,8 +860,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             ComponentBuilder componentBuilder) {
         // build a map of inputs first so that we can set the
         // input in one go
-        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = MultimapBuilder.hashKeys()
-                .arrayListValues().build();
+        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = ArrayListMultimap.create(); 
 
         for (InputType inputType : input) {
             String name = inputType.getName();
@@ -894,6 +942,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (stringValue == null) {
                         throw new ComponentConfigurationException("No such variable: " + variableRef);
                     }
+                    
+                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                 }
 
                 final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();

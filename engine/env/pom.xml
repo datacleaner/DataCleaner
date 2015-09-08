@@ -10,6 +10,7 @@
 	<modules>
 		<module>berkeleydb</module>
 		<module>cluster</module>
+		<module>spark</module>
 	</modules>
 	
 	<dependencies>

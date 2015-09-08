@@ -37,6 +37,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -81,6 +82,7 @@ public final class IconUtils {
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
     public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
+    public static final String OUTPUT_DATA_STREAM_PATH = "images/component-types/output-data-stream.png";
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
@@ -188,6 +190,7 @@ public final class IconUtils {
     public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
+    public static final String DATAHUB_IMAGEPATH = "images/datastore-types/datahub.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
@@ -468,7 +471,10 @@ public final class IconUtils {
             imagePath = SUGAR_CRM_IMAGEPATH;
         } else if (datastore instanceof CompositeDatastore) {
             imagePath = COMPOSITE_IMAGEPATH;
+        } else if (datastore instanceof DataHubDatastore) {
+            imagePath = DATAHUB_IMAGEPATH;
         }
         return imagePath;
     }
 }
+

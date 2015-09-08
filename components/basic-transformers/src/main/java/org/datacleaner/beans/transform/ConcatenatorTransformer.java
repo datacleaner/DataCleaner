@@ -32,8 +32,8 @@ import org.datacleaner.components.categories.StringManipulationCategory;
 
 /**
  * Concatenates several values into one String value.
- * 
- * 
+ *
+ *
  */
 @Named("Concatenator")
 @Description("Concatenate several column values into one.")

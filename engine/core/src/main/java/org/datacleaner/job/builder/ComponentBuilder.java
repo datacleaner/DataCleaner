@@ -278,4 +278,10 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @return
      */
     public AnalysisJobBuilder getOutputDataStreamJobBuilder(OutputDataStream outputDataStream);
+
+    /**
+     * Updates the {@link AnalysisJobBuilder} that this component belongs to.
+     * @param analysisJobBuilder the new {@link }AnalysisJobBuilder}
+     */
+    public void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder);
 }

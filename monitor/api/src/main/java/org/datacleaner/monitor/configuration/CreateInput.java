@@ -17,21 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.configuration;
 
-import java.util.Collection;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents a collection of values where lookup using containsValue(...) is
- * the preferred way of access. Typically the implementation will use some
- * caching mechanism for the contained values because getting all values would
- * mean loading a lot of objects into memory.
- * 
- * @param <E>
+ * @Since 7/31/15
+ *
+ * Simple holder for configuration data. It is used for creating components.
  */
-public interface ReferenceValues<E> {
-
-	public Collection<E> getValues();
-
-	public boolean containsValue(E value);
+public class CreateInput {
+    @JsonProperty
+    public ComponentConfiguration configuration;
 }

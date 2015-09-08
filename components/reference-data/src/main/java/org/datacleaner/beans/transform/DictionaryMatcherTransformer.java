@@ -22,15 +22,20 @@ package org.datacleaner.beans.transform;
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.DictionaryConnection;
 
 @Named("Dictionary matcher")
 @Description("Matches string values against a set of dictionaries, producing a corresponding set of output columns specifying whether or not the values exist in those dictionaries")
@@ -45,14 +50,20 @@ public class DictionaryMatcherTransformer implements Transformer {
 
 	@Configured
 	MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
+	
+	@Provided
+	DataCleanerConfiguration _configuration;
+	
+	private DictionaryConnection[] dictionaryConnections;
 
 	public DictionaryMatcherTransformer() {
 	}
 
-	public DictionaryMatcherTransformer(InputColumn<?> column, Dictionary[] dictionaries) {
+	public DictionaryMatcherTransformer(InputColumn<?> column, Dictionary[] dictionaries, DataCleanerConfiguration configuration) {
 		this();
 		_column = column;
 		_dictionaries = dictionaries;
+		_configuration = configuration;
 	}
 
 	public void setDictionaries(Dictionary[] dictionaries) {
@@ -76,6 +87,24 @@ public class DictionaryMatcherTransformer implements Transformer {
 		}
 		return new OutputColumns(names, types);
 	}
+	
+	@Initialize
+	public void init() {
+	    dictionaryConnections = new DictionaryConnection[_dictionaries.length];
+	    for (int i = 0; i < _dictionaries.length; i++) {
+            dictionaryConnections[i] = _dictionaries[i].openConnection(_configuration);
+        }
+	}
+	
+	@Close
+	public void close() {
+	    if (dictionaryConnections != null) {
+	        for (int i = 0; i < dictionaryConnections.length; i++) {
+	            dictionaryConnections[i].close();
+            }
+	        dictionaryConnections=null;
+	    }
+	}
 
 	@Override
 	public Object[] transform(InputRow inputRow) {
@@ -88,7 +117,7 @@ public class DictionaryMatcherTransformer implements Transformer {
 		Object[] result = new Object[_dictionaries.length];
 		if (stringValue != null) {
 			for (int i = 0; i < result.length; i++) {
-				boolean containsValue = _dictionaries[i].containsValue(stringValue);
+				boolean containsValue = dictionaryConnections[i].containsValue(stringValue);
 				if (_outputType == MatchOutputType.TRUE_FALSE) {
 					result[i] = containsValue;
 				} else if (_outputType == MatchOutputType.INPUT_OR_NULL) {

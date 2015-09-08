@@ -148,6 +148,14 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
             }
             threads[i].start();
         }
+        
+        for (int i = 0; i < threads.length; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                // do nothing
+            }
+        }
 
         assertTrue(creations.get() > 0);
         assertTrue(creations.get() < threadCount);

@@ -61,9 +61,12 @@ import org.datacleaner.descriptors.RendererBeanDescriptor;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.DictionaryConnection;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.StringPatternConnection;
 import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.SynonymCatalogConnection;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
@@ -242,7 +245,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
         ElasticSearchDatastore esDatastore = (ElasticSearchDatastore) datastoreCatalog.getDatastore("my es index");
         assertEquals("localhost", esDatastore.getHostname());
-        assertEquals(9300, esDatastore.getPort());
+        assertEquals(new Integer(9300), esDatastore.getPort());
         assertEquals("my_es_cluster", esDatastore.getClusterName());
         assertEquals("my_index", esDatastore.getIndexName());
         assertNull(esDatastore.getTableDefs());
@@ -391,42 +394,50 @@ public class JaxbConfigurationReaderTest extends TestCase {
         String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
         assertEquals("[custom_dict, datastore_dict, textfile_dict, valuelist_dict]", Arrays.toString(dictionaryNames));
         
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(conf, null, null, true);
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(conf, null, true);
 
         Dictionary d = referenceDataCatalog.getDictionary("datastore_dict");
         assertEquals("dict_ds", d.getDescription());
         lifeCycleHelper.assignProvidedProperties(Descriptors.ofComponent(d.getClass()), d);
         lifeCycleHelper.initialize(Descriptors.ofComponent(d.getClass()), d);
-        assertTrue(d.containsValue("Patterson"));
-        assertTrue(d.containsValue("Murphy"));
-        assertFalse(d.containsValue("Gates"));
+        DictionaryConnection dictionaryConnection = d.openConnection(conf);
+        assertTrue(dictionaryConnection.containsValue("Patterson"));
+        assertTrue(dictionaryConnection.containsValue("Murphy"));
+        assertFalse(dictionaryConnection.containsValue("Gates"));
+        dictionaryConnection.close();
 
         d = referenceDataCatalog.getDictionary("textfile_dict");
         assertEquals("dict_txt", d.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(d.getClass()), d);
-        assertTrue(d.containsValue("Patterson"));
-        assertFalse(d.containsValue("Murphy"));
-        assertTrue(d.containsValue("Gates"));
+        dictionaryConnection = d.openConnection(conf);
+        assertTrue(dictionaryConnection.containsValue("Patterson"));
+        assertFalse(dictionaryConnection.containsValue("Murphy"));
+        assertTrue(dictionaryConnection.containsValue("Gates"));
+        dictionaryConnection.close();
 
         d = referenceDataCatalog.getDictionary("valuelist_dict");
         assertEquals("dict_simple", d.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(d.getClass()), d);
-        assertFalse(d.containsValue("Patterson"));
-        assertFalse(d.containsValue("Murphy"));
-        assertTrue(d.containsValue("greetings"));
+        dictionaryConnection = d.openConnection(conf);
+        assertFalse(dictionaryConnection.containsValue("Patterson"));
+        assertFalse(dictionaryConnection.containsValue("Murphy"));
+        assertTrue(dictionaryConnection.containsValue("greetings"));
+        dictionaryConnection.close();
 
         d = referenceDataCatalog.getDictionary("custom_dict");
         assertEquals("dict_custom", d.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(d.getClass()), d);
-        assertFalse(d.containsValue("Patterson"));
-        assertFalse(d.containsValue("Murphy"));
-        assertFalse(d.containsValue("Gates"));
-        assertTrue(d.containsValue("value0"));
-        assertTrue(d.containsValue("value1"));
-        assertTrue(d.containsValue("value2"));
-        assertTrue(d.containsValue("value3"));
-        assertTrue(d.containsValue("value4"));
-        assertFalse(d.containsValue("value5"));
+        dictionaryConnection = d.openConnection(conf);
+        assertFalse(dictionaryConnection.containsValue("Patterson"));
+        assertFalse(dictionaryConnection.containsValue("Murphy"));
+        assertFalse(dictionaryConnection.containsValue("Gates"));
+        assertTrue(dictionaryConnection.containsValue("value0"));
+        assertTrue(dictionaryConnection.containsValue("value1"));
+        assertTrue(dictionaryConnection.containsValue("value2"));
+        assertTrue(dictionaryConnection.containsValue("value3"));
+        assertTrue(dictionaryConnection.containsValue("value4"));
+        assertFalse(dictionaryConnection.containsValue("value5"));
+        dictionaryConnection.close();
 
         String[] synonymCatalogNames = referenceDataCatalog.getSynonymCatalogNames();
         assertEquals("[custom_syn, datastore_syn, textfile_syn]", Arrays.toString(synonymCatalogNames));
@@ -434,31 +445,40 @@ public class JaxbConfigurationReaderTest extends TestCase {
         SynonymCatalog s = referenceDataCatalog.getSynonymCatalog("textfile_syn");
         assertEquals("syn_txt", s.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(s.getClass()), s);
-        assertEquals("DNK", s.getMasterTerm("Denmark"));
-        assertEquals("DNK", s.getMasterTerm("Danmark"));
-        assertEquals("DNK", s.getMasterTerm("DK"));
-        assertEquals("ALB", s.getMasterTerm("Albania"));
-        assertEquals(null, s.getMasterTerm("Netherlands"));
+        SynonymCatalogConnection synonymConnection = s.openConnection(conf);
+        assertEquals("DNK", synonymConnection.getMasterTerm("Denmark"));
+        assertEquals("DNK", synonymConnection.getMasterTerm("Danmark"));
+        assertEquals("DNK", synonymConnection.getMasterTerm("DK"));
+        assertEquals("ALB", synonymConnection.getMasterTerm("Albania"));
+        assertEquals(null, synonymConnection.getMasterTerm("Netherlands"));
+        synonymConnection.close();
 
         s = referenceDataCatalog.getSynonymCatalog("datastore_syn");
         assertEquals("syn_ds", s.getDescription());
         lifeCycleHelper.assignProvidedProperties(Descriptors.ofComponent(s.getClass()), s);
         lifeCycleHelper.initialize(Descriptors.ofComponent(s.getClass()), s);
+        
+        synonymConnection = s.openConnection(conf);
 
         // lookup by id
-        assertEquals("La Rochelle Gifts", s.getMasterTerm("119"));
+        assertEquals("La Rochelle Gifts", synonymConnection.getMasterTerm("119"));
         // lookup by phone number (string)
-        assertEquals("Danish Wholesale Imports", s.getMasterTerm("31 12 3555"));
-        assertEquals(null, s.getMasterTerm("foobar"));
+        assertEquals("Danish Wholesale Imports", synonymConnection.getMasterTerm("31 12 3555"));
+        assertEquals(null, synonymConnection.getMasterTerm("foobar"));
+        
+        synonymConnection.close();
 
         s = referenceDataCatalog.getSynonymCatalog("custom_syn");
         assertEquals("syn_custom", s.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(s.getClass()), s);
-        assertEquals("DNK", s.getMasterTerm("Denmark"));
-        assertEquals("DNK", s.getMasterTerm("Danmark"));
-        assertEquals(null, s.getMasterTerm("DK"));
-        assertEquals(null, s.getMasterTerm("Albania"));
-        assertEquals("NLD", s.getMasterTerm("Netherlands"));
+        
+        synonymConnection= s.openConnection(conf);
+        assertEquals("DNK", synonymConnection.getMasterTerm("Denmark"));
+        assertEquals("DNK", synonymConnection.getMasterTerm("Danmark"));
+        assertEquals(null, synonymConnection.getMasterTerm("DK"));
+        assertEquals(null, synonymConnection.getMasterTerm("Albania"));
+        assertEquals("NLD", synonymConnection.getMasterTerm("Netherlands"));
+        synonymConnection.close();
 
         String[] stringPatternNames = referenceDataCatalog.getStringPatternNames();
         assertEquals("[regex danish email, simple email]", Arrays.toString(stringPatternNames));
@@ -469,17 +489,21 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals(
                 "RegexStringPattern[name=regex danish email, expression=[a-z]+@[a-z]+\\.dk, matchEntireString=true]",
                 pattern.toString());
-        assertTrue(pattern.matches("kasper@eobjects.dk"));
-        assertFalse(pattern.matches("kasper@eobjects.org"));
-        assertFalse(pattern.matches(" kasper@eobjects.dk"));
+        StringPatternConnection patternConnection = pattern.openConnection(conf);
+        assertTrue(patternConnection.matches("kasper@eobjects.dk"));
+        assertFalse(patternConnection.matches("kasper@eobjects.org"));
+        assertFalse(patternConnection.matches(" kasper@eobjects.dk"));
+        patternConnection.close();
 
         pattern = referenceDataCatalog.getStringPattern("simple email");
         assertEquals("pattern_simple", pattern.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(pattern.getClass()), pattern);
         assertEquals("SimpleStringPattern[name=simple email, expression=aaaa@aaaaa.aa]", pattern.toString());
-        assertTrue(pattern.matches("kasper@eobjects.dk"));
-        assertTrue(pattern.matches("kasper@eobjects.org"));
-        assertFalse(pattern.matches(" kasper@eobjects.dk"));
+        patternConnection = pattern.openConnection(conf);
+        assertTrue(patternConnection.matches("kasper@eobjects.dk"));
+        assertTrue(patternConnection.matches("kasper@eobjects.org"));
+        assertFalse(patternConnection.matches(" kasper@eobjects.dk"));
+        patternConnection.close();
     }
 
     public void testCustomDictionaryWithInjectedDatastore() {

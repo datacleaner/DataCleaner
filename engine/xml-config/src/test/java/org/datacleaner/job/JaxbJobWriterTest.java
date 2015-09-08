@@ -37,6 +37,8 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.beans.filter.NullCheckFilter;
@@ -52,6 +54,8 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -214,7 +218,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("        <data-context ref=_db_/>", lines[8]);
             assertEquals("        <columns>", lines[9]);
             assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
-            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>", lines[11]);
+            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>",
+                    lines[11]);
             assertEquals("        </columns>", lines[12]);
             assertEquals("    </source>", lines[13]);
             assertEquals("    <transformation/>", lines[14]);
@@ -340,6 +345,40 @@ public class JaxbJobWriterTest extends TestCase {
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file6.xml");
 
         }
+    }
+
+    public void testReadAndWriteOutputDataStreamsJob() throws Exception {
+        Datastore ds = TestHelper.createSampleDatabaseDatastore("my database");
+        SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(NumberAnalyzer.class));
+
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJob job;
+        try (AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-output-dataset.analysis.xml"))) {
+            job = jobBuilder.toAnalysisJob();
+        }
+
+        assertMatchesBenchmark(job, "JaxbJobWriterTest-testReadAndWriteOutputDataStreamsJob.xml");
+    }
+
+    public void testWriteVariable() throws Exception {
+        final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner", true);
+        CsvDatastore datastore = new CsvDatastore("date-datastore", "src/test/resources/example-dates.csv");
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        JaxbJobReader reader = new JaxbJobReader(configuration);
+        File file = new File("src/test/resources/example-job-variables.xml");
+        AnalysisJobBuilder ajb = reader.create(file);
+
+        assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testWriteVariable.xml");
     }
 
     /**

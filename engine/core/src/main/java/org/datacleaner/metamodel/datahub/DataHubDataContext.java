@@ -20,6 +20,7 @@
 package org.datacleaner.metamodel.datahub;
 
 import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
+import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DATASTORES_PATH;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.SCHEMA_EXTENSION;
@@ -34,7 +35,7 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
@@ -49,10 +50,16 @@ import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.net.UrlEscapers;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
+    
+    private static final String JSON_CONTENT_TYPE = "application/json";
+
 
     private DataHubConnection _connection;
     private Map<String, DataHubSchema> _schemas;
@@ -116,7 +123,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return getDefaultSchema();
     }
 
-
     private HttpResponse executeRequest(HttpUriRequest request) {
 
         MonitorHttpClient httpClient = _connection.getHttpClient();
@@ -128,7 +134,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         }
 
         validateReponseStatusCode(response);
-        
+
         return response;
     }
 
@@ -156,7 +162,9 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         String uri = _connection.getRepositoryUrl() + "/datastores/"
                 + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".update";
         logger.debug("request {}", uri);
-        final HttpPut request = new HttpPut(uri);
+        final HttpPost request = new HttpPost(uri);
+        request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
+
         try {
             request.setEntity(new StringEntity(query));
         } catch (UnsupportedEncodingException e) {
@@ -164,16 +172,25 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         }
         final HttpResponse response = executeRequest(request);
         final HttpEntity entity = response.getEntity();
+        printTestResult(entity);
+
+    }
+
+    private void printTestResult(HttpEntity entity) {
         try {
-            System.out.println(entity.getContent().toString());
-        } catch (UnsupportedOperationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        JsonFactory factory = new JsonFactory();
+        JsonParser parser;
+            parser = factory.createParser(entity.getContent());
+            JsonToken token = parser.nextToken();
+            while (token != null) {
+                parser.getCurrentToken();
+                System.out.println(parser.getText());
+                parser.nextToken();
+            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
     }
 
 }

@@ -68,7 +68,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
                 sb.append(columnName);
 
                 sb.append('=');
-                sb.append('?');
+                sb.append(value);
 
             }
         }

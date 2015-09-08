@@ -31,12 +31,14 @@ import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Controller
 public class DatastoreUpdateController {
     
     private static final Logger logger = LoggerFactory.getLogger(DatastoreUpdateController.class);
@@ -48,7 +50,7 @@ public class DatastoreUpdateController {
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.update", method = RequestMethod.PUT, headers = "Accept=application/json", produces = {
             "application/json" })
     @ResponseBody
-    public Map<String, Object> jsonQueryDatastoreGet(HttpServletResponse response,
+    public Map<String, Object> datastorePut(HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName,
             @RequestBody String query) throws IOException {
         response.setContentType("application/json");

@@ -22,13 +22,16 @@ package org.datacleaner.beans.valuedist;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
+import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountListImpl;
@@ -63,12 +66,13 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                 final SingleValueDistributionResult singleResult = (SingleValueDistributionResult) partialResult;
                 final ValueCountList reducedTopValues = reduceTopValues(reducedResult.getTopValues(),
                         singleResult.getTopValues());
+                final int reducedDistinctCount = reduceDistinctCount(reducedResult, partialResult);
                 final int reducedTotalCount = reducedResult.getTotalCount() + partialResult.getTotalCount();
                 final Collection<String> reducedUniqueValues = reduceUniqueValues(reducedResult.getUniqueValues(),
                         partialResult.getUniqueValues());
 
                 reducedResult = new SingleValueDistributionResult(reducedResult.getName(), reducedTopValues,
-                        reducedUniqueValues, reducedUniqueValues.size(), reducedResult.getDistinctCount(),
+                        reducedUniqueValues, reducedUniqueValues.size(), reducedDistinctCount,
                         reducedTotalCount, annotations, new RowAnnotationImpl(), annotationFactory, highlightedColumns);
             } else {
                 // TODO: Disregard grouped results for now
@@ -98,6 +102,37 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         }
 
         return topValuesImpl1;
+    }
+    
+    private int reduceDistinctCount(ValueDistributionAnalyzerResult reducedResult,
+            ValueDistributionAnalyzerResult partialResult) {
+        Set<String> distinctValues = new HashSet<>();
+        
+        for (ValueFrequency valueFrequency : reducedResult.getValueCounts()) {
+            if (valueFrequency instanceof CompositeValueFrequency) {
+                CompositeValueFrequency compositeValueFrequency = (CompositeValueFrequency) valueFrequency;
+                
+                for (ValueFrequency childValueFrequency : compositeValueFrequency.getChildren()) {
+                    distinctValues.add(childValueFrequency.getValue());
+                }
+            } else {
+                distinctValues.add(valueFrequency.getValue());
+            }
+        }
+        
+        for (ValueFrequency valueFrequency : partialResult.getValueCounts()) {
+            if (valueFrequency instanceof CompositeValueFrequency) {
+                CompositeValueFrequency compositeValueFrequency = (CompositeValueFrequency) valueFrequency;
+                
+                for (ValueFrequency childValueFrequency : compositeValueFrequency.getChildren()) {
+                    distinctValues.add(childValueFrequency.getValue());
+                }
+            } else {
+                distinctValues.add(valueFrequency.getValue());
+            }
+        }
+        
+        return distinctValues.size();
     }
 
     private Collection<String> reduceUniqueValues(Collection<String> uniqueValues1, Collection<String> uniqueValues2) {

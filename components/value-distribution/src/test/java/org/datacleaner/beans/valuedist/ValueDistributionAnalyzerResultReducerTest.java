@@ -77,6 +77,7 @@ public class ValueDistributionAnalyzerResultReducerTest {
         ValueDistributionAnalyzerResult reducedResult = reducer.reduce(partialResults);
         
         SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) reducedResult;
+        assertEquals(Integer.valueOf(4), singleReducedResult.getDistinctCount());
         assertEquals(21, singleReducedResult.getTotalCount());
         assertEquals(Integer.valueOf(1), singleReducedResult.getUniqueCount());
         assertEquals("[globallyUniqueWord]", singleReducedResult.getUniqueValues().toString());

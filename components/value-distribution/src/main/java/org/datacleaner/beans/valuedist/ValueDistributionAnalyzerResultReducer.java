@@ -19,32 +19,26 @@
  */
 package org.datacleaner.beans.valuedist;
 
-import org.datacleaner.api.Distributed;
-import org.datacleaner.api.Metric;
-import org.datacleaner.result.AbstractValueCountingAnalyzerResult;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.Provided;
+import org.datacleaner.storage.RowAnnotationFactory;
 
 /**
- * Defines abstract methods, metrics etc. for analyzer results of the Value
- * Distribution analyzer.
+ * A reducer of {@link ValueDistributionAnalyzerResult}s.
  */
-@Distributed(reducer = ValueDistributionAnalyzerResultReducer.class)
-public abstract class ValueDistributionAnalyzerResult extends AbstractValueCountingAnalyzerResult {
+public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultReducer<ValueDistributionAnalyzerResult> {
 
-    private static final long serialVersionUID = 1L;
+    @Inject
+    @Provided
+    RowAnnotationFactory _rowAnnotationFactory;
 
-    @Metric("Total count")
     @Override
-    public abstract int getTotalCount();
+    public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
+        return analyzerResults.iterator().next();
+    }
 
-    @Metric("Null count")
-    @Override
-    public abstract int getNullCount();
-
-    @Metric("Unique count")
-    @Override
-    public abstract Integer getUniqueCount();
-
-    @Metric("Distinct count")
-    @Override
-    public abstract Integer getDistinctCount();
 }

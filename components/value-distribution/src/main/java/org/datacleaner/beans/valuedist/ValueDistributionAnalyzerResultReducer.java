@@ -19,6 +19,7 @@
  */
 package org.datacleaner.beans.valuedist;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -46,28 +47,55 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
     @Override
     public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
-        ValueCountList topValues = ValueCountListImpl.emptyList();
-        Collection<String> uniqueValues = Collections.emptyList();
+        final ValueCountList topValues = ValueCountListImpl.emptyList();
+        final Collection<String> uniqueValues = Collections.emptyList();
         final Map<String, RowAnnotation> annotations = Collections.emptyMap();
-        final InMemoryRowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
-        InputColumn<?>[] highlightedColumns = null;
+        final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+        final InputColumn<?>[] highlightedColumns = null;
 
         SingleValueDistributionResult reducedResult = new SingleValueDistributionResult("", topValues, uniqueValues, 0,
                 0, 0, annotations, new RowAnnotationImpl(), annotationFactory, highlightedColumns);
 
         for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
             if (partialResult instanceof SingleValueDistributionResult) {
+                int reducedTotalCount = reducedResult.getTotalCount() + partialResult.getTotalCount();
+                Collection<String> reducedUniqueValues = reduceUniqueValues(reducedResult.getUniqueValues(),
+                        partialResult.getUniqueValues());
+
                 reducedResult = new SingleValueDistributionResult(reducedResult.getName(),
-                        reducedResult.getTopValues(), reducedResult.getUniqueValues(), reducedResult.getUniqueCount(),
-                        reducedResult.getDistinctCount(),
-                        reducedResult.getTotalCount() + partialResult.getTotalCount(), annotations,
-                        new RowAnnotationImpl(), annotationFactory, highlightedColumns);
+                        reducedResult.getTopValues(), reducedUniqueValues, reducedUniqueValues.size(),
+                        reducedResult.getDistinctCount(), reducedTotalCount, annotations, new RowAnnotationImpl(),
+                        annotationFactory, highlightedColumns);
             } else {
                 // TODO: Disregard grouped results for now
             }
         }
 
         return reducedResult;
+    }
+
+    private Collection<String> reduceUniqueValues(Collection<String> uniqueValues1, Collection<String> uniqueValues2) {
+        if ((uniqueValues1 == null) || uniqueValues1.isEmpty()) {
+            return uniqueValues2;
+        }
+
+        Collection<String> reducedUniqueValues = new ArrayList<>();
+
+        if (uniqueValues1.size() >= uniqueValues2.size()) {
+            for (String value : uniqueValues1) {
+                if (!uniqueValues2.contains(value)) {
+                    reducedUniqueValues.add(value);
+                }
+            }
+        } else {
+            for (String value : uniqueValues2) {
+                if (!uniqueValues1.contains(value)) {
+                    reducedUniqueValues.add(value);
+                }
+            }
+        }
+
+        return reducedUniqueValues;
     }
 
 }

@@ -40,6 +40,7 @@ public class ValueDistributionAnalyzerResultReducerTest {
         valueDist1.runInternal(new MockInputRow(), "hello", 1);
         valueDist1.runInternal(new MockInputRow(), "hello", 1);
         valueDist1.runInternal(new MockInputRow(), "world", 3);
+        valueDist1.runInternal(new MockInputRow(), "locallyUniqueWord", 1);
         ValueDistributionAnalyzerResult partialResult1 = valueDist1.getResult();
 
         ValueCountList partialTopValues1 = ((SingleValueDistributionResult) partialResult1).getTopValues();
@@ -48,7 +49,7 @@ public class ValueDistributionAnalyzerResultReducerTest {
         assertEquals("[hello->2]", partialTopValues1.getValueCounts().get(1).toString());
 
         assertEquals(0, partialResult1.getNullCount());
-        assertEquals(0, partialResult1.getUniqueCount().intValue());
+        assertEquals(1, partialResult1.getUniqueCount().intValue());
         
         ValueDistributionAnalyzer valueDist2 = new ValueDistributionAnalyzer(
                 new MetaModelInputColumn(new MutableColumn("col")), true);
@@ -56,6 +57,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
         valueDist2.runInternal(new MockInputRow(), "hello", 5);
         valueDist2.runInternal(new MockInputRow(), "hello", 1);
         valueDist2.runInternal(new MockInputRow(), "world", 7);
+        valueDist2.runInternal(new MockInputRow(), "locallyUniqueWord", 1);
+        valueDist2.runInternal(new MockInputRow(), "globallyUniqueWord", 1);
         ValueDistributionAnalyzerResult partialResult2 = valueDist2.getResult();
 
         ValueCountList partialTopValues2 = ((SingleValueDistributionResult) partialResult2).getTopValues();
@@ -64,7 +67,7 @@ public class ValueDistributionAnalyzerResultReducerTest {
         assertEquals("[hello->6]", partialTopValues2.getValueCounts().get(1).toString());
 
         assertEquals(0, partialResult2.getNullCount());
-        assertEquals(0, partialResult2.getUniqueCount().intValue());
+        assertEquals(2, partialResult2.getUniqueCount().intValue());
         
         List<ValueDistributionAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
@@ -74,7 +77,9 @@ public class ValueDistributionAnalyzerResultReducerTest {
         ValueDistributionAnalyzerResult reducedResult = reducer.reduce(partialResults);
         
         SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) reducedResult;
-        assertEquals(18, singleReducedResult.getTotalCount());
+        assertEquals(21, singleReducedResult.getTotalCount());
+        assertEquals(Integer.valueOf(1), singleReducedResult.getUniqueCount());
+        assertEquals("[globallyUniqueWord]", singleReducedResult.getUniqueValues().toString());
         ValueCountList reducedTopValues = singleReducedResult.getTopValues();
         assertEquals(2, reducedTopValues.getActualSize());
         assertEquals("[world->10]", reducedTopValues.getValueCounts().get(0).toString());

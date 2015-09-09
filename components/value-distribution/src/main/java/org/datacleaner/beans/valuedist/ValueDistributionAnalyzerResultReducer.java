@@ -20,12 +20,20 @@
 package org.datacleaner.beans.valuedist;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
+import org.datacleaner.result.ValueCountList;
+import org.datacleaner.result.ValueCountListImpl;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotationImpl;
 
 /**
  * A reducer of {@link ValueDistributionAnalyzerResult}s.
@@ -38,7 +46,28 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
     @Override
     public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
-        return analyzerResults.iterator().next();
+        ValueCountList topValues = ValueCountListImpl.emptyList();
+        Collection<String> uniqueValues = Collections.emptyList();
+        final Map<String, RowAnnotation> annotations = Collections.emptyMap();
+        final InMemoryRowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+        InputColumn<?>[] highlightedColumns = null;
+
+        SingleValueDistributionResult reducedResult = new SingleValueDistributionResult("", topValues, uniqueValues, 0,
+                0, 0, annotations, new RowAnnotationImpl(), annotationFactory, highlightedColumns);
+
+        for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
+            if (partialResult instanceof SingleValueDistributionResult) {
+                reducedResult = new SingleValueDistributionResult(reducedResult.getName(),
+                        reducedResult.getTopValues(), reducedResult.getUniqueValues(), reducedResult.getUniqueCount(),
+                        reducedResult.getDistinctCount(),
+                        reducedResult.getTotalCount() + partialResult.getTotalCount(), annotations,
+                        new RowAnnotationImpl(), annotationFactory, highlightedColumns);
+            } else {
+                // TODO: Disregard grouped results for now
+            }
+        }
+
+        return reducedResult;
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers.doc;
 
+import com.mangofactory.swagger.paths.SwaggerPathProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,11 @@ import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 @Configuration
 @EnableSwagger
 public class SwaggerConfig {
+    private static final String API_VERSION = "1.0";
+    private static final String URL_BASE_PATH = "repository";
+
     private SpringSwaggerConfig springSwaggerConfig;
+
     @Autowired
     public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
         this.springSwaggerConfig = springSwaggerConfig;
@@ -44,7 +49,13 @@ public class SwaggerConfig {
 
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()).includePatterns(".*");
+        SwaggerPathProvider pathProvider = new PathProvider();
+        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
+                .apiInfo(apiInfo())
+                .pathProvider(pathProvider)
+                .apiVersion(SwaggerConfig.API_VERSION)
+                .swaggerGroup(SwaggerConfig.URL_BASE_PATH)
+                .build();
     }
 
     private ApiInfo apiInfo() {
@@ -56,5 +67,20 @@ public class SwaggerConfig {
         String termsOfService = licenceURL;
 
         return new ApiInfo(title, description, termsOfService, email, licenceType, licenceURL);
+    }
+
+    private static class PathProvider extends SwaggerPathProvider {
+        public PathProvider() {
+        }
+
+        @Override
+        protected String applicationPath() {
+            return "/" + SwaggerConfig.URL_BASE_PATH;
+        }
+
+        @Override
+        protected String getDocumentationPath() {
+            return "/";
+        }
     }
 }

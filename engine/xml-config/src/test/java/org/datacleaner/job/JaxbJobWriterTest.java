@@ -37,7 +37,9 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.beans.CompletenessAnalyzer.Condition;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
@@ -47,6 +49,7 @@ import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -379,6 +382,37 @@ public class JaxbJobWriterTest extends TestCase {
         AnalysisJobBuilder ajb = reader.create(file);
 
         assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testWriteVariable.xml");
+    }
+
+    public void testNameClashInMelonAndDefaultScope() throws RuntimeException, Exception {
+        Datastore ds = TestHelper.createSampleDatabaseDatastore("db");
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
+            ajb.setDatastore(ds);
+            ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME");
+            InputColumn<?> inputFirstNameColumn = ajb.getSourceColumnByName("FIRSTNAME");
+
+            AnalyzerComponentBuilder<CompletenessAnalyzer> completenessAnalyzerBuilder = ajb
+                    .addAnalyzer(CompletenessAnalyzer.class);
+            completenessAnalyzerBuilder.addInputColumn(inputFirstNameColumn);
+            Condition[] conditions = new CompletenessAnalyzer.Condition[1];
+            conditions[0] = Condition.NOT_BLANK_OR_NULL;
+            completenessAnalyzerBuilder.setConfiguredProperty("Conditions", conditions);
+
+            OutputDataStream completeRecordsOutputDataStream = completenessAnalyzerBuilder
+                    .getOutputDataStream("Complete rows");
+            AnalysisJobBuilder completeRecordsJobBuilder = completenessAnalyzerBuilder
+                    .getOutputDataStreamJobBuilder(completeRecordsOutputDataStream);
+
+            AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistBuilder = completeRecordsJobBuilder
+                    .addAnalyzer(ValueDistributionAnalyzer.class);
+            valueDistBuilder.addInputColumn(completeRecordsJobBuilder.getSourceColumnByName("Complete rows.FIRSTNAME"));
+
+            // The benchmark expects the id of the source column in the melon to
+            // be different than "col_lastname" which is the ID in the default
+            // scope
+            assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testNameClashInMelonAndDefaultScope.xml");
+        }
     }
 
     /**

@@ -52,6 +52,9 @@
 				</choice>
 				<element name="storage-provider" type="ab:storageProviderType"
 					minOccurs="0" maxOccurs="1" />
+				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="1" maxOccurs="1" />
+
+				<!-- Deprecated - for backward compatibility -->
 				<choice minOccurs="0" maxOccurs="1">
 					<element name="classpath-scanner" minOccurs="1" maxOccurs="1"
 						type="ab:classpathScannerType">
@@ -66,6 +69,7 @@
 						minOccurs="1" maxOccurs="1" />
 				</choice>
 			</sequence>
+
 		</complexType>
 	</element>
 
@@ -124,6 +128,33 @@
 		</sequence>
 	</complexType>
 
+    <complexType name="descriptorProvidersType">
+        <choice minOccurs="1" maxOccurs="unbounded">
+            <element name="custom-class" type="ab:customElementType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines a custom component by a class name and properties values
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="classpath-scanner" type="ab:classpathScannerType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines which java packages should be scanned for
+                        components to use in AnalyzerBeans.
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="remote-components" type="ab:remoteComponentsType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines connection to DC monitor which provides AnalyzerBeans components remotely over network.
+                    </documentation>
+                </annotation>
+            </element>
+        </choice>
+    </complexType>
+
 	<complexType name="classpathScannerType">
 		<sequence>
 			<element name="excluded-rendering-format" minOccurs="0"
@@ -137,6 +168,27 @@
 					</simpleContent>
 				</complexType>
 			</element>
+		</sequence>
+	</complexType>
+
+    <complexType name="remoteComponentsType">
+        <sequence>
+            <element name="server" type="ab:serverType"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="serverType">
+        <sequence>
+            <element name="url" type="string" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines URL to the Datacleaner monitor server
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="security-mode" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
 		</sequence>
 	</complexType>
 

@@ -35,8 +35,8 @@ import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountListImpl;
+import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationImpl;
@@ -55,31 +55,52 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         final ValueCountList topValues = ValueCountListImpl.emptyList();
         final Collection<String> uniqueValues = Collections.emptyList();
         final Map<String, RowAnnotation> annotations = Collections.emptyMap();
-        final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
         final InputColumn<?>[] highlightedColumns = null;
 
         SingleValueDistributionResult reducedResult = new SingleValueDistributionResult(null, topValues, uniqueValues,
-                0, 0, 0, annotations, new RowAnnotationImpl(), annotationFactory, highlightedColumns);
+                0, 0, 0, annotations, new RowAnnotationImpl(), _rowAnnotationFactory, highlightedColumns);
 
         for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
             if (partialResult instanceof SingleValueDistributionResult) {
                 final SingleValueDistributionResult singleResult = (SingleValueDistributionResult) partialResult;
-                final ValueCountList reducedTopValues = reduceTopValues(reducedResult.getTopValues(),
-                        singleResult.getTopValues());
-                final int reducedDistinctCount = reduceDistinctCount(reducedResult, partialResult);
-                final int reducedTotalCount = reducedResult.getTotalCount() + partialResult.getTotalCount();
-                final Collection<String> reducedUniqueValues = reduceUniqueValues(reducedResult.getUniqueValues(),
-                        partialResult.getUniqueValues());
+                reducedResult = reduceSingleResult(annotations, highlightedColumns, reducedResult, singleResult);
+            } else if (partialResult instanceof GroupedValueDistributionResult) {
+                GroupedValueDistributionResult groupedResult = (GroupedValueDistributionResult) partialResult;
 
-                reducedResult = new SingleValueDistributionResult(reducedResult.getName(), reducedTopValues,
-                        reducedUniqueValues, reducedUniqueValues.size(), reducedDistinctCount,
-                        reducedTotalCount, annotations, new RowAnnotationImpl(), annotationFactory, highlightedColumns);
+                for (ValueCountingAnalyzerResult valueCountingResult : groupedResult.getGroupResults()) {
+                    if (valueCountingResult instanceof SingleValueDistributionResult) {
+                        SingleValueDistributionResult singleResult = (SingleValueDistributionResult) valueCountingResult;
+                        reducedResult = reduceSingleResult(annotations, highlightedColumns, reducedResult, singleResult);
+                    } else {
+                        throw new IllegalStateException("Expected "
+                                + SingleValueDistributionResult.class.getSimpleName() + ", but encountered "
+                                + valueCountingResult.getClass().getSimpleName());
+                    }
+                }
+
             } else {
-                // TODO: Disregard grouped results for now
+                throw new IllegalStateException("Unsupported type of "
+                        + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
+                        + partialResult.getClass().getSimpleName());
             }
         }
 
         return reducedResult;
+    }
+
+    private SingleValueDistributionResult reduceSingleResult(final Map<String, RowAnnotation> annotations,
+            final InputColumn<?>[] highlightedColumns, final SingleValueDistributionResult reducedResult,
+            final SingleValueDistributionResult singleResult) {
+        final ValueCountList reducedTopValues = reduceTopValues(reducedResult.getTopValues(),
+                singleResult.getTopValues());
+        final int reducedDistinctCount = reduceDistinctCount(reducedResult, singleResult);
+        final int reducedTotalCount = reducedResult.getTotalCount() + singleResult.getTotalCount();
+        final Collection<String> reducedUniqueValues = reduceUniqueValues(reducedResult.getUniqueValues(),
+                singleResult.getUniqueValues());
+
+        return new SingleValueDistributionResult(reducedResult.getName(), reducedTopValues, reducedUniqueValues,
+                reducedUniqueValues.size(), reducedDistinctCount, reducedTotalCount, annotations,
+                new RowAnnotationImpl(), _rowAnnotationFactory, highlightedColumns);
     }
 
     private ValueCountList reduceTopValues(ValueCountList topValues1, ValueCountList topValues2) {
@@ -103,15 +124,15 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
         return topValuesImpl1;
     }
-    
+
     private int reduceDistinctCount(ValueDistributionAnalyzerResult reducedResult,
             ValueDistributionAnalyzerResult partialResult) {
         Set<String> distinctValues = new HashSet<>();
-        
+
         for (ValueFrequency valueFrequency : reducedResult.getValueCounts()) {
             if (valueFrequency instanceof CompositeValueFrequency) {
                 CompositeValueFrequency compositeValueFrequency = (CompositeValueFrequency) valueFrequency;
-                
+
                 for (ValueFrequency childValueFrequency : compositeValueFrequency.getChildren()) {
                     distinctValues.add(childValueFrequency.getValue());
                 }
@@ -119,11 +140,11 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                 distinctValues.add(valueFrequency.getValue());
             }
         }
-        
+
         for (ValueFrequency valueFrequency : partialResult.getValueCounts()) {
             if (valueFrequency instanceof CompositeValueFrequency) {
                 CompositeValueFrequency compositeValueFrequency = (CompositeValueFrequency) valueFrequency;
-                
+
                 for (ValueFrequency childValueFrequency : compositeValueFrequency.getChildren()) {
                     distinctValues.add(childValueFrequency.getValue());
                 }
@@ -131,7 +152,7 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                 distinctValues.add(valueFrequency.getValue());
             }
         }
-        
+
         return distinctValues.size();
     }
 

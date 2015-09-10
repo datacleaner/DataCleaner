@@ -52,8 +52,24 @@
 				</choice>
 				<element name="storage-provider" type="ab:storageProviderType"
 					minOccurs="0" maxOccurs="1" />
-                <element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="1" maxOccurs="1" />
+				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="1" maxOccurs="1" />
+
+				<!-- Deprecated - for backward compatibility -->
+				<choice minOccurs="0" maxOccurs="1">
+					<element name="classpath-scanner" minOccurs="1" maxOccurs="1"
+						type="ab:classpathScannerType">
+						<annotation>
+							<documentation>
+								Defines which java packages should be scanned for
+								components to use in AnalyzerBeans.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="custom-descriptor-provider" type="ab:customElementType"
+						minOccurs="1" maxOccurs="1" />
+				</choice>
 			</sequence>
+
 		</complexType>
 	</element>
 
@@ -173,8 +189,8 @@
             <element name="security-mode" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
-        </sequence>
-    </complexType>
+		</sequence>
+	</complexType>
 
 	<complexType name="datastoreCatalogType">
 		<sequence>

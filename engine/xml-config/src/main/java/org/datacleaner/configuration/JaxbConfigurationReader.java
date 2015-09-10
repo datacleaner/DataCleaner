@@ -288,6 +288,19 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
         DescriptorProvider result = null;
         DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
+        if(providersElement == null) {
+            providersElement = new DescriptorProvidersType();
+        }
+
+        // for backward compatibility
+        if(configuration.getClasspathScanner() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getClasspathScanner());
+        }
+        if(configuration.getCustomDescriptorProvider() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getCustomDescriptorProvider());
+        }
+
+        // now go through providers specification and create them
         for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
             if(result != null) {
@@ -296,6 +309,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 result = prov;
             }
         }
+
         return result;
     }
 

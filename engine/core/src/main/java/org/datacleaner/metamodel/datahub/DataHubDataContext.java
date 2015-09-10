@@ -25,6 +25,7 @@ import static org.datacleaner.metamodel.datahub.DataHubConnection.DATASTORES_PAT
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.SCHEMA_EXTENSION;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
+import static org.datacleaner.metamodel.datahub.utils.JsonUpdateQueryBuilder.buildJsonArray;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,7 +36,7 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
@@ -92,8 +93,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     @Override
     public void executeUpdate(UpdateScript script) {
-        final DataHubUpdateCallback callback = new DataHubUpdateCallback(this);
-        try {
+        //final DataHubUpdateCallback callback = new DataHubUpdateCallback(this);
+        try (final DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
             script.run(callback);
         } catch (RuntimeException e) {
             throw e;
@@ -157,23 +158,23 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return _connection;
     }
 
-    public void executeUpdate(Table table, String query) {
+    public void executeUpdate(PendingUpdates pendingUpdates) {
+        Table table = pendingUpdates.getTable();
         String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
         String uri = _connection.getRepositoryUrl() + "/datastores/"
                 + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".update";
         logger.debug("request {}", uri);
-        final HttpPost request = new HttpPost(uri);
+        final HttpPut request = new HttpPut(uri);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
         try {
-            request.setEntity(new StringEntity(query));
+            request.setEntity(new StringEntity(buildJsonArray(pendingUpdates.getQueries())));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
         final HttpResponse response = executeRequest(request);
         final HttpEntity entity = response.getEntity();
         printTestResult(entity);
-
     }
 
     private void printTestResult(HttpEntity entity) {

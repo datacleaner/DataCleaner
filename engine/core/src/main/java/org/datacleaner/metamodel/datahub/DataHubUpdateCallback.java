@@ -19,6 +19,8 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import java.io.Closeable;
+
 import org.apache.metamodel.AbstractUpdateCallback;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.create.TableCreationBuilder;
@@ -29,14 +31,20 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.RowUpdationBuilder;
 
-public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback {
+public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback, Closeable {
 
     private final DataHubDataContext _dataContext;
     private DataHubConnection _connection;
+    private static final int INSERT_BATCH_SIZE = 100;
+    
+    private PendingUpdates _pendingUpdates;
+
+
 
     public DataHubUpdateCallback(DataHubDataContext dataContext) {
         super(dataContext);
         _dataContext = dataContext;
+        _pendingUpdates = null;
     }
 
     protected final DataHubConnection getConnection() {
@@ -92,8 +100,29 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     public void executeUpdate(Table table, String query) {
-        _dataContext.executeUpdate(table, query);
+        if (_pendingUpdates == null) {
+            _pendingUpdates = new PendingUpdates(table, query);
+        } else { 
+            _pendingUpdates.addQuery(query);
+        }
+        if (_pendingUpdates.size() >= INSERT_BATCH_SIZE) {
+            flushUpdates();
+        }
+
         
     }
+    private void flushUpdates() {
+        if (_pendingUpdates.isEmpty()) {
+            return;
+        }
+        _dataContext.executeUpdate(_pendingUpdates);
+        _pendingUpdates = null;
+    }
+
+    @Override
+    public void close() {
+        flushUpdates();
+    }
+
 
 }

@@ -25,7 +25,7 @@
 	</logger>
 
 	<logger name="org.datacleaner">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 
 	<root>

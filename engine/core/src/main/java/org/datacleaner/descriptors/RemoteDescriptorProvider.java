@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2015 Neopost - Customer Information Management
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -19,6 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
 
@@ -59,7 +61,21 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     }
 
     private void downloadDescriptors() {
-        // TODO
+
+        // TODO - this is a mocked remote transformer descriptor
+        String host = "ubu";
+        int port = 8888;
+        String resourcePath = "/repository/demo/components/Concatenator";
+
+        RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
+                "http://" + host + ":" + port + resourcePath,
+                "Concatenates string values" + " (on " + host + ":" + port + ")");
+        transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                "Columns", "Input Columns", InputColumn[].class, true, transformer));
+        transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                "Separator", new StringSchema(), false, "Separator between columns"));
+
+        _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
     }
 
     @Override

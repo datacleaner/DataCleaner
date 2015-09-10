@@ -20,7 +20,11 @@
 package org.datacleaner.descriptors;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.remote.RemoteTransformer;
 
@@ -31,16 +35,19 @@ import java.util.Set;
 /**
  * @Since 9/1/15
  */
-public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
+public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
     
     private String name;
+    private String description;
     private JsonSchema schema;
     private ComponentDescriptor component;
     private boolean isInputColumn;
 
-    public RemoteConfiguredPropertyDescriptorImpl(String name, JsonSchema schema) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description) {
         this.name = name;
+        this.description = description;
         this.schema = schema;
+        this.isInputColumn = isInputColumn;
     }
 
     public void setComponent(ComponentDescriptor component) {
@@ -57,7 +64,7 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
         if(!(component instanceof RemoteTransformer)) {
             throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
         }
-        ((RemoteTransformer)component).setPropertyValue(this, value);
+        ((RemoteTransformer)component).setPropertyValue(this.getName(), value);
     }
 
     @Override
@@ -65,7 +72,7 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
         if(!(component instanceof RemoteTransformer)) {
             throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
         }
-        return ((RemoteTransformer)component).getProperty(this);
+        return ((RemoteTransformer)component).getProperty(this.getName());
     }
 
     @Override
@@ -80,7 +87,7 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
 
     @Override
     public Class<?> getType() {
-        return JsonNode.class;
+        return schemaToJavaType(schema);
     }
 
     @Override
@@ -90,7 +97,11 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
 
     @Override
     public Class<?> getBaseType() {
-        return JsonNode.class;
+        if(schema.isArraySchema()) {
+            return schemaToJavaType(((ArraySchema)schema).getItems().asSingleItems().getSchema());
+        } else {
+            return schemaToJavaType(schema);
+        }
     }
 
     @Override
@@ -110,17 +121,17 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
 
     @Override
     public int compareTo(PropertyDescriptor o) {
-        return 0;
+        return getName().compareTo(o.getName());
     }
 
     @Override
     public boolean isInputColumn() {
-        return isInputColumn;  //To change body of implemented methods use File | Settings | File Templates.
+        return isInputColumn;
     }
 
     @Override
     public String getDescription() {
-        return "DESCRIPTION";
+        return description;
     }
 
     @Override
@@ -136,5 +147,13 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
     @Override
     public String[] getAliases() {
         return new String[0];
+    }
+
+    private Class<?> schemaToJavaType(JsonSchema schema) {
+        // try to convert
+        if(schema instanceof StringSchema) { return String.class; }
+        if(schema instanceof IntegerSchema) { return Integer.class; }
+        // fallback
+        return JsonNode.class;
     }
 }

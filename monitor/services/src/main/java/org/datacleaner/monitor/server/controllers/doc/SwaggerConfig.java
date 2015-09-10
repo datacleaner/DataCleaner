@@ -54,8 +54,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .pathProvider(pathProvider)
                 .apiVersion(SwaggerConfig.API_VERSION)
-                .swaggerGroup(SwaggerConfig.URL_BASE_PATH)
-                .build();
+                .swaggerGroup(SwaggerConfig.URL_BASE_PATH);
     }
 
     private ApiInfo apiInfo() {

@@ -21,6 +21,7 @@ package org.datacleaner.metamodel.datahub;
 
 import java.io.Closeable;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.metamodel.AbstractUpdateCallback;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.create.TableCreationBuilder;
@@ -35,7 +36,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
 
     private final DataHubDataContext _dataContext;
     private DataHubConnection _connection;
-    private static final int INSERT_BATCH_SIZE = 100;
+    public static final int INSERT_BATCH_SIZE = 100;
     
     private PendingUpdates _pendingUpdates;
 
@@ -112,7 +113,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         
     }
     private void flushUpdates() {
-        if (_pendingUpdates.isEmpty()) {
+        if (_pendingUpdates == null || _pendingUpdates.isEmpty()) {
             return;
         }
         _dataContext.executeUpdate(_pendingUpdates);

@@ -22,13 +22,12 @@ package org.datacleaner.descriptors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
-import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.*;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.remote.RemoteTransformer;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Set;
 
@@ -87,6 +86,9 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     @Override
     public Class<?> getType() {
+        if(isArray()) {
+            return Array.newInstance(getBaseType(), 0).getClass();
+        }
         return schemaToJavaType(schema);
     }
 
@@ -97,7 +99,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     @Override
     public Class<?> getBaseType() {
-        if(schema.isArraySchema()) {
+        if(isArray()) {
             return schemaToJavaType(((ArraySchema)schema).getItems().asSingleItems().getSchema());
         } else {
             return schemaToJavaType(schema);
@@ -153,6 +155,8 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         // try to convert
         if(schema instanceof StringSchema) { return String.class; }
         if(schema instanceof IntegerSchema) { return Integer.class; }
+        if(schema instanceof BooleanSchema) { return Boolean.class; }
+        if(schema instanceof NumberSchema) { return Double.class; }
         // fallback
         return JsonNode.class;
     }

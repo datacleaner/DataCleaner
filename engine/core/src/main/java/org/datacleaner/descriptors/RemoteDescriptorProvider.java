@@ -63,17 +63,16 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private void downloadDescriptors() {
 
         // TODO - this is a mocked remote transformer descriptor
-        String host = "ubu";
-        int port = 8888;
+        String serverUrl = "http://ubu:8888";
         String resourcePath = "/repository/demo/components/Concatenator";
 
         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                "http://" + host + ":" + port + resourcePath,
-                "Concatenates string values" + " (on " + host + ":" + port + ")");
+                serverUrl + resourcePath,
+                "Concatenator" + " (remote)");
         transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
                 "Columns", "Input Columns", InputColumn[].class, true, transformer));
         transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                "Separator", new StringSchema(), false, "Separator between columns"));
+                "Separator", new StringSchema(), false, "A string to separate the concatenated values"));
 
         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
     }

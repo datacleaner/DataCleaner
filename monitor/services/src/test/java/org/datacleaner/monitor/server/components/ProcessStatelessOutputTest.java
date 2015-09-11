@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.junit.Before;
 import org.junit.Test;
 

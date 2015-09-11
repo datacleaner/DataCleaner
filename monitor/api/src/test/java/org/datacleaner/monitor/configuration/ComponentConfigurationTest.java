@@ -19,9 +19,11 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import static junit.framework.TestCase.*;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.junit.Test;
 
 public class ComponentConfigurationTest {
     private ComponentConfiguration componentConfiguration = new ComponentConfiguration();

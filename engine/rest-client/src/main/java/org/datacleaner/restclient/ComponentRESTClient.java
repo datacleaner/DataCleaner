@@ -19,58 +19,92 @@
  */
 package org.datacleaner.restclient;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * @since 02. 09. 2015
  */
-public interface ComponentRESTClient {
-    /**
-     * It returns a list of all available components including their name, description and properties.
-     * @return
-     */
-    public String getAllComponents();
+public class ComponentRESTClient implements ComponentController {
+    private RESTClient restClient = null;
+    private String tenantName = "";
+    private String host = "";
 
-    /**
-     * It returns information about a particular component.
-     * @param componentName
-     * @return
-     */
-    public String getComponentInfo(final String componentName);
+    public ComponentRESTClient(String host, String username, String password) {
+        this.tenantName = username;
+        this.host = host;
+        restClient = new RESTClientImpl(username, password);
+    }
 
-    /**
-     * It returns a response for the processed configuration and input data (statelessly).
-     * @param componentName
-     * @param configurationAndData
-     * @return
-     */
-    public String processStateless(final String componentName, final String configurationAndData);
+    public ComponentList getAllComponents(final String tenant) {
+        this.tenantName = tenant;
+        String response = call(RESTClient.HttpMethod.GET, getURL(""), "");
 
-    /**
-     * It returns an unique instance ID (instance of the component and its configuration).
-     * @param componentName
-     * @param timeout
-     * @param configuration
-     * @return
-     */
-    public String createComponent(final String componentName, final String timeout, final String configuration);
+        return Serializator.componentList(response);
+    }
 
-    /**
-     * It returns a response for the processed input (statefully).
-     * @param instanceId
-     * @param inputData
-     * @return
-     */
-    public String processComponent(final String instanceId, final String inputData);
+    public ComponentList.ComponentInfo getComponentInfo(final String tenant, String componentName) {
+        this.tenantName = tenant;
+        componentName = urlify(componentName);
+        String response = call(RESTClient.HttpMethod.GET, getURL(componentName), "");
 
-    /**
-     * It returns a final result of the specified instance ID.
-     * @param instanceId
-     * @return
-     */
-    public String getFinalResult(final String instanceId);
+        return Serializator.componentInfo(response);
+    }
 
-    /**
-     * It removes the given instance ID.
-     * @param instanceId
-     */
-    public void deleteComponent(final String instanceId);
+    public ProcessStatelessOutput processStateless(String tenant, String componentName, ProcessStatelessInput processStatelessInput) {
+        componentName = urlify(componentName);
+        String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);
+        String response = call(RESTClient.HttpMethod.PUT, getURL(componentName), configurationAndData);
+
+        return Serializator.processStatelessOutput(response);
+    }
+
+    public String createComponent(final String tenant, String componentName, final String timeout, final CreateInput config) {
+        componentName = urlify(componentName);
+        String configuration = Serializator.stringCreateInput(config);
+
+        return call(RESTClient.HttpMethod.POST, getURL(componentName + "?timeout=" + timeout), configuration);
+    }
+
+    public ProcessOutput processComponent(final String tenant, final String instanceId, final ProcessInput processInput)
+            throws ComponentNotFoundException {
+        String inputData = Serializator.stringProcessInput(processInput);
+        String response = call(RESTClient.HttpMethod.PUT, getURL("/_instance/" + instanceId), inputData);
+
+        return Serializator.processOutput(response);
+    }
+
+    public ProcessResult getFinalResult(final String tenant, final String instanceId) throws ComponentNotFoundException {
+        String response = call(RESTClient.HttpMethod.GET, getURL(instanceId + "/result"), "");
+
+        return Serializator.processResult(response);
+    }
+
+    public void deleteComponent(final String tenant, final String instanceId) throws ComponentNotFoundException {
+        call(RESTClient.HttpMethod.DELETE, getURL(instanceId), "");
+    }
+
+    private String urlify(String string) {
+        try {
+            string = URLEncoder.encode(string, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+        }
+
+        return string;
+    }
+
+    private String getURL(String suffix) {
+        if (suffix != null && ! suffix.isEmpty()) {
+            suffix = "/" + suffix;
+        }
+
+        return String.format("%s/repository/%s/components%s", host, tenantName, suffix);
+    }
+
+    private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody) {
+        String response = restClient.getResponse(httpMethod, url, requestBody);
+
+        return response;
+    }
 }

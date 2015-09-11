@@ -17,16 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.restclient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * @Since 7/31/15
- *
- * Simple holder for configuration data. It is used for creating components.
+ * @since 24. 07. 2015
  */
-public class CreateInput {
+public class ProcessInput {
     @JsonProperty
-    public ComponentConfiguration configuration;
+    public JsonNode data;
 }

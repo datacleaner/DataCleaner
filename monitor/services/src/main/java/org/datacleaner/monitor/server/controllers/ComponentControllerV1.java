@@ -19,11 +19,32 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.util.Collection;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
-import org.datacleaner.monitor.server.components.*;
+import org.datacleaner.monitor.configuration.ComponentCache;
+import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
+import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
+import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.restclient.ComponentController;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessInput;
+import org.datacleaner.restclient.ProcessOutput;
+import org.datacleaner.restclient.ProcessResult;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +52,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.Collection;
-import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component

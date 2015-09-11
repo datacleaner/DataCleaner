@@ -19,8 +19,8 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
-import org.datacleaner.monitor.server.components.ComponentList.ComponentInfo;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.junit.Before;
 import org.junit.Test;
 

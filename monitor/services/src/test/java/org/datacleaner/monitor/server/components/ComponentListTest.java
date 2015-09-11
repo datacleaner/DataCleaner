@@ -21,7 +21,8 @@ package org.datacleaner.monitor.server.components;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.monitor.server.components.ComponentList.ComponentInfo;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
 

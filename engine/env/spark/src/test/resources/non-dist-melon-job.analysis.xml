@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
-    <job-metadata>
-        <job-description>Created with DataCleaner Community edition UNKNOWN</job-description>
-        <author>tomaszg</author>
-        <updated-date>2015-09-11+02:00</updated-date>
-        <metadata-properties>
-            <property name="CoordinatesY.resources.person_names.txt">40</property>
-            <property name="CoordinatesX.resources.person_names.txt">40</property>
-        </metadata-properties>
-    </job-metadata>
     <source>
         <data-context ref="person_names"/>
         <columns>
@@ -22,10 +13,6 @@
     <analysis>
         <analyzer>
             <descriptor ref="Completeness analyzer"/>
-            <metadata-properties>
-                <property name="CoordinatesX">200</property>
-                <property name="CoordinatesY">40</property>
-            </metadata-properties>
             <properties>
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -44,10 +31,6 @@
                     <analysis>
                         <analyzer>
                             <descriptor ref="Unique key check"/>
-                            <metadata-properties>
-<property name="CoordinatesY">38</property>
-<property name="CoordinatesX">372</property>
-                            </metadata-properties>
                             <properties>
 <property name="Buffer size" value="20000"/>
                             </properties>
@@ -68,10 +51,6 @@
                     <analysis>
                         <analyzer>
                             <descriptor ref="Value matcher"/>
-                            <metadata-properties>
-<property name="CoordinatesX">372</property>
-<property name="CoordinatesY">207</property>
-                            </metadata-properties>
                             <properties>
 <property name="Expected values" value="[Kasper]"/>
 <property name="Case sensitive matching" value="true"/>

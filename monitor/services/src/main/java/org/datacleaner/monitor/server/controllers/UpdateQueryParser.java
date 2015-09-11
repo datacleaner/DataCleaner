@@ -1,9 +1,39 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.monitor.server.controllers;
 
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.query.parser.QueryParserException;
 import org.apache.metamodel.query.parser.QueryPartParser;
 
+/**
+ * Very simple parser for update statements.
+ * 
+ * Restrictions:
+ * <ul>
+ * <li>The clauses in SET must be simple column=constant-value statements. No
+ * functions. No assignments of one column to another.
+ * <li>The WHERE clause must be a single column=constand-value statement
+ * (id=53536).
+ * </ul>
+ */
 public class UpdateQueryParser {
 
     private final UpdateableDataContext _dataContext;
@@ -72,7 +102,6 @@ public class UpdateQueryParser {
         return query;
     }
 
-
     private void parseUpdateClause(UpdateQuery query, String updateClause) {
         updateClause = updateClause.trim();
         if (!updateClause.isEmpty()) {
@@ -83,20 +112,20 @@ public class UpdateQueryParser {
     }
 
     private void parseColumnAssignmentsClause(UpdateQuery query, String columnAssignmentsClause) {
-        QueryPartParser clauseParser = new QueryPartParser(new UpdateItemParser(query),
-                columnAssignmentsClause, ",");
+        QueryPartParser clauseParser = new QueryPartParser(new UpdateItemParser(query), columnAssignmentsClause, ",");
         clauseParser.parse();
     }
 
     private void parseWhereClause(UpdateQuery query, String whereClause) {
         whereClause = whereClause.trim();
         final String[] parts = whereClause.split("=");
-        if(parts.length != 2) {
-            throw new QueryParserException("WHERE clause is restricted to a single field = <value> term: " + whereClause);
+        if (parts.length != 2) {
+            throw new QueryParserException(
+                    "WHERE clause is restricted to a single field = <value> term: " + whereClause);
         }
         query.setWhere(parts[0].trim(), parts[1].trim());
     }
-    
+
     private String getSubstring(Integer from, int to) {
         if (from == null) {
             return null;

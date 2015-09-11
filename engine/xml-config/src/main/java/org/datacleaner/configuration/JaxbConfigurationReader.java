@@ -92,7 +92,6 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
-import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
 import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
 import org.datacleaner.configuration.jaxb.SasDatastoreType;
@@ -353,7 +352,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
             if(result != null) {
-                result = new CompositeDescriptorProvider(result, prov);
+                result = new CompositeDescriptorProvider(prov, result);
             } else {
                 result = prov;
             }
@@ -371,7 +370,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof ClasspathScannerType) {
             return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
         } else if(providerElement instanceof RemoteComponentsType) {
-            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
         } else {
             throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
         }
@@ -405,9 +404,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement, DataCleanerEnvironment environment) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        return new RemoteDescriptorProvider(environment.getTaskRunner(), server.getUrl(), server.getUsername(), server.getPassword());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

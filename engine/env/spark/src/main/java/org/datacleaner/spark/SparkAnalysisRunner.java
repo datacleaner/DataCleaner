@@ -92,20 +92,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = inputRowsRDD
                     .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
 
-            List<Tuple2<String, NamedAnalyzerResult>> partials = partialNamedAnalyzerResultsRDD.collect();
-            for (Tuple2<String, NamedAnalyzerResult> tuple2 : partials) {
-                System.out.println("Key: " + tuple2._1);
-                System.out.println("\t\t\t" + tuple2._2.getAnalyzerResult().toString());
-            }
-
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                     _sparkJobContext));
-
-            List<Tuple2<String, NamedAnalyzerResult>> reduced = namedAnalyzerResultsRDD.collect();
-            for (Tuple2<String, NamedAnalyzerResult> tuple2 : reduced) {
-                System.out.println("Key: " + tuple2._1);
-                System.out.println("\t\t\t" + tuple2._2.getAnalyzerResult().toString());
-            }
         } else {
             logger.warn("Running the job in non-distributed mode");
             JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);

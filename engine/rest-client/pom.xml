@@ -12,6 +12,31 @@
     <artifactId>DataCleaner-rest-client</artifactId>
 
     <dependencies>
+        <!-- DataCleaner -->
+        <dependency>
+            <groupId>org.eobjects.datacleaner</groupId>
+            <artifactId>DataCleaner-engine-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eobjects.datacleaner</groupId>
+            <artifactId>DataCleaner-desktop-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+            <version>${spring.core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+
         <!-- REST client -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -32,6 +57,17 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

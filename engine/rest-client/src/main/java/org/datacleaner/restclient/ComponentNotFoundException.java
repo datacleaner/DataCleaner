@@ -17,25 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.restclient;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
-
-import java.io.Serializable;
-
-/**
- * Crate for a component processing input.
- * @since 9. 7. 2015
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProcessStatelessInput implements Serializable {
-
-    @JsonProperty
-    public ComponentConfiguration configuration;
-    @JsonProperty
-    public JsonNode data;
-
+public class ComponentNotFoundException extends RuntimeException {
+    private ComponentNotFoundException(String msg) {
+        super(msg);
+    }
+    public static ComponentNotFoundException createTypeNotFound(String type) {
+        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
+    }
+    public static ComponentNotFoundException createInstanceNotFound(String id) {
+        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
+    }
 }

@@ -44,6 +44,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
     private final JXTextField _hostnameField;
     private final JXTextField _portField;
     private final JXTextField _pathTextField;
+
     private final DCPanel _panel;
     private final List<ResourceTypePresenter.Listener> _listeners = new ArrayList<>(1);
     private final List<FileFilter> _fileFilters = new ArrayList<>();
@@ -56,6 +57,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
         _portField.setText("9000");
         _pathTextField = WidgetFactory.createTextField("path", 12);
         _pathTextField.setText("/");
+
 
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override

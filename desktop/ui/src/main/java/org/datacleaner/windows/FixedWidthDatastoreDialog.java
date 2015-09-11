@@ -50,10 +50,10 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractFilenameTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.jdesktop.swingx.JXTextField;
@@ -277,7 +277,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected void setFileFilters(FilenameTextField filenameField) {
+	protected void setFileFilters(AbstractFilenameTextField filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any text or data file (.txt, .dat)", FileFilters.TXT,
 				FileFilters.DAT);
 		filenameField.addChoosableFileFilter(combinedFilter);

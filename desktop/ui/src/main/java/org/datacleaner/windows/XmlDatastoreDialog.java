@@ -28,7 +28,7 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.AbstractFilenameTextField;
 
 public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlDatastore> {
 
@@ -41,7 +41,7 @@ public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<X
 	}
 
 	@Override
-	protected void setFileFilters(FilenameTextField filenameField) {
+	protected void setFileFilters(AbstractFilenameTextField filenameField) {
 		filenameField.addChoosableFileFilter(FileFilters.XML);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
 		filenameField.setSelectedFileFilter(FileFilters.XML);

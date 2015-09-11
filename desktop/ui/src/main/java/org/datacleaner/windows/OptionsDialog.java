@@ -55,6 +55,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractFilenameTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
@@ -114,9 +115,9 @@ public class OptionsDialog extends AbstractWindow {
                 _userPreferences.getSaveDatastoreDirectory(), true);
         saveDatastoreDirectoryField.setFile(_userPreferences.getSaveDatastoreDirectory());
         saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        saveDatastoreDirectoryField.addFileSelectionListener(new FileSelectionListener() {
+        saveDatastoreDirectoryField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 _userPreferences.setSaveDatastoreDirectory(file);
             }
         });

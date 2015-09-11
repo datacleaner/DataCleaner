@@ -60,6 +60,7 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractFilenameTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
@@ -122,9 +123,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         // add listeners after setting initial values.
         setFileFilters(_filenameField);
-        _filenameField.addFileSelectionListener(new FileSelectionListener() {
+        _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 final File dir;
                 if (file.isDirectory()) {
                     dir = file;
@@ -171,7 +172,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract D createDatastore(String name, String filename);
 
-    protected abstract void setFileFilters(FilenameTextField filenameField);
+    protected abstract void setFileFilters(AbstractFilenameTextField filenameField);
 
     @Override
     protected final void validateAndUpdate() {

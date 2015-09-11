@@ -49,6 +49,7 @@ import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractFilenameTextField;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
@@ -198,12 +199,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _usernameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _passwordField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _keystorePathField.getTextField().getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
-        _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
-            
+        _keystorePathField.addSelectionListener(new FileSelectionListener() {
+
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 validateAndUpdate();
-                
+
             }
         });
 

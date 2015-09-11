@@ -19,34 +19,60 @@
  */
 package org.datacleaner.descriptors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import org.datacleaner.api.Converter;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @Since 9/1/15
+ * @Since 9/9/15
  */
-public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
-    
+public class TypeBasedConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
+
+    private Class type;
     private String name;
-    private JsonSchema schema;
+    private String description;
+    private boolean required;
     private ComponentDescriptor component;
-    private boolean isInputColumn;
+    private Set<Annotation> annotations = Collections.EMPTY_SET;
 
-    public RemoteConfiguredPropertyDescriptorImpl(String name, JsonSchema schema) {
+    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class type, boolean required, ComponentDescriptor component) {
+        this.type = type;
         this.name = name;
-        this.schema = schema;
-    }
-
-    public void setComponent(ComponentDescriptor component) {
+        this.description = description;
+        this.required = required;
         this.component = component;
     }
-    
+
+    @Override
+    public boolean isInputColumn() {
+        return InputColumn.class.isAssignableFrom(getBaseType());
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public boolean isRequired() {
+        return required;
+    }
+
+    @Override
+    public Class<? extends Converter<?>> getCustomConverter() {
+        return null;
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     @Override
     public String getName() {
         return name;
@@ -54,43 +80,45 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
 
     @Override
     public void setValue(Object component, Object value) throws IllegalArgumentException {
-        if(!(component instanceof RemoteTransformer)) {
-            throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
-        }
-        ((RemoteTransformer)component).setPropertyValue(this, value);
+        ((RemoteTransformer)component).setPropertyValue(getName(), value);
     }
 
     @Override
     public Object getValue(Object component) throws IllegalArgumentException {
-        if(!(component instanceof RemoteTransformer)) {
-            throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
-        }
-        return ((RemoteTransformer)component).getProperty(this);
+        return ((RemoteTransformer)component).getProperty(getName());
     }
 
     @Override
     public Set<Annotation> getAnnotations() {
-        return Collections.emptySet();
+        return annotations;
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+        for(Annotation an: annotations) {
+            if(annotationClass.isAssignableFrom(an.getClass())) {
+                return (A)an;
+            }
+        }
         return null;
     }
 
     @Override
     public Class<?> getType() {
-        return JsonNode.class;
+        return type;
     }
 
     @Override
     public boolean isArray() {
-        return schema.isArraySchema();
+        return type.isArray();
     }
 
     @Override
     public Class<?> getBaseType() {
-        return JsonNode.class;
+        if (type.isArray()) {
+            return type.getComponentType();
+        }
+        return type;
     }
 
     @Override
@@ -110,31 +138,14 @@ public class RemoteConfiguredPropertyDescriptorImpl implements ConfiguredPropert
 
     @Override
     public int compareTo(PropertyDescriptor o) {
-        return 0;
+        return getName().compareTo(o.getName());
     }
 
-    @Override
-    public boolean isInputColumn() {
-        return isInputColumn;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String getDescription() {
-        return "DESCRIPTION";
-    }
-
-    @Override
-    public boolean isRequired() {
-        return false;
-    }
-
-    @Override
-    public Class<? extends Converter<?>> getCustomConverter() {
-        return null;
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[0];
+    public TypeBasedConfiguredPropertyDescriptorImpl withAnnotation(Annotation an) {
+        if(annotations == Collections.EMPTY_SET) {
+            annotations = new HashSet<>();
+        }
+        annotations.add(an);
+        return this;
     }
 }

@@ -252,6 +252,9 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
             return null;
         }
+        if (propertyDescriptor.getAnnotation(Deprecated.class) != null) {
+            return null;
+        }
 
         if (getComponentBuilder() instanceof AnalyzerComponentBuilder) {
             AnalyzerComponentBuilder<?> analyzer = (AnalyzerComponentBuilder<?>) getComponentBuilder();

@@ -28,12 +28,24 @@ import org.datacleaner.components.remote.RemoteTransformer;
  @Since 9/1/15
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor {
-    private String displayName;
 
-    public RemoteTransformerDescriptorImpl(String displayName, RemoteConfiguredPropertyDescriptorImpl[] configuredProperties) {
+    private String displayName;
+    private String url;
+
+    public RemoteTransformerDescriptorImpl(String url, String displayName) {
         super(RemoteTransformer.class);
-        this._configuredProperties.addAll(Arrays.asList(configuredProperties));
+        this.url = url;
         this.displayName = displayName;
+        try {
+            this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
+            this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {
+        this._configuredProperties.add(propertyDescriptor);
     }
 
     @Override
@@ -41,8 +53,15 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         return displayName;
     }
 
+    @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
         return TransformSuperCategory.class;
+    }
+
+    @Override
+    public Object newInstance() {
+        RemoteTransformer t = new RemoteTransformer(url);
+        return t;
     }
 
 }

@@ -29,6 +29,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
+import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
@@ -127,10 +128,6 @@ public class SparkAnalysisRunnerTest extends TestCase {
 
     @Test
     public void testOutputDataStreamsNonDistributableScenario() throws Exception {
-        // TODO: Value distribution has been reworked to be distributable now.
-        // Need to find a different non-distributable component and use it in
-        // this test. It would also be nice to have a flag indicating
-        // distributable/non-distributable job that we could assert.
         final AnalysisResultFuture result;
 
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName(
@@ -143,7 +140,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
 
-            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, 4);
 
             result = sparkAnalysisRunner.run(job);
         } finally {
@@ -168,10 +165,14 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(0), incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
 
-        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
-                ValueDistributionAnalyzerResult.class).get(0);
-        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
-        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
+        final UniqueKeyCheckAnalyzerResult uniqueKeyCheckAnalyzerResult = result.getResults(
+                UniqueKeyCheckAnalyzerResult.class).get(0);
+        assertEquals(7, uniqueKeyCheckAnalyzerResult.getRowCount());
+        assertEquals(7, uniqueKeyCheckAnalyzerResult.getUniqueCount());
+        assertEquals(0, uniqueKeyCheckAnalyzerResult.getNonUniqueCount());
+        assertEquals(0, uniqueKeyCheckAnalyzerResult.getNullCount());
+        // TODO: It would also be nice to have a flag indicating
+        // distributable/non-distributable job that we could assert.
     }
 
     @Test

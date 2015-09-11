@@ -3,7 +3,7 @@
     <job-metadata>
         <job-description>Created with DataCleaner Community edition UNKNOWN</job-description>
         <author>tomaszg</author>
-        <updated-date>2015-09-04+02:00</updated-date>
+        <updated-date>2015-09-11+02:00</updated-date>
         <metadata-properties>
             <property name="CoordinatesY.resources.person_names.txt">40</property>
             <property name="CoordinatesX.resources.person_names.txt">40</property>
@@ -36,25 +36,22 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_name" path="name" type="STRING"/>
-                            <column id="col_company" path="company" type="STRING"/>
+                            <column id="col_name2" path="name" type="STRING"/>
+                            <column id="col_company2" path="company" type="STRING"/>
                         </columns>
                     </source>
                     <transformation/>
                     <analysis>
                         <analyzer>
-                            <descriptor ref="Value distribution"/>
+                            <descriptor ref="Unique key check"/>
                             <metadata-properties>
-<property name="CoordinatesX">425</property>
-<property name="CoordinatesY">30</property>
+<property name="CoordinatesY">38</property>
+<property name="CoordinatesX">372</property>
                             </metadata-properties>
                             <properties>
-<property name="Record unique values" value="true"/>
-<property name="Record drill-down information" value="true"/>
-<property name="Top n most frequent values" value="&lt;null&gt;"/>
-<property name="Bottom n most frequent values" value="&lt;null&gt;"/>
+<property name="Buffer size" value="20000"/>
                             </properties>
-                            <input ref="col_name" name="Column"/>
+                            <input ref="col_name2"/>
                         </analyzer>
                     </analysis>
                 </job>
@@ -63,8 +60,8 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_name" path="name" type="STRING"/>
-                            <column id="col_company" path="company" type="STRING"/>
+                            <column id="col_name3" path="name" type="STRING"/>
+                            <column id="col_company3" path="company" type="STRING"/>
                         </columns>
                     </source>
                     <transformation/>
@@ -80,7 +77,7 @@
 <property name="Case sensitive matching" value="true"/>
 <property name="White space sensitive matching" value="true"/>
                             </properties>
-                            <input ref="col_name"/>
+                            <input ref="col_name3"/>
                         </analyzer>
                     </analysis>
                 </job>

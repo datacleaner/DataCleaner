@@ -19,14 +19,27 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
+import org.datacleaner.monitor.configuration.ComponentConfiguration;
+import org.datacleaner.monitor.configuration.ComponentStore;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.CreateInput;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.ComponentList;
 import org.datacleaner.monitor.server.components.ComponentNotFoundException;
 import org.datacleaner.monitor.server.components.ProcessInput;
@@ -34,12 +47,7 @@ import org.datacleaner.monitor.server.components.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";

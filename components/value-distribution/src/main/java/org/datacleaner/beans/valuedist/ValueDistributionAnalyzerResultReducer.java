@@ -157,23 +157,16 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
     }
 
     private Collection<String> reduceUniqueValues(Collection<String> uniqueValues1, Collection<String> uniqueValues2) {
-        if ((uniqueValues1 == null) || uniqueValues1.isEmpty()) {
-            return uniqueValues2;
-        }
-
         Collection<String> reducedUniqueValues = new ArrayList<>();
 
-        if (uniqueValues1.size() >= uniqueValues2.size()) {
-            for (String value : uniqueValues1) {
-                if (!uniqueValues2.contains(value)) {
-                    reducedUniqueValues.add(value);
-                }
+        for (String value : uniqueValues1) {
+            if (!uniqueValues2.contains(value)) {
+                reducedUniqueValues.add(value);
             }
-        } else {
-            for (String value : uniqueValues2) {
-                if (!uniqueValues1.contains(value)) {
-                    reducedUniqueValues.add(value);
-                }
+        }
+        for (String value : uniqueValues2) {
+            if (!uniqueValues1.contains(value)) {
+                reducedUniqueValues.add(value);
             }
         }
 

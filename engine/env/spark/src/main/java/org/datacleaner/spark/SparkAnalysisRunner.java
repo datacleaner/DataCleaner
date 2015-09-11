@@ -54,9 +54,23 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     private final SparkJobContext _sparkJobContext;
     private final JavaSparkContext _sparkContext;
 
+    private final Integer _minPartitions;
+
     public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext) {
+        this(sparkContext, sparkJobContext, null);
+    }
+
+    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
+        if (minPartitions > 0) {
+            _minPartitions = minPartitions;
+        } else {
+            logger.warn(
+                    "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
+                    minPartitions);
+            _minPartitions = null;
+        }
     }
 
     public void run() {
@@ -78,8 +92,20 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = inputRowsRDD
                     .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
 
+            List<Tuple2<String, NamedAnalyzerResult>> partials = partialNamedAnalyzerResultsRDD.collect();
+            for (Tuple2<String, NamedAnalyzerResult> tuple2 : partials) {
+                System.out.println("Key: " + tuple2._1);
+                System.out.println("\t\t\t" + tuple2._2.getAnalyzerResult().toString());
+            }
+
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                     _sparkJobContext));
+
+            List<Tuple2<String, NamedAnalyzerResult>> reduced = namedAnalyzerResultsRDD.collect();
+            for (Tuple2<String, NamedAnalyzerResult> tuple2 : reduced) {
+                System.out.println("Key: " + tuple2._1);
+                System.out.println("\t\t\t" + tuple2._2.getAnalyzerResult().toString());
+            }
         } else {
             logger.warn("Running the job in non-distributed mode");
             JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
@@ -128,7 +154,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
 
-            final JavaRDD<String> rawInput = _sparkContext.textFile(datastorePath);
+            final JavaRDD<String> rawInput;
+            if (_minPartitions != null) {
+                rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
+            } else {
+                rawInput = _sparkContext.textFile(datastorePath);
+            }
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
 
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();

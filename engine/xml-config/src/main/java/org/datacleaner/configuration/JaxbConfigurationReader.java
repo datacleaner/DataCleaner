@@ -353,7 +353,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
             if(result != null) {
-                result = new CompositeDescriptorProvider(prov, result);
+                result = new CompositeDescriptorProvider(result, prov);
             } else {
                 result = prov;
             }

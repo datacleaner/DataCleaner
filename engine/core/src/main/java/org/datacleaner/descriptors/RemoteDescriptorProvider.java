@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
 
@@ -28,6 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 
 /**
  * @Since 9/8/15
@@ -80,6 +83,18 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
         private void downloadDescriptors() {
             // TODO - load and fill the component descriptor collections
+            String serverUrl = "http://ubu:8888";
+            String resourcePath = "/repository/demo/components/Concatenator";
+
+            RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
+                    serverUrl + resourcePath,
+                    "Concatenator" + " (remote)");
+            transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                    "Columns", "Input Columns", InputColumn[].class, true, transformer));
+            transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                    "Separator", new StringSchema(), false, "A string to separate the concatenated values"));
+
+            _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
         }
     }
 }

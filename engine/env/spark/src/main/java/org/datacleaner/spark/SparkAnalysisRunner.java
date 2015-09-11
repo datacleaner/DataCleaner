@@ -63,7 +63,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
-        if (minPartitions > 0) {
+        if ((minPartitions != null) && (minPartitions > 0)) {
             _minPartitions = minPartitions;
         } else {
             logger.warn(

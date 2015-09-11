@@ -208,7 +208,5 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
         assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
         assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
-        assertEquals("[Tomasz, Kasper, Dennis, Claudia, Stefan, Hans, Ankit]", completeValueDistributionAnalyzerResult
-                .getUniqueValues().toString());
     }
 }

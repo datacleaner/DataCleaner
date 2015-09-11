@@ -92,10 +92,10 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
 import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
 import org.datacleaner.configuration.jaxb.SasDatastoreType;
-import org.datacleaner.configuration.jaxb.ServerType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
 import org.datacleaner.configuration.jaxb.SinglethreadedTaskrunnerType;
 import org.datacleaner.configuration.jaxb.StorageProviderType;
@@ -406,7 +406,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement, DataCleanerEnvironment environment) {
-        ServerType server = providerElement.getServer();
+        RemoteComponentServerType server = providerElement.getServer();
         return new RemoteDescriptorProvider(environment.getTaskRunner(), server.getUrl(), server.getUsername(), server.getPassword());
     }
 
@@ -1367,7 +1367,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         @SuppressWarnings("unchecked")
-        E result = (E) ReflectionUtils.newInstance(foundClass);
+        E result = ReflectionUtils.newInstance((Class<E>)foundClass);
 
         ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
 

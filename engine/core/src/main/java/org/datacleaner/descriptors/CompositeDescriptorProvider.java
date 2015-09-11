@@ -19,19 +19,25 @@
  */
 package org.datacleaner.descriptors;
 
-import org.apache.commons.collections.collection.CompositeCollection;
-import org.datacleaner.api.*;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.collections.collection.CompositeCollection;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RenderingFormat;
+import org.datacleaner.api.Transformer;
 
 /**
  * DescriptorProvider that provides a composite view of descriptors from 2 delegate providers.
  */
 public class CompositeDescriptorProvider implements DescriptorProvider {
 
-    private DescriptorProvider delegate1, delegate2;
+    private final DescriptorProvider delegate1;
+    private final DescriptorProvider delegate2;
 
     public CompositeDescriptorProvider(DescriptorProvider delegate1, DescriptorProvider delegate2) {
         this.delegate1 = delegate1;

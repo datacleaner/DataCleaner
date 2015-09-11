@@ -19,6 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
+import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
 
@@ -34,64 +35,51 @@ import java.util.concurrent.CountDownLatch;
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     private String url, username, password;
-    private CountDownLatch latch;
 
-    private final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerDescriptor<?>>();
-    private final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterDescriptor<?, ?>>();
-    private final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerDescriptor<?>>();
-    private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
+    LazyRef<Data> data = new LazyRef<Data>() {
+        @Override
+        protected Data fetch() throws Throwable {
+            Data data = new Data();
+            data.downloadDescriptors();
+            return data;
+        }
+    };
 
     public RemoteDescriptorProvider(TaskRunner taskRunner, String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
-        latch = new CountDownLatch(1);
-        taskRunner.run(new Task() {
-            @Override
-            public void execute() throws Exception {
-                try {
-                    downloadDescriptors();
-                } finally {
-                    latch.countDown();
-                }
-            }
-        }, null);
-    }
-
-    private void downloadDescriptors() {
-        // TODO
+        data.requestLoad();
     }
 
     @Override
     public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
-        awaitTasks();
-        return Collections.unmodifiableCollection(_filterBeanDescriptors.values());
+        return Collections.unmodifiableCollection(data.get()._filterBeanDescriptors.values());
     }
 
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
-        awaitTasks();
-        return Collections.unmodifiableCollection(_analyzerBeanDescriptors.values());
+        return Collections.unmodifiableCollection(data.get()._analyzerBeanDescriptors.values());
     }
 
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
-        awaitTasks();
-        return Collections.unmodifiableCollection(_transformerBeanDescriptors.values());
+        return Collections.unmodifiableCollection(data.get()._transformerBeanDescriptors.values());
     }
 
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
-        awaitTasks();
-        return Collections.unmodifiableCollection(_rendererBeanDescriptors.values());
+        return Collections.unmodifiableCollection(data.get()._rendererBeanDescriptors.values());
     }
 
-    private void awaitTasks() {
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+    class Data {
+        final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerDescriptor<?>>();
+        final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterDescriptor<?, ?>>();
+        final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerDescriptor<?>>();
+        final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
+
+        private void downloadDescriptors() {
+            // TODO - load and fill the component descriptor collections
         }
     }
-
 }

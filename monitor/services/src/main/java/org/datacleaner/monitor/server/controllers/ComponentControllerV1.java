@@ -19,15 +19,24 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.monitor.configuration.ComponentCache;
 import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
@@ -48,10 +57,17 @@ import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.UriUtils;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -59,6 +75,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 8. 7. 2015
  */
 @Controller
+@RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
     private ComponentCache _componentCache = null;
@@ -85,6 +102,8 @@ public class ComponentControllerV1 implements ComponentController {
      * @param tenant
      * @return
      */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
@@ -93,12 +112,14 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            componentList.add(tenant, descriptor);
+            componentList.add(createComponentInfo(tenant, descriptor));
         }
 
         return componentList;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList.ComponentInfo getComponentInfo(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") String name) {
@@ -106,7 +127,7 @@ public class ComponentControllerV1 implements ComponentController {
         LOGGER.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
-        return new ComponentList().createComponentInfo(tenant, descriptor);
+        return createComponentInfo(tenant, descriptor);
     }
 
 
@@ -117,6 +138,9 @@ public class ComponentControllerV1 implements ComponentController {
      * @param processStatelessInput
      * @return
      */
+    @ResponseBody
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
@@ -134,6 +158,9 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It runs the component and returns the results.
      */
+    @ResponseBody
+    @RequestMapping(value = "/{name}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public String createComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
@@ -154,6 +181,8 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It returns the continuous result of the component for the provided input data.
      */
+    @ResponseBody
+    @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessOutput processComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_ID) final String id,
@@ -174,6 +203,8 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It returns the component's final result.
      */
+    @ResponseBody
+    @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessResult getFinalResult(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_ID) final String id)
@@ -186,6 +217,9 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It deletes the component.
      */
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_ID) final String id)
@@ -201,4 +235,69 @@ public class ComponentControllerV1 implements ComponentController {
     private String unURLify(String url) {
         return url.replace("_@_", "/");
     }
+
+    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
+        return new ComponentList.ComponentInfo()
+                .setName(descriptor.getDisplayName())
+                .setDescription(descriptor.getDescription())
+                .setCreateURL(getURLForCreation(tenant, descriptor))
+                .setProperties(createPropertiesInfo(descriptor));
+    }
+
+    static private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
+        try {
+            return String.format(
+                    "/repository/%s/components/%s",
+                    UriUtils.encodePathSegment(tenant, "UTF8"),
+                    UriUtils.encodePathSegment(descriptor.getDisplayName().replace("/", "_@_"), "UTF8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
+        Map<String, ComponentList.PropertyInfo> result = new HashMap<>();
+        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
+            if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+                continue;
+            }
+
+            ComponentList.PropertyInfo propInfo = new ComponentList.PropertyInfo();
+            propInfo.setName(propertyDescriptor.getName());
+            propInfo.setDescription(propertyDescriptor.getDescription());
+            propInfo.setRequired(propertyDescriptor.isRequired());
+            propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
+            propInfo.setType(getPropertyType(descriptor, propertyDescriptor));
+            if(propertyDescriptor.getBaseType().isEnum()) {
+                propInfo.setEnumValues(toStringArray(propertyDescriptor.getBaseType().getEnumConstants()));
+            }
+            result.put(propInfo.getName(), propInfo);
+        }
+        return result;
+    }
+
+    static String[] toStringArray(Object[] array) {
+        String[] result = new String[array.length];
+        for(int i = 0; i < array.length; i++) {
+            result[i] = String.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    static String getPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor) {
+        // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
+        if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
+            Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
+            Type t = f.getGenericType();
+            if(t instanceof Class) {
+                return ((Class) t).getCanonicalName();
+            } else {
+                return f.getGenericType().toString();
+            }
+        } else {
+            return propertyDescriptor.getType().getCanonicalName();
+        }
+    }
+
+
 }

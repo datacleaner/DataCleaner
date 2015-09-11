@@ -21,6 +21,7 @@ package org.datacleaner.monitor.server.components;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.monitor.server.controllers.ComponentControllerV1;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
@@ -64,7 +65,7 @@ public class ComponentListTest {
         replay(configuredPropertyDescriptorMock);
         replay(componentDescriptorMock);
 
-        componentList.add(tenant, descriptorMock);
+        componentList.add(ComponentControllerV1.createComponentInfo(tenant, descriptorMock));
         assertTrue(componentList.getComponents().size() == 1);
 
         verify(configuredPropertyDescriptorMock);

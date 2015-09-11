@@ -19,23 +19,14 @@
  */
 package org.datacleaner.restclient;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.datacleaner.descriptors.AbstractPropertyDescriptor;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
-import org.springframework.web.util.UriUtils;
 
 /**
  * List of component details.
@@ -45,75 +36,12 @@ public class ComponentList {
 
     private List<ComponentInfo> components = new ArrayList<>();
 
-    public void add(String tenant, ComponentDescriptor descriptor) {
-        components.add(createComponentInfo(tenant, descriptor));
-    }
-
-    public ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
-        return new ComponentInfo()
-                .setName(descriptor.getDisplayName())
-                .setDescription(descriptor.getDescription())
-                .setCreateURL(getURLForCreation(tenant, descriptor))
-                .setProperties(createPropertiesInfo(descriptor));
+    public void add(ComponentInfo componentInfo) {
+        components.add(componentInfo);
     }
 
     public List<ComponentInfo> getComponents() {
         return components;
-    }
-
-    private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
-        try {
-            return String.format(
-                    "/repository/%s/components/%s",
-                    UriUtils.encodePathSegment(tenant, "UTF8"),
-                    UriUtils.encodePathSegment(descriptor.getDisplayName().replace("/", "_@_"), "UTF8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Map<String, PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
-        Map<String, PropertyInfo> result = new HashMap<>();
-        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
-            if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
-                continue;
-            }
-
-            PropertyInfo propInfo = new PropertyInfo();
-            propInfo.setName(propertyDescriptor.getName());
-            propInfo.setDescription(propertyDescriptor.getDescription());
-            propInfo.setRequired(propertyDescriptor.isRequired());
-            propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
-            propInfo.setType(getPropertyType(descriptor, propertyDescriptor));
-            if(propertyDescriptor.getBaseType().isEnum()) {
-                propInfo.setEnumValues(toStringArray(propertyDescriptor.getBaseType().getEnumConstants()));
-            }
-            result.put(propInfo.getName(), propInfo);
-        }
-        return result;
-    }
-
-    private String[] toStringArray(Object[] array) {
-        String[] result = new String[array.length];
-        for(int i = 0; i < array.length; i++) {
-            result[i] = String.valueOf(array[i]);
-        }
-        return result;
-    }
-
-    private String getPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor) {
-        // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
-        if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
-            Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
-            Type t = f.getGenericType();
-            if(t instanceof Class) {
-                return ((Class) t).getCanonicalName();
-            } else {
-                return f.getGenericType().toString();
-            }
-        } else {
-            return propertyDescriptor.getType().getCanonicalName();
-        }
     }
 
     /**

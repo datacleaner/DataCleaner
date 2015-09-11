@@ -48,8 +48,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         }
     };
 
-    public RemoteDescriptorProvider(TaskRunner taskRunner, String url, String username, String password) {
-        this.url = url;
+    public RemoteDescriptorProvider(String url, String username, String password) {
+        this.url = url.replaceAll("/+$", "");
         this.username = username;
         this.password = password;
         data.requestLoad();
@@ -82,12 +82,15 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             // TODO - load and fill the component descriptor collections
-            String serverUrl = "http://ubu:8888";
             String resourcePath = "/repository/demo/components/Concatenator";
-
             RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                    serverUrl + resourcePath,
+                    url + resourcePath,
                     "Concatenator" + " (remote)");
             transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
                     "Columns", "Input Columns", InputColumn[].class, true, transformer));

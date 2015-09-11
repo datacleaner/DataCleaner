@@ -27,6 +27,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * List of component details.
@@ -93,14 +94,17 @@ public class ComponentList {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonPropertyOrder({ "name", "type", "description", "required", "inputColumn", "enumValues" })
+    @JsonPropertyOrder({ "name", "type", "description", "required", "inputColumn"})
     public static class PropertyInfo {
         private String name;
-        private String type;
+        /** More human-readable class name, which contains also info about generics. */
+        private String classDetails;
+        /** Class name that can can be deserialized to Class object */
+        private String className;
+        private JsonSchema schema;
         private String description;
         private boolean required;
         private boolean isInputColumn;
-        private String[] enumValues;
 
         public void setIsInputColumn(boolean inputColumn) {
             isInputColumn = inputColumn;
@@ -140,20 +144,28 @@ public class ComponentList {
             return required;
         }
 
-        public String getType() {
-            return type;
+        public String getClassName() {
+            return className;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        public void setClassName(String className) {
+            this.className = className;
         }
 
-        public String[] getEnumValues() {
-            return enumValues;
+        public JsonSchema getSchema() {
+            return schema;
         }
 
-        public void setEnumValues(String[] enumValues) {
-            this.enumValues = enumValues;
+        public void setSchema(JsonSchema schema) {
+            this.schema = schema;
+        }
+
+        public String getClassDetails() {
+            return classDetails;
+        }
+
+        public void setClassDetails(String classDetails) {
+            this.classDetails = classDetails;
         }
     }
 

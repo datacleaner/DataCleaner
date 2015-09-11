@@ -23,6 +23,10 @@ import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +40,8 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
 
     private String url, username, password;
 
@@ -82,22 +88,46 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
-            try {
-                Thread.sleep(60000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            // TODO - load and fill the component descriptor collections
-            String resourcePath = "/repository/demo/components/Concatenator";
-            RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                    url + resourcePath,
-                    "Concatenator" + " (remote)");
-            transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
-                    "Columns", "Input Columns", InputColumn[].class, true, transformer));
-            transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                    "Separator", new StringSchema(), false, "A string to separate the concatenated values"));
 
-            _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
+            try {
+                ComponentRESTClient client = new ComponentRESTClient(url, username, password);
+                ComponentList components = client.getAllComponents("test");
+                for(ComponentList.ComponentInfo component: components.getComponents()) {
+                    try {
+                        String componentUrl = url + component.getCreateURL();
+                        RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
+                                componentUrl,
+                                component.getName() + " (remote)");
+                        for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
+                            String name = propE.getKey();
+                            ComponentList.PropertyInfo propInfo = propE.getValue();
+                            String className = propInfo.getClassName();
+                            try {
+                                Class cl = Class.forName(className, false, getClass().getClassLoader());
+                                transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                                        name,
+                                        propInfo.getDescription(),
+                                        cl,
+                                        propInfo.isRequired(),
+                                        transformer));
+                            } catch(Exception e) {
+                                // class not available on this server.
+                                transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                                        name,
+                                        propInfo.getSchema(),
+                                        propInfo.isRequired(),
+                                        propInfo.getDescription(),
+                                        transformer));
+                            }
+                        }
+                        _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
+                    } catch(Exception e) {
+                        logger.error("Cannot create remote component representation for: " + component.getName(), e);
+                    }
+                }
+            } catch(Exception e) {
+                logger.error("Cannot get list of remote components on " + url, e);
+            }
         }
     }
 }

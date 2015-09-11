@@ -35,6 +35,8 @@ public interface ComponentController {
 
     public ComponentList.ComponentInfo getComponentInfo(final String tenant, final String name);
 
+    public OutputColumns getOutputColumns(String tenant, String name, CreateInput createInput);
+
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
      * @param tenant

@@ -51,6 +51,14 @@ public class ComponentRESTClient implements ComponentController {
         return Serializator.componentInfo(response);
     }
 
+    public OutputColumns getOutputColumns(String tenant, String componentName, CreateInput config) {
+        componentName = urlify(componentName);
+        String configuration = Serializator.stringCreateInput(config);
+        String response = call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
+
+        return Serializator.outputColumnsOutput(response);
+    }
+
     public ProcessStatelessOutput processStateless(String tenant, String componentName, ProcessStatelessInput processStatelessInput) {
         componentName = urlify(componentName);
         String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);

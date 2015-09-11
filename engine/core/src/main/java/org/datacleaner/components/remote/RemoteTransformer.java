@@ -173,9 +173,7 @@ public class RemoteTransformer implements Transformer {
 
     @Override
     public Object[] transform(InputRow inputRow) {
-
         try {
-
             List values = new ArrayList();
             String[] cols = getOutputColumnNames();
             for(String col: cols) {

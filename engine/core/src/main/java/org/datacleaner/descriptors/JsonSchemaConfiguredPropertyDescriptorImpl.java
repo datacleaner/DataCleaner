@@ -42,17 +42,14 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     private ComponentDescriptor component;
     private boolean isInputColumn;
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, ComponentDescriptor component) {
         this.name = name;
         this.description = description;
         this.schema = schema;
         this.isInputColumn = isInputColumn;
-    }
-
-    public void setComponent(ComponentDescriptor component) {
         this.component = component;
     }
-    
+
     @Override
     public String getName() {
         return name;

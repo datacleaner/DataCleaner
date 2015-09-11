@@ -49,6 +49,7 @@ import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.OutputColumns;
 import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
@@ -68,6 +69,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -130,6 +134,32 @@ public class ComponentControllerV1 implements ComponentController {
         return createComponentInfo(tenant, descriptor);
     }
 
+    /**
+     * Returns output columns specification, based on the provided configuration
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{name}/_outputColumns", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public OutputColumns getOutputColumns(
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,
+            @RequestBody final CreateInput createInput) {
+        String decodedName = unURLify(name);
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentHandler handler = ComponentHandlerFactory.createComponent(
+                tenantContext, decodedName, createInput.configuration);
+        handler.createComponent(createInput.configuration);
+        try {
+            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
+            org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
+            for(int i = 0; i < outCols.getColumnCount(); i++) {
+                result.add(outCols.getColumnName(i), outCols.getColumnType(i));
+            }
+            return result;
+        } finally {
+            handler.closeComponent();
+        }
+    }
 
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
@@ -267,10 +297,7 @@ public class ComponentControllerV1 implements ComponentController {
             propInfo.setDescription(propertyDescriptor.getDescription());
             propInfo.setRequired(propertyDescriptor.isRequired());
             propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
-            propInfo.setType(getPropertyType(descriptor, propertyDescriptor));
-            if(propertyDescriptor.getBaseType().isEnum()) {
-                propInfo.setEnumValues(toStringArray(propertyDescriptor.getBaseType().getEnumConstants()));
-            }
+            setPropertyType(descriptor, propertyDescriptor, propInfo);
             result.put(propInfo.getName(), propInfo);
         }
         return result;
@@ -284,18 +311,39 @@ public class ComponentControllerV1 implements ComponentController {
         return result;
     }
 
-    static String getPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor) {
-        // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
+    static void setPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {
+        // TODO: avoid instanceof by extending the basic ComponentDescriptor interface (maybe add getter for property "Type" in addition to "Class" ? )
+
+        SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+
         if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
             Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
             Type t = f.getGenericType();
             if(t instanceof Class) {
-                return ((Class) t).getCanonicalName();
+                propInfo.setClassDetails(((Class) t).getCanonicalName());
             } else {
-                return f.getGenericType().toString();
+                propInfo.setClassDetails(f.getGenericType().toString());
+            }
+            if(!propertyDescriptor.isInputColumn()) {
+                try {
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(ComponentHandler.mapper.constructType(f.getGenericType()), visitor);
+                } catch (JsonMappingException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
-            return propertyDescriptor.getType().getCanonicalName();
+            propInfo.setClassDetails(propertyDescriptor.getType().getCanonicalName());
+            if(!propertyDescriptor.isInputColumn()) {
+                try {
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(ComponentHandler.mapper.constructType(propertyDescriptor.getType()), visitor);
+                } catch (JsonMappingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        propInfo.setClassName(propertyDescriptor.getType().getName());
+        if(!propertyDescriptor.isInputColumn()) {
+            propInfo.setSchema(visitor.finalSchema());
         }
     }
 

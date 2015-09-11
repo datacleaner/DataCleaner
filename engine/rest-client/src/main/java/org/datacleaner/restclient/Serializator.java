@@ -47,6 +47,10 @@ public class Serializator {
         return Serializator.intoString(processStatelessInput);
     }
 
+    public static OutputColumns outputColumnsOutput(String response) {
+        return Serializator.fromString(response, OutputColumns.class);
+    }
+
     public static ProcessStatelessOutput processStatelessOutput(String response) {
         return (ProcessStatelessOutput) Serializator.fromString(response, ProcessStatelessOutput.class);
     }
@@ -71,18 +75,16 @@ public class Serializator {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            logger.error(e.getMessage());
-            return "";
+            throw new RuntimeException(e);
         }
     }
 
-    private static Object fromString(String value, Class type) {
+    private static <T> T fromString(String value, Class<T> type) {
         try {
             return objectMapper.readValue(value, type);
         }
         catch (IOException e) {
-            logger.error(e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

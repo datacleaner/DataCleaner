@@ -45,6 +45,7 @@ import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
@@ -69,7 +70,7 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    public static ObjectMapper mapper = new ObjectMapper();
 
     private final String componentName;
     private DataCleanerConfiguration dcConfiguration;
@@ -176,6 +177,10 @@ public class ComponentHandler {
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
         lifeCycleHelper.initialize(descriptor, component);
+    }
+
+    public OutputColumns getOutputColumns() {
+        return ((Transformer)component).getOutputColumns();
     }
 
     public List<Object[]> runComponent(JsonNode data) {

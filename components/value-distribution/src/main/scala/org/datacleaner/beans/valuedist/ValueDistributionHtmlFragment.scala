@@ -59,7 +59,7 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
     val height = numBars * barHeight;
     val style = "height: " + height + "px;"
 
-    val html = <div class="valueDistributionGroupPanel">
+    return <div class="valueDistributionGroupPanel">
              {
                if (group && result.getName() != null) {
                  <h3>Group: { result.getName() }</h3>
@@ -89,8 +89,6 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
                }
              </table>
            </div>;
-    
-    return html;
   }
 
   def getCount(result: ValueCountingAnalyzerResult, valueFreq: ValueFrequency, context: HtmlRenderingContext): scala.xml.Node = {

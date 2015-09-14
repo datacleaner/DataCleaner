@@ -40,7 +40,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
         }
 
         ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
-                "foo", 50, null, null);
+                "foo", null, null);
         r.renderGroupResult(new SingleValueDistributionResult(column.getName(), topValueCount, 0, 0, 0, null,
                 new RowAnnotationImpl(), null, null));
 
@@ -84,7 +84,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
         // preferred size is 13, which would earlier on mean that all the 4
         // values above could be individually included in the dataset.
         ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
-                "foo", 13, null, null);
+                "foo", null, null);
         RowAnnotationImpl nullValueAnnotation = new RowAnnotationImpl();
         r.renderGroupResult(new SingleValueDistributionResult(column.getName(), topValueCount, 10, 0, 0, null,
                 nullValueAnnotation, null, null));
@@ -115,7 +115,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
         topValueCount.register(new SingleValueFrequency("r9", 530));
 
         ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
-                "foo", 10, null, null);
+                "foo", null, null);
         r.renderGroupResult(new SingleValueDistributionResult("foo", topValueCount, 0, 0, 0, null,
                 new RowAnnotationImpl(), null, null));
 

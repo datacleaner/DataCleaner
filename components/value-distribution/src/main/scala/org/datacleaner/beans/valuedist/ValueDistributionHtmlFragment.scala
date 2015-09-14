@@ -50,7 +50,7 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
   def renderResult(result: ValueCountingAnalyzerResult, context: HtmlRenderingContext, group: Boolean): scala.xml.Node = {
     val chartElementId: String = context.createElementId();
 
-    val valueCounts = result.getReducedValueFrequencies(32);
+    val valueCounts = result.getValueCounts();
 
     frag.addHeadElement(new ValueDistributionChartScriptHeadElement(result, valueCounts, chartElementId));
 

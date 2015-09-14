@@ -76,12 +76,10 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             .getLogger(ValueDistributionResultSwingRendererGroupDelegate.class);
 
     private static final Color[] SLICE_COLORS = DCDrawingSupplier.DEFAULT_FILL_COLORS;
-    private static final int DEFAULT_PREFERRED_SLICES = 32;
 
     private final Map<String, Color> _valueColorMap;
     private final DefaultCategoryDataset _dataset = new DefaultCategoryDataset();
     private final JButton _backButton = WidgetFactory.createDefaultButton("Back", IconUtils.ACTION_BACK);
-    private final int _preferredSlices;
     private final String _groupOrColumnName;
     private final DCTable _table;
     private final RendererFactory _rendererFactory;
@@ -92,25 +90,14 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
     /**
      * Default constructor
-     */
-    public ValueDistributionResultSwingRendererGroupDelegate(String groupOrColumnName, RendererFactory rendererFactory,
-            WindowContext windowContext) {
-        this(groupOrColumnName, DEFAULT_PREFERRED_SLICES, rendererFactory, windowContext);
-    }
-
-    /**
-     * Alternative constructor (primarily used for testing) with customizable
-     * slice count
      * 
      * @param groupOrColumnName
-     * @param preferredSlices
      * @param rendererFactory
      * @param windowContext
      */
-    public ValueDistributionResultSwingRendererGroupDelegate(String groupOrColumnName, int preferredSlices,
+    public ValueDistributionResultSwingRendererGroupDelegate(String groupOrColumnName,
             RendererFactory rendererFactory, WindowContext windowContext) {
         _groupOrColumnName = groupOrColumnName;
-        _preferredSlices = preferredSlices;
         _rendererFactory = rendererFactory;
         _windowContext = windowContext;
         _table = new DCTable("Value", LabelUtils.COUNT_LABEL);
@@ -140,7 +127,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         final Integer unexpectedValueCount = result.getUnexpectedValueCount();
         final int totalCount = result.getTotalCount();
 
-        _valueCounts = result.getReducedValueFrequencies(_preferredSlices);
+        _valueCounts = result.getValueCounts();
         for (ValueFrequency valueCount : _valueCounts) {
             setDataSetValue(valueCount.getName(), valueCount.getCount());
         }

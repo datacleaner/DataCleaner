@@ -20,6 +20,7 @@
 package org.datacleaner.beans.valuedist;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,7 +104,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
         valueDist1.runInternal(new MockInputRow(), "locallyUniqueWord", "group1", 1);
         final ValueDistributionAnalyzerResult partialResult1 = valueDist1.getResult();
 
-        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList1 = ((GroupedValueDistributionResult) partialResult1).getGroupResults();
+        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList1 = ((GroupedValueDistributionResult) partialResult1)
+                .getGroupResults();
         assertEquals(2, partialSingleResultList1.size());
         final Iterator<? extends ValueCountingAnalyzerResult> iterator = partialSingleResultList1.iterator();
         final SingleValueDistributionResult firstGroup = (SingleValueDistributionResult) iterator.next();
@@ -113,11 +115,13 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
         assertEquals(0, partialResult1.getNullCount());
         assertEquals(2, partialResult1.getUniqueCount().intValue());
-        assertEquals("[hello, locallyUniqueWord]", partialResult1.getUniqueValues().toString());
+        assertTrue(partialResult1.getUniqueValues().contains("hello"));
+        assertTrue(partialResult1.getUniqueValues().contains("locallyUniqueWord"));
         assertEquals(6, partialResult1.getTotalCount());
 
         ValueDistributionAnalyzer valueDist2 = new ValueDistributionAnalyzer(new MetaModelInputColumn(
-                new MutableColumn("col")), new MetaModelInputColumn(new MutableColumn("groupCol", ColumnType.STRING)).narrow(String.class), true);
+                new MutableColumn("col")),
+                new MetaModelInputColumn(new MutableColumn("groupCol", ColumnType.STRING)).narrow(String.class), true);
 
         valueDist2.runInternal(new MockInputRow(), "hello", "group1", 5);
         valueDist2.runInternal(new MockInputRow(), "hello", "group1", 1);
@@ -126,7 +130,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
         valueDist2.runInternal(new MockInputRow(), "globallyUniqueWord", "group1", 1);
         ValueDistributionAnalyzerResult partialResult2 = valueDist2.getResult();
 
-        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList2 = ((GroupedValueDistributionResult) partialResult1).getGroupResults();
+        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList2 = ((GroupedValueDistributionResult) partialResult1)
+                .getGroupResults();
         assertEquals(2, partialSingleResultList2.size());
         final Iterator<? extends ValueCountingAnalyzerResult> iterator2 = partialSingleResultList2.iterator();
         final SingleValueDistributionResult firstGroup2 = (SingleValueDistributionResult) iterator2.next();

@@ -52,7 +52,7 @@
 				</choice>
 				<element name="storage-provider" type="ab:storageProviderType"
 					minOccurs="0" maxOccurs="1" />
-				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="1" maxOccurs="1" />
+				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="0" maxOccurs="1" />
 
 				<!-- Deprecated - for backward compatibility -->
 				<choice minOccurs="0" maxOccurs="1">
@@ -141,14 +141,14 @@
                 <annotation>
                     <documentation>
                         Defines which java packages should be scanned for
-                        components to use in AnalyzerBeans.
+                        components to use in DataCleaner.
                     </documentation>
                 </annotation>
             </element>
             <element name="remote-components" type="ab:remoteComponentsType" minOccurs="0" maxOccurs="1">
                 <annotation>
                     <documentation>
-                        Defines connection to DC monitor which provides AnalyzerBeans components remotely over network.
+                        Defines connection to DC monitor which provides DataCleaner components remotely over network.
                     </documentation>
                 </annotation>
             </element>
@@ -173,16 +173,16 @@
 
     <complexType name="remoteComponentsType">
         <sequence>
-            <element name="server" type="ab:serverType"/>
+            <element name="server" type="ab:remoteComponentServerType"/>
         </sequence>
     </complexType>
 
-    <complexType name="serverType">
+    <complexType name="remoteComponentServerType">
         <sequence>
             <element name="url" type="string" minOccurs="0" maxOccurs="1">
                 <annotation>
                     <documentation>
-                        Defines URL to the Datacleaner monitor server
+                        Defines base URL to the DataCleaner monitor server
                     </documentation>
                 </annotation>
             </element>

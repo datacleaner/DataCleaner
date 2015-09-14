@@ -21,6 +21,7 @@ package org.datacleaner.result;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
@@ -69,6 +70,33 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
                 return count;
             }
         };
+    }
+
+    @Override
+    public Collection<ValueFrequency> getReducedValueFrequencies(final int preferredMaximum) {
+        final Collection<ValueFrequency> original = getValueCounts();
+        
+        final Collection<ValueFrequency> result = new TreeSet<ValueFrequency>(original);
+
+        if (original.size() <= preferredMaximum) {
+            // check if any composite value freq's can be exploded
+            for (ValueFrequency valueFrequency : original) {
+                if (valueFrequency.isComposite()) {
+                    List<ValueFrequency> children = valueFrequency.getChildren();
+                    if (children != null) {
+                        if (result.size() - 1 + children.size() <= preferredMaximum) {
+                            // replace with children
+                            result.remove(valueFrequency);
+                            result.addAll(children);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        } else {
+        	return original;
+        }
     }
 
     @Override

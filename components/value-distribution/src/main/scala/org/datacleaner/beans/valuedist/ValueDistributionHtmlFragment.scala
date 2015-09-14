@@ -50,7 +50,7 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
   def renderResult(result: ValueCountingAnalyzerResult, context: HtmlRenderingContext, group: Boolean): scala.xml.Node = {
     val chartElementId: String = context.createElementId();
 
-    val valueCounts = result.getValueCounts();
+    val valueCounts = result.getReducedValueFrequencies(32);
 
     frag.addHeadElement(new ValueDistributionChartScriptHeadElement(result, valueCounts, chartElementId));
 
@@ -59,7 +59,7 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
     val height = numBars * barHeight;
     val style = "height: " + height + "px;"
 
-    return <div class="valueDistributionGroupPanel">
+    val html = <div class="valueDistributionGroupPanel">
              {
                if (group && result.getName() != null) {
                  <h3>Group: { result.getName() }</h3>
@@ -89,6 +89,8 @@ class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendere
                }
              </table>
            </div>;
+    
+    return html;
   }
 
   def getCount(result: ValueCountingAnalyzerResult, valueFreq: ValueFrequency, context: HtmlRenderingContext): scala.xml.Node = {

@@ -34,6 +34,21 @@ public interface ValueCountingAnalyzerResult extends AnalyzerResult {
 
     public Collection<ValueFrequency> getValueCounts();
 
+    /**
+     * Gets a {@link ValueFrequency} list similar to that of
+     * {@link #getValueCounts()}, but allowing the underlying implementation to
+     * reduce the list by building {@link CompositeValueFrequency} objects if
+     * necesary to reach the preferred maximum number of elements.
+     * 
+     * @param preferredMaximum
+     *            the preferred maximum number of elements. Note that this is a
+     *            hint, but depending on the implementation and the data, it
+     *            might not always be possible to reduce to this preferred
+     *            maximum.
+     * @return
+     */
+    public Collection<ValueFrequency> getReducedValueFrequencies(int preferredMaximum);
+
     public int getNullCount();
 
     public int getTotalCount();

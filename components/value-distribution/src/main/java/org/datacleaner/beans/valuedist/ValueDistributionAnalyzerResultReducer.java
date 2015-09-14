@@ -52,32 +52,21 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
     @Override
     public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
-        final ValueCountList topValues = ValueCountListImpl.emptyList();
-        final Collection<String> uniqueValues = Collections.emptyList();
         final Map<String, RowAnnotation> annotations = Collections.emptyMap();
-        final InputColumn<?>[] highlightedColumns = null;
 
-        SingleValueDistributionResult reducedResult = new SingleValueDistributionResult(null, topValues, uniqueValues,
-                0, 0, 0, annotations, new RowAnnotationImpl(), _rowAnnotationFactory, highlightedColumns);
+        ValueDistributionAnalyzerResult reducedResult = null;
 
         for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
             if (partialResult instanceof SingleValueDistributionResult) {
-                final SingleValueDistributionResult singleResult = (SingleValueDistributionResult) partialResult;
-                reducedResult = reduceSingleResult(annotations, highlightedColumns, reducedResult, singleResult);
+                final SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) reducedResult;
+                final SingleValueDistributionResult singlePartialResult = (SingleValueDistributionResult) partialResult;
+                reducedResult = reduceSingleResult(annotations, singlePartialResult.getHighlightedColumns(), singleReducedResult,
+                        singlePartialResult);
             } else if (partialResult instanceof GroupedValueDistributionResult) {
-                GroupedValueDistributionResult groupedResult = (GroupedValueDistributionResult) partialResult;
-
-                for (ValueCountingAnalyzerResult valueCountingResult : groupedResult.getGroupResults()) {
-                    if (valueCountingResult instanceof SingleValueDistributionResult) {
-                        SingleValueDistributionResult singleResult = (SingleValueDistributionResult) valueCountingResult;
-                        reducedResult = reduceSingleResult(annotations, highlightedColumns, reducedResult, singleResult);
-                    } else {
-                        throw new IllegalStateException("Expected "
-                                + SingleValueDistributionResult.class.getSimpleName() + ", but encountered "
-                                + valueCountingResult.getClass().getSimpleName());
-                    }
-                }
-
+                final GroupedValueDistributionResult groupedReducedResult = (GroupedValueDistributionResult) reducedResult;
+                final GroupedValueDistributionResult groupedPartialResult = (GroupedValueDistributionResult) partialResult;
+                
+                reducedResult = reduceGroupedResult(annotations, groupedReducedResult, groupedPartialResult);
             } else {
                 throw new IllegalStateException("Unsupported type of "
                         + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
@@ -91,6 +80,9 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
     private SingleValueDistributionResult reduceSingleResult(final Map<String, RowAnnotation> annotations,
             final InputColumn<?>[] highlightedColumns, final SingleValueDistributionResult reducedResult,
             final SingleValueDistributionResult singleResult) {
+        if (reducedResult == null) {
+            return singleResult;
+        }
         final ValueCountList reducedTopValues = reduceTopValues(reducedResult.getTopValues(),
                 singleResult.getTopValues());
         final int reducedDistinctCount = reduceDistinctCount(reducedResult, singleResult);
@@ -103,6 +95,36 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                 new RowAnnotationImpl(), _rowAnnotationFactory, highlightedColumns);
     }
 
+    @SuppressWarnings("unchecked")
+    private GroupedValueDistributionResult reduceGroupedResult(final Map<String, RowAnnotation> annotations, final GroupedValueDistributionResult reducedResult,
+            final GroupedValueDistributionResult groupedResult) {
+        if (reducedResult == null) {
+            return groupedResult;
+        }
+        
+        InputColumn<?>[] highlightedColumns = null;
+
+        final Collection<ValueCountingAnalyzerResult> reducedChildResults = new ArrayList<ValueCountingAnalyzerResult>();
+        for (ValueCountingAnalyzerResult singleValueCountingResult : groupedResult.getGroupResults()) {
+            SingleValueDistributionResult singleResult = (SingleValueDistributionResult) singleValueCountingResult;
+            for (ValueCountingAnalyzerResult singleValueCountingReducedResult : reducedResult.getGroupResults()) {
+                SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) singleValueCountingReducedResult;
+
+                // TODO: Not only name but also grouping column
+                if (singleReducedResult.getName().equals(singleResult.getName())) {
+                    SingleValueDistributionResult reducedSingleResult = reduceSingleResult(annotations,
+                            singleResult.getHighlightedColumns(), singleReducedResult, singleResult);
+                    reducedChildResults.add(reducedSingleResult);
+                    highlightedColumns = reducedSingleResult.getHighlightedColumns();
+                    break;
+                }
+            }
+        }
+
+        return new GroupedValueDistributionResult(highlightedColumns[0], (InputColumn<String>) highlightedColumns[1],
+                reducedChildResults);
+    }
+
     private ValueCountList reduceTopValues(ValueCountList topValues1, ValueCountList topValues2) {
         if (topValues1.getValueCounts().isEmpty()) {
             return topValues2;
@@ -111,6 +133,8 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         ValueCountListImpl topValuesImpl1 = (ValueCountListImpl) topValues1;
         ValueCountListImpl topValuesImpl2 = (ValueCountListImpl) topValues2;
 
+        // TODO: Check if introduced a bug here (leaving out values from the
+        // first set)
         for (ValueFrequency valueFrequency2 : topValuesImpl2.getValueCounts()) {
             for (ValueFrequency valueFrequency1 : topValuesImpl1.getValueCounts()) {
                 if (valueFrequency1.getName().equals(valueFrequency2.getName())) {

@@ -30,6 +30,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
+import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
@@ -205,6 +206,43 @@ public class SparkAnalysisRunnerTest extends TestCase {
 
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
                 ValueDistributionAnalyzerResult.class).get(0);
+        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
+        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
+        assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
+    }
+    
+    @Test
+    public void testGroupedValueDistributionReducer() throws Exception {
+        final AnalysisResultFuture result;
+
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName(
+                "DCTest - testGroupedValueDistributionReducer");
+        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        try {
+
+            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+                    "src/test/resources/conf_local.xml", "src/test/resources/distributable-grouped-value-dist.analysis.xml");
+            final AnalysisJob job = sparkJobContext.getAnalysisJob();
+            assertNotNull(job);
+
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, 4);
+
+            result = sparkAnalysisRunner.run(job);
+        } finally {
+            sparkContext.close();
+        }
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(1, results.size());
+
+        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
+                ValueDistributionAnalyzerResult.class).get(0);
+        assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
         assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
         assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());

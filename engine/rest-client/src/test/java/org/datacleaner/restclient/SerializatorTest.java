@@ -20,13 +20,10 @@
 package org.datacleaner.restclient;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -42,7 +39,7 @@ public class SerializatorTest {
     @Test
     public void testComponentList() throws Exception {
         ComponentList componentList = new ComponentList();
-        componentList.add(tenantName, getComponentDescriptorMock());
+        componentList.add(getComponentInfo());
 
         String serialization = intoString(componentList);
         ComponentList componentList2 = Serializator.componentList(serialization);
@@ -52,14 +49,13 @@ public class SerializatorTest {
         Assert.assertTrue(serialization.equals(serialization2));
     }
 
-    private ComponentDescriptor getComponentDescriptorMock() {
-        ComponentDescriptor componentDescriptor = EasyMock.createNiceMock(ComponentDescriptor.class);
-        EasyMock.expect(componentDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
-        EasyMock.expect(componentDescriptor.getDescription()).andReturn(componentDescription).anyTimes();
-        EasyMock.expect(componentDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        EasyMock.replay(componentDescriptor);
+    private ComponentList.ComponentInfo getComponentInfo() {
+        ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo();
+        componentInfo.setName("name");
+        componentInfo.setDescription("description");
+        componentInfo.setCreateURL("http://create.url");
 
-        return componentDescriptor;
+        return componentInfo;
     }
 
     private String intoString(Object value) {

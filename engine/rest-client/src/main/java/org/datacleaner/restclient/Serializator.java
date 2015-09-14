@@ -78,6 +78,10 @@ public class Serializator {
 
     private static Object fromString(String value, Class type) {
         try {
+            if (value instanceof String && (value == null || value.equals(""))) {
+                return null;
+            }
+
             return objectMapper.readValue(value, type);
         }
         catch (IOException e) {

@@ -19,24 +19,27 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Serializable;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.*;
-
 public class ProcessStatelessOutputTest {
     private ProcessStatelessOutput processStatelessOutput = new ProcessStatelessOutput();
-    private Serializable resultMock = null;
-    private Object rows = new Object();
+    private JsonNode resultMock = null;
+    private JsonNode rows = null;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void setUp() {
-        resultMock = createNiceMock(Serializable.class);
+        resultMock = createNiceMock(JsonNode.class);
+        rows = getJsonNode("rows");
         replay(resultMock);
     }
 
@@ -50,5 +53,9 @@ public class ProcessStatelessOutputTest {
 
         assertEquals(resultMock, processStatelessOutput.result);
         assertEquals(rows, processStatelessOutput.rows);
+    }
+
+    private JsonNode getJsonNode(Object value) {
+        return objectMapper.convertValue(value, JsonNode.class);
     }
 }

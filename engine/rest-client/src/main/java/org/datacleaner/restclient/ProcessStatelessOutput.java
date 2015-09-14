@@ -23,6 +23,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Crate for a component output.
@@ -32,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessStatelessOutput implements Serializable {
     @JsonProperty
-    public Serializable result;
+    public JsonNode result;
     @JsonProperty
-    public Object rows;
+    public JsonNode rows;
 }

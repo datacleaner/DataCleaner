@@ -53,6 +53,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore configuration.
@@ -65,6 +68,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -124,11 +128,17 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
+        ComponentHandler handler =  ComponentHandlerFactory.createComponent(
+                tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = handler.runComponent(processStatelessInput.data);
-        output.result = handler.closeComponent();
+        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
+        output.result = getJsonNode(handler.closeComponent());
+
         return output;
+    }
+
+    private JsonNode getJsonNode(Object value) {
+        return objectMapper.convertValue(value, JsonNode.class);
     }
 
     /**

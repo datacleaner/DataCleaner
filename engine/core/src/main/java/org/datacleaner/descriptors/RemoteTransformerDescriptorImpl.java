@@ -19,7 +19,6 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.Arrays;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
@@ -30,12 +29,19 @@ import org.datacleaner.components.remote.RemoteTransformer;
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor {
 
     private String displayName;
-    private String url;
+    private String baseUrl;
+    private String componentUrl;
+    private String tenant;
+    private String username;
+    private String password;
 
-    public RemoteTransformerDescriptorImpl(String url, String displayName) {
+    public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant, String username, String password) {
         super(RemoteTransformer.class);
-        this.url = url;
+        this.componentUrl = componentUrl;
         this.displayName = displayName;
+        this.username = username;
+        this.password = password;
+        this.baseUrl = baseUrl;
         try {
             this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
             this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
@@ -60,7 +66,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(url);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant, username, password);
         return t;
     }
 

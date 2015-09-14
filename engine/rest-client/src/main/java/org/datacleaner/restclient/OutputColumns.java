@@ -39,10 +39,15 @@ public class OutputColumns {
         columns.add(col);
     }
 
+    public List<OutputColumn> getColumns() {
+        return columns;
+    }
+
     public static class OutputColumn {
         @JsonProperty
         public String name;
         @JsonProperty
         public String type;
     }
+
 }

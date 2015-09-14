@@ -141,7 +141,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
         assertEquals(0, partialResult2.getNullCount());
         assertEquals(2, partialResult2.getUniqueCount().intValue());
-        assertEquals("[globallyUniqueWord, locallyUniqueWord]", partialResult2.getUniqueValues().toString());
+        assertTrue(partialResult2.getUniqueValues().contains("globallyUniqueWord"));
+        assertTrue(partialResult2.getUniqueValues().contains("locallyUniqueWord"));
         assertEquals(15, partialResult2.getTotalCount());
 
         List<ValueDistributionAnalyzerResult> partialResults = new ArrayList<>();

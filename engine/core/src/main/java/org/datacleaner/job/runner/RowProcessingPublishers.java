@@ -78,6 +78,33 @@ public final class RowProcessingPublishers {
     private final Map<RowProcessingStream, RowProcessingPublisher> _rowProcessingPublishers;
     private final Map<ComponentJob, Component> _components;
 
+    /**
+     * Constructs a {@link RowProcessingPublishers}s instance.
+     * 
+     * @param analysisJob
+     * @param analysisListener
+     * @param taskRunner
+     * @param lifeCycleHelper
+     * @param sourceColumnFinder
+     * 
+     * @deprecated the {@link SourceColumnFinder} is no longer used here. Use
+     *             {@link #RowProcessingPublishers(AnalysisJob, AnalysisListener, TaskRunner, LifeCycleHelper)}
+     *             instead.
+     */
+    @Deprecated
+    public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
+            LifeCycleHelper lifeCycleHelper, SourceColumnFinder sourceColumnFinder) {
+        this(analysisJob, analysisListener, taskRunner, lifeCycleHelper);
+    }
+
+    /**
+     * Constructs a {@link RowProcessingPublishers}s instance.
+     * 
+     * @param analysisJob
+     * @param analysisListener
+     * @param taskRunner
+     * @param lifeCycleHelper
+     */
     public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
             LifeCycleHelper lifeCycleHelper) {
         _analysisJob = analysisJob;
@@ -230,7 +257,7 @@ public final class RowProcessingPublishers {
             // register the physical columns needed by this job
             final Column[] physicalColumns = getPhysicalColumns(sourceColumnFinder, componentJob);
             final Column[] relevantColumns = MetaModelHelper.getTableColumns(dataStream.getTable(), physicalColumns);
-            
+
             sourceTableRowPublisher.addPhysicalColumns(relevantColumns);
         }
 

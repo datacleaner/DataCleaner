@@ -49,9 +49,9 @@ import org.datacleaner.job.runner.CompositeAnalysisListener;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.job.runner.RowProcessingPublishers;
+import org.datacleaner.job.runner.RowProcessingStream;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,27 +329,23 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     }
 
     private RowProcessingPublishers getRowProcessingPublishers(AnalysisJob job, LifeCycleHelper lifeCycleHelper) {
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(job);
-
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, null, taskRunner, lifeCycleHelper,
-                sourceColumnFinder);
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, null, taskRunner, lifeCycleHelper);
 
         return publishers;
     }
 
     private RowProcessingPublisher getRowProcessingPublisher(RowProcessingPublishers publishers) {
-        final Table[] tables = publishers.getTables();
+        final RowProcessingStream[] streams = publishers.getStreams();
 
-        if (tables.length != 1) {
+        if (streams.length != 1) {
             throw new UnsupportedOperationException("Jobs with multiple source tables are not distributable");
         }
 
-        final Table table = tables[0];
+        final RowProcessingStream stream = streams[0];
 
-        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(table);
+        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(stream);
         return publisher;
     }
 

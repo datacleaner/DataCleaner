@@ -40,6 +40,7 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.RemoteEnumerationValue;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.ReflectionUtils;
@@ -128,6 +129,9 @@ public class StandardTypeConverter implements Converter<Object> {
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Class not found: " + str, e);
             }
+        }
+        if(ReflectionUtils.is(type, RemoteEnumerationValue.class)) {
+            return new RemoteEnumerationValue(str);
         }
         if (type.isEnum()) {
             try {

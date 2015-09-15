@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.*;
 import org.datacleaner.api.Converter;
@@ -42,6 +41,9 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     private ComponentDescriptor component;
     private boolean isInputColumn;
     private boolean required;
+    private boolean isArray;
+    private Class baseType;
+    private RemoteEnumerationValue[] enumValues;
 
     public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component) {
         this.name = name;
@@ -50,6 +52,33 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         this.isInputColumn = isInputColumn;
         this.component = component;
         this.required = required;
+        init();
+    }
+
+    private void init() {
+        isArray = schema.isArraySchema();
+        JsonSchema baseSchema;
+
+        if(isArray) {
+            baseSchema = ((ArraySchema)schema).getItems().asSingleItems().getSchema();
+        } else {
+            baseSchema = schema;
+        }
+
+        enumValues = new RemoteEnumerationValue[0]; // default
+        if(baseSchema instanceof ValueTypeSchema) {
+            Set<String> enums = ((ValueTypeSchema)baseSchema).getEnums();
+            if(enums != null && !enums.isEmpty()) {
+                enumValues = new RemoteEnumerationValue[enums.size()];
+                int i = 0;
+                for(String value: enums) {
+                    enumValues[i++] = new RemoteEnumerationValue(value);
+                }
+            }
+        }
+
+        // must be called after enums are initialized
+        baseType = schemaToJavaType(baseSchema);
     }
 
     @Override
@@ -88,21 +117,17 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         if(isArray()) {
             return Array.newInstance(getBaseType(), 0).getClass();
         }
-        return schemaToJavaType(schema);
+        return baseType;
     }
 
     @Override
     public boolean isArray() {
-        return schema.isArraySchema();
+        return isArray;
     }
 
     @Override
     public Class<?> getBaseType() {
-        if(isArray()) {
-            return schemaToJavaType(((ArraySchema)schema).getItems().asSingleItems().getSchema());
-        } else {
-            return schemaToJavaType(schema);
-        }
+        return baseType;
     }
 
     @Override
@@ -152,11 +177,22 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     private Class<?> schemaToJavaType(JsonSchema schema) {
         // try to convert
+        if(isEnum()) {
+            return RemoteEnumerationValue.class;
+        }
         if(schema instanceof StringSchema) { return String.class; }
         if(schema instanceof IntegerSchema) { return Integer.class; }
         if(schema instanceof BooleanSchema) { return Boolean.class; }
         if(schema instanceof NumberSchema) { return Double.class; }
         // fallback
         return JsonNode.class;
+    }
+
+    public boolean isEnum() {
+        return enumValues != null && enumValues.length > 0;
+    }
+
+    public RemoteEnumerationValue[] getEnumValues() {
+        return enumValues;
     }
 }

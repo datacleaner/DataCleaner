@@ -38,7 +38,6 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,8 +155,6 @@ public class ConsumeRowHandler {
                 analysisJob);
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
                 rowConsumeConfiguration.includeNonDistributedTasks);
-        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(analysisJob);
 
         /**
          * Use a single threaded task runner since this handler is invoked in a
@@ -168,7 +165,7 @@ public class ConsumeRowHandler {
 
         final AnalysisListener analysisListener = rowConsumeConfiguration.analysisListener;
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
-                analysisListener, taskRunner, lifeCycleHelper, sourceColumnFinder);
+                analysisListener, taskRunner, lifeCycleHelper);
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
@@ -225,7 +222,8 @@ public class ConsumeRowHandler {
             consumers = removeAnalyzers(consumers);
         }
 
-        consumers = RowProcessingPublisher.sortConsumers(consumers);
+        final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(consumers);
+        consumers = sorter.createProcessOrderedConsumerList();
         return consumers;
     }
 

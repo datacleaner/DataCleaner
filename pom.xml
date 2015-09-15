@@ -370,7 +370,7 @@
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>enforce-versions</id>
+						<id>enforce-versions-parent</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
@@ -384,8 +384,8 @@
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
-										<exclude>org.codehaus.jackson</exclude>
-										<exclude>org.eobjects.metamodel</exclude>
+										<exclude>org.codehaus.jackson:*</exclude>
+										<exclude>org.eobjects.metamodel:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>

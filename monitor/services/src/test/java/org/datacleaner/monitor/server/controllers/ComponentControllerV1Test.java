@@ -27,10 +27,12 @@ import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
-import org.datacleaner.monitor.server.components.ComponentList;
-import org.datacleaner.monitor.server.components.ComponentNotFoundException;
-import org.datacleaner.monitor.server.components.ProcessInput;
-import org.datacleaner.monitor.server.components.ProcessStatelessInput;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessInput;
+import org.datacleaner.restclient.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
 

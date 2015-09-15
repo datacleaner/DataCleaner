@@ -353,7 +353,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
             if(result != null) {
-                result = new CompositeDescriptorProvider(prov, result);
+                result = new CompositeDescriptorProvider(result, prov);
             } else {
                 result = prov;
             }
@@ -371,7 +371,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof ClasspathScannerType) {
             return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
         } else if(providerElement instanceof RemoteComponentsType) {
-            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
         } else {
             throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
         }
@@ -405,9 +405,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement, DataCleanerEnvironment environment) {
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(environment.getTaskRunner(), server.getUrl(), server.getUsername(), server.getPassword());
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

@@ -20,8 +20,13 @@
 package org.datacleaner.descriptors;
 
 import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,12 +34,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+
 /**
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+
     private String url, username, password;
+    private String tenant = "test"; // TODO
 
     LazyRef<Data> data = new LazyRef<Data>() {
         @Override
@@ -45,8 +55,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         }
     };
 
-    public RemoteDescriptorProvider(TaskRunner taskRunner, String url, String username, String password) {
-        this.url = url;
+    public RemoteDescriptorProvider(String url, String username, String password) {
+        this.url = url.replaceAll("/+$", "");
         this.username = username;
         this.password = password;
         data.requestLoad();
@@ -79,7 +89,47 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
-            // TODO - load and fill the component descriptor collections
+
+            try {
+                ComponentRESTClient client = new ComponentRESTClient(url, username, password);
+                ComponentList components = client.getAllComponents(tenant);
+                for(ComponentList.ComponentInfo component: components.getComponents()) {
+                    try {
+                        String componentUrl = url + component.getCreateURL();
+                        RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
+                                url,
+                                componentUrl,
+                                component.getName() + " (remote)", tenant, username, password);
+                        for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
+                            String name = propE.getKey();
+                            ComponentList.PropertyInfo propInfo = propE.getValue();
+                            String className = propInfo.getClassName();
+                            try {
+                                Class cl = Class.forName(className, false, getClass().getClassLoader());
+                                transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                                        name,
+                                        propInfo.getDescription(),
+                                        cl,
+                                        propInfo.isRequired(),
+                                        transformer));
+                            } catch(Exception e) {
+                                // class not available on this server.
+                                transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                                        name,
+                                        propInfo.getSchema(),
+                                        propInfo.isRequired(),
+                                        propInfo.getDescription(),
+                                        transformer));
+                            }
+                        }
+                        _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
+                    } catch(Exception e) {
+                        logger.error("Cannot create remote component representation for: " + component.getName(), e);
+                    }
+                }
+            } catch(Exception e) {
+                logger.error("Cannot get list of remote components on " + url, e);
+            }
         }
     }
 }

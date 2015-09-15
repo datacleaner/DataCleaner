@@ -112,7 +112,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             throw new IllegalArgumentException("Builder class does not correspond to actual class of builder");
         }
 
-        _configurableBean = ReflectionUtils.newInstance(_descriptor.getComponentClass());
+        _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
         _removalListeners = new ArrayList<>(1);
     }

@@ -20,6 +20,11 @@
 			<artifactId>DataCleaner-env-cluster</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.eobjects.datacleaner</groupId>
+            <artifactId>DataCleaner-rest-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<!-- DataCleaner components -->
 		<dependency>

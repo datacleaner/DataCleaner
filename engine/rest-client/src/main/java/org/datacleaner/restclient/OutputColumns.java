@@ -17,22 +17,37 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.restclient;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
-
 /**
- * Crate for a component output.
- *
- * @since 9. 7. 2015
+ * @Since 9/11/15
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProcessStatelessOutput implements Serializable {
+public class OutputColumns {
+
     @JsonProperty
-    public Serializable result;
-    @JsonProperty
-    public Object rows;
+    List<OutputColumn> columns = new ArrayList<>();
+
+    public void add(String columnName, Class<?> columnClass) {
+        OutputColumn col = new OutputColumn();
+        col.name = columnName;
+        col.type = columnClass.getName();
+        columns.add(col);
+    }
+
+    public List<OutputColumn> getColumns() {
+        return columns;
+    }
+
+    public static class OutputColumn {
+        @JsonProperty
+        public String name;
+        @JsonProperty
+        public String type;
+    }
+
 }

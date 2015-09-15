@@ -30,6 +30,7 @@ import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.concurrent.ForkTaskListener;
 import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunnable;
@@ -200,6 +201,45 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         }
 
         analysisListener.rowProcessingSuccess(getAnalysisJob(), rowProcessingMetrics);
+    }
+    
+    @Override
+    public final void runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener) {
+        final List<TaskRunnable> postProcessingTasks = createPostProcessingTasks(resultQueue, finishedTaskListener);
+        
+        runRowProcessingInternal(postProcessingTasks);
+    }
+    
+    protected abstract void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks);
+
+    private List<TaskRunnable> createPostProcessingTasks(Queue<JobAndResult> resultQueue,
+            TaskListener finishedTaskListener) {
+        final List<RowProcessingConsumer> configurableConsumers = getConsumers();
+
+        final int numConsumers = configurableConsumers.size();
+
+        // add tasks for closing components
+        final JoinTaskListener closeTaskListener = new JoinTaskListener(numConsumers, finishedTaskListener);
+        final List<TaskRunnable> closeTasks = new ArrayList<>();
+        for (RowProcessingConsumer consumer : configurableConsumers) {
+            closeTasks.add(createCloseTask(consumer, closeTaskListener));
+        }
+
+        final TaskListener getResultCompletionListener = new ForkTaskListener("collect results (" + getStream() + ")",
+                getTaskRunner(), closeTasks);
+
+        // add tasks for collecting results
+        final TaskListener getResultTaskListener = new JoinTaskListener(numConsumers, getResultCompletionListener);
+        final List<TaskRunnable> getResultTasks = new ArrayList<>();
+        for (RowProcessingConsumer consumer : configurableConsumers) {
+            final Task collectResultTask = createCollectResultTask(consumer, resultQueue);
+            if (collectResultTask == null) {
+                getResultTasks.add(new TaskRunnable(null, getResultTaskListener));
+            } else {
+                getResultTasks.add(new TaskRunnable(collectResultTask, getResultTaskListener));
+            }
+        }
+        return getResultTasks;
     }
 
     @Override

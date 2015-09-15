@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import org.apache.metamodel.DataContext;
@@ -41,14 +40,11 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.job.concurrent.ForkTaskListener;
-import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.RunNextTaskTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunnable;
-import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.ConsumeRowTask;
 import org.datacleaner.job.tasks.RunRowProcessingPublisherTask;
-import org.datacleaner.job.tasks.Task;
 import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -253,44 +249,17 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     }
 
     @Override
-    public void runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener) {
-        final List<RowProcessingConsumer> configurableConsumers = getConsumers();
-
-        final int numConsumers = configurableConsumers.size();
-
-        // add tasks for closing components
-        final JoinTaskListener closeTaskListener = new JoinTaskListener(numConsumers, finishedTaskListener);
-        final List<TaskRunnable> closeTasks = new ArrayList<>();
-        for (RowProcessingConsumer consumer : configurableConsumers) {
-            closeTasks.add(createCloseTask(consumer, closeTaskListener));
-        }
-        final TaskRunner taskRunner = getTaskRunner();
-
-        final TaskListener getResultCompletionListener = new ForkTaskListener("collect results ("
-                + getTable().getName() + ")", taskRunner, closeTasks);
-
-        // add tasks for collecting results
-        final TaskListener getResultTaskListener = new JoinTaskListener(numConsumers, getResultCompletionListener);
-        final List<TaskRunnable> getResultTasks = new ArrayList<>();
-        for (RowProcessingConsumer consumer : configurableConsumers) {
-            final Task collectResultTask = createCollectResultTask(consumer, resultQueue);
-            if (collectResultTask == null) {
-                getResultTasks.add(new TaskRunnable(null, getResultTaskListener));
-            } else {
-                getResultTasks.add(new TaskRunnable(collectResultTask, getResultTaskListener));
-            }
-        }
-
-        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getTable().getName()
-                + ")", taskRunner, getResultTasks);
+    protected void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
+        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
+                getTaskRunner(), postProcessingTasks);
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
-        final TaskListener initFinishedListener = new RunNextTaskTaskListener(taskRunner, runTask,
+        final TaskListener initFinishedListener = new RunNextTaskTaskListener(getTaskRunner(), runTask,
                 runCompletionListener);
 
-        final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(taskRunner,
+        final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(getTaskRunner(),
                 new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
 
         // kick off the initialization

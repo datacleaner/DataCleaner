@@ -156,7 +156,7 @@ final class AnalysisRunnerJobDelegate {
      * @param job
      */
     private void validateSingleTableInput(AnalysisJob job) {
-        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);
         validateSingleTableInput(sourceColumnFinder, job.getTransformerJobs());
         validateSingleTableInput(sourceColumnFinder, job.getFilterJobs());

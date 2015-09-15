@@ -91,6 +91,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
 
             try {
+                // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
@@ -99,7 +100,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
                                 componentUrl,
-                                component.getName() + " (remote)", tenant, username, password);
+                                component.getName(), tenant, username, password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
                             String name = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();
@@ -117,8 +118,9 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         name,
                                         propInfo.getSchema(),
-                                        propInfo.isRequired(),
+                                        propInfo.isInputColumn(),
                                         propInfo.getDescription(),
+                                        propInfo.isRequired(),
                                         transformer));
                             }
                         }

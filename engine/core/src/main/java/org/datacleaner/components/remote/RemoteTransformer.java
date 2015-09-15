@@ -19,39 +19,38 @@
  */
 package org.datacleaner.components.remote;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.util.convert.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.datacleaner.api.*;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.restclient.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @Since 9/1/15
@@ -71,9 +70,9 @@ public class RemoteTransformer implements Transformer {
     private String baseUrl;
     private String componentDisplayName;
     private String username, password, tenant;
+    private OutputColumns cachedOutputColumns;
 
     private ComponentRESTClient client;
-    private CloseableHttpClient clientRaw;
     private Map<String, Object> configuredProperties = new HashMap<>();
 
     public RemoteTransformer(String baseUrl, String url, String componentDisplayName, String tenant, String username, String password) {
@@ -85,129 +84,153 @@ public class RemoteTransformer implements Transformer {
         this.componentDisplayName = componentDisplayName;
     }
 
+    @Initialize
     public void init() {
         logger.debug("Initializing - " + componentUrl);
         client = new ComponentRESTClient(baseUrl, username, password);
-
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-        clientRaw = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
-                .build();
     }
 
+    @Close
     public void close() {
         logger.debug("closing");
-        if(clientRaw != null) {
-            try {
-                clientRaw.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                clientRaw = null;
-            }
-        }
+        client = null;
+        // TODO: client now misses a "close" method (although Jersey client has a "destroy" method).
     }
 
     @Override
     public OutputColumns getOutputColumns() {
-        org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, getCreateInput());
-        OutputColumns outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
-        int i = 0;
-        for(org.datacleaner.restclient.OutputColumns.OutputColumn colSpec: columnsSpec.getColumns()) {
-            outCols.setColumnName(i, colSpec.name);
-            try {
-                outCols.setColumnType(i, Class.forName(colSpec.type));
-            } catch (ClassNotFoundException e) {
-                // TODO: what to do with data types - classes that are not on our classpath?
-                // Provide it as pure JsonNode?
-                outCols.setColumnType(i, Object.class);
-            }
-            i++;
-        }
-        return outCols;
-    }
+        OutputColumns outCols = cachedOutputColumns;
+        if(outCols != null) { return outCols; }
 
-    private CreateInput getCreateInput() {
-        CreateInput result = new CreateInput();
-        result.configuration = new ComponentConfiguration();
-        for(Map.Entry<String, Object> propertyE: configuredProperties.entrySet()) {
-            result.configuration.getProperties().put(propertyE.getKey(), mapper.valueToTree(propertyE.getValue()));
+        boolean wasInit = false;
+        if(client == null) {
+            wasInit = true;
+            init();
         }
-        for(String col: getOutputColumnNames()) {
-            result.configuration.getColumns().add(new TextNode(col));
-        }
-        return result;
-    }
-
-    private String getConfigurationContent() {
         try {
-            return "{ \"properties\": " + mapper.writeValueAsString(configuredProperties) + ",\n" +
-                    "  \"columns\": " + mapper.writeValueAsString(getOutputColumnNames()) + "}";
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            CreateInput createInput = new CreateInput();
+            createInput.configuration = getConfiguration();
+            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, createInput);
+            outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
+            int i = 0;
+            for(org.datacleaner.restclient.OutputColumns.OutputColumn colSpec: columnsSpec.getColumns()) {
+                outCols.setColumnName(i, colSpec.name);
+                try {
+                    outCols.setColumnType(i, Class.forName(colSpec.type));
+                } catch (ClassNotFoundException e) {
+                    // TODO: what to do with data types - classes that are not on our classpath?
+                    // Provide it as pure JsonNode?
+                    outCols.setColumnType(i, Object.class);
+                }
+                i++;
+            }
+            cachedOutputColumns = outCols;
+            return outCols;
+        } finally {
+            if(wasInit) {
+                close();
+            }
         }
     }
 
-    private String[] getOutputColumnNames() {
-        ArrayList<String> colNames = new ArrayList<>();
+    private ComponentConfiguration getConfiguration() {
+        ComponentConfiguration configuration = new ComponentConfiguration();
+        for(Map.Entry<String, Object> propertyE: configuredProperties.entrySet()) {
+            configuration.getProperties().put(propertyE.getKey(), mapper.valueToTree(propertyE.getValue()));
+        }
+        // TODO: provide also the column type.
+        for(InputColumn col: getInputColumnNames()) {
+            ObjectNode colSpec = new ObjectNode(mapper.getNodeFactory());
+            colSpec.set("name", new TextNode(col.getName()));
+            colSpec.set("type", new TextNode(ColumnTypeImpl.convertColumnType(col.getDataType()).getName()));
+            colSpec.set("className", new TextNode(col.getDataType().getName()));
+            configuration.getColumns().add(colSpec);
+        }
+        return configuration;
+    }
+
+    private List<InputColumn> getInputColumnNames() {
+        ArrayList<InputColumn> columns = new ArrayList<>();
         for(Object propValue: configuredProperties.values()) {
             if(propValue instanceof InputColumn) {
-                colNames.add(((InputColumn) propValue).getName());
+                columns.add((InputColumn) propValue);
             } else if(propValue instanceof InputColumn[]) {
                 for(InputColumn col: ((InputColumn[])propValue)) {
-                    colNames.add(col.getName());
+                    columns.add(col);
                 }
             } else if(propValue instanceof Collection) {
                 for(Object value: ((Collection)propValue)) {
                     if(value instanceof InputColumn) {
-                        colNames.add(((InputColumn)value).getName());
+                        columns.add((InputColumn)value);
                     }
                 }
             }
         }
-        return colNames.toArray(new String[colNames.size()]);
+        return columns;
     }
 
     @Override
     public Object[] transform(InputRow inputRow) {
+
+        if(client == null) {
+            throw new RuntimeException("Remote transformer not initialized");
+        }
+
         List values = new ArrayList();
-        String[] cols = getOutputColumnNames();
-        // TODO: more better way?
-        for(String col: cols) {
-            for(InputColumn inputCol: inputRow.getInputColumns()) {
-                if(inputCol.getName().equals(col)) {
-                    values.add(inputRow.getValue(inputCol));
-                }
-            }
+        List<InputColumn> cols = getInputColumnNames();
+        for(InputColumn col: cols) {
+            values.add(inputRow.getValue(col));
         }
 
         Object[] rows = new Object[] {values};
 
         ProcessStatelessInput input = new ProcessStatelessInput();
-        input.configuration = getCreateInput().configuration;
+        input.configuration = getConfiguration();
         input.data = mapper.valueToTree(rows);
         ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
         return transformResponse(out.rows);
     }
 
-    private Object[] transformResponse(JsonNode response) {
-        JsonNode rows = response.get("rows");
+    private Object[] transformResponse(JsonNode rows) {
+        OutputColumns outCols = getOutputColumns();
         if(rows == null || rows.size() < 1 || rows.size() > 1) { throw new RuntimeException("Expected exactly 1 row in response"); }
         List values = new ArrayList();
         JsonNode row1 = rows.get(0);
+        int i = 0;
         for(JsonNode value: row1) {
-            values.add(transformValue(value));
+            // TODO: should JsonNode be the default?
+            Class cl = String.class;
+            if(i < outCols.getColumnCount()) {
+                cl = outCols.getColumnType(i);
+            }
+            values.add(transformValue(value, cl));
+            i++;
         }
         return values.toArray(new Object[values.size()]);
     }
 
-    private Object transformValue(JsonNode value) {
-        return value.asText();
+    private Object transformValue(JsonNode value, Class cl) {
+        // TODO: this is code duplicate with ComponentHandler.convertTableValue
+        // (which is used to transform input rows on the server side)
+        try {
+            if(value.isArray() || value.isObject()) {
+                return mapper.readValue(value.traverse(), cl);
+            } else {
+                return StringConverter.simpleInstance().deserialize(value.asText(), cl);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException("Cannot convert table value of type '" + cl + "': " + value.toString(), e);
+        }
     }
 
     public void setPropertyValue(String propertyName, Object value) {
-        configuredProperties.put(propertyName, value);
+        if(value == null) {
+            configuredProperties.remove(propertyName);
+        } else {
+            configuredProperties.put(propertyName, value);
+        }
+        // invalidate the cached output columns
+        cachedOutputColumns = null;
     }
 
     public Object getProperty(String propertyName) {

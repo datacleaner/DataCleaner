@@ -41,13 +41,15 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     private JsonSchema schema;
     private ComponentDescriptor component;
     private boolean isInputColumn;
+    private boolean required;
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, ComponentDescriptor component) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component) {
         this.name = name;
         this.description = description;
         this.schema = schema;
         this.isInputColumn = isInputColumn;
         this.component = component;
+        this.required = required;
     }
 
     @Override
@@ -135,7 +137,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     @Override
     public boolean isRequired() {
-        return false;
+        return required;
     }
 
     @Override

@@ -55,6 +55,7 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +72,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -131,7 +131,7 @@ public class ComponentControllerV1 implements ComponentController {
     public ComponentList.ComponentInfo getComponentInfo(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") String name) {
-        name = unURLify(name);
+        name = Utils.unescapeComponentName(name);
         LOGGER.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
@@ -148,7 +148,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final CreateInput createInput) {
-        String decodedName = unURLify(name);
+        String decodedName = Utils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, createInput.configuration);
@@ -179,7 +179,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
-        String decodedName = unURLify(name);
+        String decodedName = Utils.unescapeComponentName(name);
         LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
@@ -206,7 +206,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
-        String decodedName = unURLify(name);
+        String decodedName = Utils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
@@ -272,10 +272,6 @@ public class ComponentControllerV1 implements ComponentController {
         }
     }
 
-    private String unURLify(String url) {
-        return url.replace("_@_", "/");
-    }
-
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
         return new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
@@ -289,7 +285,7 @@ public class ComponentControllerV1 implements ComponentController {
             return String.format(
                     "/repository/%s/components/%s",
                     UriUtils.encodePathSegment(tenant, "UTF8"),
-                    UriUtils.encodePathSegment(descriptor.getDisplayName().replace("/", "_@_"), "UTF8"));
+                    UriUtils.encodePathSegment(Utils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

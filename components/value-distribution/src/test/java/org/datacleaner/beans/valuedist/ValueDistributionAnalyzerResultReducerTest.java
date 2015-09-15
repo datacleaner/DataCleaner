@@ -19,8 +19,7 @@
  */
 package org.datacleaner.beans.valuedist;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,51 +98,81 @@ public class ValueDistributionAnalyzerResultReducerTest {
                 new MetaModelInputColumn(new MutableColumn("groupCol", ColumnType.STRING)).narrow(String.class), true);
 
         valueDist1.runInternal(new MockInputRow(), "hello", "group1", 1);
-        valueDist1.runInternal(new MockInputRow(), "hello", "group2", 1);
         valueDist1.runInternal(new MockInputRow(), "world", "group1", 3);
         valueDist1.runInternal(new MockInputRow(), "locallyUniqueWord", "group1", 1);
+        valueDist1.runInternal(new MockInputRow(), "hello", "group2", 1);
         final ValueDistributionAnalyzerResult partialResult1 = valueDist1.getResult();
 
+        // Confirm what we got from the the first analyzer...
         final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList1 = ((GroupedValueDistributionResult) partialResult1)
                 .getGroupResults();
         assertEquals(2, partialSingleResultList1.size());
         final Iterator<? extends ValueCountingAnalyzerResult> iterator = partialSingleResultList1.iterator();
-        final SingleValueDistributionResult firstGroup = (SingleValueDistributionResult) iterator.next();
-        assertEquals("group1", firstGroup.getName());
-        final SingleValueDistributionResult secondGroup = (SingleValueDistributionResult) iterator.next();
-        assertEquals("group2", secondGroup.getName());
+        final SingleValueDistributionResult group1Analyzer1 = (SingleValueDistributionResult) iterator.next();
+        assertEquals("group1", group1Analyzer1.getName());
+        assertEquals(0, group1Analyzer1.getNullCount());
+        assertEquals(2, group1Analyzer1.getUniqueCount().intValue());
+        assertTrue(group1Analyzer1.getUniqueValues().contains("hello"));
+        assertTrue(group1Analyzer1.getUniqueValues().contains("locallyUniqueWord"));
+        assertEquals(5, group1Analyzer1.getTotalCount());
+        final SingleValueDistributionResult group2Analyzer1 = (SingleValueDistributionResult) iterator.next();
+        assertEquals("group2", group2Analyzer1.getName());
+        assertEquals(0, group2Analyzer1.getNullCount());
+        assertEquals(1, group2Analyzer1.getUniqueCount().intValue());
+        assertTrue(group2Analyzer1.getUniqueValues().contains("hello"));
+        assertEquals(1, group2Analyzer1.getTotalCount());
 
+        // Assert the aggregates at the GroupValueDistribution
         assertEquals(0, partialResult1.getNullCount());
         assertEquals(2, partialResult1.getUniqueCount().intValue());
         assertTrue(partialResult1.getUniqueValues().contains("hello"));
         assertTrue(partialResult1.getUniqueValues().contains("locallyUniqueWord"));
-        assertEquals(6, partialResult1.getTotalCount());
+        // GroupedValueDistributionResult return the aggregates of the first
+        // group in the list, not total... Therefore, 5 is expected instead of
+        // 6.
+        assertEquals(5, partialResult1.getTotalCount());
 
+        
+        // Confirm what we got from the the second analyzer...
         ValueDistributionAnalyzer valueDist2 = new ValueDistributionAnalyzer(new MetaModelInputColumn(
                 new MutableColumn("col")),
                 new MetaModelInputColumn(new MutableColumn("groupCol", ColumnType.STRING)).narrow(String.class), true);
 
-        valueDist2.runInternal(new MockInputRow(), "hello", "group1", 5);
-        valueDist2.runInternal(new MockInputRow(), "hello", "group1", 1);
-        valueDist2.runInternal(new MockInputRow(), "world", "group2", 7);
+        valueDist2.runInternal(new MockInputRow(), "hello", "group1", 6);
         valueDist2.runInternal(new MockInputRow(), "locallyUniqueWord", "group1", 1);
         valueDist2.runInternal(new MockInputRow(), "globallyUniqueWord", "group1", 1);
+        valueDist2.runInternal(new MockInputRow(), "world", "group2", 7);
         ValueDistributionAnalyzerResult partialResult2 = valueDist2.getResult();
 
         final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList2 = ((GroupedValueDistributionResult) partialResult1)
                 .getGroupResults();
         assertEquals(2, partialSingleResultList2.size());
         final Iterator<? extends ValueCountingAnalyzerResult> iterator2 = partialSingleResultList2.iterator();
-        final SingleValueDistributionResult firstGroup2 = (SingleValueDistributionResult) iterator2.next();
-        assertEquals("group1", firstGroup2.getName());
-        final SingleValueDistributionResult secondGroup2 = (SingleValueDistributionResult) iterator2.next();
-        assertEquals("group2", secondGroup2.getName());
+        final SingleValueDistributionResult group1Analyzer2 = (SingleValueDistributionResult) iterator2.next();
+        assertEquals("group1", group1Analyzer2.getName());
+        assertEquals(0, group1Analyzer2.getNullCount());
+        assertEquals(2, group1Analyzer2.getUniqueCount().intValue());
+        assertTrue(group1Analyzer2.getUniqueValues().contains("globallyUniqueWord"));
+        final Iterator<String> group1Analyzer2UniquesIterator = group1Analyzer2.getUniqueValues().iterator();
+        assertEquals("globallyUniqueWord", group1Analyzer2UniquesIterator.next());
+        assertFalse(group1Analyzer2UniquesIterator.hasNext());
+        assertTrue(group1Analyzer2.getUniqueValues().contains("locallyUniqueWord"));
+        assertEquals(8, group1Analyzer2.getTotalCount());
+        final SingleValueDistributionResult group2Analyzer2 = (SingleValueDistributionResult) iterator2.next();
+        assertEquals("group2", group2Analyzer2.getName());
+        assertEquals(0, group2Analyzer2.getNullCount());
+        assertEquals(0, group2Analyzer2.getUniqueCount().intValue());
+        assertEquals(7, group2Analyzer2.getTotalCount());
 
+        // Assert the aggregates at the GroupValueDistribution
         assertEquals(0, partialResult2.getNullCount());
         assertEquals(2, partialResult2.getUniqueCount().intValue());
         assertTrue(partialResult2.getUniqueValues().contains("globallyUniqueWord"));
         assertTrue(partialResult2.getUniqueValues().contains("locallyUniqueWord"));
-        assertEquals(15, partialResult2.getTotalCount());
+        // GroupedValueDistributionResult return the aggregates of the first
+        // group in the list, not total... Therefore, 8 is expected instead of
+        // 15.
+        assertEquals(8, partialResult2.getTotalCount());
 
         List<ValueDistributionAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
@@ -152,11 +181,35 @@ public class ValueDistributionAnalyzerResultReducerTest {
         ValueDistributionAnalyzerResultReducer reducer = new ValueDistributionAnalyzerResultReducer();
         ValueDistributionAnalyzerResult reducedResult = reducer.reduce(partialResults);
 
+        // Assert the aggregates from the reduced groups
         GroupedValueDistributionResult groupedReducedResult = (GroupedValueDistributionResult) reducedResult;
         assertEquals(Integer.valueOf(4), groupedReducedResult.getDistinctCount());
-        assertEquals(21, groupedReducedResult.getTotalCount());
+        // GroupedValueDistributionResult return the aggregates of the first
+        // group in the list, not total... Therefore, 13 is expected instead of
+        // 21.
+        assertEquals(13, groupedReducedResult.getTotalCount());
+        // GroupedValueDistributionResult return the aggregates of the first
+        // group in the list, not total... Therefore, 1 is expected instead of
+        // 2 and the "hello" is present in unique values.
         assertEquals(Integer.valueOf(1), groupedReducedResult.getUniqueCount());
-        assertEquals("[globallyUniqueWord]", groupedReducedResult.getUniqueValues().toString());
+        System.out.println(groupedReducedResult.getUniqueValues());
+        assertTrue(groupedReducedResult.getUniqueValues().contains("globallyUniqueWord"));
+        
+        // Now let's iterate over the groups and see manually if the values are aggregated correctly.
+        final Iterator<? extends ValueCountingAnalyzerResult> reducedGroupsIterator = groupedReducedResult.getGroupResults().iterator();
+        SingleValueDistributionResult firstReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator.next();
+        assertEquals("group1", firstReducedGroup.getName());
+        assertEquals(0, firstReducedGroup.getNullCount());
+        assertEquals(2, firstReducedGroup.getUniqueCount().intValue());
+        assertTrue(firstReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
+        assertEquals(13, firstReducedGroup.getTotalCount());
+        
+        SingleValueDistributionResult secondReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator.next();
+        assertEquals("group2", secondReducedGroup.getName());
+        assertEquals(0, secondReducedGroup.getNullCount());
+        assertEquals(1, secondReducedGroup.getUniqueCount().intValue());
+        assertTrue(secondReducedGroup.getUniqueValues().contains("hello"));
+        assertEquals(8, secondReducedGroup.getTotalCount());
     }
 
 }

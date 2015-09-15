@@ -19,17 +19,17 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.datahub.update.UpdateData;
+import org.datacleaner.metamodel.datahub.update.UpdateField;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -42,43 +42,51 @@ public class DataHubUpdateCallbackTest {
     @InjectMocks
     private DataHubUpdateCallback callback;
 
-    private Table table;
+    private UpdateData updateData;
+
+    private UpdateField field1;
+    private UpdateField field2;
 
     private static int maxBatchSize = DataHubUpdateCallback.INSERT_BATCH_SIZE;
     private static String query = "query";
 
     @Before
     public void init() {
-        table = new MutableTable("table");
+        UpdateField[] fields = new UpdateField[2];
+        field1 = new UpdateField("field1", "value1");
+        field2 = new UpdateField("field2", "value2");
+        fields[0] = field1;
+        fields[1] = field2;
+        updateData = new UpdateData("20", fields );
     }
     
     @Test
     public void shouldFlushBatchWhenThresholdIsReached() {
 
         for (int x = 0; x < maxBatchSize + 1; x++) {
-            callback.executeUpdate(table, query);
+            callback.executeUpdate(updateData);
         }
         
-        verify(dataContext, times(1)).executeUpdate(any(PendingUpdates.class));
+        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
     }
     
     @Test
     public void shouldNotFlushBatchPrematurely() {
         for (int x = 0; x < maxBatchSize - 1; x++) {
-            callback.executeUpdate(table, query);
+            callback.executeUpdate(updateData);
         }
         
-        verify(dataContext, never()).executeUpdate(any(PendingUpdates.class));
+        verify(dataContext, never()).executeUpdates(Matchers.anyListOf(UpdateData.class));
     }
     
     @Test
     public void shouldFlushBatchInTWRContext() {
         try(DataHubUpdateCallback callback = new DataHubUpdateCallback(dataContext)) {
             for (int x = 0; x < maxBatchSize; x++) {
-                callback.executeUpdate(table, query);
+                callback.executeUpdate(updateData);
             }
-            verify(dataContext, times(1)).executeUpdate(any(PendingUpdates.class));
+            verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
         }
-        verify(dataContext, times(1)).executeUpdate(any(PendingUpdates.class)); //Tests if it was called a second time
+        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); //Tests if it was called a second time
     }
 }

@@ -20,8 +20,9 @@
 package org.datacleaner.metamodel.datahub;
 
 import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.metamodel.AbstractUpdateCallback;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.create.TableCreationBuilder;
@@ -31,14 +32,15 @@ import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.RowUpdationBuilder;
+import org.datacleaner.metamodel.datahub.update.UpdateData;
 
 public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback, Closeable {
 
     private final DataHubDataContext _dataContext;
-    private DataHubConnection _connection;
+    //private DataHubConnection _connection;
     public static final int INSERT_BATCH_SIZE = 100;
     
-    private PendingUpdates _pendingUpdates;
+    private List<UpdateData> _pendingUpdates;
 
 
 
@@ -48,12 +50,12 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         _pendingUpdates = null;
     }
 
-    protected final DataHubConnection getConnection() {
-        if (_connection == null) {
-            _connection = _dataContext.getConnection();
-        }
-        return _connection;
-    }
+//    protected final DataHubConnection getConnection() {
+//        if (_connection == null) {
+//            _connection = _dataContext.getConnection();
+//        }
+//        return _connection;
+//    }
 
     @Override
     public TableCreationBuilder createTable(Schema arg0, String arg1) throws IllegalArgumentException,
@@ -100,12 +102,12 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         return new DataHubUpdateBuilder(this, table);
     }
 
-    public void executeUpdate(Table table, String query) {
+    public void executeUpdate(UpdateData updateData) {
         if (_pendingUpdates == null) {
-            _pendingUpdates = new PendingUpdates(table, query);
-        } else { 
-            _pendingUpdates.addQuery(query);
+            _pendingUpdates = new ArrayList<UpdateData>();
         }
+        _pendingUpdates.add(updateData);
+        
         if (_pendingUpdates.size() >= INSERT_BATCH_SIZE) {
             flushUpdates();
         }
@@ -116,7 +118,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         if (_pendingUpdates == null || _pendingUpdates.isEmpty()) {
             return;
         }
-        _dataContext.executeUpdate(_pendingUpdates);
+        _dataContext.executeUpdates(_pendingUpdates);
         _pendingUpdates = null;
     }
 

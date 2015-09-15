@@ -19,14 +19,10 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.datacleaner.metamodel.datahub.DataHubSecurityMode.CAS;
 
 import java.net.URISyntaxException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -42,13 +38,9 @@ import org.datacleaner.util.http.MonitorHttpClient;
 
 public class DataHubConnection {
 
-    public final static String DATASTORES_PATH = "/datastores";
-    public final static String CONTEXT_PATH = "/ui";
-    public final static String REPOSITORY_PATH = "/repository";
     public final static String CAS_PATH = "/cas";
     public final static String DEFAULT_SCHEMA = "MDM";
-    public final static String SCHEMA_EXTENSION = ".schemas";
-    public final static String QUERY_EXTENSION = ".query?";
+    
 
     private final String _hostname;
     private final int _port;
@@ -75,7 +67,7 @@ public class DataHubConnection {
         _securityMode = dataHubSecurityMode;
     }
 
-    public MonitorHttpClient getHttpClient() {
+    public MonitorHttpClient getHttpClient(String contextUrl) {
 
         final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
@@ -84,7 +76,7 @@ public class DataHubConnection {
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if (CAS.equals(_securityMode)) {
-            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, getContextUrl());
+            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
         } else {
             return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
@@ -98,22 +90,10 @@ public class DataHubConnection {
         return _port;
     }
 
-    public String getRepositoryUrl() {
-        return getContextUrl() + REPOSITORY_PATH
-                + (isEmpty(_tenantId) ? EMPTY : "/" + urlPathSegmentEscaper().escape(_tenantId));
+    public String getTenantId() {
+        return _tenantId;
     }
-
-    private String getContextUrl() {
-        URIBuilder uriBuilder = getBaseUrlBuilder();
-        appendToPath(uriBuilder, CONTEXT_PATH);
-        
-        try {
-            return uriBuilder.build().toString();
-        } catch (URISyntaxException uriSyntaxException) {
-            throw new IllegalStateException(uriSyntaxException);
-        }
-    }
-
+    
     private String getCasServerUrl() {
         
         URIBuilder uriBuilder = getBaseUrlBuilder();
@@ -126,7 +106,7 @@ public class DataHubConnection {
         }
     }
 
-    private URIBuilder getBaseUrlBuilder() {
+    protected URIBuilder getBaseUrlBuilder() {
         URIBuilder baseUriBuilder = new URIBuilder();
         baseUriBuilder.setScheme(_scheme);
         baseUriBuilder.setHost(_hostname);
@@ -137,7 +117,7 @@ public class DataHubConnection {
         }
         return baseUriBuilder;
     }
-    
+ 
     private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
         if(uriBuilder.getPath() != null) {
             uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
@@ -145,5 +125,6 @@ public class DataHubConnection {
         
         return uriBuilder.setPath(pathSegment);
     }
+
 
 }

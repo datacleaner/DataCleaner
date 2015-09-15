@@ -22,11 +22,12 @@ package org.datacleaner.metamodel.datahub;
 import java.util.List;
 
 import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.query.FilterClause;
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.AbstractRowUpdationBuilder;
+import org.datacleaner.metamodel.datahub.update.UpdateData;
+import org.datacleaner.metamodel.datahub.update.UpdateField;
 
 public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
@@ -39,45 +40,30 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
     @Override
     public void execute() throws MetaModelException {
-        String query = createSqlStatement();
-        System.out.println("Executing query: " + query);
-        _callback.executeUpdate(getTable(), query);
+        UpdateData updateData = createUpdateData();
+        _callback.executeUpdate(updateData);
     }
 
-    private String createSqlStatement() {
+    private UpdateData createUpdateData() {
         final Object[] values = getValues();
-        final Table table = getTable();
-        final StringBuilder sb = new StringBuilder();
-
-        sb.append("UPDATE ");
-        sb.append(table.getQualifiedLabel());
-        sb.append(" SET ");
-
         Column[] columns = getColumns();
         boolean[] explicitNulls = getExplicitNulls();
-        boolean firstValue = true;
+        UpdateField[] fields = new UpdateField[columns.length];
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
-                if (firstValue) {
-                    firstValue = false;
-                } else {
-                    sb.append(',');
-                }
                 String columnName = columns[i].getName();
-                sb.append(columnName);
-
-                sb.append('=');
-                sb.append(value);
-
+                UpdateField field = new UpdateField(columnName, value.toString());
+                fields[i] = field;
             }
         }
 
         List<FilterItem> whereItems = getWhereItems();
-        String whereClause = new FilterClause(null, " WHERE ").addItems(whereItems).toSql();
-        sb.append(whereClause);
-        String sql = sb.toString();
-        return sql;
+        if (!(whereItems.size() == 1 && whereItems.get(0).getSelectItem().getColumn().getName().equals("gr_id"))) {
+            throw new IllegalArgumentException("Only gr_id is allowed as a select item");
+        }
+        String grId = (String) whereItems.get(0).getOperand();
+        return new UpdateData(grId, fields);
     }
 
 }

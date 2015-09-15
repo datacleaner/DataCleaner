@@ -19,9 +19,7 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
 import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.datacleaner.metamodel.datahub.DataHubConnection.QUERY_EXTENSION;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
 
 import java.util.ArrayList;
@@ -63,7 +61,7 @@ public class DataHubDataSet extends AbstractDataSet {
     private static final String FIRST_ROW_PARAM = "f";
     private static final String MAX_ROW_PARAM = "m";
 
-    private final DataHubConnection _connection;
+    private final DataHubRepoConnection _connection;
     private final Query _query;
     private String _queryString;
     private String _uri;
@@ -79,7 +77,7 @@ public class DataHubDataSet extends AbstractDataSet {
      * @param query
      * @param connection
      */
-    public DataHubDataSet(Query query, DataHubConnection connection) {
+    public DataHubDataSet(Query query, DataHubRepoConnection connection) {
         super(getSelectItems(query));
         Table table = query.getFromClause().getItem(0).getTable();
         _queryString = getQueryString(query, table);
@@ -158,10 +156,9 @@ public class DataHubDataSet extends AbstractDataSet {
         return query.getSelectClause().getItems();
     }
 
-    private String createEncodedUri(DataHubConnection connection, Table table) {
+    private String createEncodedUri(DataHubRepoConnection connection, Table table) {
         String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
-        return connection.getRepositoryUrl() + DataHubConnection.DATASTORES_PATH + "/"
-                + urlPathSegmentEscaper().escape(datastoreName) + QUERY_EXTENSION;
+        return _connection.getQueryUrl(connection, datastoreName);
     }
 
     private String getQueryString(Query query, Table table) {

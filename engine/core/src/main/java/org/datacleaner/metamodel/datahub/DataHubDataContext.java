@@ -19,13 +19,10 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
 import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.datacleaner.metamodel.datahub.DataHubConnection.DATASTORES_PATH;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
-import static org.datacleaner.metamodel.datahub.DataHubConnection.SCHEMA_EXTENSION;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
-import static org.datacleaner.metamodel.datahub.utils.JsonUpdateQueryBuilder.buildJsonArray;
+import static org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder.buildJsonArray;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,7 +33,7 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
@@ -45,7 +42,7 @@ import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
@@ -54,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.google.common.net.UrlEscapers;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
@@ -62,22 +58,23 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     private static final String JSON_CONTENT_TYPE = "application/json";
 
 
-    private DataHubConnection _connection;
+    private DataHubRepoConnection _repoConnection;
+    private DataHubUpdateConnection _updateConnection;
     private Map<String, DataHubSchema> _schemas;
 
     public DataHubDataContext(DataHubConnection connection) {
-        _connection = connection;
+        _repoConnection = new DataHubRepoConnection(connection);
+        _updateConnection = new DataHubUpdateConnection(connection);
         _schemas = getDatahubSchemas();
     }
 
     private Map<String, DataHubSchema> getDatahubSchemas() {
         Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
         for (final String datastoreName : getDataStoreNames()) {
-            final String uri = _connection.getRepositoryUrl() + DATASTORES_PATH + "/"
-                    + urlPathSegmentEscaper().escape(datastoreName) + SCHEMA_EXTENSION;
+            final String uri = _repoConnection.getSchemaUrl(datastoreName);
             logger.debug("request {}", uri);
             final HttpGet request = new HttpGet(uri);
-            final HttpResponse response = executeRequest(request);
+            final HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
             final HttpEntity entity = response.getEntity();
             final JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
@@ -91,9 +88,9 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return schemas;
     }
 
+
     @Override
     public void executeUpdate(UpdateScript script) {
-        //final DataHubUpdateCallback callback = new DataHubUpdateCallback(this);
         try (final DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
             script.run(callback);
         } catch (RuntimeException e) {
@@ -103,14 +100,14 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     @Override
     public DataSet executeQuery(final Query query) {
-        return new DataHubDataSet(query, _connection);
+        return new DataHubDataSet(query, _repoConnection);
     }
 
     private List<String> getDataStoreNames() {
-        String uri = _connection.getRepositoryUrl() + DATASTORES_PATH;
+        String uri = _repoConnection.getDatastoreUrl();
         logger.debug("request {}", uri);
         HttpGet request = new HttpGet(uri);
-        HttpResponse response = executeRequest(request);
+        HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
         HttpEntity entity = response.getEntity();
         JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
         try {
@@ -124,9 +121,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return getDefaultSchema();
     }
 
-    private HttpResponse executeRequest(HttpUriRequest request) {
+    private HttpResponse executeRequest(HttpUriRequest request, MonitorHttpClient httpClient) {
 
-        MonitorHttpClient httpClient = _connection.getHttpClient();
         HttpResponse response;
         try {
             response = httpClient.execute(request);
@@ -154,28 +150,26 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return _schemas.get(name);
     }
 
-    public DataHubConnection getConnection() {
-        return _connection;
-    }
+//    public DataHubRepoConnection getRepoConnection() {
+//        return _repoConnection;
+//    }
 
-    public void executeUpdate(PendingUpdates pendingUpdates) {
-        Table table = pendingUpdates.getTable();
-        String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
-        String uri = _connection.getRepositoryUrl() + "/datastores/"
-                + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".update";
+    public void executeUpdates(List<UpdateData> pendingUpdates) {
+        String uri = _updateConnection.getUpdateUrl();
         logger.debug("request {}", uri);
-        final HttpPut request = new HttpPut(uri);
+        final HttpPost request = new HttpPost(uri);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
         try {
-            request.setEntity(new StringEntity(buildJsonArray(pendingUpdates.getQueries())));
+            request.setEntity(new StringEntity(buildJsonArray(pendingUpdates)));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        final HttpResponse response = executeRequest(request);
+        final HttpResponse response = executeRequest(request, _updateConnection.getHttpClient());
         final HttpEntity entity = response.getEntity();
         printTestResult(entity);
     }
+
 
     private void printTestResult(HttpEntity entity) {
         try {

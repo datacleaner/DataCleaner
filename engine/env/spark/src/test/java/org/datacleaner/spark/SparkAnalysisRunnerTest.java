@@ -20,6 +20,7 @@
 package org.datacleaner.spark;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -31,10 +32,12 @@ import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
 import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
+import org.datacleaner.beans.valuedist.SingleValueDistributionResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.junit.Test;
 
 /**
@@ -243,9 +246,20 @@ public class SparkAnalysisRunnerTest extends TestCase {
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
                 ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
-        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
-        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
-        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
-        assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
+        GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
+        Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
+        SingleValueDistributionResult group1 = (SingleValueDistributionResult) iterator.next();
+        assertEquals("Netherlands", group1.getName());
+        assertEquals(3, group1.getTotalCount());
+        assertEquals(Integer.valueOf(3), group1.getUniqueCount());
+        assertEquals(Integer.valueOf(3), group1.getDistinctCount());
+        assertEquals(0, group1.getNullCount());
+        
+        SingleValueDistributionResult group2 = (SingleValueDistributionResult) iterator.next();
+        assertEquals("Denmark", group2.getName());
+        assertEquals(4, group2.getTotalCount());
+        assertEquals(Integer.valueOf(4), group2.getUniqueCount());
+        assertEquals(Integer.valueOf(4), group2.getDistinctCount());
+        assertEquals(0, group2.getNullCount());
     }
 }

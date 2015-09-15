@@ -108,6 +108,7 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
         final Collection<ValueCountingAnalyzerResult> reducedChildResults = new ArrayList<ValueCountingAnalyzerResult>();
         for (ValueCountingAnalyzerResult singleValueCountingResult : groupedResult.getGroupResults()) {
+            boolean groupFound = false;
             SingleValueDistributionResult singleResult = (SingleValueDistributionResult) singleValueCountingResult;
             for (ValueCountingAnalyzerResult singleValueCountingReducedResult : reducedResult.getGroupResults()) {
                 SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) singleValueCountingReducedResult;
@@ -118,11 +119,18 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                             singleResult.getHighlightedColumns(), singleReducedResult, singleResult);
                     reducedChildResults.add(reducedSingleResult);
                     highlightedColumns = reducedSingleResult.getHighlightedColumns();
+                    groupFound = true;
                     break;
                 }
             }
+            
+            if (!groupFound) {
+                reducedChildResults.addAll(reducedResult.getGroupResults());
+                reducedChildResults.add(singleResult);
+                highlightedColumns = singleResult.getHighlightedColumns();
+            }
         }
-
+        
         return new GroupedValueDistributionResult(highlightedColumns[0], (InputColumn<String>) highlightedColumns[1],
                 reducedChildResults);
     }

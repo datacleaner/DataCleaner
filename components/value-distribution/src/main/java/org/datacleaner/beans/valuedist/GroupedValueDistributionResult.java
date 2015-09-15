@@ -24,8 +24,8 @@ import java.util.Collection;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
-import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
+import org.datacleaner.result.ValueFrequency;
 
 /**
  * Represents the result of the {@link ValueDistributionAnalyzer}.
@@ -65,32 +65,44 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public Integer getDistinctCount() {
-        return getSingleValueDistributionResult().getDistinctCount();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return -1;
     }
 
     @Override
     public int getNullCount() {
-        return getSingleValueDistributionResult().getNullCount();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return -1;
     }
 
     @Override
     public int getTotalCount() {
-        return getSingleValueDistributionResult().getTotalCount();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return -1;
     }
 
     @Override
     public Integer getCount(String value) {
-        return getSingleValueDistributionResult().getCount(value);
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return -1;
     }
 
     @Override
     public Integer getUniqueCount() {
-        return getSingleValueDistributionResult().getUniqueCount();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return -1;
     }
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        return getSingleValueDistributionResult().getValueCounts();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return null;
     }
 
     @Override
@@ -126,12 +138,16 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
-        return getSingleValueDistributionResult().getAnnotatedRowsForValue(value);
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return null;
     }
 
     @Override
     public AnnotatedRowsResult getAnnotatedRowsForNull() {
-        return getSingleValueDistributionResult().getAnnotatedRowsForNull();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return null;
     }
 
     @Override
@@ -142,12 +158,16 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public Collection<String> getUniqueValues() {
-        return getSingleValueDistributionResult().getUniqueValues();
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return null;
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
-        return getSingleValueDistributionResult().hasAnnotatedRows(value);
+    public Boolean hasAnnotatedRows(String value) {
+        // This operation is not supported on GroupValueDistributionResult, but
+        // we don't want to throw exceptions...
+        return null; 
     }
 
     @Override

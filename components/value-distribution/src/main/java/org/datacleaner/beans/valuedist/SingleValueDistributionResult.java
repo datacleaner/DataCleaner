@@ -100,7 +100,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public Boolean hasAnnotatedRows(String value) {
         if (_annotations == null) {
             return false;
         }

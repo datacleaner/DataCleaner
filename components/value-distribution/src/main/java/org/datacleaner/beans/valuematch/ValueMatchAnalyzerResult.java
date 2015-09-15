@@ -168,7 +168,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public Boolean hasAnnotatedRows(String value) {
         if (_rowAnnotationFactoryRef.get() == null) {
             return false;
         }

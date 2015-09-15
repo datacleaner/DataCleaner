@@ -22,7 +22,9 @@ package org.datacleaner.beans.valuedist;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -181,20 +183,36 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
     }
 
     private Collection<String> reduceUniqueValues(Collection<String> uniqueValues1, Collection<String> uniqueValues2) {
-        Collection<String> reducedUniqueValues = new ArrayList<>();
-
-        for (String value : uniqueValues1) {
-            if (!uniqueValues2.contains(value)) {
-                reducedUniqueValues.add(value);
+        Map<String, Integer> frequencyMap = new HashMap<String, Integer>();
+        
+        if (uniqueValues1 != null) {
+            for (String value : uniqueValues1) {
+                if (frequencyMap.containsKey(value)) {
+                    frequencyMap.put(value, frequencyMap.get(value) + 1);
+                } else {
+                    frequencyMap.put(value, 1);
+                }
             }
         }
-        for (String value : uniqueValues2) {
-            if (!uniqueValues1.contains(value)) {
-                reducedUniqueValues.add(value);
+        
+        if (uniqueValues2 != null) {
+            for (String value : uniqueValues2) {
+                if (frequencyMap.containsKey(value)) {
+                    frequencyMap.put(value, frequencyMap.get(value) + 1);
+                } else {
+                    frequencyMap.put(value, 1);
+                }
             }
         }
-
-        return reducedUniqueValues;
+        
+        List<String> uniqueList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry: frequencyMap.entrySet()) {
+            if (entry.getValue() == 1) {
+                uniqueList.add(entry.getKey());
+            }
+        }
+        
+        return uniqueList;
     }
 
 }

@@ -19,6 +19,14 @@
  */
 package org.datacleaner.components.remote;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,38 +34,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.datacleaner.api.*;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.restclient.*;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @Since 9/1/15
  */
 public class RemoteTransformer implements Transformer {
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformer.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -71,17 +70,23 @@ public class RemoteTransformer implements Transformer {
     private String baseUrl;
     private String componentDisplayName;
     private String username, password, tenant;
+    private String superCategoryName;
+    private Set<String> categoryNames;
 
     private ComponentRESTClient client;
     private CloseableHttpClient clientRaw;
     private Map<String, Object> configuredProperties = new HashMap<>();
 
-    public RemoteTransformer(String baseUrl, String url, String componentDisplayName, String tenant, String username, String password) {
+    public RemoteTransformer(String baseUrl, String url, String componentDisplayName, String tenant,
+                             String superCategoryName, Set<String> categoryNames,
+                             String username, String password) {
         this.baseUrl = baseUrl;
         this.componentUrl = url;
         this.username = username;
         this.password = password;
         this.tenant = tenant;
+        this.superCategoryName = superCategoryName;
+        this.categoryNames = categoryNames;
         this.componentDisplayName = componentDisplayName;
     }
 
@@ -215,7 +220,6 @@ public class RemoteTransformer implements Transformer {
     }
 
     private static class MyInputColumnsSerializer extends StdSerializer<InputColumn> {
-
         protected MyInputColumnsSerializer() {
             super(InputColumn.class);
         }

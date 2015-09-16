@@ -19,29 +19,44 @@
  */
 package org.datacleaner.descriptors;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  @Since 9/1/15
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor {
-
+    private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String displayName;
     private String baseUrl;
     private String componentUrl;
     private String tenant;
+    private String superCategoryName;
+    private Set<String> categoryNames;
     private String username;
     private String password;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant, String username, String password) {
+    public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant,
+                                           String superCategoryName, Set<String> categoryNames,
+                                           String username, String password) {
         super(RemoteTransformer.class);
-        this.componentUrl = componentUrl;
+
         this.displayName = displayName;
+        this.baseUrl = baseUrl;
+        this.componentUrl = componentUrl;
+        this.tenant = tenant;
+        this.superCategoryName = superCategoryName;
+        this.categoryNames = categoryNames;
         this.username = username;
         this.password = password;
-        this.baseUrl = baseUrl;
+
         try {
             this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
             this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
@@ -61,13 +76,51 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
-        return TransformSuperCategory.class;
+        return classFromName(superCategoryName, TransformSuperCategory.class);
+    }
+
+    private Class classFromName(String className, Class defaultClass) {
+        Class clazz = defaultClass;
+        
+        try {
+            clazz = Class.forName(className);
+        }
+        catch (ClassNotFoundException e) {
+            logger.warn("Class '" + className + "' was not found. \n" + e.getMessage());
+        }
+
+        return clazz;
+    }
+
+    @Override
+    public Set<ComponentCategory> getComponentCategories() {
+        //ComponentCategory[] list = new ComponentCategory[] { new StringManipulationCategory() };
+        //return new HashSet<>(Arrays.asList(list));
+        Set<ComponentCategory> componentCategories = new HashSet<>();
+
+        try {
+            for (String name : categoryNames) {
+                Class categoryClass = classFromName(name, null);
+
+                if (categoryClass == null) {
+                    continue;
+                }
+
+                ComponentCategory category = (ComponentCategory) categoryClass.newInstance();
+                componentCategories.add(category);
+            }
+        }
+        catch (InstantiationException | IllegalAccessException e) {
+            logger.warn("New instance of a component category could not have been created. \n" + e.getMessage());
+        }
+
+        return componentCategories;
     }
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant,
+                superCategoryName, categoryNames, username, password);
         return t;
     }
-
 }

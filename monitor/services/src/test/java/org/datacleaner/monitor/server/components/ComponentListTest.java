@@ -19,6 +19,26 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.server.controllers.ComponentControllerV1;
@@ -26,14 +46,6 @@ import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.*;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 
 public class ComponentListTest {
     private static final int COMPONENTS_COUNT = 5;
@@ -62,9 +74,6 @@ public class ComponentListTest {
         assertTrue(componentList.getComponents().isEmpty());
         ComponentDescriptor descriptorMock = getDescriptorMock();
 
-        replay(configuredPropertyDescriptorMock);
-        replay(componentDescriptorMock);
-
         componentList.add(ComponentControllerV1.createComponentInfo(tenant, descriptorMock));
         assertTrue(componentList.getComponents().size() == 1);
 
@@ -74,10 +83,39 @@ public class ComponentListTest {
 
     private ComponentDescriptor getDescriptorMock() {
         componentDescriptorMock = createNiceMock(ComponentDescriptor.class);
-        expect(componentDescriptorMock.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock());
+        expect(componentDescriptorMock.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(componentDescriptorMock.getDisplayName()).andReturn("descriptor display name").anyTimes();
+        expect(componentDescriptorMock.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
+        expect(componentDescriptorMock.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
+        replay(componentDescriptorMock);
 
         return componentDescriptorMock;
+    }
+
+    private ComponentSuperCategory getComponentSuperCategoryMock() {
+        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+            @Override
+            public String getName() {
+                return "superCategory";
+            }
+
+            @Override
+            public String getDescription() {
+                return getName();
+            }
+
+            @Override
+            public int getSortIndex() {
+                return 0;
+            }
+
+            @Override
+            public int compareTo(ComponentSuperCategory o) {
+                return 0;
+            }
+        };
+
+        return componentSuperCategory;
     }
 
     private Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesMock() {
@@ -93,6 +131,7 @@ public class ComponentListTest {
 
         Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
         propertiesSet.add(configuredPropertyDescriptorMock);
+        replay(configuredPropertyDescriptorMock);
 
         return propertiesSet;
     }

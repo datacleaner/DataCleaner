@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -31,6 +32,11 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -69,12 +75,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
-
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -231,9 +231,9 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
         if(config == null){
-                LOGGER.warn("Component with id {} does not exist.", id);
-                throw ComponentNotFoundException.createInstanceNotFound(id);
-            }
+            LOGGER.warn("Component with id {} does not exist.", id);
+            throw ComponentNotFoundException.createInstanceNotFound(id);
+        }
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -281,7 +281,20 @@ public class ComponentControllerV1 implements ComponentController {
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
+                .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
+                .setCategoryNames(getCategoryNames(descriptor))
                 .setProperties(createPropertiesInfo(descriptor));
+    }
+
+    private static Set<String> getCategoryNames(ComponentDescriptor componentDescriptor) {
+        Set<String> categoryNames = new HashSet<>();
+
+        for (Object element: componentDescriptor.getComponentCategories()) {
+            ComponentCategory componentCategory = (ComponentCategory) element;
+            categoryNames.add(componentCategory.getClass().getName());
+        }
+
+        return categoryNames;
     }
 
     static private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
@@ -356,6 +369,4 @@ public class ComponentControllerV1 implements ComponentController {
             propInfo.setSchema(visitor.finalSchema());
         }
     }
-
-
 }

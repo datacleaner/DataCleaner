@@ -1,3 +1,4 @@
+
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -19,33 +20,24 @@
  */
 package org.datacleaner.descriptors;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.metamodel.util.LazyRef;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.tasks.Task;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
-
 /**
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
-
     private String url, username, password;
-    private String tenant = "test"; // TODO
-
+    private String tenant = "";
     LazyRef<Data> data = new LazyRef<Data>() {
         @Override
         protected Data fetch() throws Throwable {
@@ -59,6 +51,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         this.url = url.replaceAll("/+$", "");
         this.username = username;
         this.password = password;
+        this.tenant = username;
         data.requestLoad();
     }
 
@@ -89,7 +82,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
-
             try {
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant);
@@ -99,7 +91,12 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
                                 componentUrl,
-                                component.getName() + " (remote)", tenant, username, password);
+                                component.getName() + " (remote)",
+                                tenant,
+                                component.getSuperCategoryName(),
+                                component.getCategoryNames(),
+                                username,
+                                password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
                             String name = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();

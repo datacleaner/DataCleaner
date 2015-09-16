@@ -137,4 +137,8 @@ public class CoalesceUnit {
     public String toString() {
         return "CoalesceUnit[inputColumnNames=" + Arrays.toString(_inputColumnNames) + "]";
     }
+
+    public String getSuggestedOutputColumnName() {
+        return _inputColumnNames[0];
+    }
 }

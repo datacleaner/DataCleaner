@@ -25,28 +25,32 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.datacleaner.api.Alias;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.MultiStreamComponent;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.components.categories.CompositionCategory;
+import org.datacleaner.job.output.OutputDataStreamBuilder;
+import org.datacleaner.job.output.OutputDataStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Named("Fuse / Coalesce fields")
-@Alias("Coalesce multiple fields")
-@Description("Lets you combine multiple fields into one, selecting the first value that is non-null.\n\n"
-        + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
-        + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
+@Named("Fuse streams")
+@Description("Lets you combine multiple streams into one.\n\n"
+        + "Use it to fuse data streams coming from different filter requirements, different output data streams or different source tables. "
+        + "You can define new fields whose values represent whatever is available from one of the input streams.")
 @Categorized(CompositionCategory.class)
-public class CoalesceMultipleFieldsTransformer implements Transformer {
+public class FuseStreamsComponent extends MultiStreamComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
+    private static final Logger logger = LoggerFactory.getLogger(FuseStreamsComponent.class);
 
     @Configured
     InputColumn<?>[] _input;
@@ -58,12 +62,13 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     @Description("Consider empty strings (\"\") as null also?")
     boolean considerEmptyStringAsNull = true;
 
+    private OutputRowCollector _outputRowCollector;
     private CoalesceFunction _coalesceFunction;
 
-    public CoalesceMultipleFieldsTransformer() {
+    public FuseStreamsComponent() {
     }
 
-    public CoalesceMultipleFieldsTransformer(CoalesceUnit... units) {
+    public FuseStreamsComponent(CoalesceUnit... units) {
         this();
         this._units = units;
     }
@@ -92,29 +97,40 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     }
 
     @Override
-    public OutputColumns getOutputColumns() {
-        final OutputColumns outputColumns = new OutputColumns(_units.length, Object.class);
-        for (int i = 0; i < _units.length; i++) {
-            final CoalesceUnit unit = _units[i];
-            final Class<?> dataType = unit.getOutputDataType(_input);
-            outputColumns.setColumnType(i, dataType);
-        }
-        return outputColumns;
-    }
-
-    @Override
-    public Object[] transform(InputRow inputRow) {
-        final Object[] result = new Object[_units.length];
+    public void run(InputRow inputRow) {
+        final Object[] output = new Object[_units.length];
         for (int i = 0; i < _units.length; i++) {
             final CoalesceUnit unit = _units[i];
             final InputColumn<?>[] inputColumns = unit.getInputColumns(_input);
             final List<Object> values = inputRow.getValues(inputColumns);
             final Object value = _coalesceFunction.coalesce(values);
-            result[i] = value;
+            output[i] = value;
         }
+
         if (logger.isDebugEnabled()) {
-            logger.debug("Coalesced values for row {}: {}", inputRow.getId(), Arrays.toString(result));
+            logger.debug("Fused values for row: {}", Arrays.toString(output));
         }
-        return result;
+
+        _outputRowCollector.putValues(output);
     }
+
+    @Override
+    public OutputDataStream[] getOutputDataStreams() {
+        final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream("output");
+        for (int i = 0; i < _units.length; i++) {
+            final CoalesceUnit unit = _units[i];
+            final Class<?> dataType = unit.getOutputDataType(_input);
+            final String columnName = unit.getSuggestedOutputColumnName();
+            final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
+            builder.withColumn(columnName, columnType);
+        }
+        return new OutputDataStream[] { builder.toOutputDataStream() };
+    }
+
+    @Override
+    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
+            OutputRowCollector outputRowCollector) {
+        _outputRowCollector = outputRowCollector;
+    }
+
 }

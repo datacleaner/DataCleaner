@@ -175,4 +175,12 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
         // not applicable
         return null;
     }
+    
+    public InputColumn<?> getColumn() {
+        return _column;
+    }
+    
+    public InputColumn<String> getGroupColumn() {
+        return _groupColumn;
+    }
 }

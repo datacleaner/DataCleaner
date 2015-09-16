@@ -38,6 +38,7 @@ import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountListImpl;
+import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
@@ -68,21 +69,16 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             if (partialResult instanceof SingleValueDistributionResult) {
                 final SingleValueDistributionResult singlePartialResult = (SingleValueDistributionResult) partialResult;
 
-                Collection<ValueFrequency> flattenedTopValues = getOrInitializeFlattenedTopValues(
-                        flattenedTopValuesMap, singlePartialResult);
-                Collection<String> flattenedUniqueValues = getOrInitializeFlattenedUniqueValues(
-                        flattenedUniqueValuesMap, singlePartialResult);
-                Collection<ValueFrequency> flattenedDistinctValues = getOrInitializeFlattenedTopValues(
-                        flattenedDistinctValuesMap, singlePartialResult);
-                Integer reducedTotalCount = getOrInitializeReducedTotalCount(reducedTotalCountMap, singlePartialResult);
-                
-                flattenedUniqueValues.addAll(singlePartialResult.getUniqueValues());
-                flattenedTopValues.addAll(singlePartialResult.getTopValues().getValueCounts());
-                flattenedDistinctValues.addAll(singlePartialResult.getValueCounts());
-                reducedTotalCount += singlePartialResult.getTotalCount();
-
+                flattenAggregates(flattenedTopValuesMap, flattenedUniqueValuesMap, flattenedDistinctValuesMap,
+                        reducedTotalCountMap, singlePartialResult);
             } else if (partialResult instanceof GroupedValueDistributionResult) {
                 final GroupedValueDistributionResult groupedPartialResult = (GroupedValueDistributionResult) partialResult;
+                
+                for (ValueCountingAnalyzerResult childValueCountingResult : groupedPartialResult.getGroupResults()) {
+                    SingleValueDistributionResult childResult = (SingleValueDistributionResult) childValueCountingResult;
+                    
+                    flattenAggregates(flattenedTopValuesMap, flattenedUniqueValuesMap, flattenedDistinctValuesMap, reducedTotalCountMap, childResult);
+                }
 
             } else {
                 throw new IllegalStateException("Unsupported type of "
@@ -96,22 +92,27 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         Map<String, Integer> reducedDistinctValuesMap = reduceDistinctValuesMap(flattenedDistinctValuesMap);
 
         ValueDistributionAnalyzerResult reducedResult;
-        final InputColumn<?>[] highlightedColumns = ((SingleValueDistributionResult) first).getHighlightedColumns();
         if (flattenedDistinctValuesMap.size() > 1) {
+            final InputColumn<?> inputColumn = ((GroupedValueDistributionResult) first).getColumn();
+            final InputColumn<String> groupColumn = ((GroupedValueDistributionResult) first).getGroupColumn();
+            final InputColumn<?>[] highlightedColumns = new InputColumn<?>[2];
+            highlightedColumns[0] = inputColumn;
+            highlightedColumns[0] = groupColumn;
+            List<SingleValueDistributionResult> childResults = new ArrayList<>();
             for (String groupName : flattenedDistinctValuesMap.keySet()) {
-                // TODO: No constructor for ValueCountList?
-                final ValueCountList reducedValueCountList = reducedTopValuesMap.get(groupName);
-                new SingleValueDistributionResult(
+                final ValueCountList reducedValueCountList = createValueCountList(reducedTopValuesMap.get(groupName));
+                SingleValueDistributionResult childValueDistributionResult = new SingleValueDistributionResult(
                         groupName, reducedValueCountList, reducedUniqueValuesMap.get(groupName),
                         reducedUniqueValuesMap.get(groupName).size(), reducedDistinctValuesMap.get(groupName), reducedTotalCountMap.get(groupName), annotations,
                         new RowAnnotationImpl(), _rowAnnotationFactory,
                         highlightedColumns);
+                childResults.add(childValueDistributionResult);
             }
-            reducedResult = new GroupedValueDistributionResult(highlightedColumns[0], (InputColumn<String>) highlightedColumns[1], values);
+            reducedResult = new GroupedValueDistributionResult(inputColumn, groupColumn, childResults);
         } else {
+            final InputColumn<?>[] highlightedColumns = ((SingleValueDistributionResult) first).getHighlightedColumns();
             final Collection<String> reducedUniqueValues = reducedUniqueValuesMap.values().iterator().next();
-            // TODO: No constructor for ValueCountList?
-            final ValueCountList reducedValueCountList = reducedTopValuesMap.values().iterator().next();
+            final ValueCountList reducedValueCountList = createValueCountList(reducedTopValuesMap.values().iterator().next());
             reducedResult = new SingleValueDistributionResult(
                     ((SingleValueDistributionResult) first).getName(), reducedValueCountList, reducedUniqueValues,
                     reducedUniqueValues.size(), reducedDistinctValuesMap.values().iterator().next(), reducedTotalCountMap.values().iterator().next(), annotations,
@@ -123,14 +124,37 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         return reducedResult;
     }
 
-    private Integer getOrInitializeReducedTotalCount(Map<String, Integer> reducedTotalCountMap,
-            final SingleValueDistributionResult singlePartialResult) {
+    private void flattenAggregates(Map<String, Collection<ValueFrequency>> flattenedTopValuesMap,
+            Map<String, Collection<String>> flattenedUniqueValuesMap,
+            Map<String, Collection<ValueFrequency>> flattenedDistinctValuesMap,
+            Map<String, Integer> reducedTotalCountMap, final SingleValueDistributionResult singlePartialResult) {
+        Collection<ValueFrequency> flattenedTopValues = getOrInitializeFlattenedTopValues(
+                flattenedTopValuesMap, singlePartialResult);
+        Collection<String> flattenedUniqueValues = getOrInitializeFlattenedUniqueValues(
+                flattenedUniqueValuesMap, singlePartialResult);
+        Collection<ValueFrequency> flattenedDistinctValues = getOrInitializeFlattenedTopValues(
+                flattenedDistinctValuesMap, singlePartialResult);
+        
+        flattenedUniqueValues.addAll(singlePartialResult.getUniqueValues());
+        flattenedTopValues.addAll(singlePartialResult.getTopValues().getValueCounts());
+        flattenedDistinctValues.addAll(singlePartialResult.getValueCounts());
+        
         Integer reducedTotalCount = reducedTotalCountMap.get(singlePartialResult.getName());
         if (reducedTotalCount == null) {
-            reducedTotalCountMap.put(singlePartialResult.getName(), new Integer(0));
+            reducedTotalCountMap.put(singlePartialResult.getName(), singlePartialResult.getTotalCount());
             reducedTotalCount = reducedTotalCountMap.get(singlePartialResult.getName());
+        } else {
+            reducedTotalCountMap.remove(singlePartialResult.getName());
+            reducedTotalCountMap.put(singlePartialResult.getName(), reducedTotalCount + singlePartialResult.getTotalCount());
         }
-        return reducedTotalCount;
+    }
+
+    private ValueCountList createValueCountList(Collection<ValueFrequency> valueFrequencies) {
+        ValueCountListImpl valueCountListImpl = ValueCountListImpl.createFullList();
+        for (ValueFrequency valueFrequency : valueFrequencies) {
+            valueCountListImpl.register(valueFrequency);
+        }
+        return valueCountListImpl;
     }
 
     private Collection<String> getOrInitializeFlattenedUniqueValues(
@@ -188,10 +212,7 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             }
         }
 
-        ValueCountListImpl reducedValueCountList = ValueCountListImpl.createFullList();
-        for (ValueFrequency valueFrequency : reducedValueFrequencies) {
-            reducedValueCountList.register(valueFrequency);
-        }
+        ValueCountList reducedValueCountList = createValueCountList(reducedValueFrequencies);
         return reducedValueCountList;
     }
     

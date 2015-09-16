@@ -12,8 +12,8 @@
 	<modules>
 		<module>core</module>
 		<module>env</module>
-        <module>rest-client</module>
-        <module>utils</module>
+		<module>rest-client</module>
+		<module>utils</module>
 		<module>xml-config</module>
 	</modules>
 

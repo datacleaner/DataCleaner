@@ -61,16 +61,19 @@ public class CloseTaskListener implements TaskListener {
 
     public void cleanup() {
         logger.debug("cleanup()");
-
-        final Object component = _consumer.getComponent();
-        final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
-
-        // close can occur AFTER completion
-        _lifeCycleHelper.close(descriptor, component, _success.get());
-
-        final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
-        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-            activeOutputDataStream.close();
+        
+        final int publishersLeft = _consumer.decrementActivePublishers();
+        if (publishersLeft == 0) {
+            final Object component = _consumer.getComponent();
+            final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
+            
+            // close can occur AFTER completion
+            _lifeCycleHelper.close(descriptor, component, _success.get());
+            
+            final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
+            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+                activeOutputDataStream.close();
+            }
         }
     }
 

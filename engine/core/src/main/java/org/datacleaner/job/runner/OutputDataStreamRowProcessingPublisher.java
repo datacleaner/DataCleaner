@@ -39,27 +39,26 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
 
     private final static Logger logger = LoggerFactory.getLogger(OutputDataStreamRowProcessingPublisher.class);
 
-    private final RowProcessingPublisher _parentPublisher;
+    private final RowProcessingConsumer _parentConsumer;
 
     /**
      * Constructor to use for {@link OutputDataStreamRowProcessingPublisher}s
-     * that are parented by another
-     * {@link OutputDataStreamRowProcessingPublisher}. When a parent publisher
-     * exists the execution flow is adapted since records will be dispatched by
-     * a (component within the) parent instead of sourced by the
+     * that are parented by a {@link RowProcessingConsumer}. When a parent
+     * consumer exists the execution flow is adapted since records will be
+     * dispatched by a (component within the) parent instead of sourced by the
      * {@link OutputDataStreamRowProcessingPublisher} itself.
      * 
      * @param publishers
-     * @param parentPublisher
+     * @param parentConsumer
      * @param stream
      */
     public OutputDataStreamRowProcessingPublisher(RowProcessingPublishers publishers,
-            RowProcessingPublisher firstParentPublisher, RowProcessingStream stream) {
+            RowProcessingConsumer parentConsumer, RowProcessingStream stream) {
         super(publishers, stream);
-        if (firstParentPublisher == null) {
-            throw new IllegalArgumentException("Parent RowProcessingPublisher cannot be null");
+        if (parentConsumer == null) {
+            throw new IllegalArgumentException("Parent RowProcessingConsumer cannot be null");
         }
-        _parentPublisher = firstParentPublisher;
+        _parentConsumer = parentConsumer;
     }
 
     @Override
@@ -69,17 +68,14 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
 
     @Override
     protected boolean processRowsInternal(AnalysisListener listener, RowProcessingMetrics rowProcessingMetrics) {
-        final List<RowProcessingConsumer> consumers = _parentPublisher.getConsumers();
-        for (RowProcessingConsumer consumer : consumers) {
-            final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
-            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-                try {
-                    activeOutputDataStream.await();
-                } catch (InterruptedException e) {
-                    logger.error("Unexpected error awaiting output data stream", e);
-                    listener.errorUnknown(getAnalysisJob(), e);
-                    return false;
-                }
+        final Collection<ActiveOutputDataStream> activeOutputDataStreams = _parentConsumer.getActiveOutputDataStreams();
+        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+            try {
+                activeOutputDataStream.await();
+            } catch (InterruptedException e) {
+                logger.error("Unexpected error awaiting output data stream", e);
+                listener.errorUnknown(getAnalysisJob(), e);
+                return false;
             }
         }
 

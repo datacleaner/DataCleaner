@@ -118,4 +118,20 @@ public interface RowProcessingConsumer {
      * @return
      */
     public AnalysisJob getAnalysisJob();
+
+    /**
+     * Increments the number of active publishers that will be publishing to
+     * this consumer.
+     * 
+     * @return the (new) count of publishers
+     */
+    public int incrementActivePublishers();
+
+    /**
+     * Decrements the number of active publishers that will be publishing to
+     * this consumer.
+     * 
+     * @return the (new) count of publishers
+     */
+    public int decrementActivePublishers();
 }

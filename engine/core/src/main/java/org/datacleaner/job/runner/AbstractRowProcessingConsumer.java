@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.HasOutputDataStreams;
@@ -59,6 +60,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
     private final List<ActiveOutputDataStream> _outputDataStreams;
+    private final AtomicInteger _publisherCount;
 
     protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
@@ -81,6 +83,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
         _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
+        _publisherCount = new AtomicInteger(0);
     }
 
     private boolean isAlwaysSatisfiedForConsume() {
@@ -253,5 +256,15 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     @Override
     public AnalysisJob getAnalysisJob() {
         return _analysisJob;
+    }
+
+    @Override
+    public int incrementActivePublishers() {
+        return _publisherCount.incrementAndGet();
+    }
+
+    @Override
+    public int decrementActivePublishers() {
+        return _publisherCount.decrementAndGet();
     }
 }

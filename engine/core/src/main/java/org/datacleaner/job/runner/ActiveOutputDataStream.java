@@ -38,8 +38,8 @@ public class ActiveOutputDataStream implements Closeable {
     private final CountDownLatch _countDownLatch;
     private OutputDataStreamRowCollector _outputRowCollector;
 
-    public ActiveOutputDataStream(OutputDataStreamJob outputDataStreamJob,
-            RowProcessingPublisher publisher, HasOutputDataStreams component) {
+    public ActiveOutputDataStream(OutputDataStreamJob outputDataStreamJob, RowProcessingPublisher publisher,
+            HasOutputDataStreams component) {
         _outputDataStreamJob = outputDataStreamJob;
         _publisher = publisher;
         _component = component;

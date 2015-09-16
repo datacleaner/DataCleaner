@@ -53,24 +53,27 @@ public final class InitializeTask implements Task {
     }
 
     private static void executeInternal(final RowProcessingConsumer consumer, LifeCycleHelper lifeCycleHelper) {
-        final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
-        final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
-        final Object component = consumer.getComponent();
-
-        lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
-        lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        lifeCycleHelper.validate(descriptor, component);
-        final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
-        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-            activeOutputDataStream.initialize();
-            final RowProcessingPublisher publisher = activeOutputDataStream.getPublisher();
-            for (RowProcessingConsumer outputDataStreamConsumer : publisher.getConsumers()) {
-                final LifeCycleHelper outputDataStreamLifeCycleHelper = publisher.getPublishers()
-                        .getConsumerSpecificLifeCycleHelper(consumer);
-                executeInternal(outputDataStreamConsumer, outputDataStreamLifeCycleHelper);
+        final int publisherCount = consumer.incrementActivePublishers();
+        if (publisherCount == 1) {
+            final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
+            final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
+            final Object component = consumer.getComponent();
+            
+            lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
+            lifeCycleHelper.assignProvidedProperties(descriptor, component);
+            lifeCycleHelper.validate(descriptor, component);
+            final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
+            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+                activeOutputDataStream.initialize();
+                final RowProcessingPublisher publisher = activeOutputDataStream.getPublisher();
+                for (RowProcessingConsumer outputDataStreamConsumer : publisher.getConsumers()) {
+                    final LifeCycleHelper outputDataStreamLifeCycleHelper = publisher.getPublishers()
+                            .getConsumerSpecificLifeCycleHelper(consumer);
+                    executeInternal(outputDataStreamConsumer, outputDataStreamLifeCycleHelper);
+                }
             }
+            lifeCycleHelper.initialize(descriptor, component);
         }
-        lifeCycleHelper.initialize(descriptor, component);
     }
 
     @Override

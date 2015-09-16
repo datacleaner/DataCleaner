@@ -36,6 +36,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.ContextAwareInjectionManager;
 import org.datacleaner.configuration.InjectionManager;
@@ -49,6 +50,7 @@ import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,7 +217,9 @@ public final class RowProcessingPublishers {
         }
 
         if (tables.length > 1) {
-            throw new IllegalStateException("Component has input columns from multiple tables: " + componentJob);
+            if (!ReflectionUtils.is(componentJob.getDescriptor().getComponentClass(), MultiStreamComponent.class)) {
+                throw new IllegalStateException("Component has input columns from multiple tables: " + componentJob);
+            }
         }
 
         if (tables.length == 0) {

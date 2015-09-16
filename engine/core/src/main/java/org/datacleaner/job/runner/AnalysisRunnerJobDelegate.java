@@ -25,6 +25,7 @@ import java.util.Queue;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.job.AnalysisJob;
@@ -35,6 +36,7 @@ import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,18 +175,20 @@ final class AnalysisRunnerJobDelegate {
     private void validateSingleTableInput(final SourceColumnFinder sourceColumnFinder,
             final Collection<? extends ComponentJob> componentJobs) {
         for (ComponentJob componentJob : componentJobs) {
-            Table originatingTable = null;
-            final InputColumn<?>[] input = componentJob.getInput();
+            if (!ReflectionUtils.is(componentJob.getDescriptor().getComponentClass(), MultiStreamComponent.class)) {
+                Table originatingTable = null;
+                final InputColumn<?>[] input = componentJob.getInput();
 
-            for (InputColumn<?> inputColumn : input) {
-                final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
-                if (table != null) {
-                    if (originatingTable == null) {
-                        originatingTable = table;
-                    } else {
-                        if (!originatingTable.equals(table)) {
-                            throw new IllegalArgumentException("Input columns in " + componentJob
-                                    + " originate from different tables");
+                for (InputColumn<?> inputColumn : input) {
+                    final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
+                    if (table != null) {
+                        if (originatingTable == null) {
+                            originatingTable = table;
+                        } else {
+                            if (!originatingTable.equals(table)) {
+                                throw new IllegalArgumentException("Input columns in " + componentJob
+                                        + " originate from different tables");
+                            }
                         }
                     }
                 }

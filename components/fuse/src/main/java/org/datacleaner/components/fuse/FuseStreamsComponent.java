@@ -52,10 +52,13 @@ public class FuseStreamsComponent extends MultiStreamComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(FuseStreamsComponent.class);
 
+    public static final String OUTPUT_DATA_STREAM_NAME = "output";
+    public static final String PROPERTY_UNITS = "Units";
+
     @Configured
     InputColumn<?>[] _input;
 
-    @Configured
+    @Configured(PROPERTY_UNITS)
     CoalesceUnit[] _units;
 
     @Configured
@@ -116,7 +119,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
 
     @Override
     public OutputDataStream[] getOutputDataStreams() {
-        final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream("output");
+        final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
         for (int i = 0; i < _units.length; i++) {
             final CoalesceUnit unit = _units[i];
             final Class<?> dataType = unit.getOutputDataType(_input);

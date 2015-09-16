@@ -37,7 +37,6 @@ import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountListImpl;
-import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
@@ -106,17 +105,16 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         
         InputColumn<?>[] highlightedColumns = null;
 
-        final Collection<ValueCountingAnalyzerResult> reducedChildResults = new ArrayList<ValueCountingAnalyzerResult>();
-        for (ValueCountingAnalyzerResult singleValueCountingResult : groupedResult.getGroupResults()) {
+        final Collection<SingleValueDistributionResult> reducedChildResults = (Collection<SingleValueDistributionResult>) reducedResult.getGroupResults();
+        for (SingleValueDistributionResult singleResult : (Collection<SingleValueDistributionResult>) groupedResult.getGroupResults()) {
             boolean groupFound = false;
-            SingleValueDistributionResult singleResult = (SingleValueDistributionResult) singleValueCountingResult;
-            for (ValueCountingAnalyzerResult singleValueCountingReducedResult : reducedResult.getGroupResults()) {
-                SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) singleValueCountingReducedResult;
 
-                // TODO: Not only name but also grouping column
+            for (SingleValueDistributionResult singleReducedResult : (Collection<SingleValueDistributionResult>) reducedResult.getGroupResults()) {
+
                 if (singleReducedResult.getName().equals(singleResult.getName())) {
                     SingleValueDistributionResult reducedSingleResult = reduceSingleResult(annotations,
                             singleResult.getHighlightedColumns(), singleReducedResult, singleResult);
+                    reducedChildResults.remove(singleResult);
                     reducedChildResults.add(reducedSingleResult);
                     highlightedColumns = reducedSingleResult.getHighlightedColumns();
                     groupFound = true;
@@ -125,7 +123,6 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             }
             
             if (!groupFound) {
-                reducedChildResults.addAll(reducedResult.getGroupResults());
                 reducedChildResults.add(singleResult);
                 highlightedColumns = singleResult.getHighlightedColumns();
             }

@@ -95,4 +95,9 @@ public class RowProcessingStream {
         final RowProcessingStream other = (RowProcessingStream) obj;
         return Objects.equals(_analysisJob, other._analysisJob) && Objects.equals(_table, other._table);
     }
+    
+    @Override
+    public String toString() {
+        return getTable().getName();
+    }
 }

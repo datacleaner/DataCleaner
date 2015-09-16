@@ -198,6 +198,12 @@
 		<!-- Components used in test -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-fuse</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-basic-transformers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

@@ -65,6 +65,10 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
 
+    private static final String CDI_TICKET_HEADER = "CDI-ticket";
+    private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
+    private static final String CDI_USERID = "CDI-userId";
+    
     private final Charset charset = Charset.forName("UTF-8");
 
     private final CloseableHttpClient _httpClient;
@@ -147,6 +151,10 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());
 
+        request.addHeader(CDI_TICKET_HEADER, ticket);
+        request.addHeader(CDI_SERVICE_URL_HEADER, _casServerUrl);
+        request.addHeader(CDI_USERID, _username);
+        
         final HttpResponse result = executeHttpRequest(request, context);
         logger.debug("Cookies 4: {}", cookieStore.getCookies());
 

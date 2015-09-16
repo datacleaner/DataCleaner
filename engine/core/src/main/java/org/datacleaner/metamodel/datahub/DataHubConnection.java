@@ -68,7 +68,6 @@ public class DataHubConnection {
     }
 
     public MonitorHttpClient getHttpClient(String contextUrl) {
-
         final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
             clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
@@ -82,6 +81,26 @@ public class DataHubConnection {
         }
     }
 
+    /**
+     * Returns a client suitable for calling REST services on the DataHub
+     * @param contextUrl
+     * @return A client.
+     */
+    public MonitorHttpClient getServiceClient(String contextUrl) {
+        final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
+        if (_acceptUnverifiedSslPeers) {
+            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
+        }
+        final CloseableHttpClient httpClient = clientBuilder.build();
+
+        if (CAS.equals(_securityMode)) {
+            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+        } else {
+            return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
+        }
+        
+    }
+    
     public String getHostname() {
         return _hostname;
     }

@@ -33,8 +33,9 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.coalesce.CoalesceUnit;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -47,7 +48,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -19,8 +19,8 @@
  */
 package org.datacleaner.panels.coalesce;
 
-import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;

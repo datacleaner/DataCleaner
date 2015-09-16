@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

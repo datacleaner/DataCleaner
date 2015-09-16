@@ -17,10 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.FuseStreamsComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -34,7 +35,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link CoalesceMultipleFieldsTransformer}.
  */
-final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends TransformerComponentBuilderPanel {
+final class FuseStreamsComponentBuilderPresenter extends TransformerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,14 +43,16 @@ final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends T
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
-    public CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
-            TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
+    public FuseStreamsComponentBuilderPresenter(
+            TransformerComponentBuilder<FuseStreamsComponent> transformerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory, WindowContext windowContext,
             DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 
-        _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Input");
-        _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Units");
+        _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
+                FuseStreamsComponent.PROPERTY_INPUTS);
+        _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
+                FuseStreamsComponent.PROPERTY_UNITS);
 
         _propertyWidget = new MultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
     }

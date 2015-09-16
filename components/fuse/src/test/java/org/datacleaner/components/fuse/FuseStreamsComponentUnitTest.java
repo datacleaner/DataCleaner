@@ -54,7 +54,7 @@ public class FuseStreamsComponentUnitTest extends TestCase {
         final CoalesceUnit unit2 = new CoalesceUnit("city1", "town2");
         final FuseStreamsComponent component = new FuseStreamsComponent(unit1, unit2);
 
-        component._input = new InputColumn[] { colName1, colCity1, colName2, colTown2 };
+        component._inputs = new InputColumn[] { colName1, colCity1, colName2, colTown2 };
 
         final OutputDataStream[] streams = component.getOutputDataStreams();
         assertEquals(1, streams.length);

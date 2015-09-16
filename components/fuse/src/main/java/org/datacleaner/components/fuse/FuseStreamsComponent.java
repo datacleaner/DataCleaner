@@ -53,10 +53,11 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     private static final Logger logger = LoggerFactory.getLogger(FuseStreamsComponent.class);
 
     public static final String OUTPUT_DATA_STREAM_NAME = "output";
+    public static final String PROPERTY_INPUTS = "Inputs";
     public static final String PROPERTY_UNITS = "Units";
 
-    @Configured
-    InputColumn<?>[] _input;
+    @Configured(PROPERTY_INPUTS)
+    InputColumn<?>[] _inputs;
 
     @Configured(PROPERTY_UNITS)
     CoalesceUnit[] _units;
@@ -95,7 +96,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
             }
         }
 
-        _input = input.toArray(new InputColumn[input.size()]);
+        _inputs = input.toArray(new InputColumn[input.size()]);
         _units = units;
     }
 
@@ -104,7 +105,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         final Object[] output = new Object[_units.length];
         for (int i = 0; i < _units.length; i++) {
             final CoalesceUnit unit = _units[i];
-            final InputColumn<?>[] inputColumns = unit.getInputColumns(_input);
+            final InputColumn<?>[] inputColumns = unit.getInputColumns(_inputs);
             final List<Object> values = inputRow.getValues(inputColumns);
             final Object value = _coalesceFunction.coalesce(values);
             output[i] = value;
@@ -122,7 +123,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
         for (int i = 0; i < _units.length; i++) {
             final CoalesceUnit unit = _units[i];
-            final Class<?> dataType = unit.getOutputDataType(_input);
+            final Class<?> dataType = unit.getOutputDataType(_inputs);
             final String columnName = unit.getSuggestedOutputColumnName();
             final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
             builder.withColumn(columnName, columnType);

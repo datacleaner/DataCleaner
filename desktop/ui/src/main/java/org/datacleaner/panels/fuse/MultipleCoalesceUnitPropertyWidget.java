@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -142,17 +142,20 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
             _unitContainerPanel.updateUI();
             fireBothValuesChanged();
         }
+        updateUI();
     }
 
     public void addCoalesceUnit(CoalesceUnit unit) {
         final CoalesceUnitPanel panel = new CoalesceUnitPanel(this, unit);
         _unitContainerPanel.add(panel);
+        updateUI();
     }
 
     public void addCoalesceUnit() {
         final CoalesceUnitPanel panel = new CoalesceUnitPanel(this);
         _unitContainerPanel.add(panel);
         fireBothValuesChanged();
+        updateUI();
     }
 
     private MinimalPropertyWidget<CoalesceUnit[]> createUnitPropertyWidget() {

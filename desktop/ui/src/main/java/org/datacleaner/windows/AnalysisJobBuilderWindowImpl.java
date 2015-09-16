@@ -751,7 +751,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
-                } else if (unsavedChangesChoice == 2) { // cancel closing
+                } else if (unsavedChangesChoice != 1) { // cancel closing
                     return false;
                 }
             }

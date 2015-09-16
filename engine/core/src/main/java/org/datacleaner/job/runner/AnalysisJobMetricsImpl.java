@@ -22,6 +22,7 @@ package org.datacleaner.job.runner;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.util.SourceColumnFinder;
 
 final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
 
@@ -45,6 +46,7 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
         return new ComponentMetricsImpl(rowProcessingMetrics, componentJob);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Table[] getRowProcessingTables() {
         return _publishers.getTables();
@@ -52,7 +54,8 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
 
     @Override
     public RowProcessingMetrics getRowProcessingMetrics(Table table) {
-        final RowProcessingPublisher publisher = _publishers.getRowProcessingPublisher(table);
+        final RowProcessingStream stream = _publishers.getStream(table);
+        final RowProcessingPublisher publisher = _publishers.getRowProcessingPublisher(stream);
         if (publisher == null) {
             return null;
         }
@@ -61,7 +64,9 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
 
     @Override
     public Table getRowProcessingTable(ComponentJob componentJob) {
-        Table[] tables = _publishers.getTables(componentJob);
+        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(_job);
+        Table[] tables = _publishers.getTables(sourceColumnFinder, componentJob);
         if (tables == null || tables.length == 0) {
             return null;
         }

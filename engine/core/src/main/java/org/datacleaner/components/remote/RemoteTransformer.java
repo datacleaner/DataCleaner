@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.Version;
@@ -70,23 +69,18 @@ public class RemoteTransformer implements Transformer {
     private String baseUrl;
     private String componentDisplayName;
     private String username, password, tenant;
-    private String superCategoryName;
-    private Set<String> categoryNames;
 
     private ComponentRESTClient client;
     private CloseableHttpClient clientRaw;
     private Map<String, Object> configuredProperties = new HashMap<>();
 
     public RemoteTransformer(String baseUrl, String url, String componentDisplayName, String tenant,
-                             String superCategoryName, Set<String> categoryNames,
                              String username, String password) {
         this.baseUrl = baseUrl;
         this.componentUrl = url;
         this.username = username;
         this.password = password;
         this.tenant = tenant;
-        this.superCategoryName = superCategoryName;
-        this.categoryNames = categoryNames;
         this.componentDisplayName = componentDisplayName;
     }
 

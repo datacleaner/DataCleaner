@@ -94,8 +94,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Set<ComponentCategory> getComponentCategories() {
-        //ComponentCategory[] list = new ComponentCategory[] { new StringManipulationCategory() };
-        //return new HashSet<>(Arrays.asList(list));
         Set<ComponentCategory> componentCategories = new HashSet<>();
 
         try {
@@ -119,8 +117,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant,
-                superCategoryName, categoryNames, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant, username, password);
         return t;
     }
 }

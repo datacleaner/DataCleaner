@@ -118,12 +118,12 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public final <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
         return ReflectionUtils.getAnnotation(getComponentClass(), annotationClass);
     }
 
     @Override
-    public Set<Annotation> getAnnotations() {
+    public final Set<Annotation> getAnnotations() {
         Annotation[] annotations = getComponentClass().getAnnotations();
         return new HashSet<Annotation>(Arrays.asList(annotations));
     }

@@ -386,10 +386,6 @@ public final class IconUtils {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
 
-        System.out.println(descriptor.getDisplayName());
-        System.out.println(componentClass.toString());
-        System.out.println(bundledIconPath);
-
         if (bundledIconPath != null) {
             return bundledIconPath;
         }

@@ -22,6 +22,7 @@ package org.datacleaner.beans.coalesce;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.data.MockInputColumn;
 
 public class CoalesceUnitTest extends TestCase {

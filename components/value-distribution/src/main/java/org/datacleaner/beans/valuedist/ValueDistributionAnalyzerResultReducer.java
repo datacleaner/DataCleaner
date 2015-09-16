@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
 import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
@@ -55,10 +56,11 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
     public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
         final Map<String, RowAnnotation> annotations = Collections.emptyMap();
 
-        Collection<ValueFrequency> flattenedTopValues = new ArrayList<>();
-        Collection<String> flattenedUniqueValues = new ArrayList<>();
-        Collection<ValueFrequency> flattenedDistinctValues = new ArrayList<>();
-        int reducedTotalCount = 0;
+        Map<String, Collection<ValueFrequency>> flattenedTopValuesMap = new HashMap<>();
+        Map<String, Collection<String>> flattenedUniqueValuesMap = new HashMap<>();
+        Map<String, Collection<ValueFrequency>> flattenedDistinctValuesMap = new HashMap<>();
+        
+        Map<String, Integer> reducedTotalCountMap = new HashMap<>();
 
         AnalyzerResult first = analyzerResults.iterator().next();
 
@@ -66,20 +68,22 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             if (partialResult instanceof SingleValueDistributionResult) {
                 final SingleValueDistributionResult singlePartialResult = (SingleValueDistributionResult) partialResult;
 
+                Collection<ValueFrequency> flattenedTopValues = getOrInitializeFlattenedTopValues(
+                        flattenedTopValuesMap, singlePartialResult);
+                Collection<String> flattenedUniqueValues = getOrInitializeFlattenedUniqueValues(
+                        flattenedUniqueValuesMap, singlePartialResult);
+                Collection<ValueFrequency> flattenedDistinctValues = getOrInitializeFlattenedTopValues(
+                        flattenedDistinctValuesMap, singlePartialResult);
+                Integer reducedTotalCount = getOrInitializeReducedTotalCount(reducedTotalCountMap, singlePartialResult);
+                
                 flattenedUniqueValues.addAll(singlePartialResult.getUniqueValues());
                 flattenedTopValues.addAll(singlePartialResult.getTopValues().getValueCounts());
                 flattenedDistinctValues.addAll(singlePartialResult.getValueCounts());
                 reducedTotalCount += singlePartialResult.getTotalCount();
 
-                // } else if (partialResult instanceof
-                // GroupedValueDistributionResult) {
-                // final GroupedValueDistributionResult groupedReducedResult =
-                // (GroupedValueDistributionResult) reducedResult;
-                // final GroupedValueDistributionResult groupedPartialResult =
-                // (GroupedValueDistributionResult) partialResult;
-                //
-                // reducedResult = reduceGroupedResult(annotations,
-                // groupedReducedResult, groupedPartialResult);
+            } else if (partialResult instanceof GroupedValueDistributionResult) {
+                final GroupedValueDistributionResult groupedPartialResult = (GroupedValueDistributionResult) partialResult;
+
             } else {
                 throw new IllegalStateException("Unsupported type of "
                         + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
@@ -87,65 +91,82 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             }
         }
 
-        Collection<String> reducedUniqueValues = reduceUniqueValues(flattenedUniqueValues);
-        ValueCountList reducedTopValues = reduceTopValues(flattenedTopValues);
-        int reducedDistinctCount = reduceDistinctCount(flattenedDistinctValues);
+        Map<String, Collection<String>> reducedUniqueValuesMap = reduceUniqueValuesMap(flattenedUniqueValuesMap);
+        Map<String, Collection<ValueFrequency>> reducedTopValuesMap = reduceTopValuesMap(flattenedTopValuesMap);
+        Map<String, Integer> reducedDistinctValuesMap = reduceDistinctValuesMap(flattenedDistinctValuesMap);
 
-        ValueDistributionAnalyzerResult reducedResult = new SingleValueDistributionResult(
-                ((SingleValueDistributionResult) first).getName(), reducedTopValues, reducedUniqueValues,
-                reducedUniqueValues.size(), reducedDistinctCount, reducedTotalCount, annotations,
-                new RowAnnotationImpl(), _rowAnnotationFactory,
-                ((SingleValueDistributionResult) first).getHighlightedColumns());
+        ValueDistributionAnalyzerResult reducedResult;
+        final InputColumn<?>[] highlightedColumns = ((SingleValueDistributionResult) first).getHighlightedColumns();
+        if (flattenedDistinctValuesMap.size() > 1) {
+            for (String groupName : flattenedDistinctValuesMap.keySet()) {
+                // TODO: No constructor for ValueCountList?
+                final ValueCountList reducedValueCountList = reducedTopValuesMap.get(groupName);
+                new SingleValueDistributionResult(
+                        groupName, reducedValueCountList, reducedUniqueValuesMap.get(groupName),
+                        reducedUniqueValuesMap.get(groupName).size(), reducedDistinctValuesMap.get(groupName), reducedTotalCountMap.get(groupName), annotations,
+                        new RowAnnotationImpl(), _rowAnnotationFactory,
+                        highlightedColumns);
+            }
+            reducedResult = new GroupedValueDistributionResult(highlightedColumns[0], (InputColumn<String>) highlightedColumns[1], values);
+        } else {
+            final Collection<String> reducedUniqueValues = reducedUniqueValuesMap.values().iterator().next();
+            // TODO: No constructor for ValueCountList?
+            final ValueCountList reducedValueCountList = reducedTopValuesMap.values().iterator().next();
+            reducedResult = new SingleValueDistributionResult(
+                    ((SingleValueDistributionResult) first).getName(), reducedValueCountList, reducedUniqueValues,
+                    reducedUniqueValues.size(), reducedDistinctValuesMap.values().iterator().next(), reducedTotalCountMap.values().iterator().next(), annotations,
+                    new RowAnnotationImpl(), _rowAnnotationFactory,
+                    highlightedColumns);
+        }
+        
 
         return reducedResult;
     }
 
-    // @SuppressWarnings("unchecked")
-    // private GroupedValueDistributionResult reduceGroupedResult(final
-    // Map<String, RowAnnotation> annotations, final
-    // GroupedValueDistributionResult reducedResult,
-    // final GroupedValueDistributionResult groupedResult) {
-    // if (reducedResult == null) {
-    // return groupedResult;
-    // }
-    //
-    // InputColumn<?>[] highlightedColumns = null;
-    //
-    // final Collection<SingleValueDistributionResult> reducedChildResults =
-    // (Collection<SingleValueDistributionResult>)
-    // reducedResult.getGroupResults();
-    // for (SingleValueDistributionResult singleResult :
-    // (Collection<SingleValueDistributionResult>)
-    // groupedResult.getGroupResults()) {
-    // boolean groupFound = false;
-    //
-    // for (SingleValueDistributionResult singleReducedResult :
-    // (Collection<SingleValueDistributionResult>)
-    // reducedResult.getGroupResults()) {
-    //
-    // if (singleReducedResult.getName().equals(singleResult.getName())) {
-    // SingleValueDistributionResult reducedSingleResult =
-    // reduceSingleResult(annotations,
-    // singleResult.getHighlightedColumns(), singleReducedResult, singleResult);
-    // reducedChildResults.remove(singleResult);
-    // reducedChildResults.add(reducedSingleResult);
-    // highlightedColumns = reducedSingleResult.getHighlightedColumns();
-    // groupFound = true;
-    // break;
-    // }
-    // }
-    //
-    // if (!groupFound) {
-    // reducedChildResults.add(singleResult);
-    // highlightedColumns = singleResult.getHighlightedColumns();
-    // }
-    // }
-    //
-    // return new GroupedValueDistributionResult(highlightedColumns[0],
-    // (InputColumn<String>) highlightedColumns[1],
-    // reducedChildResults);
-    // }
+    private Integer getOrInitializeReducedTotalCount(Map<String, Integer> reducedTotalCountMap,
+            final SingleValueDistributionResult singlePartialResult) {
+        Integer reducedTotalCount = reducedTotalCountMap.get(singlePartialResult.getName());
+        if (reducedTotalCount == null) {
+            reducedTotalCountMap.put(singlePartialResult.getName(), new Integer(0));
+            reducedTotalCount = reducedTotalCountMap.get(singlePartialResult.getName());
+        }
+        return reducedTotalCount;
+    }
 
+    private Collection<String> getOrInitializeFlattenedUniqueValues(
+            Map<String, Collection<String>> flattenedUniqueValuesMap,
+            final SingleValueDistributionResult singlePartialResult) {
+        Collection<String> flattenedUniqueValues = flattenedUniqueValuesMap.get(singlePartialResult.getName());
+        if (flattenedUniqueValues == null) {
+            flattenedUniqueValuesMap.put(singlePartialResult.getName(), new ArrayList<String>());
+            flattenedUniqueValues = flattenedUniqueValuesMap.get(singlePartialResult.getName());
+        }
+        return flattenedUniqueValues;
+    }
+
+    private Collection<ValueFrequency> getOrInitializeFlattenedTopValues(
+            Map<String, Collection<ValueFrequency>> flattenedTopValuesMap,
+            final SingleValueDistributionResult singlePartialResult) {
+        Collection<ValueFrequency> flattenedTopValues = flattenedTopValuesMap.get(singlePartialResult.getName());
+        if (flattenedTopValues == null) {
+            flattenedTopValuesMap.put(singlePartialResult.getName(), new ArrayList<ValueFrequency>());
+            flattenedTopValues = flattenedTopValuesMap.get(singlePartialResult.getName());
+        }
+        return flattenedTopValues;
+    }
+    
+    private Map<String, Collection<ValueFrequency>> reduceTopValuesMap(Map<String, Collection<ValueFrequency>> flattenedTopValuesMap) {
+        Map<String, Collection<ValueFrequency>> reducedValuesMap = new HashMap<>();
+        
+        for (Map.Entry<String, Collection<ValueFrequency>> entry: flattenedTopValuesMap.entrySet()) {
+            String groupName = entry.getKey();
+            Collection<ValueFrequency> reducedValues = reduceTopValues(entry.getValue()).getValueCounts();
+            reducedValuesMap.put(groupName, reducedValues);
+        }
+        
+        return reducedValuesMap;
+    }
+    
     private ValueCountList reduceTopValues(Collection<ValueFrequency> flattenedTopValues) {
         List<ValueFrequency> reducedValueFrequencies = new ArrayList<>();
 
@@ -173,6 +194,18 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
         }
         return reducedValueCountList;
     }
+    
+    private Map<String, Integer> reduceDistinctValuesMap(Map<String, Collection<ValueFrequency>> flattenedDistinctValuesMap) {
+        Map<String, Integer> reducedValuesMap = new HashMap<>();
+        
+        for (Map.Entry<String, Collection<ValueFrequency>> entry: flattenedDistinctValuesMap.entrySet()) {
+            String groupName = entry.getKey();
+            Integer reducedCount = reduceDistinctCount(entry.getValue());
+            reducedValuesMap.put(groupName, reducedCount);
+        }
+        
+        return reducedValuesMap;
+    }
 
     private int reduceDistinctCount(Collection<ValueFrequency> valueFrequencies) {
         Set<String> distinctValues = new HashSet<>();
@@ -191,7 +224,19 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
         return distinctValues.size();
     }
-
+    
+    private Map<String, Collection<String>> reduceUniqueValuesMap(Map<String, Collection<String>> flattenedUniqueValuesMap) {
+        Map<String, Collection<String>> reducedUniqueValuesMap = new HashMap<>();
+        
+        for (Map.Entry<String, Collection<String>> entry: flattenedUniqueValuesMap.entrySet()) {
+            String groupName = entry.getKey();
+            Collection<String> reducedUniqueValues = reduceUniqueValues(entry.getValue());
+            reducedUniqueValuesMap.put(groupName, reducedUniqueValues);
+        }
+        
+        return reducedUniqueValuesMap;
+    }
+    
     private Collection<String> reduceUniqueValues(Collection<String> flattenedUniqueValues) {
         Map<String, Integer> frequencyMap = new HashMap<String, Integer>();
 

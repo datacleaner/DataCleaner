@@ -32,6 +32,7 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
@@ -365,11 +366,18 @@ public final class IconUtils {
     }
 
     public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
-        final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+        String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+
+        if (cls.equals(RemoteTransformer.class)) {
+            iconPath = IconUtils.TRANSFORMER_IMAGEPATH;
+        }
+
         final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
+
         if (url == null) {
             return null;
         }
+
         return iconPath;
     }
 
@@ -377,6 +385,11 @@ public final class IconUtils {
             boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
+
+        System.out.println(descriptor.getDisplayName());
+        System.out.println(componentClass.toString());
+        System.out.println(bundledIconPath);
+
         if (bundledIconPath != null) {
             return bundledIconPath;
         }

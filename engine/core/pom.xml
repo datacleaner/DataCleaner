@@ -81,17 +81,6 @@
 			<artifactId>asm5</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jsonSchema</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-rest-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<!-- Logging dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

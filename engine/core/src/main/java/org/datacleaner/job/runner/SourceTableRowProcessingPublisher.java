@@ -249,7 +249,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     }
 
     @Override
-    protected void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
+    protected boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
         final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
                 getTaskRunner(), postProcessingTasks);
 
@@ -264,5 +264,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
         // kick off the initialization
         initializeConsumers(consumerInitFinishedListener);
+        
+        return true;
     }
 }

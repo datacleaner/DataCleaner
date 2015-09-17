@@ -20,8 +20,8 @@
 package org.datacleaner.job.runner;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import org.apache.metamodel.schema.Table;
@@ -147,28 +147,32 @@ final class AnalysisRunnerJobDelegate {
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
         logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
 
-        // TODO: This works around the fact that multi-stream sourced publishers
-        // must come last. This is because the runRowProcessing method will
-        // otherwise end prematurely. This should be properly worked around...
-        final Collection<RowProcessingPublisher> sortedPublishers = sortPublishers(rowProcessingPublishers);
-
-        for (RowProcessingPublisher rowProcessingPublisher : sortedPublishers) {
-            logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
-            rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);
-        }
+        dispatchWhenReady(rowProcessingPublishers, rowProcessorPublishersDoneCompletionListener);
     }
 
-    // moves source table publishers to the beginning of the sequence
-    private Collection<RowProcessingPublisher> sortPublishers(Collection<RowProcessingPublisher> unsorted) {
-        final List<RowProcessingPublisher> sorted = new LinkedList<>();
-        for (RowProcessingPublisher publisher : unsorted) {
-            if (publisher instanceof SourceTableRowProcessingPublisher) {
-                sorted.add(0, publisher);
-            } else {
-                sorted.add(publisher);
+    private void dispatchWhenReady(final Collection<RowProcessingPublisher> rowProcessingPublishers,
+            final TaskListener rowProcessorPublishersDoneCompletionListener) {
+        final LinkedList<RowProcessingPublisher> remainingRowProcessingPublishers = new LinkedList<>(
+                rowProcessingPublishers);
+
+        while (!remainingRowProcessingPublishers.isEmpty()) {
+            boolean progressThisIteration = false;
+
+            for (Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext();) {
+                final RowProcessingPublisher rowProcessingPublisher = it.next();
+                final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
+                        rowProcessorPublishersDoneCompletionListener);
+                if (started) {
+                    logger.debug("Scheduled row processing publisher: {}", rowProcessingPublisher);
+                    it.remove();
+                    progressThisIteration = true;
+                }
+            }
+
+            if (!progressThisIteration) {
+                _taskRunner.assistExecution();
             }
         }
-        return sorted;
     }
 
     /**

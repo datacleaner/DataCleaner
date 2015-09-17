@@ -309,6 +309,8 @@ public final class RowProcessingPublishers {
             _consumers.put(componentJob, consumer);
         }
         
+        consumer.registerPublisher(publisher);
+        
         return new ConsumerCreation(consumer, create);
     }
 

@@ -178,14 +178,14 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
 
     protected final TaskRunnable createCloseTask(RowProcessingConsumer consumer, TaskListener closeTaskListener) {
         final LifeCycleHelper lifeCycleHelper = _publishers.getConsumerSpecificLifeCycleHelper(consumer);
-        final CloseTaskListener taskListener = new CloseTaskListener(lifeCycleHelper, consumer, _success,
+        final CloseTaskListener taskListener = new CloseTaskListener(lifeCycleHelper, this, consumer, _success,
                 closeTaskListener, _publishers.getAnalysisListener(), _stream.getAnalysisJob());
         return new TaskRunnable(null, taskListener);
     }
 
     protected final TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
         final LifeCycleHelper lifeCycleHelper = _publishers.getConsumerSpecificLifeCycleHelper(consumer);
-        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer);
+        final InitializeTask task = new InitializeTask(lifeCycleHelper, this, consumer);
         return new TaskRunnable(task, listener);
     }
 
@@ -202,15 +202,23 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
 
         analysisListener.rowProcessingSuccess(getAnalysisJob(), rowProcessingMetrics);
     }
-    
+
     @Override
-    public final void runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener) {
-        final List<TaskRunnable> postProcessingTasks = createPostProcessingTasks(resultQueue, finishedTaskListener);
+    public final boolean runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener) {
+        if (!isReadyForRowProcessing()) {
+            return false;
+        }
         
-        runRowProcessingInternal(postProcessingTasks);
+        final List<TaskRunnable> postProcessingTasks = createPostProcessingTasks(resultQueue, finishedTaskListener);
+
+        return runRowProcessingInternal(postProcessingTasks);
     }
-    
-    protected abstract void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks);
+
+    protected boolean isReadyForRowProcessing() {
+        return true;
+    }
+
+    protected abstract boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks);
 
     private List<TaskRunnable> createPostProcessingTasks(Queue<JobAndResult> resultQueue,
             TaskListener finishedTaskListener) {

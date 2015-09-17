@@ -120,18 +120,35 @@ public interface RowProcessingConsumer {
     public AnalysisJob getAnalysisJob();
 
     /**
-     * Increments the number of active publishers that will be publishing to
-     * this consumer.
+     * Indicates to this consumer that a {@link RowProcessingPublisher} has
+     * initialized the component that is represented.
      * 
-     * @return the (new) count of publishers
+     * @param publisher
+     * @return the count of initialized publishers
      */
-    public int incrementActivePublishers();
+    public int onPublisherInitialized(RowProcessingPublisher publisher);
 
     /**
-     * Decrements the number of active publishers that will be publishing to
-     * this consumer.
+     * Indicates to this consumer that a {@link RowProcessingPublisher} has
+     * closed the component that is represented.
      * 
-     * @return the (new) count of publishers
+     * @param publisher
+     * @return the count of not-closed publishers
      */
-    public int decrementActivePublishers();
+    public int onPublisherClosed(RowProcessingPublisher publisher);
+
+    /**
+     * Registers a {@link RowProcessingPublisher} with this consumer to indicate
+     * that it will be publishing records to it.
+     * 
+     * @param publisher
+     */
+    public void registerPublisher(RowProcessingPublisher publisher);
+
+    /**
+     * Determines whether all registered publishers have been initialized.
+     * 
+     * @return
+     */
+    public boolean isAllPublishersInitialized();
 }

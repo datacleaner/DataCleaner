@@ -60,7 +60,9 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
     private final List<ActiveOutputDataStream> _outputDataStreams;
-    private final AtomicInteger _publisherCount;
+    private final AtomicInteger _publishersRegisteredCount;
+    private final AtomicInteger _publishersInitializedCount;
+    private final AtomicInteger _publishersClosedCount;
 
     protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
@@ -83,7 +85,9 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
         _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
-        _publisherCount = new AtomicInteger(0);
+        _publishersRegisteredCount = new AtomicInteger(0);
+        _publishersInitializedCount = new AtomicInteger(0);
+        _publishersClosedCount = new AtomicInteger(0);
     }
 
     private boolean isAlwaysSatisfiedForConsume() {
@@ -259,12 +263,23 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     @Override
-    public int incrementActivePublishers() {
-        return _publisherCount.incrementAndGet();
+    public int onPublisherInitialized(RowProcessingPublisher publisher) {
+        return _publishersInitializedCount.incrementAndGet();
     }
 
     @Override
-    public int decrementActivePublishers() {
-        return _publisherCount.decrementAndGet();
+    public int onPublisherClosed(RowProcessingPublisher publisher) {
+        final int closedCount = _publishersClosedCount.incrementAndGet();
+        return _publishersRegisteredCount.get() - closedCount;
+    }
+
+    @Override
+    public boolean isAllPublishersInitialized() {
+        return _publishersRegisteredCount.get() == _publishersInitializedCount.get();
+    }
+
+    @Override
+    public void registerPublisher(RowProcessingPublisher publisher) {
+        _publishersRegisteredCount.incrementAndGet();
     }
 }

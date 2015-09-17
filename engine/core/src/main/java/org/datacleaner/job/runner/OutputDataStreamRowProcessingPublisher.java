@@ -81,9 +81,14 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
 
         return true;
     }
+    
+    @Override
+    protected boolean isReadyForRowProcessing() {
+        return _parentConsumer.isAllPublishersInitialized();
+    }
 
     @Override
-    protected void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
+    protected boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
         final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
                 getTaskRunner(), postProcessingTasks);
 
@@ -91,6 +96,8 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
         getTaskRunner().run(runTask, runCompletionListener);
+        
+        return true;
     }
 
     @Override

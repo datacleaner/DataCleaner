@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
@@ -73,7 +74,8 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
                 try {
                     _result = resultRef.get();
                     if (_result == null && resultRef instanceof LazyRef) {
-                        // TODO: workaround - reported as MM bug, remove when fixed.
+                        // TODO: workaround - reported as MM bug, remove when
+                        // fixed.
                         throw new RuntimeException(((LazyRef<?>) resultRef).getError());
                     }
                     onSuccess();
@@ -165,9 +167,17 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
     public R get() {
         if (_countDownLatch != null) {
             try {
-                _countDownLatch.await();
+                boolean finished = false;
+                int iteration = 0;
+                while (!finished) {
+                    iteration++;
+                    finished = _countDownLatch.await(2, TimeUnit.MINUTES);
+                    if (!finished) {
+                        logger.info("Awaited completion for " + (iteration * 2) + " minutes...");
+                    }
+                }
             } catch (InterruptedException e) {
-                // do nothing
+                throw new IllegalStateException("Awaiting completion of AnalyzerResultFuture was interrupted!", e);
             }
         }
         if (_error != null) {

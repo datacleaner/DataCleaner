@@ -18,6 +18,7 @@
 			<artifactId>jersey-client</artifactId>
 			<version>1.19</version>
 		</dependency>
+		<!-- Json de/serialization library -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -31,15 +32,10 @@
 			<artifactId>jackson-module-jsonSchema</artifactId>
 		</dependency>
 
-		<!-- Logging -->
+		<!-- Logging API -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- Test dependencies -->
@@ -52,13 +48,13 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<!-- Logging used when running tests -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

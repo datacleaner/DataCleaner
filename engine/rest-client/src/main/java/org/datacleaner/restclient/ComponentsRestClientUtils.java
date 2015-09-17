@@ -22,10 +22,15 @@ package org.datacleaner.restclient;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+
 /**
  * @Since 9/15/15
  */
-public abstract class Utils {
+public abstract class ComponentsRestClientUtils {
 
     /**
      * Encodes the given URI path segment with the given encoding.
@@ -47,6 +52,14 @@ public abstract class Utils {
 
     public static String unescapeComponentName(String escapedName) {
         return escapedName.replace("_@_", "/");
+    }
+
+    public static JsonNode createInputColumnSpecification(String name, Class<?> columnType, String columnTypeName, JsonNodeFactory nodeFac) {
+        ObjectNode colSpec = new ObjectNode(nodeFac);
+        colSpec.set("name", new TextNode(name));
+        colSpec.set("type", new TextNode(columnTypeName));
+        colSpec.set("className", new TextNode(columnType.getName()));
+        return colSpec;
     }
 
     /** Copy&paste from org.springframework.web.util.UriUtils.encodePathSegment(...) (We don't want the Spring dependency) */

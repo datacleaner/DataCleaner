@@ -90,7 +90,7 @@ public class ComponentRESTClient implements ComponentController {
     }
 
     private String urlify(String string) {
-        return Utils.encodeUrlPathSegment(Utils.escapeComponentName(string));
+        return ComponentsRestClientUtils.encodeUrlPathSegment(ComponentsRestClientUtils.escapeComponentName(string));
     }
 
     private String getURL(String suffix) {

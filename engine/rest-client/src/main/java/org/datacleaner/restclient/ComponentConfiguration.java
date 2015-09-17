@@ -48,13 +48,4 @@ public class ComponentConfiguration {
     public List<JsonNode> getColumns() {
         return columns;
     }
-
-    public JsonNode getProperty(String name) {
-        return properties.get(name);
-    }
-
-    public Collection<String> getPropertiesNames() {
-        return properties.keySet();
-    }
-
 }

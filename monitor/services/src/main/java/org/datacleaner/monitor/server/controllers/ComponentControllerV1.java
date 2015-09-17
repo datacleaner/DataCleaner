@@ -55,7 +55,7 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
-import org.datacleaner.restclient.Utils;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +123,7 @@ public class ComponentControllerV1 implements ComponentController {
             componentList.add(createComponentInfo(tenant, descriptor));
         }
 
+        LOGGER.debug("Informing about {} components", componentList.getComponents().size());
         return componentList;
     }
 
@@ -131,8 +132,8 @@ public class ComponentControllerV1 implements ComponentController {
     public ComponentList.ComponentInfo getComponentInfo(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") String name) {
-        name = Utils.unescapeComponentName(name);
-        LOGGER.debug("Informing about '" + name + "'");
+        name = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("Informing about '{}'", name);
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         return createComponentInfo(tenant, descriptor);
@@ -148,7 +149,8 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final CreateInput createInput) {
-        String decodedName = Utils.unescapeComponentName(name);
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, createInput.configuration);
@@ -179,8 +181,8 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
-        String decodedName = Utils.unescapeComponentName(name);
-        LOGGER.debug("Running '" + decodedName + "'");
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, processStatelessInput.configuration);
@@ -192,7 +194,8 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     private JsonNode getJsonNode(Object value) {
-        return objectMapper.convertValue(value, JsonNode.class);
+        if(value == null) { return null; }
+        return objectMapper.valueToTree(value);
     }
 
     /**
@@ -206,7 +209,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
-        String decodedName = Utils.unescapeComponentName(name);
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
@@ -285,7 +288,7 @@ public class ComponentControllerV1 implements ComponentController {
             return String.format(
                     "/repository/%s/components/%s",
                     UriUtils.encodePathSegment(tenant, "UTF8"),
-                    UriUtils.encodePathSegment(Utils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
+                    UriUtils.encodePathSegment(ComponentsRestClientUtils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

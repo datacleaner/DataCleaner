@@ -65,44 +65,74 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public Integer getDistinctCount() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return -1;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getDistinctCount();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return -1;
+        }
     }
 
     @Override
     public int getNullCount() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return -1;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getNullCount();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return -1;
+        }
     }
 
     @Override
     public int getTotalCount() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return -1;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getTotalCount();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return -1;
+        }
     }
 
     @Override
     public Integer getCount(String value) {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return -1;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getCount(value);
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return -1;
+        }
     }
 
     @Override
     public Integer getUniqueCount() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return -1;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getUniqueCount();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return -1;
+        }
     }
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return null;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getValueCounts();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult
+            // with many children, but
+            // we don't want to throw exceptions...
+            return null;
+        }
     }
 
     @Override
@@ -138,16 +168,24 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return null;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getAnnotatedRowsForValue(value);
+        } else {
+            // This operation is not supported on GroupValueDistributionResult with many children, but
+            // we don't want to throw exceptions...
+            return null;
+        }
     }
 
     @Override
     public AnnotatedRowsResult getAnnotatedRowsForNull() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return null;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getAnnotatedRowsForNull();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult with many children, but
+            // we don't want to throw exceptions...
+            return null;
+        }
     }
 
     @Override
@@ -158,16 +196,24 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public Collection<String> getUniqueValues() {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return null;
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().getUniqueValues();
+        } else {
+            // This operation is not supported on GroupValueDistributionResult with many children, but
+            // we don't want to throw exceptions...
+            return null;
+        }
     }
 
     @Override
     public Boolean hasAnnotatedRows(String value) {
-        // This operation is not supported on GroupValueDistributionResult, but
-        // we don't want to throw exceptions...
-        return null; 
+        if (_result.size() == 1) {
+            return getSingleValueDistributionResult().hasAnnotatedRows(value);
+        } else {
+            // This operation is not supported on GroupValueDistributionResult with many children, but
+            // we don't want to throw exceptions...
+            return null;
+        }
     }
 
     @Override
@@ -175,11 +221,11 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
         // not applicable
         return null;
     }
-    
+
     public InputColumn<?> getColumn() {
         return _column;
     }
-    
+
     public InputColumn<String> getGroupColumn() {
         return _groupColumn;
     }

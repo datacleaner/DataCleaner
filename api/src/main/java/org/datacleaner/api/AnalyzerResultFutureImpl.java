@@ -169,11 +169,12 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
             try {
                 boolean finished = false;
                 int iteration = 0;
+                final int minutesToWaitPerIteration = 2;
                 while (!finished) {
                     iteration++;
-                    finished = _countDownLatch.await(2, TimeUnit.MINUTES);
+                    finished = _countDownLatch.await(minutesToWaitPerIteration, TimeUnit.MINUTES);
                     if (!finished) {
-                        logger.info("Awaited completion for " + (iteration * 2) + " minutes...");
+                        logger.info("Awaited completion for " + (iteration * minutesToWaitPerIteration) + " minutes...");
                     }
                 }
             } catch (InterruptedException e) {

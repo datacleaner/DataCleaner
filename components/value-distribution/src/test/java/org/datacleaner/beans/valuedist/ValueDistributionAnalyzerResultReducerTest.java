@@ -171,20 +171,37 @@ public class ValueDistributionAnalyzerResultReducerTest {
                     .getGroupResults().iterator();
             SingleValueDistributionResult firstReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator
                     .next();
-            assertEquals("group1", firstReducedGroup.getName());
-            assertEquals(0, firstReducedGroup.getNullCount());
-            assertEquals(2, firstReducedGroup.getUniqueCount().intValue());
-            assertTrue(firstReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
-            assertTrue(firstReducedGroup.getUniqueValues().contains("hello"));
-            assertEquals(13, firstReducedGroup.getTotalCount());
-
             SingleValueDistributionResult secondReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator
                     .next();
-            assertEquals("group2", secondReducedGroup.getName());
-            assertEquals(0, secondReducedGroup.getNullCount());
-            assertEquals(1, secondReducedGroup.getUniqueCount().intValue());
-            assertTrue(secondReducedGroup.getUniqueValues().contains("hello"));
-            assertEquals(8, secondReducedGroup.getTotalCount());
+            
+            // The order is non-deterministic...
+            if (firstReducedGroup.getName().equals("group1")) {
+                assertEquals("group1", firstReducedGroup.getName());
+                assertEquals(0, firstReducedGroup.getNullCount());
+                assertEquals(2, firstReducedGroup.getUniqueCount().intValue());
+                assertTrue(firstReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
+                assertTrue(firstReducedGroup.getUniqueValues().contains("hello"));
+                assertEquals(13, firstReducedGroup.getTotalCount());
+
+                assertEquals("group2", secondReducedGroup.getName());
+                assertEquals(0, secondReducedGroup.getNullCount());
+                assertEquals(1, secondReducedGroup.getUniqueCount().intValue());
+                assertTrue(secondReducedGroup.getUniqueValues().contains("hello"));
+                assertEquals(8, secondReducedGroup.getTotalCount());
+            } else {
+                assertEquals("group2", firstReducedGroup.getName());
+                assertEquals(0, firstReducedGroup.getNullCount());
+                assertEquals(1, firstReducedGroup.getUniqueCount().intValue());
+                assertTrue(firstReducedGroup.getUniqueValues().contains("hello"));
+                assertEquals(8, firstReducedGroup.getTotalCount());
+
+                assertEquals("group1", secondReducedGroup.getName());
+                assertEquals(0, secondReducedGroup.getNullCount());
+                assertEquals(2, secondReducedGroup.getUniqueCount().intValue());
+                assertTrue(secondReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
+                assertTrue(secondReducedGroup.getUniqueValues().contains("hello"));
+                assertEquals(13, secondReducedGroup.getTotalCount());
+            }
         }
     }
 

@@ -214,7 +214,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
         assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
     }
-    
+
     @Test
     public void testGroupedValueDistributionReducer() throws Exception {
         final AnalysisResultFuture result;
@@ -225,7 +225,8 @@ public class SparkAnalysisRunnerTest extends TestCase {
         try {
 
             final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
-                    "src/test/resources/conf_local.xml", "src/test/resources/distributable-grouped-value-dist.analysis.xml");
+                    "src/test/resources/conf_local.xml",
+                    "src/test/resources/distributable-grouped-value-dist.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
 
@@ -249,18 +250,32 @@ public class SparkAnalysisRunnerTest extends TestCase {
         GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
         Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
         SingleValueDistributionResult group1 = (SingleValueDistributionResult) iterator.next();
-        assertEquals("Denmark", group1.getName());
-        assertEquals(4, group1.getTotalCount());
-        assertEquals(Integer.valueOf(4), group1.getUniqueCount());
-        assertEquals(Integer.valueOf(4), group1.getDistinctCount());
-        assertEquals(0, group1.getNullCount());
-
         SingleValueDistributionResult group2 = (SingleValueDistributionResult) iterator.next();
-        assertEquals("Netherlands", group2.getName());
-        assertEquals(3, group2.getTotalCount());
-        assertEquals(Integer.valueOf(3), group2.getUniqueCount());
-        assertEquals(Integer.valueOf(3), group2.getDistinctCount());
-        assertEquals(0, group2.getNullCount());
-        
+
+        if (group1.getName().equals("Denmark")) {
+            assertEquals("Denmark", group1.getName());
+            assertEquals(4, group1.getTotalCount());
+            assertEquals(Integer.valueOf(4), group1.getUniqueCount());
+            assertEquals(Integer.valueOf(4), group1.getDistinctCount());
+            assertEquals(0, group1.getNullCount());
+
+            assertEquals("Netherlands", group2.getName());
+            assertEquals(3, group2.getTotalCount());
+            assertEquals(Integer.valueOf(3), group2.getUniqueCount());
+            assertEquals(Integer.valueOf(3), group2.getDistinctCount());
+            assertEquals(0, group2.getNullCount());
+        } else {
+            assertEquals("Denmark", group2.getName());
+            assertEquals(4, group2.getTotalCount());
+            assertEquals(Integer.valueOf(4), group2.getUniqueCount());
+            assertEquals(Integer.valueOf(4), group2.getDistinctCount());
+            assertEquals(0, group2.getNullCount());
+
+            assertEquals("Netherlands", group1.getName());
+            assertEquals(3, group1.getTotalCount());
+            assertEquals(Integer.valueOf(3), group1.getUniqueCount());
+            assertEquals(Integer.valueOf(3), group1.getDistinctCount());
+            assertEquals(0, group1.getNullCount());
+        }
     }
 }

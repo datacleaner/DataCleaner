@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
@@ -79,15 +77,6 @@ public class ReferentialIntegrityAnalyzerReducerTest {
 
     private AnalysisJobBuilder getAnalysisJobBuilder() {
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        
-        DataSet dataSet = datastore.openConnection().getDataContext().query().from("customers").selectAll().execute();
-        
-        while (dataSet.next()) {
-            Row row = dataSet.getRow();
-            System.out.println(row);
-        }
-        
-        dataSet.close();
         
         DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
                 .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));

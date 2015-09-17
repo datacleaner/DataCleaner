@@ -19,21 +19,16 @@
  */
 package org.datacleaner.beans.referentialintegrity;
 
-import org.datacleaner.api.Description;
-import org.datacleaner.api.Distributed;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.result.AnnotatedRowsResult;
-import org.datacleaner.storage.RowAnnotation;
-import org.datacleaner.storage.RowAnnotationFactory;
+import java.util.Collection;
 
-@Description("Records with unresolved foreign key values")
-@Distributed(reducer = ReferentialIntegrityAnalyzerReducer.class)
-public class ReferentialIntegrityAnalyzerResult extends AnnotatedRowsResult {
+import org.datacleaner.api.AnalyzerResultReducer;
 
-    private static final long serialVersionUID = 1L;
+public class ReferentialIntegrityAnalyzerReducer implements AnalyzerResultReducer<ReferentialIntegrityAnalyzerResult> {
 
-    public ReferentialIntegrityAnalyzerResult(RowAnnotation annotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
-        super(annotation, annotationFactory, highlightedColumns);
+    @Override
+    public ReferentialIntegrityAnalyzerResult reduce(Collection<? extends ReferentialIntegrityAnalyzerResult> results) {
+        // TODO Auto-generated method stub
+        return null;
     }
+
 }

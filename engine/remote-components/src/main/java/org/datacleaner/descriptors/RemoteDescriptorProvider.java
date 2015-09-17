@@ -19,22 +19,16 @@
  */
 package org.datacleaner.descriptors;
 
-import org.apache.metamodel.util.LazyRef;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.tasks.Task;
-import org.datacleaner.restclient.ComponentList;
-import org.datacleaner.restclient.ComponentRESTClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Since 9/8/15
@@ -91,15 +85,14 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
 
             try {
+                logger.info("Loading remote components list from " + url);
                 // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
-                        String componentUrl = url + component.getCreateURL();
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
-                                componentUrl,
                                 component.getName(), tenant, username, password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
                             String name = propE.getKey();
@@ -131,6 +124,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 }
             } catch(Exception e) {
                 logger.error("Cannot get list of remote components on " + url, e);
+                // TODO: plan a task to try again after somw while. And then notify listeners...
             }
         }
     }

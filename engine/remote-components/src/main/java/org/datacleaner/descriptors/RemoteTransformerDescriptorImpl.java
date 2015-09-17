@@ -30,14 +30,12 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     private String remoteDisplayName;
     private String baseUrl;
-    private String componentUrl;
     private String tenant;
     private String username;
     private String password;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant, String username, String password) {
+    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String tenant, String username, String password) {
         super(RemoteTransformer.class);
-        this.componentUrl = componentUrl;
         this.remoteDisplayName = displayName;
         this.username = username;
         this.password = password;
@@ -67,7 +65,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, remoteDisplayName, tenant, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
         return t;
     }
 

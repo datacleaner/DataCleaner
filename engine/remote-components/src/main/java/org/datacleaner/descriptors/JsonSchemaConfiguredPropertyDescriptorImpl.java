@@ -99,7 +99,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         if(!(component instanceof RemoteTransformer)) {
             throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
         }
-        return ((RemoteTransformer)component).getProperty(this.getName());
+        return ((RemoteTransformer)component).getPropertyValue(this.getName());
     }
 
     @Override

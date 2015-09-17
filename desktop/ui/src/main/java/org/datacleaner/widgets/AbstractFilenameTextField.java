@@ -38,13 +38,12 @@ import org.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
 
-public abstract class AbstractFilenameTextField<R extends Resource, L extends SelectionListener> extends DCPanel
+public abstract class AbstractFilenameTextField<R extends Resource> extends DCPanel
         implements ResourceTypePresenter<R> {
     protected final JXTextField _textField = WidgetFactory.createTextField("Filename");
     protected final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
     protected final List<Listener> _resourceListeners = new ArrayList<>();
     protected final List<FileFilter> _choosableFileFilters = new ArrayList<>();
-    protected final List<L> _selectionListeners = new ArrayList<>();
     protected volatile FileFilter _selectedFileFilter;
     protected boolean _textFieldUpdating = false;
     protected int _fileSelectionMode = JFileChooser.FILES_ONLY;
@@ -60,12 +59,8 @@ public abstract class AbstractFilenameTextField<R extends Resource, L extends Se
             protected void onChange(DocumentEvent event) {
                 _textFieldUpdating = true;
                 try {
-                    if (!isSelectionOkay()) {
-                        final String text = _textField.getText();
-                        notifyListeners(text);
-                    } else {
-                        notifyListeners();
-                    }
+                    final String text = _textField.getText();
+                    notifyListeners(text);
                 } finally {
                     _textFieldUpdating = false;
                 }
@@ -75,8 +70,12 @@ public abstract class AbstractFilenameTextField<R extends Resource, L extends Se
     }
 
     protected void notifyListeners(String text) {
+        final Resource resource = getResource();
         for (Listener listener : _resourceListeners) {
             listener.onPathEntered(this, text);
+            if(resource != null) {
+                listener.onResourceSelected(this, resource);
+            }
         }
     }
 
@@ -147,23 +146,10 @@ public abstract class AbstractFilenameTextField<R extends Resource, L extends Se
         _resourceListeners.remove(listener);
     }
 
-    public void addSelectionListener(L listener) {
-        _selectionListeners.add(listener);
-    }
-
-    public void removeSelectionListener(L listener) {
-        _selectionListeners.remove(listener);
-    }
-
-    protected abstract void notifyListeners();
-
     @Override
     public abstract R getResource();
 
     @Override
     public abstract void setResource(R resource);
-
-    protected abstract boolean isSelectionOkay();
-
 
 }

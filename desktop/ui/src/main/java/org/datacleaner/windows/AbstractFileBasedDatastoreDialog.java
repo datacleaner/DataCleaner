@@ -125,7 +125,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         setFileFilters(_filenameField);
         _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(final FilenameTextField filenameTextField, final File file) {
+            public void onSelected(FilenameTextField filenameTextField, File file) {
                 final File dir;
                 if (file.isDirectory()) {
                     dir = file;

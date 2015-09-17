@@ -24,12 +24,15 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Insets;
 import java.lang.reflect.Field;
+import java.text.Format;
+import java.text.ParseException;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPasswordField;
@@ -46,6 +49,7 @@ import org.datacleaner.widgets.PopupButton;
 import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.jdesktop.swingx.JXFormattedTextField;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
@@ -323,6 +327,37 @@ public final class WidgetFactory {
         return tf;
     }
 
+    public static JXFormattedTextField createFormattedTextField(String promptText, final int columns, final Format format) {
+        JXFormattedTextField tf = new JXFormattedTextField(promptText);
+        // Stupid JXFormattedTextField will not pass along a formatter to the constructor.
+        tf.setFormatterFactory(new JFormattedTextField.AbstractFormatterFactory() {
+            private JFormattedTextField.AbstractFormatter _formatter;
+
+            @Override
+            public synchronized JFormattedTextField.AbstractFormatter getFormatter(final JFormattedTextField tf) {
+                if(_formatter == null) {
+                    _formatter = new JFormattedTextField.AbstractFormatter() {
+                        @Override
+                        public Object stringToValue(final String text) throws ParseException {
+                            return format.parseObject(text);
+                        }
+
+                        @Override
+                        public String valueToString(final Object value) throws ParseException {
+                            return format.format(value);
+                        }
+                    };
+                }
+                return _formatter;
+            }
+        });
+        tf.setColumns(columns);
+        if (promptText != null) {
+            tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
+            tf.setToolTipText(promptText);
+        }
+        return tf;
+    }
     public static JXTextArea createTextArea(String promptText) {
         JXTextArea ta = new JXTextArea(promptText);
         ta.setColumns(17);

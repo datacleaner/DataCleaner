@@ -19,6 +19,9 @@
  */
 package org.datacleaner.widgets;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,6 +32,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.NumberDocument;
@@ -106,19 +110,13 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
 
         final String qualifiedPath = resource.getQualifiedPath();
 
-        // TODO: Currently we don't have getHostname(), getPort() and
-        // getFilepath() methods so we have to resort to parsing the qualified
-        // path.
-        final Pattern pattern = Pattern.compile("hdfs://(.+):([0-9]+)/(.+)");
-        final Matcher matcher = pattern.matcher(qualifiedPath);
-        if (matcher.find()) {
-            final String hostname = matcher.group(1);
-            final String port = matcher.group(2);
-            final String path = '/' + matcher.group(3);
-
-            _hostnameField.setText(hostname);
-            _portField.setText(port);
-            _pathTextField.setText(path);
+        try {
+            URI uri = new URI(qualifiedPath);
+            _hostnameField.setText(uri.getHost());
+            _portField.setText(Integer.toString(uri.getPort()));
+            _pathTextField.setText(uri.getPath());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Not a valid URI", e);
         }
     }
 

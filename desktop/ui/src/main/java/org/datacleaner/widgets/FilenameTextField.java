@@ -23,12 +23,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 
@@ -40,11 +44,12 @@ import org.datacleaner.util.WidgetUtils;
  * {@link ResourceSelector} which will work with any type of {@link Resource},
  * not just files (e.g. {@link FileResource} and others).
  */
-public final class FilenameTextField extends AbstractFilenameTextField<FileResource, FileSelectionListener> {
+public final class FilenameTextField extends AbstractFilenameTextField<FileResource> {
 
     private static final long serialVersionUID = 1L;
 
     private volatile File _directory;
+    protected final List<FileSelectionListener> _fileSelectionListeners = new ArrayList<>();
 
     /**
      *
@@ -54,7 +59,6 @@ public final class FilenameTextField extends AbstractFilenameTextField<FileResou
      *            if it should be a "save file" dialog.
      */
     public FilenameTextField(File directory, final boolean fileOpenDialog) {
-        super();
         _directory = directory;
 
         _browseButton.addActionListener(new ActionListener() {
@@ -103,22 +107,36 @@ public final class FilenameTextField extends AbstractFilenameTextField<FileResou
                         } else {
                             _directory = file.getParentFile();
                         }
-                        notifyListeners();
+                        notifySelectionListeners(file);
                     }
+                }
+            }
+
+        });
+
+        _textField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                final File file = getFile();
+                if (file != null) {
+                    notifySelectionListeners(file);
                 }
             }
         });
     }
 
-    @Override
-    protected void notifyListeners() {
-        final File file = getFile();
-        for (FileSelectionListener listener : _selectionListeners) {
+    public void addSelectionListener(FileSelectionListener listener) {
+        _fileSelectionListeners.add(listener);
+    }
+
+    public void removeSelectionListener(FileSelectionListener listener) {
+        _fileSelectionListeners.remove(listener);
+    }
+
+
+    private void notifySelectionListeners(final File file) {
+        for (FileSelectionListener listener : _fileSelectionListeners) {
             listener.onSelected(this, file);
-        }
-        final Resource fileResource = new FileResource(file);
-        for (Listener listener : _resourceListeners) {
-            listener.onResourceSelected(this, fileResource);
         }
     }
 
@@ -155,10 +173,5 @@ public final class FilenameTextField extends AbstractFilenameTextField<FileResou
             // ignore
             setFilename(file.getAbsolutePath());
         }
-    }
-
-    @Override
-    protected boolean isSelectionOkay() {
-        return !StringUtils.isNullOrEmpty(getFilename());
     }
 }

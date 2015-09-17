@@ -104,7 +104,6 @@ public class DatastoreSchemaController {
         List<Map<String, Object>> tables = new ArrayList<>();
         for (Table table : schema.getTables()) {
             tables.add(createTableMap(table));
-            break;
         }
         return tables;
     }
@@ -120,7 +119,6 @@ public class DatastoreSchemaController {
         List<Map<String, Object>> columns = new ArrayList<>();
         for (Column column : table.getColumns()) {
             columns.add(createColumnMap(column));
-            break;
         }
         return columns;
     }

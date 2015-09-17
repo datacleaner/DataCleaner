@@ -19,6 +19,7 @@
  */
 package org.datacleaner.components.fuse;
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -34,6 +35,9 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -41,6 +45,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestHelper;
 
 public class FuseStreamsComponentIntegrationTest extends TestCase {
@@ -117,8 +122,79 @@ public class FuseStreamsComponentIntegrationTest extends TestCase {
         assertEquals(COUNT_CUSTOMERS + COUNT_EMPLOYEES, result.getValues().size());
     }
 
-    public void testFuseOutputDataStreams() throws Exception {
-        // TODO
+    public void testFuseOutputDataStreams() throws Throwable {
+        final AnalysisJob job;
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore(datastore);
+            ajb.addSourceColumns("customers.customernumber");
+
+            // add an analyzer to create two streams
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
+                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer1.addInputColumns(ajb.getSourceColumns());
+
+            final AnalysisJobBuilder streamJobBuilder1 = analyzer1
+                    .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+            final AnalysisJobBuilder streamJobBuilder2 = analyzer1
+                    .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME2);
+
+            // add fuse streams component to both streams
+            final TransformerComponentBuilder<FuseStreamsComponent> fuse1 = streamJobBuilder1
+                    .addTransformer(FuseStreamsComponent.class);
+            final TransformerComponentBuilder<FuseStreamsComponent> fuse2 = streamJobBuilder2.addTransformer(fuse1);
+            assertSame(fuse1, fuse2);
+
+            // add input columns from both streams
+            fuse1.addInputColumns(streamJobBuilder1.getSourceColumns());
+            fuse1.addInputColumns(streamJobBuilder2.getSourceColumns());
+
+            final CoalesceUnit unit = new CoalesceUnit(streamJobBuilder1.getSourceColumns().get(0), streamJobBuilder2
+                    .getSourceColumns().get(0));
+            final CoalesceUnit[] units = new CoalesceUnit[] { unit };
+            fuse1.setConfiguredProperty(FuseStreamsComponent.PROPERTY_UNITS, units);
+
+            // now consume the fused output
+            final AnalysisJobBuilder fusedStreamJobBuilder = fuse1
+                    .getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
+            final AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzerBuilder = fusedStreamJobBuilder
+                    .addAnalyzer(MockAnalyzer.class);
+            mockAnalyzerBuilder.addInputColumns(fusedStreamJobBuilder.getSourceColumns());
+
+            job = ajb.toAnalysisJob();
+        }
+
+        // assert on the structure of the job and get a reference to the mock analyzer
+        final AnalyzerJob mockAnalyzer;
+        {
+            final AnalyzerJob analyzer1 = job.getAnalyzerJobs().get(0);
+            assertEquals(MockOutputDataStreamAnalyzer.class, analyzer1.getDescriptor().getComponentClass());
+            
+            final OutputDataStreamJob[] outputDataStreamJobs = analyzer1.getOutputDataStreamJobs();
+            assertEquals(2, outputDataStreamJobs.length);
+            
+            final TransformerJob fuse1 = outputDataStreamJobs[0].getJob().getTransformerJobs().get(0);
+            assertEquals(FuseStreamsComponent.class, fuse1.getDescriptor().getComponentClass());
+            // the created fuse refers to both streams
+            assertEquals("[MetaModelInputColumn[foo bar records.foo], MetaModelInputColumn[foo bar records.bar], "
+                    + "MetaModelInputColumn[counter records.count], MetaModelInputColumn[counter records.uuid]]",
+                    Arrays.toString(fuse1.getInput()));
+            final TransformerJob fuse2 = outputDataStreamJobs[1].getJob().getTransformerJobs().get(0);
+            assertSame(fuse1, fuse2);
+            
+            mockAnalyzer = fuse1.getOutputDataStreamJobs()[0].getJob().getAnalyzerJobs().get(0);
+            assertEquals(MockAnalyzer.class, mockAnalyzer.getDescriptor().getComponentClass());
+        }
+        
+        // now run the job
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        resultFuture.await();
+        
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+        
+        final ListResult<?> result = (ListResult<?>) resultFuture.getResult(mockAnalyzer);
+        assertEquals(-1, result.getValues().size());
     }
 
     public void testFuseSourceTableAndOutputDataStream() throws Exception {

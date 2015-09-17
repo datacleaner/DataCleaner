@@ -28,9 +28,11 @@ public class ReferentialIntegrityAnalyzerReducerTest {
     public void testVanilla() throws Throwable {
         AnalysisJobBuilder jobBuilder1 = getAnalysisJobBuilder();
         AnalysisJobBuilder jobBuilder2 = getAnalysisJobBuilder();
+        AnalysisJobBuilder jobBuilder3 = getAnalysisJobBuilder();
         
         ReferentialIntegrityAnalyzerResult partialResult1 = getPartialResult(jobBuilder1, 1, 22);
-        ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 23, null);
+        ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 23, 1);
+        ReferentialIntegrityAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 24, null);
         
         // Assert what we have in the first partial result
         {
@@ -46,17 +48,27 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         {
             InputColumn<?> salesRepEmployeeNumber = jobBuilder2.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
             int annotatedRowCount = partialResult2.getAnnotatedRowCount();
-            assertEquals(2, annotatedRowCount);
+            assertEquals(1, annotatedRowCount);
             
             List<InputRow> rows = partialResult2.getSampleRows();
-            assertEquals(2, rows.size());
+            assertEquals(1, rows.size());
             assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
-            assertEquals(-1, rows.get(1).getValue(salesRepEmployeeNumber));
+        }
+        // Assert what we have in the thrird partial result
+        {
+            InputColumn<?> salesRepEmployeeNumber = jobBuilder3.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+            int annotatedRowCount = partialResult3.getAnnotatedRowCount();
+            assertEquals(1, annotatedRowCount);
+            
+            List<InputRow> rows = partialResult3.getSampleRows();
+            assertEquals(1, rows.size());
+            assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         
         Collection<ReferentialIntegrityAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
         partialResults.add(partialResult2);
+        partialResults.add(partialResult3);
         
         ReferentialIntegrityAnalyzerReducer reducer = new ReferentialIntegrityAnalyzerReducer();
         ReferentialIntegrityAnalyzerResult reducedResult = reducer.reduce(partialResults);
@@ -83,6 +95,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
 
         jobBuilder.setDatastore(datastore);
+        jobBuilder.addSourceColumns("customers.CUSTOMERNUMBER");
         jobBuilder.addSourceColumns("customers.SALESREPEMPLOYEENUMBER");
         
         return jobBuilder;

@@ -20,15 +20,36 @@
 package org.datacleaner.beans.referentialintegrity;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
+import org.datacleaner.storage.RowAnnotation;
+import org.datacleaner.storage.RowAnnotationImpl;
 
 public class ReferentialIntegrityAnalyzerReducer implements AnalyzerResultReducer<ReferentialIntegrityAnalyzerResult> {
 
     @Override
-    public ReferentialIntegrityAnalyzerResult reduce(Collection<? extends ReferentialIntegrityAnalyzerResult> results) {
-        // TODO Auto-generated method stub
-        return null;
+    public ReferentialIntegrityAnalyzerResult reduce(final Collection<? extends ReferentialIntegrityAnalyzerResult> partialResults) {
+        if (partialResults.isEmpty()) {
+            return null;
+        }
+        
+        final RowAnnotation reducerAnnotation = new RowAnnotationImpl();
+        final InMemoryRowAnnotationFactory2 reducerAnnotationFactory = new InMemoryRowAnnotationFactory2();
+        InputColumn<?>[] highlightedColumns = null;
+        
+        for (ReferentialIntegrityAnalyzerResult partialResult : partialResults) {
+            final List<InputRow> partialRows = partialResult.getSampleRows();
+            for (InputRow partialRow : partialRows) {
+                reducerAnnotationFactory.annotate(partialRow, reducerAnnotation);
+            }
+            highlightedColumns = partialResult.getHighlightedColumns();
+        }
+        
+        return new ReferentialIntegrityAnalyzerResult(reducerAnnotation, reducerAnnotationFactory, highlightedColumns);
     }
 
 }

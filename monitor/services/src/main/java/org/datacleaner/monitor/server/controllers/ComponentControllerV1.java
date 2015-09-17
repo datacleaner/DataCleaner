@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -32,10 +34,7 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import org.apache.commons.io.IOUtils;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
@@ -61,6 +60,7 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +76,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore configuration.
@@ -84,7 +89,7 @@ import org.springframework.web.util.UriUtils;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
+    private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
     private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ID = "id";
@@ -132,7 +137,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") String name) {
         name = unURLify(name);
-        LOGGER.debug("Informing about '" + name + "'");
+        logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         return createComponentInfo(tenant, descriptor);
@@ -180,7 +185,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
-        LOGGER.debug("Running '" + decodedName + "'");
+        logger.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, processStatelessInput.configuration);
@@ -231,7 +236,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
         if(config == null){
-            LOGGER.warn("Component with id {} does not exist.", id);
+            logger.warn("Component with id {} does not exist.", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
         ComponentHandler handler = config.getHandler();
@@ -267,7 +272,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         boolean isHere = _componentCache.remove(id, tenantContext);
         if (!isHere) {
-            LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
+            logger.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
     }
@@ -283,7 +288,20 @@ public class ComponentControllerV1 implements ComponentController {
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
                 .setCategoryNames(getCategoryNames(descriptor))
-                .setProperties(createPropertiesInfo(descriptor));
+                .setProperties(createPropertiesInfo(descriptor))
+                .setIconData(getComponentIconData(descriptor));
+    }
+
+    private static byte[] getComponentIconData(ComponentDescriptor descriptor) {
+        try {
+            String imagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
+            InputStream imageStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(imagePath);
+
+            return IOUtils.toByteArray(imageStream);
+        }
+        catch (NullPointerException | IOException e) {
+            return new byte[0];
+        }
     }
 
     private static Set<String> getCategoryNames(ComponentDescriptor componentDescriptor) {

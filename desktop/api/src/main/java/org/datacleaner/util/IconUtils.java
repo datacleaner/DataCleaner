@@ -19,13 +19,12 @@
  */
 package org.datacleaner.util;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
@@ -58,13 +57,17 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
  * component icons.
  */
 public final class IconUtils {
+    private static final Logger logger = LoggerFactory.getLogger(IconUtils.class);
 
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
@@ -210,6 +213,14 @@ public final class IconUtils {
     }
 
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+        if (descriptor instanceof RemoteTransformerDescriptorImpl) {
+            ImageIcon imageIcon = createIconFromRemoteData(descriptor, iconWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
         if (configured) {
             return descriptorIcon;
@@ -250,6 +261,14 @@ public final class IconUtils {
      */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
             boolean allowTransparentForUnspecific) {
+        if (descriptor instanceof RemoteTransformerDescriptorImpl) {
+            ImageIcon imageIcon = createIconFromRemoteData(descriptor, newWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
         final boolean allowGeneric = !allowTransparentForUnspecific;
         final String imagePath = getDescriptorImagePath(descriptor, classLoader, allowGeneric);
@@ -257,6 +276,22 @@ public final class IconUtils {
             return getTransparentIcon(newWidth);
         }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
+    }
+
+    private static ImageIcon createIconFromRemoteData(ComponentDescriptor componentDescriptor, int width) { // mytodo
+        RemoteTransformerDescriptorImpl remoteTransformerDescriptor =
+                (RemoteTransformerDescriptorImpl) componentDescriptor;
+
+        if (remoteTransformerDescriptor.getIconData() == null ||
+                remoteTransformerDescriptor.getIconData().length == 0) {
+            return null;
+        }
+
+        ImageIcon imageIcon = new ImageIcon(remoteTransformerDescriptor.getIconData());
+        BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
+
+        return new ImageIcon(bufferedImage);
     }
 
     public static ImageIcon getTransparentIcon(int width) {

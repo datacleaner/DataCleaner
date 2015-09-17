@@ -42,9 +42,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private Set<String> categoryNames;
     private String username;
     private String password;
+    private byte[] iconData;
 
     public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant,
-                                           String superCategoryName, Set<String> categoryNames,
+                                           String superCategoryName, Set<String> categoryNames, byte[] iconData,
                                            String username, String password) {
         super(RemoteTransformer.class);
 
@@ -54,6 +55,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.tenant = tenant;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
+        this.iconData = iconData;
         this.username = username;
         this.password = password;
 
@@ -119,5 +121,9 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     public Object newInstance() {
         RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant, username, password);
         return t;
+    }
+
+    public byte[] getIconData() {
+        return iconData;
     }
 }

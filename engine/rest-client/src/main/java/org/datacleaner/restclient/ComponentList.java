@@ -57,6 +57,7 @@ public class ComponentList {
         private Set<String> categoryNames = new HashSet<>();
         private String superCategoryName = null;
         private Map<String, PropertyInfo> properties = new HashMap<>();
+        private byte[] iconData = null;
 
         public ComponentInfo setProperties(Map<String, PropertyInfo> properties) {
             this.properties = properties;
@@ -109,6 +110,15 @@ public class ComponentList {
 
         public ComponentInfo setSuperCategoryName(String superCategoryName) {
             this.superCategoryName = superCategoryName;
+            return this;
+        }
+
+        public byte[] getIconData() {
+            return iconData;
+        }
+
+        public ComponentInfo setIconData(byte[] iconData) {
+            this.iconData = iconData;
             return this;
         }
     }

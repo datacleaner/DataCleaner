@@ -95,6 +95,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 tenant,
                                 component.getSuperCategoryName(),
                                 component.getCategoryNames(),
+                                component.getIconData(),
                                 username,
                                 password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {

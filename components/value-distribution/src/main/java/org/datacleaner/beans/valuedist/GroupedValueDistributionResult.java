@@ -206,13 +206,13 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     }
 
     @Override
-    public Boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(String value) {
         if (_result.size() == 1) {
             return getSingleValueDistributionResult().hasAnnotatedRows(value);
         } else {
             // This operation is not supported on GroupValueDistributionResult with many children, but
             // we don't want to throw exceptions...
-            return null;
+            return false;
         }
     }
 

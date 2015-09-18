@@ -61,7 +61,7 @@ public interface ValueCountingAnalyzerResult extends AnalyzerResult {
 
     public Integer getUnexpectedValueCount();
 
-    public Boolean hasAnnotatedRows(String value);
+    public boolean hasAnnotatedRows(String value);
 
     public AnnotatedRowsResult getAnnotatedRowsForValue(String value);
 

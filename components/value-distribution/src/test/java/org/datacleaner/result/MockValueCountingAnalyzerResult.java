@@ -72,7 +72,7 @@ public class MockValueCountingAnalyzerResult extends AbstractValueCountingAnalyz
     }
 
     @Override
-    public Boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(String value) {
         return false;
     }
 

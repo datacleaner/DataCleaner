@@ -31,7 +31,6 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
-import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
@@ -412,10 +411,6 @@ public final class IconUtils {
 
     public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
         String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
-
-        if (cls.equals(RemoteTransformer.class)) {
-            iconPath = IconUtils.TRANSFORMER_IMAGEPATH;
-        }
 
         final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
 

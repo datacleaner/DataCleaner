@@ -26,6 +26,7 @@
 		<javax.jsp.version>2.0</javax.jsp.version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
+		<jersy.version>1.19</jersy.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -986,6 +987,16 @@
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-jsonSchema</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-core</artifactId>
+				<version>${jersy.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->

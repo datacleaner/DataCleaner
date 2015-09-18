@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.doc;
+package org.datacleaner.documentation;
 
 import com.mangofactory.swagger.paths.SwaggerPathProvider;
 import org.springframework.beans.factory.annotation.Autowired;

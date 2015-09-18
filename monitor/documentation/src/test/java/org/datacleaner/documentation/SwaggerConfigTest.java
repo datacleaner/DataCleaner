@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.doc;
-
-import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
-import org.junit.Test;
+package org.datacleaner.documentation;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.replay;
+
+import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
+import org.junit.Test;
 
 public class SwaggerConfigTest {
     private SwaggerConfig swaggerConfig = new SwaggerConfig();

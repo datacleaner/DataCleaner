@@ -45,60 +45,60 @@ public class ReferentialIntegrityAnalyzerReducerTest {
 
     @Test
     public void testVanilla() throws Throwable {
-        AnalysisJobBuilder jobBuilder1 = getAnalysisJobBuilder();
-        AnalysisJobBuilder jobBuilder2 = getAnalysisJobBuilder();
-        AnalysisJobBuilder jobBuilder3 = getAnalysisJobBuilder();
+        final AnalysisJobBuilder jobBuilder1 = getAnalysisJobBuilder();
+        final AnalysisJobBuilder jobBuilder2 = getAnalysisJobBuilder();
+        final AnalysisJobBuilder jobBuilder3 = getAnalysisJobBuilder();
         
-        ReferentialIntegrityAnalyzerResult partialResult1 = getPartialResult(jobBuilder1, 1, 22);
-        ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 23, 1);
-        ReferentialIntegrityAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 24, null);
+        final ReferentialIntegrityAnalyzerResult partialResult1 = getPartialResult(jobBuilder1, 1, 22);
+        final ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 23, 1);
+        final ReferentialIntegrityAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 24, null);
         
         // Assert what we have in the first partial result
         {
-            InputColumn<?> salesRepEmployeeNumber = jobBuilder1.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
-            int annotatedRowCount = partialResult1.getAnnotatedRowCount();
+            final InputColumn<?> salesRepEmployeeNumber = jobBuilder1.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+            final int annotatedRowCount = partialResult1.getAnnotatedRowCount();
             assertEquals(1, annotatedRowCount);
             
-            List<InputRow> rows = partialResult1.getSampleRows();
+            final List<InputRow> rows = partialResult1.getSampleRows();
             assertEquals(1, rows.size());
             assertEquals(-1000, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         // Assert what we have in the second partial result
         {
-            InputColumn<?> salesRepEmployeeNumber = jobBuilder2.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
-            int annotatedRowCount = partialResult2.getAnnotatedRowCount();
+            final InputColumn<?> salesRepEmployeeNumber = jobBuilder2.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+            final int annotatedRowCount = partialResult2.getAnnotatedRowCount();
             assertEquals(1, annotatedRowCount);
             
-            List<InputRow> rows = partialResult2.getSampleRows();
+            final List<InputRow> rows = partialResult2.getSampleRows();
             assertEquals(1, rows.size());
             assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         // Assert what we have in the thrird partial result
         {
-            InputColumn<?> salesRepEmployeeNumber = jobBuilder3.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+            final InputColumn<?> salesRepEmployeeNumber = jobBuilder3.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
             int annotatedRowCount = partialResult3.getAnnotatedRowCount();
             assertEquals(1, annotatedRowCount);
             
-            List<InputRow> rows = partialResult3.getSampleRows();
+            final List<InputRow> rows = partialResult3.getSampleRows();
             assertEquals(1, rows.size());
             assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         
-        Collection<ReferentialIntegrityAnalyzerResult> partialResults = new ArrayList<>();
+        final Collection<ReferentialIntegrityAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
         partialResults.add(partialResult2);
         partialResults.add(partialResult3);
         
-        ReferentialIntegrityAnalyzerReducer reducer = new ReferentialIntegrityAnalyzerReducer();
-        ReferentialIntegrityAnalyzerResult reducedResult = reducer.reduce(partialResults);
+        final ReferentialIntegrityAnalyzerReducer reducer = new ReferentialIntegrityAnalyzerReducer();
+        final ReferentialIntegrityAnalyzerResult reducedResult = reducer.reduce(partialResults);
         
         // Assert what we have in the reduced result
         {
-            InputColumn<?> salesRepEmployeeNumber = jobBuilder1.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
-            int annotatedRowCount = reducedResult.getAnnotatedRowCount();
+            final InputColumn<?> salesRepEmployeeNumber = jobBuilder1.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+            final int annotatedRowCount = reducedResult.getAnnotatedRowCount();
             assertEquals(3, annotatedRowCount);
             
-            List<InputRow> rows = reducedResult.getSampleRows();
+            final List<InputRow> rows = reducedResult.getSampleRows();
             assertEquals(3, rows.size());
             assertEquals(-1000, rows.get(0).getValue(salesRepEmployeeNumber));
             assertEquals(-1, rows.get(1).getValue(salesRepEmployeeNumber));
@@ -107,11 +107,11 @@ public class ReferentialIntegrityAnalyzerReducerTest {
     }
     
     private AnalysisJobBuilder getAnalysisJobBuilder() {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
         
-        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
+        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
                 .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
-        AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
+        final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
 
         jobBuilder.setDatastore(datastore);
         jobBuilder.addSourceColumns("customers.CUSTOMERNUMBER");
@@ -121,8 +121,8 @@ public class ReferentialIntegrityAnalyzerReducerTest {
     }
 
     private ReferentialIntegrityAnalyzerResult getPartialResult(AnalysisJobBuilder jobBuilder, Integer firstRow, Integer maxRows) throws Throwable {
-        InputColumn<?> salesRepEmployeeNumber = jobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
-        FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
+        final InputColumn<?> salesRepEmployeeNumber = jobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
+        final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
         maxRowsFilter.addInputColumn(salesRepEmployeeNumber);
         if (firstRow != null) {
             maxRowsFilter.setConfiguredProperty("First row", firstRow);
@@ -131,10 +131,10 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             maxRowsFilter.setConfiguredProperty("Max rows", maxRows);
         }
 
-        AnalyzerComponentBuilder<ReferentialIntegrityAnalyzer> referentialIntegrityAnalyzer = jobBuilder
+        final AnalyzerComponentBuilder<ReferentialIntegrityAnalyzer> referentialIntegrityAnalyzer = jobBuilder
                 .addAnalyzer(ReferentialIntegrityAnalyzer.class);
         referentialIntegrityAnalyzer.setRequirement(maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID));
-        ReferentialIntegrityAnalyzer referentialIntegrity = referentialIntegrityAnalyzer.getComponentInstance();
+        final ReferentialIntegrityAnalyzer referentialIntegrity = referentialIntegrityAnalyzer.getComponentInstance();
         referentialIntegrity.foreignKey = salesRepEmployeeNumber;
         referentialIntegrity.cacheLookups = true;
         referentialIntegrity.datastore = jobBuilder.getDatastore();
@@ -142,11 +142,11 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         referentialIntegrity.tableName = "employees";
         referentialIntegrity.columnName = "EMPLOYEENUMBER";
 
-        AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+        final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
         jobBuilder.close();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(jobBuilder.getConfiguration()).run(analysisJob);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(jobBuilder.getConfiguration()).run(analysisJob);
 
         resultFuture.await();
 
@@ -154,7 +154,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             throw resultFuture.getErrors().get(0);
         }
 
-        ReferentialIntegrityAnalyzerResult result = resultFuture.getResults(ReferentialIntegrityAnalyzerResult.class)
+        final ReferentialIntegrityAnalyzerResult result = resultFuture.getResults(ReferentialIntegrityAnalyzerResult.class)
                 .get(0);
 
         return result;

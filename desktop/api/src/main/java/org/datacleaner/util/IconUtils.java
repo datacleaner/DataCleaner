@@ -19,13 +19,12 @@
  */
 package org.datacleaner.util;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
@@ -57,13 +56,17 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
  * component icons.
  */
 public final class IconUtils {
+    private static final Logger logger = LoggerFactory.getLogger(IconUtils.class);
 
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
@@ -209,6 +212,14 @@ public final class IconUtils {
     }
 
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
         if (configured) {
             return descriptorIcon;
@@ -249,6 +260,14 @@ public final class IconUtils {
      */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
             boolean allowTransparentForUnspecific) {
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
         final boolean allowGeneric = !allowTransparentForUnspecific;
         final String imagePath = getDescriptorImagePath(descriptor, classLoader, allowGeneric);
@@ -256,6 +275,31 @@ public final class IconUtils {
             return getTransparentIcon(newWidth);
         }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
+    }
+
+    private static ImageIcon getIconFromData(ComponentDescriptor componentDescriptor, int width) {
+        String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
+        Image image = _imageManager.getImageFromCache(cacheKey);
+        ImageIcon imageIcon = null;
+
+        if (image == null) {
+            HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
+
+            if (descriptorWithIcon.getIconData() == null || descriptorWithIcon .getIconData().length == 0) {
+                return null;
+            }
+
+            imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
+            BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+            bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
+            imageIcon = new ImageIcon(bufferedImage);
+            _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
+        }
+        else {
+            imageIcon = new ImageIcon(image);
+        }
+
+        return imageIcon;
     }
 
     public static ImageIcon getTransparentIcon(int width) {
@@ -365,11 +409,14 @@ public final class IconUtils {
     }
 
     public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
-        final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+        String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+
         final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
+
         if (url == null) {
             return null;
         }
+
         return iconPath;
     }
 
@@ -377,6 +424,7 @@ public final class IconUtils {
             boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
+
         if (bundledIconPath != null) {
             return bundledIconPath;
         }

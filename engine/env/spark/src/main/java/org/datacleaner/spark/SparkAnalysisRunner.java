@@ -63,12 +63,16 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
-        if ((minPartitions != null) && (minPartitions > 0)) {
-            _minPartitions = minPartitions;
+        if (minPartitions != null) {
+            if (minPartitions > 0) {
+                _minPartitions = minPartitions;
+            } else {
+                logger.warn(
+                        "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
+                        minPartitions);
+                _minPartitions = null;
+            }
         } else {
-            logger.warn(
-                    "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
-                    minPartitions);
             _minPartitions = null;
         }
     }

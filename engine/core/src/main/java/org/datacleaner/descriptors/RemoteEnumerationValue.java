@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.metamodel.util.HasName;
 
@@ -35,7 +36,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  *
  * @Since 9/15/15
  */
-public class RemoteEnumerationValue implements HasName, JsonSerializable {
+public class RemoteEnumerationValue implements HasName, JsonSerializable, Serializable {
 
     private String value;
 

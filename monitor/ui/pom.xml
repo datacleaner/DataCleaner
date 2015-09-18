@@ -213,11 +213,13 @@
 		</dependency>
 
         <!-- DataCleaner monitor documentation -->
+        <!-- 
         <dependency>
             <groupId>org.eobjects.datacleaner</groupId>
             <artifactId>DataCleaner-monitor-documentation</artifactId>
             <version>${project.version}</version>
         </dependency>
+         -->
 
 		<!-- JDBC drivers -->
 		<dependency>
@@ -253,6 +255,7 @@
 			<groupId>javax.faces</groupId>
 			<artifactId>javax.faces-api</artifactId>
 			<version>2.2</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.el</groupId>

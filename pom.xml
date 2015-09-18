@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -382,11 +383,27 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
+										<exclude>javax.servlet:jsp-api:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
 										<exclude>org.eobjects.metamodel:*</exclude>
+
+										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
+										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
+										<exclude>com.sun.xml.bind:jaxb-xjc:*:jar:compile</exclude>
+										
+										<exclude>javax.faces:javax.faces-api:*:jar:compile</exclude>
+										<exclude>org.glassfish.web:el-impl:*:jar:compile</exclude>
+
+										<!-- HK2 should not be used, we have enough Dependency Injection frameworks as it is -->
+										<exclude>org.glassfish.hk2.*</exclude>
+										<exclude>org.glassfish.hk2.external:*</exclude>
+										
+										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is required by Hadoop) -->
+										<exclude>org.glassfish.jersey:*</exclude>
+
 									</excludes>
 								</bannedDependencies>
 							</rules>

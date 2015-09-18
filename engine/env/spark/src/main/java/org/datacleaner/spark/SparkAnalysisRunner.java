@@ -54,9 +54,23 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     private final SparkJobContext _sparkJobContext;
     private final JavaSparkContext _sparkContext;
 
+    private final Integer _minPartitions;
+
     public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext) {
+        this(sparkContext, sparkJobContext, null);
+    }
+
+    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
+        if ((minPartitions != null) && (minPartitions > 0)) {
+            _minPartitions = minPartitions;
+        } else {
+            logger.warn(
+                    "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
+                    minPartitions);
+            _minPartitions = null;
+        }
     }
 
     public void run() {
@@ -128,7 +142,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
 
-            final JavaRDD<String> rawInput = _sparkContext.textFile(datastorePath);
+            final JavaRDD<String> rawInput;
+            if (_minPartitions != null) {
+                rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
+            } else {
+                rawInput = _sparkContext.textFile(datastorePath);
+            }
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
 
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();

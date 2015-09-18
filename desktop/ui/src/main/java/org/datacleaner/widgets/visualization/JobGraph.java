@@ -290,7 +290,8 @@ public final class JobGraph {
                     subTitle = "Right-click the source table and select 'Link to ...'.\n"
                             + "This directs the flow of data to the component.";
                     imagePath = "images/window/canvas-bg-connect.png";
-                } else if (_analysisJobBuilder.getAnalyzerComponentBuilders().size() == 0
+                } else if (_analysisJobBuilder.getResultProducingComponentBuilders().size() == 0
+                        && _analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Your job is almost ready.";
                     subTitle = "Jobs need to either 'Analyze' or 'Write' something.\n"

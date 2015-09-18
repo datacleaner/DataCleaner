@@ -17,16 +17,44 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+package org.datacleaner.restclient;
 
 /**
- * @since 24. 07. 2015
+ * Basic REST client that requires the endpoint and the requestBody to provide the response.
+ * @since 03. 09. 2015
  */
-public class ProcessInput {
-    @JsonProperty
-    public JsonNode data;
+public interface RESTClient {
+    public static enum HttpMethod {
+        POST,
+        GET,
+        PUT,
+        DELETE,
+        ;
+    };
 
+    public static enum HttpCode {
+        OK(200),
+        CREATED(201),
+        ;
+
+        private int code = 0;
+
+        private HttpCode(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    };
+
+    /**
+     * It returns the response for the given request.
+     *
+     * @param httpMethod
+     * @param url
+     * @param requestBody
+     * @return
+     */
+    public String getResponse(HttpMethod httpMethod, String url, String requestBody);
 }

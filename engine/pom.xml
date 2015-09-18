@@ -11,9 +11,11 @@
 
 	<modules>
 		<module>core</module>
-		<module>utils</module>
 		<module>env</module>
+		<module>rest-client</module>
+		<module>utils</module>
 		<module>xml-config</module>
+		<module>remote-components</module>
 	</modules>
 
 </project>

@@ -17,25 +17,35 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.restclient;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
-
-import java.io.Serializable;
 
 /**
- * Crate for a component processing input.
+ * This class contains configuration and state of a particular component.
  * @since 9. 7. 2015
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProcessStatelessInput implements Serializable {
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+public class ComponentConfiguration {
     @JsonProperty
-    public ComponentConfiguration configuration;
+    private Map<String, JsonNode> properties = new HashMap<>();
     @JsonProperty
-    public JsonNode data;
+    private List<JsonNode> columns = new ArrayList<>();
 
+    public Map<String, JsonNode> getProperties() {
+        return properties;
+    }
+
+    public List<JsonNode> getColumns() {
+        return columns;
+    }
 }

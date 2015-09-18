@@ -17,40 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.restclient;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.*;
-
 /**
- * This class contains configuration and state of a particular component.
- * @since 9. 7. 2015
+ * @since 24. 07. 2015
  */
-
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
-public class ComponentConfiguration {
+public class ProcessInput {
     @JsonProperty
-    private Map<String, JsonNode> properties = new HashMap<>();
-    @JsonProperty
-    private List<JsonNode> columns = new ArrayList<>();
-
-    public Map<String, JsonNode> getProperties() {
-        return properties;
-    }
-
-    public List<JsonNode> getColumns() {
-        return columns;
-    }
-
-    public JsonNode getProperty(String name) {
-        return properties.get(name);
-    }
-
-    public Collection<String> getPropertiesNames() {
-        return properties.keySet();
-    }
-
+    public JsonNode data;
 }

@@ -17,15 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.restclient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @Since 7/31/15
+ * @since 24. 07. 2015
  */
-
-public class ProcessResult {
+public class ProcessOutput {
     @JsonProperty
-    Object result;
+    public Object rows;
 }

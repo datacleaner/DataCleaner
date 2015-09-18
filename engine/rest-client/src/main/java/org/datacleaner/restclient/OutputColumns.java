@@ -17,16 +17,37 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.restclient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @Since 7/31/15
- *
- * Simple holder for configuration data. It is used for creating components.
+ * @Since 9/11/15
  */
-public class CreateInput {
+public class OutputColumns {
+
     @JsonProperty
-    public ComponentConfiguration configuration;
+    List<OutputColumn> columns = new ArrayList<>();
+
+    public void add(String columnName, Class<?> columnClass) {
+        OutputColumn col = new OutputColumn();
+        col.name = columnName;
+        col.type = columnClass.getName();
+        columns.add(col);
+    }
+
+    public List<OutputColumn> getColumns() {
+        return columns;
+    }
+
+    public static class OutputColumn {
+        @JsonProperty
+        public String name;
+        @JsonProperty
+        public String type;
+    }
+
 }

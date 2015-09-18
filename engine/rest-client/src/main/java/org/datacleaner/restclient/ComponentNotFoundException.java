@@ -17,19 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Named;
-
-import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.ColumnProperty;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.result.ListResult;
+package org.datacleaner.restclient;
 
 public class ComponentNotFoundException extends RuntimeException {
     private ComponentNotFoundException(String msg) {

@@ -19,9 +19,6 @@
  */
 package org.datacleaner.restclient;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 /**
  * @since 02. 09. 2015
  */
@@ -93,13 +90,7 @@ public class ComponentRESTClient implements ComponentController {
     }
 
     private String urlify(String string) {
-        try {
-            string = URLEncoder.encode(string, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-        }
-
-        return string;
+        return ComponentsRestClientUtils.encodeUrlPathSegment(ComponentsRestClientUtils.escapeComponentName(string));
     }
 
     private String getURL(String suffix) {

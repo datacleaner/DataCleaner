@@ -41,11 +41,11 @@ public class ComponentConfigurationTest {
 
     @Test
     public void testGetProperty() throws Exception {
-        assertNull(componentConfiguration.getProperty(propertyName));
+        assertNull(componentConfiguration.getProperties().get(propertyName));
     }
 
     @Test
     public void testGetPropertiesNames() throws Exception {
-        assertNotNull(componentConfiguration.getPropertiesNames());
+        assertNotNull(componentConfiguration.getProperties());
     }
 }

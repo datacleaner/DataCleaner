@@ -34,9 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor, HasIcon {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
-    private String displayName;
+    private String remoteDisplayName;
     private String baseUrl;
-    private String componentUrl;
     private String tenant;
     private String superCategoryName;
     private Set<String> categoryNames;
@@ -44,21 +43,18 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private String password;
     private byte[] iconData;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String componentUrl, String displayName, String tenant,
+    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String tenant,
                                            String superCategoryName, Set<String> categoryNames, byte[] iconData,
                                            String username, String password) {
         super(RemoteTransformer.class);
-
-        this.displayName = displayName;
-        this.baseUrl = baseUrl;
-        this.componentUrl = componentUrl;
-        this.tenant = tenant;
+        this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
         this.iconData = iconData;
         this.username = username;
         this.password = password;
-
+        this.baseUrl = baseUrl;
+        this.tenant = tenant;
         try {
             this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
             this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
@@ -73,7 +69,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public String getDisplayName() {
-        return displayName;
+        return remoteDisplayName + " (remote)";
     }
 
     @Override
@@ -119,7 +115,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, componentUrl, displayName, tenant, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
         return t;
     }
 

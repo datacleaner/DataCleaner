@@ -61,6 +61,7 @@ import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
     private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
@@ -131,6 +132,7 @@ public class ComponentControllerV1 implements ComponentController {
             componentList.add(createComponentInfo(tenant, descriptor, iconData));
         }
 
+        LOGGER.debug("Informing about {} components", componentList.getComponents().size());
         return componentList;
     }
 
@@ -140,8 +142,8 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
-        name = unURLify(name);
-        logger.debug("Informing about '" + name + "'");
+        name = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("Informing about '{}'", name);
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         return createComponentInfo(tenant, descriptor, iconData);
@@ -157,7 +159,8 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final CreateInput createInput) {
-        String decodedName = unURLify(name);
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, createInput.configuration);
@@ -188,8 +191,8 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
-        String decodedName = unURLify(name);
-        logger.debug("Running '" + decodedName + "'");
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        LOGGER.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, processStatelessInput.configuration);
@@ -201,7 +204,8 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     private JsonNode getJsonNode(Object value) {
-        return objectMapper.convertValue(value, JsonNode.class);
+        if(value == null) { return null; }
+        return objectMapper.valueToTree(value);
     }
 
     /**
@@ -215,7 +219,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
-        String decodedName = unURLify(name);
+        String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
@@ -240,9 +244,9 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
         if(config == null){
-            logger.warn("Component with id {} does not exist.", id);
-            throw ComponentNotFoundException.createInstanceNotFound(id);
-        }
+                LOGGER.warn("Component with id {} does not exist.", id);
+                throw ComponentNotFoundException.createInstanceNotFound(id);
+            }
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -276,13 +280,9 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         boolean isHere = _componentCache.remove(id, tenantContext);
         if (!isHere) {
-            logger.warn("Instance of component {} not found in the cache and in the store", id);
+            LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-    }
-
-    private String unURLify(String url) {
-        return url.replace("_@_", "/");
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor,
@@ -330,7 +330,7 @@ public class ComponentControllerV1 implements ComponentController {
             return String.format(
                     "/repository/%s/components/%s",
                     UriUtils.encodePathSegment(tenant, "UTF8"),
-                    UriUtils.encodePathSegment(descriptor.getDisplayName().replace("/", "_@_"), "UTF8"));
+                    UriUtils.encodePathSegment(ComponentsRestClientUtils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

@@ -19,6 +19,9 @@
  */
 package org.datacleaner.restclient;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.client.Client;
@@ -32,11 +35,17 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 public class RESTClientImpl implements RESTClient {
     private Client client = null;
 
-    public RESTClientImpl(String username, String password) {
-        client = Client.create();
+    private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
 
-        if (username != null && password != null) {
-            client.addFilter(new HTTPBasicAuthFilter(username, password));
+    public RESTClientImpl(String username, String password) {
+        if(username == null) { username = ""; }
+        client = clientCache.get(username);
+        if(client == null) {
+            client = Client.create();
+            if (username != null && password != null) {
+                client.addFilter(new HTTPBasicAuthFilter(username, password));
+            }
+            clientCache.put(username, client);
         }
     }
 

@@ -143,7 +143,7 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
-        for(String propertyName: componentConfiguration.getPropertiesNames()) {
+        for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
@@ -155,7 +155,7 @@ public class ComponentHandler {
                 continue;
             }
 
-            JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
+            JsonNode userPropValue = componentConfiguration.getProperties().get(propertyName);
             if(userPropValue != null) {
                 if(propDesc.isInputColumn()) {
                     List<String> colNames = convertToStringArray(userPropValue);

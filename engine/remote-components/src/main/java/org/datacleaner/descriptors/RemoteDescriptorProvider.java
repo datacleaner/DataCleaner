@@ -1,4 +1,3 @@
-
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -37,7 +36,8 @@ import org.slf4j.LoggerFactory;
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
     private String url, username, password;
-    private String tenant = "";
+    private String tenant = "test"; // TODO
+
     LazyRef<Data> data = new LazyRef<Data>() {
         @Override
         protected Data fetch() throws Throwable {
@@ -51,7 +51,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         this.url = url.replaceAll("/+$", "");
         this.username = username;
         this.password = password;
-        this.tenant = username;
         data.requestLoad();
     }
 
@@ -83,15 +82,15 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
         private void downloadDescriptors() {
             try {
+                logger.info("Loading remote components list from " + url);
+                // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant, true);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
-                        String componentUrl = url + component.getCreateURL();
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
-                                componentUrl,
-                                component.getName() + " (remote)",
+                                component.getName(),
                                 tenant,
                                 component.getSuperCategoryName(),
                                 component.getCategoryNames(),
@@ -115,8 +114,9 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         name,
                                         propInfo.getSchema(),
-                                        propInfo.isRequired(),
+                                        propInfo.isInputColumn(),
                                         propInfo.getDescription(),
+                                        propInfo.isRequired(),
                                         transformer));
                             }
                         }
@@ -127,6 +127,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 }
             } catch(Exception e) {
                 logger.error("Cannot get list of remote components on " + url, e);
+                // TODO: plan a task to try again after somw while. And then notify listeners...
             }
         }
     }

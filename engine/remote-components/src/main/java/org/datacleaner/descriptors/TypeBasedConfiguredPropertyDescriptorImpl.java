@@ -85,7 +85,7 @@ public class TypeBasedConfiguredPropertyDescriptorImpl implements ConfiguredProp
 
     @Override
     public Object getValue(Object component) throws IllegalArgumentException {
-        return ((RemoteTransformer)component).getProperty(getName());
+        return ((RemoteTransformer)component).getPropertyValue(getName());
     }
 
     @Override

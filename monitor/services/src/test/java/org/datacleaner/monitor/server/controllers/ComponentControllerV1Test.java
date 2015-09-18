@@ -99,7 +99,7 @@ public class ComponentControllerV1Test {
     private ComponentConfiguration getComponentConfigurationMock() {
         ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
         expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
-        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getProperties()).andReturn(Collections.EMPTY_MAP).anyTimes();
         replay(componentConfiguration);
 
         return componentConfiguration;

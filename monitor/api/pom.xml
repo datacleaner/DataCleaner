@@ -92,6 +92,11 @@
 			<artifactId>DataCleaner-xml-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-rest-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>

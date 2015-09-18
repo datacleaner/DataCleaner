@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
@@ -137,12 +138,16 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     public ExtensionPackage loadDescriptors(DescriptorProvider descriptorProvider) throws IllegalStateException {
         if (!_loaded) {
-            if (!(descriptorProvider instanceof ClasspathScanDescriptorProvider)) {
+
+            final ClasspathScanDescriptorProvider classpathScanner;
+            if(descriptorProvider instanceof ClasspathScanDescriptorProvider) {
+                classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
+            } else if(descriptorProvider instanceof CompositeDescriptorProvider) {
+                classpathScanner = ((CompositeDescriptorProvider)descriptorProvider).findClasspathScanProvider();
+            } else {
                 throw new IllegalStateException(
                         "Can only load user extensions when descriptor provider is of classpath scanner type.");
             }
-
-            final ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
             final int analyzersBefore = classpathScanner.getAnalyzerDescriptors().size();
             final int transformersBefore = classpathScanner.getTransformerDescriptors().size();

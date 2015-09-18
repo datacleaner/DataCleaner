@@ -20,9 +20,11 @@
 package org.datacleaner.monitor.configuration;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
+
+import org.datacleaner.restclient.CreateInput;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Class ComponentsStoreHolder

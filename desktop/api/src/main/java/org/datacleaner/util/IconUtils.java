@@ -278,7 +278,7 @@ public final class IconUtils {
     }
 
     private static ImageIcon getIconFromData(ComponentDescriptor componentDescriptor, int width) {
-        String cacheKey = "remote: " + componentDescriptor.getDisplayName();
+        String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
         Image image = _imageManager.getImageFromCache(cacheKey);
         ImageIcon imageIcon = null;
 
@@ -293,12 +293,11 @@ public final class IconUtils {
             BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
+            _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
         }
         else {
             imageIcon = new ImageIcon(image);
         }
-
-        _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
 
         return imageIcon;
     }

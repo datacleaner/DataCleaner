@@ -146,13 +146,13 @@
 			<version>3.3.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- log4j-over-slf4j to ensure compatibility when we exclude log4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
 		</dependency>
-	
+
 		<!-- DataCleaner monitor dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -164,7 +164,7 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- DataCleaner monitor extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -211,7 +211,14 @@
 			<artifactId>DataCleaner-monitor-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
+        <!-- DataCleaner monitor documentation -->
+        <dependency>
+            <groupId>org.eobjects.datacleaner</groupId>
+            <artifactId>DataCleaner-monitor-documentation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
@@ -229,7 +236,7 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>
 		</dependency>
-		
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

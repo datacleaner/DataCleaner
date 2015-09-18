@@ -15,7 +15,8 @@
 		<module>widgets</module>
 		<module>extensions</module>
 		<module>ui</module>
-	</modules>
+        <module>documentation</module>
+    </modules>
 
 	<build>
 		<resources>

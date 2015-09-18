@@ -57,7 +57,7 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
-import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
+import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,8 +213,8 @@ public final class IconUtils {
     }
 
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
-        if (descriptor instanceof RemoteTransformerDescriptorImpl) {
-            ImageIcon imageIcon = createIconFromRemoteData(descriptor, iconWidth);
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
 
             if (imageIcon != null) {
                 return imageIcon;
@@ -261,8 +261,8 @@ public final class IconUtils {
      */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
             boolean allowTransparentForUnspecific) {
-        if (descriptor instanceof RemoteTransformerDescriptorImpl) {
-            ImageIcon imageIcon = createIconFromRemoteData(descriptor, newWidth);
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
 
             if (imageIcon != null) {
                 return imageIcon;
@@ -278,20 +278,30 @@ public final class IconUtils {
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
-    private static ImageIcon createIconFromRemoteData(ComponentDescriptor componentDescriptor, int width) { // mytodo
-        RemoteTransformerDescriptorImpl remoteTransformerDescriptor =
-                (RemoteTransformerDescriptorImpl) componentDescriptor;
+    private static ImageIcon getIconFromData(ComponentDescriptor componentDescriptor, int width) {
+        String cacheKey = "remote: " + componentDescriptor.getDisplayName();
+        Image image = _imageManager.getImageFromCache(cacheKey);
+        ImageIcon imageIcon = null;
 
-        if (remoteTransformerDescriptor.getIconData() == null ||
-                remoteTransformerDescriptor.getIconData().length == 0) {
-            return null;
+        if (image == null) {
+            HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
+
+            if (descriptorWithIcon.getIconData() == null || descriptorWithIcon .getIconData().length == 0) {
+                return null;
+            }
+
+            imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
+            BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+            bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
+            imageIcon = new ImageIcon(bufferedImage);
+        }
+        else {
+            imageIcon = new ImageIcon(image);
         }
 
-        ImageIcon imageIcon = new ImageIcon(remoteTransformerDescriptor.getIconData());
-        BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
+        _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
 
-        return new ImageIcon(bufferedImage);
+        return imageIcon;
     }
 
     public static ImageIcon getTransparentIcon(int width) {

@@ -200,7 +200,7 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents(tenant);
+        ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
     }
 

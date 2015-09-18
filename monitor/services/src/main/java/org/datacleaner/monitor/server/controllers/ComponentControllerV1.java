@@ -92,6 +92,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
     private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
+    private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -113,11 +114,13 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It returns a list of all components and their configurations.
      * @param tenant
+     * @param iconData
      * @return
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant) {
+    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider()
@@ -125,7 +128,7 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            componentList.add(createComponentInfo(tenant, descriptor));
+            componentList.add(createComponentInfo(tenant, descriptor, iconData));
         }
 
         return componentList;
@@ -135,12 +138,13 @@ public class ComponentControllerV1 implements ComponentController {
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList.ComponentInfo getComponentInfo(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("name") String name) {
+            @PathVariable(PARAMETER_NAME_NAME) String name,
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = unURLify(name);
         logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
-        return createComponentInfo(tenant, descriptor);
+        return createComponentInfo(tenant, descriptor, iconData);
     }
 
     /**
@@ -281,15 +285,21 @@ public class ComponentControllerV1 implements ComponentController {
         return url.replace("_@_", "/");
     }
 
-    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
-        return new ComponentList.ComponentInfo()
+    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor,
+                                                                  boolean iconData) {
+        ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
                 .setCategoryNames(getCategoryNames(descriptor))
-                .setProperties(createPropertiesInfo(descriptor))
-                .setIconData(getComponentIconData(descriptor));
+                .setProperties(createPropertiesInfo(descriptor));
+
+        if (iconData) {
+            componentInfo.setIconData(getComponentIconData(descriptor));
+        }
+
+        return componentInfo;
     }
 
     private static byte[] getComponentIconData(ComponentDescriptor descriptor) {

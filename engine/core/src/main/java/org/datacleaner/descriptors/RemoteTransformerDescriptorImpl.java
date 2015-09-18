@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor {
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor, HasIcon {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String displayName;
     private String baseUrl;

@@ -74,7 +74,7 @@ public class ComponentListTest {
         assertTrue(componentList.getComponents().isEmpty());
         ComponentDescriptor descriptorMock = getDescriptorMock();
 
-        componentList.add(ComponentControllerV1.createComponentInfo(tenant, descriptorMock));
+        componentList.add(ComponentControllerV1.createComponentInfo(tenant, descriptorMock, false));
         assertTrue(componentList.getComponents().size() == 1);
 
         verify(configuredPropertyDescriptorMock);

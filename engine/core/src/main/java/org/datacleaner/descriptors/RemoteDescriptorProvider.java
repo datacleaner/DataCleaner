@@ -84,7 +84,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
             try {
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
-                ComponentList components = client.getAllComponents(tenant);
+                ComponentList components = client.getAllComponents(tenant, true);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
                         String componentUrl = url + component.getCreateURL();

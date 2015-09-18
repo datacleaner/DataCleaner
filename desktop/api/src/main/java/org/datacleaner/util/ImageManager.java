@@ -26,10 +26,9 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.cache.Cache;
 
 /**
  * The {@link ImageManager} class serves as a utility for fetching images used
@@ -122,5 +121,13 @@ public final class ImageManager {
             }
         }
         return image;
+    }
+
+    public Image getImageFromCache(String key) {
+        return _cachedImageIcons.getIfPresent(key);
+    }
+
+    public void storeImageIntoCache(String key, Image image) {
+        _cachedImageIcons.put(key, image);
     }
 }

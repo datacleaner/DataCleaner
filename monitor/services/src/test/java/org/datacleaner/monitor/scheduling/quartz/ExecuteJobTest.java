@@ -40,71 +40,13 @@ import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.repository.file.FileRepository;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.GroupMatcher;
 
 public class ExecuteJobTest extends TestCase {
 
     public void testAssumptionsAboutDisallowConcurrentExecution() throws Exception {
-        final Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-        try {
-            scheduler.clear();
-
-            if (!scheduler.getJobGroupNames().isEmpty()) {
-                fail("Test prerequisites failed. Expecting empty getJobGroupNames() but got: "
-                        + scheduler.getJobGroupNames());
-            }
-
-            JobDetail job1 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant1")
-                    .storeDurably().build();
-            JobDetail job2 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job2", "tenant1")
-                    .storeDurably().build();
-
-            scheduler.addJob(job1, true);
-            scheduler.addJob(job2, true);
-
-            assertEquals(1, scheduler.getJobGroupNames().size());
-            assertEquals(2, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant1")).size());
-
-            JobDetail job3 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant2")
-                    .storeDurably().build();
-            scheduler.addJob(job3, true);
-
-            assertEquals(2, scheduler.getJobGroupNames().size());
-            assertEquals(2, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant1")).size());
-            assertEquals(1, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant2")).size());
-
-            scheduler.start();
-
-            scheduler.triggerJob(new JobKey("job1", "tenant1"));
-            scheduler.triggerJob(new JobKey("job1", "tenant1"));
-            scheduler.triggerJob(new JobKey("job1", "tenant1"));
-            scheduler.triggerJob(new JobKey("job1", "tenant1"));
-            Thread.sleep(40);
-
-            int executingJobs;
-            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
-            assertTrue("Expected max 1 executing jobs but got " + executingJobs, executingJobs <= 1);
-
-            scheduler.triggerJob(new JobKey("job2", "tenant1"));
-            Thread.sleep(40);
-
-            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
-            assertTrue("Expected max 2 executing jobs but got " + executingJobs, executingJobs <= 2);
-
-            scheduler.triggerJob(new JobKey("job1", "tenant2"));
-            scheduler.triggerJob(new JobKey("job1", "tenant2"));
-            scheduler.triggerJob(new JobKey("job1", "tenant2"));
-            Thread.sleep(40);
-
-            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
-            assertTrue("Expected max 3 executing jobs but got " + executingJobs, executingJobs <= 3);
-
-        } finally {
-            scheduler.shutdown();
-        }
+        final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity("job1", "tenant2").storeDurably()
+                .build();
+        assertTrue(jobDetail.isConcurrentExectionDisallowed());
     }
 
     public void testFileNotFound() throws Exception {

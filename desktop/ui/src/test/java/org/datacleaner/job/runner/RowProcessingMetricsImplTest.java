@@ -38,7 +38,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SourceColumnFinder;
 import org.junit.Assert;
 
 public class RowProcessingMetricsImplTest extends TestCase {
@@ -119,11 +118,9 @@ public class RowProcessingMetricsImplTest extends TestCase {
         final TaskRunner taskRunner = configuration.getEnvironment().getTaskRunner();
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, job, true);
-        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(job);
 
         final RowProcessingPublishers publishers = new RowProcessingPublishers(job, analysisListener, taskRunner,
-                lifeCycleHelper, sourceColumnFinder);
+                lifeCycleHelper);
         final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStreams()[0]);
         publisher.initializeConsumers(new TaskListener() {
             @Override

@@ -81,11 +81,10 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
 
         return true;
     }
-    
+
     @Override
     protected boolean isReadyForRowProcessing() {
-        // TODO: See if we can do something smarter here - is all publishers actually started (initialize happens in a task before)?
-        return _parentConsumer.isAllPublishersInitialized();
+        return _parentConsumer.isAllPublishersInitialized() && _parentConsumer.isAllPublishersClosed();
     }
 
     @Override
@@ -97,7 +96,7 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
         getTaskRunner().run(runTask, runCompletionListener);
-        
+
         return true;
     }
 

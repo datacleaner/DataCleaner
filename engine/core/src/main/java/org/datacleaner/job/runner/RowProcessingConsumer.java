@@ -151,4 +151,11 @@ public interface RowProcessingConsumer {
      * @return
      */
     public boolean isAllPublishersInitialized();
+
+    /**
+     * Determines whether all registered publishers have been closed.
+     * 
+     * @return
+     */
+    public boolean isAllPublishersClosed();
 }

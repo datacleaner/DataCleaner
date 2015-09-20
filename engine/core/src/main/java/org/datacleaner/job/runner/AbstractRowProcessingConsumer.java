@@ -277,6 +277,11 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     public boolean isAllPublishersInitialized() {
         return _publishersRegisteredCount.get() == _publishersInitializedCount.get();
     }
+    
+    @Override
+    public boolean isAllPublishersClosed() {
+        return _publishersRegisteredCount.get() == _publishersClosedCount.get();
+    }
 
     @Override
     public void registerPublisher(RowProcessingPublisher publisher) {

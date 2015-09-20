@@ -226,8 +226,10 @@ public class JobGraphLinkPainter {
             if (sourceColumns != null && !sourceColumns.isEmpty()) {
 
                 try {
-                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
-                        sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                    if (!componentBuilder.getDescriptor().isMultiStreamComponent()) {
+                        if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
+                            sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                        }
                     }
 
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder

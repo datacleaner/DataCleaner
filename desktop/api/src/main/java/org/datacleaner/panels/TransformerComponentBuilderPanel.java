@@ -129,12 +129,14 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.add(_writeDataButton);
         bottomButtonPanel.add(_previewButton);
 
-        final DCPanel outputColumnsPanel = new DCPanel();
-        outputColumnsPanel.setLayout(new BorderLayout());
-        outputColumnsPanel.add(WidgetUtils.decorateWithShadow(_outputColumnsTable), BorderLayout.CENTER);
-        outputColumnsPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
-
-        addTaskPane(IconUtils.MODEL_SOURCE, "Output columns", outputColumnsPanel);
+        if (!_componentBuilder.getDescriptor().isMultiStreamComponent()) {
+            final DCPanel outputColumnsPanel = new DCPanel();
+            outputColumnsPanel.setLayout(new BorderLayout());
+            outputColumnsPanel.add(WidgetUtils.decorateWithShadow(_outputColumnsTable), BorderLayout.CENTER);
+            outputColumnsPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
+            
+            addTaskPane(IconUtils.MODEL_SOURCE, "Output columns", outputColumnsPanel);
+        }
         return result;
     }
 

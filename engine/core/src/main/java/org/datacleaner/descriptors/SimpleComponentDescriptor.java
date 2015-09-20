@@ -45,6 +45,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
 import org.datacleaner.util.ReflectionUtils;
@@ -355,14 +356,14 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         if (otherComponentClass == null) {
             return 1;
         }
-        
+
         int diff = this.getDisplayName().compareTo(o.getDisplayName());
         if (diff == 0) {
             String thisBeanClassName = this.getComponentClass().toString();
             String thatBeanClassName = otherComponentClass.toString();
             diff = thisBeanClassName.compareTo(thatBeanClassName);
         }
-        
+
         return diff;
     }
 
@@ -373,6 +374,11 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
             return false;
         }
         return distributed.value();
+    }
+
+    @Override
+    public boolean isMultiStreamComponent() {
+        return ReflectionUtils.is(getComponentClass(), MultiStreamComponent.class);
     }
 
     @Override

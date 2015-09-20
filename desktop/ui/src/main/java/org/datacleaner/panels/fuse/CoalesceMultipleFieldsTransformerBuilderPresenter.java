@@ -38,7 +38,7 @@ final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends T
 
     private static final long serialVersionUID = 1L;
 
-    private final MultipleCoalesceUnitPropertyWidget _propertyWidget;
+    private final ColumnListMultipleCoalesceUnitPropertyWidget _propertyWidget;
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
@@ -51,7 +51,7 @@ final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends T
         _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Input");
         _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Units");
 
-        _propertyWidget = new MultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
+        _propertyWidget = new ColumnListMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
     }
 
     @Override

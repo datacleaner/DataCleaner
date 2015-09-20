@@ -55,11 +55,14 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link PropertyWidget} for two properties at one time: An array of
  * {@link InputColumn}s and an array of {@link CoalesceUnit}s.
+ * 
+ * This widget displays a list of {@link CoalesceUnit}s with {@link InputColumn}
+ * s that the user can add an remove from.
  */
-public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
+public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger(MultipleCoalesceUnitPropertyWidget.class);
+    private static final Logger logger = LoggerFactory.getLogger(ColumnListMultipleCoalesceUnitPropertyWidget.class);
 
     private final ConfiguredPropertyDescriptor _unitProperty;
     private final MinimalPropertyWidget<CoalesceUnit[]> _unitPropertyWidget;
@@ -68,7 +71,7 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
     private final Set<InputColumn<?>> _pickedInputColumns;
     private final Set<InputColumn<?>> _hiddenInputColumns;
 
-    public MultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
+    public ColumnListMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
         _unitProperty = unitProperty;
@@ -182,7 +185,7 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
 
             @Override
             public boolean isSet() {
-                return MultipleCoalesceUnitPropertyWidget.this.isSet();
+                return ColumnListMultipleCoalesceUnitPropertyWidget.this.isSet();
             }
 
             @Override

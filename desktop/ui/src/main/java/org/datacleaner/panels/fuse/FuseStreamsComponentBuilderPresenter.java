@@ -39,7 +39,7 @@ final class FuseStreamsComponentBuilderPresenter extends TransformerComponentBui
 
     private static final long serialVersionUID = 1L;
 
-    private final MultipleCoalesceUnitPropertyWidget _propertyWidget;
+    private final StreamColumnMatrixMultipleCoalesceUnitPropertyWidget _propertyWidget;
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
@@ -54,7 +54,7 @@ final class FuseStreamsComponentBuilderPresenter extends TransformerComponentBui
         _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
                 FuseStreamsComponent.PROPERTY_UNITS);
 
-        _propertyWidget = new MultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
+        _propertyWidget = new StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
     }
 
     @Override

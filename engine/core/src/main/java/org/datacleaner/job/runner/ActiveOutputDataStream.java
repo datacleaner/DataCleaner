@@ -69,6 +69,8 @@ public class ActiveOutputDataStream implements Closeable {
         _outputRowCollector = new OutputDataStreamRowCollector(_publisher, selectItems, consumeRowHandler);
         final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
         _component.initializeOutputDataStream(outputDataStream, query, _outputRowCollector);
+        
+        _publisher.getAnalysisListener().rowProcessingBegin(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics());
     }
 
     public void await() throws InterruptedException {

@@ -196,6 +196,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         } else {
             idGenerator = new SimpleRowIdGenerator(finalQuery.getFirstRow());
         }
+        
+        analysisListener.rowProcessingBegin(getAnalysisJob(), rowProcessingMetrics);
 
         final ConsumeRowHandler consumeRowHandler = createConsumeRowHandler();
 
@@ -259,11 +261,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         final TaskListener initFinishedListener = new RunNextTaskTaskListener(getTaskRunner(), runTask,
                 runCompletionListener);
 
-        final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(getTaskRunner(),
-                new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
-
         // kick off the initialization
-        initializeConsumers(consumerInitFinishedListener);
+        initializeConsumers(initFinishedListener);
         
         return true;
     }

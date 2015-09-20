@@ -84,6 +84,7 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
     
     @Override
     protected boolean isReadyForRowProcessing() {
+        // TODO: See if we can do something smarter here - is all publishers actually started (initialize happens in a task before)?
         return _parentConsumer.isAllPublishersInitialized();
     }
 

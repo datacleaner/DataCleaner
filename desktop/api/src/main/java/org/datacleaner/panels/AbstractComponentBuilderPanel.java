@@ -67,6 +67,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final ComponentBuilder _componentBuilder;
     private final ComponentDescriptor<?> _descriptor;
     private final JComponent _buttonPanel;
+    private final OutputDataStreamsViewer _outputDataStreamsViewer;
 
     protected AbstractComponentBuilderPanel(String watermarkImagePath, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
@@ -83,12 +84,14 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _descriptor = componentBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
+        _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder.getAnalysisJobBuilder(), _componentBuilder, null);
+        addTaskPane(IconUtils.MODEL_TABLE, "Output data streams", _outputDataStreamsViewer);
 
         setLayout(new BorderLayout());
 
         final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
         add(scrolleable, BorderLayout.CENTER);
-
+        
         _buttonPanel = createTopButtonPanel();
         add(_buttonPanel, BorderLayout.NORTH);
     }

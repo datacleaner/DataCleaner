@@ -19,9 +19,11 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JLabel;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
@@ -30,6 +32,10 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * Panel that displays {@link OutputDataStream}s published by the component.
@@ -47,24 +53,33 @@ public final class OutputDataStreamsViewer extends DCPanel {
         _analysisJobBuilder = analysisJobBuilder;
         _componentBuilder = componentBuilder;
         _windowContext = windowsContext;
+        
+        setLayout(new VerticalLayout(4));
+        
         refresh();
     }
 
     public void refresh() {
         removeAll();
-
+        
         for (OutputDataStream outputDataStream : _componentBuilder.getOutputDataStreams()) {
             List<InputColumn<?>> inputColumns = new ArrayList<>();
             for (Column column : outputDataStream.getTable().getColumns()) {
                 MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
                 inputColumns.add(inputColumn);
             }
+            final DCPanel headerPanel = new DCPanel();
+            headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
+                    IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+            tableNameLabel.setOpaque(false);
+            tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
+            headerPanel.add(tableNameLabel);
             final ColumnListTable columnListTable = new ColumnListTable(inputColumns, _analysisJobBuilder,
                     true, false, _windowContext);
 
-            DCPanel outputDataStreamPanel = new DCPanel();
-            outputDataStreamPanel.add(columnListTable, BorderLayout.AFTER_LAST_LINE);
-            add(outputDataStreamPanel, BorderLayout.AFTER_LAST_LINE);
+            add(headerPanel);
+            add(columnListTable);
         }
     }
 

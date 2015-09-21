@@ -30,8 +30,10 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.result.ReducedValueDistributionResult;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
+import org.datacleaner.result.ValueFrequency;
 import org.junit.Test;
 
 public class ValueDistributionAnalyzerResultReducerTest {
@@ -81,14 +83,15 @@ public class ValueDistributionAnalyzerResultReducerTest {
         partialResults.add(partialResult2);
 
         ValueDistributionAnalyzerResultReducer reducer = new ValueDistributionAnalyzerResultReducer();
-        ValueDistributionAnalyzerResult reducedResult = reducer.reduce(partialResults);
+        ValueDistributionAnalyzerResult reducedValueDistributionResult = reducer.reduce(partialResults);
 
-        SingleValueDistributionResult singleReducedResult = (SingleValueDistributionResult) reducedResult;
-        assertEquals(Integer.valueOf(4), singleReducedResult.getDistinctCount());
-        assertEquals(21, singleReducedResult.getTotalCount());
-        assertEquals(Integer.valueOf(1), singleReducedResult.getUniqueCount());
-        assertEquals("[globallyUniqueWord]", singleReducedResult.getUniqueValues().toString());
-        ValueCountList reducedTopValues = singleReducedResult.getTopValues();
+        ReducedValueDistributionResult reducedResult = (ReducedValueDistributionResult) reducedValueDistributionResult;
+        assertEquals(0, reducedResult.getNullCount());
+        assertEquals(Integer.valueOf(4), reducedResult.getDistinctCount());
+        assertEquals(21, reducedResult.getTotalCount());
+        assertEquals(Integer.valueOf(1), reducedResult.getUniqueCount());
+        assertEquals("[globallyUniqueWord]", reducedResult.getUniqueValues().toString());
+        ValueCountList reducedTopValues = reducedResult.getTopValues();
         assertEquals(2, reducedTopValues.getActualSize());
         assertEquals("[world->10]", reducedTopValues.getValueCounts().get(0).toString());
         assertEquals("[hello->8]", reducedTopValues.getValueCounts().get(1).toString());
@@ -166,9 +169,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
         // Assert the aggregates from the reduced groups
         {
-            final GroupedValueDistributionResult groupedReducedResult = (GroupedValueDistributionResult) reducedResult;
-            final Iterator<? extends ValueCountingAnalyzerResult> reducedGroupsIterator = groupedReducedResult
-                    .getGroupResults().iterator();
+            final ReducedValueDistributionResult groupedReducedResult = (ReducedValueDistributionResult) reducedResult;
+            final Iterator<ValueFrequency> reducedGroupsIterator = groupedReducedResult.getValueCounts().iterator();
             SingleValueDistributionResult firstReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator
                     .next();
             SingleValueDistributionResult secondReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator

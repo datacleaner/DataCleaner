@@ -21,6 +21,7 @@ package org.datacleaner.result;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -38,12 +39,12 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     private static final long serialVersionUID = 1L;
 
     private final String _name;
-    private final Map<String, Integer> _valueCounts;
+    private final Map<String, Integer> _valueCountsMap;
     private final int _nullCount;
 
-    public ReducedValueDistributionResult(final String name, Map<String, Integer> valueCounts, int nullCount) {
+    public ReducedValueDistributionResult(final String name, Map<String, Integer> valueCountsMap, int nullCount) {
         _name = name;
-        _valueCounts = valueCounts;
+        _valueCountsMap = valueCountsMap;
         _nullCount = nullCount;
     }
 
@@ -54,13 +55,17 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        // TODO Auto-generated method stub
-        return null;
+        List<ValueFrequency> valueCounts = new ArrayList<>(); 
+        for (Map.Entry<String, Integer> valueCount : _valueCountsMap.entrySet()) {
+            ValueFrequency valueFrequency = new SingleValueFrequency(valueCount.getKey(), valueCount.getValue());
+            valueCounts.add(valueFrequency);
+        }
+        return valueCounts;
     }
 
     @Override
     public Integer getCount(String value) {
-        Integer result = _valueCounts.get(value);
+        Integer result = _valueCountsMap.get(value);
         if (result == null) {
             return 0;
         }
@@ -95,7 +100,7 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     @Override
     public Collection<String> getUniqueValues() {
         final Collection<String> result = new ArrayList<>();
-        final Set<Entry<String, Integer>> entries = _valueCounts.entrySet();
+        final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
         for (Entry<String, Integer> entry : entries) {
             if (entry.getValue().intValue() == 1) {
                 result.add(entry.getKey());
@@ -107,7 +112,7 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     @Override
     public int getTotalCount() {
         int sum = 0;
-        final Set<Entry<String, Integer>> entries = _valueCounts.entrySet();
+        final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
         for (Entry<String, Integer> entry : entries) {
             sum = sum + entry.getValue().intValue();
         }
@@ -122,7 +127,7 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     @Override
     public Integer getUniqueCount() {
         int sum = 0;
-        final Set<Entry<String, Integer>> entries = _valueCounts.entrySet();
+        final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
         for (Entry<String, Integer> entry : entries) {
             if (entry.getValue().intValue() == 1) {
                 sum++;
@@ -134,9 +139,17 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     @Override
     public Integer getDistinctCount() {
         if (_nullCount == 0) {
-            return _valueCounts.size();
+            return _valueCountsMap.size();
         }
-        return _valueCounts.size() + 1;
+        return _valueCountsMap.size() + 1;
+    }
+
+    public ValueCountList getTopValues() {
+        ValueCountListImpl valueCountList = ValueCountListImpl.createTopList(2);
+        for (ValueFrequency valueFrequency : getValueCounts()) {
+            valueCountList.register(valueFrequency);
+        }
+        return valueCountList;
     }
 
 }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.util.HasAliases;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,21 +37,37 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  *
  * @Since 9/15/15
  */
-public class RemoteEnumerationValue implements HasName, JsonSerializable, Serializable {
+public class EnumerationValue implements HasName, JsonSerializable, Serializable {
 
     private String value;
+    private String name;
+    private Enum enumValue;
 
-    public RemoteEnumerationValue(String value) {
+    public EnumerationValue(String value) {
+        // TODO: where to get the name for "HasName" interface ?
         this.value = value;
     }
 
+    public EnumerationValue(Enum value) {
+        this.enumValue = value;
+        this.value = enumValue.name();
+        if(enumValue instanceof HasName) {
+            name = ((HasName)enumValue).getName();
+        }
+    }
+
+    /** Available only if this object represents a Java enum value */
+    public Enum asJavaEnum() { return enumValue; }
+
+    /** The enum constant */
     public String getValue() {
         return value;
     }
 
+    /** This should return the enum human-readable name */
     @Override
     public String getName() {
-        return value;
+        return name;
     }
 
     @Override
@@ -68,7 +85,7 @@ public class RemoteEnumerationValue implements HasName, JsonSerializable, Serial
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RemoteEnumerationValue that = (RemoteEnumerationValue) o;
+        EnumerationValue that = (EnumerationValue) o;
 
         if (value != null ? !value.equals(that.value) : that.value != null) return false;
 
@@ -79,4 +96,45 @@ public class RemoteEnumerationValue implements HasName, JsonSerializable, Serial
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+
+    public static EnumerationValue[] fromArray(Object value) {
+        if(value == null) {
+            return null;
+        }
+
+        if(value instanceof EnumerationValue[]) {
+            return (EnumerationValue[])value;
+        }
+
+        // Array of java enums will be converted
+        if(value != null && value.getClass().isArray()) {
+            if (value.getClass().getComponentType().isEnum()) {
+                Enum[] values = (Enum[]) value;
+                EnumerationValue[] result = new EnumerationValue[values.length];
+                for (int i = 0; i < result.length; i++) {
+                    result[i] = new EnumerationValue(values[i]);
+                }
+                return result;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
+    }
+
+    public String[] getAliases() {
+        if(enumValue instanceof HasAliases) {
+            return ((HasAliases)enumValue).getAliases();
+        }
+        return new String[0];
+    }
+
+    public static EnumerationProvider providerFromEnumClass(Class<? extends Enum> enumClass) {
+        final EnumerationValue[] values = EnumerationValue.fromArray(enumClass.getEnumConstants());
+        return new EnumerationProvider() {
+            @Override
+            public EnumerationValue[] values() {
+                return values;
+            }
+        };
+    }
+
 }

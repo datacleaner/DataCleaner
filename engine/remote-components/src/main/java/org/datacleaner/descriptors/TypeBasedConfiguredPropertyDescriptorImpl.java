@@ -22,10 +22,14 @@ package org.datacleaner.descriptors;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,19 +37,22 @@ import java.util.Set;
  */
 public class TypeBasedConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
 
+    private static final Logger logger = LoggerFactory.getLogger(TypeBasedConfiguredPropertyDescriptorImpl.class);
+
     private Class type;
     private String name;
     private String description;
     private boolean required;
     private ComponentDescriptor component;
-    private Set<Annotation> annotations = Collections.EMPTY_SET;
+    Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
 
-    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class type, boolean required, ComponentDescriptor component) {
+    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class type, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations) {
         this.type = type;
         this.name = name;
         this.description = description;
         this.required = required;
         this.component = component;
+        this.annotations = annotations;
     }
 
     @Override
@@ -90,17 +97,12 @@ public class TypeBasedConfiguredPropertyDescriptorImpl implements ConfiguredProp
 
     @Override
     public Set<Annotation> getAnnotations() {
-        return annotations;
+        return new HashSet<>(annotations.values());
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-        for(Annotation an: annotations) {
-            if(annotationClass.isAssignableFrom(an.getClass())) {
-                return (A)an;
-            }
-        }
-        return null;
+        return (A) annotations.get(annotationClass);
     }
 
     @Override
@@ -139,13 +141,5 @@ public class TypeBasedConfiguredPropertyDescriptorImpl implements ConfiguredProp
     @Override
     public int compareTo(PropertyDescriptor o) {
         return getName().compareTo(o.getName());
-    }
-
-    public TypeBasedConfiguredPropertyDescriptorImpl withAnnotation(Annotation an) {
-        if(annotations == Collections.EMPTY_SET) {
-            annotations = new HashSet<>();
-        }
-        annotations.add(an);
-        return this;
     }
 }

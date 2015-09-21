@@ -24,28 +24,28 @@ import javax.inject.Inject;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.JsonSchemaConfiguredPropertyDescriptorImpl;
-import org.datacleaner.descriptors.RemoteEnumerationValue;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.job.builder.ComponentBuilder;
 
 /**
  * @Since 9/15/15
  */
-public class MultipleRemoteEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<RemoteEnumerationValue> {
+public class MultipleRemoteEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<EnumerationValue> {
 
     @Inject
     @SuppressWarnings("unchecked")
     public MultipleRemoteEnumPropertyWidget(ComponentBuilder componentBuilder,
                                             ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(componentBuilder, propertyDescriptor, (Class<RemoteEnumerationValue>) propertyDescriptor.getBaseType());
+        super(componentBuilder, propertyDescriptor, (Class<EnumerationValue>) propertyDescriptor.getBaseType());
     }
 
     @Override
-    protected RemoteEnumerationValue[] getAvailableValues() {
+    protected EnumerationValue[] getAvailableValues() {
         return ((JsonSchemaConfiguredPropertyDescriptorImpl)getPropertyDescriptor()).getEnumValues();
     }
 
     @Override
-    protected String getName(RemoteEnumerationValue item) {
+    protected String getName(EnumerationValue item) {
         if (item instanceof HasName) {
             return ((HasName)item).getName();
         }

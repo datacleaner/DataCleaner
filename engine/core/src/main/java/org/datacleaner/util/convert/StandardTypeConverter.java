@@ -40,7 +40,7 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.descriptors.RemoteEnumerationValue;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.ReflectionUtils;
@@ -130,8 +130,8 @@ public class StandardTypeConverter implements Converter<Object> {
                 throw new IllegalArgumentException("Class not found: " + str, e);
             }
         }
-        if(ReflectionUtils.is(type, RemoteEnumerationValue.class)) {
-            return new RemoteEnumerationValue(str);
+        if(ReflectionUtils.is(type, EnumerationValue.class)) {
+            return new EnumerationValue(str);
         }
         if (type.isEnum()) {
             try {
@@ -238,6 +238,8 @@ public class StandardTypeConverter implements Converter<Object> {
             return ((Enum<?>) o).name();
         } else if (o instanceof Class) {
             result = ((Class<?>) o).getName();
+        } else if (o instanceof EnumerationValue) {
+            result = ((EnumerationValue)o).getValue();
         } else if (o instanceof Serializable) {
             logger.info("toString(...): No built-in handling of type: {}, using serialization.", o.getClass().getName());
             byte[] bytes = SerializationUtils.serialize((Serializable) o);

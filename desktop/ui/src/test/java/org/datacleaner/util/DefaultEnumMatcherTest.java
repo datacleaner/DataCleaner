@@ -22,6 +22,7 @@ package org.datacleaner.util;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.metadata.ColumnMeaning;
 
 public class DefaultEnumMatcherTest extends TestCase {
@@ -46,7 +47,7 @@ public class DefaultEnumMatcherTest extends TestCase {
         }
     }
 
-    private final EnumMatcher<TestEnum> matcher = new DefaultEnumMatcher<TestEnum>(TestEnum.class);
+    private final EnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
 
     public void testSuggestByAlias() throws Exception {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("fu"));
@@ -83,7 +84,7 @@ public class DefaultEnumMatcherTest extends TestCase {
     }
 
     public void testDontMatchTooEager() throws Exception {
-        final EnumMatcher<ColumnMeaning> matcher = new DefaultEnumMatcher<>(ColumnMeaning.class);
+        final EnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(ColumnMeaning.class));
 
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone no"));
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone ID"));

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -98,26 +99,28 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 username,
                                 password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
-                            String name = propE.getKey();
+                            String propertyName = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();
                             String className = propInfo.getClassName();
                             try {
                                 Class cl = Class.forName(className, false, getClass().getClassLoader());
                                 transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
-                                        name,
+                                        propertyName,
                                         propInfo.getDescription(),
                                         cl,
                                         propInfo.isRequired(),
-                                        transformer));
+                                        transformer,
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotationsInfo())));
                             } catch(Exception e) {
                                 // class not available on this server.
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                                        name,
+                                        propertyName,
                                         propInfo.getSchema(),
                                         propInfo.isInputColumn(),
                                         propInfo.getDescription(),
                                         propInfo.isRequired(),
-                                        transformer));
+                                        transformer,
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotationsInfo())));
                             }
                         }
                         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
@@ -131,4 +134,21 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
     }
+
+    private Map<Class<Annotation>, Annotation> initAnnotations(String componentName, String propertyName, Map<String, Map<String, Object>> annotationsInfo) {
+        Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
+        if(annotationsInfo == null) { return annotations; }
+        for(Map.Entry<String, Map<String, Object>> annInfoE: annotationsInfo.entrySet()) {
+            try {
+                Class anClass = Class.forName(annInfoE.getKey());
+                Map<String, Object> anProperties = annInfoE.getValue();
+                Annotation anProxy = AnnotationProxy.newAnnotation(anClass, anProperties);
+                annotations.put(anClass, anProxy);
+            } catch (Exception e) {
+                logger.warn("Cannot create annotation '{}' for component '{}' property '{}'", annInfoE.getKey(), componentName, propertyName);
+            }
+        }
+        return annotations;
+    }
+
 }

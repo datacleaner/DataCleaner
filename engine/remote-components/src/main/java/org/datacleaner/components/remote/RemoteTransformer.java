@@ -105,10 +105,12 @@ public class RemoteTransformer implements Transformer {
         try {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
+
             org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, createInput);
+
             outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
             int i = 0;
-            for(org.datacleaner.restclient.OutputColumns.OutputColumn colSpec: columnsSpec.getColumns()) {
+            for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
                 outCols.setColumnName(i, colSpec.name);
                 try {
                     outCols.setColumnType(i, Class.forName(colSpec.type));
@@ -121,6 +123,8 @@ public class RemoteTransformer implements Transformer {
             }
             cachedOutputColumns = outCols;
             return outCols;
+        } catch(Exception e) {
+            return new OutputColumns(String.class, "Unknown");
         } finally {
             if(wasInit) {
                 close();

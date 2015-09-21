@@ -24,17 +24,23 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.*;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @Since 9/1/15
  */
-public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
-    
+public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor, EnumerationProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaConfiguredPropertyDescriptorImpl.class);
+
     private String name;
     private String description;
     private JsonSchema schema;
@@ -43,15 +49,17 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     private boolean required;
     private boolean isArray;
     private Class baseType;
-    private RemoteEnumerationValue[] enumValues;
+    private EnumerationValue[] enumValues;
+    Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations) {
         this.name = name;
         this.description = description;
         this.schema = schema;
         this.isInputColumn = isInputColumn;
         this.component = component;
         this.required = required;
+        this.annotations = annotations;
         init();
     }
 
@@ -65,14 +73,14 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
             baseSchema = schema;
         }
 
-        enumValues = new RemoteEnumerationValue[0]; // default
+        enumValues = new EnumerationValue[0]; // default
         if(baseSchema instanceof ValueTypeSchema) {
             Set<String> enums = ((ValueTypeSchema)baseSchema).getEnums();
             if(enums != null && !enums.isEmpty()) {
-                enumValues = new RemoteEnumerationValue[enums.size()];
+                enumValues = new EnumerationValue[enums.size()];
                 int i = 0;
                 for(String value: enums) {
-                    enumValues[i++] = new RemoteEnumerationValue(value);
+                    enumValues[i++] = new EnumerationValue(value);
                 }
             }
         }
@@ -104,12 +112,12 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     @Override
     public Set<Annotation> getAnnotations() {
-        return Collections.emptySet();
+        return new HashSet<>(annotations.values());
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-        return null;
+        return (A) annotations.get(annotationClass);
     }
 
     @Override
@@ -178,7 +186,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     private Class<?> schemaToJavaType(JsonSchema schema) {
         // try to convert
         if(isEnum()) {
-            return RemoteEnumerationValue.class;
+            return EnumerationValue.class;
         }
         if(schema instanceof StringSchema) { return String.class; }
         if(schema instanceof IntegerSchema) { return Integer.class; }
@@ -192,7 +200,13 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         return enumValues != null && enumValues.length > 0;
     }
 
-    public RemoteEnumerationValue[] getEnumValues() {
+    public EnumerationValue[] getEnumValues() {
         return enumValues;
     }
+
+    @Override
+    public EnumerationValue[] values() {
+        return enumValues;
+    }
+
 }

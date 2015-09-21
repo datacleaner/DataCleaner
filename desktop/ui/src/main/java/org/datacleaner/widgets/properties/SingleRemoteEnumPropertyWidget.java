@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.JsonSchemaConfiguredPropertyDescriptorImpl;
-import org.datacleaner.descriptors.RemoteEnumerationValue;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.EnumComboBoxListRenderer;
@@ -32,47 +32,47 @@ import org.datacleaner.widgets.EnumComboBoxListRenderer;
 /**
  * @Since 9/15/15
  */
-public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<RemoteEnumerationValue> {
+public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<EnumerationValue> {
 
-    private final DCComboBox<RemoteEnumerationValue> _comboBox;
+    private final DCComboBox<EnumerationValue> _comboBox;
 
     @Inject
     public SingleRemoteEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
                                     ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        RemoteEnumerationValue[] enumConstants = ((JsonSchemaConfiguredPropertyDescriptorImpl)propertyDescriptor).getEnumValues();
+        EnumerationValue[] enumConstants = ((JsonSchemaConfiguredPropertyDescriptorImpl)propertyDescriptor).getEnumValues();
 
         if (!propertyDescriptor.isRequired()) {
-            enumConstants = CollectionUtils.array(new RemoteEnumerationValue[]{null}, enumConstants);
+            enumConstants = CollectionUtils.array(new EnumerationValue[]{null}, enumConstants);
         }
 
         _comboBox = new DCComboBox<>(enumConstants);
         _comboBox.setRenderer(new EnumComboBoxListRenderer());
 
-        RemoteEnumerationValue currentValue = getCurrentValue();
+        EnumerationValue currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
-        addComboListener(new DCComboBox.Listener<RemoteEnumerationValue>() {
+        addComboListener(new DCComboBox.Listener<EnumerationValue>() {
             @Override
-            public void onItemSelected(RemoteEnumerationValue item) {
+            public void onItemSelected(EnumerationValue item) {
                 fireValueChanged();
             }
         });
         add(_comboBox);
     }
 
-    public void addComboListener(DCComboBox.Listener<RemoteEnumerationValue> listener) {
+    public void addComboListener(DCComboBox.Listener<EnumerationValue> listener) {
         _comboBox.addListener(listener);
     }
 
     @Override
-    public RemoteEnumerationValue getValue() {
-        return (RemoteEnumerationValue) _comboBox.getSelectedItem();
+    public EnumerationValue getValue() {
+        return (EnumerationValue) _comboBox.getSelectedItem();
     }
 
     @Override
-    protected void setValue(RemoteEnumerationValue value) {
+    protected void setValue(EnumerationValue value) {
         _comboBox.setSelectedItem(value);
     }
 

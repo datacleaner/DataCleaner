@@ -135,6 +135,7 @@ public class ComponentList {
         private String description;
         private boolean required;
         private boolean isInputColumn;
+        private Map<String, Map<String, Object>> annotationsInfo = new HashMap<>();
 
         public void setIsInputColumn(boolean inputColumn) {
             isInputColumn = inputColumn;
@@ -197,5 +198,10 @@ public class ComponentList {
         public void setClassDetails(String classDetails) {
             this.classDetails = classDetails;
         }
+
+        public Map<String, Map<String, Object>> getAnnotationsInfo() { return annotationsInfo; }
+
+        public void setAnnotationsInfo(Map<String, Map<String, Object>> annotationsInfo) { this.annotationsInfo = annotationsInfo; }
+
     }
 }

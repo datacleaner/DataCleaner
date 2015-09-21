@@ -104,6 +104,8 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
         WidgetUtils.addToGridBag(_visibilityButton, this, 0, 0, GridBagConstraints.WEST, 0.0, 0.0);
         WidgetUtils.addToGridBag(_textField, this, 1, 0, GridBagConstraints.WEST, 1.0, 1.0);
         WidgetUtils.addToGridBag(resetButton, this, 2, 0, GridBagConstraints.WEST, 0.0, 0.0);
+
+        this.panelOwner = panelOwner;
     }
 
     @Override

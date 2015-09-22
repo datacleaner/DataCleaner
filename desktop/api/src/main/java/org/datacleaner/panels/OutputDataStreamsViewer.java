@@ -28,9 +28,7 @@ import javax.swing.border.EmptyBorder;
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -44,15 +42,11 @@ public final class OutputDataStreamsViewer extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final ComponentBuilder _componentBuilder;
-    private final  WindowContext _windowContext;
 
-    public OutputDataStreamsViewer(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder, WindowContext windowsContext) {
+    public OutputDataStreamsViewer(ComponentBuilder componentBuilder) {
         super();
-        _analysisJobBuilder = analysisJobBuilder;
         _componentBuilder = componentBuilder;
-        _windowContext = windowsContext;
         
         setLayout(new VerticalLayout(4));
     }
@@ -74,8 +68,8 @@ public final class OutputDataStreamsViewer extends DCPanel {
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             tableNameLabel.setBorder(new EmptyBorder(5, 5, 0, 5));
-            final ColumnListTable columnListTable = new ColumnListTable(inputColumns, _analysisJobBuilder,
-                    true, false, _windowContext);
+            final ColumnListTable columnListTable = new ColumnListTable(inputColumns, _componentBuilder.getAnalysisJobBuilder(),
+                    true, false, null);
             columnListTable.setBorder(new EmptyBorder(0, 5, 5, 5));
 
             add(tableNameLabel);

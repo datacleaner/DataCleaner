@@ -31,7 +31,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 
 /**
  * A sample transformer that appends a greeting to a name column's values.
@@ -62,7 +62,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
  * src/main/resources).
  */
 @Named("Hello world transformer")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 @Description("Put your description of your transformer here")
 @Concurrent(true)
 public class HelloWorldTransformer implements Transformer {

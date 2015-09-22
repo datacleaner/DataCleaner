@@ -19,11 +19,6 @@
  */
 package org.datacleaner.components.categories;
 
-/**
- * @deprecated This category is no longer used.
- */
-@Deprecated
-public class MatchingAndStandardizationCategory extends AbstractComponentCategory {
-
+public class LocationCategory extends AbstractComponentCategory {
 	private static final long serialVersionUID = 1L;
 }

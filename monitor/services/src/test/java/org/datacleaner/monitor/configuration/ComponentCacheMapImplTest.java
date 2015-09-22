@@ -19,13 +19,19 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.repository.RepositoryFolder;
@@ -33,10 +39,6 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 /**
  * Class ComponentsCacheTest
@@ -65,7 +67,7 @@ public class ComponentCacheMapImplTest {
             }
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new RemoteComponentsConfigurationImpl());
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
@@ -104,7 +106,7 @@ public class ComponentCacheMapImplTest {
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new RemoteComponentsConfigurationImpl());
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 

@@ -31,6 +31,8 @@ import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
@@ -85,6 +87,11 @@ public class ConfigurationFactory {
 
     public void setNumThreads(Integer numThreads) {
         _numThreads = numThreads;
+    }
+
+    @Bean(name = "published-components")
+    public RemoteComponentsConfiguration createRemoteComponentsConfiguration() {
+        return new RemoteComponentsConfigurationImpl();
     }
 
     @Bean(name = "taskRunner", destroyMethod = "shutdown")

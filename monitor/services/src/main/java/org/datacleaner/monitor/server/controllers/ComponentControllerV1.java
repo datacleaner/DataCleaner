@@ -19,11 +19,33 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.util.Collection;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
-import org.datacleaner.monitor.server.components.*;
+import org.datacleaner.monitor.configuration.ComponentCache;
+import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
+import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
+import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.CreateInput;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.ComponentController;
+import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.monitor.server.components.ComponentList;
+import org.datacleaner.monitor.server.components.ComponentNotFoundException;
+import org.datacleaner.monitor.server.components.ProcessInput;
+import org.datacleaner.monitor.server.components.ProcessOutput;
+import org.datacleaner.monitor.server.components.ProcessResult;
+import org.datacleaner.monitor.server.components.ProcessStatelessInput;
+import org.datacleaner.monitor.server.components.ProcessStatelessOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +53,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.Collection;
-import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -52,11 +69,14 @@ public class ComponentControllerV1 implements ComponentController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
+    
+    @Autowired
+    RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
 
     @PostConstruct
     public void init() {
-        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory);
+        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory, _remoteComponentsConfiguration);
     }
 
     @PreDestroy
@@ -77,9 +97,10 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            componentList.add(tenant, descriptor);
+            if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
+                componentList.add(tenant, descriptor);
+            }
         }
-
         return componentList;
     }
 
@@ -108,7 +129,7 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
+        ComponentHandler handler =  ComponentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration, _remoteComponentsConfiguration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();

@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.datacleaner.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +40,16 @@ public class ComponentCacheMapImpl implements ComponentCache {
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
     private TenantContextFactory _tenantContextFactory;
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
     private ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
     private Thread checkerThread;
     private TimeoutChecker checker;
 
-    public ComponentCacheMapImpl(TenantContextFactory _tenantContextFactory) {
-        this._tenantContextFactory = _tenantContextFactory;
+    public ComponentCacheMapImpl(TenantContextFactory tenantContextFactory,
+                                 RemoteComponentsConfiguration remoteComponentsConfiguration) {
+        this._tenantContextFactory = tenantContextFactory;
+        this._remoteComponentsConfiguration = remoteComponentsConfiguration;
         checker = new TimeoutChecker();
         checkerThread = new Thread(checker);
         checkerThread.start();
@@ -61,7 +66,10 @@ public class ComponentCacheMapImpl implements ComponentCache {
         logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
                 componentsHolder.getInstanceId());
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
-                tenantContext, componentsHolder.getComponentName(), componentsHolder.getCreateInput().configuration);
+                tenantContext,
+                componentsHolder.getComponentName(),
+                componentsHolder.getCreateInput().configuration,
+                _remoteComponentsConfiguration);
         ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
         data.put(componentsHolder.getInstanceId(), wrapper);
         tenantContext.getComponentStore().store(wrapper.getComponentStoreHolder());
@@ -85,8 +93,11 @@ public class ComponentCacheMapImpl implements ComponentCache {
                 logger.warn("Configuration {} does not exist in store.", id);
                 return null;
             } else {
-                ComponentHandler componentHandler = ComponentHandlerFactory.createComponent(tenantContext,
-                        storeConfig.getComponentName(), storeConfig.getCreateInput().configuration);
+                ComponentHandler componentHandler = ComponentHandlerFactory.createComponent(
+                        tenantContext,
+                        storeConfig.getComponentName(),
+                        storeConfig.getCreateInput().configuration,
+                        _remoteComponentsConfiguration);
                 componentCacheConfigWrapper = new ComponentCacheConfigWrapper(tenant, storeConfig, componentHandler);
                 data.put(id, componentCacheConfigWrapper);
             }

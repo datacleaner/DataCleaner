@@ -19,18 +19,29 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
-import org.apache.metamodel.schema.*;
-import org.datacleaner.api.*;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Component;
+import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -44,7 +55,12 @@ import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * This class is a component type independent wrapper that decides the proper handler and provides its results.
@@ -64,8 +80,9 @@ public class ComponentHandler {
     Map<String, InputColumn> inputColumns;
     MyMutableTable table;
     Component component;
+    RemoteComponentsConfiguration remoteComponentsConfiguration;
 
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
         this.dcConfiguration = dcConfiguration;
         this.componentName = componentName;
     }
@@ -158,6 +175,7 @@ public class ComponentHandler {
 
         LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
+        remoteComponentsConfiguration.setDefaultValues(descriptor, component);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
         lifeCycleHelper.initialize(descriptor, component);

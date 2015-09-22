@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import org.datacleaner.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
@@ -35,11 +36,14 @@ public class ComponentHandlerFactory {
      * @return
      * @throws RuntimeException
      */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName, ComponentConfiguration configuration)
+    public static ComponentHandler createComponent(TenantContext tenantContext,
+                                                   String componentName,
+                                                   ComponentConfiguration configuration,
+                                                   RemoteComponentsConfiguration remoteComponentsConfiguration)
             throws RuntimeException {
         ComponentHandler handler = new ComponentHandler(
                 tenantContext.getConfiguration(),
-                componentName);
+                componentName, remoteComponentsConfiguration);
         handler.createComponent(configuration);
 
         return handler;

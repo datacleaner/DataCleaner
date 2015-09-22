@@ -17,9 +17,9 @@ public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReduce
             return null;
         }
 
+        //Create the dimensions
         final List<CrosstabDimension> columnStatisticCrosstabDimensions = new ArrayList<CrosstabDimension>();
         final List<CrosstabDimension> columnValueCombinationCrosstabDimensions = new ArrayList<CrosstabDimension>();
-
         for (BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
@@ -27,15 +27,19 @@ public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReduce
             createDimensions(columnValueCombinationCrosstabDimensions, partialValueCombinationCrosstab);
         }
 
+        //create the crosstabs
         final Crosstab<Number> newResultColumnStatistics = new Crosstab<Number>(Number.class,
                 columnStatisticCrosstabDimensions);
         final Crosstab<Number> newResultColumnValueCombination = new Crosstab<Number>(Number.class,
                 columnValueCombinationCrosstabDimensions);
 
+        //define the navigators
         final CrosstabNavigator<Number> columnStatisticsNavigator = new CrosstabNavigator<Number>(
                 newResultColumnStatistics);
         final CrosstabNavigator<Number> columnValueCombinationNavigator = new CrosstabNavigator<Number>(
                 newResultColumnValueCombination);
+        
+        //add the partial results 
         for (BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();

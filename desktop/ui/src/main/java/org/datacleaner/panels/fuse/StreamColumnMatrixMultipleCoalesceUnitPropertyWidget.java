@@ -90,10 +90,13 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         add(scroll);
 
-        refresh();
+        final CoalesceUnit[] coalesceUnits = (CoalesceUnit[]) getComponentBuilder()
+                .getConfiguredProperty(_unitProperty);
+
+        refresh(coalesceUnits);
     }
 
-    private void refresh() {
+    private void refresh(final CoalesceUnit[] units) {
         _tablePanels.clear();
         _containerPanel.removeAll();
 
@@ -112,7 +115,6 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         final Multimap<Table, InputColumn<?>> allTablesAndColumns = ArrayListMultimap.create();
         final Multimap<Table, InputColumn<?>> coalescedTablesAndColumns = ArrayListMultimap.create();
         {
-            final CoalesceUnit[] units = getCoalesceUnits();
             if (units != null) {
                 for (CoalesceUnit unit : units) {
                     final InputColumn<?>[] coalescedInputColumns = unit.getInputColumns(inputColumns);
@@ -144,7 +146,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                 tablePanel.addInputColumn(inputColumn, true);
             }
 
-            final Collection<InputColumn<?>> columns = allTablesAndColumns.get(table);
+            final Collection<InputColumn<?>> columns = new ArrayList<>(allTablesAndColumns.get(table));
             columns.removeAll(selectedColumns);
             for (InputColumn<?> inputColumn : columns) {
                 tablePanel.addInputColumn(inputColumn, false);
@@ -257,7 +259,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
         if (transformerJobBuilder != getComponentBuilder()) {
-            refresh();
+            refresh(getCoalesceUnits());
         }
     }
 

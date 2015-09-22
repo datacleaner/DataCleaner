@@ -143,6 +143,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onComponentRightClicked(final ComponentBuilder componentBuilder, final MouseEvent me) {
+        final boolean isMultiStream = componentBuilder.getDescriptor().isMultiStreamComponent();
+
         final JPopupMenu popup = new JPopupMenu();
 
         final JMenuItem configureComponentMenuItem = new JMenuItem("Configure ...", ImageManager.get().getImageIcon(
@@ -155,7 +157,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         });
         popup.add(configureComponentMenuItem);
 
-        if (componentBuilder instanceof InputColumnSourceJob || componentBuilder instanceof HasFilterOutcomes) {
+        if (!isMultiStream && componentBuilder instanceof InputColumnSourceJob
+                || componentBuilder instanceof HasFilterOutcomes) {
             popup.add(createLinkMenuItem(componentBuilder));
         }
 
@@ -178,8 +181,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         if (componentBuilder instanceof TransformerComponentBuilder) {
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
-            
-            if (tjb.getAnalysisJobBuilder().isRootJobBuilder() && !tjb.getDescriptor().isMultiStreamComponent()) {
+
+            if (!isMultiStream && tjb.getAnalysisJobBuilder().isRootJobBuilder()) {
                 final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                         IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
                 previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
@@ -204,7 +207,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     private JMenuItem createLinkMenuItem(final JobGraphLinkPainter.VertexContext from) {
         final ImageManager imageManager = ImageManager.get();
         final String menuItemText;
-        if(from.getOutputDataStream() == null){
+        if (from.getOutputDataStream() == null) {
             menuItemText = "Link to ...";
         } else {
             menuItemText = "Link \"" + from.getOutputDataStream().getName() + "\" to ...";

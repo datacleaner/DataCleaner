@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Fuse streams")
-@Description("Lets you combine multiple streams into one.\n\n"
+@Description("Lets you combine multiple streams into one. Providing what is equivalent to a union of tables.\n\n"
         + "Use it to fuse data streams coming from different filter requirements, different output data streams or different source tables. "
         + "You can define new fields whose values represent whatever is available from one of the input streams.")
 @Categorized(CompositionCategory.class)

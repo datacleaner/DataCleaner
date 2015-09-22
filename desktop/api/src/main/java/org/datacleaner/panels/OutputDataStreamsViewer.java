@@ -19,11 +19,11 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
@@ -69,17 +69,16 @@ public final class OutputDataStreamsViewer extends DCPanel {
                 MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
                 inputColumns.add(inputColumn);
             }
-            final DCPanel headerPanel = new DCPanel();
-            headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
                     IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
-            headerPanel.add(tableNameLabel);
+            tableNameLabel.setBorder(new EmptyBorder(5, 5, 0, 5));
             final ColumnListTable columnListTable = new ColumnListTable(inputColumns, _analysisJobBuilder,
                     true, false, _windowContext);
+            columnListTable.setBorder(new EmptyBorder(0, 5, 5, 5));
 
-            add(headerPanel);
+            add(tableNameLabel);
             add(columnListTable);
         }
     }

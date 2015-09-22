@@ -179,7 +179,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (componentBuilder instanceof TransformerComponentBuilder) {
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             
-            if (tjb.getAnalysisJobBuilder().isRootJobBuilder()) {
+            if (tjb.getAnalysisJobBuilder().isRootJobBuilder() && !tjb.getDescriptor().isMultiStreamComponent()) {
                 final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                         IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
                 previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));

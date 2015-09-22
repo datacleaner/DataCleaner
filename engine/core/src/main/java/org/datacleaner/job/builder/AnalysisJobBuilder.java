@@ -318,6 +318,10 @@ public final class AnalysisJobBuilder implements Closeable {
         }
         return this;
     }
+    
+    public boolean containsSourceTable(Table table) {
+        return getSourceTables().contains(table);
+    }
 
     public boolean containsSourceColumn(Column column) {
         for (MetaModelInputColumn sourceColumn : _sourceColumns) {

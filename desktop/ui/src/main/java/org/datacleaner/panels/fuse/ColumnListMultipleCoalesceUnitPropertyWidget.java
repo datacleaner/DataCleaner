@@ -172,7 +172,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
             @Override
             public CoalesceUnit[] getValue() {
-                CoalesceUnit[] units = getCoalesceUnits();
+                final CoalesceUnit[] units = getCoalesceUnits();
                 if (units.length == 0) {
                     logger.debug("Returning Units.value = null");
                     return null;
@@ -239,11 +239,11 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     public CoalesceUnit[] getCoalesceUnits() {
-        List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
-        List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
-        for (CoalesceUnitPanel panel : panels) {
+        final List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
+        final List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
+        for (final CoalesceUnitPanel panel : panels) {
             if (panel.isSet()) {
-                CoalesceUnit unit = panel.getCoalesceUnit();
+                final CoalesceUnit unit = panel.getCoalesceUnit();
                 result.add(unit);
             }
         }

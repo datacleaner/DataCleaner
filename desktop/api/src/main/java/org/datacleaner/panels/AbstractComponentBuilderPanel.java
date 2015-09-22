@@ -68,6 +68,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final ComponentDescriptor<?> _descriptor;
     private final JComponent _buttonPanel;
     private final OutputDataStreamsViewer _outputDataStreamsViewer;
+    private JXTaskPane _outputDataStreamsTaskPane;
 
     protected AbstractComponentBuilderPanel(String watermarkImagePath, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
@@ -85,8 +86,6 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
         _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder.getAnalysisJobBuilder(), _componentBuilder, null);
-        _outputDataStreamsViewer.refresh();
-        addTaskPane(IconUtils.MODEL_TABLE, "Output data streams", _outputDataStreamsViewer);
 
         setLayout(new BorderLayout());
 
@@ -287,7 +286,12 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      */
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
+        
+        _taskPaneContainer.remove(_outputDataStreamsTaskPane);
         _outputDataStreamsViewer.refresh();
+        if (_outputDataStreamsViewer.isEnabled()) {
+            _outputDataStreamsTaskPane = addTaskPane(IconUtils.MODEL_TABLE, "Output data streams", _outputDataStreamsViewer);
+        }
     }
 
     /**

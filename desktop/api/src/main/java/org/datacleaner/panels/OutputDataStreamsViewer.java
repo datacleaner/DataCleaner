@@ -55,14 +55,15 @@ public final class OutputDataStreamsViewer extends DCPanel {
         _windowContext = windowsContext;
         
         setLayout(new VerticalLayout(4));
-        
-        refresh();
     }
 
     public void refresh() {
         removeAll();
         
+        setEnabled(false);
         for (OutputDataStream outputDataStream : _componentBuilder.getOutputDataStreams()) {
+            setEnabled(true);
+            
             List<InputColumn<?>> inputColumns = new ArrayList<>();
             for (Column column : outputDataStream.getTable().getColumns()) {
                 MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);

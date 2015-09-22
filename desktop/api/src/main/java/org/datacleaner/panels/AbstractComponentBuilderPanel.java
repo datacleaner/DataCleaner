@@ -287,6 +287,10 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
         
+        onOutputDataStreamsChanged();
+    }
+
+    private void onOutputDataStreamsChanged() {
         _taskPaneContainer.remove(_outputDataStreamsTaskPane);
         _outputDataStreamsViewer.refresh();
         if (_outputDataStreamsViewer.isEnabled()) {

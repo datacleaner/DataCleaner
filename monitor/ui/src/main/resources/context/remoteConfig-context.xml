@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:remconf="http://www.datacleaner.org/schema/remoteComponentsConfiguration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.datacleaner.org/schema/remoteComponentsConfiguration http://www.datacleaner.org/schema/remoteComponentsConfiguration.xsd">
+
+
+    <remconf:published-components id="published-components">
+        <remconf:excludes>
+            <remconf:exclude name="k"></remconf:exclude>
+            <remconf:exclude name="aaa"></remconf:exclude>
+        </remconf:excludes>
+        <remconf:defaults>
+            <remconf:component name="Component1">
+                <remconf:properties>
+                    <remconf:property name="property1">
+                        AAAAA
+                    </remconf:property>
+
+                    <!--<remconf:property name="property2">-->
+                    <!--BBBBB-->
+                    <!--</remconf:property>-->
+
+                    <remconf:propertyXML name="propertyxml">
+                        <a>
+                            aaaaa
+                        </a>
+                    </remconf:propertyXML>
+                </remconf:properties>
+            </remconf:component>
+            <remconf:component name="component2">
+                <remconf:properties></remconf:properties>
+            </remconf:component>
+        </remconf:defaults>
+    </remconf:published-components>
+</beans>

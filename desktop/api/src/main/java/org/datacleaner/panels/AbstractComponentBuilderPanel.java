@@ -287,6 +287,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      */
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
+        _outputDataStreamsViewer.refresh();
     }
 
     /**

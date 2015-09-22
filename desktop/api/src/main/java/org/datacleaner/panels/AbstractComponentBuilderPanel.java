@@ -86,6 +86,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
         _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder.getAnalysisJobBuilder(), _componentBuilder, null);
+        onOutputDataStreamsChanged();
 
         setLayout(new BorderLayout());
 

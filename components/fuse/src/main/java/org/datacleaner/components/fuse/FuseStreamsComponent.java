@@ -62,10 +62,6 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     @Configured(PROPERTY_UNITS)
     CoalesceUnit[] _units;
 
-    @Configured
-    @Description("Consider empty strings (\"\") as null also?")
-    boolean considerEmptyStringAsNull = true;
-
     private OutputRowCollector _outputRowCollector;
     private CoalesceFunction _coalesceFunction;
 
@@ -79,7 +75,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
 
     @Initialize
     public void init() {
-        _coalesceFunction = new CoalesceFunction(considerEmptyStringAsNull);
+        _coalesceFunction = new CoalesceFunction(false);
     }
 
     /**

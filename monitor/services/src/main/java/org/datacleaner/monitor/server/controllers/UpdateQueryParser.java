@@ -104,7 +104,7 @@ public class UpdateQueryParser {
 
     private void parseUpdateClause(UpdateQuery query, String updateClause) {
         updateClause = updateClause.trim();
-        if (!updateClause.isEmpty()) {
+        if (updateClause.isEmpty()) {
             throw new QueryParserException("The UPDATE clause must not be empty.");
         } else {
             query.setUpdatedTable(updateClause);

@@ -62,24 +62,4 @@ public class AbstractValueCountingAnalyzerResultTest extends TestCase {
                 + "[test->1], [this->1], [tokens->1], [word->1]]", reduced.toString());
     }
 
-    public void testGetReducedValueFrequenciesReduceOne() throws Exception {
-        AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
-
-        Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(5);
-        assertEquals("[[hey->40], [yo->40], [bah->30], [<count=10>->30], [buh->20]]", reduced.toString());
-    }
-
-    public void testGetReducedValueFrequenciesReduceAll() throws Exception {
-        AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
-
-        Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(4);
-        assertEquals("[[<count=40>->80], [bah->30], [<count=10>->30], [buh->20]]", reduced.toString());
-    }
-
-    public void testGetReducedValueFrequenciesCannotReduceEnough() throws Exception {
-        AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
-
-        Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(2);
-        assertEquals("[[<count=40>->80], [bah->30], [<count=10>->30], [buh->20]]", reduced.toString());
-    }
 }

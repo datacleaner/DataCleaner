@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -9,7 +10,7 @@
 		<junit.version>4.12</junit.version>
 		<hadoop.version>2.7.1</hadoop.version>
 		<spark.version>1.4.1</spark.version>
-		<easymock.version>3.3.1</easymock.version>
+		<easymock.version>3.4</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
@@ -26,6 +27,7 @@
 		<javax.jsp.version>2.0</javax.jsp.version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
+		<jersy.version>1.19</jersy.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -95,6 +97,73 @@
 				<module>components</module>
 				<module>monitor</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>code-coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.7.5.201505241946</version>
+						<executions>
+							<execution>
+								<id>default-prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>default-report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>default-check</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<rule implementation="org.jacoco.maven.RuleConfiguration">
+											<element>BUNDLE</element>
+											<limits>
+												<limit>
+													<counter>INSTRUCTION</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.01</minimum>
+												</limit>
+												<limit>
+													<counter>BRANCH</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.00</minimum>
+												</limit>
+												<limit>
+													<counter>METHOD</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.00</minimum>
+												</limit>
+												<limit>
+													<counter>LINE</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.00</minimum>
+												</limit>
+												<limit>
+													<counter>COMPLEXITY</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.00</minimum>
+												</limit>
+											</limits>
+										</rule>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 	<developers>
@@ -303,7 +372,7 @@
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>enforce-versions</id>
+						<id>enforce-versions-parent</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
@@ -314,11 +383,27 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
+										<exclude>javax.servlet:jsp-api:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
-										<exclude>org.codehaus.jackson</exclude>
-										<exclude>org.eobjects.metamodel</exclude>
+										<exclude>org.codehaus.jackson:*</exclude>
+										<exclude>org.eobjects.metamodel:*</exclude>
+
+										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
+										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
+										<exclude>com.sun.xml.bind:jaxb-xjc:*:jar:compile</exclude>
+										
+										<exclude>javax.faces:javax.faces-api:*:jar:compile</exclude>
+										<exclude>org.glassfish.web:el-impl:*:jar:compile</exclude>
+
+										<!-- HK2 should not be used, we have enough Dependency Injection frameworks as it is -->
+										<exclude>org.glassfish.hk2.*</exclude>
+										<exclude>org.glassfish.hk2.external:*</exclude>
+										
+										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is required by Hadoop) -->
+										<exclude>org.glassfish.jersey:*</exclude>
+
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -514,6 +599,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-core</artifactId>
@@ -753,6 +843,14 @@
 						<groupId>org.eclipse.jetty.aggregate</groupId>
 						<artifactId>jetty-all</artifactId>
 					</exclusion>
+					<exclusion>
+					    <groupId>com.sun.xml.bind</groupId>
+    					<artifactId>jaxb-impl</artifactId>
+					</exclusion>
+					<exclusion>
+					    <groupId>javax.xml.bind</groupId>
+					    <artifactId>jaxb-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -866,7 +964,7 @@
 				<version>${scala.version}</version>
 			</dependency>
 
-			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be 
+			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be
 				replaced by HTTP components (4.x) at some point. -->
 			<dependency>
 				<groupId>commons-httpclient</groupId>
@@ -910,6 +1008,21 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jsonSchema</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-core</artifactId>
+				<version>${jersy.version}</version>
+			</dependency>
 
 			<!-- logging dependencies -->
 			<dependency>
@@ -925,6 +1038,16 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>

@@ -17,25 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.scheduling.quartz;
+package org.datacleaner.restclient;
 
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A dummy quartz job with {@link DisallowConcurrentExecution}.
+ * @since 24. 07. 2015
  */
-@DisallowConcurrentExecution
-public class MockNonConcurrentJob extends AbstractQuartzJob {
-
-    @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        System.out.println(context.getJobDetail().getKey() + " - starting");
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-        }
-        System.out.println(context.getJobDetail().getKey() + " - finished");
-    }
+public class ProcessOutput {
+    @JsonProperty
+    public Object rows;
 }

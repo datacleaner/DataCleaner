@@ -26,6 +26,7 @@ import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -104,8 +105,17 @@ public interface RowProcessingConsumer {
     public Object getComponent();
 
     /**
-     * Determines if the {@link ComponentJob} represented in this consumer is expected to produce an {@link AnalyzerResult}
+     * Determines if the {@link ComponentJob} represented in this consumer is
+     * expected to produce an {@link AnalyzerResult}
+     * 
      * @return
      */
     public boolean isResultProducer();
+
+    /**
+     * Gets the {@link AnalysisJob} that this consumer pertains to.
+     * 
+     * @return
+     */
+    public AnalysisJob getAnalysisJob();
 }

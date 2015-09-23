@@ -236,7 +236,7 @@ public class JobGraphLinkPainter {
                         componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
+                        componentBuilder.setConfiguredProperty(inputProperty, sourceColumns.get(0));
                     }
                     _actions.showConfigurationDialog(componentBuilder);
 

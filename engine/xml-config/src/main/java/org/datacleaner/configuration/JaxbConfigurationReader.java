@@ -70,6 +70,7 @@ import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
+import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
 import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
@@ -91,6 +92,8 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
+import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
 import org.datacleaner.configuration.jaxb.SasDatastoreType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
@@ -128,9 +131,11 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
@@ -330,48 +335,79 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createDescriptorProvider(Configuration configuration,
             DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
-        final DescriptorProvider descriptorProvider;
-        final CustomElementType customDescriptorProviderElement = configuration.getCustomDescriptorProvider();
-        final ClasspathScannerType classpathScannerElement = configuration.getClasspathScanner();
-        if (customDescriptorProviderElement != null) {
-            descriptorProvider = createCustomElement(customDescriptorProviderElement, DescriptorProvider.class,
-                    temporaryConfiguration, true);
-        } else {
-            final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
-            if (classpathScannerElement != null) {
-                final List<String> excludedRenderingFormatList = classpathScannerElement.getExcludedRenderingFormat();
-                for (String excludedRenderingFormat : excludedRenderingFormatList) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor
-                                .loadClass(excludedRenderingFormat);
-                        excludedRenderingFormats.add(cls);
-                    } catch (ClassNotFoundException e) {
-                        logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
-                    }
-                }
-            }
-
-            final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(
-                    environment.getTaskRunner(), excludedRenderingFormats);
-            if (classpathScannerElement != null) {
-                final List<Package> packages = classpathScannerElement.getPackage();
-                for (Package pkg : packages) {
-                    String packageName = pkg.getValue();
-                    if (packageName != null) {
-                        packageName = packageName.trim();
-                        Boolean recursive = pkg.isRecursive();
-                        if (recursive == null) {
-                            recursive = true;
-                        }
-                        classpathScanner.scanPackage(packageName, recursive);
-                    }
-                }
-            }
-            descriptorProvider = classpathScanner;
+        DescriptorProvider result = null;
+        DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
+        if(providersElement == null) {
+            providersElement = new DescriptorProvidersType();
         }
 
-        return descriptorProvider;
+        // for backward compatibility
+        if(configuration.getClasspathScanner() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getClasspathScanner());
+        }
+        if(configuration.getCustomDescriptorProvider() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getCustomDescriptorProvider());
+        }
+
+        // now go through providers specification and create them
+        for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
+            DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
+            if(result != null) {
+                result = new CompositeDescriptorProvider(result, prov);
+            } else {
+                result = prov;
+            }
+        }
+
+        return result;
+    }
+
+    private DescriptorProvider createDescriptorProvider(Object providerElement, DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        if(providerElement instanceof CustomElementType) {
+            return createCustomElement(
+                    ((CustomElementType) providerElement),
+                    DescriptorProvider.class,
+                    temporaryConfiguration, true);
+        } else if(providerElement instanceof ClasspathScannerType) {
+            return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
+        } else if(providerElement instanceof RemoteComponentsType) {
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
+        } else {
+            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+        }
+    }
+
+    private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(final ClasspathScannerType classpathScannerElement, DataCleanerEnvironment environment) {
+        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
+        for (String excludedRenderingFormat : classpathScannerElement.getExcludedRenderingFormat()) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor
+                        .loadClass(excludedRenderingFormat);
+                excludedRenderingFormats.add(cls);
+            } catch (ClassNotFoundException e) {
+                logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
+            }
+        }
+        final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(
+                environment.getTaskRunner(), excludedRenderingFormats);
+        for (Package pkg : classpathScannerElement.getPackage()) {
+            String packageName = pkg.getValue();
+            if (packageName != null) {
+                packageName = packageName.trim();
+                Boolean recursive = pkg.isRecursive();
+                if (recursive == null) {
+                    recursive = true;
+                }
+                classpathScanner.scanPackage(packageName, recursive);
+            }
+        }
+        return classpathScanner;
+    }
+
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
+        RemoteComponentServerType server = providerElement.getServer();
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,
@@ -1331,7 +1367,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         @SuppressWarnings("unchecked")
-        E result = (E) ReflectionUtils.newInstance(foundClass);
+        E result = ReflectionUtils.newInstance((Class<E>)foundClass);
 
         ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
 

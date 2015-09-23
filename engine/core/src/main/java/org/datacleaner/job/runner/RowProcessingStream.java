@@ -32,19 +32,32 @@ public class RowProcessingStream {
 
     private final AnalysisJob _analysisJob;
     private final Table _table;
+    private final boolean _sourceTable;
 
     public static RowProcessingStream ofOutputDataStream(OutputDataStreamJob outputDataStreamJob) {
         return new RowProcessingStream(outputDataStreamJob.getJob(), outputDataStreamJob.getOutputDataStream()
-                .getTable());
+                .getTable(), false);
     }
 
     public static RowProcessingStream ofSourceTable(AnalysisJob analysisJob, Table table) {
-        return new RowProcessingStream(analysisJob, table);
+        return new RowProcessingStream(analysisJob, table, true);
     }
 
-    private RowProcessingStream(AnalysisJob analysisJob, Table table) {
+    private RowProcessingStream(AnalysisJob analysisJob, Table table, boolean sourceTable) {
         _analysisJob = analysisJob;
         _table = table;
+        _sourceTable = sourceTable;
+    }
+
+    /**
+     * Determines if this RowProcessingStream is acting on a source
+     * {@link Table} or not (in which case it would normally represent an
+     * {@link OutputDataStream})
+     * 
+     * @return
+     */
+    public boolean isSourceTable() {
+        return _sourceTable;
     }
 
     /**
@@ -81,5 +94,10 @@ public class RowProcessingStream {
         }
         final RowProcessingStream other = (RowProcessingStream) obj;
         return Objects.equals(_analysisJob, other._analysisJob) && Objects.equals(_table, other._table);
+    }
+    
+    @Override
+    public String toString() {
+        return getTable().getName();
     }
 }

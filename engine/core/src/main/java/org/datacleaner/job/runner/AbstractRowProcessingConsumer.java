@@ -142,7 +142,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     public InputColumn<?>[] getOutputColumns() {
         return new InputColumn[0];
     }
-    
+
     @Override
     public boolean isResultProducer() {
         return getComponent() instanceof HasAnalyzerResult;
@@ -248,5 +248,10 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         final HasOutputDataStreams component = (HasOutputDataStreams) getComponent();
         _outputDataStreams
                 .add(new ActiveOutputDataStream(outputDataStreamJob, publisherForOutputDataStream, component));
+    }
+
+    @Override
+    public AnalysisJob getAnalysisJob() {
+        return _analysisJob;
     }
 }

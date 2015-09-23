@@ -78,7 +78,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
         for (InputColumn<?> column : sourceColumns) {
             onAdd(column);
         }
-        analysisJobBuilder.getSourceColumnListeners().add(this);
+        analysisJobBuilder.addSourceColumnChangeListener(this);
     }
 
     private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
@@ -150,13 +150,13 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
     @Override
     public void removeNotify() {
-        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        _analysisJobBuilder.removeSourceColumnChangeListener(this);
         super.removeNotify();
     }
 
     @Override
     public void addNotify() {
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        _analysisJobBuilder.addSourceColumnChangeListener(this);
         super.addNotify();
     }
 

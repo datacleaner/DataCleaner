@@ -19,9 +19,13 @@
  */
 package org.datacleaner.test.full.scenarios;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -41,6 +45,7 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
+import org.junit.Test;
 
 /**
  * Basic acceptance test for DC issue #224: Output DataSet (renamed to 'data
@@ -48,13 +53,14 @@ import org.datacleaner.test.TestHelper;
  * to build a job with {@link OutputDataStream}s and executes it to verify the
  * invocation and completion of the {@link OutputDataStreamJob}s.
  */
-public class JobWithOutputDataStreamsTest extends TestCase {
+public class JobWithOutputDataStreamsTest {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
             .withEnvironment(environment);
     
+    @Test(timeout=30*1000)
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {

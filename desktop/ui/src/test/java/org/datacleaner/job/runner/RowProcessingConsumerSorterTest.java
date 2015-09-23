@@ -24,9 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
 import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -232,7 +230,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
 
     private List<RowProcessingConsumer> getConsumers(AnalysisJob analysisJob) {
         List<RowProcessingConsumer> consumers = new ArrayList<RowProcessingConsumer>();
-        RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, null, null, null, null);
+        RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, null, null, null);
         Table table = analysisJob.getSourceColumns().get(0)
                 .getPhysicalColumn().getTable();
         RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStream(table));

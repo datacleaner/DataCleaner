@@ -68,6 +68,7 @@ import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.MutableAnalysisJobMetadata;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
@@ -104,6 +105,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 public class JaxbJobReader implements JobReader<InputStream> {
+
+    public static final String DATACLEANER_JAXB_VARIABLE_PREFIX = "datacleaner.jaxb.variable.";
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
@@ -443,6 +446,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
                         getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
                 analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
+            } else {
+                if (variables.size() > 0) {
+                    final MutableAnalysisJobMetadata mutableAnalysisJobMetadata = new MutableAnalysisJobMetadata();
+                    mutableAnalysisJobMetadata.getVariables().putAll(variables);
+                    analysisJobBuilder.setAnalysisJobMetadata(mutableAnalysisJobMetadata);    
+                }
             }
 
             // map column id's to input columns
@@ -933,6 +942,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (stringValue == null) {
                         throw new ComponentConfigurationException("No such variable: " + variableRef);
                     }
+                    
+                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                 }
 
                 final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();

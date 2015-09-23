@@ -31,10 +31,24 @@ import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.PojoDatastore;
+import org.datacleaner.test.MockDynamicOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockJobEscalatingAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 
 public class AbstractComponentBuilderTest extends TestCase {
+
+    private PojoDatastore dummyDatastore;
+    private DataCleanerConfigurationImpl configuration;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        final List<TableDataProvider<?>> tableDataProviders = Arrays
+                .<TableDataProvider<?>> asList(new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] {
+                        "col1", "col2" }), Collections.<Object[]> emptyList()));
+        dummyDatastore = new PojoDatastore("my ds", tableDataProviders);
+        configuration = new DataCleanerConfigurationImpl().withDatastores(dummyDatastore);
+    }
 
     /**
      * See issue https://github.com/datacleaner/DataCleaner/issues/574 which
@@ -43,13 +57,7 @@ public class AbstractComponentBuilderTest extends TestCase {
      * @throws Exception
      */
     public void testGetOutputDataStreamsWhenConsumingEscalateToMultipleJobs() throws Exception {
-        final List<TableDataProvider<?>> tableDataProviders = Arrays
-                .<TableDataProvider<?>> asList(new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] {
-                        "col1", "col2" }), Collections.<Object[]> emptyList()));
-        final PojoDatastore dummyDatastore = new PojoDatastore("my ds", tableDataProviders);
-
-        final AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(
-                new DataCleanerConfigurationImpl().withDatastores(dummyDatastore));
+        final AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration);
         try {
             mainJobBuilder.setDatastore(dummyDatastore);
             mainJobBuilder.addSourceColumns("col1", "col2");
@@ -66,6 +74,42 @@ public class AbstractComponentBuilderTest extends TestCase {
             // this is the call that would provoke the failure before the fix to
             // #574
             analyzer2.getOutputDataStreams();
+        } finally {
+            mainJobBuilder.close();
+        }
+    }
+
+    public void testGetOutputDataStreamsWithIncrementalChanges() throws Exception {
+        final AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration);
+        try {
+            mainJobBuilder.setDatastore(dummyDatastore);
+            mainJobBuilder.addSourceColumns("col1", "col2");
+
+            final AnalyzerComponentBuilder<MockDynamicOutputDataStreamAnalyzer> analyzer = mainJobBuilder
+                    .addAnalyzer(MockDynamicOutputDataStreamAnalyzer.class);
+            analyzer.setConfiguredProperty("Stream name", "my stream");
+            analyzer.addInputColumn(mainJobBuilder.getSourceColumns().get(0));
+
+            final List<OutputDataStream> streams1 = analyzer.getOutputDataStreams();
+            assertEquals(1, streams1.size());
+
+            // add a column (will add also a column to the same stream)
+            analyzer.addInputColumn(mainJobBuilder.getSourceColumns().get(1));
+            final List<OutputDataStream> streams2 = analyzer.getOutputDataStreams();
+            assertEquals(1, streams2.size());
+
+            // the two collections are not the same
+            assertNotSame(streams1, streams2);
+            // but the stream itself should be mutated, not replaced, so same
+            // instance is expected
+            assertSame(streams1.get(0), streams2.get(0));
+            
+            // now change the name of the stream
+            analyzer.setConfiguredProperty("Stream name", "another stream name");
+            final List<OutputDataStream> streams3 = analyzer.getOutputDataStreams();
+            
+            // now we expect a completely new stream instance
+            assertNotSame(streams1.get(0), streams3.get(0));
         } finally {
             mainJobBuilder.close();
         }

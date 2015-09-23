@@ -67,12 +67,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
-public class DataHubDatastoreDialog
-        extends AbstractDatastoreDialog<DataHubDatastore> {
+public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatastore> {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DataHubDatastoreDialog.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDatastoreDialog.class);
+
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _hostTextField;
@@ -82,11 +80,10 @@ public class DataHubDatastoreDialog
     private final JPasswordField _passwordTextField;
     private final JXTextField _tenantNameTextField;
     private final JCheckBox _acceptUnverifiedSslPeersCheckBox;
-    //private final JXTextField _securityModeTextField;
+    // private final JXTextField _securityModeTextField;
     private final JComboBox<String> _securityModeSelector;
     private final JButton _testButton;
     private final DCLabel _urlLabel;
-//    private final JXTextField _contextPathTextField;
 
     public DataHubRepoConnection createConnection() {
         int port = 8080;
@@ -96,16 +93,8 @@ public class DataHubDatastoreDialog
             // do nothing, fall back to 8080.
         }
 
-        final String username;
-        final String password;
-        if (true) {
-            // if (_authenticationCheckBox.isSelected()) {
-            username = _usernameTextField.getText();
-            password = new String(_passwordTextField.getPassword());
-        } else {
-            username = null;
-            password = null;
-        }
+        final String username = _usernameTextField.getText();
+        final String password = new String(_passwordTextField.getPassword());
 
         return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username,
                 password, _tenantNameTextField.getText(),
@@ -121,10 +110,8 @@ public class DataHubDatastoreDialog
     }
 
     @Inject
-    public DataHubDatastoreDialog(WindowContext windowContext,
-            MutableDatastoreCatalog datastoreCatalog,
-            @Nullable DataHubDatastore originalDatastore,
-            UserPreferences userPreferences) {
+    public DataHubDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
+            @Nullable DataHubDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
         _hostTextField = WidgetFactory.createTextField("Hostname");
@@ -132,10 +119,12 @@ public class DataHubDatastoreDialog
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
         _tenantNameTextField = WidgetFactory.createTextField("Tenant id");
-//        _contextPathTextField = WidgetFactory.createTextField("Context path");
-        _securityModeSelector = new JComboBox<>(new String[] { DataHubSecurityMode.DEFAULT.toString(), DataHubSecurityMode.CAS.toString() });
+        // _contextPathTextField =
+        // WidgetFactory.createTextField("Context path");
+        _securityModeSelector = new JComboBox<>(new String[] { DataHubSecurityMode.DEFAULT.toString(),
+                DataHubSecurityMode.CAS.toString() });
         _securityModeSelector.setEditable(false);
-        
+
         _urlLabel = DCLabel.bright("");
         _urlLabel.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _urlLabel.setBorder(new EmptyBorder(5, 0, 5, 0));
@@ -196,22 +185,16 @@ public class DataHubDatastoreDialog
                             FileHelper.safeClose(content);
                         }
                         LOGGER.info("Ping request responded: {}", map);
-                        JOptionPane.showMessageDialog(
-                                DataHubDatastoreDialog.this,
-                                "Connection successful!");
+                        JOptionPane.showMessageDialog(DataHubDatastoreDialog.this, "Connection successful!");
                     } else {
-                        final String reasonPhrase = statusLine
-                                .getReasonPhrase();
+                        final String reasonPhrase = statusLine.getReasonPhrase();
                         WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                        + statusLine.getStatusCode() + ":\n"
-                                        + reasonPhrase);
+                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                     }
                 } catch (Exception e) {
                     // TODO: This dialog is shown behind the modal dialog
-                    WidgetUtils.showErrorMessage(
-                            "Connection failed",
-                            "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?",
-                            e);
+                    WidgetUtils.showErrorMessage("Connection failed",
+                            "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?", e);
                 }
             }
 
@@ -298,8 +281,7 @@ public class DataHubDatastoreDialog
         final String password = String.valueOf(passwordChars);
         final String tenantName = _tenantNameTextField.getText();
         final boolean https = _httpsCheckBox.isSelected();
-        final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox
-                .isSelected();
+        final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
         return new DataHubDatastore(name, host, port, username, password,
@@ -326,10 +308,10 @@ public class DataHubDatastoreDialog
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("DataHub hostname", _hostTextField));
-        result.add(new ImmutableEntry<String, JComponent>("DataHub port",  _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _acceptUnverifiedSslPeersCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("Security mode",_securityModeSelector));
+        result.add(new ImmutableEntry<String, JComponent>("Security mode", _securityModeSelector));
         result.add(new ImmutableEntry<String, JComponent>("DataHub username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("DataHub password", _passwordTextField));
         result.add(new ImmutableEntry<String, JComponent>("DataHub tenant name", _tenantNameTextField));

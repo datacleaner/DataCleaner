@@ -21,7 +21,6 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskListener;
@@ -43,7 +42,7 @@ public class CloseTaskListener implements TaskListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CloseTaskListener.class);
 
-    private final AtomicBoolean _errorsReported = new AtomicBoolean(false);
+    private final AtomicBoolean _success;
     private final LifeCycleHelper _lifeCycleHelper;
     private final RowProcessingConsumer _consumer;
     private final TaskListener _nextTaskListener;
@@ -54,6 +53,7 @@ public class CloseTaskListener implements TaskListener {
             TaskListener nextTaskListener, AnalysisListener analysisListener, AnalysisJob analysisJob) {
         _lifeCycleHelper = lifeCycleHelper;
         _consumer = consumer;
+        _success = success;
         _nextTaskListener = nextTaskListener;
         _analysisListener = analysisListener;
         _analysisJob = analysisJob;
@@ -66,7 +66,7 @@ public class CloseTaskListener implements TaskListener {
         final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
 
         // close can occur AFTER completion
-        _lifeCycleHelper.close(descriptor, component, !_errorsReported.get());
+        _lifeCycleHelper.close(descriptor, component, _success.get());
 
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
@@ -91,8 +91,9 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
-        final boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
-        if (!alreadyRegisteredError) {
+        final boolean previouslySuccessful = _success.getAndSet(false);
+        if (previouslySuccessful) {
+            // only report the first such error
             _analysisListener.errorUnknown(_analysisJob, throwable);
         }
         cleanup();

@@ -32,9 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.HasOutputDataStreams;
@@ -108,7 +112,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             throw new IllegalArgumentException("Builder class does not correspond to actual class of builder");
         }
 
-        _configurableBean = ReflectionUtils.newInstance(_descriptor.getComponentClass());
+        _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
         _removalListeners = new ArrayList<>(1);
     }
@@ -782,22 +786,95 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         if (component instanceof HasOutputDataStreams) {
             final OutputDataStream[] outputDataStreams = ((HasOutputDataStreams) component).getOutputDataStreams();
-            final List<OutputDataStream> newList = Arrays.asList(outputDataStreams);
-            if (!_outputDataStreams.equals(newList)) {
-                // This can be improved - maybe the list only slightly changes
-                // in which case we would want to only change the elements that
-                // are different. See
-                // TransformerComponentBuilder.getOutputColumns() as
-                // inspiration.
-                _outputDataStreams.clear();
-                _outputDataStreamJobs.clear();
-                _outputDataStreams.addAll(newList);
+            final List<OutputDataStream> newStreams = Arrays.asList(outputDataStreams);
+            if (!_outputDataStreams.equals(newStreams)) {
+                final List<String> newNames = CollectionUtils.map(newStreams, new HasNameMapper());
+                final List<String> existingNames = CollectionUtils.map(_outputDataStreams, new HasNameMapper());
+                if (!newNames.equals(existingNames)) {
+                    _outputDataStreams.clear();
+                    _outputDataStreamJobs.clear();
+                    _outputDataStreams.addAll(newStreams);
+                } else {
+                    // if the stream names are the same then it's better to see
+                    // if we can incrementally update the existing streams
+                    // instead of replacing it all
+                    for (int i = 0; i < outputDataStreams.length; i++) {
+                        final OutputDataStream existingStream = _outputDataStreams.get(i);
+                        final Table table = existingStream.getTable();
+                        final OutputDataStream newStream = newStreams.get(i);
+                        if (table instanceof MutableTable) {
+                            final MutableTable mutableTable = (MutableTable) table;
+                            if (isOutputDataStreamConsumed(existingStream)) {
+                                final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(existingStream);
+                                // update the table
+                                updateStream(mutableTable, existingJobBuilder, newStream);
+                            } else {
+                                updateStream(mutableTable, null, newStream);
+                            }
+                        } else {
+                            _outputDataStreams.set(i, newStream);
+                        }
+                    }
+                }
             }
-            return Collections.unmodifiableList(_outputDataStreams);
+            return new ArrayList<>(_outputDataStreams);
         }
 
         // component isn't capable of having output data streams
         return Collections.emptyList();
+    }
+
+    private void updateStream(final MutableTable existingTable, final AnalysisJobBuilder jobBuilder,
+            final OutputDataStream newStream) {
+        final List<Column> columnsToKeep = new ArrayList<Column>();
+        final List<Column> columnsToRemove = new ArrayList<Column>();
+        final List<Column> columnsToAdd = new ArrayList<Column>();
+
+        final Table newTable = newStream.getTable();
+
+        for (Column newColumn : newTable.getColumns()) {
+            final Column existingColumn = existingTable.getColumnByName(newColumn.getName());
+            if (existingColumn == null) {
+                // no matching existing column - add it
+                columnsToAdd.add(newColumn);
+                continue;
+            }
+        }
+
+        // match existing columns to new expected columns
+        for (Column existingColumn : existingTable.getColumns()) {
+            final Column newColumn = newTable.getColumnByName(existingColumn.getName());
+            if (newColumn == null) {
+                // remove the existing column - no match
+                columnsToRemove.add(existingColumn);
+                continue;
+            }
+            if (!existingColumn.getType().equals(newColumn.getType())) {
+                // remove the existing column because the data type doesn't
+                // match
+                columnsToRemove.add(existingColumn);
+                columnsToAdd.add(newColumn);
+                continue;
+            }
+
+            columnsToKeep.add(existingColumn);
+        }
+
+        // now do the updates
+        for (Column column : columnsToRemove) {
+            if (jobBuilder != null) {
+                jobBuilder.removeSourceColumn(column);
+            }
+            existingTable.removeColumn(column);
+        }
+        for (Column column : columnsToAdd) {
+            final MutableColumn newColumn = new MutableColumn(column.getName(), column.getType())
+                    .setTable(existingTable);
+            existingTable.addColumn(newColumn);
+            if (jobBuilder != null) {
+                jobBuilder.addSourceColumn(newColumn);
+            }
+        }
     }
 
     @Override

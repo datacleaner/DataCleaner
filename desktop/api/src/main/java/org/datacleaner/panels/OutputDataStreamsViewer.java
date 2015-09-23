@@ -64,7 +64,7 @@ public final class OutputDataStreamsViewer extends DCPanel {
                 inputColumns.add(inputColumn);
             }
             final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
-                    IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+                    IconUtils.OUTPUT_DATA_STREAM_PATH, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             tableNameLabel.setBorder(new EmptyBorder(5, 5, 0, 5));

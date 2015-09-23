@@ -298,7 +298,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _taskPaneContainer.remove(_outputDataStreamsTaskPane);
         _outputDataStreamsViewer.refresh();
         if (_outputDataStreamsViewer.isEnabled()) {
-            _outputDataStreamsTaskPane = addTaskPane(IconUtils.MODEL_TABLE, "Output data streams", _outputDataStreamsViewer);
+            _outputDataStreamsTaskPane = addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams", _outputDataStreamsViewer);
         }
     }
 

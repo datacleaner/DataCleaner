@@ -77,7 +77,7 @@ public final class ColumnListTable extends DCPanel {
     private final WindowContext _windowContext;
     private final boolean _addShadowBorder;
 
-    private boolean _editable;
+    private final boolean _editable;
 
     public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
             boolean addShadowBorder, WindowContext windowContext) {
@@ -176,7 +176,7 @@ public final class ColumnListTable extends DCPanel {
         }
 
         final String[] headers;
-        if ((hasPhysicalColumns) && (_editable)) {
+        if (hasPhysicalColumns && _editable) {
             headers = HEADERS_WITH_ACTION_COLUMN;
         } else {
             headers = HEADERS_WITHOUT_ACTIONS;

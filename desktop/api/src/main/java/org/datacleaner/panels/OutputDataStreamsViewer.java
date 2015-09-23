@@ -58,10 +58,9 @@ public final class OutputDataStreamsViewer extends DCPanel {
         for (OutputDataStream outputDataStream : _componentBuilder.getOutputDataStreams()) {
             setEnabled(true);
             
-            List<InputColumn<?>> inputColumns = new ArrayList<>();
+            final List<InputColumn<?>> inputColumns = new ArrayList<>();
             for (Column column : outputDataStream.getTable().getColumns()) {
-                MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
-                inputColumns.add(inputColumn);
+                inputColumns.add(new MetaModelInputColumn(column));
             }
             final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
                     IconUtils.OUTPUT_DATA_STREAM_PATH, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);

@@ -86,7 +86,6 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
         _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder);
-        onOutputDataStreamsChanged();
 
         setLayout(new BorderLayout());
 
@@ -138,6 +137,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         final ComponentBuilder componentBuilder = getComponentBuilder();
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
+        
 
         final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
         unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
@@ -150,6 +150,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
         }
 
+
         if (!unconfiguredPropertyDescriptors.isEmpty()) {
             for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
                 logger.warn("No property widget was found in task panes for property: {}", property);
@@ -159,6 +160,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
                 getPropertyWidgetCollection().registerWidget(property, propertyWidget);
             }
         }
+        
+        onOutputDataStreamsChanged();
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {

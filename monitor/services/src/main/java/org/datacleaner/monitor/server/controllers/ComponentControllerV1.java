@@ -40,6 +40,7 @@ import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.ComponentController;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.monitor.server.components.ComponentList;
+import org.datacleaner.monitor.server.components.ComponentNotAllowed;
 import org.datacleaner.monitor.server.components.ComponentNotFoundException;
 import org.datacleaner.monitor.server.components.ProcessInput;
 import org.datacleaner.monitor.server.components.ProcessOutput;
@@ -108,6 +109,10 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") String name) {
         name = unURLify(name);
+        if (!_remoteComponentsConfiguration.isAllowed(name)) {
+            LOGGER.info("Component {} is not allowed.", name);
+            throw ComponentNotAllowed.createInstanceNotAllowed(name);
+        }
         LOGGER.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
@@ -128,6 +133,10 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
+        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
+            LOGGER.info("Component {} is not allowed.", decodedName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
+        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration, _remoteComponentsConfiguration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
@@ -145,6 +154,10 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = unURLify(name);
+        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
+            LOGGER.info("Component {} is not allowed.", decodedName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
+        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);

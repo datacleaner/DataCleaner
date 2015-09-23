@@ -193,7 +193,7 @@ public final class ColumnListTable extends DCPanel {
             final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
             model.setValueAt(dataTypeString, i, 1);
 
-            if (column.isPhysicalColumn() && (_editable)) {
+            if (column.isPhysicalColumn() && _editable) {
                 final DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new GridBagLayout());
                 final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);

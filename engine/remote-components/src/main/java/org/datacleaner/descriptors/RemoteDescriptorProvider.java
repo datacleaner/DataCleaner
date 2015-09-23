@@ -110,7 +110,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                         cl,
                                         propInfo.isRequired(),
                                         transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotationsInfo())));
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations())));
                             } catch(Exception e) {
                                 // class not available on this server.
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
@@ -120,7 +120,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                         propInfo.getDescription(),
                                         propInfo.isRequired(),
                                         transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotationsInfo())));
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations())));
                             }
                         }
                         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);

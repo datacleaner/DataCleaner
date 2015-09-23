@@ -80,7 +80,20 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
                 enumValues = new EnumerationValue[enums.size()];
                 int i = 0;
                 for(String value: enums) {
-                    enumValues[i++] = new EnumerationValue(value);
+                    String enumValue, enumName;
+                    int idx = value.indexOf("::");
+                    if(idx >= 0) {
+                        enumValue = value.substring(0, idx);
+                        enumName = value.substring(idx+2);
+                    } else {
+                        enumValue = value;
+                        enumName = value;
+                    }
+                    if(enumName.trim().isEmpty()) {
+                        enumName = value;
+                    }
+
+                    enumValues[i++] = new EnumerationValue(enumValue, enumName);
                 }
             }
         }

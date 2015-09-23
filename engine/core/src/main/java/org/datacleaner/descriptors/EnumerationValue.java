@@ -43,9 +43,13 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     private String name;
     private Enum enumValue;
 
-    public EnumerationValue(String value) {
-        // TODO: where to get the name for "HasName" interface ?
+    public EnumerationValue(String value, String name) {
         this.value = value;
+        this.name = name;
+    }
+
+    public EnumerationValue(String value) {
+        this(value, value);
     }
 
     public EnumerationValue(Enum value) {
@@ -53,6 +57,8 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         this.value = enumValue.name();
         if(enumValue instanceof HasName) {
             name = ((HasName)enumValue).getName();
+        } else {
+            name = value.toString();
         }
     }
 

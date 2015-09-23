@@ -55,6 +55,7 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.OutputColumns;
 import org.datacleaner.restclient.ProcessInput;
@@ -62,8 +63,8 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -375,7 +376,7 @@ public class ComponentControllerV1 implements ComponentController {
                     logger.warn("Cannot provide property '{}' annotation", propertyDescriptor.getName(), e);
                 }
             }
-            propInfo.getAnnotationsInfo().put(anClass.getName(), anValues);
+            propInfo.getAnnotations().put(anClass.getName(), anValues);
         }
     }
 

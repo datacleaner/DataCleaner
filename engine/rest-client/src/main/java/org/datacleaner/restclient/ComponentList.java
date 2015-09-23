@@ -135,7 +135,7 @@ public class ComponentList {
         private String description;
         private boolean required;
         private boolean isInputColumn;
-        private Map<String, Map<String, Object>> annotationsInfo = new HashMap<>();
+        private Map<String, Map<String, Object>> annotations = new HashMap<>();
 
         public void setIsInputColumn(boolean inputColumn) {
             isInputColumn = inputColumn;
@@ -153,8 +153,6 @@ public class ComponentList {
             this.name = name;
         }
 
-        // We don't need name in the property info, since it is used as a key in the properties map.
-        @JsonIgnore
         public String getName() {
             return name;
         }
@@ -199,9 +197,9 @@ public class ComponentList {
             this.classDetails = classDetails;
         }
 
-        public Map<String, Map<String, Object>> getAnnotationsInfo() { return annotationsInfo; }
+        public Map<String, Map<String, Object>> getAnnotations() { return annotations; }
 
-        public void setAnnotationsInfo(Map<String, Map<String, Object>> annotationsInfo) { this.annotationsInfo = annotationsInfo; }
+        public void setAnnotations(Map<String, Map<String, Object>> annotations) { this.annotations = annotations; }
 
     }
 }

@@ -19,10 +19,13 @@
  */
 package org.datacleaner.metamodel.datahub.update;
 
-
+/**
+ * POJO for transferring updated records from DataCleaner
+ * to the DataHub update REST service. 
+ *
+ */
 public class UpdateData {
     
-
     private String grId;
     private UpdateField[] fields;
     

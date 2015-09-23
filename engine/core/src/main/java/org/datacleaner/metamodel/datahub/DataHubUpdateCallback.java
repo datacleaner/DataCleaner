@@ -102,6 +102,11 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         return new DataHubUpdateBuilder(this, table);
     }
 
+    /**
+     * Invokes update REST method on DataHub, using the updates collected by the {@link DataHubUpdateBuilder}.
+     * The incoming updates are buffered and send to DataHub in batches of size <code>INSERT_BATCH_SIZE</code>.
+     * @param updateData Contains the records and fields to be updated.
+     */
     public void executeUpdate(UpdateData updateData) {
         if (_pendingUpdates == null) {
             _pendingUpdates = new ArrayList<UpdateData>();
@@ -114,6 +119,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
 
         
     }
+
     private void flushUpdates() {
         if (_pendingUpdates == null || _pendingUpdates.isEmpty()) {
             return;

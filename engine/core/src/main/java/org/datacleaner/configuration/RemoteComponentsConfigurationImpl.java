@@ -19,7 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,9 +26,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -37,8 +38,10 @@ import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.AssignConfiguredPropertiesHelper;
+import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  * Class RemoteComponentsConfigurationImpl
@@ -91,46 +94,71 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
     }
 
     @Override
-    public void setDefaultValues(ComponentDescriptor componentDescriptor,  Component component) {
+    public void setDefaultValues(ComponentDescriptor componentDescriptor, Component component) {
         List<Property> defaultProperties = properties.get(componentDescriptor.getDisplayName());
-        if(defaultProperties == null || !isAllowed(componentDescriptor)){
+        if (defaultProperties == null || !isAllowed(componentDescriptor)) {
             return;
         }
         Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
         for (Property defaultProperty : defaultProperties) {
-            ConfiguredPropertyDescriptor propDesc = componentDescriptor.getConfiguredProperty(defaultProperty.getName());
-            Class type = propDesc.getType();
-            try {
-                JAXBContext context = JAXBContext.newInstance(type);
-                Unmarshaller unmarshaller = context.createUnmarshaller();
-                Object objectProperty = unmarshaller.unmarshal(new StringReader(defaultProperty.getValue()));
-                configuredProperties.put(propDesc, objectProperty);
-            } catch (JAXBException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            ConfiguredPropertyDescriptor propDesc = componentDescriptor
+                    .getConfiguredProperty(defaultProperty.getName());
+            if (propDesc == null) {
+                LOGGER.warn("Component '{}' not contains property '{}'.", componentDescriptor.getDisplayName(),
+                        defaultProperty.getName());
+                continue;
             }
+            Class type = propDesc.getType();
+            String inputValue = defaultProperty.getValue();
+            Object objectProperty;
+            if (defaultProperty.isSimpleString()) {
+                objectProperty = StringConverter.simpleInstance().deserialize(inputValue, type);
+            } else {
+                // Value is XML
+                try {
+                    JAXBContext context = JAXBContext.newInstance(type);
+                    Unmarshaller unmarshaller = context.createUnmarshaller();
+                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                    dbFactory.setNamespaceAware(false);
+                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                    Document doc = dBuilder.parse(IOUtils.toInputStream(defaultProperty.getValue(), "UTF-8"));
+                    doc.normalizeDocument();
+                    objectProperty = unmarshaller.unmarshal(doc, type).getValue();
+                } catch (Exception e) {
+                    LOGGER.warn("Problem with parsing '{}' property. Input value: {}", defaultProperty.getName(),
+                            inputValue);
+                    continue;
+                }
+            }
+            configuredProperties.put(propDesc, objectProperty);
         }
-
         ComponentConfiguration componentConfiguration = new ImmutableComponentConfiguration(configuredProperties);
         final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper();
-        helper.assignProperties(component, componentDescriptor, componentConfiguration);
+        helper.assignProperties(component, componentDescriptor, componentConfiguration, true);
     }
 
 
     public static class Property {
         private String name;
         private String value;
+        private boolean isSimpleString;
 
-        public Property(String name, String value) {
+        public Property(String name, String value, boolean simpleString) {
             this.name = name;
+            isSimpleString = simpleString;
             this.value = value;
         }
 
-        private String getName() {
+        public String getName() {
             return name;
         }
 
-        private String getValue() {
+        public String getValue() {
             return value;
+        }
+
+        public boolean isSimpleString() {
+            return isSimpleString;
         }
     }
 }

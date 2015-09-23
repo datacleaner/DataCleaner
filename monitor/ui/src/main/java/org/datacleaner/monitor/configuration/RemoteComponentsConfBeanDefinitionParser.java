@@ -89,7 +89,8 @@ public class RemoteComponentsConfBeanDefinitionParser extends AbstractSingleBean
                 if (propertyAttr != null) {
                     String propertyName = propertyAttr.getNamedItem("name").getTextContent().trim();
                     String propertyValue = nodeToString(propertyNodeList.item(j));
-                    propertyList.add(new RemoteComponentsConfigurationImpl.Property(propertyName, propertyValue));
+                    boolean isSimpleString = isSimpleString(propertyNodeList.item(j));
+                    propertyList.add(new RemoteComponentsConfigurationImpl.Property(propertyName, propertyValue, isSimpleString));
                 }
             }
 
@@ -112,9 +113,9 @@ public class RemoteComponentsConfBeanDefinitionParser extends AbstractSingleBean
             if (childNodes.item(i).getLocalName() != null) {
                 StringWriter sw = new StringWriter();
                 try {
-                    Transformer t = TransformerFactory.newInstance().newTransformer();
-                    t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-                    t.transform(new DOMSource(node), new StreamResult(sw));
+                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                    transformer.transform(new DOMSource(childNodes.item(i)), new StreamResult(sw));
                 } catch (TransformerException te) {
                     continue;
                 }
@@ -122,6 +123,19 @@ public class RemoteComponentsConfBeanDefinitionParser extends AbstractSingleBean
             }
         }
         return node.getTextContent().trim();
+    }
+
+    /**
+     * Check the element. If it is only string --> true, The xml object -> false
+     *
+     * @param node
+     * @return
+     */
+    private boolean isSimpleString(Node node) {
+        if (node == null) {
+            return true;
+        }
+        return node.getLocalName().equals("property");
     }
 
     private Set<String> parseListFromNode(Node node) {

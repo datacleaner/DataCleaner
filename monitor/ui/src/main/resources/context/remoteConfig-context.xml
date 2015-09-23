@@ -12,21 +12,19 @@
             <remconf:exclude name="aaa"></remconf:exclude>
         </remconf:excludes>
         <remconf:defaults>
-            <remconf:component name="Component1">
+            <remconf:component name="Concatenator">
                 <remconf:properties>
-                    <remconf:property name="property1">
-                        AAAAA
+                    <remconf:property name="Separator">
+                    XXX
                     </remconf:property>
-
-                    <!--<remconf:property name="property2">-->
-                    <!--BBBBB-->
-                    <!--</remconf:property>-->
-
-                    <remconf:propertyXML name="propertyxml">
-                        <a>
-                            aaaaa
-                        </a>
-                    </remconf:propertyXML>
+                    <!--<remconf:propertyXML name="propertyxml">-->
+                        <!--<Animal>-->
+                            <!--<a>a</a>-->
+                            <!--<b>b</b>-->
+                            <!--<c>c</c>-->
+                            <!--<d>d</d>-->
+                        <!--</Animal>-->
+                    <!--</remconf:propertyXML>-->
                 </remconf:properties>
             </remconf:component>
             <remconf:component name="component2">

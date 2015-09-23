@@ -85,6 +85,7 @@ public class ComponentHandler {
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
         this.dcConfiguration = dcConfiguration;
         this.componentName = componentName;
+        this.remoteComponentsConfiguration = remoteComponentsConfiguration;
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {

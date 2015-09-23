@@ -212,7 +212,7 @@ public final class ColumnListTable extends DCPanel {
         }
         _columnTable.setModel(model);
 
-        if ((hasPhysicalColumns) && (_editable)) {
+        if (hasPhysicalColumns && _editable) {
             final TableColumnExt columnExt = _columnTable.getColumnExt(2);
             columnExt.setMinWidth(26);
             columnExt.setMaxWidth(80);

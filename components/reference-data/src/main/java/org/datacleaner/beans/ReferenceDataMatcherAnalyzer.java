@@ -142,19 +142,19 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
 
     @Close
     public void close() {
-        if (_dictionaryMatchers != null) {
+        if (isDictionaryMatchingEnabled() && _dictionaryMatchers != null) {
             for (DictionaryMatcherTransformer matcher : _dictionaryMatchers) {
                 matcher.close();
             }
             _dictionaryMatchers = null;
         }
-        if (_stringPatternMatchers != null) {
+        if (isStringPatternMatchingEnabled() && _stringPatternMatchers != null) {
             for (StringPatternMatcherTransformer matcher : _stringPatternMatchers) {
                 matcher.close();
             }
             _stringPatternMatchers = null;
         }
-        if (_synonymCatalogConnections != null) {
+        if (isSynonymCatalogLookupEnabled() && _synonymCatalogConnections != null) {
             for (SynonymCatalogConnection connection : _synonymCatalogConnections) {
                 connection.close();
             }

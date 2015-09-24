@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>DataCleaner-monitor</artifactId>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<version>4.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>DataCleaner-monitor-documentation</artifactId>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-versions-parent</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<!-- For now we allow skipping the enforcer in this module. It has known issues because of transitive dependencies of wadl -->
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+        <!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+
+        <!-- Servlet+JSP dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+        <!-- REST documentation -->
+		<dependency>
+			<groupId>org.jvnet.ws.wadl</groupId>
+			<artifactId>wadl-client-plugin</artifactId>
+			<version>1.1.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson:jackson-core-asl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+	</dependencies>
+</project>

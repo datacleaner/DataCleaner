@@ -136,6 +136,22 @@
 					<groupId>org.eobjects.metamodel-extras</groupId>
 					<artifactId>MetaModel-extras-access</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jsonSchema</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>

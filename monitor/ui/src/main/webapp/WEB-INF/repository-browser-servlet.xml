@@ -12,7 +12,7 @@
     <mvc:annotation-driven/>
 
 	<!-- load controllers and secure them -->
-	<context:component-scan base-package="org.datacleaner.monitor.server.controllers" />
+	<context:component-scan base-package="org.datacleaner.monitor.server.controllers, org.datacleaner.documentation" />
 	<security:global-method-security jsr250-annotations="enabled" />
 
 	<!-- Multipart resolver needed to make file upload work -->

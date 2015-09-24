@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -40,6 +41,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -51,6 +54,9 @@ import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
+import org.datacleaner.util.convert.ResourceConverter;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +72,8 @@ public class Dropzone extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectListener;
     private final UserPreferences _userPreferences;
 
-    public Dropzone(final DatastoreCatalog datastoreCatalog, final DatastoreSelectedListener datastoreSelectListener,
-            final UserPreferences userPreferences) {
+    public Dropzone( final DatastoreCatalog datastoreCatalog,
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -83,11 +89,18 @@ public class Dropzone extends DCPanel {
         add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
-        final JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to browse)", IconUtils.FILE_FILE);
+        final JButton orClickButton = WidgetFactory.createPrimaryButton("(Click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        final JButton selectHadoopButton = WidgetFactory.createPrimaryButton("Select Hadoop HDFS file",
+                IconUtils.FILE_HDFS);
+        selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
+        selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+
+        add(selectHadoopButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
         orClickButton.addActionListener(new ActionListener() {
@@ -96,6 +109,19 @@ public class Dropzone extends DCPanel {
                 showFileChooser();
             }
         });
+
+        final DCPanel hdfsResourceSelector = createHdfsResourcePanel();
+        selectHadoopButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                add(hdfsResourceSelector, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                        GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+                updateUI();
+            }
+
+        });
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -104,6 +130,35 @@ public class Dropzone extends DCPanel {
         });
 
         makeDroppable();
+    }
+
+    private DCPanel createHdfsResourcePanel() {
+
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
+        handlers.add(new HdfsResourceTypeHandler());
+        final ResourceConverter resourceConverter = new ResourceConverter(handlers);
+        final ResourceSelector resourceSelector = new ResourceSelector(resourceConverter, _userPreferences, true);
+        resourceSelector.setScheme("hdfs");
+        final ResourceTypePresenter<?> resourceTypePresenter = resourceSelector.getResourceTypePresenter("hdfs");
+        resourceSelector.setCurrentPresenter(resourceTypePresenter);
+
+        final DCPanel panel = new DCPanel();
+        panel.add(resourceSelector);
+        final JButton okButton = WidgetFactory.createDefaultButton("OK");
+        okButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final Resource resource = resourceSelector.getResource();
+                if (resource != null) {
+                    final Datastore datastore = new CsvDatastore(resource.getName(), resource);
+                    _datastoreSelectListener.datastoreSelected(datastore);
+                }
+            }
+        });
+        panel.add(okButton);
+
+        return panel;
     }
 
     protected void showFileChooser() {

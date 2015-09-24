@@ -241,104 +241,6 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
         return datastore.getName() + " - " + tableName;
     }
 
-    private void validateCsvHeaders(CsvDataContext dc) {
-        Schema schema = dc.getDefaultSchema();
-        if (schema.getTableCount() == 0) {
-            // nothing to worry about, we will create the table ourselves
-            return;
-        }
-        Table table = schema.getTables()[0];
-
-        // verify that table names correspond to what we need!
-
-        for (String columnName : columnNames) {
-            Column column = table.getColumnByName(columnName);
-            if (column == null) {
-                throw new IllegalStateException("Error log file does not have required column header: " + columnName);
-            }
-        }
-        for (String columnName : conditionColumnNames) {
-            Column column = table.getColumnByName(columnName);
-            if (column == null) {
-                throw new IllegalStateException("Error log file does not have required column header: " + columnName);
-            }
-        }
-        if (additionalErrorLogValues != null) {
-            for (InputColumn<?> inputColumn : additionalErrorLogValues) {
-                String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
-                Column column = table.getColumnByName(columnName);
-                if (column == null) {
-                    throw new IllegalStateException("Error log file does not have required column header: "
-                            + columnName);
-                }
-            }
-        }
-
-        Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
-        if (column == null) {
-            throw new IllegalStateException("Error log file does not have required column: "
-                    + ERROR_MESSAGE_COLUMN_NAME);
-        }
-    }
-
-    private String translateAdditionalErrorLogColumnName(String columnName) {
-        if (ArrayUtils.contains(columnNames, columnName)) {
-            return translateAdditionalErrorLogColumnName(columnName + "_add");
-        }
-        return columnName;
-    }
-
-    private CsvDataContext createErrorDataContext() {
-        final File file;
-
-        if (errorLogFile == null || TEMP_DIR.equals(errorLogFile)) {
-            try {
-                file = File.createTempFile("updation_error", ".csv");
-            } catch (IOException e) {
-                throw new IllegalStateException("Could not create new temp file", e);
-            }
-        } else if (errorLogFile.isDirectory()) {
-            file = new File(errorLogFile, "updation_error_log.csv");
-        } else {
-            file = errorLogFile;
-        }
-
-        final CsvDataContext dc = new CsvDataContext(file);
-
-        final Schema schema = dc.getDefaultSchema();
-
-        if (file.exists() && file.length() > 0) {
-            validateCsvHeaders(dc);
-        } else {
-            // create table if no table exists.
-            dc.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(UpdateCallback cb) {
-                    TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
-                    for (String columnName : columnNames) {
-                        tableBuilder = tableBuilder.withColumn(columnName);
-                    }
-                    for (String columnName : conditionColumnNames) {
-                        tableBuilder = tableBuilder.withColumn(columnName);
-                    }
-
-                    if (additionalErrorLogValues != null) {
-                        for (InputColumn<?> inputColumn : additionalErrorLogValues) {
-                            String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
-                            tableBuilder = tableBuilder.withColumn(columnName);
-                        }
-                    }
-
-                    tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
-
-                    tableBuilder.execute();
-                }
-            });
-        }
-
-        return dc;
-    }
-
     @Override
     public void run(InputRow row, int distinctCount) {
         if (logger.isDebugEnabled()) {
@@ -564,4 +466,103 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
     public void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<?, ?> descriptor,
             String categoryName) {
     }
+
+    private CsvDataContext createErrorDataContext() {
+        final File file;
+
+        if (errorLogFile == null || TEMP_DIR.equals(errorLogFile)) {
+            try {
+                file = File.createTempFile("updation_error", ".csv");
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not create new temp file", e);
+            }
+        } else if (errorLogFile.isDirectory()) {
+            file = new File(errorLogFile, "updation_error_log.csv");
+        } else {
+            file = errorLogFile;
+        }
+
+        final CsvDataContext dc = new CsvDataContext(file);
+
+        final Schema schema = dc.getDefaultSchema();
+
+        if (file.exists() && file.length() > 0) {
+            validateCsvHeaders(dc);
+        } else {
+            // create table if no table exists.
+            dc.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback cb) {
+                    TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
+                    for (String columnName : columnNames) {
+                        tableBuilder = tableBuilder.withColumn(columnName);
+                    }
+                    for (String columnName : conditionColumnNames) {
+                        tableBuilder = tableBuilder.withColumn(columnName);
+                    }
+
+                    if (additionalErrorLogValues != null) {
+                        for (InputColumn<?> inputColumn : additionalErrorLogValues) {
+                            String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
+                            tableBuilder = tableBuilder.withColumn(columnName);
+                        }
+                    }
+
+                    tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
+
+                    tableBuilder.execute();
+                }
+            });
+        }
+
+        return dc;
+    }
+
+    private void validateCsvHeaders(CsvDataContext dc) {
+        Schema schema = dc.getDefaultSchema();
+        if (schema.getTableCount() == 0) {
+            // nothing to worry about, we will create the table ourselves
+            return;
+        }
+        Table table = schema.getTables()[0];
+
+        // verify that table names correspond to what we need!
+
+        for (String columnName : columnNames) {
+            Column column = table.getColumnByName(columnName);
+            if (column == null) {
+                throw new IllegalStateException("Error log file does not have required column header: " + columnName);
+            }
+        }
+        for (String columnName : conditionColumnNames) {
+            Column column = table.getColumnByName(columnName);
+            if (column == null) {
+                throw new IllegalStateException("Error log file does not have required column header: " + columnName);
+            }
+        }
+        if (additionalErrorLogValues != null) {
+            for (InputColumn<?> inputColumn : additionalErrorLogValues) {
+                String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
+                Column column = table.getColumnByName(columnName);
+                if (column == null) {
+                    throw new IllegalStateException("Error log file does not have required column header: "
+                            + columnName);
+                }
+            }
+        }
+
+        Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
+        if (column == null) {
+            throw new IllegalStateException("Error log file does not have required column: "
+                    + ERROR_MESSAGE_COLUMN_NAME);
+        }
+    }
+
+    private String translateAdditionalErrorLogColumnName(String columnName) {
+        if (ArrayUtils.contains(columnNames, columnName)) {
+            return translateAdditionalErrorLogColumnName(columnName + "_add");
+        }
+        return columnName;
+    }
+
 }

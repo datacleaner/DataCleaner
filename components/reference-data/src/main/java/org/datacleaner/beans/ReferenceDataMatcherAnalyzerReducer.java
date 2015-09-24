@@ -19,6 +19,7 @@
  */
 package org.datacleaner.beans;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -93,7 +94,7 @@ public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReduce
                     if (categoryValue != null) {
                         final Number oldValue = whereToPut.safeGet(null);
                         if (oldValue != null) {
-                            final Number newValue = oldValue.doubleValue() + categoryValue.doubleValue();
+                            final Number newValue = new BigDecimal(categoryValue.longValue()).add(new BigDecimal(oldValue.longValue()));
                             whereToPut.put(newValue);
                         } else {
                             whereToPut.put(categoryValue);

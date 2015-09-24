@@ -47,6 +47,7 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class FuseStreamsComponentIntegrationTest {
@@ -230,6 +231,7 @@ public class FuseStreamsComponentIntegrationTest {
     }
 
     @Test
+    @Ignore("Not yet implemented")
     public void testFuseSourceTableAndOutputDataStream() throws Exception {
         Assert.fail("Not yet implemented");
     }

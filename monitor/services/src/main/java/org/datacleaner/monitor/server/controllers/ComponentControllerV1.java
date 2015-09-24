@@ -134,7 +134,11 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            componentList.add(createComponentInfo(tenant, descriptor, iconData));
+            try {
+                componentList.add(createComponentInfo(tenant, descriptor, iconData));
+            } catch(Exception e) {
+                logger.error("Cannot create info about component {}", descriptor, e);
+            }
         }
 
         logger.debug("Informing about {} components", componentList.getComponents().size());
@@ -292,13 +296,14 @@ public class ComponentControllerV1 implements ComponentController {
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor,
                                                                   boolean iconData) {
+        Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
                 .setCategoryNames(getCategoryNames(descriptor))
-                .setProperties(createPropertiesInfo(descriptor));
+                .setProperties(createPropertiesInfo(descriptor, componentInstance));
 
         if (iconData) {
             componentInfo.setIconData(getComponentIconData(descriptor));
@@ -341,13 +346,12 @@ public class ComponentControllerV1 implements ComponentController {
         }
     }
 
-    static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
+    private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor, Object componentInstance) {
         Map<String, ComponentList.PropertyInfo> result = new HashMap<>();
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
             if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
                 continue;
             }
-
             ComponentList.PropertyInfo propInfo = new ComponentList.PropertyInfo();
             propInfo.setName(propertyDescriptor.getName());
             propInfo.setDescription(propertyDescriptor.getDescription());
@@ -356,6 +360,10 @@ public class ComponentControllerV1 implements ComponentController {
             setPropertyType(descriptor, propertyDescriptor, propInfo);
             setPropertyAnnotations(propertyDescriptor, propInfo);
             result.put(propInfo.getName(), propInfo);
+            Object defaultValue = propertyDescriptor.getValue(componentInstance);
+            if(defaultValue != null) {
+                propInfo.setDefaultValue(objectMapper.valueToTree(defaultValue));
+            }
         }
         return result;
     }

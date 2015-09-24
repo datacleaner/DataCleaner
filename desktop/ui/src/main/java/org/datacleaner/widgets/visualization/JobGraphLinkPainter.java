@@ -225,11 +225,17 @@ public class JobGraphLinkPainter {
             final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
             if (sourceColumns != null && !sourceColumns.isEmpty()) {
 
+                if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
+                    if (!fromVertex.getAnalysisJobBuilder().isRootJobBuilder()) {
+                        // we don't yet support MultiStreamComponents on output
+                        // data streams. See issue #620
+                        return false;
+                    }
+                }
+
                 try {
-                    if (!componentBuilder.getDescriptor().isMultiStreamComponent()) {
-                        if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
-                            sourceAnalysisJobBuilder.moveComponent(componentBuilder);
-                        }
+                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
+                        sourceAnalysisJobBuilder.moveComponent(componentBuilder);
                     }
 
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder

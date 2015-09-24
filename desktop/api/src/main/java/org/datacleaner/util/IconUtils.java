@@ -195,6 +195,7 @@ public final class IconUtils {
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
     public static final String FILE_FILE = "images/filetypes/file.png";
+    public static final String FILE_HDFS = "images/filetypes/hadoop.png";
     public static final String FILE_DESKTOP_FOLDER = "images/filetypes/desktop-folder.png";
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";

@@ -57,27 +57,31 @@ public final class InitializeTask implements Task {
 
     private static void executeInternal(final RowProcessingConsumer consumer, final RowProcessingPublisher publisher,
             final LifeCycleHelper lifeCycleHelper) {
-        final int publisherCount = consumer.onPublisherInitialized(publisher);
-        if (publisherCount == 1) {
-            final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
-            final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
-            final Object component = consumer.getComponent();
-
-            lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
-            lifeCycleHelper.assignProvidedProperties(descriptor, component);
-            lifeCycleHelper.validate(descriptor, component);
-            final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
-            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-                activeOutputDataStream.initialize();
-                final RowProcessingPublisher outputDataStreamPublisher = activeOutputDataStream.getPublisher();
-                for (RowProcessingConsumer outputDataStreamConsumer : outputDataStreamPublisher.getConsumers()) {
-                    final LifeCycleHelper outputDataStreamLifeCycleHelper = outputDataStreamPublisher.getPublishers()
-                            .getConsumerSpecificLifeCycleHelper(consumer);
-                    executeInternal(outputDataStreamConsumer, outputDataStreamPublisher,
-                            outputDataStreamLifeCycleHelper);
+        // we synchronize to avoid a race condition where initialization is on-going in one stream and therefore skipped in the other
+        synchronized (consumer) {
+            final int publisherCount = consumer.onPublisherInitialized(publisher);
+            
+            if (publisherCount == 1) {
+                final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
+                final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
+                final Object component = consumer.getComponent();
+                
+                lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
+                lifeCycleHelper.assignProvidedProperties(descriptor, component);
+                lifeCycleHelper.validate(descriptor, component);
+                final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
+                for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+                    activeOutputDataStream.initialize();
+                    final RowProcessingPublisher outputDataStreamPublisher = activeOutputDataStream.getPublisher();
+                    for (RowProcessingConsumer outputDataStreamConsumer : outputDataStreamPublisher.getConsumers()) {
+                        final LifeCycleHelper outputDataStreamLifeCycleHelper = outputDataStreamPublisher.getPublishers()
+                                .getConsumerSpecificLifeCycleHelper(consumer);
+                        executeInternal(outputDataStreamConsumer, outputDataStreamPublisher,
+                                outputDataStreamLifeCycleHelper);
+                    }
                 }
+                lifeCycleHelper.initialize(descriptor, component);
             }
-            lifeCycleHelper.initialize(descriptor, component);
         }
     }
 

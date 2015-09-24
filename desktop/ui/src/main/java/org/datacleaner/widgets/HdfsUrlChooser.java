@@ -23,12 +23,18 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -50,6 +56,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.hadoop.conf.Configuration;
@@ -58,7 +65,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.http.client.utils.URIBuilder;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
@@ -86,7 +92,6 @@ public class HdfsUrlChooser extends JComponent {
     private class ServerChoiceDialog extends JComponent {
         private final JXTextField _hostnameField;
         private final JXFormattedTextField _portField;
-        private final DCPanel _panel;
 
         public ServerChoiceDialog(final Dialog dialog, final String host, final int port) {
             _hostnameField = WidgetFactory.createTextField("hostname", 10);
@@ -114,20 +119,20 @@ public class HdfsUrlChooser extends JComponent {
                 public void actionPerformed(final ActionEvent aE) {
                     try {
                         final URI uri =
-                                new URIBuilder().setScheme(HDFS_SCHEME).setHost(_hostnameField.getText()).setPort(Integer.parseInt(_portField.getText())).build();
+                                new URIBuilder().setScheme(HDFS_SCHEME).setHost(_hostnameField.getText()).setPort(Integer.parseInt(_portField.getText())).setPath("/").build();
                         // Try a read. TODO: Is there something better to verify HDFS connectivity?
-                        _fileSystem.listStatus(new Path(uri));
+                        FileSystem tempFS = getFileSystemFromUri(uri);
+                        tempFS.listStatus(new Path(uri));
 
                         // Let's update the URI
-                        _uri = uri;
+                        _fileSystem = tempFS;
+                        setUri(uri);
                         dialog.setVisible(false);
 
                     } catch (URISyntaxException e) {
                         JOptionPane.showMessageDialog(ServerChoiceDialog.this, "This server address is wrong", "Wrong server address", JOptionPane.ERROR_MESSAGE);
-                    } catch (IOException e) {
+                    } catch (IOException | NumberFormatException e) {
                         // _fileSystem.makeQualified will throw illegal argument is it cannot connect.
-                        JOptionPane.showMessageDialog(ServerChoiceDialog.this, "This server address is not available", "Server unavailable", JOptionPane.ERROR_MESSAGE);
-                    } catch (NumberFormatException e){
                         JOptionPane.showMessageDialog(ServerChoiceDialog.this, "This server address is not available", "Server unavailable", JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -140,11 +145,19 @@ public class HdfsUrlChooser extends JComponent {
                 }
             });
 
-            _panel = new DCPanel();
-            _panel.setLayout(new VerticalLayout(2));
-            _panel.add(_hostnameField);
-            _panel.add(_portField);
-            _panel.add(DCPanel.flow(Alignment.RIGHT, okButton, cancelButton));
+            setLayout(new VerticalLayout(2));
+            DCPanel propertiesPanel = new DCPanel();
+            propertiesPanel.setLayout(new GridBagLayout());
+            WidgetUtils.addToGridBag(DCLabel.dark("Hostname: "), propertiesPanel, 0, 0);
+            WidgetUtils.addToGridBag(_hostnameField, propertiesPanel, 1, 0, 1 ,1, GridBagConstraints.WEST, WidgetUtils.DEFAULT_PADDING, 1, 1, GridBagConstraints.HORIZONTAL);
+            WidgetUtils.addToGridBag(DCLabel.dark("Port: "), propertiesPanel, 0, 1);
+            WidgetUtils.addToGridBag(_portField, propertiesPanel, 1, 1, 1, 1, GridBagConstraints.WEST, WidgetUtils.DEFAULT_PADDING, 1, 1, GridBagConstraints.HORIZONTAL);
+
+            add(propertiesPanel);
+            add(DCPanel.flow(Alignment.RIGHT, okButton, cancelButton));
+            setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING));
+
+            // setPreferredSize(new Dimension(400, 300));
         }
 
     }
@@ -293,7 +306,7 @@ public class HdfsUrlChooser extends JComponent {
         private void updateFileList() {
             FileStatus[] fileStatuses;
             try {
-                fileStatuses = _fileSystem.listStatus(new Path(_uri));
+                fileStatuses = _fileSystem.listStatus(new Path(getUri()));
                 // Natural ordering is the URL
                 Arrays.sort(fileStatuses);
             } catch (IOException e) {
@@ -324,16 +337,17 @@ public class HdfsUrlChooser extends JComponent {
             updateFileList();
         }
     }
+
     public static final Icon DIRECTORY_ICON = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon FILE_ICON = UIManager.getIcon("FileView.fileIcon");
     final static int space = 10;
     public static String HDFS_SCHEME = "hdfs";
-    private final FileSystem _fileSystem;
     private final OpenType _openType;
+    private FileSystem _fileSystem;
     private JDialog _dialog = null;
-    private DCPanel _topPanel;
-    private DCPanel _filePanel;
-    private ServerComboBoxRenderer _serverComboBoxRenderer;
+
+    private DCComboBox<Object> _pathsCombobox;
+
     private URI _uri;
     private HdfsServerComboBoxModel _directoryComboBoxModel = new HdfsServerComboBoxModel();
     private HdfsServerDirectoryModel _hdfsServerDirectoryModel;
@@ -347,19 +361,41 @@ public class HdfsUrlChooser extends JComponent {
             if (!HDFS_SCHEME.equals(uri.getScheme())) {
                 throw new IllegalArgumentException("Only HDFS allowed");
             }
-            _uri = UriBuilder.fromUri(uri).replacePath(null).fragment(null).build();
+
+            uri = UriBuilder.fromUri(uri).replaceQuery(null).fragment(null).build();
+
+            URI baseUri = UriBuilder.fromUri(uri).replacePath("/").build();
+            getFileSystemFromUri(baseUri);
+            setUri(uri);
         }
 
         _openType = openType;
-        try {
-            _fileSystem = FileSystem.newInstance(new Configuration());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final DCLabel lookInLabel = DCLabel.dark("Look in:");
+        _pathsCombobox = new DCComboBox<>(new HdfsServerComboBoxModel());
+        _pathsCombobox.setRenderer(new ServerComboBoxRenderer());
+        _pathsCombobox.setMinimumSize(new Dimension(300, 40));
+        setLayout(new BorderLayout());
+        final DCPanel topPanel = new DCPanel();
+        final DCPanel filePanel = new DCPanel();
+        topPanel.setLayout(new GridBagLayout());
+        topPanel.setPreferredSize(new Dimension(1000, 40));
+        WidgetUtils.addToGridBag(lookInLabel, topPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 5);
+        WidgetUtils.addToGridBag(_pathsCombobox, topPanel, 1, 0, 100, 40, GridBagConstraints.WEST, 5, 1, 1, GridBagConstraints.HORIZONTAL);
+
+        topPanel.setMinimumSize(new Dimension(1000, 40));
+        add(topPanel, BorderLayout.NORTH);
+        add(filePanel, BorderLayout.CENTER);
+
+    }
+
+    public Configuration getHadoopConfiguration(URI uri) {
+        final Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", uri.toString());
+        return conf;
     }
 
     private Path getCurrentDirectory() {
-        return _uri == null ? null : new Path(_uri);
+        return getUri() == null ? null : new Path(getUri());
     }
 
     private Path getRoot() {
@@ -373,9 +409,9 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     private void rescanServer() {
-        if (_uri != null) {
+        if (getUri() != null) {
             try {
-                _fileSystem.listStatus(new Path(_uri));
+                _fileSystem.listStatus(new Path(getUri()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -392,15 +428,28 @@ public class HdfsUrlChooser extends JComponent {
 
     public static URI showDialog(Component parent, URI currentUri, OpenType openType)
             throws HeadlessException {
-        HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
+        final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
             // Prevent to show second instance of _dialog if the previous one still exists
             return null;
         }
 
-        chooser.createDialog(parent);
+        final ComponentListener listener = new ComponentAdapter() {
+            @Override
+            public void componentShown(final ComponentEvent e) {
+                if (chooser.getUri() == null) {
+                    chooser.showServerInputDialog();
+                }
 
-        if (chooser._uri != null) {
+                if (chooser.getUri() == null) {
+                    chooser._dialog.setVisible(false);
+                }
+            }
+        };
+
+        chooser.createDialog(parent, listener);
+
+        if (chooser.getUri() != null) {
             chooser.rescanServer();
         }
 
@@ -421,10 +470,17 @@ public class HdfsUrlChooser extends JComponent {
         throw new UnsupportedOperationException("Cannot create dialog for a component without a frame or dialog parent");
     }
 
-    protected void createDialog(Component parent) throws HeadlessException {
+    protected void createDialog(Component parent) {
+        createDialog(parent, null);
+    }
+
+    protected void createDialog(Component parent, ComponentListener listener) {
         _dialog = createSimpleDialog(parent);
         initDialog(_dialog, this, parent);
 
+        if(listener != null){
+            _dialog.addComponentListener(listener);
+        }
         _dialog.setVisible(true);
         _dialog.dispose();
         _dialog = null;
@@ -452,8 +508,16 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     private void showServerInputDialog(){
-        JDialog dialog = createSimpleDialog(this);
-        ServerChoiceDialog serverChoiceDialog = new ServerChoiceDialog(dialog, _uri.getHost(), _uri.getPort());
+        final JDialog dialog = createSimpleDialog(this);
+        String host = null;
+        int port = -1;
+
+        if(getUri() != null){
+            host = getUri().getHost();
+            port = getUri().getPort();
+        }
+
+        final ServerChoiceDialog serverChoiceDialog = new ServerChoiceDialog(dialog, host, port);
 
         initDialog(dialog, serverChoiceDialog, this);
 
@@ -482,5 +546,22 @@ public class HdfsUrlChooser extends JComponent {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    FileSystem getFileSystemFromUri(URI uri){
+        try {
+            return FileSystem.newInstance(getHadoopConfiguration(uri));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public URI getUri() {
+        return _uri;
+    }
+
+    public void setUri(URI uri) {
+        _uri = uri;
     }
 }

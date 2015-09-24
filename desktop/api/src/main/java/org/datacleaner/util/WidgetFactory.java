@@ -344,6 +344,10 @@ public final class WidgetFactory {
 
                         @Override
                         public String valueToString(final Object value) throws ParseException {
+                            if(value == null){
+                                return "";
+                            }
+
                             return format.format(value);
                         }
                     };

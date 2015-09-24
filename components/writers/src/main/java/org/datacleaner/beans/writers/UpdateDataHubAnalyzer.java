@@ -205,6 +205,10 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
 
         _writeBuffer = new WriteBuffer(bufferSize, this);
 
+        checkFieldsExist();
+    }
+
+    private void checkFieldsExist() {
         final UpdateableDatastoreConnection con = datastore.openConnection();
         try {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();

@@ -20,6 +20,7 @@
 package org.datacleaner.metamodel.datahub;
 
 import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
 import static org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder.buildJsonArray;
@@ -54,9 +55,8 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
-    
-    private static final String JSON_CONTENT_TYPE = "application/json";
 
+    private static final String JSON_CONTENT_TYPE = "application/json";
 
     private DataHubRepoConnection _repoConnection;
     private DataHubUpdateConnection _updateConnection;
@@ -87,7 +87,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         }
         return schemas;
     }
-
 
     @Override
     public void executeUpdate(UpdateScript script) {
@@ -150,14 +149,11 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return _schemas.get(name);
     }
 
-//    public DataHubRepoConnection getRepoConnection() {
-//        return _repoConnection;
-//    }
-
     public void executeUpdates(List<UpdateData> pendingUpdates) {
         String uri = _updateConnection.getUpdateUrl();
         logger.debug("request {}", uri);
         final HttpPost request = new HttpPost(uri);
+        request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
         try {
@@ -165,27 +161,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        final HttpResponse response = executeRequest(request, _updateConnection.getHttpClient());
-        final HttpEntity entity = response.getEntity();
-        printTestResult(entity);
+        executeRequest(request, _updateConnection.getHttpClient());
     }
-
-
-    private void printTestResult(HttpEntity entity) {
-        try {
-        JsonFactory factory = new JsonFactory();
-        JsonParser parser;
-            parser = factory.createParser(entity.getContent());
-            JsonToken token = parser.nextToken();
-            while (token != null) {
-                parser.getCurrentToken();
-                System.out.println(parser.getText());
-                parser.nextToken();
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
 }

@@ -151,9 +151,9 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());
 
-//        request.addHeader(CDI_TICKET_HEADER, ticketGrantingTicket);
-//        request.addHeader(CDI_SERVICE_URL_HEADER, _casServerUrl);
-//        request.addHeader(CDI_USERID, _username);
+        request.addHeader(CDI_TICKET_HEADER, ticketGrantingTicket);
+        request.addHeader(CDI_SERVICE_URL_HEADER, _casServerUrl);
+        request.addHeader(CDI_USERID, _username);
         
         final HttpResponse result = executeHttpRequest(request, context);
         logger.debug("Cookies 4: {}", cookieStore.getCookies());

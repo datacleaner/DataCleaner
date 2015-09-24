@@ -358,7 +358,7 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
             rowData[i] = inputValues.get(i);
         }
         for (int i = 0; i < conditionValues.length; i++) {
-            rowData[i + values.length] = row.getValue(conditionValues[i]);
+            rowData[i + values.length - 1] = row.getValue(conditionValues[i]);
         }
 
         if (additionalErrorLogValues != null) {
@@ -380,7 +380,7 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
                 }
             }
             for (int i = 0; i < conditionValues.length; i++) {
-                int index = i + values.length;
+                int index = i + values.length - 1;
                 rowData[index] = convertType(rowData[index], _targetConditionColumns[i]);
 
                 if (logger.isDebugEnabled()) {
@@ -480,7 +480,7 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
                         }
 
                         for (int i = 0; i < whereColumns.length; i++) {
-                            final Object value = rowData[i + updateColumns.length];
+                            final Object value = rowData[i + updateColumns.length - 1];
                             final Column whereColumn = whereColumns[i];
                             final FilterItem filterItem = new FilterItem(new SelectItem(whereColumn),
                                     OperatorType.EQUALS_TO, value);

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.metamodel.MetaModelException;
@@ -48,13 +49,13 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
         final Object[] values = getValues();
         Column[] columns = getColumns();
         boolean[] explicitNulls = getExplicitNulls();
-        UpdateField[] fields = new UpdateField[columns.length];
+        List<UpdateField> fields = new ArrayList<UpdateField>();
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
                 String columnName = columns[i].getName();
-                UpdateField field = new UpdateField(columnName, value.toString());
-                fields[i] = field;
+                final UpdateField field = new UpdateField(columnName, value.toString());
+                fields.add(field);
             }
         }
 
@@ -63,7 +64,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
             throw new IllegalArgumentException("Only gr_id is allowed as a select item");
         }
         String grId = (String) whereItems.get(0).getOperand();
-        return new UpdateData(grId, fields);
+        return new UpdateData(grId, fields.toArray(new UpdateField[fields.size()]));
     }
 
 }

@@ -25,7 +25,6 @@ import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
 import static org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder.buildJsonArray;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +47,6 @@ import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
     private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);

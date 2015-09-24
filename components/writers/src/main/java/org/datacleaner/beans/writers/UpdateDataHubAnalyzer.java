@@ -350,15 +350,15 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
         List<Object> inputValues = row.getValues();
         int rowSize = inputValues.size();
         if (additionalErrorLogValues == null) {
-            rowData = new Object[rowSize + conditionColumnNames.length];
+            rowData = new Object[values.length + conditionColumnNames.length];
         } else {
-            rowData = new Object[rowSize + conditionColumnNames.length + additionalErrorLogValues.length];
+            rowData = new Object[values.length + conditionColumnNames.length + additionalErrorLogValues.length];
         }
-        for (int i = 0; i < rowSize; i++) {
-            rowData[i] = inputValues.get(i);
+        for (int i = 0; i < values.length; i++) {
+            rowData[i] = row.getValue(values[i]);
         }
         for (int i = 0; i < conditionValues.length; i++) {
-            rowData[i + values.length - 1] = row.getValue(conditionValues[i]);
+            rowData[i + values.length] = row.getValue(conditionValues[i]);
         }
 
         if (additionalErrorLogValues != null) {
@@ -480,7 +480,7 @@ public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<
                         }
 
                         for (int i = 0; i < whereColumns.length; i++) {
-                            final Object value = rowData[i + updateColumns.length - 1];
+                            final Object value = rowData[i + updateColumns.length];
                             final Column whereColumn = whereColumns[i];
                             final FilterItem filterItem = new FilterItem(new SelectItem(whereColumn),
                                     OperatorType.EQUALS_TO, value);

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<published-components
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.datacleaner.org/schema/remoteComponentsConfiguration"
+        xsi:schemaLocation="http://www.datacleaner.org/schema/remoteComponentsConfiguration http://www.datacleaner.org/schema/remoteComponentsConfiguration.xsd">
+    <excludes>
+        <exclude name="Component1"></exclude>
+        <exclude name="Component2"/>
+    </excludes>
+</published-components>

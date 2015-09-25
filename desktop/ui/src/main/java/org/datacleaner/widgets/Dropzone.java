@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -40,6 +41,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -51,6 +54,9 @@ import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
+import org.datacleaner.util.convert.ResourceConverter;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,19 +89,53 @@ public class Dropzone extends DCPanel {
         add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
-        final JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to browse)", IconUtils.FILE_FILE);
+        // orclick button
+        final JButton orClickButton = WidgetFactory.createPrimaryButton("(Click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-
         orClickButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showFileChooser();
             }
         });
+        // select hadoop file button
+        final JButton selectHadoopButton = WidgetFactory.createPrimaryButton("Select Hadoop HDFS file",
+                IconUtils.FILE_HDFS);
+        selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
+        selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(selectHadoopButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.CENTER, new Insets(0, 0, 10, 0), 0, 0));
+
+        final DCLabel errorResourceLabel = DCLabel
+                .dark("<html><p color='red'>The hdfs file does not exists</p></html>");
+        errorResourceLabel.setVisible(false);
+
+        add(errorResourceLabel, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        // hdfs resource selector
+        final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel(errorResourceLabel);
+        add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        hdfsResourceSelectorPanel.setVisible(false);
+
+        hdfsResourceSelectorPanel.setVisible(false);
+
+        selectHadoopButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (hdfsResourceSelectorPanel.isVisible()) {
+                    hdfsResourceSelectorPanel.setVisible(false);
+                    errorResourceLabel.setVisible(false);
+                } else {
+                    hdfsResourceSelectorPanel.setVisible(true);
+                }
+            }
+
+        });
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -104,6 +144,40 @@ public class Dropzone extends DCPanel {
         });
 
         makeDroppable();
+    }
+
+    private DCPanel createHdfsResourcePanel(final DCLabel errorResourceLabel) {
+
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
+        handlers.add(new HdfsResourceTypeHandler());
+        final ResourceConverter resourceConverter = new ResourceConverter(handlers);
+        final ResourceSelector resourceSelector = new ResourceSelector(resourceConverter, _userPreferences, true);
+        resourceSelector.setScheme("hdfs");
+        resourceSelector.setVisibleResourceTypeCombox(false);
+        final ResourceTypePresenter<?> resourceTypePresenter = resourceSelector.getResourceTypePresenter("hdfs");
+        resourceSelector.setCurrentPresenter(resourceTypePresenter);
+
+        final DCPanel panel = new DCPanel();
+        panel.add(resourceSelector);
+        final JButton okButton = WidgetFactory.createDefaultButton("OK");
+        okButton.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final Resource resource = resourceSelector.getResource();
+                if (resource != null && resource.isExists()) {
+                    errorResourceLabel.setVisible(false);
+                    final Datastore datastore = new CsvDatastore(resource.getName(), resource);
+                    _datastoreSelectListener.datastoreSelected(datastore);
+                } else {
+                    errorResourceLabel.setVisible(true);
+                }
+
+            }
+        });
+
+        panel.add(okButton);
+        return panel;
     }
 
     protected void showFileChooser() {

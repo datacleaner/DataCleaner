@@ -22,7 +22,9 @@ package org.datacleaner.monitor.server.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +55,7 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.OutputColumns;
 import org.datacleaner.restclient.ProcessInput;
@@ -60,8 +63,8 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,13 +93,15 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
+
     private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -132,7 +137,7 @@ public class ComponentControllerV1 implements ComponentController {
             componentList.add(createComponentInfo(tenant, descriptor, iconData));
         }
 
-        LOGGER.debug("Informing about {} components", componentList.getComponents().size());
+        logger.debug("Informing about {} components", componentList.getComponents().size());
         return componentList;
     }
 
@@ -143,7 +148,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
-        LOGGER.debug("Informing about '{}'", name);
+        logger.debug("Informing about '{}'", name);
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         return createComponentInfo(tenant, descriptor, iconData);
@@ -160,7 +165,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        LOGGER.debug("Informing about output columns of '{}'", decodedName);
+        logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, createInput.configuration);
@@ -192,7 +197,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        LOGGER.debug("One-shot processing '{}'", decodedName);
+        logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
                 tenantContext, decodedName, processStatelessInput.configuration);
@@ -244,7 +249,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
         if(config == null){
-                LOGGER.warn("Component with id {} does not exist.", id);
+                logger.warn("Component with id {} does not exist.", id);
                 throw ComponentNotFoundException.createInstanceNotFound(id);
             }
         ComponentHandler handler = config.getHandler();
@@ -280,7 +285,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         boolean isHere = _componentCache.remove(id, tenantContext);
         if (!isHere) {
-            LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
+            logger.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
     }
@@ -349,17 +354,32 @@ public class ComponentControllerV1 implements ComponentController {
             propInfo.setRequired(propertyDescriptor.isRequired());
             propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
             setPropertyType(descriptor, propertyDescriptor, propInfo);
+            setPropertyAnnotations(propertyDescriptor, propInfo);
             result.put(propInfo.getName(), propInfo);
         }
         return result;
     }
 
-    static String[] toStringArray(Object[] array) {
-        String[] result = new String[array.length];
-        for(int i = 0; i < array.length; i++) {
-            result[i] = String.valueOf(array[i]);
+    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {
+        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
+        if(annotations == null) { return; }
+        for(Annotation an: annotations) {
+            Class anClass = an.annotationType();
+            Map<String, Object> anValues = new HashMap<>();
+            for(Method anMethod: anClass.getDeclaredMethods()) {
+                try {
+                    if(anMethod.getParameterTypes().length == 0) {
+                        Object anValue = anMethod.invoke(an, new Object[0]);
+                        if (anValue != null) {
+                            anValues.put(anMethod.getName(), anValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.warn("Cannot provide property '{}' annotation", propertyDescriptor.getName(), e);
+                }
+            }
+            propInfo.getAnnotations().put(anClass.getName(), anValues);
         }
-        return result;
     }
 
     static void setPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {

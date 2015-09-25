@@ -20,13 +20,10 @@
 
 package org.datacleaner.monitor.configuration;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,12 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.easymock.EasyMock;
+import org.datacleaner.descriptors.PropertyDescriptor;
 import org.easymock.EasyMockRunner;
-import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +105,7 @@ public class RemoteComponentsConfigurationImplTest {
     }
 
     @Test
-    public void testSetDefaultValues() throws Exception {
+    public void testGetDefaultValues() throws Exception {
         Set<String> includes = new HashSet<>();
         Set<String> excludes = new HashSet<>();
         Map<String, List<RemoteComponentsConfigurationImpl.Property>> properties = new HashMap<>();
@@ -132,23 +127,11 @@ public class RemoteComponentsConfigurationImplTest {
         descriptorProperties.add(configuredPropertyDescriptorMock);
         expect(componentDescriptorMock.getConfiguredProperties()).andReturn(descriptorProperties);
 
-        Component componentMock = createNiceMock(Component.class);
+        replay(componentDescriptorMock, configuredPropertyDescriptorMock);
+        Map<PropertyDescriptor, Object> map = remoteComponentsConfiguration.getDefaultValues(componentDescriptorMock);
 
-        configuredPropertyDescriptorMock.setValue(anyObject(), anyString());
+        Assert.assertEquals("value", map.get(configuredPropertyDescriptorMock));
 
-        expectLastCall().andAnswer(new IAnswer<Object>() {
-            @Override
-            public Object answer() throws Throwable {
-                Object value = EasyMock.getCurrentArguments()[1];
-                Assert.assertEquals("value", value);
-                return null;
-            }
-        });
-
-        replay(componentDescriptorMock, configuredPropertyDescriptorMock, componentMock);
-        remoteComponentsConfiguration.setDefaultValues(componentDescriptorMock, componentMock);
-
-        verify(configuredPropertyDescriptorMock);
     }
 
 }

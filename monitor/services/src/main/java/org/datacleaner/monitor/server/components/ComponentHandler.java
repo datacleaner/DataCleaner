@@ -145,6 +145,12 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
+
+        //Admin properties from xml context
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = remoteComponentsConfiguration.getDefaultValues(descriptor);
+        configuredProperties.putAll(remoteDefaultPropertiesMap);
+
+        //User properties
         for(String propertyName: componentConfiguration.getPropertiesNames()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {
@@ -176,7 +182,6 @@ public class ComponentHandler {
 
         LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
-        remoteComponentsConfiguration.setDefaultValues(descriptor, component);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
         lifeCycleHelper.initialize(descriptor, component);

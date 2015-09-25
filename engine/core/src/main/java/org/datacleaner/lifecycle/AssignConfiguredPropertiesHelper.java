@@ -34,18 +34,11 @@ public final class AssignConfiguredPropertiesHelper {
 
     public void assignProperties(Object component, ComponentDescriptor<?> descriptor,
             ComponentConfiguration configuration) {
-        assignProperties(component, descriptor, configuration, false);
-    }
-
-    public void assignProperties(Object component, ComponentDescriptor<?> descriptor,
-            ComponentConfiguration configuration, boolean replace) {
         final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
         for (final ConfiguredPropertyDescriptor property : configuredProperties) {
             Object configuredValue = getValue(property, configuration);
             if (configuredValue == null) {
-                if (!replace) {
-                    setValue(property, component, null);
-                }
+                setValue(property, component, null);
             } else {
                 if (property.isArray()) {
                     setValue(property, component, configuredValue);

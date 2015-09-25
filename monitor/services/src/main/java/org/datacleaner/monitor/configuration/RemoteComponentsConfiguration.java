@@ -19,8 +19,10 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.api.Component;
+import java.util.Map;
+
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
 
 /**
  * Class RemoteComponentsConfiguration
@@ -46,10 +48,9 @@ public interface RemoteComponentsConfiguration {
     public boolean isAllowed(String componentDisplayName);
 
     /**
-     * Method put or replaces the default values for specific controller.
+     * Method returns map with default values of properties.
      *
      * @param componentDescriptor
-     * @param component
      */
-    public void setDefaultValues(ComponentDescriptor componentDescriptor, Component component);
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor componentDescriptor);
 }

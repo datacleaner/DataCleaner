@@ -31,13 +31,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.job.ComponentConfiguration;
-import org.datacleaner.job.ImmutableComponentConfiguration;
-import org.datacleaner.lifecycle.AssignConfiguredPropertiesHelper;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,12 +91,13 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
     }
 
     @Override
-    public void setDefaultValues(ComponentDescriptor componentDescriptor, Component component) {
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor componentDescriptor) {
         List<Property> defaultProperties = properties.get(componentDescriptor.getDisplayName());
-        if (defaultProperties == null || !isAllowed(componentDescriptor)) {
-            return;
-        }
         Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
+        if (defaultProperties == null || !isAllowed(componentDescriptor)) {
+            return configuredProperties;
+        }
+
         for (Property defaultProperty : defaultProperties) {
             ConfiguredPropertyDescriptor propDesc = componentDescriptor
                     .getConfiguredProperty(defaultProperty.getName());
@@ -138,9 +135,7 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
             }
             configuredProperties.put(propDesc, objectProperty);
         }
-        ComponentConfiguration componentConfiguration = new ImmutableComponentConfiguration(configuredProperties);
-        final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper();
-        helper.assignProperties(component, componentDescriptor, componentConfiguration, true);
+        return configuredProperties;
     }
 
     public static class Property {

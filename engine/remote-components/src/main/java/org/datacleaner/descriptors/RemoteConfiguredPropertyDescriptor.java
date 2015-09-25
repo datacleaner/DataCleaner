@@ -95,6 +95,14 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     }
 
     private Object createDefaultValue() {
+        // TODO: this is code duplicate with ComponentHandler.convertPropertyValue
+        // (which is used to deserialize properties values on the server side).
+        // TODO: But on server side a StringConverter is used for string values,
+        // which is not fully available on client
+        // side (some extenstions providing custom converters may be not available on client classpath).
+        // We must unify how values are serialized on client as well as server side. Maybe use pure JSON string?
+        // Maybe it is enough to support JsonNode in StringConverter? That should fit the unknown values...
+
         try {
             return Serializator.getJacksonObjectMapper().treeToValue(defaultValue, getType());
         } catch (Exception e) {

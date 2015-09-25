@@ -101,7 +101,7 @@
     <xsd:complexType name="attrElementType">
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
-                <xsd:attribute name="name" type="xsd:string">
+                <xsd:attribute name="name" type="xsd:string" use="required">
                 </xsd:attribute>
             </xsd:extension>
         </xsd:simpleContent>
@@ -110,7 +110,7 @@
     <xsd:complexType name="attrElementUniversalType">
         <xsd:complexContent>
             <xsd:extension base="universalType">
-                <xsd:attribute name="name" type="xsd:string">
+                <xsd:attribute name="name" type="xsd:string" use="required">
                 </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>

@@ -361,7 +361,9 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {
-        for(Annotation an: propertyDescriptor.getAnnotations()) {
+        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
+        if(annotations == null) { return; }
+        for(Annotation an: annotations) {
             Class anClass = an.annotationType();
             Map<String, Object> anValues = new HashMap<>();
             for(Method anMethod: anClass.getDeclaredMethods()) {

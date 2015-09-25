@@ -210,7 +210,13 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         }
         return _resourceConverter.toString(resource);
     }
+
     public void setCurrentPresenter(ResourceTypePresenter<?> currentPresenter) {
         _currentPresenter = currentPresenter;
     }
+
+    public void setVisibleResourceTypeCombox(boolean isVisible) {
+        _resourceTypeComboBox.setVisible(isVisible);
+    }
+
 }

@@ -109,11 +109,18 @@ public class Dropzone extends DCPanel {
         add(selectHadoopButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.CENTER, new Insets(0, 0, 10, 0), 0, 0));
 
+        final DCLabel errorResourceLabel = DCLabel
+                .dark("<html><p color='red'>The hdfs file does not exists</p></html>");
+        errorResourceLabel.setVisible(false);
 
+        add(errorResourceLabel, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
         // hdfs resource selector
-        final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel();
+        final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel(errorResourceLabel);
         add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        hdfsResourceSelectorPanel.setVisible(false);
+
         hdfsResourceSelectorPanel.setVisible(false);
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {
@@ -121,6 +128,7 @@ public class Dropzone extends DCPanel {
             public void mouseClicked(MouseEvent e) {
                 if (hdfsResourceSelectorPanel.isVisible()) {
                     hdfsResourceSelectorPanel.setVisible(false);
+                    errorResourceLabel.setVisible(false);
                 } else {
                     hdfsResourceSelectorPanel.setVisible(true);
                 }
@@ -138,22 +146,20 @@ public class Dropzone extends DCPanel {
         makeDroppable();
     }
 
-    private DCPanel createHdfsResourcePanel() {
+    private DCPanel createHdfsResourcePanel(final DCLabel errorResourceLabel) {
 
         final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
         handlers.add(new HdfsResourceTypeHandler());
         final ResourceConverter resourceConverter = new ResourceConverter(handlers);
         final ResourceSelector resourceSelector = new ResourceSelector(resourceConverter, _userPreferences, true);
         resourceSelector.setScheme("hdfs");
+        resourceSelector.setVisibleResourceTypeCombox(false);
         final ResourceTypePresenter<?> resourceTypePresenter = resourceSelector.getResourceTypePresenter("hdfs");
         resourceSelector.setCurrentPresenter(resourceTypePresenter);
 
         final DCPanel panel = new DCPanel();
         panel.add(resourceSelector);
         final JButton okButton = WidgetFactory.createDefaultButton("OK");
-        final DCLabel errorResourceLabel = DCLabel
-                .dark("<html><p color='red'>The hdfs file does not exists</p></html>");
-        errorResourceLabel.setVisible(false);
         okButton.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -171,7 +177,6 @@ public class Dropzone extends DCPanel {
         });
 
         panel.add(okButton);
-        panel.add(errorResourceLabel);
         return panel;
     }
 

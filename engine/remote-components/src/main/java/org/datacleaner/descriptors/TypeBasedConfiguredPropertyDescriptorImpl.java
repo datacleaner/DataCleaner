@@ -37,6 +37,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
+ * Representation of configured property of remote transformer, in case that the property value class is available on
+ * the client side like on the server. For example property of type String.class can be represented by a String.class
+ * on server as well as on the client. But if server has some exotic class for property values, that is not
+ * available on client classpath, such a property must be represented by {@link JsonSchemaConfiguredPropertyDescriptorImpl}.
+ *
+ * @see RemoteTransformer
  * @Since 9/9/15
  */
 public class TypeBasedConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor {

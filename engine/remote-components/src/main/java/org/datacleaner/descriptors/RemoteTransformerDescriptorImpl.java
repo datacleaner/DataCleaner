@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Transformer descriptor that represents a remote transformer sitting on a DataCleaner Monitor server. This descriptor
+ * is created by {@link RemoteDescriptorProvider} when it downloads a transformers list from the server.
  @Since 9/1/15
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor, HasIcon {

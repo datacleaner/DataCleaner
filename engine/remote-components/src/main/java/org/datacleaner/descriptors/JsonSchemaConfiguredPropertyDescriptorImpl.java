@@ -35,6 +35,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Property descriptor for properties of RemoteTransformer, which has no appropriate class on the client side.
+ * (Class is available only on server, but is not part of standard DataCleaner installation).
+ * The data type of the property is represented by Json Schema. Special care was taken to support enumerations.
+ *
  * @Since 9/1/15
  */
 public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor implements EnumerationProvider {

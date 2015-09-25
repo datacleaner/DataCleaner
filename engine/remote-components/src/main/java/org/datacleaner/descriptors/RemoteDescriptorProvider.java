@@ -36,6 +36,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
+ * Provides descriptors of components that are available for remote calls on a DataCleaner Monitor server.
+ * The list of them is downloaded and appropriate descriptors are created for them
+ * ({@link RemoteTransformerDescriptorImpl}).
+ *
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {

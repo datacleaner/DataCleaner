@@ -26,7 +26,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentCache;

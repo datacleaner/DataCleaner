@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ import org.w3c.dom.Document;
  * Class RemoteComponentsConfigurationImpl
  *
  */
-public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfiguration{
+public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteComponentsConfigurationImpl.class);
 
@@ -104,7 +104,7 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
             ConfiguredPropertyDescriptor propDesc = componentDescriptor
                     .getConfiguredProperty(defaultProperty.getName());
             if (propDesc == null) {
-                LOGGER.warn("Component '{}' not contains property '{}'.", componentDescriptor.getDisplayName(),
+                LOGGER.warn("Component '{}' does not contain property '{}'.", componentDescriptor.getDisplayName(),
                         defaultProperty.getName());
                 continue;
             }

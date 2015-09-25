@@ -31,8 +31,6 @@ import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.RemoteComponentsConfiguration;
-import org.datacleaner.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;

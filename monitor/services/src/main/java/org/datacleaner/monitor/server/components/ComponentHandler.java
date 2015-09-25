@@ -41,7 +41,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;

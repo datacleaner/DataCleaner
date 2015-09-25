@@ -1,3 +1,23 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
 package org.datacleaner.monitor.configuration;
 
 import static org.easymock.EasyMock.anyObject;
@@ -15,7 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.datacleaner.configuration.RemoteComponentsConfigurationImpl;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -33,7 +52,7 @@ public class RemoteComponentsConfBeanDefinitionParserTest {
 
     @Test
     public void testDoParseOneDefault() throws Exception {
-        ConstructorObject constructorObj = readXmlFile("remoteConfigContextTest1.xml");
+        ConstructorObject constructorObj = readXmlFile("remote_config/remoteConfigContextTest1.xml");
         Assert.assertEquals(0, constructorObj.includeSet.size());
         Assert.assertEquals(0, constructorObj.excludeSet.size());
         Assert.assertEquals(1, constructorObj.properties.size());
@@ -47,7 +66,7 @@ public class RemoteComponentsConfBeanDefinitionParserTest {
 
     @Test
     public void testDoParseEmpty() throws Exception {
-        ConstructorObject constructorObj = readXmlFile("remoteConfigContextTest2.xml");
+        ConstructorObject constructorObj = readXmlFile("remote_config/remoteConfigContextTest2.xml");
         Assert.assertEquals(0, constructorObj.includeSet.size());
         Assert.assertEquals(0, constructorObj.excludeSet.size());
         Assert.assertEquals(0, constructorObj.properties.size());
@@ -55,17 +74,16 @@ public class RemoteComponentsConfBeanDefinitionParserTest {
 
     @Test
     public void testDoParseIncludes() throws Exception {
-        ConstructorObject constructorObj = readXmlFile("remoteConfigContextTest3.xml");
+        ConstructorObject constructorObj = readXmlFile("remote_config/remoteConfigContextTest3.xml");
         Assert.assertEquals(2, constructorObj.includeSet.size());
         Assert.assertEquals("[Component1, Component2]", constructorObj.includeSet.toString());
-
         Assert.assertEquals(0, constructorObj.excludeSet.size());
         Assert.assertEquals(0, constructorObj.properties.size());
     }
 
     @Test
     public void testDoParseExcludes() throws Exception {
-        ConstructorObject constructorObj = readXmlFile("remoteConfigContextTest4.xml");
+        ConstructorObject constructorObj = readXmlFile("remote_config/remoteConfigContextTest4.xml");
         Assert.assertEquals(0, constructorObj.includeSet.size());
         Assert.assertEquals(2, constructorObj.excludeSet.size());
         Assert.assertEquals("[Component1, Component2]", constructorObj.excludeSet.toString());

@@ -1,4 +1,24 @@
-package org.datacleaner.configuration;
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
+package org.datacleaner.monitor.configuration;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
@@ -18,7 +38,6 @@ import java.util.Set;
 import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.ComponentConfiguration;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRunner;
 import org.easymock.IAnswer;
@@ -130,12 +149,6 @@ public class RemoteComponentsConfigurationImplTest {
         remoteComponentsConfiguration.setDefaultValues(componentDescriptorMock, componentMock);
 
         verify(configuredPropertyDescriptorMock);
-    }
-
-    private Object getValue(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentConfiguration componentConfiguration) {
-        final Object value = componentConfiguration.getProperty(propertyDescriptor);
-        return value;
     }
 
 }

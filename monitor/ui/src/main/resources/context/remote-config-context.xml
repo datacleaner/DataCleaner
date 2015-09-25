@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:remconf="http://www.datacleaner.org/schema/remoteComponentsConfiguration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.datacleaner.org/schema/remoteComponentsConfiguration http://www.datacleaner.org/schema/remoteComponentsConfiguration.xsd">
+
+    <!--
+        <remconf:published-components id="published-components">
+            <remconf:includes>
+                <remconf:include name="Concatenator"/>
+            </remconf:includes>
+            <remconf:defaults>
+                <remconf:component name="Concatenator">
+                    <remconf:properties>
+                        <remconf:property name="Separator">
+                        _
+                        </remconf:property>
+                    </remconf:properties>
+                </remconf:component>
+            </remconf:defaults>
+        </remconf:published-components>
+    -->
+</beans>

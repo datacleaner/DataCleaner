@@ -32,6 +32,7 @@ import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
@@ -59,6 +60,7 @@ public class ComponentControllerV1Test {
     @Before
     public void setUp() {
         componentControllerV1._tenantContextFactory = getTenantContextFactoryMock();
+        componentControllerV1._remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl();
         componentControllerV1.init();
     }
 

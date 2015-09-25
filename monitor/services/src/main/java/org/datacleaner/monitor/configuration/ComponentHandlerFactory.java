@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**

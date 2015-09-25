@@ -31,7 +31,6 @@ import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.repository.RepositoryFolder;

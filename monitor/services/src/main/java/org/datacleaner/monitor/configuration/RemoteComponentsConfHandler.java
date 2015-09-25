@@ -17,39 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
 
-import org.datacleaner.api.Component;
-import org.datacleaner.descriptors.ComponentDescriptor;
+package org.datacleaner.monitor.configuration;
+
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * Class RemoteComponentsConfiguration
+ * Class RemoteComponentsConfigurationHandler
  *
+ * @author k.houzvicka
+ * @since 18.9.15
  */
-public interface RemoteComponentsConfiguration {
-
-
-    /**
-     * Is the component allowed?
-     *
-     * @param componentDescriptor
-     * @return
-     */
-    public boolean isAllowed(ComponentDescriptor componentDescriptor);
-
-    /**
-     * Is the component allowed?
-     *
-     * @param componentDisplayName
-     * @return
-     */
-    public boolean isAllowed(String componentDisplayName);
-
-    /**
-     * Method put or replaces the default values for specific controller.
-     *
-     * @param componentDescriptor
-     * @param component
-     */
-    public void setDefaultValues(ComponentDescriptor componentDescriptor, Component component);
+public class RemoteComponentsConfHandler extends NamespaceHandlerSupport {
+    @Override
+    public void init() {
+        registerBeanDefinitionParser("published-components", new RemoteComponentsConfBeanDefinitionParser());
+    }
 }

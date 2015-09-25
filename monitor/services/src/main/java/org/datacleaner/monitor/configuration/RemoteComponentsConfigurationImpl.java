@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 
 /**
  * Class RemoteComponentsConfigurationImpl
- *
+ * 
  */
 public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfiguration {
 
@@ -63,7 +63,8 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
     public RemoteComponentsConfigurationImpl() {
     }
 
-    public RemoteComponentsConfigurationImpl(Set<String> includeSet, Set<String> excludeSet, Map<String, List<Property>> properties) {
+    public RemoteComponentsConfigurationImpl(Set<String> includeSet, Set<String> excludeSet,
+            Map<String, List<Property>> properties) {
         this.includeSet = includeSet;
         this.excludeSet = excludeSet;
         this.properties = properties;
@@ -71,18 +72,18 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
 
     @Override
     public boolean isAllowed(String componentDisplayName) {
-        if(includeSet.isEmpty() && excludeSet.isEmpty()){
+        if (includeSet.isEmpty() && excludeSet.isEmpty()) {
             return true;
         }
-        if(includeSet.isEmpty()){
-            if(excludeSet.contains(componentDisplayName)){
+        if (includeSet.isEmpty()) {
+            if (excludeSet.contains(componentDisplayName)) {
                 return false;
             }
             return true;
-        }else {
-            if(includeSet.contains(componentDisplayName)){
+        } else {
+            if (includeSet.contains(componentDisplayName)) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         }
@@ -115,19 +116,24 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
                 objectProperty = StringConverter.simpleInstance().deserialize(inputValue, type);
             } else {
                 // Value is XML
-                try {
-                    JAXBContext context = JAXBContext.newInstance(type);
-                    Unmarshaller unmarshaller = context.createUnmarshaller();
-                    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                    dbFactory.setNamespaceAware(false);
-                    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                    Document doc = dBuilder.parse(IOUtils.toInputStream(defaultProperty.getValue(), "UTF-8"));
-                    doc.normalizeDocument();
-                    objectProperty = unmarshaller.unmarshal(doc, type).getValue();
-                } catch (Exception e) {
-                    LOGGER.warn("Problem with parsing '{}' property. Input value: {}", defaultProperty.getName(),
-                            inputValue);
-                    continue;
+                if (defaultProperty.getDeserialObject() == null) {
+                    try {
+                        JAXBContext context = JAXBContext.newInstance(type);
+                        Unmarshaller unmarshaller = context.createUnmarshaller();
+                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                        dbFactory.setNamespaceAware(false);
+                        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                        Document doc = dBuilder.parse(IOUtils.toInputStream(defaultProperty.getValue(), "UTF-8"));
+                        doc.normalizeDocument();
+                        objectProperty = unmarshaller.unmarshal(doc, type).getValue();
+                        defaultProperty.setDeserialObject(objectProperty);
+                    } catch (Exception e) {
+                        LOGGER.warn("Problem with parsing '{}' property. Input value: {}", defaultProperty.getName(),
+                                inputValue);
+                        continue;
+                    }
+                } else {
+                    objectProperty = defaultProperty.getDeserialObject();
                 }
             }
             configuredProperties.put(propDesc, objectProperty);
@@ -137,15 +143,15 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
         helper.assignProperties(component, componentDescriptor, componentConfiguration, true);
     }
 
-
     public static class Property {
         private String name;
         private String value;
         private boolean isSimpleString;
+        private Object deserialObject = null;
 
         public Property(String name, String value, boolean simpleString) {
             this.name = name;
-            isSimpleString = simpleString;
+            this.isSimpleString = simpleString;
             this.value = value;
         }
 
@@ -159,6 +165,14 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
 
         public boolean isSimpleString() {
             return isSimpleString;
+        }
+
+        public Object getDeserialObject() {
+            return deserialObject;
+        }
+
+        public void setDeserialObject(Object deserialObject) {
+            this.deserialObject = deserialObject;
         }
     }
 }

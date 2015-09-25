@@ -28,9 +28,28 @@ import org.datacleaner.descriptors.ComponentDescriptor;
  */
 public interface RemoteComponentsConfiguration {
 
+
+    /**
+     * Is the component allowed?
+     *
+     * @param componentDescriptor
+     * @return
+     */
     public boolean isAllowed(ComponentDescriptor componentDescriptor);
 
+    /**
+     * Is the component allowed?
+     *
+     * @param componentDisplayName
+     * @return
+     */
     public boolean isAllowed(String componentDisplayName);
 
+    /**
+     * Method put or replaces the default values for specific controller.
+     *
+     * @param componentDescriptor
+     * @param component
+     */
     public void setDefaultValues(ComponentDescriptor componentDescriptor, Component component);
 }

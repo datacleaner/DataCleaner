@@ -19,7 +19,6 @@
  */
 package org.datacleaner.beans;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
-import org.datacleaner.result.CrosstabNavigator;
+import org.datacleaner.util.CrosstabReducerHelper;
 
 public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReducer<BooleanAnalyzerResult> {
 
@@ -43,8 +42,8 @@ public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReduce
         for (BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
-            createDimensions(columnStatisticCrosstabDimensions, partialColumnStatisticsCrosstab);
-            createDimensions(columnValueCombinationCrosstabDimensions, partialValueCombinationCrosstab);
+            CrosstabReducerHelper.createDimensions(columnStatisticCrosstabDimensions, partialColumnStatisticsCrosstab);
+            CrosstabReducerHelper.createDimensions(columnValueCombinationCrosstabDimensions, partialValueCombinationCrosstab);
         }
 
         //create the crosstabs
@@ -53,69 +52,20 @@ public class ReferenceDataMatcherAnalyzerReducer implements AnalyzerResultReduce
         final Crosstab<Number> newResultColumnValueCombination = new Crosstab<Number>(Number.class,
                 columnValueCombinationCrosstabDimensions);
 
-        //define the navigators
-        final CrosstabNavigator<Number> columnStatisticsNavigator = new CrosstabNavigator<Number>(
-                newResultColumnStatistics);
-        final CrosstabNavigator<Number> columnValueCombinationNavigator = new CrosstabNavigator<Number>(
-                newResultColumnValueCombination);
-        
         //add the partial results 
         for (BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
-            addData(columnStatisticsNavigator, partialColumnStatisticsCrosstab);
-            addData(columnValueCombinationNavigator, partialValueCombinationCrosstab);
+            CrosstabReducerHelper.addData(newResultColumnStatistics, partialColumnStatisticsCrosstab);
+            CrosstabReducerHelper.addData(newResultColumnValueCombination, partialValueCombinationCrosstab);
         }
 
         return new BooleanAnalyzerResult(newResultColumnStatistics, newResultColumnValueCombination);
     }
 
-    private void createDimensions(List<CrosstabDimension> crosstabDimensions,
-            final Crosstab<Number> partialColumnCrosstab) {
-        if (partialColumnCrosstab != null) {
-            final List<CrosstabDimension> dimensions = partialColumnCrosstab.getDimensions();
-            for (CrosstabDimension dimension : dimensions) {
-                if (!dimensionExits(crosstabDimensions, dimension)) {
-                    crosstabDimensions.add(dimension);
-                }
-            }
-        }
-    }
+   
 
-    private void addData(final CrosstabNavigator<Number> mainNavigator, final Crosstab<Number> partialCrosstab) {
-        if (partialCrosstab != null) {
-            final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
-            final List<CrosstabDimension> dimensions = partialCrosstab.getDimensions();
-            for (CrosstabDimension dimension : dimensions) {
-                final List<String> categories = dimension.getCategories();
-                for (String category : categories) {
-                    final Number categoryValue = nav.where(dimension, category).safeGet(null);
-                    final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
-                    if (categoryValue != null) {
-                        final Number oldValue = whereToPut.safeGet(null);
-                        if (oldValue != null) {
-                            final Number newValue = new BigDecimal(categoryValue.longValue()).add(new BigDecimal(oldValue.longValue()));
-                            whereToPut.put(newValue);
-                        } else {
-                            whereToPut.put(categoryValue);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    private boolean dimensionExits(Collection<CrosstabDimension> list, CrosstabDimension dimension) {
-        if (list.size() > 0) {
-            boolean allreadyExits = false;
-            for (CrosstabDimension dim : list) {
-                if (dimension.equals(dim)) {
-                    allreadyExits = true;
-                    break;
-                }
-            }
-            return allreadyExits;
-        }
-        return false;
-    }
+
+   
 }

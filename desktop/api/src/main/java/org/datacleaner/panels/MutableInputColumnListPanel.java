@@ -51,8 +51,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
     private final JXTextField _textField;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final OutputColumnVisibilityButton _visibilityButton;
-
-    public JComponent panelOwner;
+    private final JComponent panelOwner;
 
     /**
      *

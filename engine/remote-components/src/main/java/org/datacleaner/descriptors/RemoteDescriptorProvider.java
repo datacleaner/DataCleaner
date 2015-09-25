@@ -34,9 +34,7 @@ import org.slf4j.LoggerFactory;
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
-
     private String url, username, password;
     private String tenant = "test"; // TODO
 
@@ -83,17 +81,22 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
-
             try {
                 logger.info("Loading remote components list from " + url);
                 // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
-                ComponentList components = client.getAllComponents(tenant);
+                ComponentList components = client.getAllComponents(tenant, true);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
-                                component.getName(), tenant, username, password);
+                                component.getName(),
+                                tenant,
+                                component.getSuperCategoryName(),
+                                component.getCategoryNames(),
+                                component.getIconData(),
+                                username,
+                                password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
                             String name = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();

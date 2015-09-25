@@ -33,17 +33,17 @@ public class ComponentRESTClient implements ComponentController {
         restClient = new RESTClientImpl(username, password);
     }
 
-    public ComponentList getAllComponents(final String tenant) {
+    public ComponentList getAllComponents(final String tenant, final boolean iconData) {
         this.tenantName = tenant;
-        String response = call(RESTClient.HttpMethod.GET, getURL(""), "");
+        String response = call(RESTClient.HttpMethod.GET, getURL("?iconData=" + iconData), "");
 
         return Serializator.componentList(response);
     }
 
-    public ComponentList.ComponentInfo getComponentInfo(final String tenant, String componentName) {
+    public ComponentList.ComponentInfo getComponentInfo(final String tenant, String componentName, boolean iconData) {
         this.tenantName = tenant;
         componentName = urlify(componentName);
-        String response = call(RESTClient.HttpMethod.GET, getURL(componentName), "");
+        String response = call(RESTClient.HttpMethod.GET, getURL(componentName + "&iconData=" + iconData), "");
 
         return Serializator.componentInfo(response);
     }

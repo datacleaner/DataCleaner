@@ -19,11 +19,14 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -31,6 +34,8 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.apache.commons.io.IOUtils;
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -55,6 +60,7 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +93,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
     private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
+    private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -108,11 +115,13 @@ public class ComponentControllerV1 implements ComponentController {
     /**
      * It returns a list of all components and their configurations.
      * @param tenant
+     * @param iconData
      * @return
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant) {
+    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider()
@@ -120,7 +129,7 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            componentList.add(createComponentInfo(tenant, descriptor));
+            componentList.add(createComponentInfo(tenant, descriptor, iconData));
         }
 
         LOGGER.debug("Informing about {} components", componentList.getComponents().size());
@@ -131,12 +140,13 @@ public class ComponentControllerV1 implements ComponentController {
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList.ComponentInfo getComponentInfo(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("name") String name) {
+            @PathVariable(PARAMETER_NAME_NAME) String name,
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
         LOGGER.debug("Informing about '{}'", name);
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
-        return createComponentInfo(tenant, descriptor);
+        return createComponentInfo(tenant, descriptor, iconData);
     }
 
     /**
@@ -275,12 +285,44 @@ public class ComponentControllerV1 implements ComponentController {
         }
     }
 
-    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
-        return new ComponentList.ComponentInfo()
+    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor,
+                                                                  boolean iconData) {
+        ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
+                .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
+                .setCategoryNames(getCategoryNames(descriptor))
                 .setProperties(createPropertiesInfo(descriptor));
+
+        if (iconData) {
+            componentInfo.setIconData(getComponentIconData(descriptor));
+        }
+
+        return componentInfo;
+    }
+
+    private static byte[] getComponentIconData(ComponentDescriptor descriptor) {
+        try {
+            String imagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
+            InputStream imageStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(imagePath);
+
+            return IOUtils.toByteArray(imageStream);
+        }
+        catch (NullPointerException | IOException e) {
+            return new byte[0];
+        }
+    }
+
+    private static Set<String> getCategoryNames(ComponentDescriptor componentDescriptor) {
+        Set<String> categoryNames = new HashSet<>();
+
+        for (Object element: componentDescriptor.getComponentCategories()) {
+            ComponentCategory componentCategory = (ComponentCategory) element;
+            categoryNames.add(componentCategory.getClass().getName());
+        }
+
+        return categoryNames;
     }
 
     static private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
@@ -355,6 +397,4 @@ public class ComponentControllerV1 implements ComponentController {
             propInfo.setSchema(visitor.finalSchema());
         }
     }
-
-
 }

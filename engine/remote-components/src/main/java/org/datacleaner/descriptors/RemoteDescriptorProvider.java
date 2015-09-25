@@ -25,11 +25,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.Serializator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @Since 9/8/15
@@ -102,25 +106,27 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                             String propertyName = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();
                             String className = propInfo.getClassName();
+                            ConfiguredPropertyDescriptor propDesc;
                             try {
-                                Class cl = Class.forName(className, false, getClass().getClassLoader());
-                                transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                                Class cl = findClass(className);
+                                transformer.addPropertyDescriptor(propDesc = new TypeBasedConfiguredPropertyDescriptorImpl(
                                         propertyName,
                                         propInfo.getDescription(),
                                         cl,
                                         propInfo.isRequired(),
                                         transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations())));
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()), propInfo.getDefaultValue()));
                             } catch(Exception e) {
+                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}'", component.getName(), propertyName, e);
                                 // class not available on this server.
-                                transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                                transformer.addPropertyDescriptor(propDesc = new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         propertyName,
                                         propInfo.getSchema(),
                                         propInfo.isInputColumn(),
                                         propInfo.getDescription(),
                                         propInfo.isRequired(),
                                         transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations())));
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()), propInfo.getDefaultValue()));
                             }
                         }
                         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
@@ -133,6 +139,10 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 // TODO: plan a task to try again after somw while. And then notify listeners...
             }
         }
+    }
+
+    Class findClass(String name) throws ClassNotFoundException {
+        return ClassUtils.getClass(getClass().getClassLoader(), name, false);
     }
 
     private Map<Class<Annotation>, Annotation> initAnnotations(String componentName, String propertyName, Map<String, Map<String, Object>> annotationsInfo) {
@@ -149,6 +159,9 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
         return annotations;
+    }
+
+    public static void main(String[] args) throws Exception {
     }
 
 }

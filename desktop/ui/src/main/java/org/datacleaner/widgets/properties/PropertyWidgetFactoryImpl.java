@@ -38,6 +38,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.guice.DCModule;
@@ -283,7 +284,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
             } else if (type == StringPattern.class) {
                 widgetClass = MultipleStringPatternPropertyWidget.class;
-            } else if(type == EnumerationValue.class) {
+            } else if(type == EnumerationValue.class && propertyDescriptor instanceof EnumerationProvider) {
                 widgetClass = MultipleRemoteEnumPropertyWidget.class;
             } else if (type.isEnum()) {
                 widgetClass = MultipleEnumPropertyWidget.class;
@@ -327,7 +328,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 widgetClass = SingleSynonymCatalogPropertyWidget.class;
             } else if (type == StringPattern.class) {
                 widgetClass = SingleStringPatternPropertyWidget.class;
-            } else if(type == EnumerationValue.class) {
+            } else if(type == EnumerationValue.class && propertyDescriptor instanceof EnumerationProvider) {
                 widgetClass = SingleRemoteEnumPropertyWidget.class;
             } else if (type.isEnum()) {
                 widgetClass = SingleEnumPropertyWidget.class;

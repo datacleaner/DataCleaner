@@ -116,6 +116,11 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     @Override
     public Object newInstance() {
         RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
+        for(ConfiguredPropertyDescriptor prop: (Set<ConfiguredPropertyDescriptor>)_configuredProperties) {
+            if(prop instanceof RemoteConfiguredPropertyDescriptor) {
+                ((RemoteConfiguredPropertyDescriptor)prop).setDefaultValue(t);
+            }
+        }
         return t;
     }
 

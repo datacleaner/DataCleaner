@@ -32,14 +32,14 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
+import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
 
-@Named("URL standardizer")
+@Named("URL parser")
 @Description("Retrieve the individual parts of an URL, including protocol, domain, port, path and querystring.")
-@Categorized({ MatchingAndStandardizationCategory.class })
+@Categorized({ TextCategory.class })
 public class UrlStandardizerTransformer implements Transformer {
 
 	public static final String[] PATTERNS = { "PROTOCOL://DOMAIN:PORTPATH\\?QUERYSTRING",

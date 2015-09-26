@@ -19,7 +19,6 @@
  */
 package org.datacleaner.components.remote;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,17 +37,13 @@ import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * @Since 9/1/15
@@ -56,13 +51,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 public class RemoteTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformer.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    static {
-        SimpleModule myModule = new SimpleModule("RemoteTransformersModule", new Version(1, 0, 0, null, "org.datacleaner", "DataCleaner-remote-transformers"));
-        myModule.addSerializer(new MyInputColumnsSerializer()); // assuming serializer declares correct class to bind to
-        mapper.registerModule(myModule);
-    }
+    private static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private String baseUrl;
     private String componentDisplayName;
@@ -105,10 +94,12 @@ public class RemoteTransformer implements Transformer {
         try {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
+
             org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, createInput);
+
             outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
             int i = 0;
-            for(org.datacleaner.restclient.OutputColumns.OutputColumn colSpec: columnsSpec.getColumns()) {
+            for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
                 outCols.setColumnName(i, colSpec.name);
                 try {
                     outCols.setColumnType(i, Class.forName(colSpec.type));
@@ -121,6 +112,8 @@ public class RemoteTransformer implements Transformer {
             }
             cachedOutputColumns = outCols;
             return outCols;
+        } catch(Exception e) {
+            return new OutputColumns(String.class, "Unknown");
         } finally {
             if(wasInit) {
                 close();
@@ -240,15 +233,4 @@ public class RemoteTransformer implements Transformer {
         return configuredProperties.get(propertyName);
     }
 
-    private static class MyInputColumnsSerializer extends StdSerializer<InputColumn> {
-
-        protected MyInputColumnsSerializer() {
-            super(InputColumn.class);
-        }
-
-        @Override
-        public void serialize(InputColumn value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeString(value.getName());
-        }
-    }
 }

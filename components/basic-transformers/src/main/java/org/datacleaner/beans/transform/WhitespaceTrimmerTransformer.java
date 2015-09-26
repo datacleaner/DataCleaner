@@ -28,12 +28,12 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.util.StringUtils;
 
 @Named("Whitespace trimmer")
 @Description("Trims your String values either on left, right or both sides.")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class WhitespaceTrimmerTransformer implements Transformer {
 
 	@Configured

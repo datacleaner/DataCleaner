@@ -130,7 +130,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public final Set<ComponentCategory> getComponentCategories() {
+    public Set<ComponentCategory> getComponentCategories() {
         Categorized categorized = getAnnotation(Categorized.class);
         if (categorized == null) {
             return Collections.emptySet();

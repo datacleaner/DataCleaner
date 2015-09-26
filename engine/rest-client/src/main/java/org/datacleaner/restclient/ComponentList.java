@@ -21,8 +21,10 @@ package org.datacleaner.restclient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,7 +36,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
  * @since 24. 07. 2015
  */
 public class ComponentList {
-
     private List<ComponentInfo> components = new ArrayList<>();
 
     public void add(ComponentInfo componentInfo) {
@@ -50,11 +51,13 @@ public class ComponentList {
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ComponentInfo {
-
         private String name = "";
         private String description = "";
         private String createURL = "";
+        private Set<String> categoryNames = new HashSet<>();
+        private String superCategoryName = null;
         private Map<String, PropertyInfo> properties = new HashMap<>();
+        private byte[] iconData = null;
 
         public ComponentInfo setProperties(Map<String, PropertyInfo> properties) {
             this.properties = properties;
@@ -91,6 +94,33 @@ public class ComponentList {
             this.createURL = createURL;
             return this;
         }
+
+        public Set<String> getCategoryNames() {
+            return categoryNames;
+        }
+
+        public ComponentInfo setCategoryNames(Set<String> categoryNames) {
+            this.categoryNames = categoryNames;
+            return this;
+        }
+
+        public String getSuperCategoryName() {
+            return superCategoryName;
+        }
+
+        public ComponentInfo setSuperCategoryName(String superCategoryName) {
+            this.superCategoryName = superCategoryName;
+            return this;
+        }
+
+        public byte[] getIconData() {
+            return iconData;
+        }
+
+        public ComponentInfo setIconData(byte[] iconData) {
+            this.iconData = iconData;
+            return this;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -99,12 +129,13 @@ public class ComponentList {
         private String name;
         /** More human-readable class name, which contains also info about generics. */
         private String classDetails;
-        /** Class name that can can be deserialized to Class object */
+        /** Class name that can be deserialized to Class object */
         private String className;
         private JsonSchema schema;
         private String description;
         private boolean required;
         private boolean isInputColumn;
+        private Map<String, Map<String, Object>> annotations = new HashMap<>();
 
         public void setIsInputColumn(boolean inputColumn) {
             isInputColumn = inputColumn;
@@ -122,8 +153,6 @@ public class ComponentList {
             this.name = name;
         }
 
-        // We don't need name in the property info, since it is used a a key in the properties map.
-        @JsonIgnore
         public String getName() {
             return name;
         }
@@ -167,6 +196,10 @@ public class ComponentList {
         public void setClassDetails(String classDetails) {
             this.classDetails = classDetails;
         }
-    }
 
+        public Map<String, Map<String, Object>> getAnnotations() { return annotations; }
+
+        public void setAnnotations(Map<String, Map<String, Object>> annotations) { this.annotations = annotations; }
+
+    }
 }

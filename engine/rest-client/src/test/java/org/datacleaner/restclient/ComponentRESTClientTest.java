@@ -47,7 +47,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetAllComponents() throws Exception {
         try {
-            ComponentList componentList = componentRESTClient.getAllComponents(this.TENANT);
+            ComponentList componentList = componentRESTClient.getAllComponents(this.TENANT, false);
             logger.info(componentList.toString());
             Assert.assertTrue(componentList != null);
         }
@@ -59,7 +59,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetComponentInfo() throws Exception {
         try {
-            ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(this.TENANT, this.COMPONENT_NAME);
+            ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(this.TENANT, this.COMPONENT_NAME, false);
             logger.info(componentInfo.toString());
             Assert.assertTrue(componentInfo != null);
         }

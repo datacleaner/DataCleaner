@@ -19,24 +19,14 @@
  */
 package org.datacleaner.components.categories;
 
-import org.datacleaner.components.categories.ConversionCategory;
-import org.datacleaner.components.categories.DataStructuresCategory;
-import org.datacleaner.components.categories.DateAndTimeCategory;
-import org.datacleaner.components.categories.FilterCategory;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
-import org.datacleaner.components.categories.NumbersCategory;
-import org.datacleaner.components.categories.ScriptingCategory;
-import org.datacleaner.components.categories.StringManipulationCategory;
-import org.datacleaner.components.categories.ValidationCategory;
-
 import junit.framework.TestCase;
 
 public class AbstractComponentCategoryTest extends TestCase {
 
 	public void testGetName() throws Exception {
 		assertEquals("Scripting", new ScriptingCategory().getName());
-		assertEquals("String manipulation", new StringManipulationCategory().getName());
-		assertEquals("String manipulation", new StringManipulationCategory().toString());
+		assertEquals("Text", new TextCategory().getName());
+		assertEquals("Text", new TextCategory().toString());
 		
 		assertEquals("Conversion", new ConversionCategory().getName());
 		assertEquals("Data structures", new DataStructuresCategory().getName());
@@ -49,9 +39,9 @@ public class AbstractComponentCategoryTest extends TestCase {
 	}
 	
 	public void testEquals() throws Exception {
-        assertEquals(new StringManipulationCategory(), new StringManipulationCategory());
-        assertEquals(new StringManipulationCategory().hashCode(), new StringManipulationCategory().hashCode());
-        assertFalse(new NumbersCategory().equals(new StringManipulationCategory()));
-        assertFalse(new NumbersCategory().hashCode() == new StringManipulationCategory().hashCode());
+        assertEquals(new TextCategory(), new TextCategory());
+        assertEquals(new TextCategory().hashCode(), new TextCategory().hashCode());
+        assertFalse(new NumbersCategory().equals(new TextCategory()));
+        assertFalse(new NumbersCategory().hashCode() == new TextCategory().hashCode());
     }
 }

@@ -24,31 +24,82 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.*;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @Since 9/1/15
  */
-public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor {
-    
+public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor, EnumerationProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaConfiguredPropertyDescriptorImpl.class);
+
     private String name;
     private String description;
     private JsonSchema schema;
     private ComponentDescriptor component;
     private boolean isInputColumn;
     private boolean required;
+    private boolean isArray;
+    private Class baseType;
+    private EnumerationValue[] enumValues;
+    Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations) {
         this.name = name;
         this.description = description;
         this.schema = schema;
         this.isInputColumn = isInputColumn;
         this.component = component;
         this.required = required;
+        this.annotations = annotations;
+        init();
+    }
+
+    private void init() {
+        isArray = schema.isArraySchema();
+        JsonSchema baseSchema;
+
+        if(isArray) {
+            baseSchema = ((ArraySchema)schema).getItems().asSingleItems().getSchema();
+        } else {
+            baseSchema = schema;
+        }
+
+        enumValues = new EnumerationValue[0]; // default
+        if(baseSchema instanceof ValueTypeSchema) {
+            Set<String> enums = ((ValueTypeSchema)baseSchema).getEnums();
+            if(enums != null && !enums.isEmpty()) {
+                enumValues = new EnumerationValue[enums.size()];
+                int i = 0;
+                for(String value: enums) {
+                    String enumValue, enumName;
+                    int idx = value.indexOf("::");
+                    if(idx >= 0) {
+                        enumValue = value.substring(0, idx);
+                        enumName = value.substring(idx+2);
+                    } else {
+                        enumValue = value;
+                        enumName = value;
+                    }
+                    if(enumName.trim().isEmpty()) {
+                        enumName = value;
+                    }
+
+                    enumValues[i++] = new EnumerationValue(enumValue, enumName);
+                }
+            }
+        }
+
+        // must be called after enums are initialized
+        baseType = schemaToJavaType(baseSchema);
     }
 
     @Override
@@ -74,12 +125,12 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     @Override
     public Set<Annotation> getAnnotations() {
-        return Collections.emptySet();
+        return new HashSet<>(annotations.values());
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-        return null;
+        return (A) annotations.get(annotationClass);
     }
 
     @Override
@@ -87,21 +138,17 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         if(isArray()) {
             return Array.newInstance(getBaseType(), 0).getClass();
         }
-        return schemaToJavaType(schema);
+        return baseType;
     }
 
     @Override
     public boolean isArray() {
-        return schema.isArraySchema();
+        return isArray;
     }
 
     @Override
     public Class<?> getBaseType() {
-        if(isArray()) {
-            return schemaToJavaType(((ArraySchema)schema).getItems().asSingleItems().getSchema());
-        } else {
-            return schemaToJavaType(schema);
-        }
+        return baseType;
     }
 
     @Override
@@ -151,6 +198,9 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     private Class<?> schemaToJavaType(JsonSchema schema) {
         // try to convert
+        if(isEnum()) {
+            return EnumerationValue.class;
+        }
         if(schema instanceof StringSchema) { return String.class; }
         if(schema instanceof IntegerSchema) { return Integer.class; }
         if(schema instanceof BooleanSchema) { return Boolean.class; }
@@ -158,4 +208,18 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         // fallback
         return JsonNode.class;
     }
+
+    public boolean isEnum() {
+        return enumValues != null && enumValues.length > 0;
+    }
+
+    public EnumerationValue[] getEnumValues() {
+        return enumValues;
+    }
+
+    @Override
+    public EnumerationValue[] values() {
+        return enumValues;
+    }
+
 }

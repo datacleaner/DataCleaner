@@ -45,6 +45,7 @@ import org.datacleaner.util.NamedPatternMatch;
 @Named("Name standardizer")
 @Description("Identify the various parts of a full name column and turn it into separate, standardized tokens.")
 @Categorized({ MatchingAndStandardizationCategory.class })
+@Deprecated
 public class NameStandardizerTransformer implements Transformer {
 
 	public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",

@@ -30,12 +30,12 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 import org.apache.metamodel.util.HasName;
 
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class TextCaseTransformer implements Transformer {
 
     /**

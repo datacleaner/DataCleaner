@@ -34,7 +34,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 import org.apache.metamodel.util.HasName;
 
 /**
@@ -44,7 +44,7 @@ import org.apache.metamodel.util.HasName;
  */
 @Named("Tokenizer")
 @Description("Tokenizes a String value (splits into substrings).")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class TokenizerTransformer implements Transformer {
 
     public static enum TokenTarget implements HasName {

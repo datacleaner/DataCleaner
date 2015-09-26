@@ -38,6 +38,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
@@ -56,12 +57,14 @@ import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
+import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.result.CategorizationResult;
+import org.datacleaner.storage.DummyRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.datacleaner.storage.DummyRowAnnotationFactory;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +79,7 @@ import com.google.common.cache.Cache;
 @Alias("Datastore lookup")
 @Description("Perform a lookup based on a table in any of your registered datastore (like a LEFT join).")
 @Concurrent(true)
+@Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasAnalyzerResult<CategorizationResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);

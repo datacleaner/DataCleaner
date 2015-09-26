@@ -41,7 +41,6 @@ import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.SourceColumnFinder;
-import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
@@ -131,15 +130,13 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         }
 
         for (final Table table : allTablesAndColumns.keySet()) {
-            final DCCheckBox.Listener<InputColumn<?>> checkBoxListener = new DCCheckBox.Listener<InputColumn<?>>() {
+            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table, new StreamColumnListPanel.Listener() {
                 @Override
-                public void onItemSelected(InputColumn<?> item, boolean selected) {
+                public void onValueChanged(StreamColumnListPanel panel) {
                     fireValueChanged();
                     _unitPropertyWidget.fireValueChanged();
                 }
-            };
-
-            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table, checkBoxListener);
+            });
 
             final Collection<InputColumn<?>> selectedColumns = coalescedTablesAndColumns.get(table);
             for (InputColumn<?> inputColumn : selectedColumns) {

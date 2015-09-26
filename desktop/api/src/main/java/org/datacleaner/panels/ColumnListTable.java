@@ -233,7 +233,7 @@ public final class ColumnListTable extends DCPanel {
             final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 
             final MutableInputColumnListPanel panel = new MutableInputColumnListPanel(_analysisJobBuilder,
-                    mutableInputColumn);
+                    mutableInputColumn, _columnTable);
 
             return panel;
         }

@@ -34,7 +34,6 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
@@ -62,16 +61,9 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
         setLayout(new VerticalLayout(0));
 
-        final String iconPath;
-        if (rootAnalysisJobBuilder.containsSourceTable(table)) {
-            iconPath = IconUtils.MODEL_TABLE;
-        } else {
-            iconPath = IconUtils.OUTPUT_DATA_STREAM_PATH;
-        }
-
         final DCLabel streamHeader = DCLabel.dark(table.getName());
         streamHeader.setFont(WidgetUtils.FONT_SMALL.deriveFont(Font.BOLD));
-        streamHeader.setIcon(ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL));
+        streamHeader.setBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION);
         add(streamHeader);
 
         final JButton reorderColumnsButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REORDER_COLUMNS);

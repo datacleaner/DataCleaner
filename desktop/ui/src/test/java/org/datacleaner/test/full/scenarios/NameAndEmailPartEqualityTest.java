@@ -48,6 +48,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 
+@SuppressWarnings("deprecation")
 public class NameAndEmailPartEqualityTest extends TestCase {
 
     public void testScenario() throws Throwable {

@@ -59,6 +59,7 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
 
+@SuppressWarnings("deprecation")
 public class RowProcessingQueryOptimizerTest extends TestCase {
 
     private final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, true);

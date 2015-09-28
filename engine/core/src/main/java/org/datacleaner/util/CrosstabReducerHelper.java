@@ -19,7 +19,6 @@
  */
 package org.datacleaner.util;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -89,8 +88,7 @@ public class CrosstabReducerHelper {
                     if (categoryValue != null) {
                         final Number oldValue = whereToPut.safeGet(null);
                         if (oldValue != null) {
-                            final Number newValue = new BigDecimal(categoryValue.longValue()).add(new BigDecimal(
-                                    oldValue.longValue()));
+                            final Number newValue = addNumbers(oldValue, categoryValue);
                             whereToPut.put(newValue);
                         } else {
                             whereToPut.put(categoryValue);
@@ -99,5 +97,18 @@ public class CrosstabReducerHelper {
                 }
             }
         }
+    }
+
+    private static Number addNumbers(final Number a, final Number b) {
+        if (a instanceof Double || b instanceof Double) {
+            return new Double(a.doubleValue() + b.doubleValue());
+        } else if (a instanceof Float || b instanceof Float) {
+            return new Float(a.floatValue() + b.floatValue());
+        } else if (a instanceof Long || b instanceof Long) {
+            return new Long(a.longValue() + b.longValue());
+        } else {
+            return new Integer(a.intValue() + b.intValue());
+        }
+
     }
 }

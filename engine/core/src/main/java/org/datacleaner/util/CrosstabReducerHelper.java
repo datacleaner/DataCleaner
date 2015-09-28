@@ -109,6 +109,5 @@ public class CrosstabReducerHelper {
         } else {
             return new Integer(a.intValue() + b.intValue());
         }
-
     }
 }

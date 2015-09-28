@@ -119,7 +119,7 @@ public class Dropzone extends DCPanel {
         // hdfs resource selector
         final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel(errorResourceLabel);
         add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+                GridBagConstraints.NONE, new Insets(0, -5, 10, 0), 0, 0));
         hdfsResourceSelectorPanel.setVisible(false);
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {

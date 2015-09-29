@@ -17,15 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
+package org.datacleaner.descriptors;
 
 /**
- * Represents a component capable of matching Strings to enum values
- * 
- * @param <E>
+ * @Since 21.9.15
  */
-public interface EnumMatcher<E> {
-
-    public E suggestMatch(String string);
-
+public interface EnumerationProvider {
+    EnumerationValue[] values();
 }

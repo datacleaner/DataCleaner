@@ -17,15 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
+package org.datacleaner.components.categories;
 
-/**
- * Represents a component capable of matching Strings to enum values
- * 
- * @param <E>
- */
-public interface EnumMatcher<E> {
+public class TextCategory extends AbstractComponentCategory {
 
-    public E suggestMatch(String string);
-
+	private static final long serialVersionUID = 1L;
 }

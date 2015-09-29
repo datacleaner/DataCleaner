@@ -32,13 +32,12 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.DateAndTimeCategory;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @Named("Date mask matcher")
 @Description("Matches String values against a set of date masks, producing a corresponding set of output columns, specifying whether or not the strings could be interpreted as dates given those date masks")
-@Categorized({ MatchingAndStandardizationCategory.class, DateAndTimeCategory.class })
+@Categorized({ DateAndTimeCategory.class })
 public class DateMaskMatcherTransformer implements Transformer {
 
 	public static final String[] DEFAULT_DATE_MASKS = new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy",

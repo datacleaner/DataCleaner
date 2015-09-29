@@ -25,12 +25,12 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
-import org.datacleaner.api.Close;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -39,6 +39,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.SynonymCatalogConnection;
@@ -53,7 +54,7 @@ import org.datacleaner.reference.SynonymCatalogConnection;
 @ExternalDocumentation({
         @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
         @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
-@Categorized(superCategory = ImproveSuperCategory.class)
+@Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured

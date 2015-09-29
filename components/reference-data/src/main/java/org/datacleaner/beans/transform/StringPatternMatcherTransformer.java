@@ -31,7 +31,8 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
+import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.StringPattern;
@@ -39,7 +40,7 @@ import org.datacleaner.reference.StringPatternConnection;
 
 @Named("String pattern matcher")
 @Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")
-@Categorized({ MatchingAndStandardizationCategory.class })
+@Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class StringPatternMatcherTransformer implements Transformer {
 
     @Configured

@@ -25,12 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
@@ -58,9 +52,17 @@ import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * This class is a component type independent wrapper that decides the proper handler and provides its results.
@@ -70,7 +72,7 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
 
-    public static ObjectMapper mapper = new ObjectMapper();
+    public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private final String componentName;
     private DataCleanerConfiguration dcConfiguration;
@@ -250,7 +252,7 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class type = propDesc.getType();
         try {
-            if(value.isArray() || value.isObject()) {
+            if(value.isArray() || value.isObject() || type.isEnum()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
                 return new StringConverter(dcConfiguration).deserialize(value.asText(), type, propDesc.getCustomConverter());

@@ -31,11 +31,11 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)

@@ -35,31 +35,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Property descriptor for properties of RemoteTransformer, which has no appropriate class on the client side.
+ * (Class is available only on server, but is not part of standard DataCleaner installation).
+ * The data type of the property is represented by Json Schema. Special care was taken to support enumerations.
+ *
  * @Since 9/1/15
  */
-public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPropertyDescriptor, EnumerationProvider {
+public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor implements EnumerationProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonSchemaConfiguredPropertyDescriptorImpl.class);
 
-    private String name;
-    private String description;
     private JsonSchema schema;
-    private ComponentDescriptor component;
     private boolean isInputColumn;
-    private boolean required;
     private boolean isArray;
     private Class baseType;
     private EnumerationValue[] enumValues;
-    Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations) {
-        this.name = name;
-        this.description = description;
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations, JsonNode defaultValue) {
+        super(name, description, required, component, annotations, defaultValue);
         this.schema = schema;
         this.isInputColumn = isInputColumn;
-        this.component = component;
-        this.required = required;
-        this.annotations = annotations;
         init();
     }
 
@@ -101,38 +96,6 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
         // must be called after enums are initialized
         baseType = schemaToJavaType(baseSchema);
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setValue(Object component, Object value) throws IllegalArgumentException {
-        if(!(component instanceof RemoteTransformer)) {
-            throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
-        }
-        ((RemoteTransformer)component).setPropertyValue(this.getName(), value);
-    }
-
-    @Override
-    public Object getValue(Object component) throws IllegalArgumentException {
-        if(!(component instanceof RemoteTransformer)) {
-            throw new IllegalArgumentException("Cannot set remote property to non-remote transformer");
-        }
-        return ((RemoteTransformer)component).getPropertyValue(this.getName());
-    }
-
-    @Override
-    public Set<Annotation> getAnnotations() {
-        return new HashSet<>(annotations.values());
-    }
-
-    @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-        return (A) annotations.get(annotationClass);
-    }
-
     @Override
     public Class<?> getType() {
         if(isArray()) {
@@ -152,50 +115,9 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
     }
 
     @Override
-    public ComponentDescriptor<?> getComponentDescriptor() {
-        return component;
-    }
-
-    @Override
-    public int getTypeArgumentCount() {
-        return 0;
-    }
-
-    @Override
-    public Class<?> getTypeArgument(int i) throws IndexOutOfBoundsException {
-        return null;
-    }
-
-    @Override
-    public int compareTo(PropertyDescriptor o) {
-        return getName().compareTo(o.getName());
-    }
-
-    @Override
     public boolean isInputColumn() {
         return isInputColumn;
     }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
-
-    @Override
-    public Class<? extends Converter<?>> getCustomConverter() {
-        return null;
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[0];
-    }
-
     private Class<?> schemaToJavaType(JsonSchema schema) {
         // try to convert
         if(isEnum()) {
@@ -211,10 +133,6 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl implements ConfiguredPro
 
     public boolean isEnum() {
         return enumValues != null && enumValues.length > 0;
-    }
-
-    public EnumerationValue[] getEnumValues() {
-        return enumValues;
     }
 
     @Override

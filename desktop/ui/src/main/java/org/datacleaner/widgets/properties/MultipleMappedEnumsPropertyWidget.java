@@ -35,7 +35,6 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
-import org.datacleaner.descriptors.JsonSchemaConfiguredPropertyDescriptorImpl;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DefaultEnumMatcher;
@@ -74,7 +73,7 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
         @Override
         public Object[] getValue() {
             EnumerationValue[] values = getMappedEnums();
-            if(_mappedEnumsProperty instanceof JsonSchemaConfiguredPropertyDescriptorImpl) {
+            if(_mappedEnumsProperty instanceof EnumerationProvider) {
                 return values;
             } else {
                 Object[] enumValues = (Object[]) Array.newInstance(_mappedEnumsProperty.getBaseType(), values.length);
@@ -178,8 +177,8 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
      * @return
      */
     protected EnumerationValue[] getEnumConstants(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor mappedEnumsProperty) {
-        if(mappedEnumsProperty instanceof JsonSchemaConfiguredPropertyDescriptorImpl) {
-            return ((JsonSchemaConfiguredPropertyDescriptorImpl)mappedEnumsProperty).getEnumValues();
+        if(mappedEnumsProperty instanceof EnumerationProvider) {
+            return ((EnumerationProvider)mappedEnumsProperty).values();
         } else {
             return EnumerationValue.fromArray(mappedEnumsProperty.getBaseType().getEnumConstants());
         }
@@ -256,8 +255,8 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
      * @return
      */
     protected EnumMatcher<EnumerationValue> createEnumMatcher() {
-        if(_mappedEnumsProperty instanceof JsonSchemaConfiguredPropertyDescriptorImpl) {
-            return new DefaultEnumMatcher((JsonSchemaConfiguredPropertyDescriptorImpl)_mappedEnumsProperty);
+        if(_mappedEnumsProperty instanceof EnumerationProvider) {
+            return new DefaultEnumMatcher((EnumerationProvider)_mappedEnumsProperty);
         } else {
             @SuppressWarnings("unchecked")
             final Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) _mappedEnumsProperty.getBaseType();

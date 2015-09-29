@@ -86,14 +86,14 @@ public class Dropzone extends DCPanel {
 
         final DCLabel dropFileLabel = DCLabel.dark("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
-        add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+        add(dropFileLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
         // orclick button
         final JButton orClickButton = WidgetFactory.createPrimaryButton("(Click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
         orClickButton.addActionListener(new ActionListener() {
             @Override
@@ -106,21 +106,20 @@ public class Dropzone extends DCPanel {
                 IconUtils.FILE_HDFS);
         selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
         selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(selectHadoopButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.CENTER, new Insets(0, 0, 10, 0), 0, 0));
+        add(selectHadoopButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
+                GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 
+        // error label
         final DCLabel errorResourceLabel = DCLabel
-                .dark("<html><p color='red'>The hdfs file does not exists</p></html>");
+                .dark("<html><p color='red'>The HDFS file does not exist</p></html>");
         errorResourceLabel.setVisible(false);
-
-        add(errorResourceLabel, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+        add(errorResourceLabel, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        
         // hdfs resource selector
         final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel(errorResourceLabel);
-        add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 3, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        hdfsResourceSelectorPanel.setVisible(false);
-
+        add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, -5, 10, 0), 0, 0));
         hdfsResourceSelectorPanel.setVisible(false);
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {

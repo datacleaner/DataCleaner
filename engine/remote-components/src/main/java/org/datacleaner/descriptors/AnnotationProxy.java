@@ -28,10 +28,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * This tricky class allows us to create new annotations dynamically. Java api doesn't provide anything like this, annotations can be
+ * created either via source code, or specific class can be defined. But to create a dynamic annotation of specific interface
+ * by reflection, that is not available in standard java api.
+ *
  * @Since 21.9.15
  */
 public class AnnotationProxy {
 
+    /**
+     * Factory method for annotations which is able to create an instance of any annotation class.
+     *
+     * @param anClass Annotation interface that should be instantiated
+     * @param properties map of values for the annotation. The name (key) of a property is interpreted as a name of
+     *                   a method from the annotation interface. The created annotation proxy then returns this value
+     *                   when this method is called.
+     * @param <A>
+     * @return An annotation instance providing given values by its interface methods.
+     */
     public static <A extends Annotation> A newAnnotation(Class<A> anClass, Map<String, Object> properties) {
         return (A)Proxy.newProxyInstance(AnnotationProxy.class.getClassLoader(), new Class[] {anClass}, new InvHandler(properties));
     }

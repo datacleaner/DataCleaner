@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.JsonSchemaConfiguredPropertyDescriptorImpl;
+import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
@@ -41,7 +41,7 @@ public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<Enume
                                     ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        EnumerationValue[] enumConstants = ((JsonSchemaConfiguredPropertyDescriptorImpl)propertyDescriptor).getEnumValues();
+        EnumerationValue[] enumConstants = ((EnumerationProvider)propertyDescriptor).values();
 
         if (!propertyDescriptor.isRequired()) {
             enumConstants = CollectionUtils.array(new EnumerationValue[]{null}, enumConstants);

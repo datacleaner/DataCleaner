@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.JsonSchemaConfiguredPropertyDescriptorImpl;
+import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.job.builder.ComponentBuilder;
 
@@ -41,7 +41,7 @@ public class MultipleRemoteEnumPropertyWidget extends AbstractMultipleCheckboxes
 
     @Override
     protected EnumerationValue[] getAvailableValues() {
-        return ((JsonSchemaConfiguredPropertyDescriptorImpl)getPropertyDescriptor()).getEnumValues();
+        return ((EnumerationProvider)getPropertyDescriptor()).values();
     }
 
     @Override

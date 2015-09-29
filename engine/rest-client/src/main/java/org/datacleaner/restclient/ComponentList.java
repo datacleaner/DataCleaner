@@ -29,6 +29,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
@@ -136,6 +137,7 @@ public class ComponentList {
         private boolean required;
         private boolean isInputColumn;
         private Map<String, Map<String, Object>> annotations = new HashMap<>();
+        private JsonNode defaultValue;
 
         public void setIsInputColumn(boolean inputColumn) {
             isInputColumn = inputColumn;
@@ -201,5 +203,12 @@ public class ComponentList {
 
         public void setAnnotations(Map<String, Map<String, Object>> annotations) { this.annotations = annotations; }
 
+        public JsonNode getDefaultValue() {
+            return defaultValue;
+        }
+
+        public void setDefaultValue(JsonNode defaultValue) {
+            this.defaultValue = defaultValue;
+        }
     }
 }

@@ -46,6 +46,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
+ * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
+ * Instances of this transformer can be created only by
+ * {@link org.datacleaner.descriptors.RemoteTransformerDescriptorImpl} component descriptors.
+ *
  * @Since 9/1/15
  */
 public class RemoteTransformer implements Transformer {

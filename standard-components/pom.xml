@@ -10,7 +10,6 @@
 	<artifactId>DataCleaner-standard-components</artifactId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.version>4.1-SNAPSHOT</project.version>
 	</properties>
 	<packaging>jar</packaging>
 	<dependencies>

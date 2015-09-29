@@ -8,11 +8,11 @@
 		<version>4.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-standard-components</artifactId>
-	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.version>4.1-SNAPSHOT</project.version>
 	</properties>
+	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -110,5 +110,4 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	<packaging>jar</packaging>
 </project>

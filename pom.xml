@@ -412,7 +412,22 @@
 										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
 											required by Hadoop) -->
 										<exclude>org.glassfish.jersey:*</exclude>
+										
+										<!-- asm groupId is conflicting with org.ow2.asm groupId -->
+										<exclude>asm:asm:*</exclude>
+									
+										<!-- findbugs-annotations is overlapping with annotations -->
+										<exclude>com.github.stephenc.findbugs:findbugs-annotations:*</exclude>
+										
+										<!-- jcip-annotations is overlapping with annotations -->
+										<exclude>net.jcip:jcip-annotations</exclude>
 
+										<!-- stax-api is overlapping with xml-apis -->
+										<exclude>stax:stax-api:*</exclude>
+										<exclude>javax.xml.stream:stax-api</exclude>
+										
+										<!-- standard is overlapping with jstl -->
+										<exclude>taglibs:standard:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -620,6 +635,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-excel</artifactId>
+				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-hadoop</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -656,6 +682,14 @@
 					<exclusion>
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.github.stephenc.findbugs</groupId>
+						<artifactId>findbugs-annotations</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -702,6 +736,10 @@
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -711,12 +749,31 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-api</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -845,6 +902,10 @@
 					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>asm</groupId>
+						<artifactId>asm</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>log4j</groupId>

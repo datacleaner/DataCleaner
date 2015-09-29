@@ -391,6 +391,8 @@
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
 										<exclude>org.eobjects.metamodel:*</exclude>
+										<exclude>log4j:apache-log4j-extras:*</exclude>
+										<exclude>org.apache.logging.log4j:*</exclude>
 
 										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
 										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
@@ -854,6 +856,10 @@
 					<exclusion>
 						<groupId>javax.xml.bind</groupId>
 						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>apache-log4j-extras</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

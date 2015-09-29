@@ -19,6 +19,8 @@
  */
 package org.datacleaner.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class CrosstabReducerHelper {
                     if (categoryValue != null) {
                         final Number oldValue = whereToPut.safeGet(null);
                         if (oldValue != null) {
-                            final Number newValue = addNumbers(oldValue, categoryValue);
+                            final Number newValue = sum(oldValue, categoryValue);
                             whereToPut.put(newValue);
                         } else {
                             whereToPut.put(categoryValue);
@@ -99,15 +101,14 @@ public class CrosstabReducerHelper {
         }
     }
 
-    private static Number addNumbers(final Number a, final Number b) {
-        if (a instanceof Double || b instanceof Double) {
-            return new Double(a.doubleValue() + b.doubleValue());
-        } else if (a instanceof Float || b instanceof Float) {
-            return new Float(a.floatValue() + b.floatValue());
-        } else if (a instanceof Long || b instanceof Long) {
-            return new Long(a.longValue() + b.longValue());
-        } else {
-            return new Integer(a.intValue() + b.intValue());
-        }
+    private static Number sum(Number n1, Number n2) {
+        if (isIntegerType(n1) && isIntegerType(n2)) {
+            return BigInteger.valueOf(n1.longValue()).add(BigInteger.valueOf(n2.longValue()));
+        } 
+        return new BigDecimal(n1.doubleValue()).add(new BigDecimal(n2.doubleValue()));
+    }
+
+    private static boolean isIntegerType(Number n) {
+        return (n instanceof Byte || n instanceof Short || n instanceof Integer || n instanceof Long || n instanceof BigInteger);
     }
 }

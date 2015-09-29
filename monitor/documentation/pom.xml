@@ -45,26 +45,17 @@
 			<scope>provided</scope>
 		</dependency>
 
-        <!-- REST documentation -->
-		<dependency>
-			<groupId>org.jvnet.ws.wadl</groupId>
-			<artifactId>wadl-client-plugin</artifactId>
-			<version>1.1.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.jackson</groupId>
-					<artifactId>jackson-mapper-asl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.jackson</groupId>
-					<artifactId>jackson:jackson-core-asl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.mangofactory</groupId>
-			<artifactId>swagger-springmvc</artifactId>
-			<version>1.0.2</version>
-		</dependency>
+        <!-- Reflections -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 	</dependencies>
 </project>

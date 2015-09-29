@@ -524,7 +524,7 @@
 							<report>jar</report>
 							<report>multiplejars</report>
 						</reports>
-
+						<filter>tattletale-filters.properties</filter>
 						<failOnWarn>true</failOnWarn>
 					</configuration>
 				</plugin>

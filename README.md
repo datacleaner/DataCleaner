@@ -1,6 +1,6 @@
-DataCleaner
-===========
+# DataCleaner
 
+[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
 <div>
 <img src="http://datacleaner.org/resources/dc-logo-100.png" alt="DataCleaner logo" />
 </div>

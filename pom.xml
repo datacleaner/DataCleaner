@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -48,6 +49,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
+		<module>standard-components</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -393,15 +395,17 @@
 										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
 										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
 										<exclude>com.sun.xml.bind:jaxb-xjc:*:jar:compile</exclude>
-										
+
 										<exclude>javax.faces:javax.faces-api:*:jar:compile</exclude>
 										<exclude>org.glassfish.web:el-impl:*:jar:compile</exclude>
 
-										<!-- HK2 should not be used, we have enough Dependency Injection frameworks as it is -->
+										<!-- HK2 should not be used, we have enough Dependency Injection 
+											frameworks as it is -->
 										<exclude>org.glassfish.hk2.*</exclude>
 										<exclude>org.glassfish.hk2.external:*</exclude>
-										
-										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is required by Hadoop) -->
+
+										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
+											required by Hadoop) -->
 										<exclude>org.glassfish.jersey:*</exclude>
 
 									</excludes>
@@ -844,12 +848,12 @@
 						<artifactId>jetty-all</artifactId>
 					</exclusion>
 					<exclusion>
-					    <groupId>com.sun.xml.bind</groupId>
-    					<artifactId>jaxb-impl</artifactId>
+						<groupId>com.sun.xml.bind</groupId>
+						<artifactId>jaxb-impl</artifactId>
 					</exclusion>
 					<exclusion>
-					    <groupId>javax.xml.bind</groupId>
-					    <artifactId>jaxb-api</artifactId>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -964,7 +968,7 @@
 				<version>${scala.version}</version>
 			</dependency>
 
-			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be
+			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be 
 				replaced by HTTP components (4.x) at some point. -->
 			<dependency>
 				<groupId>commons-httpclient</groupId>

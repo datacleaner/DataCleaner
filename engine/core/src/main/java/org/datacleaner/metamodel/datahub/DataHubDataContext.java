@@ -35,6 +35,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.UpdateScript;
@@ -151,11 +152,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
-        try {
-            request.setEntity(new StringEntity(buildJsonArray(pendingUpdates)));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        request.setEntity(new StringEntity(buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 }

@@ -21,6 +21,7 @@ package org.datacleaner.util.convert;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -32,6 +33,11 @@ import org.datacleaner.configuration.SimpleInjectionPoint;
 import org.datacleaner.job.AnalysisJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Helper class for converting objects to and from string representations as
@@ -70,6 +76,21 @@ public final class StringConverter {
 
     private final InjectionManager _injectionManager;
     private final DataCleanerConfiguration _configuration;
+
+    private final LoadingCache<Class, Converter> cache = CacheBuilder.newBuilder().build(new CacheLoader<Class, Converter>() {
+        @Override
+        public Converter load(Class converterClass) throws Exception {
+            final DelegatingConverter delegatingConverter = new DelegatingConverter();
+            if (converterClass != null && converterClass != FakedNullConverter.class) {
+                delegatingConverter.addConverter(createConverter(converterClass));
+            }
+            delegatingConverter.addConverter(new ConfigurationItemConverter());
+            delegatingConverter.addConverter(getResourceConverter());
+            delegatingConverter.addConverter(new StandardTypeConverter(_configuration, delegatingConverter));
+            delegatingConverter.initializeAll(_injectionManager);
+            return delegatingConverter;
+        }
+    });
 
     /**
      * Gets a simple instance of {@link StringConverter}. This instance will not
@@ -200,15 +221,19 @@ public final class StringConverter {
      * @return a Java object matching the String representation
      */
     public final <E> E deserialize(String str, Class<E> type) {
-        return deserialize(str, type, new ArrayList<Class<? extends Converter<?>>>(0));
+        return deserialize(str, type, (Class<? extends Converter<?>>)null);
     }
 
+    public static abstract class FakedNullConverter implements Converter {}
+
     public final <E> E deserialize(String str, Class<E> type, Class<? extends Converter<?>> converterClass) {
-        Collection<Class<? extends Converter<?>>> col = new ArrayList<Class<? extends Converter<?>>>();
-        if (converterClass != null) {
-            col.add(converterClass);
+        logger.debug("deserialize(\"{}\", {})", str, type);
+        try {
+            Converter converter = cache.get(converterClass == null ? FakedNullConverter.class : converterClass);
+            return (E) converter.fromString(type, str);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e.getCause());
         }
-        return deserialize(str, type, col);
     }
 
     /**

@@ -40,7 +40,8 @@ public class ComponentHandlerFactory {
             throws RuntimeException {
         ComponentHandler handler = new ComponentHandler(
                 tenantContext.getConfiguration(),
-                componentName);
+                componentName,
+                tenantContext.getStringConverter());
         handler.createComponent(configuration);
 
         return handler;

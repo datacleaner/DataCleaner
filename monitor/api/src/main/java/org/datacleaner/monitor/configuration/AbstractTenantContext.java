@@ -21,6 +21,7 @@ package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
+import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.util.StringUtils;
@@ -32,6 +33,7 @@ import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
+import org.datacleaner.util.convert.StringConverter;
 
 /**
  * Abstract helper-implementation of {@link TenantContext}. Provides the methods
@@ -148,4 +150,16 @@ public abstract class AbstractTenantContext implements TenantContext {
             }
         });
     }
+
+    LazyRef<StringConverter> stringConverterRef = new LazyRef<StringConverter>() {
+        @Override
+        protected StringConverter fetch() throws Throwable {
+            return new StringConverter(getConfiguration());
+        }
+    };
+
+    public StringConverter getStringConverter() {
+        return stringConverterRef.get();
+    }
+
 }

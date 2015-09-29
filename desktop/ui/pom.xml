@@ -52,6 +52,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.jboss.tattletale</groupId>
+				<artifactId>tattletale-maven</artifactId>
+				<configuration>
+					<source>${project.build.directory}/lib</source>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

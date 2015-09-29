@@ -110,20 +110,19 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                             String propertyName = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();
                             String className = propInfo.getClassName();
-                            ConfiguredPropertyDescriptor propDesc;
                             try {
                                 Class cl = findClass(className);
-                                transformer.addPropertyDescriptor(propDesc = new TypeBasedConfiguredPropertyDescriptorImpl(
+                                transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
                                         propertyName,
                                         propInfo.getDescription(),
                                         cl,
                                         propInfo.isRequired(),
                                         transformer,
                                         initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()), propInfo.getDefaultValue()));
-                            } catch(Exception e) {
+                            } catch(ClassNotFoundException e) {
                                 logger.debug("Cannot initialize typed property descriptor '{}'.'{}'", component.getName(), propertyName, e);
                                 // class not available on this server.
-                                transformer.addPropertyDescriptor(propDesc = new JsonSchemaConfiguredPropertyDescriptorImpl(
+                                transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         propertyName,
                                         propInfo.getSchema(),
                                         propInfo.isInputColumn(),
@@ -164,8 +163,4 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         }
         return annotations;
     }
-
-    public static void main(String[] args) throws Exception {
-    }
-
 }

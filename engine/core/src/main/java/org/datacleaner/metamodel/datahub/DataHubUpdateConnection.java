@@ -38,33 +38,32 @@ public class DataHubUpdateConnection {
         _connection = connection;
     }
 
+    public String getUpdateUrl() {
+        return getContextUrl() + UPDATE_PATH + (isEmpty(_connection.getTenantId()) ? EMPTY
+                : "/" + urlPathSegmentEscaper().escape(_connection.getTenantId()));
+    }
 
-  public String getUpdateUrl() {
-      return getContextUrl() + UPDATE_PATH
-              + (isEmpty(_connection.getTenantId()) ? EMPTY : "/" + urlPathSegmentEscaper().escape(_connection.getTenantId()));
-}
+    public MonitorHttpClient getHttpClient() {
+        return _connection.getHttpClient(getContextUrl());
+    }
 
-  public MonitorHttpClient getHttpClient() {
-      return _connection.getHttpClient(getContextUrl());
-  }
-  
-  private String getContextUrl() {
-      URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
-      appendToPath(uriBuilder, CONTEXT_PATH);
-      
-      try {
-          return uriBuilder.build().toString();
-      } catch (URISyntaxException uriSyntaxException) {
-          throw new IllegalStateException(uriSyntaxException);
-      }
-  }
+    private String getContextUrl() {
+        URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
+        appendToPath(uriBuilder, CONTEXT_PATH);
 
-  private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
-      if(uriBuilder.getPath() != null) {
-          uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
-      }
-      
-      return uriBuilder.setPath(pathSegment);
-  }
+        try {
+            return uriBuilder.build().toString();
+        } catch (URISyntaxException uriSyntaxException) {
+            throw new IllegalStateException(uriSyntaxException);
+        }
+    }
+
+    private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
+        if (uriBuilder.getPath() != null) {
+            uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
+        }
+
+        return uriBuilder.setPath(pathSegment);
+    }
 
 }

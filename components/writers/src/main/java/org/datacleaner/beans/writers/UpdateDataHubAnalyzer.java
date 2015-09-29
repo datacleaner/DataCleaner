@@ -86,11 +86,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Update DataHub")
-@Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore."
-        + "\nTo understand the configuration of the Update table component, consider a typical SQL update statement:"
-        + "\n<blockquote>UPDATE table SET name = 'John Doe' WHERE id = 42</blockquote>"
-        + "\nHere we see that there is a condition (WHERE id=42) and a value to update (name should become 'John Doe'). This is what the two inputs are referring to. But obviously you are not dealing with constant values like 'John Doe' or '42'. You have a field in your DC job that you want to map to fields in your database."
-        + "\nUsually the 'condition value' would be a mapping of the key that you have in your job towards the key that is in the database. The 'values to update' property would include the columns that you wish to update based on the values you have in your job.")
+@Description("Update Golden Records in the DataHub. This component allows you to update fields defined in the golden records metadata. The component always updates a golden record based"
+        + "\non its golden record id."
+        + "\nThe 'values to update' property lets you specify which values must be changed. This component can not update fields of the metadata, like traffic lights or severities or track codes.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
 public class UpdateDataHubAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,

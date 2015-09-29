@@ -26,8 +26,8 @@ package org.datacleaner.metamodel.datahub.update;
  */
 public class UpdateField {
 
-    String name;
-    String value;
+    private final String name;
+    private final String value;
     
     public UpdateField(String name, String value) {
         this.name = name;

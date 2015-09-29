@@ -34,7 +34,7 @@ public class JsonUpdateDataBuilder {
 
         final OutputStream os = new ByteArrayOutputStream();
         final ObjectMapper mapper = new ObjectMapper();
-        String json = "";
+        String json;
         try {
             mapper.writeValue(os, updateData);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();

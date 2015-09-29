@@ -111,7 +111,7 @@ public class Dropzone extends DCPanel {
 
         // error label
         final DCLabel errorResourceLabel = DCLabel
-                .dark("<html><p color='red'>The hdfs file does not exists</p></html>");
+                .dark("<html><p color='red'>The HDFS file does not exist</p></html>");
         errorResourceLabel.setVisible(false);
         add(errorResourceLabel, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));

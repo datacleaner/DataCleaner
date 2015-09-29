@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.referentialintegrity;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
@@ -74,10 +76,10 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
         int annotatedRowCount = result.getAnnotatedRowCount();
         assertEquals(3, annotatedRowCount);
 
-        InputRow[] rows = result.getRows();
-        assertEquals(-1, rows[0].getValue(salesRepEmployeeNumber));
-        assertEquals(-1000, rows[1].getValue(salesRepEmployeeNumber));
-        assertEquals(-1, rows[2].getValue(salesRepEmployeeNumber));
+        List<InputRow> rows = result.getSampleRows();
+        assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
+        assertEquals(-1000, rows.get(1).getValue(salesRepEmployeeNumber));
+        assertEquals(-1, rows.get(2).getValue(salesRepEmployeeNumber));
     }
 
 }

@@ -31,15 +31,17 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
+import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
+import org.datacleaner.reference.ReferenceData;
 
 @Named("Dictionary matcher")
 @Description("Matches string values against a set of dictionaries, producing a corresponding set of output columns specifying whether or not the values exist in those dictionaries")
-@Categorized({ MatchingAndStandardizationCategory.class })
+@Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class DictionaryMatcherTransformer implements Transformer {
 
 	@Configured

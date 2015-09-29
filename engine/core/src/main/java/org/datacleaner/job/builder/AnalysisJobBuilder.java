@@ -757,7 +757,7 @@ public final class AnalysisJobBuilder implements Closeable {
             return false;
         }
 
-        if (getResultProducingComponentBuilders().isEmpty()) {
+        if (getResultProducingComponentBuilders().isEmpty() && getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
             if (throwException) {
                 throw new NoResultProducingComponentsException();
             }
@@ -1276,7 +1276,7 @@ public final class AnalysisJobBuilder implements Closeable {
             }
         });
     }
-
+    
     /**
      * Gets all available {@link InputColumn}s to map to a particular
      * {@link ComponentBuilder}

@@ -35,7 +35,7 @@ import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 

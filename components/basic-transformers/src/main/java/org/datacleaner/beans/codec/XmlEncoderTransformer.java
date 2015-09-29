@@ -28,7 +28,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.EncodingCategory;
 import org.datacleaner.data.MockInputColumn;
 
 import com.google.common.escape.Escaper;
@@ -36,7 +36,7 @@ import com.google.common.xml.XmlEscapers;
 
 @Named("XML encoder")
 @Description("Encodes/escapes plain text into XML content")
-@Categorized(StringManipulationCategory.class)
+@Categorized(EncodingCategory.class)
 public class XmlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat {

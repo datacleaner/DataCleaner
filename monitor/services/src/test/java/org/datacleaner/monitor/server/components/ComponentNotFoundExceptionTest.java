@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.datacleaner.restclient.ComponentNotFoundException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

@@ -39,7 +39,7 @@ final class CompletenessAnalyzerComponentBuilderPresenter extends AnalyzerCompon
 
     private final ConfiguredPropertyDescriptor _inputColumnProperty;
     private final ConfiguredPropertyDescriptor _conditionEnumProperty;
-    private final MultipleMappedEnumsPropertyWidget<Enum<?>> _inputColumnMappingPropertyWidget;
+    private final MultipleMappedEnumsPropertyWidget _inputColumnMappingPropertyWidget;
 
     public CompletenessAnalyzerComponentBuilderPresenter(AnalyzerComponentBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
@@ -48,7 +48,7 @@ final class CompletenessAnalyzerComponentBuilderPresenter extends AnalyzerCompon
         _inputColumnProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Values");
         _conditionEnumProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Conditions");
 
-        _inputColumnMappingPropertyWidget = new MultipleMappedEnumsPropertyWidget<Enum<?>>(analyzerJobBuilder,
+        _inputColumnMappingPropertyWidget = new MultipleMappedEnumsPropertyWidget(analyzerJobBuilder,
                 _inputColumnProperty, _conditionEnumProperty);
     }
 

@@ -35,6 +35,7 @@ import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.storage.InMemoryStorageProvider;
@@ -45,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Bean factory for {@link AnalyzerBeansConfiguration} elements in the DC
@@ -135,6 +138,11 @@ public class ConfigurationFactory {
             DescriptorProvider descriptorProvider, StorageProvider storageProvider,
             InjectionManagerFactory injectionManagerFactory) {
         return new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory);
+    }
+
+    @Bean(name = "jacksonObjectMapper")
+    public ObjectMapper createJacksonObjectMapper() {
+        return Serializator.getJacksonObjectMapper();
     }
 
     private File[] getJarFilesForDescriptorProvider(final ServletContext servletContext) {

@@ -112,7 +112,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             throw new IllegalArgumentException("Builder class does not correspond to actual class of builder");
         }
 
-        _configurableBean = ReflectionUtils.newInstance(_descriptor.getComponentClass());
+        _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
         _removalListeners = new ArrayList<>(1);
     }
@@ -826,55 +826,51 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     private void updateStream(final MutableTable existingTable, final AnalysisJobBuilder jobBuilder,
             final OutputDataStream newStream) {
-        final List<Column> columnsToKeep = new ArrayList<Column>();
-        final List<Column> columnsToRemove = new ArrayList<Column>();
-        final List<Column> columnsToAdd = new ArrayList<Column>();
+        final List<Column> newColumnList = new ArrayList<Column>();
+        final List<Column> addedColumns = new ArrayList<Column>();
 
         final Table newTable = newStream.getTable();
 
+        int columnNumber = 0;
         for (Column newColumn : newTable.getColumns()) {
             final Column existingColumn = existingTable.getColumnByName(newColumn.getName());
+            final MutableColumn mutableColumn;
+
             if (existingColumn == null) {
-                // no matching existing column - add it
-                columnsToAdd.add(newColumn);
-                continue;
+                mutableColumn = (MutableColumn) newColumn;
+
+                addedColumns.add(newColumn);
+            } else {
+                mutableColumn = (MutableColumn) existingColumn;
+
+                // remove this so that it cannot be matched against in next
+                // iterations
+                existingTable.removeColumn(existingColumn);
             }
+
+            // update the column to make sure everything is 100% matching
+            mutableColumn.setTable(existingTable);
+            mutableColumn.setColumnNumber(columnNumber);
+            mutableColumn.setType(newColumn.getType());
+
+            newColumnList.add(mutableColumn);
+
+            columnNumber++;
         }
 
-        // match existing columns to new expected columns
-        for (Column existingColumn : existingTable.getColumns()) {
-            final Column newColumn = newTable.getColumnByName(existingColumn.getName());
-            if (newColumn == null) {
-                // remove the existing column - no match
-                columnsToRemove.add(existingColumn);
-                continue;
-            }
-            if (!existingColumn.getType().equals(newColumn.getType())) {
-                // remove the existing column because the data type doesn't
-                // match
-                columnsToRemove.add(existingColumn);
-                columnsToAdd.add(newColumn);
-                continue;
-            }
-
-            columnsToKeep.add(existingColumn);
-        }
-
-        // now do the updates
-        for (Column column : columnsToRemove) {
-            if (jobBuilder != null) {
+        if (jobBuilder != null) {
+            // notify job builder of removed source columns
+            for (Column column : existingTable.getColumns()) {
                 jobBuilder.removeSourceColumn(column);
             }
-            existingTable.removeColumn(column);
-        }
-        for (Column column : columnsToAdd) {
-            final MutableColumn newColumn = new MutableColumn(column.getName(), column.getType())
-                    .setTable(existingTable);
-            existingTable.addColumn(newColumn);
-            if (jobBuilder != null) {
-                jobBuilder.addSourceColumn(newColumn);
+            // notify the job builder of added source columns
+            for (Column column : addedColumns) {
+                jobBuilder.addSourceColumn(column);
             }
         }
+
+        // update the table with the new set of columns
+        existingTable.setColumns(newColumnList);
     }
 
     @Override

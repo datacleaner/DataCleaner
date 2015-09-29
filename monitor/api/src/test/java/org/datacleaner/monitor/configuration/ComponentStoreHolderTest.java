@@ -19,9 +19,11 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import static org.junit.Assert.*;
+import org.datacleaner.restclient.CreateInput;
+import org.junit.Test;
 
 public class ComponentStoreHolderTest {
     private ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder();

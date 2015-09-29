@@ -751,7 +751,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
-                } else if (unsavedChangesChoice == 2) { // cancel closing
+                } else if (unsavedChangesChoice != 1) { // cancel closing
                     return false;
                 }
             }
@@ -982,13 +982,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             public void actionPerformed(ActionEvent e) {
                 applyPropertyValues();
 
-                if (analysisJobBuilder.getAnalyzerComponentBuilders().isEmpty()) {
-                    // Present choices to user to write file somewhere,
-                    // and then run a copy of the job based on that.
-                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                            _dcModule, getWindowContext(), analysisJobBuilder, _userPreferences);
-                    executeJobWithoutAnalyzersPanel.open();
-                    return;
+                if (analysisJobBuilder.getResultProducingComponentBuilders().isEmpty()) {
+                    if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
+                        // Present choices to user to write file somewhere,
+                        // and then run a copy of the job based on that.
+                        ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                                _dcModule, getWindowContext(), analysisJobBuilder, _userPreferences);
+                        executeJobWithoutAnalyzersPanel.open();
+                        return;
+                    }
                 }
 
                 final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,

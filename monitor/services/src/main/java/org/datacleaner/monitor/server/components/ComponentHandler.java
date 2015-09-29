@@ -39,6 +39,7 @@ import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
@@ -50,7 +51,9 @@ import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +73,7 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private final String componentName;
     private DataCleanerConfiguration dcConfiguration;
@@ -151,7 +154,7 @@ public class ComponentHandler {
         configuredProperties.putAll(remoteDefaultPropertiesMap);
 
         //User properties
-        for(String propertyName: componentConfiguration.getPropertiesNames()) {
+        for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
@@ -163,7 +166,7 @@ public class ComponentHandler {
                 continue;
             }
 
-            JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
+            JsonNode userPropValue = componentConfiguration.getProperties().get(propertyName);
             if(userPropValue != null) {
                 if(propDesc.isInputColumn()) {
                     List<String> colNames = convertToStringArray(userPropValue);
@@ -185,6 +188,10 @@ public class ComponentHandler {
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
         lifeCycleHelper.initialize(descriptor, component);
+    }
+
+    public OutputColumns getOutputColumns() {
+        return ((Transformer)component).getOutputColumns();
     }
 
     public List<Object[]> runComponent(JsonNode data) {
@@ -254,7 +261,7 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class type = propDesc.getType();
         try {
-            if(value.isArray() || value.isObject()) {
+            if(value.isArray() || value.isObject() || type.isEnum()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
                 return new StringConverter(dcConfiguration).deserialize(value.asText(), type, propDesc.getCustomConverter());

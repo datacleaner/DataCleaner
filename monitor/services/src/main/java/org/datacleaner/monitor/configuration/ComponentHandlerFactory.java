@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.configuration;
 
 import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.restclient.ComponentConfiguration;
 
 /**
  * Class ComponentsFactory

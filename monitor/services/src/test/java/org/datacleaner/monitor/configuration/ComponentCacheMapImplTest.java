@@ -34,6 +34,8 @@ import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.CreateInput;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -128,7 +130,7 @@ public class ComponentCacheMapImplTest {
     private ComponentConfiguration getComponentConfigurationMock() {
         ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
         expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
-        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getProperties()).andReturn(Collections.EMPTY_MAP).anyTimes();
         replay(componentConfiguration);
 
         return componentConfiguration;

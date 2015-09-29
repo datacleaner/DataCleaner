@@ -29,7 +29,6 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.components.fuse.CoalesceUnit;
@@ -130,13 +129,14 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         }
 
         for (final Table table : allTablesAndColumns.keySet()) {
-            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table, new StreamColumnListPanel.Listener() {
-                @Override
-                public void onValueChanged(StreamColumnListPanel panel) {
-                    fireValueChanged();
-                    _unitPropertyWidget.fireValueChanged();
-                }
-            });
+            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table,
+                    new StreamColumnListPanel.Listener() {
+                        @Override
+                        public void onValueChanged(StreamColumnListPanel panel) {
+                            fireValueChanged();
+                            _unitPropertyWidget.fireValueChanged();
+                        }
+                    });
 
             final Collection<InputColumn<?>> selectedColumns = coalescedTablesAndColumns.get(table);
             for (InputColumn<?> inputColumn : selectedColumns) {
@@ -148,6 +148,8 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
             for (InputColumn<?> inputColumn : columns) {
                 tablePanel.addInputColumn(inputColumn, false);
             }
+
+            tablePanel.refresh();
 
             _tablePanels.add(tablePanel);
             _containerPanel.add(tablePanel);
@@ -193,20 +195,8 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
             @Override
             protected void setValue(CoalesceUnit[] value) {
-                if (value == null) {
-                    return;
-                }
-                if (EqualsBuilder.equals(value, getValue())) {
-                    return;
-                }
-                setCoalesceUnits(value);
             }
         };
-    }
-
-    protected void setCoalesceUnits(CoalesceUnit[] value) {
-        // TODO Auto-generated method stub
-
     }
 
     protected CoalesceUnit[] getCoalesceUnits() {
@@ -237,19 +227,19 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     public InputColumn<?>[] getValue() {
         final List<InputColumn<?>> result = new ArrayList<>();
         for (StreamColumnListPanel tablePanel : _tablePanels) {
-            result.addAll(tablePanel.getCoalescedInputColumns());
+            if (tablePanel.hasSelectedInputColumns()) {
+                result.addAll(tablePanel.getAllInputColumns());
+            }
         }
         return result.toArray(new InputColumn<?>[result.size()]);
     }
 
     @Override
     public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -262,7 +252,6 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
     @Override
     protected void setValue(InputColumn<?>[] value) {
-        // TODO
     }
 
     @Override

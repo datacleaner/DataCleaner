@@ -19,18 +19,10 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.ColumnProperty;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.result.ListResult;
-
+@ResponseStatus(value= HttpStatus.NOT_FOUND)
 public class ComponentNotFoundException extends RuntimeException {
     private ComponentNotFoundException(String msg) {
         super(msg);

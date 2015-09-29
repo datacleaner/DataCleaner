@@ -71,19 +71,11 @@
                         <xsd:element name="properties" minOccurs="1" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element name="property" type="attrElementType" minOccurs="0"
+                                    <xsd:element name="property" type="elementUniversalType" minOccurs="0"
                                                  maxOccurs="unbounded">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 Only for primitive types (String, int, boolean).
-                                            </xsd:documentation>
-                                        </xsd:annotation>
-                                    </xsd:element>
-                                    <xsd:element name="propertyXML" type="attrElementUniversalType" minOccurs="0"
-                                                 maxOccurs="unbounded">
-                                        <xsd:annotation>
-                                            <xsd:documentation>
-                                                For the complex property.
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:element>
@@ -97,29 +89,11 @@
         </xsd:sequence>
     </xsd:complexType>
 
-
-    <xsd:complexType name="attrElementType">
-        <xsd:simpleContent>
-            <xsd:extension base="xsd:string">
-                <xsd:attribute name="name" type="xsd:string" use="required">
-                </xsd:attribute>
-            </xsd:extension>
-        </xsd:simpleContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="attrElementUniversalType">
-        <xsd:complexContent>
-            <xsd:extension base="universalType">
-                <xsd:attribute name="name" type="xsd:string" use="required">
-                </xsd:attribute>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="universalType">
+    <xsd:complexType name="elementUniversalType" mixed="true">
         <xsd:sequence>
             <xsd:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>

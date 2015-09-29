@@ -19,14 +19,19 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * Class ComponentNotAllowed
  *
  */
+@ResponseStatus(value= HttpStatus.FORBIDDEN, reason="Component is not allowed.")
 public class ComponentNotAllowed extends RuntimeException {
     private ComponentNotAllowed(String msg) {
         super(msg);
     }
+
     public static ComponentNotAllowed createInstanceNotAllowed(String componentName) {
         return new ComponentNotAllowed("Component with name " + componentName + " is not allowed.");
     }

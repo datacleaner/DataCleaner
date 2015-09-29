@@ -154,7 +154,7 @@ public class RemoteComponentsConfBeanDefinitionParser extends AbstractSingleBean
         if (node == null) {
             return true;
         }
-        return node.getLocalName().equals("property");
+        return node.getChildNodes().getLength() == 1 && node.getChildNodes().item(0).getLocalName() == null;
     }
 
     private Set<String> parseListFromNode(Node node) {

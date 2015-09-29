@@ -19,10 +19,14 @@
  */
 package org.datacleaner.util;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.Window;
 import java.lang.reflect.Field;
 import java.text.Format;
 import java.text.ParseException;
@@ -32,6 +36,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -39,6 +44,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -335,7 +341,7 @@ public final class WidgetFactory {
 
             @Override
             public synchronized JFormattedTextField.AbstractFormatter getFormatter(final JFormattedTextField tf) {
-                if(_formatter == null) {
+                if (_formatter == null) {
                     _formatter = new JFormattedTextField.AbstractFormatter() {
                         @Override
                         public Object stringToValue(final String text) throws ParseException {
@@ -344,7 +350,7 @@ public final class WidgetFactory {
 
                         @Override
                         public String valueToString(final Object value) throws ParseException {
-                            if(value == null){
+                            if (value == null) {
                                 return "";
                             }
 
@@ -405,4 +411,41 @@ public final class WidgetFactory {
         field.setFont(new Font("LucidaSans", Font.PLAIN, 12));
         return field;
     }
+
+    public static JDialog createModalDialog(final Component component, final Window parentWindow, final String title, boolean resizable) {
+        final JDialog dialog;
+        if (parentWindow instanceof Frame) {
+            dialog = new JDialog((Frame) parentWindow, title, true);
+        } else if (parentWindow instanceof Dialog) {
+            dialog = new JDialog((Dialog) parentWindow, title, true);
+        } else {
+            throw new UnsupportedOperationException("Cannot create dialog for a component without a frame or dialog parent");
+        }
+
+        Container contentPane = dialog.getContentPane();
+
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(component, BorderLayout.CENTER);
+        dialog.setResizable(resizable);
+        if (JDialog.isDefaultLookAndFeelDecorated()) {
+            boolean supportsWindowDecorations =
+                    UIManager.getLookAndFeel().getSupportsWindowDecorations();
+            if (supportsWindowDecorations) {
+                dialog.setUndecorated(true);
+            }
+        }
+        dialog.pack();
+        dialog.setLocationRelativeTo(parentWindow);
+        return dialog;
+    }
+
+    public static JDialog createModalDialog(final Component component, final Component parentComponent, final String title, boolean resizable) {
+        Component windowComponent = parentComponent;
+        while (!(windowComponent instanceof Window) && windowComponent != null) {
+            windowComponent = windowComponent.getParent();
+        }
+
+        return createModalDialog(component, (Window) windowComponent, title, resizable);
+    }
+
 }

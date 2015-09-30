@@ -33,20 +33,22 @@ import org.slf4j.LoggerFactory;
  * @since 24.7.15
  */
 public class ComponentCacheMapImpl implements ComponentCache {
+    
     private static final Logger logger = LoggerFactory.getLogger(ComponentCacheMapImpl.class);
     private static final long CHECK_INTERVAL = 5 * 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
-    private TenantContextFactory _tenantContextFactory;
+    private final TenantContextFactory _tenantContextFactory;
 
-    private ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
-    private Thread checkerThread;
-    private TimeoutChecker checker;
+    private final ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
+    private final Thread checkerThread;
+    private final TimeoutChecker checker;
 
     public ComponentCacheMapImpl(TenantContextFactory _tenantContextFactory) {
         this._tenantContextFactory = _tenantContextFactory;
         checker = new TimeoutChecker();
         checkerThread = new Thread(checker);
+        checkerThread.setDaemon(true);
         checkerThread.start();
     }
 

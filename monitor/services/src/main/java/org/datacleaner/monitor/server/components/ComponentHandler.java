@@ -76,8 +76,9 @@ public class ComponentHandler {
 
     public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
-    private final String componentName;
-    private final DataCleanerConfiguration dcConfiguration;
+    private final String _componentName;
+    private final DataCleanerConfiguration _dcConfiguration;
+    private final StringConverter _stringConverter;
 
     private ComponentDescriptor<?> descriptor;
     private Map<String, MutableColumn> columns;
@@ -86,22 +87,23 @@ public class ComponentHandler {
     private Component component;
 
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
-        this.dcConfiguration = dcConfiguration;
-        this.componentName = componentName;
+        _dcConfiguration = dcConfiguration;
+        _componentName = componentName;
+        _stringConverter = new StringConverter(dcConfiguration);
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = dcConfiguration.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(componentName);
+        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorByDisplayName(_componentName);
         table = new MutableTable("inputData");
         if (descriptor == null) {
-            descriptor = dcConfiguration.getEnvironment().getDescriptorProvider()
-                    .getAnalyzerDescriptorByDisplayName(componentName);
+            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                    .getAnalyzerDescriptorByDisplayName(_componentName);
         }
         if (descriptor == null) {
-            throw ComponentNotFoundException.createTypeNotFound(componentName);
+            throw ComponentNotFoundException.createTypeNotFound(_componentName);
         }
 
         component = (Component) descriptor.newInstance();
@@ -179,7 +181,7 @@ public class ComponentHandler {
         }
         org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
@@ -217,7 +219,7 @@ public class ComponentHandler {
     }
 
     public AnalyzerResult closeComponent() {
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.close(descriptor, component, true);
         if (component instanceof HasAnalyzerResult) {
             return ((HasAnalyzerResult<?>) component).getResult();
@@ -249,7 +251,7 @@ public class ComponentHandler {
                 break;
             }
             Column col = table.getColumn(i);
-            values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
+            values.add(convertTableValue(_stringConverter, col.getType().getJavaEquivalentClass(), value));
             i++;
         }
         return values.toArray(new Object[values.size()]);
@@ -261,8 +263,7 @@ public class ComponentHandler {
             if (value.isArray() || value.isObject() || type.isEnum()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return new StringConverter(dcConfiguration).deserialize(value.asText(), type,
-                        propDesc.getCustomConverter());
+                return _stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
             }
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
@@ -270,12 +271,12 @@ public class ComponentHandler {
         }
     }
 
-    private Object convertTableValue(Class<?> type, JsonNode value) {
+    private Object convertTableValue(StringConverter stringConverter, Class<?> type, JsonNode value) {
         try {
             if (value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+                return stringConverter.deserialize(value.asText(), type);
             }
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);

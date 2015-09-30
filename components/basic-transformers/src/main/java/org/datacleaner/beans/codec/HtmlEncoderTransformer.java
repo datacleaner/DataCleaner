@@ -28,14 +28,14 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.EncodingCategory;
 import org.datacleaner.data.MockInputColumn;
 
 import com.google.common.html.HtmlEscapers;
 
 @Named("HTML encoder")
 @Description("Encodes/escapes plain text into HTML content")
-@Categorized(StringManipulationCategory.class)
+@Categorized(EncodingCategory.class)
 public class HtmlEncoderTransformer implements Transformer {
 
     @Configured

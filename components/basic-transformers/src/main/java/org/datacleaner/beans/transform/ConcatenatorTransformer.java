@@ -28,7 +28,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 
 /**
  * Concatenates several values into one String value.
@@ -37,7 +37,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
  */
 @Named("Concatenator")
 @Description("Concatenate several column values into one.")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class ConcatenatorTransformer implements Transformer {
 
 	@Configured

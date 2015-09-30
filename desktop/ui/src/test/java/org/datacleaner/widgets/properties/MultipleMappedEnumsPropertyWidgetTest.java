@@ -33,6 +33,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -81,13 +82,13 @@ public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
         final InputColumn<?>[] inputValue = (InputColumn<?>[]) completenessAnalyzer
                 .getConfiguredProperty(inputProperty);
 
-        final MultipleMappedEnumsPropertyWidget<Enum<?>> inputWidget = new MultipleMappedEnumsPropertyWidget<Enum<?>>(
+        final MultipleMappedEnumsPropertyWidget inputWidget = new MultipleMappedEnumsPropertyWidget(
                 completenessAnalyzer, inputProperty, enumProperty);
-        final PropertyWidget<Enum<?>[]> enumWidget = inputWidget.getMappedEnumsPropertyWidget();
-        enumWidget.initialize(enumValue);
+        final PropertyWidget<Object[]> enumWidget = inputWidget.getMappedEnumsPropertyWidget();
+        enumWidget.initialize(EnumerationValue.fromArray(enumValue));
         inputWidget.initialize(inputValue);
         inputWidget.onValueTouched(inputValue);
-        enumWidget.onValueTouched(enumValue);
+        enumWidget.onValueTouched(EnumerationValue.fromArray(enumValue));
 
         assertEquals("{NOT_NULL,NOT_BLANK_OR_NULL}", ArrayUtils.toString(enumWidget.getValue()));
     }

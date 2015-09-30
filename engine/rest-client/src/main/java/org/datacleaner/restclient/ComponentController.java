@@ -27,13 +27,21 @@ package org.datacleaner.restclient;
  */
 public interface ComponentController {
     /**
-     * It returns a list of all components and their configurations.
+     * It returns a list of all components and their configurations (with/without icon data).
      * @param tenant
+     * @param iconData
      * @return
      */
-    public ComponentList getAllComponents(final String tenant);
+    public ComponentList getAllComponents(final String tenant, final boolean iconData);
 
-    public ComponentList.ComponentInfo getComponentInfo(final String tenant, final String name);
+    /**
+     * It returns a component's configuration (with/without icon data).
+     * @param tenant
+     * @param name
+     * @param iconData
+     * @return
+     */
+    public ComponentList.ComponentInfo getComponentInfo(final String tenant, final String name, final boolean iconData);
 
     public OutputColumns getOutputColumns(String tenant, String name, CreateInput createInput);
 

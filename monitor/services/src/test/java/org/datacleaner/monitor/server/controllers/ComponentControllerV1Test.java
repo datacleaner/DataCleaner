@@ -19,14 +19,27 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
+import org.datacleaner.monitor.configuration.ComponentStore;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentNotFoundException;
@@ -35,13 +48,6 @@ import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -145,9 +151,37 @@ public class ComponentControllerV1Test {
         expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
+        expect(transformerDescriptor.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
+        expect(transformerDescriptor.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
         replay(transformerDescriptor);
 
         return transformerDescriptor;
+    }
+
+    private ComponentSuperCategory getComponentSuperCategoryMock() {
+        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+            @Override
+            public String getName() {
+                return "superCategory";
+            }
+
+            @Override
+            public String getDescription() {
+                return getName();
+            }
+
+            @Override
+            public int getSortIndex() {
+                return 0;
+            }
+
+            @Override
+            public int compareTo(ComponentSuperCategory o) {
+                return 0;
+            }
+        };
+
+        return componentSuperCategory;
     }
 
     private JsonNode getJsonNodeMock() {
@@ -166,7 +200,7 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents(tenant);
+        ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
     }
 

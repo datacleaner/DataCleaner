@@ -67,6 +67,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final ComponentBuilder _componentBuilder;
     private final ComponentDescriptor<?> _descriptor;
     private final JComponent _buttonPanel;
+    private final OutputDataStreamsViewer _outputDataStreamsViewer;
+    private JXTaskPane _outputDataStreamsTaskPane;
 
     protected AbstractComponentBuilderPanel(String watermarkImagePath, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
@@ -83,12 +85,13 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _descriptor = componentBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
+        _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder);
 
         setLayout(new BorderLayout());
 
         final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
         add(scrolleable, BorderLayout.CENTER);
-
+        
         _buttonPanel = createTopButtonPanel();
         add(_buttonPanel, BorderLayout.NORTH);
     }
@@ -134,6 +137,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         final ComponentBuilder componentBuilder = getComponentBuilder();
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
+        
 
         final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
         unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
@@ -146,6 +150,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
         }
 
+
         if (!unconfiguredPropertyDescriptors.isEmpty()) {
             for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
                 logger.warn("No property widget was found in task panes for property: {}", property);
@@ -155,6 +160,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
                 getPropertyWidgetCollection().registerWidget(property, propertyWidget);
             }
         }
+        
+        onOutputDataStreamsChanged();
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
@@ -283,6 +290,18 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      */
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
+        
+        onOutputDataStreamsChanged();
+    }
+
+    private void onOutputDataStreamsChanged() {
+        _taskPaneContainer.remove(_outputDataStreamsTaskPane);
+        _outputDataStreamsViewer.refresh();
+        if (_outputDataStreamsViewer.isEnabled()) {
+            _outputDataStreamsTaskPane = addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams",
+                    _outputDataStreamsViewer);
+            _taskPaneContainer.updateUI();
+        }
     }
 
     /**

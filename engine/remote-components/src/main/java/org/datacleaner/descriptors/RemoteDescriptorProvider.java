@@ -19,24 +19,31 @@
  */
 package org.datacleaner.descriptors;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.Serializator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
+ * Provides descriptors of components that are available for remote calls on a DataCleaner Monitor server.
+ * The list of them is downloaded and appropriate descriptors are created for them
+ * ({@link RemoteTransformerDescriptorImpl}).
+ *
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
-
     private String url, username, password;
     private String tenant = "test"; // TODO
 
@@ -83,38 +90,46 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
 
         private void downloadDescriptors() {
-
             try {
                 logger.info("Loading remote components list from " + url);
                 // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
-                ComponentList components = client.getAllComponents(tenant);
+                ComponentList components = client.getAllComponents(tenant, true);
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
                                 url,
-                                component.getName(), tenant, username, password);
+                                component.getName(),
+                                tenant,
+                                component.getSuperCategoryName(),
+                                component.getCategoryNames(),
+                                component.getIconData(),
+                                username,
+                                password);
                         for(Map.Entry<String, ComponentList.PropertyInfo> propE: component.getProperties().entrySet()) {
-                            String name = propE.getKey();
+                            String propertyName = propE.getKey();
                             ComponentList.PropertyInfo propInfo = propE.getValue();
                             String className = propInfo.getClassName();
                             try {
-                                Class cl = Class.forName(className, false, getClass().getClassLoader());
+                                Class cl = findClass(className);
                                 transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
-                                        name,
+                                        propertyName,
                                         propInfo.getDescription(),
                                         cl,
                                         propInfo.isRequired(),
-                                        transformer));
-                            } catch(Exception e) {
+                                        transformer,
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()), propInfo.getDefaultValue()));
+                            } catch(ClassNotFoundException e) {
+                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}'", component.getName(), propertyName, e);
                                 // class not available on this server.
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                                        name,
+                                        propertyName,
                                         propInfo.getSchema(),
                                         propInfo.isInputColumn(),
                                         propInfo.getDescription(),
                                         propInfo.isRequired(),
-                                        transformer));
+                                        transformer,
+                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()), propInfo.getDefaultValue()));
                             }
                         }
                         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
@@ -127,5 +142,25 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 // TODO: plan a task to try again after somw while. And then notify listeners...
             }
         }
+    }
+
+    Class findClass(String name) throws ClassNotFoundException {
+        return ClassUtils.getClass(getClass().getClassLoader(), name, false);
+    }
+
+    private Map<Class<Annotation>, Annotation> initAnnotations(String componentName, String propertyName, Map<String, Map<String, Object>> annotationsInfo) {
+        Map<Class<Annotation>, Annotation> annotations = new HashMap<>();
+        if(annotationsInfo == null) { return annotations; }
+        for(Map.Entry<String, Map<String, Object>> annInfoE: annotationsInfo.entrySet()) {
+            try {
+                Class anClass = Class.forName(annInfoE.getKey());
+                Map<String, Object> anProperties = annInfoE.getValue();
+                Annotation anProxy = AnnotationProxy.newAnnotation(anClass, anProperties);
+                annotations.put(anClass, anProxy);
+            } catch (Exception e) {
+                logger.warn("Cannot create annotation '{}' for component '{}' property '{}'", annInfoE.getKey(), componentName, propertyName);
+            }
+        }
+        return annotations;
     }
 }

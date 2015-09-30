@@ -60,7 +60,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
         }
 
         List<FilterItem> whereItems = getWhereItems();
-        if (!(whereItems.size() == 1 && whereItems.get(0).getSelectItem().getColumn().getName().equals("gr_id"))) {
+        if (whereItems.size() != 1 || !"gr_id".equals(whereItems.get(0).getSelectItem().getColumn().getName())) {
             throw new IllegalArgumentException("Updates are only allowed on individual records, identified by gr_id (golden record id)");
         }
         String grId = (String) whereItems.get(0).getOperand();

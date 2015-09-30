@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -153,6 +154,15 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
 
         request.setEntity(new StringEntity(buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
+        executeRequest(request, _updateConnection.getHttpClient());
+    }
+    
+    public void executeDelete(String goldenRecordId) {
+        String uri = _updateConnection.getDeleteUrl();
+        uri = uri + "/" + goldenRecordId;
+        logger.debug("request {}", uri);
+        final HttpDelete request = new HttpDelete(uri);
+
         executeRequest(request, _updateConnection.getHttpClient());
     }
 }

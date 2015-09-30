@@ -106,7 +106,6 @@ public class ComponentControllerV1 implements ComponentController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-
     @PostConstruct
     public void init() {
         _componentCache = new ComponentCacheMapImpl(_tenantContextFactory);

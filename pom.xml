@@ -919,6 +919,10 @@
 						<artifactId>jackson-core-asl</artifactId>
 					</exclusion>
 					<exclusion>
+						<groupId>net.sf.opencsv</groupId>
+						<artifactId>opencsv</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>org.codehaus.jackson</groupId>
 						<artifactId>jackson-mapper-asl</artifactId>
 					</exclusion>

@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/swagger.json")
 public class SwaggerJSONController {
     private static final String CONTROLLERS_PACKAGE = "org.datacleaner.monitor.server.controllers";
-    private static final String BASE_PATH = "repository";
+    private static final String BASE_PATH = "/repository";
     private static final Logger logger = LoggerFactory.getLogger(SwaggerJSONController.class);
     private Reflections reflections = new Reflections(SwaggerJSONController.CONTROLLERS_PACKAGE);
     private Class serviceClass = null;
@@ -57,9 +57,7 @@ public class SwaggerJSONController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SwaggerConfiguration generateSwaggerJSON(HttpServletRequest httpServletRequest) {
-        String thisURL = httpServletRequest.getRequestURL().toString();
-        String host = thisURL.substring(0, thisURL.indexOf("/" + SwaggerJSONController.BASE_PATH));
-        swaggerConfiguration.setHost(host);
+        swaggerConfiguration.setHost(getCurrentHost(httpServletRequest));
         swaggerConfiguration.setBasePath(SwaggerJSONController.BASE_PATH);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -69,6 +67,16 @@ public class SwaggerJSONController {
         }
 
         return swaggerConfiguration;
+    }
+
+    private String getCurrentHost(HttpServletRequest httpServletRequest) {
+        String thisURL = httpServletRequest.getRequestURL().toString();
+        String protocolSeparator = "://";
+        String host = thisURL.substring(
+                thisURL.indexOf(protocolSeparator) + protocolSeparator.length(),
+                thisURL.indexOf(SwaggerJSONController.BASE_PATH));
+
+        return host;
     }
 
     private void addClassServices() {
@@ -122,8 +130,9 @@ public class SwaggerJSONController {
             SwaggerMethod swaggerMethod = createSwaggerMethod(methodRequestMapping, method);
             String httpMethodName = requestMethod.name().toLowerCase();
 
-            if (httpMethodName == null || httpMethodName.isEmpty()) {
+            if (httpMethodName.isEmpty()) {
                 logger.warn("HTTP method of a service method is empty ({}). ", method.getName());
+                continue;
             }
 
             swaggerConfiguration.getPaths().get(url).put(httpMethodName, swaggerMethod);
@@ -178,13 +187,13 @@ public class SwaggerJSONController {
         else if (pathVariable != null) {
             swaggerParameter = new SwaggerParameter();
             swaggerParameter.setRequired(true);
-            swaggerParameter.setIn(SwaggerParameter.In.QUERY.getValue());
+            swaggerParameter.setIn(SwaggerParameter.In.PATH.getValue());
             parameterName = pathVariable.value();
         }
 
         if (swaggerParameter != null) {
             swaggerParameter.setName(parameterName);
-            swaggerParameter.getSchema().put("$ref", "#/definitions/Entity");
+            swaggerParameter.setTypeByClass(parameter.getType());
         }
 
         return swaggerParameter;

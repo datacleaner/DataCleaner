@@ -22,12 +22,16 @@ package org.datacleaner.documentation.swagger;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * @since 23. 09. 2015
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SwaggerParameter {
     public static enum In {
         HEADER("header"),
+        PATH("path"),
         QUERY("query"),
         BODY("body"),
         ;
@@ -43,10 +47,30 @@ public class SwaggerParameter {
         }
     };
 
+    public static enum Type {
+        STRING("string"),
+        INTEGER("integer"),
+        BOOLEAN("boolean"),
+        OBJECT("object"),
+        ;
+
+        private String value = "";
+
+        private Type(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    };
+
     private String in = "";
     private String name = "";
     private String description = "";
     private Boolean required = false;
+    private String type = "";
+    private Map<String, String> items = new HashMap<>();
     private Map<String, String> schema = new HashMap<>();
 
     public String getIn() {
@@ -81,11 +105,43 @@ public class SwaggerParameter {
         this.required = required;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Map<String, String> getItems() {
+        return items;
+    }
+
+    public void setItems(Map<String, String> items) {
+        this.items = items;
+    }
+
     public Map<String, String> getSchema() {
         return schema;
     }
 
     public void setSchema(Map<String, String> schema) {
         this.schema = schema;
+    }
+
+    public void setTypeByClass(Class clazz) {
+        if (clazz.getName().equals(String.class.getName())) {
+            setType(Type.STRING.getValue());
+        }
+        else if (clazz.getName().equals(Integer.class.getName())) {
+            setType(Type.INTEGER.getValue());
+        }
+        else if (clazz.getName().equals(Boolean.class.getName())) {
+            setType(Type.BOOLEAN.getValue());
+        }
+        else {
+            setType(Type.OBJECT.getValue());
+            schema.put("$ref", "#/definitions/JSON object");
+        }
     }
 }

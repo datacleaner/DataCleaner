@@ -391,6 +391,11 @@
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
 										<exclude>org.eobjects.metamodel:*</exclude>
+										<exclude>log4j:apache-log4j-extras:*</exclude>
+										<exclude>org.apache.logging.log4j:*</exclude>
+										
+										<!-- commons-beanutils-core is redundant when we already depend on commons-beanutils -->
+										<exclude>commons-beanutils:commons-beanutils-core:*</exclude>
 
 										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
 										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
@@ -617,6 +622,12 @@
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-hadoop</artifactId>
 				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
@@ -641,6 +652,10 @@
 					<exclusion>
 						<groupId>jdk.tools</groupId>
 						<artifactId>jdk.tools</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -855,6 +870,10 @@
 						<groupId>javax.xml.bind</groupId>
 						<artifactId>jaxb-api</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>apache-log4j-extras</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -862,6 +881,11 @@
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.3</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>

@@ -52,7 +52,7 @@ import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;

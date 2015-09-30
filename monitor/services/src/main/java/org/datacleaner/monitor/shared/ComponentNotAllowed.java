@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.monitor.shared;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Class ComponentNotAllowed
- *
+ * 
  */
-@ResponseStatus(value= HttpStatus.FORBIDDEN, reason="Component is not allowed.")
+@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Component is not allowed.")
 public class ComponentNotAllowed extends RuntimeException {
     private ComponentNotAllowed(String msg) {
         super(msg);

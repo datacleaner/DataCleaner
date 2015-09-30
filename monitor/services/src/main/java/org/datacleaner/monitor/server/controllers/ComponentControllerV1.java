@@ -39,13 +39,34 @@ import javax.annotation.PreDestroy;
 import org.apache.commons.io.IOUtils;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
-import org.datacleaner.monitor.server.components.*;
+import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.monitor.configuration.ComponentCache;
+import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
+import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
+import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.restclient.ComponentController;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.OutputColumns;
+import org.datacleaner.restclient.ProcessInput;
+import org.datacleaner.restclient.ProcessOutput;
+import org.datacleaner.restclient.ProcessResult;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
+import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +82,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.Collection;
-import java.util.UUID;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -162,7 +183,7 @@ public class ComponentControllerV1 implements ComponentController {
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
-                tenantContext, decodedName, createInput.configuration);
+                tenantContext, decodedName, createInput.configuration, _remoteComponentsConfiguration);
         handler.createComponent(createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();

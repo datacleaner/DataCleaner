@@ -17,13 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
+package org.datacleaner.monitor.shared;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-
-@ResponseStatus(value= HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ComponentNotFoundException extends RuntimeException {
     private ComponentNotFoundException(String msg) {
         super(msg);

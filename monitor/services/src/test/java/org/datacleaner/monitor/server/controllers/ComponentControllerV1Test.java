@@ -28,34 +28,28 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList;
-import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";

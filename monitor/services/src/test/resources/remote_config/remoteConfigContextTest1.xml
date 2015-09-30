@@ -9,9 +9,9 @@
                 <property name="Separator">
                     XXX
                 </property>
-                <propertyXML name="Separator2">
-                    <a>A</a>
-                </propertyXML>
+                <property name="Separator2">
+                    <X>Prague</X>
+                </property>
             </properties>
         </component>
     </defaults>

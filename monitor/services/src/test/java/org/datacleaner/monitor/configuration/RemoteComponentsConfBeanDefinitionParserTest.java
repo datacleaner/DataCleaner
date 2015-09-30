@@ -59,9 +59,11 @@ public class RemoteComponentsConfBeanDefinitionParserTest {
         Assert.assertEquals(2, constructorObj.properties.get("Concatenator").size());
         Assert.assertEquals("Separator", constructorObj.properties.get("Concatenator").get(0).getName());
         Assert.assertEquals("XXX", constructorObj.properties.get("Concatenator").get(0).getValue());
+        Assert.assertEquals(true, constructorObj.properties.get("Concatenator").get(0).isSimpleString());
         Assert.assertEquals("Separator2", constructorObj.properties.get("Concatenator").get(1).getName());
-        Assert.assertEquals("<a xmlns=\"http://www.datacleaner.org/schema/remoteComponentsConfiguration\">A</a>",
+        Assert.assertEquals("<X xmlns=\"http://www.datacleaner.org/schema/remoteComponentsConfiguration\">Prague</X>",
                 constructorObj.properties.get("Concatenator").get(1).getValue());
+        Assert.assertEquals(false, constructorObj.properties.get("Concatenator").get(1).isSimpleString());
     }
 
     @Test

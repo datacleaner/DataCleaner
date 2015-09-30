@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * to DataCleaner monitor.
  *
  */
-@Deprecated
 public class JsonUpdateQueryBuilder {
 
     public static String buildJsonArray(List<String> queries) {

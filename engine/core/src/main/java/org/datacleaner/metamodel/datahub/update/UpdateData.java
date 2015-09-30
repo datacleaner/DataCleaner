@@ -26,8 +26,8 @@ package org.datacleaner.metamodel.datahub.update;
  */
 public class UpdateData {
     
-    private String grId;
-    private UpdateField[] fields;
+    private final String grId;
+    private final UpdateField[] fields;
     
     public UpdateData(String grId, UpdateField[] fields) {
         this.grId = grId;

@@ -47,8 +47,7 @@ public class DataHubUpdateCallbackTest {
     private UpdateField field1;
     private UpdateField field2;
 
-    private static int maxBatchSize = DataHubUpdateCallback.INSERT_BATCH_SIZE;
-    private static String query = "query";
+    private static final int MAX_BATCH_SIZE = DataHubUpdateCallback.INSERT_BATCH_SIZE;
 
     @Before
     public void init() {
@@ -63,7 +62,7 @@ public class DataHubUpdateCallbackTest {
     @Test
     public void shouldFlushBatchWhenThresholdIsReached() {
 
-        for (int x = 0; x < maxBatchSize + 1; x++) {
+        for (int x = 0; x < MAX_BATCH_SIZE + 1; x++) {
             callback.executeUpdate(updateData);
         }
         
@@ -72,7 +71,7 @@ public class DataHubUpdateCallbackTest {
     
     @Test
     public void shouldNotFlushBatchPrematurely() {
-        for (int x = 0; x < maxBatchSize - 1; x++) {
+        for (int x = 0; x < MAX_BATCH_SIZE - 1; x++) {
             callback.executeUpdate(updateData);
         }
         
@@ -82,7 +81,7 @@ public class DataHubUpdateCallbackTest {
     @Test
     public void shouldFlushBatchInTWRContext() {
         try(DataHubUpdateCallback callback = new DataHubUpdateCallback(dataContext)) {
-            for (int x = 0; x < maxBatchSize; x++) {
+            for (int x = 0; x < MAX_BATCH_SIZE; x++) {
                 callback.executeUpdate(updateData);
             }
             verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));

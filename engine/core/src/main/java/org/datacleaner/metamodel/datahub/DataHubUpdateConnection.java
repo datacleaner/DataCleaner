@@ -32,7 +32,7 @@ public class DataHubUpdateConnection {
     public final static String CONTEXT_PATH = "/service/cdi/v1";
     public final static String UPDATE_PATH = "/goldenrecords/batch";
 
-    DataHubConnection _connection;
+    private final DataHubConnection _connection;
 
     public DataHubUpdateConnection(DataHubConnection connection) {
         _connection = connection;

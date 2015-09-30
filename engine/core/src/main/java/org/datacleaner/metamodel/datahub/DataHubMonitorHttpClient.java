@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util.http;
+package org.datacleaner.metamodel.datahub;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +51,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,9 +62,9 @@ import org.slf4j.LoggerFactory;
  * This client requires that CAS is installed with the RESTful API, which is
  * described in detail here: https://wiki.jasig.org/display/CASUM/RESTful+API
  */
-public class CASMonitorHttpClient implements MonitorHttpClient {
+public class DataHubMonitorHttpClient implements MonitorHttpClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataHubMonitorHttpClient.class);
 
     private static final String CDI_TICKET_HEADER = "CDI-ticket";
     private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
@@ -80,7 +81,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private String _requestedService;
     private String _casRestServiceUrl;
 
-    public CASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
+    public DataHubMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
             String monitorBaseUrl) {
         _httpClient = client;
         _casServerUrl = casServerUrl;

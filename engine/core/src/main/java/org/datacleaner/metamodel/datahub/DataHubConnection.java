@@ -28,7 +28,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.util.SecurityUtils;
-import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
 
@@ -75,7 +74,7 @@ public class DataHubConnection {
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if (CAS.equals(_securityMode)) {
-            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+            return new DataHubMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
         } else {
             return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
@@ -94,7 +93,7 @@ public class DataHubConnection {
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if (CAS.equals(_securityMode)) {
-            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+            return new DataHubMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
         } else {
             return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }

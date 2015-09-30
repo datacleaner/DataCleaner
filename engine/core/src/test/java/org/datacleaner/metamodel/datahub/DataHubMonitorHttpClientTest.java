@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util.http;
+package org.datacleaner.metamodel.datahub;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -29,12 +29,13 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
+import org.datacleaner.metamodel.datahub.DataHubMonitorHttpClient;
 
-public class CASMonitorHttpClientTest {
+public class DataHubMonitorHttpClientTest {
 
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {
-        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
+        try (DataHubMonitorHttpClient client = new DataHubMonitorHttpClient(HttpClients.createSystem(),
                 "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
 
             doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
@@ -45,14 +46,14 @@ public class CASMonitorHttpClientTest {
             client.close();
         }
 
-        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
+        try (DataHubMonitorHttpClient client = new DataHubMonitorHttpClient(HttpClients.createSystem(),
                 "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
             doRequest(client, new HttpGet(
                     "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
         }
     }
 
-    private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
+    private static void doRequest(DataHubMonitorHttpClient client, HttpUriRequest req) throws Exception {
         System.out.println("REQUESTING: " + req.getURI());
 
         final HttpResponse response = client.execute(req);

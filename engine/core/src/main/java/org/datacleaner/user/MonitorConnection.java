@@ -26,10 +26,10 @@ import java.net.URISyntaxException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.datacleaner.metamodel.datahub.DataHubMonitorHttpClient;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
-import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
@@ -97,7 +97,7 @@ public class MonitorConnection implements Serializable {
         final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
         if ("CAS".equalsIgnoreCase(securityMode)) {
             final String casUrl = System.getProperty(SystemProperties.MONITOR_CAS_URL);
-            return new CASMonitorHttpClient(httpClient, casUrl, username, password, getBaseUrl());
+            return new DataHubMonitorHttpClient(httpClient, casUrl, username, password, getBaseUrl());
         }
 
         return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), username, password);

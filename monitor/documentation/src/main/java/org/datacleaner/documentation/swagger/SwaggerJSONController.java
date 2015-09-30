@@ -24,6 +24,7 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,11 +53,12 @@ public class SwaggerJSONController {
     private Reflections reflections = new Reflections(SwaggerJSONController.CONTROLLERS_PACKAGE);
     private Class serviceClass = null;
     private String serviceUrlPrefix = null;
-    private SwaggerConfiguration swaggerConfiguration = new SwaggerConfiguration();
+    private SwaggerConfiguration swaggerConfiguration = null;
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SwaggerConfiguration generateSwaggerJSON(HttpServletRequest httpServletRequest) {
+        swaggerConfiguration = new SwaggerConfiguration();
         swaggerConfiguration.setHost(getCurrentHost(httpServletRequest));
         swaggerConfiguration.setBasePath(SwaggerJSONController.BASE_PATH);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -89,42 +91,49 @@ public class SwaggerJSONController {
         serviceUrlPrefix = classRequestMapping.value()[0];
 
         for (Method method : serviceClass.getMethods()) {
-            addSwaggerMethod(method);
+            addMethod(method);
         }
 
-        swaggerConfiguration.getTags().add(createSwaggerTag(classRequestMapping));
+        swaggerConfiguration.getTags().add(createSwaggerTag());
     }
 
-    private SwaggerTag createSwaggerTag(RequestMapping classRequestMapping) {
-        String[] values = classRequestMapping.value();
-        String serviceName = "default";
-
-        if (values.length > 0) {
-            serviceName = values[0];
-        }
-
+    private SwaggerTag createSwaggerTag() {
         SwaggerTag swaggerTag = new SwaggerTag();
-        swaggerTag.setName(serviceName);
+        swaggerTag.setName(serviceClass.getSimpleName());
 
         return swaggerTag;
     }
 
-    private void addSwaggerMethod(Method method) {
+    private void addMethod(Method method) {
         RequestMapping methodRequestMapping = method.getAnnotation(RequestMapping.class);
 
         if (methodRequestMapping == null) {
             return;
         }
 
-        String methodUrl = "";
-        String[] values = methodRequestMapping.value();
+        String url = getMethodURL(methodRequestMapping.value());
 
-        if (values.length > 0) {
-            methodUrl = values[0];
+        if (! swaggerConfiguration.getPaths().containsKey(url)) {
+            Map<String, SwaggerMethod> swaggerMethods = new HashMap<>();
+            swaggerConfiguration.getPaths().put(url, swaggerMethods);
         }
 
-        String url = serviceUrlPrefix + methodUrl;
-        swaggerConfiguration.getPaths().put(url, new HashMap<String, SwaggerMethod>());
+        addHTTPMethods(url, method);
+    }
+
+    private String getMethodURL(String[] methodRequestMappingValues) {
+        String methodUrl = "";
+
+        if (methodRequestMappingValues.length > 0) {
+            methodUrl = methodRequestMappingValues[0];
+        }
+
+        return serviceUrlPrefix + methodUrl;
+    }
+
+    private void addHTTPMethods(String url, Method method) {
+        RequestMapping methodRequestMapping = method.getAnnotation(RequestMapping.class);
+        Map<String, SwaggerMethod> swaggerMethods = swaggerConfiguration.getPaths().get(url);
 
         for (RequestMethod requestMethod : methodRequestMapping.method()) {
             SwaggerMethod swaggerMethod = createSwaggerMethod(methodRequestMapping, method);
@@ -135,7 +144,7 @@ public class SwaggerJSONController {
                 continue;
             }
 
-            swaggerConfiguration.getPaths().get(url).put(httpMethodName, swaggerMethod);
+            swaggerMethods.put(httpMethodName, swaggerMethod);
         }
     }
 
@@ -147,6 +156,7 @@ public class SwaggerJSONController {
         swaggerMethod.setConsumes(methodRequestMapping.consumes());
         swaggerMethod.setProduces(methodRequestMapping.produces());
         swaggerMethod.setParameters(createSwaggerParameterArray(method));
+        swaggerMethod.getTags().add(serviceClass.getSimpleName());
 
         return swaggerMethod;
     }

@@ -19,14 +19,16 @@
  */
 package org.datacleaner.documentation.swagger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @since 23. 09. 2015
  */
 public class SwaggerMethod {
-    private String[] tags = new String[] { };
+    private List<String> tags = new ArrayList<>();
     private String summary = "";
     private String description = "";
     private String operationId = "";
@@ -36,11 +38,11 @@ public class SwaggerMethod {
     private Map<String, SwaggerResponse> responses = new HashMap<>();
     private String[] security = new String[] { };
 
-    public String[] getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(String[] tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

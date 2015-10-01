@@ -19,8 +19,8 @@
  */
 package org.datacleaner.documentation.swagger;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -163,9 +163,11 @@ public class SwaggerJSONController {
 
     private SwaggerParameter[] createSwaggerParameterArray(Method method) {
         List<SwaggerParameter> swaggerParameterList = new ArrayList<>();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        Class[] parameterTypes = method.getParameterTypes();
 
-        for (Parameter parameter : method.getParameters()) {
-            SwaggerParameter swaggerParameter = getSwaggerParameter(parameter);
+        for (int i = 0; i < parameterTypes.length; i++) {
+            SwaggerParameter swaggerParameter = getSwaggerParameter(parameterTypes[i], parameterAnnotations[i]);
 
             if (swaggerParameter != null) {
                 swaggerParameterList.add(swaggerParameter);
@@ -175,11 +177,11 @@ public class SwaggerJSONController {
         return swaggerParameterList.toArray(new SwaggerParameter[swaggerParameterList.size()]);
     }
 
-    private SwaggerParameter getSwaggerParameter(Parameter parameter) {
+    private SwaggerParameter getSwaggerParameter(Class parameterType, Annotation[] parameterAnnotations) {
         SwaggerParameter swaggerParameter = null;
-        RequestBody requestBody = parameter.getAnnotation(RequestBody.class);
-        RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
-        PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
+        RequestBody requestBody = (RequestBody) findAnnotation(parameterAnnotations, RequestBody.class);
+        RequestParam requestParam = (RequestParam) findAnnotation(parameterAnnotations, RequestParam.class);
+        PathVariable pathVariable = (PathVariable) findAnnotation(parameterAnnotations, PathVariable.class);
         String parameterName = "";
 
         if (requestBody != null) {
@@ -203,9 +205,19 @@ public class SwaggerJSONController {
 
         if (swaggerParameter != null) {
             swaggerParameter.setName(parameterName);
-            swaggerParameter.setTypeByClass(parameter.getType());
+            swaggerParameter.setTypeByClass(parameterType);
         }
 
         return swaggerParameter;
+    }
+
+    private Annotation findAnnotation(Annotation[] allAnnotations, Class requiredType) {
+        for (Annotation annotation : allAnnotations) {
+            if (annotation.annotationType().equals(requiredType)) {
+                return annotation;
+            }
+        }
+
+        return null;
     }
 }

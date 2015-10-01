@@ -29,6 +29,7 @@ import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.convert.StringConverter;
 
 /**
  * Defines a context for a <i>single</i> tenant in which access to shared
@@ -162,4 +163,6 @@ public interface TenantContext {
      * @return
      */
     public ComponentStore getComponentStore();
+
+    public StringConverter getStringConverter();
 }

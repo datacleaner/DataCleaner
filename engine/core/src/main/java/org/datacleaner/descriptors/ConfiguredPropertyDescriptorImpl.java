@@ -35,22 +35,21 @@ import org.datacleaner.util.StringUtils;
 final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor implements ConfiguredPropertyDescriptor {
 
     private static final long serialVersionUID = 1L;
+    private final String name;
+    private final boolean isInputColumn;
+    private String[] aliases;
 
     protected ConfiguredPropertyDescriptorImpl(Field field, ComponentDescriptor<?> componentDescriptor)
             throws DescriptorException {
         super(field, componentDescriptor);
+        name = resolveName();
+        isInputColumn = resolveIsInputColumn();
+        aliases = resolveAliases();
     }
 
     @Override
     public String getName() {
-        Configured configured = getAnnotation(Configured.class);
-        if (configured != null) {
-            String value = configured.value();
-            if (!StringUtils.isNullOrEmpty(value)) {
-                return value.trim();
-            }
-        }
-        return ReflectionUtils.explodeCamelCase(super.getName(), true);
+        return name;
     }
 
     @Override
@@ -69,9 +68,7 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public boolean isInputColumn() {
-        Class<?> baseType = getBaseType();
-        boolean result = ReflectionUtils.isInputColumn(baseType);
-        return result;
+        return isInputColumn;
     }
 
     @Override
@@ -112,10 +109,32 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public String[] getAliases() {
+        return aliases;
+    }
+
+    private String[] resolveAliases() {
         Alias alias = getAnnotation(Alias.class);
         if (alias == null) {
             return new String[0];
         }
         return alias.value();
     }
+
+    private String resolveName() {
+        Configured configured = getAnnotation(Configured.class);
+        if (configured != null) {
+            String value = configured.value();
+            if (!StringUtils.isNullOrEmpty(value)) {
+                return value.trim();
+            }
+        }
+        return ReflectionUtils.explodeCamelCase(super.getName(), true);
+    }
+
+    private boolean resolveIsInputColumn() {
+        Class<?> baseType = getBaseType();
+        boolean result = ReflectionUtils.isInputColumn(baseType);
+        return result;
+    }
+
 }

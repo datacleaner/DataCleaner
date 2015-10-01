@@ -82,10 +82,12 @@ public class ComponentHandler {
     Map<String, InputColumn> inputColumns;
     MyMutableTable table;
     Component component;
+    StringConverter stringConverter;
 
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, StringConverter stringConverter) {
         this.dcConfiguration = dcConfiguration;
         this.componentName = componentName;
+        this.stringConverter = stringConverter == null ? StringConverter.simpleInstance() : stringConverter;
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {
@@ -255,7 +257,7 @@ public class ComponentHandler {
             if(value.isArray() || value.isObject() || type.isEnum()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return new StringConverter(dcConfiguration).deserialize(value.asText(), type, propDesc.getCustomConverter());
+                return stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
             }
         } catch(Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value.toString(), e);
@@ -267,7 +269,7 @@ public class ComponentHandler {
             if(value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+                return stringConverter.deserialize(value.asText(), type);
             }
         } catch(Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);

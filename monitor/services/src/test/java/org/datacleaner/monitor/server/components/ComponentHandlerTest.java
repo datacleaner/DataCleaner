@@ -28,6 +28,7 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.util.convert.StringConverter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class ComponentHandlerTest {
 
     @Before
     public void setUp() {
-        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName);
+        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, null);
         componentConfiguration = getComponentConfiguration();
         jsonData = getJsonDataMock();
     }

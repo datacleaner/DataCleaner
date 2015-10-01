@@ -50,6 +50,7 @@ final class ConfigurationCache {
 
     private volatile DataCleanerConfiguration _configuration;
     private volatile long _lastModifiedCache;
+    private volatile long _lastModifiedCall;
 
     public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext, Repository repository) {
         _environment = environment;
@@ -70,16 +71,20 @@ final class ConfigurationCache {
     }
 
     public DataCleanerConfiguration getAnalyzerBeansConfiguration() {
-        long lastModified = getConfigurationFile().getLastModified();
-        if (_configuration == null || lastModified != _lastModifiedCache) {
-            synchronized (this) {
-                lastModified = _file.getLastModified();
-                if (_configuration == null || lastModified != _lastModifiedCache) {
-                    DataCleanerConfiguration readConfiguration = readConfiguration();
-                    DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
-                    _configuration = decoratedConfiguration;
+        // avoid to access filesystem too often.
+        if(_lastModifiedCall + 3000 < System.currentTimeMillis()) {
+            long lastModified = getConfigurationFile().getLastModified();
+            if (_configuration == null || lastModified != _lastModifiedCache) {
+                synchronized (this) {
+                    lastModified = _file.getLastModified();
+                    if (_configuration == null || lastModified != _lastModifiedCache) {
+                        DataCleanerConfiguration readConfiguration = readConfiguration();
+                        DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
+                        _configuration = decoratedConfiguration;
+                    }
                 }
             }
+            _lastModifiedCall = System.currentTimeMillis();
         }
         return _configuration;
     }

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class DataHubSchema extends AbstractSchema {
     private List<Table> _tables;
 
     public DataHubSchema() {
-        _name = "";
+        _name = EMPTY;
         _tables = new ArrayList<Table>();
 
     }

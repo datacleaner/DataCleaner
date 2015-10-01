@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.desktop.api;
+package org.datacleaner.api;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,8 +25,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.datacleaner.api.Configured;
 
 /**
  * Additional annotation that can be put on a {@link Configured} property to
@@ -41,4 +39,17 @@ import org.datacleaner.api.Configured;
 @Inherited
 public @interface HiddenProperty {
 
+    /**
+     * Hides property for remote access like in REST API.
+     *
+     * @return
+     */
+    boolean hiddenForRemoteAccess() default true;
+
+    /**
+     * Hides property for local access.
+     *
+     * @return
+     */
+    boolean hiddenForLocalAccess() default true;
 }

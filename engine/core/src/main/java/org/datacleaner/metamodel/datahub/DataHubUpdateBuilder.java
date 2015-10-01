@@ -54,6 +54,9 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
                 String columnName = columns[i].getName();
+                if (columnName.startsWith("_")) {
+                    throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\"");
+                }
                 final UpdateField field = new UpdateField(columnName, value.toString());
                 fields.add(field);
             }

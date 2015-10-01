@@ -71,8 +71,7 @@ public final class StringConverter {
 
     private final InjectionManager _injectionManager;
     private final DataCleanerConfiguration _configuration;
-
-    private DelegatingConverter _baseConverter;
+    private final DelegatingConverter _baseConverter;
 
     /**
      * Gets a simple instance of {@link StringConverter}. This instance will not
@@ -100,6 +99,7 @@ public final class StringConverter {
         _configuration = configuration;
         _injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
+        _baseConverter = createBaseConverter();
     }
 
     public StringConverter(InjectionManager injectionManager) {
@@ -110,13 +110,16 @@ public final class StringConverter {
                 .of(DataCleanerConfiguration.class);
         _configuration = injectionManager.getInstance(injectionPoint);
         _injectionManager = injectionManager;
+        _baseConverter = createBaseConverter();
+    }
 
-        _baseConverter = new DelegatingConverter();
-        _baseConverter.addConverter(new ConfigurationItemConverter());
-        _baseConverter.addConverter(getResourceConverter());
-        _baseConverter.addConverter(new StandardTypeConverter(_configuration, _baseConverter));
-
-        _baseConverter.initializeAll(_injectionManager);
+    private DelegatingConverter createBaseConverter() {
+        DelegatingConverter baseConverter = new DelegatingConverter();
+        baseConverter.addConverter(new ConfigurationItemConverter());
+        baseConverter.addConverter(getResourceConverter());
+        baseConverter.addConverter(new StandardTypeConverter(_configuration, baseConverter));
+        baseConverter.initializeAll(_injectionManager);
+        return baseConverter;
     }
 
     private static InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {

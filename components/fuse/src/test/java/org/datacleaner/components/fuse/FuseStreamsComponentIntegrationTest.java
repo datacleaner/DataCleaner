@@ -48,7 +48,9 @@ import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 public class FuseStreamsComponentIntegrationTest {
 
@@ -61,6 +63,9 @@ public class FuseStreamsComponentIntegrationTest {
     private final DataCleanerConfigurationImpl multiThreadedConfiguration = new DataCleanerConfigurationImpl()
             .withDatastores(datastore).withEnvironment(
                     new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
+    
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(20);
 
     @Test
     public void testAssumptionsAboutOrderdb() throws Exception {
@@ -77,12 +82,12 @@ public class FuseStreamsComponentIntegrationTest {
         }
     }
 
-    @Test(timeout = 20 * 1000)
+    @Test
     public void testUnionTablesSingleThreaded() throws Throwable {
         testUnionTables(singleThreadedConfiguration);
     }
 
-    @Test(timeout = 20 * 1000)
+    @Test
     public void testUnionTablesMultiThreaded() throws Throwable {
         testUnionTables(multiThreadedConfiguration);
     }
@@ -137,12 +142,12 @@ public class FuseStreamsComponentIntegrationTest {
         Assert.assertEquals(COUNT_CUSTOMERS + COUNT_EMPLOYEES, result.getValues().size());
     }
 
-    @Test(timeout = 20 * 1000)
+    @Test
     public void testFuseOutputDataStreamsSingleThreaded() throws Throwable {
         testFuseOutputDataStreams(singleThreadedConfiguration);
     }
 
-    @Test(timeout = 20 * 1000)
+    @Test
     public void testFuseOutputDataStreamsMultiThreaded() throws Throwable {
         testFuseOutputDataStreams(multiThreadedConfiguration);
     }

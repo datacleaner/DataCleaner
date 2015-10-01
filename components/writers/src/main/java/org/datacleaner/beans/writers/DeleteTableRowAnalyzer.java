@@ -113,7 +113,7 @@ public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action
 
     @Inject
     @Configured(order = 3)
-    @Description("Datastore to write to")
+    @Description("Datastore to delete from")
     UpdateableDatastore datastore;
 
     @Inject
@@ -124,7 +124,7 @@ public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action
 
     @Inject
     @Configured(order = 5, required = false)
-    @Description("Table to target (update)")
+    @Description("Table to target (delete from)")
     @TableProperty
     String tableName;
 
@@ -134,7 +134,7 @@ public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action
     WriteBufferSizeOption bufferSizeOption = WriteBufferSizeOption.MEDIUM;
 
     @Inject
-    @Configured(value = "How to handle updation errors?", order = 7)
+    @Configured(value = "How to handle deletion errors?", order = 7)
     ErrorHandlingOption errorHandlingOption = ErrorHandlingOption.STOP_JOB;
 
     @Inject

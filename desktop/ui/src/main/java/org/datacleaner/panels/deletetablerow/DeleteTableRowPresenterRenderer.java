@@ -28,14 +28,13 @@ import org.datacleaner.beans.writers.DeleteTableRowAnalyzer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link AnalysisJobBuilder} for
+ * Specialized {@link Renderer} for a {@link AnalyzerComponentBuilder} for
  * {@link DeleteTableRowAnalyzer}.
  * 
  * @author Menno Booi

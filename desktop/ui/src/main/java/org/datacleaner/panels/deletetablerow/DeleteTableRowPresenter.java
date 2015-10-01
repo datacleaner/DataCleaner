@@ -158,11 +158,11 @@ class DeleteTableRowPresenter extends AnalyzerComponentBuilderPanel {
 
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final ConfiguredPropertyTaskPane taskPane1 = new ConfiguredPropertyTaskPane("Table to update",
+        final ConfiguredPropertyTaskPane taskPane1 = new ConfiguredPropertyTaskPane("Table to delete from",
                 IconUtils.getImagePathForClass(UpdateTableAnalyzer.class), Arrays.asList(_datastoreProperty,
                         _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
 
-        final ConfiguredPropertyTaskPane taskPane2 = new ConfiguredPropertyTaskPane("Update condition",
+        final ConfiguredPropertyTaskPane taskPane2 = new ConfiguredPropertyTaskPane("Delete condition",
                 "images/model/column.png", Arrays.asList(_conditionInputColumnsProperty));
 
         final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",

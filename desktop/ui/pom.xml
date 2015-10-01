@@ -52,6 +52,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.jboss.tattletale</groupId>
+				<artifactId>tattletale-maven</artifactId>
+				<configuration>
+					<source>${project.build.directory}/lib</source>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -146,6 +153,12 @@
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-io</artifactId>
 			<version>2.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>stax</groupId>
+					<artifactId>stax-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleframework</groupId>

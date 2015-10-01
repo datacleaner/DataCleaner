@@ -43,7 +43,7 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.monitor.configuration.ComponentCache;
 import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
@@ -337,9 +337,9 @@ public class ComponentControllerV1 implements ComponentController {
     private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor<?> descriptor,
             Object componentInstance) {
         Map<String, ComponentList.PropertyInfo> result = new HashMap<>();
-        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor
-                .getConfiguredProperties()) {
-            if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
+            final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+            if (hiddenProperty != null && hiddenProperty.hiddenForRemoteAccess()) {
                 continue;
             }
             ComponentList.PropertyInfo propInfo = new ComponentList.PropertyInfo();

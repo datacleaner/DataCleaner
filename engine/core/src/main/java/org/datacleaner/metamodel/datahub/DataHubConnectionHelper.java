@@ -17,28 +17,26 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.desktop.api;
+package org.datacleaner.metamodel.datahub;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.security.AccessControlException;
 
-import org.datacleaner.api.Configured;
+import org.apache.http.HttpResponse;
 
-/**
- * Additional annotation that can be put on a {@link Configured} property to
- * hide it from the Desktop UI of DataCleaner.
- * 
- * Hidden properties will still be configurable through XML files or
- * programmatic instrumentation.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
-@Documented
-@Inherited
-public @interface HiddenProperty {
+public class DataHubConnectionHelper {
+
+    public static void validateReponseStatusCode(HttpResponse response) {
+        
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 403) {
+            throw new AccessControlException("You are not authorized to access the service");
+        }
+        if (statusCode == 404) {
+            throw new AccessControlException("Could not connect to Datahub: not found");
+        }
+        if (statusCode != 200) {
+            throw new IllegalStateException("Unexpected response status code: " + statusCode);
+        }
+    }
 
 }

@@ -412,7 +412,22 @@
 										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
 											required by Hadoop) -->
 										<exclude>org.glassfish.jersey:*</exclude>
+										
+										<!-- asm groupId is conflicting with org.ow2.asm groupId -->
+										<exclude>asm:asm:*</exclude>
+									
+										<!-- findbugs-annotations is overlapping with annotations -->
+										<exclude>com.github.stephenc.findbugs:findbugs-annotations:*</exclude>
+										
+										<!-- jcip-annotations is overlapping with annotations -->
+										<exclude>net.jcip:jcip-annotations</exclude>
 
+										<!-- stax-api is overlapping with xml-apis -->
+										<exclude>stax:stax-api:*</exclude>
+										<exclude>javax.xml.stream:stax-api</exclude>
+										
+										<!-- standard is overlapping with jstl -->
+										<exclude>taglibs:standard:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -491,6 +506,29 @@
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>1.3.1</version>
 				</plugin>
+				<plugin>
+					<groupId>org.jboss.tattletale</groupId>
+					<artifactId>tattletale-maven</artifactId>
+					<version>1.1.2.Final</version>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<destination>${project.reporting.outputDirectory}/tattletale</destination>
+						<reports>
+							<report>jar</report>
+							<report>multiplejars</report>
+						</reports>
+						<filter>tattletale-filters.properties</filter>
+						<failOnWarn>true</failOnWarn>
+					</configuration>
+				</plugin>
+
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
 					<artifactId>scala-maven-plugin</artifactId>
@@ -620,6 +658,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-excel</artifactId>
+				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-hadoop</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -656,6 +705,18 @@
 					<exclusion>
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.github.stephenc.findbugs</groupId>
+						<artifactId>findbugs-annotations</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.servlet.jsp</groupId>
+						<artifactId>jsp-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -702,6 +763,10 @@
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -711,12 +776,31 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-api</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.stream</groupId>
+						<artifactId>stax-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -835,6 +919,10 @@
 						<artifactId>jackson-core-asl</artifactId>
 					</exclusion>
 					<exclusion>
+						<groupId>net.sf.opencsv</groupId>
+						<artifactId>opencsv</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>org.codehaus.jackson</groupId>
 						<artifactId>jackson-mapper-asl</artifactId>
 					</exclusion>
@@ -845,6 +933,10 @@
 					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>asm</groupId>
+						<artifactId>asm</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>log4j</groupId>
@@ -885,7 +977,7 @@
 			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
-				<version>1.8.3</version>
+				<version>1.9.2</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>

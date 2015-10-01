@@ -8,9 +8,6 @@
 		<version>4.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-standard-components</artifactId>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
@@ -41,11 +38,6 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-basic-analyzers</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-basic-transformers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

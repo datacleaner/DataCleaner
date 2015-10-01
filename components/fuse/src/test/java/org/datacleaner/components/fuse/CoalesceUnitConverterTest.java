@@ -17,13 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans.coalesce;
+package org.datacleaner.components.fuse;
 
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.components.fuse.CoalesceUnit;
+import org.datacleaner.components.fuse.CoalesceUnitConverter;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.data.MockInputColumn;

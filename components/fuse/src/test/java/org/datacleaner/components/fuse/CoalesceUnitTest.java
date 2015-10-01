@@ -17,11 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans.coalesce;
+package org.datacleaner.components.fuse;
 
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.data.MockInputColumn;
 
 public class CoalesceUnitTest extends TestCase {

@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
-import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;

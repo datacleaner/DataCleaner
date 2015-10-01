@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -34,7 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.coalesce.CoalesceUnit;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -50,14 +50,14 @@ public class CoalesceUnitPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final MultipleCoalesceUnitPropertyWidget _parent;
+    private final ColumnListMultipleCoalesceUnitPropertyWidget _parent;
     private final DCComboBox<InputColumn<?>> _comboBox;
     private final Map<InputColumn<?>, DCPanel> _inputColumnPanels;
     private final List<InputColumn<?>> _inputColumns;
     private final DCPanel _columnListPanel;
     private final DCPanel _outerPanel;
 
-    public CoalesceUnitPanel(MultipleCoalesceUnitPropertyWidget parent, CoalesceUnit unit) {
+    public CoalesceUnitPanel(ColumnListMultipleCoalesceUnitPropertyWidget parent, CoalesceUnit unit) {
         _parent = parent;
         _inputColumns = new ArrayList<InputColumn<?>>();
         _inputColumnPanels = new IdentityHashMap<InputColumn<?>, DCPanel>();
@@ -156,7 +156,7 @@ public class CoalesceUnitPanel extends DCPanel {
         return panel;
     }
 
-    public CoalesceUnitPanel(MultipleCoalesceUnitPropertyWidget parent) {
+    public CoalesceUnitPanel(ColumnListMultipleCoalesceUnitPropertyWidget parent) {
         this(parent, null);
     }
 

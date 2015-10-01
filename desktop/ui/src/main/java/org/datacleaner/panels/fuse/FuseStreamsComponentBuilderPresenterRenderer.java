@@ -17,15 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import javax.inject.Inject;
 
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.FuseStreamsComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -38,8 +39,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link CoalesceMultipleFieldsTransformer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<CoalesceMultipleFieldsTransformer>, TransformerComponentBuilderPresenter> {
+public class FuseStreamsComponentBuilderPresenterRenderer implements
+        Renderer<TransformerComponentBuilder<FuseStreamsComponent>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,20 +52,19 @@ public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer 
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
-        if (tjb.getDescriptor().getComponentClass() == CoalesceMultipleFieldsTransformer.class) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
+        if (tjb.getDescriptor().getComponentClass() == FuseStreamsComponent.class) {
             return RendererPrecedence.HIGH;
         }
         return RendererPrecedence.NOT_CAPABLE;
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
-                configuration);
+        return new FuseStreamsComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext, configuration);
     }
 
 }

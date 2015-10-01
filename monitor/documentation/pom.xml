@@ -45,13 +45,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Reflections -->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
-        </dependency>
-
         <!-- Json de/serialization library -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

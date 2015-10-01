@@ -23,15 +23,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +53,6 @@ public class SwaggerJSONController {
     private static final String CONTROLLERS_PACKAGE = "org.datacleaner.monitor.server.controllers";
     private static final String BASE_PATH = "/repository";
     private static final Logger logger = LoggerFactory.getLogger(SwaggerJSONController.class);
-    private Reflections reflections = new Reflections(SwaggerJSONController.CONTROLLERS_PACKAGE);
     private Class serviceClass = null;
     private String serviceUrlPrefix = null;
     private SwaggerConfiguration swaggerConfiguration = null;
@@ -61,7 +63,7 @@ public class SwaggerJSONController {
         swaggerConfiguration = new SwaggerConfiguration();
         swaggerConfiguration.setHost(getCurrentHost(httpServletRequest));
         swaggerConfiguration.setBasePath(SwaggerJSONController.BASE_PATH);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClasses = getControllerClasses();
 
         for (Class<?> clazz : controllerClasses) {
             serviceClass = clazz;
@@ -69,6 +71,24 @@ public class SwaggerJSONController {
         }
 
         return swaggerConfiguration;
+    }
+
+    private Set<Class<?>> getControllerClasses() {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Controller.class));
+        Set<Class<?>> controllerClasses = new HashSet<>();
+
+        for (BeanDefinition bd : scanner.findCandidateComponents(SwaggerJSONController.CONTROLLERS_PACKAGE)) {
+            try {
+                String className = bd.getBeanClassName();
+                controllerClasses.add(Class.forName(className));
+            }
+            catch (ClassNotFoundException e) {
+                continue;
+            }
+        }
+
+        return controllerClasses;
     }
 
     private String getCurrentHost(HttpServletRequest httpServletRequest) {

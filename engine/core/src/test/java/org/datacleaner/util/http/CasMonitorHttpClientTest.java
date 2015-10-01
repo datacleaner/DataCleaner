@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
 
-public class DefaultCasMonitorHttpClientTest {
+public class CasMonitorHttpClientTest {
 
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {

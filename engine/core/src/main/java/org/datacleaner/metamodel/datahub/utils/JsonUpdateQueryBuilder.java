@@ -33,20 +33,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonUpdateQueryBuilder {
 
-    public static String buildJsonArray(List<String> queries) {
-
+    public final static String buildJsonArray(List<String> queries) {
         final OutputStream os = new ByteArrayOutputStream();
         final ObjectMapper mapper = new ObjectMapper();
-        String json = "";
         try {
             mapper.writeValue(os, queries);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
-            json = new String(data, "UTF-8");
+            final String json = new String(data, "UTF-8");
+            return json;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return json;
-
     }
 
 }

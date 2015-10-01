@@ -29,11 +29,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.datacleaner.util.http.MonitorHttpClient;
 
 public class DataHubRepoConnection  {
-    public final static String DATASTORES_PATH = "/datastores";
-    public final static String CONTEXT_PATH = "/ui";
-    public final static String REPOSITORY_PATH = "/repository";
-    public final static String SCHEMA_EXTENSION = ".schemas";
-    public final static String QUERY_EXTENSION = ".query?";
+    private final static String DATASTORES_PATH = "/datastores";
+    private final static String CONTEXT_PATH = "/ui";
+    private final static String REPOSITORY_PATH = "/repository";
+    private final static String SCHEMA_EXTENSION = ".schemas";
+    private final static String QUERY_EXTENSION = ".query?";
  
     DataHubConnection _connection;
 

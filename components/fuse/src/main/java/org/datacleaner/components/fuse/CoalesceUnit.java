@@ -72,7 +72,7 @@ public class CoalesceUnit {
 
                 // first do an exact match round
                 for (int j = 0; j < allInputColumns.length; j++) {
-                    InputColumn<?> inputColumn = allInputColumns[j];
+                    final InputColumn<?> inputColumn = allInputColumns[j];
                     if (name.equals(inputColumn.getName())) {
                         _inputColumns[i] = inputColumn;
                         found = true;
@@ -82,7 +82,7 @@ public class CoalesceUnit {
                 if (!found) {
                     // try with trimming and case-insensitive matching
                     for (int j = 0; j < allInputColumns.length; j++) {
-                        InputColumn<?> inputColumn = allInputColumns[j];
+                        final InputColumn<?> inputColumn = allInputColumns[j];
                         if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
                             _inputColumns[i] = inputColumn;
                             found = true;
@@ -91,7 +91,7 @@ public class CoalesceUnit {
                 }
 
                 if (!found) {
-                    List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
+                    final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
                     throw new IllegalStateException("Column '" + name + "' not found. Available columns: " + names);
                 }
             }

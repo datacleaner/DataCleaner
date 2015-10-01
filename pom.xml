@@ -4,8 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sshwagon.version>2.6</sshwagon.version>
+		
+		<!-- Maven plugin versions -->
 		<javadoc.version>2.9.1</javadoc.version>
+		
+		<!-- Dependency versions -->
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
@@ -436,15 +439,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
-		<extensions>
-			<extension>
-				<!-- Provide support for scp based deployment of site -->
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>${sshwagon.version}</version>
-			</extension>
-		</extensions>
 
 		<pluginManagement>
 			<plugins>

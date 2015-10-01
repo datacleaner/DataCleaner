@@ -231,7 +231,7 @@ public final class AnalysisJobBuilder implements Closeable {
         if (!_sourceColumns.contains(inputColumn)) {
             _sourceColumns.add(inputColumn);
 
-            List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
+            final List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
             for (SourceColumnChangeListener listener : listeners) {
                 listener.onAdd(inputColumn);
             }
@@ -309,16 +309,16 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public AnalysisJobBuilder removeSourceColumn(MetaModelInputColumn inputColumn) {
-        boolean removed = _sourceColumns.remove(inputColumn);
+        final boolean removed = _sourceColumns.remove(inputColumn);
         if (removed) {
-            List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
+            final List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
             for (SourceColumnChangeListener listener : listeners) {
                 listener.onRemove(inputColumn);
             }
         }
         return this;
     }
-    
+
     public boolean containsSourceTable(Table table) {
         return getSourceTables().contains(table);
     }
@@ -387,7 +387,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
         // make a copy since some of the listeners may add additional listeners
         // which will otherwise cause ConcurrentModificationExceptions
-        List<TransformerChangeListener> listeners = new ArrayList<>(_transformerChangeListeners);
+        final List<TransformerChangeListener> listeners = new ArrayList<>(_transformerChangeListeners);
         for (TransformerChangeListener listener : listeners) {
             listener.onAdd(tjb);
         }
@@ -395,7 +395,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public AnalysisJobBuilder removeTransformer(TransformerComponentBuilder<?> tjb) {
-        boolean removed = _transformerComponentBuilders.remove(tjb);
+        final boolean removed = _transformerComponentBuilders.remove(tjb);
         if (removed) {
             tjb.onRemoved();
 

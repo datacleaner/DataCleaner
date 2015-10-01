@@ -17,16 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
 
-public class ComponentNotFoundException extends RuntimeException {
-    private ComponentNotFoundException(String msg) {
-        super(msg);
-    }
-    public static ComponentNotFoundException createTypeNotFound(String type) {
-        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
-    }
-    public static ComponentNotFoundException createInstanceNotFound(String id) {
-        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
+package org.datacleaner.monitor.configuration;
+
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+
+/**
+ * Class RemoteComponentsConfigurationHandler
+ *
+ * @author k.houzvicka
+ * @since 18.9.15
+ */
+public class RemoteComponentsConfHandler extends NamespaceHandlerSupport {
+    @Override
+    public void init() {
+        registerBeanDefinitionParser("published-components", new RemoteComponentsConfBeanDefinitionParser());
     }
 }

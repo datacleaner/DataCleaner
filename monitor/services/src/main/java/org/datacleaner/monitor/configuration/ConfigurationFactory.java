@@ -90,6 +90,11 @@ public class ConfigurationFactory {
         _numThreads = numThreads;
     }
 
+    @Bean(name = "published-components")
+    public RemoteComponentsConfiguration createRemoteComponentsConfiguration() {
+        return new RemoteComponentsConfigurationImpl();
+    }
+
     @Bean(name = "taskRunner", destroyMethod = "shutdown")
     public TaskRunner createTaskRunner() {
         if (_numThreads == null) {

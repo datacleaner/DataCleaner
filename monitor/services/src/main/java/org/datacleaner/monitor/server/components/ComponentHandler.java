@@ -42,6 +42,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -51,7 +52,7 @@ import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -82,10 +83,12 @@ public class ComponentHandler {
     Map<String, InputColumn> inputColumns;
     MyMutableTable table;
     Component component;
+    RemoteComponentsConfiguration remoteComponentsConfiguration;
 
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
         this.dcConfiguration = dcConfiguration;
         this.componentName = componentName;
+        this.remoteComponentsConfiguration = remoteComponentsConfiguration;
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {
@@ -145,6 +148,12 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
+
+        //Admin properties from xml context
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = remoteComponentsConfiguration.getDefaultValues(descriptor);
+        configuredProperties.putAll(remoteDefaultPropertiesMap);
+
+        //User properties
         for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {

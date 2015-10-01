@@ -72,20 +72,20 @@ public class ComponentRESTClient implements ComponentController {
     }
 
     public ProcessOutput processComponent(final String tenant, final String instanceId, final ProcessInput processInput)
-            throws ComponentNotFoundException {
+            throws RuntimeException {
         String inputData = Serializator.stringProcessInput(processInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL("/_instance/" + instanceId), inputData);
 
         return Serializator.processOutput(response);
     }
 
-    public ProcessResult getFinalResult(final String tenant, final String instanceId) throws ComponentNotFoundException {
+    public ProcessResult getFinalResult(final String tenant, final String instanceId) throws RuntimeException {
         String response = call(RESTClient.HttpMethod.GET, getURL(instanceId + "/result"), "");
 
         return Serializator.processResult(response);
     }
 
-    public void deleteComponent(final String tenant, final String instanceId) throws ComponentNotFoundException {
+    public void deleteComponent(final String tenant, final String instanceId) throws RuntimeException {
         call(RESTClient.HttpMethod.DELETE, getURL(instanceId), "");
     }
 

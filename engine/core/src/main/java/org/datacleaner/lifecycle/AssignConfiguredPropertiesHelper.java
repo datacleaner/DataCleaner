@@ -28,7 +28,7 @@ import org.datacleaner.job.ComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class AssignConfiguredPropertiesHelper {
+public final class AssignConfiguredPropertiesHelper {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -49,12 +49,14 @@ import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
 import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
-import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.OutputColumns;
@@ -105,11 +107,14 @@ public class ComponentControllerV1 implements ComponentController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
+    
+    @Autowired
+    RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
 
     @PostConstruct
     public void init() {
-        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory);
+        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory, _remoteComponentsConfiguration);
     }
 
     @PreDestroy
@@ -134,10 +139,12 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            try {
-                componentList.add(createComponentInfo(tenant, descriptor, iconData));
-            } catch(Exception e) {
-                logger.error("Cannot create info about component {}", descriptor, e);
+            if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
+                try {
+                    componentList.add(createComponentInfo(tenant, descriptor, iconData));
+                } catch(Exception e) {
+                    logger.error("Cannot create info about component {}", descriptor, e);
+                }
             }
         }
 
@@ -152,7 +159,11 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
-        logger.debug("Informing about '{}'", name);
+        if (!_remoteComponentsConfiguration.isAllowed(name)) {
+            logger.info("Component {} is not allowed.", name);
+            throw ComponentNotAllowed.createInstanceNotAllowed(name);
+        }
+        logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         return createComponentInfo(tenant, descriptor, iconData);
@@ -172,7 +183,7 @@ public class ComponentControllerV1 implements ComponentController {
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
-                tenantContext, decodedName, createInput.configuration);
+                tenantContext, decodedName, createInput.configuration, _remoteComponentsConfiguration);
         handler.createComponent(createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
@@ -201,10 +212,14 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
+            logger.info("Component {} is not allowed.", decodedName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
+        }
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
-                tenantContext, decodedName, processStatelessInput.configuration);
+                tenantContext, decodedName, processStatelessInput.configuration, _remoteComponentsConfiguration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
         output.result = getJsonNode(handler.closeComponent());
@@ -229,6 +244,10 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
+            logger.info("Component {} is not allowed.", decodedName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
+        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);

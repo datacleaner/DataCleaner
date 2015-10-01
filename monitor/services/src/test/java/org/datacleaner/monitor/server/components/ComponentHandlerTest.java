@@ -19,11 +19,19 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
@@ -31,11 +39,7 @@ import org.datacleaner.restclient.ComponentConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.easymock.EasyMock.*;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ComponentHandlerTest {
     private ComponentHandler componentHandler = null;
@@ -45,7 +49,7 @@ public class ComponentHandlerTest {
 
     @Before
     public void setUp() {
-        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName);
+        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, new RemoteComponentsConfigurationImpl());
         componentConfiguration = getComponentConfiguration();
         jsonData = getJsonDataMock();
     }

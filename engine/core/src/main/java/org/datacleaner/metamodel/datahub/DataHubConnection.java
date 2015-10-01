@@ -28,7 +28,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.util.SecurityUtils;
-import org.datacleaner.util.http.DefaultCasMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
 

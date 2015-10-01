@@ -42,8 +42,8 @@ public class DataHubMonitorHttpClient extends CASMonitorHttpClient {
     @Override
     protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
         request.addHeader(CDI_TICKET_HEADER, retrieveTicketGrantingTicket());
-        request.addHeader(CDI_SERVICE_URL_HEADER, _casServerUrl);
-        request.addHeader(CDI_USERID, _username);        
+        request.addHeader(CDI_SERVICE_URL_HEADER, getCasServerUrl());
+        request.addHeader(CDI_USERID, getUsername());        
     }
 
 }

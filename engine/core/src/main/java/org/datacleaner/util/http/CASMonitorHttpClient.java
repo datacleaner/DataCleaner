@@ -61,20 +61,20 @@ import org.slf4j.LoggerFactory;
  * This client requires that CAS is installed with the RESTful API, which is
  * described in detail here: https://wiki.jasig.org/display/CASUM/RESTful+API
  */
-public abstract class CASMonitorHttpClient implements MonitorHttpClient {
+public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
     
     private final Charset charset = Charset.forName("UTF-8");
 
     private final CloseableHttpClient _httpClient;
-    protected final String _casServerUrl;
-    protected final String _username;
+    private final String _casServerUrl;
+    private final String _username;
     private final String _password;
     private final String _monitorBaseUrl;
-    protected final LazyRef<String> _ticketGrantingTicketRef;
-    protected String _requestedService;
-    protected String _casRestServiceUrl;
+    private final LazyRef<String> _ticketGrantingTicketRef;
+    private String _requestedService;
+    private String _casRestServiceUrl;
 
     public CASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
             String monitorBaseUrl) {
@@ -159,12 +159,14 @@ public abstract class CASMonitorHttpClient implements MonitorHttpClient {
     }
     
     /**
-     * Implement this method to add additional security headers as needed.
+     * Override this method to add extra security headers when needed.
      * 
      * @param request The request.
-     * @throws Exception 
+     * @throws Exception Adding the headers resulted in a problem.
      */
-    protected abstract void addSecurityHeaders(HttpUriRequest request) throws Exception;
+    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+        // Nothing to do...
+    }
     
     protected String getTicket(final String requestedService, final String casServiceUrl,
             final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
@@ -276,5 +278,21 @@ public abstract class CASMonitorHttpClient implements MonitorHttpClient {
         }
         
         FileHelper.safeClose(_httpClient);
+    }
+
+    /**
+     * Returns the CAS server URL
+     * @return the CAS Server Url
+     */
+    protected String getCasServerUrl() {
+        return _casServerUrl;
+    }
+    
+    /**
+     * Returns the user name.
+     * @return The username.
+     */
+    protected String getUsername() {
+        return _username;
     }
 }

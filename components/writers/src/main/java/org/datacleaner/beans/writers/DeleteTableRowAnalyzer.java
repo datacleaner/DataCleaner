@@ -84,8 +84,8 @@ import org.datacleaner.util.WriteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Named("Delete table row")
-@Description("Delete rows in a DataStore that match the specified conditions.")
+@Named("Delete from table")
+@Description("Delete records in a table in a registered datastore that match the specified condition.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
 public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
@@ -98,18 +98,6 @@ public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action
     private static final String ERROR_MESSAGE_COLUMN_NAME = "update_table_error_message";
 
     private static final Logger logger = LoggerFactory.getLogger(DeleteTableRowAnalyzer.class);
-
-//    @Inject
-//    @Configured(value = PROPERTY_NAME_VALUES, order = 1)
-//    @Description("Values to update in the table")
-//    InputColumn<?>[] values;
-
-//    @Inject
-//    @Configured(order = 2)
-//    @Description("Names of columns in the target table, on which the values will be updated.")
-//    @ColumnProperty
-//    @MappedProperty(PROPERTY_NAME_VALUES)
-//    String[] columnNames;
 
     @Inject
     @Configured(value = PROPERTY_NAME_CONDITION_VALUES, order = 1)

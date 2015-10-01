@@ -92,6 +92,14 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                 .getConfiguredProperty(_unitProperty);
 
         refresh(coalesceUnits);
+
+        if (coalesceUnits != null) {
+            // Call fireValueChanged() to provoke the check for non-used
+            // streams. This cleans up the InputColumn[] property of streams
+            // that are not relevant at all. Another way to think of it is that
+            // irrelevant lines on the graph behind will be removed.
+            fireValueChanged();
+        }
     }
 
     private void refresh(final CoalesceUnit[] units) {

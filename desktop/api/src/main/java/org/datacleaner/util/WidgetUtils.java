@@ -110,7 +110,7 @@ public final class WidgetUtils {
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
         FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
         FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
-        
+
         FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
         fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
@@ -216,6 +216,12 @@ public final class WidgetUtils {
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
     public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
+
+    /**
+     * Border for indented button panels where the content has to align with
+     * check boxes above or below.
+     */
+    public static final Border BORDER_CHECKBOX_LIST_INDENTATION = new EmptyBorder(1, 17, 0, 1);
 
     public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
@@ -655,5 +661,5 @@ public final class WidgetUtils {
             b.setUI(DefaultButtonUI.get());
         }
     }
-    
+
 }

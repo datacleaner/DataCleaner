@@ -124,7 +124,6 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
 
         final InputColumn<?>[] currentValue = getCurrentValue();
 
-        @SuppressWarnings("unchecked")
         Object value = componentBuilder.getConfiguredProperty(mappedEnumsProperty);
         final EnumerationValue[] currentMappedEnums = EnumerationValue.fromArray(value);
         if (currentValue != null && currentMappedEnums != null) {
@@ -259,7 +258,9 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
         if(_mappedEnumsProperty instanceof EnumerationProvider) {
             return new DefaultEnumMatcher((EnumerationProvider)_mappedEnumsProperty);
         } else {
-            EnumerationProvider prov = EnumerationValue.providerFromEnumClass((Class<? extends Enum>) _mappedEnumsProperty.getBaseType());
+            @SuppressWarnings("unchecked")
+            final Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) _mappedEnumsProperty.getBaseType();
+            final EnumerationProvider prov = EnumerationValue.providerFromEnumClass(baseType);
             return new DefaultEnumMatcher(prov);
         }
     }

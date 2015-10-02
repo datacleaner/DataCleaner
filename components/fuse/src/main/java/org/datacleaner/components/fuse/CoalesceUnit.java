@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans.coalesce;
+package org.datacleaner.components.fuse;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.Convertable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
 
 /**
  * Represents a set of columns to be coalesced.
@@ -66,16 +66,32 @@ public class CoalesceUnit {
         if (_inputColumns == null) {
             _inputColumns = new InputColumn[_inputColumnNames.length];
             for (int i = 0; i < _inputColumnNames.length; i++) {
+                boolean found = false;
+
                 final String name = _inputColumnNames[i];
+
+                // first do an exact match round
                 for (int j = 0; j < allInputColumns.length; j++) {
-                    InputColumn<?> inputColumn = allInputColumns[j];
+                    final InputColumn<?> inputColumn = allInputColumns[j];
                     if (name.equals(inputColumn.getName())) {
                         _inputColumns[i] = inputColumn;
-                        break;
+                        found = true;
                     }
                 }
-                if (_inputColumns[i] == null) {
-                    List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
+                
+                if (!found) {
+                    // try with trimming and case-insensitive matching
+                    for (int j = 0; j < allInputColumns.length; j++) {
+                        final InputColumn<?> inputColumn = allInputColumns[j];
+                        if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
+                            _inputColumns[i] = inputColumn;
+                            found = true;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
                     throw new IllegalStateException("Column '" + name + "' not found. Available columns: " + names);
                 }
             }
@@ -136,5 +152,9 @@ public class CoalesceUnit {
     @Override
     public String toString() {
         return "CoalesceUnit[inputColumnNames=" + Arrays.toString(_inputColumnNames) + "]";
+    }
+
+    public String getSuggestedOutputColumnName() {
+        return _inputColumnNames[0];
     }
 }

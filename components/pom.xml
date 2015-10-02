@@ -9,6 +9,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>html-rendering</module>
+		<module>fuse</module>
 		<module>basic-transformers</module>
 		<module>basic-filters</module>
 		<module>basic-analyzers</module>

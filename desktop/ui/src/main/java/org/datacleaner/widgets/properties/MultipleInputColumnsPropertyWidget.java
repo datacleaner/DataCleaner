@@ -38,7 +38,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -75,13 +74,9 @@ import org.slf4j.LoggerFactory;
  * Property widget for multiple input columns. Displays these as checkboxes.
  */
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
-        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener, ReorderColumnsActionListener.ReorderColumnsCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(MultipleInputColumnsPropertyWidget.class);
-
-    // border for the button panel and search box to make them "indented"
-    // similar to the check boxes.
-    private static final EmptyBorder _indentBorder = new EmptyBorder(1, 17, 0, 1);
 
     private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
         @Override
@@ -130,7 +125,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         setLayout(new VerticalLayout(2));
 
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
-        _searchDatastoreTextField.setBorder(new CompoundBorder(_indentBorder, WidgetUtils.BORDER_THIN));
+        _searchDatastoreTextField.setBorder(new CompoundBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION, WidgetUtils.BORDER_THIN));
         _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -163,7 +158,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
         _buttonPanel = new DCPanel();
         _buttonPanel.setLayout(new HorizontalLayout(2));
-        _buttonPanel.setBorder(_indentBorder);
+        _buttonPanel.setBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION);
 
         JButton selectAllButton = WidgetFactory.createDefaultButton("Select all");
         selectAllButton.setFont(WidgetUtils.FONT_SMALL);
@@ -518,6 +513,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         if (valueChanged) {
             fireValueChanged();
         }
+    }
+    
+    @Override
+    public void reorderColumns(InputColumn<?>[] newValue) {
+        reorderValue(newValue);
+    }
+    
+    @Override
+    public InputColumn<?>[] getColumns() {
+        return getValue();
     }
 
     /**

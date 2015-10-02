@@ -41,6 +41,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 
+@SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 
     private DataCleanerConfiguration configuration;

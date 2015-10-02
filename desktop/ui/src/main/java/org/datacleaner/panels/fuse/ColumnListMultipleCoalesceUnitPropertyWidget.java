@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.coalesce;
+package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -33,8 +33,9 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.coalesce.CoalesceUnit;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -47,7 +48,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +55,14 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link PropertyWidget} for two properties at one time: An array of
  * {@link InputColumn}s and an array of {@link CoalesceUnit}s.
+ * 
+ * This widget displays a list of {@link CoalesceUnit}s with {@link InputColumn}
+ * s that the user can add an remove from.
  */
-public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
+public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger(MultipleCoalesceUnitPropertyWidget.class);
+    private static final Logger logger = LoggerFactory.getLogger(ColumnListMultipleCoalesceUnitPropertyWidget.class);
 
     private final ConfiguredPropertyDescriptor _unitProperty;
     private final MinimalPropertyWidget<CoalesceUnit[]> _unitPropertyWidget;
@@ -68,7 +71,7 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
     private final Set<InputColumn<?>> _pickedInputColumns;
     private final Set<InputColumn<?>> _hiddenInputColumns;
 
-    public MultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
+    public ColumnListMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
         _unitProperty = unitProperty;
@@ -142,17 +145,20 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
             _unitContainerPanel.updateUI();
             fireBothValuesChanged();
         }
+        updateUI();
     }
 
     public void addCoalesceUnit(CoalesceUnit unit) {
         final CoalesceUnitPanel panel = new CoalesceUnitPanel(this, unit);
         _unitContainerPanel.add(panel);
+        updateUI();
     }
 
     public void addCoalesceUnit() {
         final CoalesceUnitPanel panel = new CoalesceUnitPanel(this);
         _unitContainerPanel.add(panel);
         fireBothValuesChanged();
+        updateUI();
     }
 
     private MinimalPropertyWidget<CoalesceUnit[]> createUnitPropertyWidget() {
@@ -166,7 +172,7 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
 
             @Override
             public CoalesceUnit[] getValue() {
-                CoalesceUnit[] units = getCoalesceUnits();
+                final CoalesceUnit[] units = getCoalesceUnits();
                 if (units.length == 0) {
                     logger.debug("Returning Units.value = null");
                     return null;
@@ -179,7 +185,7 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
 
             @Override
             public boolean isSet() {
-                return MultipleCoalesceUnitPropertyWidget.this.isSet();
+                return ColumnListMultipleCoalesceUnitPropertyWidget.this.isSet();
             }
 
             @Override
@@ -233,11 +239,11 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
     }
 
     public CoalesceUnit[] getCoalesceUnits() {
-        List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
-        List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
-        for (CoalesceUnitPanel panel : panels) {
+        final List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
+        final List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
+        for (final CoalesceUnitPanel panel : panels) {
             if (panel.isSet()) {
-                CoalesceUnit unit = panel.getCoalesceUnit();
+                final CoalesceUnit unit = panel.getCoalesceUnit();
                 result.add(unit);
             }
         }

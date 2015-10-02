@@ -19,17 +19,17 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHost;
+import static org.datacleaner.metamodel.datahub.DataHubSecurityMode.CAS;
+
+import java.net.URISyntaxException;
+
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.util.SecurityUtils;
-import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
-
-import com.google.common.net.UrlEscapers;
 
 /**
  * Describes the connection information needed to connect to the DataHub.
@@ -37,57 +37,71 @@ import com.google.common.net.UrlEscapers;
 
 public class DataHubConnection {
 
+    public final static String CAS_PATH = "/cas";
+    public final static String DEFAULT_SCHEMA = "MDM";
+    
+
     private final String _hostname;
     private final int _port;
-    private final boolean _https;
+    private final boolean _useHTTPS;
     private final String _tenantId;
     private final String _username;
     private final String _password;
-    private final String _contextPath = "/ui";
-    private final String _datahubContext = "/datastores/Golden%20record";
+
     private final String _scheme;
     private boolean _acceptUnverifiedSslPeers;
-    private final String _securityMode;
+    private final DataHubSecurityMode _securityMode;
 
     public DataHubConnection(String hostname, Integer port, String username, String password, String tenantId,
-            boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+            boolean useHTTPS, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
 
         _hostname = hostname;
         _port = port;
-        _https = https;
+        _useHTTPS = useHTTPS;
         _tenantId = tenantId;
         _username = username;
         _password = password;
-        _scheme = _https ? "https" : "http";
+        _scheme = _useHTTPS ? "https" : "http";
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
-        _securityMode = securityMode;
+        _securityMode = dataHubSecurityMode;
     }
 
-    public MonitorHttpClient getHttpClient() {
-
+    public MonitorHttpClient getHttpClient(String contextUrl) {
         final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
             clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
         }
         final CloseableHttpClient httpClient = clientBuilder.build();
 
-        if ("CAS".equalsIgnoreCase(_securityMode)) {
-            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, getBaseUrl());
+        if (CAS.equals(_securityMode)) {
+            return new DataHubMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
         } else {
             return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
     }
 
+    /**
+     * Returns a client suitable for calling REST services on the DataHub
+     * @param contextUrl
+     * @return A client.
+     */
+    public MonitorHttpClient getServiceClient(String contextUrl) {
+        final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
+        if (_acceptUnverifiedSslPeers) {
+            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
+        }
+        final CloseableHttpClient httpClient = clientBuilder.build();
+
+        if (CAS.equals(_securityMode)) {
+            return new DataHubMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+        } else {
+            return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
+        }
+        
+    }
+    
     public String getHostname() {
         return _hostname;
-    }
-
-    public String getContextPath() {
-        return _contextPath;
-    }
-
-    public boolean isHttps() {
-        return _https;
     }
 
     public int getPort() {
@@ -97,58 +111,38 @@ public class DataHubConnection {
     public String getTenantId() {
         return _tenantId;
     }
+    
+    private String getCasServerUrl() {
+        
+        URIBuilder uriBuilder = getBaseUrlBuilder();
+        appendToPath(uriBuilder, CAS_PATH);
 
-    public String getUsername() {
-        return _username;
+        try {
+            return uriBuilder.build().toString();
+        } catch (URISyntaxException uriSyntaxException) {
+            throw new IllegalStateException(uriSyntaxException);
+        }
     }
 
-    public String getPassword() {
-        return _password;
-    }
+    protected URIBuilder getBaseUrlBuilder() {
+        URIBuilder baseUriBuilder = new URIBuilder();
+        baseUriBuilder.setScheme(_scheme);
+        baseUriBuilder.setHost(_hostname);
 
-    public String getRepositoryUrl() {
-        return getBaseUrl() + "/repository"
-                + (StringUtils.isEmpty(_tenantId) ? "" : "/" + UrlEscapers.urlPathSegmentEscaper().escape(_tenantId));
-    }
-
-    public String getBaseUrl() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_scheme).append("://" + _hostname);
-
-        if ((_https && _port != 443) || (!_https && _port != 80)) {
+        if ((_useHTTPS && _port != 443) || (!_useHTTPS && _port != 80)) {
             // only add port if it differs from default ports of HTTP/HTTPS.
-            sb.append(':');
-            sb.append(_port);
+            baseUriBuilder.setPort(_port);
         }
-
-        if (!StringUtils.isEmpty(_contextPath)) {
-            sb.append(_contextPath);
+        return baseUriBuilder;
+    }
+ 
+    private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
+        if(uriBuilder.getPath() != null) {
+            uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
         }
-
-        return sb.toString();
+        
+        return uriBuilder.setPath(pathSegment);
     }
 
-    public String getCasServerUrl() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_scheme).append("://" + _hostname);
-
-        if ((_https && _port != 443) || (!_https && _port != 80)) {
-            // only add port if it differs from default ports of HTTP/HTTPS.
-            sb.append(':');
-            sb.append(_port);
-        }
-
-        sb.append("/cas");
-
-        return sb.toString();
-    }
-
-    public HttpHost getHttpHost() {
-        return new HttpHost(_hostname, _port, _scheme);
-    }
-
-    public String getDatahubContextPath() {
-        return _datahubContext;
-    }
 
 }

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans.coalesce;
+package org.datacleaner.components.fuse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +29,7 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
@@ -57,12 +58,19 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     @Description("Consider empty strings (\"\") as null also?")
     boolean considerEmptyStringAsNull = true;
 
+    private CoalesceFunction _coalesceFunction;
+
     public CoalesceMultipleFieldsTransformer() {
     }
 
     public CoalesceMultipleFieldsTransformer(CoalesceUnit... units) {
         this();
         this._units = units;
+    }
+
+    @Initialize
+    public void init() {
+        _coalesceFunction = new CoalesceFunction(considerEmptyStringAsNull);
     }
 
     /**
@@ -101,7 +109,7 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
             final CoalesceUnit unit = _units[i];
             final InputColumn<?>[] inputColumns = unit.getInputColumns(_input);
             final List<Object> values = inputRow.getValues(inputColumns);
-            final Object value = coalesce(values);
+            final Object value = _coalesceFunction.coalesce(values);
             result[i] = value;
         }
         if (logger.isDebugEnabled()) {
@@ -109,20 +117,4 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
         }
         return result;
     }
-
-    private Object coalesce(List<Object> values) {
-        for (final Object value : values) {
-            if (value != null) {
-                if (considerEmptyStringAsNull) {
-                    if (!"".equals(value)) {
-                        return value;
-                    }
-                } else {
-                    return value;
-                }
-            }
-        }
-        return null;
-    }
-
 }

@@ -30,8 +30,22 @@ public class OutputColumns implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constant {@link OutputColumns} values for components with no/zero output
+     * columns.
+     */
+    public static final OutputColumns NO_OUTPUT_COLUMNS = new OutputColumns();
+
     private final String[] columnNames;
     private final Class<?>[] columnTypes;
+
+    /**
+     * Private constructor used to create an empty output columns objects.
+     */
+    private OutputColumns() {
+        columnNames = new String[0];
+        columnTypes = new Class[0];
+    }
 
     /**
      * Constructs an OutputColumns object with a variable amount of anonymous

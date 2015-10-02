@@ -47,7 +47,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetAllComponents() throws Exception {
         try {
-            ComponentList componentList = componentRESTClient.getAllComponents(this.TENANT, false);
+            ComponentList componentList = componentRESTClient.getAllComponents(false);
             logger.info(componentList.toString());
             Assert.assertTrue(componentList != null);
         }
@@ -59,7 +59,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetComponentInfo() throws Exception {
         try {
-            ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(this.TENANT, this.COMPONENT_NAME, false);
+            ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(this.COMPONENT_NAME, false);
             logger.info(componentInfo.toString());
             Assert.assertTrue(componentInfo != null);
         }
@@ -74,8 +74,7 @@ public class ComponentRESTClientTest {
             ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
             processStatelessInput.configuration = getConfiguration();
             processStatelessInput.data = getInputData();
-            ProcessStatelessOutput processStatelessOutput = componentRESTClient.processStateless(this.TENANT,
-                    this.COMPONENT_NAME, processStatelessInput);
+            ProcessStatelessOutput processStatelessOutput = componentRESTClient.processStateless(this.COMPONENT_NAME, processStatelessInput);
             logger.info(processStatelessOutput.toString());
             Assert.assertTrue(processStatelessOutput != null);
         }
@@ -89,7 +88,7 @@ public class ComponentRESTClientTest {
         try {
             String timeout = "60000";
             CreateInput createInput = getCreateInput();
-            String response  = componentRESTClient.createComponent(this.TENANT, this.COMPONENT_NAME,
+            String response  = componentRESTClient.createComponent(this.COMPONENT_NAME,
                     timeout, createInput);
             logger.info(response);
             Assert.assertFalse(response.isEmpty());
@@ -103,7 +102,7 @@ public class ComponentRESTClientTest {
     public void testProcessComponent() throws Exception {
         try {
             ProcessInput processInput = getProcessInput();
-            ProcessOutput processOutput = componentRESTClient.processComponent(this.TENANT, this.INSTANCE_ID, processInput);
+            ProcessOutput processOutput = componentRESTClient.processComponent(this.INSTANCE_ID, processInput);
             logger.info(processOutput.toString());
             Assert.assertTrue(processOutput != null);
         }
@@ -115,7 +114,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetFinalResult() throws Exception {
         try {
-            ProcessResult processResult = componentRESTClient.getFinalResult(this.TENANT, this.INSTANCE_ID);
+            ProcessResult processResult = componentRESTClient.getFinalResult(this.INSTANCE_ID);
 
             if (processResult != null) {
                 logger.info(processResult.toString());
@@ -129,7 +128,7 @@ public class ComponentRESTClientTest {
     @Test
     public void testDeleteComponent() throws Exception {
         try {
-            componentRESTClient.deleteComponent(this.TENANT, this.INSTANCE_ID);
+            componentRESTClient.deleteComponent(this.INSTANCE_ID);
         }
         catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused") || e.getMessage().contains("HTTP error code: 404"));

@@ -287,7 +287,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-            <!-- JSTL -->
+		<!-- JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>

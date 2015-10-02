@@ -78,9 +78,10 @@ public class SwaggerJSONController {
         scanner.addIncludeFilter(new AnnotationTypeFilter(Controller.class));
         Set<Class<?>> controllerClasses = new HashSet<>();
 
-        for (BeanDefinition bd : scanner.findCandidateComponents(SwaggerJSONController.CONTROLLERS_PACKAGE)) {
+        for (BeanDefinition beanDefinition :
+                scanner.findCandidateComponents(SwaggerJSONController.CONTROLLERS_PACKAGE)) {
             try {
-                String className = bd.getBeanClassName();
+                String className = beanDefinition.getBeanClassName();
                 controllerClasses.add(Class.forName(className));
             }
             catch (ClassNotFoundException e) {

@@ -164,7 +164,7 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-monitor-documentation</artifactId>
 			<version>${project.version}</version>
@@ -280,7 +280,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- JSTL -->
+            <!-- JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>

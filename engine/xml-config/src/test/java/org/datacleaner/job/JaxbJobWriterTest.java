@@ -70,6 +70,7 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 
+@SuppressWarnings("deprecation")
 public class JaxbJobWriterTest extends TestCase {
 
     // mock metadata factory used in this test case because we will otherwise
@@ -249,7 +250,7 @@ public class JaxbJobWriterTest extends TestCase {
         EasyMock.expect(job.getMetadata()).andReturn(AnalysisJobMetadata.EMPTY_METADATA).anyTimes();
         Datastore ds = EasyMock.createMock(Datastore.class);
 
-        EasyMock.expect(job.getDatastore()).andReturn(ds);
+        EasyMock.expect(job.getDatastore()).andReturn(ds).atLeastOnce();
 
         EasyMock.expect(ds.getName()).andReturn("myds");
 

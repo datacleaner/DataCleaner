@@ -85,7 +85,7 @@ public class DelegatingConverter implements Converter<Object> {
 
         for (Converter<?> converter : _converters) {
             if (converter.isConvertable(type)) {
-                Object result = converter.fromString(type, serializedForm);
+                final Object result = converter.fromString(type, serializedForm);
                 return result;
             }
         }
@@ -97,9 +97,9 @@ public class DelegatingConverter implements Converter<Object> {
         Convertable convertable = ReflectionUtils.getAnnotation(type, Convertable.class);
         if (convertable != null) {
             try {
-                Class<? extends Converter<?>> converterClass = convertable.value();
+                final Class<? extends Converter<?>> converterClass = convertable.value();
                 @SuppressWarnings("unchecked")
-                Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
+                final Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
                 return converter.fromString(type, serializedForm);
             } catch (Exception e) {
                 logger.warn("Failed to convert fromString(" + serializedForm
@@ -132,12 +132,12 @@ public class DelegatingConverter implements Converter<Object> {
             }
         }
 
-        Convertable convertable = ReflectionUtils.getAnnotation(instance.getClass(), Convertable.class);
+        final Convertable convertable = ReflectionUtils.getAnnotation(instance.getClass(), Convertable.class);
         if (convertable != null) {
             try {
-                Class<? extends Converter<?>> converterClass = convertable.value();
+                final Class<? extends Converter<?>> converterClass = convertable.value();
                 @SuppressWarnings("unchecked")
-                Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
+                final Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
                 return SerializationStringEscaper.escape(converter.toString(instance));
             } catch (Exception e) {
                 logger.warn("Failed to convert toString(" + instance + ") using Convertable annotated converter class",
@@ -159,26 +159,30 @@ public class DelegatingConverter implements Converter<Object> {
      * @param injectionManager
      */
     public void initializeAll(InjectionManager injectionManager) {
+        for (Converter<?> converter : _converters) {
+            initialize(converter, injectionManager);
+        }
+    }
+
+    public void initialize(Converter<?> converter, InjectionManager injectionManager) {
         if (injectionManager != null) {
-            for (Converter<?> converter : _converters) {
-                Field[] fields = ReflectionUtils.getAllFields(converter.getClass(), Inject.class);
-                for (Field field : fields) {
-                    final Object value;
-                    if (field.getType() == Converter.class) {
-                        // Injected converters are used as callbacks. They
-                        // should be assigned to the outer converter, which is
-                        // this.
-                        value = this;
-                    } else {
-                        InjectionPoint<Object> injectionPoint = new MemberInjectionPoint<Object>(field, converter);
-                        value = injectionManager.getInstance(injectionPoint);
-                    }
-                    field.setAccessible(true);
-                    try {
-                        field.set(converter, value);
-                    } catch (Exception e) {
-                        throw new IllegalStateException("Could not initialize converter: " + converter, e);
-                    }
+            final Field[] fields = ReflectionUtils.getAllFields(converter.getClass(), Inject.class);
+            for (Field field : fields) {
+                final Object value;
+                if (field.getType() == Converter.class) {
+                    // Injected converters are used as callbacks. They
+                    // should be assigned to the outer converter, which is
+                    // this.
+                    value = this;
+                } else {
+                    InjectionPoint<Object> injectionPoint = new MemberInjectionPoint<Object>(field, converter);
+                    value = injectionManager.getInstance(injectionPoint);
+                }
+                field.setAccessible(true);
+                try {
+                    field.set(converter, value);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Could not initialize converter: " + converter, e);
                 }
             }
         }

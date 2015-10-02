@@ -52,7 +52,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
-		<module>standard-components</module>
 	</modules>
 	<profiles>
 		<profile>

@@ -19,13 +19,17 @@
  */
 package org.datacleaner.descriptors;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.datacleaner.api.Close;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +62,12 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.baseUrl = baseUrl;
         this.tenant = tenant;
         try {
-            this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
-            this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
+            for(Method initMethod: ReflectionUtils.getMethods(RemoteTransformer.class, Initialize.class)) {
+                this._initializeMethods.add(new InitializeMethodDescriptorImpl(initMethod, this));
+            }
+            for(Method closeMethod: ReflectionUtils.getMethods(RemoteTransformer.class, Close.class)) {
+                this._closeMethods.add(new CloseMethodDescriptorImpl(closeMethod, this));
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -28,28 +28,29 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.restclient.Serializator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * A Base class for property descriptors of remote transformers, implementing common functions. See the child classes for details.
+ * A Base class for property descriptors of remote transformers, implementing
+ * common functions. See the child classes for details.
  *
  * @Since 25.9.15
  */
 public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPropertyDescriptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RemoteConfiguredPropertyDescriptor.class);
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final String description;
     private final boolean required;
-    private final ComponentDescriptor component;
-    private final Map<Class<Annotation>, Annotation> annotations;
+    private final ComponentDescriptor<?> component;
+    private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final JsonNode defaultValue;
 
-    RemoteConfiguredPropertyDescriptor(String name, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations, JsonNode defaultValue) {
+    RemoteConfiguredPropertyDescriptor(String name, String description, boolean required,
+            ComponentDescriptor<?> component, Map<Class<? extends Annotation>, Annotation> annotations,
+            JsonNode defaultValue) {
         this.name = name;
         this.annotations = annotations;
         this.defaultValue = defaultValue;
@@ -75,7 +76,8 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @Override
     public String[] getAliases() {
-        return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new String[0]; // To change body of implemented methods use File
+                              // | Settings | File Templates.
     }
 
     @Override
@@ -85,23 +87,27 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @Override
     public void setValue(Object component, Object value) throws IllegalArgumentException {
-        ((RemoteTransformer)component).setPropertyValue(getName(), value);
+        ((RemoteTransformer) component).setPropertyValue(getName(), value);
     }
 
     public void setDefaultValue(Object component) {
-        if(defaultValue != null) {
+        if (defaultValue != null) {
             ((RemoteTransformer) component).setPropertyValue(getName(), createDefaultValue());
         }
     }
 
     private Object createDefaultValue() {
-        // TODO: this is code duplicate with ComponentHandler.convertPropertyValue
+        // TODO: this is code duplicate with
+        // ComponentHandler.convertPropertyValue
         // (which is used to deserialize properties values on the server side).
         // TODO: But on server side a StringConverter is used for string values,
         // which is not fully available on client
-        // side (some extenstions providing custom converters may be not available on client classpath).
-        // We must unify how values are serialized on client as well as server side. Maybe use pure JSON string?
-        // Maybe it is enough to support JsonNode in StringConverter? That should fit the unknown values...
+        // side (some extenstions providing custom converters may be not
+        // available on client classpath).
+        // We must unify how values are serialized on client as well as server
+        // side. Maybe use pure JSON string?
+        // Maybe it is enough to support JsonNode in StringConverter? That
+        // should fit the unknown values...
 
         try {
             return Serializator.getJacksonObjectMapper().treeToValue(defaultValue, getType());
@@ -115,10 +121,9 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
         return InputColumn.class.isAssignableFrom(getBaseType());
     }
 
-
     @Override
     public Object getValue(Object component) throws IllegalArgumentException {
-        return ((RemoteTransformer)component).getPropertyValue(getName());
+        return ((RemoteTransformer) component).getPropertyValue(getName());
     }
 
     @Override
@@ -126,6 +131,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
         return new HashSet<>(annotations.values());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
         return (A) annotations.get(annotationClass);

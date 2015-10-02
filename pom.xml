@@ -42,7 +42,7 @@
 
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>4.5-RC1</version>
+	<version>4.5-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
@@ -257,7 +257,7 @@
 		<url>https://github.com/datacleaner/DataCleaner</url>
 		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
-		<tag>DataCleaner-4.5-RC1</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<mailingLists>
 		<mailingList>

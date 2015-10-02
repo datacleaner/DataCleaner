@@ -88,6 +88,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private int proxyPort = 8080;
     private String proxyUsername;
     private String proxyPassword;
+    private String remoteComponentsUsername;
+    private String remoteComponentsPassword;
 
     private List<File> recentJobFiles = new ArrayList<File>();
     private File openDatastoreDirectory;
@@ -370,6 +372,26 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
         refreshProxySettings();
+    }
+
+    @Override
+    public String getRemoteComponentsUsername() {
+        return remoteComponentsUsername;
+    }
+
+    @Override
+    public void setRemoteComponentsUsername(String remoteComponentsUsername) {
+        this.remoteComponentsUsername = remoteComponentsUsername;
+    }
+
+    @Override
+    public String getRemoteComponentsPassword() {
+        return remoteComponentsPassword;
+    }
+
+    @Override
+    public void setRemoteComponentsPassword(String remoteComponentsPassword) {
+        this.remoteComponentsPassword = remoteComponentsPassword;
     }
 
     @Override

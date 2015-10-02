@@ -67,10 +67,18 @@
 		</combined>
 	</storage-provider>
 
-	<classpath-scanner>
-		<package recursive="true">org.datacleaner</package>
-		<package recursive="true">com.hi</package>
-		<package recursive="true">com.neopost</package>
-	</classpath-scanner>
-
+    <descriptor-providers>
+        <classpath-scanner>
+            <package recursive="true">org.datacleaner</package>
+            <package recursive="true">com.hi</package>
+            <package recursive="true">com.neopost</package>
+        </classpath-scanner>
+        <remote-components>
+            <server>
+                <url>http://localhost:8888</url>
+                <username>admin</username>
+                <password>admin</password>
+            </server>
+        </remote-components>
+    </descriptor-providers>
 </configuration>

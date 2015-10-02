@@ -29,6 +29,7 @@
 		<module>el</module>
 		<module>javascript</module>
 		<module>i18n</module>
+		<module>standard-components</module>
 	</modules>
 
 	<dependencies>

@@ -67,7 +67,8 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
     }
 
     @Override
-    public boolean isAllowed(String componentDisplayName) {
+    public boolean isAllowed(ComponentDescriptor componentDescriptor) {
+        String componentDisplayName = componentDescriptor.getDisplayName();
         if (includeSet.isEmpty() && excludeSet.isEmpty()) {
             return true;
         }
@@ -83,11 +84,6 @@ public class RemoteComponentsConfigurationImpl implements RemoteComponentsConfig
                 return false;
             }
         }
-    }
-
-    @Override
-    public boolean isAllowed(ComponentDescriptor componentDescriptor) {
-        return isAllowed(componentDescriptor.getDisplayName());
     }
 
     @Override

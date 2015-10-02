@@ -159,13 +159,13 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
-        if (!_remoteComponentsConfiguration.isAllowed(name)) {
-            logger.info("Component {} is not allowed.", name);
-            throw ComponentNotAllowed.createInstanceNotAllowed(name);
-        }
         logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
         ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            logger.info("Component {} is not allowed.", name);
+            throw ComponentNotAllowed.createInstanceNotAllowed(name);
+        }
         return createComponentInfo(tenant, descriptor, iconData);
     }
 
@@ -212,10 +212,6 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
-            logger.info("Component {} is not allowed.", decodedName);
-            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
-        }
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler =  ComponentHandlerFactory.createComponent(
@@ -244,10 +240,6 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        if (!_remoteComponentsConfiguration.isAllowed(decodedName)) {
-            logger.info("Component {} is not allowed.", decodedName);
-            throw ComponentNotAllowed.createInstanceNotAllowed(decodedName);
-        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);

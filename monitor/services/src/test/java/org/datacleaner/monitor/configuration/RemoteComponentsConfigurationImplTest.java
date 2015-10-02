@@ -51,8 +51,15 @@ public class RemoteComponentsConfigurationImplTest {
     @Test
     public void testIsAllowedAll() throws Exception {
         RemoteComponentsConfigurationImpl remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl();
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("a"));
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("Separator"));
+        ComponentDescriptor componentDescriptor1 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor1.getDisplayName()).andReturn("a");
+
+        ComponentDescriptor componentDescriptor2 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor2.getDisplayName()).andReturn("Separator");
+
+        replay(componentDescriptor1, componentDescriptor2);
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor1));
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor2));
     }
 
     @Test
@@ -63,8 +70,16 @@ public class RemoteComponentsConfigurationImplTest {
         includes.add("a");
         RemoteComponentsConfigurationImpl remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl(
                 includes, excludes, properties);
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("a"));
-        Assert.assertFalse(remoteComponentsConfiguration.isAllowed("Separator"));
+
+        ComponentDescriptor componentDescriptor1 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor1.getDisplayName()).andReturn("a");
+
+        ComponentDescriptor componentDescriptor2 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor2.getDisplayName()).andReturn("Separator");
+
+        replay(componentDescriptor1, componentDescriptor2);
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor1));
+        Assert.assertFalse(remoteComponentsConfiguration.isAllowed(componentDescriptor2));
     }
 
     @Test
@@ -75,8 +90,17 @@ public class RemoteComponentsConfigurationImplTest {
         excludes.add("a");
         RemoteComponentsConfigurationImpl remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl(
                 includes, excludes, properties);
-        Assert.assertFalse(remoteComponentsConfiguration.isAllowed("a"));
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("Separator"));
+
+        ComponentDescriptor componentDescriptor1 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor1.getDisplayName()).andReturn("a");
+
+        ComponentDescriptor componentDescriptor2 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor2.getDisplayName()).andReturn("Separator");
+
+        replay(componentDescriptor1, componentDescriptor2);
+
+        Assert.assertFalse(remoteComponentsConfiguration.isAllowed(componentDescriptor1));
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor2));
     }
 
     @Test
@@ -88,8 +112,17 @@ public class RemoteComponentsConfigurationImplTest {
         excludes.add("b");
         RemoteComponentsConfigurationImpl remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl(
                 includes, excludes, properties);
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("a"));
-        Assert.assertFalse(remoteComponentsConfiguration.isAllowed("Separator"));
+
+        ComponentDescriptor componentDescriptor1 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor1.getDisplayName()).andReturn("a");
+
+        ComponentDescriptor componentDescriptor2 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor2.getDisplayName()).andReturn("Separator");
+
+        replay(componentDescriptor1, componentDescriptor2);
+
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor1));
+        Assert.assertFalse(remoteComponentsConfiguration.isAllowed(componentDescriptor2));
     }
 
     @Test
@@ -101,7 +134,12 @@ public class RemoteComponentsConfigurationImplTest {
         excludes.add("a");
         RemoteComponentsConfigurationImpl remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl(
                 includes, excludes, properties);
-        Assert.assertTrue(remoteComponentsConfiguration.isAllowed("a"));
+
+        ComponentDescriptor componentDescriptor1 = createNiceMock(ComponentDescriptor.class);
+        expect(componentDescriptor1.getDisplayName()).andReturn("a");
+
+        replay(componentDescriptor1);
+        Assert.assertTrue(remoteComponentsConfiguration.isAllowed(componentDescriptor1));
     }
 
     @Test

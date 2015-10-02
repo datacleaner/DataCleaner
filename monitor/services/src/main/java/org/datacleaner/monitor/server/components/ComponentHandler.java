@@ -51,6 +51,7 @@ import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
@@ -95,6 +96,10 @@ public class ComponentHandler {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
         descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName);
+        if (!remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(componentName);
+        }
         table = new MyMutableTable("inputData");
         if(descriptor == null) {
             descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorByDisplayName(componentName);

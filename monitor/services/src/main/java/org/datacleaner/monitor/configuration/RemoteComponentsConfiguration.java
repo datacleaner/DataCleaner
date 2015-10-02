@@ -40,14 +40,6 @@ public interface RemoteComponentsConfiguration {
     public boolean isAllowed(ComponentDescriptor componentDescriptor);
 
     /**
-     * Is the component allowed?
-     *
-     * @param componentDisplayName
-     * @return
-     */
-    public boolean isAllowed(String componentDisplayName);
-
-    /**
      * Method returns map with default values of properties.
      *
      * @param componentDescriptor

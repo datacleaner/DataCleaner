@@ -81,22 +81,34 @@ public class CrosstabReducerHelper {
 
             final CrosstabNavigator<Number> mainNavigator = new CrosstabNavigator<Number>(mainCrosstab);
             final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
-            final List<CrosstabDimension> dimensions = partialCrosstab.getDimensions();
-            for (CrosstabDimension dimension : dimensions) {
-                final List<String> categories = dimension.getCategories();
-                for (String category : categories) {
-                    final Number categoryValue = nav.where(dimension, category).safeGet(null);
-                    final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
-                    if (categoryValue != null) {
-                        final Number oldValue = whereToPut.safeGet(null);
-                        if (oldValue != null) {
-                            final Number newValue = sum(oldValue, categoryValue);
-                            whereToPut.put(newValue);
-                        } else {
-                            whereToPut.put(categoryValue);
-                        }
-                    }
+            final CrosstabDimension columnDimension = partialCrosstab.getDimensions().get(0);
+            final CrosstabDimension measureDimension = partialCrosstab.getDimensions().get(1);
+
+            for (String columnCategory : columnDimension.getCategories()) {
+                //just navigate through the dimensions because is the column dimension
+                nav.where(columnDimension, columnCategory);
+                mainNavigator.where(columnDimension, columnCategory);
+                //navigate and sum up data
+                final List<String> categories = measureDimension.getCategories();
+                for (String measureCategory : categories) {
+                    sumUpData(mainNavigator, nav, measureDimension, measureCategory);
                 }
+            }
+        }
+    }
+
+    private static void sumUpData(final CrosstabNavigator<Number> mainNavigator, final CrosstabNavigator<Number> nav,
+            CrosstabDimension dimension, String category) {
+        final CrosstabNavigator<Number> where = nav.where(dimension, category);
+        final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
+        final Number categoryValue = where.safeGet(null);
+        if (categoryValue != null) {
+            final Number oldValue = whereToPut.safeGet(null);
+            if (oldValue != null) {
+                final Number newValue = sum(oldValue, categoryValue);
+                whereToPut.put(newValue);
+            } else {
+                whereToPut.put(categoryValue);
             }
         }
     }
@@ -104,7 +116,7 @@ public class CrosstabReducerHelper {
     private static Number sum(Number n1, Number n2) {
         if (isIntegerType(n1) && isIntegerType(n2)) {
             return BigInteger.valueOf(n1.longValue()).add(BigInteger.valueOf(n2.longValue()));
-        } 
+        }
         return new BigDecimal(n1.doubleValue()).add(new BigDecimal(n2.doubleValue()));
     }
 

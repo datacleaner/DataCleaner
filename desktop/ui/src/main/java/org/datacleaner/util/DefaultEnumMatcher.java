@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
-import org.datacleaner.metadata.ColumnMeaning;
 
 import com.google.common.base.Splitter;
 
@@ -49,7 +48,7 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
     private final Map<String, EnumerationValue> _exactMatchesMap;
 
-    public DefaultEnumMatcher(Class<? extends Enum> enumClass) {
+    public DefaultEnumMatcher(Class<? extends Enum<?>> enumClass) {
         this(EnumerationValue.providerFromEnumClass(enumClass));
     }
 

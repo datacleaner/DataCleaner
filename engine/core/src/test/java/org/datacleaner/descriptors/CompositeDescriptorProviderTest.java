@@ -34,7 +34,7 @@ import java.util.Collection;
 public class CompositeDescriptorProviderTest {
 
     CompositeDescriptorProvider dp;
-    AnalyzerDescriptor ad1, ad2;
+    AnalyzerDescriptor<?> ad1, ad2;
 
     @Before
     public void init() {

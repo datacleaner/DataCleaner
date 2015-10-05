@@ -36,26 +36,15 @@ import org.datacleaner.metamodel.datahub.update.UpdateData;
 
 public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback, Closeable {
 
-    private final DataHubDataContext _dataContext;
-    //private DataHubConnection _connection;
     public static final int INSERT_BATCH_SIZE = 100;
-    
+    private final DataHubDataContext _dataContext;
     private List<UpdateData> _pendingUpdates;
-
-
 
     public DataHubUpdateCallback(DataHubDataContext dataContext) {
         super(dataContext);
         _dataContext = dataContext;
         _pendingUpdates = null;
     }
-
-//    protected final DataHubConnection getConnection() {
-//        if (_connection == null) {
-//            _connection = _dataContext.getConnection();
-//        }
-//        return _connection;
-//    }
 
     @Override
     public TableCreationBuilder createTable(Schema arg0, String arg1) throws IllegalArgumentException,

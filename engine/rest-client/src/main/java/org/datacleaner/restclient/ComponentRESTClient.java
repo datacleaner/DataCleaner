@@ -23,6 +23,7 @@ package org.datacleaner.restclient;
  * @since 02. 09. 2015
  */
 public class ComponentRESTClient implements ComponentController {
+    
     private RESTClient restClient = null;
     private String tenantName = "";
     private String host = "";

@@ -32,7 +32,7 @@ public class AbstractComponentCategoryTest extends TestCase {
 		assertEquals("Data structures", new DataStructuresCategory().getName());
 		assertEquals("Date and time", new DateAndTimeCategory().getName());
 		assertEquals("Filter", new FilterCategory().getName());
-		assertEquals("Matching and standardization", new MatchingAndStandardizationCategory().getName());
+		assertEquals("Contact data", new ContactDataCategory().getName());
 		assertEquals("Numbers", new NumbersCategory().getName());
 		assertEquals("Scripting", new ScriptingCategory().getName());
 		assertEquals("Validation", new ValidationCategory().getName());

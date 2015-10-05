@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Created with DataCleaner Community edition UNKNOWN</job-description>
+        <author>tomaszg</author>
+        <updated-date>2015-09-11+02:00</updated-date>
+        <metadata-properties>
+            <property name="CoordinatesY.resources.person_names.txt">40</property>
+            <property name="CoordinatesX.resources.person_names.txt">40</property>
+        </metadata-properties>
+    </job-metadata>
+    <source>
+        <data-context ref="person_names"/>
+        <columns>
+            <column id="col_id" path="id" type="STRING"/>
+            <column id="col_name" path="name" type="STRING"/>
+            <column id="col_company" path="company" type="STRING"/>
+            <column id="col_country" path="country" type="STRING"/>
+        </columns>
+    </source>
+    <transformation/>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Value distribution"/>
+            <metadata-properties>
+                <property name="CoordinatesY">70</property>
+                <property name="CoordinatesX">350</property>
+            </metadata-properties>
+            <properties>
+                <property name="Record unique values" value="true"/>
+                <property name="Record drill-down information" value="true"/>
+                <property name="Top n most frequent values" value="&lt;null&gt;"/>
+                <property name="Bottom n most frequent values" value="&lt;null&gt;"/>
+            </properties>
+            <input ref="col_name" name="Column"/>
+            <input ref="col_country" name="Group column"/>
+        </analyzer>
+    </analysis>
+</job>

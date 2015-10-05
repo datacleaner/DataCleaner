@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +31,8 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
+
+import com.google.common.collect.Collections2;
 
 /**
  * DescriptorProvider that provides a composite view of descriptors from 2 delegate providers.

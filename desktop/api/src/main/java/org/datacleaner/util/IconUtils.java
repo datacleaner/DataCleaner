@@ -19,12 +19,13 @@
  */
 package org.datacleaner.util;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
@@ -58,15 +59,12 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
  * component icons.
  */
 public final class IconUtils {
-    private static final Logger logger = LoggerFactory.getLogger(IconUtils.class);
 
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
@@ -278,7 +276,7 @@ public final class IconUtils {
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
-    private static ImageIcon getIconFromData(ComponentDescriptor componentDescriptor, int width) {
+    private static ImageIcon getIconFromData(ComponentDescriptor<?> componentDescriptor, int width) {
         String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
         Image image = _imageManager.getImageFromCache(cacheKey);
         ImageIcon imageIcon = null;

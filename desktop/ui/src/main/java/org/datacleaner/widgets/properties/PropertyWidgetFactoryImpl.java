@@ -40,7 +40,7 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -250,8 +250,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         if (propertyWidget != null) {
             return propertyWidget;
         }
-
-        if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+        final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+        if (hiddenProperty != null && hiddenProperty.hiddenForLocalAccess()) {
             return null;
         }
         if (propertyDescriptor.getAnnotation(Deprecated.class) != null) {

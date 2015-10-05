@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.HasOutputDataStreams;
@@ -59,6 +60,9 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
     private final List<ActiveOutputDataStream> _outputDataStreams;
+    private final AtomicInteger _publishersRegisteredCount;
+    private final AtomicInteger _publishersInitializedCount;
+    private final AtomicInteger _publishersClosedCount;
 
     protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
@@ -81,6 +85,9 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
         _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
+        _publishersRegisteredCount = new AtomicInteger(0);
+        _publishersInitializedCount = new AtomicInteger(0);
+        _publishersClosedCount = new AtomicInteger(0);
     }
 
     private boolean isAlwaysSatisfiedForConsume() {
@@ -253,5 +260,31 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     @Override
     public AnalysisJob getAnalysisJob() {
         return _analysisJob;
+    }
+
+    @Override
+    public int onPublisherInitialized(RowProcessingPublisher publisher) {
+        return _publishersInitializedCount.incrementAndGet();
+    }
+
+    @Override
+    public int onPublisherClosed(RowProcessingPublisher publisher) {
+        final int closedCount = _publishersClosedCount.incrementAndGet();
+        return _publishersRegisteredCount.get() - closedCount;
+    }
+
+    @Override
+    public boolean isAllPublishersInitialized() {
+        return _publishersRegisteredCount.get() == _publishersInitializedCount.get();
+    }
+    
+    @Override
+    public boolean isAllPublishersClosed() {
+        return _publishersRegisteredCount.get() == _publishersClosedCount.get();
+    }
+
+    @Override
+    public void registerPublisher(RowProcessingPublisher publisher) {
+        _publishersRegisteredCount.incrementAndGet();
     }
 }

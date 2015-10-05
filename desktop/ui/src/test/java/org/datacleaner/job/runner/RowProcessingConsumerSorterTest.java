@@ -24,15 +24,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
 import junit.framework.TestCase;
+
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
-import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
-import org.datacleaner.beans.coalesce.CoalesceUnit;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;

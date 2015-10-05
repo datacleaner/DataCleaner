@@ -34,7 +34,7 @@ import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResultReducer;
  * {@link ValueDistributionAnalyzerResult} produced by the
  * {@link ValueDistributionAnalyzerResultReducer}.
  */
-public class ReducedValueDistributionResult extends ValueDistributionAnalyzerResult {
+public class ReducedSingleValueDistributionResult extends ValueDistributionAnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     private final Map<String, Integer> _valueCountsMap;
     private final int _nullCount;
 
-    public ReducedValueDistributionResult(final String name, Map<String, Integer> valueCountsMap, int nullCount) {
+    public ReducedSingleValueDistributionResult(final String name, Map<String, Integer> valueCountsMap, int nullCount) {
         _name = name;
         _valueCountsMap = valueCountsMap;
         _nullCount = nullCount;

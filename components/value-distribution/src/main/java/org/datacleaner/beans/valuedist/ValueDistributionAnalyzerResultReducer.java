@@ -19,8 +19,10 @@
  */
 package org.datacleaner.beans.valuedist;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -28,7 +30,7 @@ import javax.inject.Inject;
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
-import org.datacleaner.result.ReducedValueDistributionResult;
+import org.datacleaner.result.ReducedSingleValueDistributionResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotationFactory;
@@ -44,20 +46,65 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
 
     @Override
     public ValueDistributionAnalyzerResult reduce(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
+        if (hasGroupedResults(analyzerResults)) {
+            return reduceGroupedResults(analyzerResults);
+        } else {
+            return reduceSingleResults(analyzerResults);
+        }
+    }
+
+    private ValueDistributionAnalyzerResult reduceSingleResults(
+            Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
         final Map<String, Integer> reducedValueCounts = new HashMap<>();
         Integer nullCount = 0;
 
         ValueDistributionAnalyzerResult first = analyzerResults.iterator().next();
 
         for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
-            if (partialResult instanceof SingleValueDistributionResult) {
+            if ((partialResult instanceof SingleValueDistributionResult)
+                    || (partialResult instanceof ReducedSingleValueDistributionResult)) {
                 nullCount = reduceValueCounts(reducedValueCounts, nullCount, partialResult);
-            } else if (partialResult instanceof GroupedValueDistributionResult) {
+            } else {
+                throw new IllegalStateException("Unsupported type of "
+                        + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
+                        + partialResult.getClass().getSimpleName());
+            }
+        }
+
+        return new ReducedSingleValueDistributionResult(first.getName(), reducedValueCounts, nullCount);
+    }
+
+    private boolean hasGroupedResults(Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
+        for (ValueDistributionAnalyzerResult valueDistributionAnalyzerResult : analyzerResults) {
+            if (valueDistributionAnalyzerResult instanceof GroupedValueDistributionResult) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ValueDistributionAnalyzerResult reduceGroupedResults(
+            Collection<? extends ValueDistributionAnalyzerResult> analyzerResults) {
+
+        Map<String, List<ValueDistributionAnalyzerResult>> groupedMap = new HashMap<>();
+
+        ValueDistributionAnalyzerResult first = analyzerResults.iterator().next();
+
+        for (ValueDistributionAnalyzerResult partialResult : analyzerResults) {
+            if (partialResult instanceof GroupedValueDistributionResult) {
                 final GroupedValueDistributionResult groupedPartialResult = (GroupedValueDistributionResult) partialResult;
 
                 for (ValueCountingAnalyzerResult childValueCountingResult : groupedPartialResult.getGroupResults()) {
-                    SingleValueDistributionResult childResult = (SingleValueDistributionResult) childValueCountingResult;
-                    nullCount = reduceValueCounts(reducedValueCounts, nullCount, childResult);
+                    ValueDistributionAnalyzerResult childValueDistributionResult = (ValueDistributionAnalyzerResult) childValueCountingResult;
+                    String groupName = childValueCountingResult.getName();
+                    if (groupedMap.containsKey(groupName)) {
+                        List<ValueDistributionAnalyzerResult> list = groupedMap.get(groupName);
+                        list.add(childValueDistributionResult);
+                    } else {
+                        final List<ValueDistributionAnalyzerResult> list = new ArrayList<>();
+                        list.add(childValueDistributionResult);
+                        groupedMap.put(groupName, list);
+                    }
                 }
             } else {
                 throw new IllegalStateException("Unsupported type of "
@@ -66,19 +113,16 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             }
         }
 
-        
-        final InputColumn<?>[] highlightedColumns;
-        if (first instanceof GroupedValueDistributionResult) {
-            final InputColumn<?> inputColumn = ((GroupedValueDistributionResult) first).getColumn();
-            final InputColumn<String> groupColumn = ((GroupedValueDistributionResult) first).getGroupColumn();
-            highlightedColumns = new InputColumn<?>[2];
-            highlightedColumns[0] = inputColumn;
-            highlightedColumns[0] = groupColumn;
-        } else {
-            highlightedColumns = ((SingleValueDistributionResult) first).getHighlightedColumns();
+        List<ValueDistributionAnalyzerResult> reducedChildResults = new ArrayList<>();
+        Collection<List<ValueDistributionAnalyzerResult>> groupedLists = groupedMap.values();
+        for (List<ValueDistributionAnalyzerResult> list : groupedLists) {
+            ValueDistributionAnalyzerResult reducedChildResult = reduce(list);
+            reducedChildResults.add(reducedChildResult);
         }
 
-        return new ReducedValueDistributionResult(first.getName(), reducedValueCounts, nullCount);
+        final InputColumn<?> inputColumn = ((GroupedValueDistributionResult) first).getColumn();
+        final InputColumn<String> groupColumn = ((GroupedValueDistributionResult) first).getGroupColumn();
+        return new GroupedValueDistributionResult(inputColumn, groupColumn, reducedChildResults);
     }
 
     private Integer reduceValueCounts(Map<String, Integer> reducedValueCounts, Integer nullCount,
@@ -101,7 +145,7 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
             ValueFrequency valueFrequency) {
         String value = valueFrequency.getValue();
         int count = valueFrequency.getCount();
-        
+
         if (value != null) {
             if (reducedValueCounts.containsKey(value)) {
                 Integer oldCount = reducedValueCounts.get(value);

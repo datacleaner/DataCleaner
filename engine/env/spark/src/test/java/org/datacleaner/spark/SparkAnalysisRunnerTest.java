@@ -32,11 +32,11 @@ import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
 import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
-import org.datacleaner.beans.valuedist.SingleValueDistributionResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.result.ReducedSingleValueDistributionResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.junit.Test;
 
@@ -249,8 +249,8 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
         GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
         Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
-        SingleValueDistributionResult group1 = (SingleValueDistributionResult) iterator.next();
-        SingleValueDistributionResult group2 = (SingleValueDistributionResult) iterator.next();
+        ReducedSingleValueDistributionResult group1 = (ReducedSingleValueDistributionResult) iterator.next();
+        ReducedSingleValueDistributionResult group2 = (ReducedSingleValueDistributionResult) iterator.next();
 
         if (group1.getName().equals("Denmark")) {
             assertEquals("Denmark", group1.getName());

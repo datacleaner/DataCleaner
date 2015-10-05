@@ -19,7 +19,8 @@
  */
 package org.datacleaner.beans.valuedist;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,10 +31,9 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.result.ReducedValueDistributionResult;
+import org.datacleaner.result.ReducedSingleValueDistributionResult;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
-import org.datacleaner.result.ValueFrequency;
 import org.junit.Test;
 
 public class ValueDistributionAnalyzerResultReducerTest {
@@ -85,7 +85,7 @@ public class ValueDistributionAnalyzerResultReducerTest {
         ValueDistributionAnalyzerResultReducer reducer = new ValueDistributionAnalyzerResultReducer();
         ValueDistributionAnalyzerResult reducedValueDistributionResult = reducer.reduce(partialResults);
 
-        ReducedValueDistributionResult reducedResult = (ReducedValueDistributionResult) reducedValueDistributionResult;
+        ReducedSingleValueDistributionResult reducedResult = (ReducedSingleValueDistributionResult) reducedValueDistributionResult;
         assertEquals(0, reducedResult.getNullCount());
         assertEquals(Integer.valueOf(4), reducedResult.getDistinctCount());
         assertEquals(21, reducedResult.getTotalCount());
@@ -169,20 +169,19 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
         // Assert the aggregates from the reduced groups
         {
-            final ReducedValueDistributionResult groupedReducedResult = (ReducedValueDistributionResult) reducedResult;
-            final Iterator<ValueFrequency> reducedGroupsIterator = groupedReducedResult.getValueCounts().iterator();
-            SingleValueDistributionResult firstReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator
+            final GroupedValueDistributionResult groupedReducedResult = (GroupedValueDistributionResult) reducedResult;
+            final Iterator<? extends ValueCountingAnalyzerResult> reducedGroupsIterator = groupedReducedResult.getGroupResults().iterator();
+            ReducedSingleValueDistributionResult firstReducedGroup = (ReducedSingleValueDistributionResult) reducedGroupsIterator
                     .next();
-            SingleValueDistributionResult secondReducedGroup = (SingleValueDistributionResult) reducedGroupsIterator
+            ReducedSingleValueDistributionResult secondReducedGroup = (ReducedSingleValueDistributionResult) reducedGroupsIterator
                     .next();
             
             // The order is non-deterministic...
             if (firstReducedGroup.getName().equals("group1")) {
                 assertEquals("group1", firstReducedGroup.getName());
                 assertEquals(0, firstReducedGroup.getNullCount());
-                assertEquals(2, firstReducedGroup.getUniqueCount().intValue());
+                assertEquals(1, firstReducedGroup.getUniqueCount().intValue());
                 assertTrue(firstReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
-                assertTrue(firstReducedGroup.getUniqueValues().contains("hello"));
                 assertEquals(13, firstReducedGroup.getTotalCount());
 
                 assertEquals("group2", secondReducedGroup.getName());
@@ -199,9 +198,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
                 assertEquals("group1", secondReducedGroup.getName());
                 assertEquals(0, secondReducedGroup.getNullCount());
-                assertEquals(2, secondReducedGroup.getUniqueCount().intValue());
+                assertEquals(1, secondReducedGroup.getUniqueCount().intValue());
                 assertTrue(secondReducedGroup.getUniqueValues().contains("globallyUniqueWord"));
-                assertTrue(secondReducedGroup.getUniqueValues().contains("hello"));
                 assertEquals(13, secondReducedGroup.getTotalCount());
             }
         }

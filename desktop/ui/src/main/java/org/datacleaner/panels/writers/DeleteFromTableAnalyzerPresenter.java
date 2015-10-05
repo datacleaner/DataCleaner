@@ -86,7 +86,7 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
         _conditionInputColumnsProperty = descriptor.getConfiguredProperty("Condition values");
         _conditionColumnNamesProperty = descriptor.getConfiguredProperty("Condition column names");
         _bufferSizeProperty = descriptor.getConfiguredProperty("Buffer size");
-        _errorHandlingProperty = descriptor.getConfiguredProperty("How to handle updation errors?");
+        _errorHandlingProperty = descriptor.getConfiguredProperty("How to handle deletion errors?");
         _errorFileLocationProperty = descriptor.getConfiguredProperty("Error log file location");
         _additionalErrorLogValuesProperty = descriptor.getConfiguredProperty("Additional error log values");
 

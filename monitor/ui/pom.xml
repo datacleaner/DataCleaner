@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
@@ -110,6 +109,14 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.jboss.tattletale</groupId>
+				<artifactId>tattletale-maven</artifactId>
+				<configuration>
+					<source>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</source>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -164,6 +171,11 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-documentation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- DataCleaner monitor extensions -->
 		<dependency>
@@ -211,15 +223,6 @@
 			<artifactId>DataCleaner-monitor-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-        <!-- DataCleaner monitor documentation -->
-        <!-- 
-        <dependency>
-            <groupId>org.eobjects.datacleaner</groupId>
-            <artifactId>DataCleaner-monitor-documentation</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-         -->
 
 		<!-- JDBC drivers -->
 		<dependency>
@@ -274,7 +277,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -291,12 +293,6 @@
 			<version>1.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-			<scope>runtime</scope>
-			<version>1.1.2</version>
-		</dependency>
 
 		<!-- Jetty used for dev mode testing -->
 		<dependency>
@@ -304,6 +300,12 @@
 			<artifactId>jetty-all</artifactId>
 			<version>7.2.0.v20101020</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

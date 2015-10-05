@@ -21,9 +21,10 @@ package org.datacleaner.connection;
 
 import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.metamodel.datahub.DataHubDataContext;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 
 public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
-        implements Datastore, UsernameDatastore {
+        implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
     private final String _host;
@@ -33,10 +34,10 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final String _tenantName;
     private final boolean _https;
     private final boolean _acceptUnverifiedSslPeers;
-    private final String _securityMode;
+    private final DataHubSecurityMode _securityMode;
 
     public DataHubDatastore(String name, String host, Integer port, String username, String password, String tenantName,
-            boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+            boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
         super(name);
         _host = host;
         _port = port;
@@ -45,7 +46,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         _tenantName = tenantName;
         _https = https;
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
-        _securityMode = securityMode;
+        _securityMode = dataHubSecurityMode;
     }
 
     @Override
@@ -82,14 +83,14 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return _acceptUnverifiedSslPeers;
     }
 
-    public String getSecurityMode() {
+    public DataHubSecurityMode getSecurityMode() {
         return _securityMode;
     }
 
     @Override
-    public DatastoreConnection openConnection() {
+    public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
-        return connection;
+        return (UpdateableDatastoreConnection)connection;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName,
                 _https, _acceptUnverifiedSslPeers, _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
-        return new DatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
     }
 
     @Override

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor</artifactId>
 	<packaging>pom</packaging>
@@ -15,8 +15,8 @@
 		<module>widgets</module>
 		<module>extensions</module>
 		<module>ui</module>
-        <module>documentation</module>
-    </modules>
+		<module>documentation</module>
+	</modules>
 
 	<build>
 		<resources>
@@ -125,6 +125,10 @@
 					<exclusion>
 						<groupId>commons-logging</groupId>
 						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

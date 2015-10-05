@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Fuse data streams</name>
+	<package>org.datacleaner.components.fuse</package>
+	<description>Utility components for fusing, coalescing, combining and unioning data streams, fields and filter outcomes.</description>
+	<icon>org/datacleaner/components/fuse/FuseIcon.png</icon>
+</extension>

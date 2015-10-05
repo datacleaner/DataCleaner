@@ -37,6 +37,7 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.test.TestHelper;
 
+@SuppressWarnings("deprecation")
 public class ReferenceDataInJobIntegrationTest extends TestCase {
 
     public void testScenario() throws Throwable {

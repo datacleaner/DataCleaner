@@ -48,7 +48,7 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
@@ -67,7 +67,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
- * This class is a component type independent wrapper that decides the proper handler and provides its results.
+ * This class is a component type independent wrapper that decides the proper
+ * handler and provides its results.
+ * 
  * @since 14. 07. 2015
  */
 public class ComponentHandler {
@@ -76,49 +78,52 @@ public class ComponentHandler {
 
     public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
-    private final String componentName;
-    private DataCleanerConfiguration dcConfiguration;
-
-    ComponentDescriptor descriptor;
-    Map<String, MutableColumn> columns;
-    Map<String, InputColumn> inputColumns;
-    MyMutableTable table;
-    Component component;
-    RemoteComponentsConfiguration remoteComponentsConfiguration;
-
+    private final String _componentName;
+    private final DataCleanerConfiguration _dcConfiguration;
+    private final StringConverter _stringConverter;
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
+    
+    private ComponentDescriptor<?> descriptor;
+    private Map<String, MutableColumn> columns;
+    private Map<String, InputColumn<?>> inputColumns;
+    private MyMutableTable table;
+    private Component component;
+   
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
-        this.dcConfiguration = dcConfiguration;
-        this.componentName = componentName;
-        this.remoteComponentsConfiguration = remoteComponentsConfiguration;
+        _remoteComponentsConfiguration = remoteComponentsConfiguration;
+        _dcConfiguration = dcConfiguration;
+        _componentName = componentName;
+        _stringConverter = new StringConverter(dcConfiguration);
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName);
-        if (!remoteComponentsConfiguration.isAllowed(descriptor)) {
-            LOGGER.info("Component {} is not allowed.", componentName);
-            throw ComponentNotAllowed.createInstanceNotAllowed(componentName);
+        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName);
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", _componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
         table = new MyMutableTable("inputData");
         if(descriptor == null) {
-            descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorByDisplayName(componentName);
+            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorByDisplayName(componentName);
         }
-        if(descriptor == null) {
-            throw ComponentNotFoundException.createTypeNotFound(componentName);
+        if (descriptor == null) {
+            throw ComponentNotFoundException.createTypeNotFound(_componentName);
         }
 
         component = (Component) descriptor.newInstance();
 
-        // create "table" according to the columns specification (for now only a list of names)
+        // create "table" according to the columns specification (for now only a
+        // list of names)
         int index = 0;
         for (JsonNode columnSpec : componentConfiguration.getColumns()) {
             String columnName;
             String columnTypeName;
-            if(columnSpec.isObject()) {
-                ObjectNode columnSpecO = (ObjectNode)columnSpec;
+            if (columnSpec.isObject()) {
+                ObjectNode columnSpecO = (ObjectNode) columnSpec;
                 columnName = columnSpecO.get("name").asText();
-                if(columnSpecO.get("type") == null) {
+                if (columnSpecO.get("type") == null) {
                     columnTypeName = ColumnType.VARCHAR.getName();
                 } else {
                     columnTypeName = columnSpecO.get("type").asText();
@@ -129,11 +134,11 @@ public class ComponentHandler {
             }
 
             MutableColumn column = columns.get(columnName);
-            if(column != null) {
+            if (column != null) {
                 throw new RuntimeException("Multiple column definition of name '" + columnName + "'");
             }
             ColumnType columnType = ColumnTypeImpl.valueOf(columnTypeName);
-            if(columnType == null) {
+            if (columnType == null) {
                 throw new RuntimeException("Column '" + columnName + "' has unknown type '" + columnTypeName + "'");
             }
             column = new MutableColumn(columnName, columnType, table, index, true);
@@ -147,9 +152,9 @@ public class ComponentHandler {
         // First, copy current values = the defaults
         Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
         Set<ConfiguredPropertyDescriptor> props = descriptor.getConfiguredProperties();
-        for(ConfiguredPropertyDescriptor propDesc: props) {
+        for (ConfiguredPropertyDescriptor propDesc : props) {
             Object defaultValue = propDesc.getValue(component);
-            if(defaultValue != null) {
+            if (defaultValue != null) {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
@@ -161,22 +166,23 @@ public class ComponentHandler {
         //User properties
         for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
-            if(propDesc == null) {
+            if (propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
                 continue;
             }
 
-            if (propDesc.getAnnotation(HiddenProperty.class) != null) {
+            final HiddenProperty hiddenProperty = propDesc.getAnnotation(HiddenProperty.class);
+            if (hiddenProperty != null && hiddenProperty.hiddenForRemoteAccess()) {
                 LOGGER.debug("Hidden property '{}' is skipped. ", propertyName);
                 continue;
             }
 
-            JsonNode userPropValue = componentConfiguration.getProperties().get(propertyName);
-            if(userPropValue != null) {
-                if(propDesc.isInputColumn()) {
+            final JsonNode userPropValue = componentConfiguration.getProperties().get(propertyName);
+            if (userPropValue != null) {
+                if (propDesc.isInputColumn()) {
                     List<String> colNames = convertToStringArray(userPropValue);
-                    List<InputColumn> inputCols = new ArrayList<>();
-                    for(String columnName: colNames) {
+                    List<InputColumn<?>> inputCols = new ArrayList<>();
+                    for (String columnName : colNames) {
                         inputCols.add(getOrCreateInputColumn(columnName, propertyName));
                     }
                     configuredProperties.put(propDesc, inputCols.toArray(new InputColumn[inputCols.size()]));
@@ -188,7 +194,7 @@ public class ComponentHandler {
         }
         org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
@@ -196,29 +202,28 @@ public class ComponentHandler {
     }
 
     public OutputColumns getOutputColumns() {
-        return ((Transformer)component).getOutputColumns();
+        return ((Transformer) component).getOutputColumns();
     }
 
     public List<Object[]> runComponent(JsonNode data) {
-        List<InputRow> inputRows;
-        DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
-        inputRows = new ArrayList<>();
+        final List<InputRow> inputRows = new ArrayList<>();
+        final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
         int id = 0;
         for (JsonNode row : data) {
-            DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
+            final DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
             inputRows.add(new MetaModelInputRow(id, inputRow));
             id++;
         }
 
-        if(component instanceof Transformer) {
-            List results = new ArrayList();
+        if (component instanceof Transformer) {
+            final List<Object[]> results = new ArrayList<>();
             for (InputRow inputRow : inputRows) {
-                results.add(((Transformer)component).transform(inputRow));
+                results.add(((Transformer) component).transform(inputRow));
             }
             return results;
-        } else if(component instanceof Analyzer) {
+        } else if (component instanceof Analyzer) {
             for (InputRow inputRow : inputRows) {
-                ((Analyzer)component).run(inputRow, 1);
+                ((Analyzer<?>) component).run(inputRow, 1);
             }
             return null;
         } else {
@@ -227,23 +232,25 @@ public class ComponentHandler {
     }
 
     public AnalyzerResult closeComponent() {
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.close(descriptor, component, true);
-        if(component instanceof HasAnalyzerResult) {
-            return ((HasAnalyzerResult)component).getResult();
+        if (component instanceof HasAnalyzerResult) {
+            return ((HasAnalyzerResult<?>) component).getResult();
         } else {
             return null;
         }
     }
 
-    private InputColumn getOrCreateInputColumn(String columnName, String propertyName) {
-        MutableColumn column = columns.get(columnName);
-        if(column == null) {
-            throw new RuntimeException("Column '" + columnName + "' specified in property '" + propertyName + "' was not found in table columns specification");
+    private InputColumn<?> getOrCreateInputColumn(String columnName, String propertyName) {
+        final MutableColumn column = columns.get(columnName);
+        if (column == null) {
+            throw new RuntimeException("Column '" + columnName + "' specified in property '" + propertyName
+                    + "' was not found in table columns specification");
         }
-        InputColumn inputColumn = inputColumns.get(columnName);
-        if(inputColumn == null) {
-            inputColumns.put(columnName, inputColumn = new MetaModelInputColumn(column));
+        InputColumn<?> inputColumn = inputColumns.get(columnName);
+        if (inputColumn == null) {
+            inputColumn = new MetaModelInputColumn(column);
+            inputColumns.put(columnName, inputColumn);
         }
         return inputColumn;
     }
@@ -251,48 +258,49 @@ public class ComponentHandler {
     private Object[] toRowValues(ArrayNode row) {
         ArrayList<Object> values = new ArrayList<>();
         int i = 0;
-        for(JsonNode value: row) {
-            if(i >= table.getColumnsCount()) {
+        for (JsonNode value : row) {
+            if (i >= table.getColumnCount()) {
                 LOGGER.debug("Data contain more columns than specified. Will be ignored.");
                 break;
             }
             Column col = table.getColumn(i);
-            values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
+            values.add(convertTableValue(_stringConverter, col.getType().getJavaEquivalentClass(), value));
             i++;
         }
         return values.toArray(new Object[values.size()]);
     }
 
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
-        Class type = propDesc.getType();
+        Class<?> type = propDesc.getType();
         try {
-            if(value.isArray() || value.isObject() || type.isEnum()) {
+            if (value.isArray() || value.isObject() || type.isEnum()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return new StringConverter(dcConfiguration).deserialize(value.asText(), type, propDesc.getCustomConverter());
+                return _stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
             }
-        } catch(Exception e) {
-            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value.toString(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
+                    + "': " + value.toString(), e);
         }
     }
 
-    private Object convertTableValue(Class type, JsonNode value) {
+    private Object convertTableValue(StringConverter stringConverter, Class<?> type, JsonNode value) {
         try {
-            if(value.isArray() || value.isObject()) {
+            if (value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+                return stringConverter.deserialize(value.asText(), type);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
     }
 
     private String toString(JsonNode item) {
-        if(item.getNodeType() == JsonNodeType.STRING) {
-            return ((TextNode)item).textValue();
-        } else if(item.isArray() && ((ArrayNode)item).size() < 1) {
-            if(((ArrayNode)item).size() == 0) {
+        if (item.getNodeType() == JsonNodeType.STRING) {
+            return ((TextNode) item).textValue();
+        } else if (item.isArray() && ((ArrayNode) item).size() < 1) {
+            if (((ArrayNode) item).size() == 0) {
                 return "";
             } else {
                 return toString(((ArrayNode) item).get(0));
@@ -303,26 +311,13 @@ public class ComponentHandler {
 
     private List<String> convertToStringArray(JsonNode json) {
         List<String> result = new ArrayList<>();
-        if(json.isArray()) {
-            for(JsonNode item: ((ArrayNode)json)) {
+        if (json.isArray()) {
+            for (JsonNode item : ((ArrayNode) json)) {
                 result.add(toString(item));
             }
         } else {
             result.add(toString(json));
         }
         return result;
-    }
-
-    // TODO: implement the methods written here directly in MutableTable (which is in dependent project)
-    static class MyMutableTable extends MutableTable {
-        public MyMutableTable(String name) {
-            super(name);
-        }
-        public Column getColumn(int index) throws IndexOutOfBoundsException {
-            return _columns.get(index);
-        }
-        public int getColumnsCount() {
-            return _columns.size();
-        }
     }
 }

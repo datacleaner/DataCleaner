@@ -55,6 +55,7 @@ import org.datacleaner.result.ResultProducer;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
 
+@SuppressWarnings("deprecation")
 public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
     public void testScenario() throws Throwable {

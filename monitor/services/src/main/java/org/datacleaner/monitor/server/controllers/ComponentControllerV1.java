@@ -43,7 +43,7 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.monitor.configuration.ComponentCache;
 import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
@@ -88,8 +88,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 
 /**
- * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
- * and provide the input data separately without any need of the whole job or datastore configuration.
+ * Controller for DataCleaner components (transformers and analyzers). It
+ * enables to use a particular component and provide the input data separately
+ * without any need of the whole job or datastore configuration.
+ * 
  * @since 8. 7. 2015
  */
 @Controller
@@ -111,7 +113,6 @@ public class ComponentControllerV1 implements ComponentController {
     @Autowired
     RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
-
     @PostConstruct
     public void init() {
         _componentCache = new ComponentCacheMapImpl(_tenantContextFactory, _remoteComponentsConfiguration);
@@ -124,6 +125,7 @@ public class ComponentControllerV1 implements ComponentController {
 
     /**
      * It returns a list of all components and their configurations.
+     * 
      * @param tenant
      * @param iconData
      * @return
@@ -134,11 +136,10 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
-                .getDescriptorProvider()
-                .getTransformerDescriptors();
+                .getDescriptorProvider().getTransformerDescriptors();
         ComponentList componentList = new ComponentList();
 
-        for (TransformerDescriptor descriptor : transformerDescriptors) {
+        for (TransformerDescriptor<?> descriptor : transformerDescriptors) {
             if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
                 try {
                     componentList.add(createComponentInfo(tenant, descriptor, iconData));
@@ -154,14 +155,13 @@ public class ComponentControllerV1 implements ComponentController {
 
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList.ComponentInfo getComponentInfo(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ComponentList.ComponentInfo getComponentInfo(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
-        ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
+        ComponentDescriptor<?> descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
         if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
             logger.info("Component {} is not allowed.", name);
             throw ComponentNotAllowed.createInstanceNotAllowed(name);
@@ -175,10 +175,8 @@ public class ComponentControllerV1 implements ComponentController {
     @ResponseBody
     @RequestMapping(value = "/{name}/_outputColumns", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public OutputColumns getOutputColumns(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestBody final CreateInput createInput) {
+    public OutputColumns getOutputColumns(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_NAME) final String name, @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -188,7 +186,7 @@ public class ComponentControllerV1 implements ComponentController {
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
-            for(int i = 0; i < outCols.getColumnCount(); i++) {
+            for (int i = 0; i < outCols.getColumnCount(); i++) {
                 result.add(outCols.getColumnName(i), outCols.getColumnType(i));
             }
             return result;
@@ -198,17 +196,17 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     /**
-     * It creates a new component with the provided configuration, runs it and returns the result.
+     * It creates a new component with the provided configuration, runs it and
+     * returns the result.
+     * 
      * @param tenant
      * @param name
      * @param processStatelessInput
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessStatelessOutput processStateless(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
@@ -224,7 +222,9 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     private JsonNode getJsonNode(Object value) {
-        if(value == null) { return null; }
+        if (value == null) {
+            return null;
+        }
         return objectMapper.valueToTree(value);
     }
 
@@ -234,39 +234,33 @@ public class ComponentControllerV1 implements ComponentController {
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createComponent(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
+    public String createComponent(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_NAME) final String name, // 1 day
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
-        _componentCache.put(
-                tenant,
-                tenantContext,
-                new ComponentStoreHolder(longTimeout, createInput, id, decodedName)
-        );
+        _componentCache.put(tenant, tenantContext, new ComponentStoreHolder(longTimeout, createInput, id, decodedName));
         return id;
     }
 
     /**
-     * It returns the continuous result of the component for the provided input data.
+     * It returns the continuous result of the component for the provided input
+     * data.
      */
     @ResponseBody
     @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessOutput processComponent(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_ID) final String id,
-            @RequestBody final ProcessInput processInput)
-            throws ComponentNotFoundException {
+    public ProcessOutput processComponent(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id, @RequestBody final ProcessInput processInput)
+                    throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
-        if(config == null){
-                logger.warn("Component with id {} does not exist.", id);
-                throw ComponentNotFoundException.createInstanceNotFound(id);
-            }
+        if (config == null) {
+            logger.warn("Component with id {} does not exist.", id);
+            throw ComponentNotFoundException.createInstanceNotFound(id);
+        }
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -278,10 +272,8 @@ public class ComponentControllerV1 implements ComponentController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessResult getFinalResult(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_ID) final String id)
-            throws ComponentNotFoundException {
+    public ProcessResult getFinalResult(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id) throws ComponentNotFoundException {
         // TODO - only for analyzers, implement it later after the architecture
         // decisions regarding the load-balancing and failover.
         return null;
@@ -293,10 +285,8 @@ public class ComponentControllerV1 implements ComponentController {
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteComponent(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_ID) final String id)
-            throws ComponentNotFoundException {
+    public void deleteComponent(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id) throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         boolean isHere = _componentCache.remove(id, tenantContext);
         if (!isHere) {
@@ -305,12 +295,11 @@ public class ComponentControllerV1 implements ComponentController {
         }
     }
 
-    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor,
-                                                                  boolean iconData) {
+    public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,
+            boolean iconData) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
-                .setName(descriptor.getDisplayName())
-                .setDescription(descriptor.getDescription())
+                .setName(descriptor.getDisplayName()).setDescription(descriptor.getDescription())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
                 .setCategoryNames(getCategoryNames(descriptor))
@@ -323,22 +312,21 @@ public class ComponentControllerV1 implements ComponentController {
         return componentInfo;
     }
 
-    private static byte[] getComponentIconData(ComponentDescriptor descriptor) {
+    private static byte[] getComponentIconData(ComponentDescriptor<?> descriptor) {
         try {
             String imagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream imageStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(imagePath);
 
             return IOUtils.toByteArray(imageStream);
-        }
-        catch (NullPointerException | IOException e) {
+        } catch (NullPointerException | IOException e) {
             return new byte[0];
         }
     }
 
-    private static Set<String> getCategoryNames(ComponentDescriptor componentDescriptor) {
+    private static Set<String> getCategoryNames(ComponentDescriptor<?> componentDescriptor) {
         Set<String> categoryNames = new HashSet<>();
 
-        for (Object element: componentDescriptor.getComponentCategories()) {
+        for (Object element : componentDescriptor.getComponentCategories()) {
             ComponentCategory componentCategory = (ComponentCategory) element;
             categoryNames.add(componentCategory.getClass().getName());
         }
@@ -346,21 +334,22 @@ public class ComponentControllerV1 implements ComponentController {
         return categoryNames;
     }
 
-    static private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
+    static private String getURLForCreation(String tenant, ComponentDescriptor<?> descriptor) {
         try {
-            return String.format(
-                    "/repository/%s/components/%s",
-                    UriUtils.encodePathSegment(tenant, "UTF8"),
-                    UriUtils.encodePathSegment(ComponentsRestClientUtils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
+            return String.format("/repository/%s/components/%s", UriUtils.encodePathSegment(tenant, "UTF8"),
+                    UriUtils.encodePathSegment(
+                            ComponentsRestClientUtils.escapeComponentName(descriptor.getDisplayName()), "UTF8"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor, Object componentInstance) {
+    private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor<?> descriptor,
+            Object componentInstance) {
         Map<String, ComponentList.PropertyInfo> result = new HashMap<>();
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
-            if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+            final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+            if (hiddenProperty != null && hiddenProperty.hiddenForRemoteAccess()) {
                 continue;
             }
             ComponentList.PropertyInfo propInfo = new ComponentList.PropertyInfo();
@@ -372,22 +361,25 @@ public class ComponentControllerV1 implements ComponentController {
             setPropertyAnnotations(propertyDescriptor, propInfo);
             result.put(propInfo.getName(), propInfo);
             Object defaultValue = propertyDescriptor.getValue(componentInstance);
-            if(defaultValue != null) {
+            if (defaultValue != null) {
                 propInfo.setDefaultValue(objectMapper.valueToTree(defaultValue));
             }
         }
         return result;
     }
 
-    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {
+    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor,
+            ComponentList.PropertyInfo propInfo) {
         Set<Annotation> annotations = propertyDescriptor.getAnnotations();
-        if(annotations == null) { return; }
-        for(Annotation an: annotations) {
-            Class anClass = an.annotationType();
+        if (annotations == null) {
+            return;
+        }
+        for (Annotation an : annotations) {
+            Class<?> anClass = an.annotationType();
             Map<String, Object> anValues = new HashMap<>();
-            for(Method anMethod: anClass.getDeclaredMethods()) {
+            for (Method anMethod : anClass.getDeclaredMethods()) {
                 try {
-                    if(anMethod.getParameterTypes().length == 0) {
+                    if (anMethod.getParameterTypes().length == 0) {
                         Object anValue = anMethod.invoke(an, new Object[0]);
                         if (anValue != null) {
                             anValues.put(anMethod.getName(), anValue);
@@ -401,38 +393,43 @@ public class ComponentControllerV1 implements ComponentController {
         }
     }
 
-    static void setPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor, ComponentList.PropertyInfo propInfo) {
-        // TODO: avoid instanceof by extending the basic ComponentDescriptor interface (maybe add getter for property "Type" in addition to "Class" ? )
+    static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
+            ComponentList.PropertyInfo propInfo) {
+        // TODO: avoid instanceof by extending the basic ComponentDescriptor
+        // interface (maybe add getter for property "Type" in addition to
+        // "Class" ? )
 
         SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
 
-        if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
-            Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
+        if (propertyDescriptor instanceof AbstractPropertyDescriptor) {
+            Field f = ((AbstractPropertyDescriptor) propertyDescriptor).getField();
             Type t = f.getGenericType();
-            if(t instanceof Class) {
-                propInfo.setClassDetails(((Class) t).getCanonicalName());
+            if (t instanceof Class) {
+                propInfo.setClassDetails(((Class<?>) t).getCanonicalName());
             } else {
                 propInfo.setClassDetails(f.getGenericType().toString());
             }
-            if(!propertyDescriptor.isInputColumn()) {
+            if (!propertyDescriptor.isInputColumn()) {
                 try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(ComponentHandler.mapper.constructType(f.getGenericType()), visitor);
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(
+                            ComponentHandler.mapper.constructType(f.getGenericType()), visitor);
                 } catch (JsonMappingException e) {
                     throw new RuntimeException(e);
                 }
             }
         } else {
             propInfo.setClassDetails(propertyDescriptor.getType().getCanonicalName());
-            if(!propertyDescriptor.isInputColumn()) {
+            if (!propertyDescriptor.isInputColumn()) {
                 try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(ComponentHandler.mapper.constructType(propertyDescriptor.getType()), visitor);
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(
+                            ComponentHandler.mapper.constructType(propertyDescriptor.getType()), visitor);
                 } catch (JsonMappingException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
         propInfo.setClassName(propertyDescriptor.getType().getName());
-        if(!propertyDescriptor.isInputColumn()) {
+        if (!propertyDescriptor.isInputColumn()) {
             propInfo.setSchema(visitor.finalSchema());
         }
     }

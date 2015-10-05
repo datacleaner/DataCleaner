@@ -28,9 +28,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -101,8 +104,8 @@ public class ComponentControllerV1Test {
 
     private ComponentConfiguration getComponentConfigurationMock() {
         ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
-        expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
-        expect(componentConfiguration.getProperties()).andReturn(Collections.EMPTY_MAP).anyTimes();
+        expect(componentConfiguration.getColumns()).andReturn(Collections.<JsonNode> emptyList()).anyTimes();
+        expect(componentConfiguration.getProperties()).andReturn(Collections.<String, JsonNode> emptyMap()).anyTimes();
         replay(componentConfiguration);
 
         return componentConfiguration;
@@ -111,6 +114,8 @@ public class ComponentControllerV1Test {
     private DataCleanerConfiguration getDCConfigurationMock() {
         DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
         expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
+        expect(dataCleanerConfiguration.getHomeFolder()).andReturn(DataCleanerConfigurationImpl.defaultHomeFolder())
+                .anyTimes();
         replay(dataCleanerConfiguration);
 
         return dataCleanerConfiguration;
@@ -119,7 +124,8 @@ public class ComponentControllerV1Test {
     private DataCleanerEnvironment getEnvironmentMock() {
         DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
-        expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock()).anyTimes();
+        expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
+                .anyTimes();
         replay(dataCleanerEnvironment);
 
         return dataCleanerEnvironment;
@@ -133,19 +139,23 @@ public class ComponentControllerV1Test {
         return injectionManagerFactory;
     }
 
+    @SuppressWarnings("unchecked")
     private DescriptorProvider getDescriptorProviderMock() {
         DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
         Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
+        @SuppressWarnings("rawtypes")
         TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
         transformerDescriptorSet.add(transformerDescriptorMock);
         expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(transformerDescriptorMock).anyTimes();
+        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
+                transformerDescriptorMock).anyTimes();
         replay(descriptorProvider);
 
         return descriptorProvider;
     }
 
-    private TransformerDescriptor getTransformerDescriptorMock() {
+    @SuppressWarnings("rawtypes")
+    private TransformerDescriptor<?> getTransformerDescriptorMock() {
         TransformerDescriptor transformerDescriptor = createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
@@ -163,6 +173,9 @@ public class ComponentControllerV1Test {
 
     private ComponentSuperCategory getComponentSuperCategoryMock() {
         ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+
+            private static final long serialVersionUID = 1L;
+
             @Override
             public String getName() {
                 return "superCategory";
@@ -189,7 +202,7 @@ public class ComponentControllerV1Test {
 
     private JsonNode getJsonNodeMock() {
         JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set set = new HashSet();
+        Set<JsonNode> set = new HashSet<>();
         expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
         replay(jsonNode);
 

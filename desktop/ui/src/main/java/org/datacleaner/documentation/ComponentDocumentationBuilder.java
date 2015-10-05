@@ -39,7 +39,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.util.IconUtils;
 
 import freemarker.cache.ClassTemplateLoader;
@@ -113,7 +113,8 @@ public class ComponentDocumentationBuilder {
                     final Deprecated deprecatedProperty = property.getAnnotation(Deprecated.class);
                     
                     // we do not show hidden or deprecated properties in docs
-                    if (hiddenProperty == null && deprecatedProperty == null) {
+                    if ((hiddenProperty == null || hiddenProperty.hiddenForLocalAccess() == false)
+                            && deprecatedProperty == null) {
                         final ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
                                 property);
                         propertyList.add(wrapper);

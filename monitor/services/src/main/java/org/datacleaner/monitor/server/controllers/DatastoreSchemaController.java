@@ -74,14 +74,15 @@ public class DatastoreSchemaController {
         }
 
         String username = getUsername();
+        try (final DatastoreConnection connection = datastore.openConnection()) {
+            final DataContext dataContext = connection.getDataContext();
 
-        final DataContext dataContext = getDataContext(datastore);
+            logger.info("Serving schemas in datastore {} to user: {}.", new Object[] { datastoreName, username });
 
-        logger.info("Serving schemas in datastore {} to user: {}.", new Object[] { datastoreName, username });
-
-        final Map<String, Object> schemas = new HashMap<>();
-        schemas.put("schemas", createSchemaList(dataContext));
-        return schemas;
+            final Map<String, Object> schemas = new HashMap<>();
+            schemas.put("schemas", createSchemaList(dataContext));
+            return schemas;
+        }
     }
 
     private List<Map<String, Object>> createSchemaList(DataContext dataContext) {
@@ -140,12 +141,6 @@ public class DatastoreSchemaController {
     private String getTypeName(Column column) {
         ColumnType type = column.getType();
         return type == null ? null : type.getName();
-    }
-
-    private DataContext getDataContext(Datastore datastore) {
-        try (final DatastoreConnection connection = datastore.openConnection()) {
-            return connection.getDataContext();
-        }
     }
 
     private String getUsername() {

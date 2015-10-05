@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +37,12 @@ public class ComponentCacheMapImpl implements ComponentCache {
     private static final long CHECK_INTERVAL = 5 * 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
-    private TenantContextFactory _tenantContextFactory;
-    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
+    private final TenantContextFactory _tenantContextFactory;
+    private final RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
-    private ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
-    private Thread checkerThread;
-    private TimeoutChecker checker;
+    private final ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
+    private final Thread checkerThread;
+    private final TimeoutChecker checker;
 
     public ComponentCacheMapImpl(TenantContextFactory tenantContextFactory,
                                  RemoteComponentsConfiguration remoteComponentsConfiguration) {
@@ -51,6 +50,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
         this._remoteComponentsConfiguration = remoteComponentsConfiguration;
         checker = new TimeoutChecker();
         checkerThread = new Thread(checker);
+        checkerThread.setDaemon(true);
         checkerThread.start();
     }
 

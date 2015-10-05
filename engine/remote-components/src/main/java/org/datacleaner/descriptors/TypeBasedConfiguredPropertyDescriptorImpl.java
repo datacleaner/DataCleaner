@@ -19,38 +19,33 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.api.Converter;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.remote.RemoteTransformer;
-import org.datacleaner.restclient.Serializator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.datacleaner.components.remote.RemoteTransformer;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Representation of configured property of remote transformer, in case that the property value class is available on
- * the client side like on the server. For example property of type String.class can be represented by a String.class
- * on server as well as on the client. But if server has some exotic class for property values, that is not
- * available on client classpath, such a property must be represented by {@link JsonSchemaConfiguredPropertyDescriptorImpl}.
+ * Representation of configured property of remote transformer, in case that the
+ * property value class is available on the client side like on the server. For
+ * example property of type String.class can be represented by a String.class on
+ * server as well as on the client. But if server has some exotic class for
+ * property values, that is not available on client classpath, such a property
+ * must be represented by {@link JsonSchemaConfiguredPropertyDescriptorImpl}.
  *
  * @see RemoteTransformer
  * @Since 9/9/15
  */
 public class TypeBasedConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(TypeBasedConfiguredPropertyDescriptorImpl.class);
-    private Class type;
+    private static final long serialVersionUID = 1L;
+    
+    private final Class<?> type;
 
-    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class type, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations, JsonNode defaultValue) {
+    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class<?> type, boolean required,
+            ComponentDescriptor<?> component, Map<Class<? extends Annotation>, Annotation> annotations,
+            JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);
         this.type = type;
     }

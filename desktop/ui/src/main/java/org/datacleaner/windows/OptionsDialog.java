@@ -23,10 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.NumberFormat;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -35,9 +32,6 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.configuration.jaxb.Configuration;
-import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -51,10 +45,10 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
-import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
@@ -288,10 +282,11 @@ public class OptionsDialog extends AbstractWindow {
                 .setTitledBorder("Credentials");
         int left = 0;
         int right = 1;
-
         int row = 0;
-        WidgetUtils.addToGridBag(new JLabel("URL"), credentialsPanel, left, row);
-        WidgetUtils.addToGridBag(new JLabel(getRemoteComponentsURL()), credentialsPanel, right, row);
+
+        int cellSpan = 2;
+        int rowSpan = 1;
+        WidgetUtils.addToGridBag(getDescriptionComponent(), credentialsPanel, left, row, cellSpan, rowSpan);
 
         row++;
         final JTextField usernameTextField = WidgetFactory.createTextField("username");
@@ -320,27 +315,11 @@ public class OptionsDialog extends AbstractWindow {
         return credentialsPanel;
     }
 
-    private String getRemoteComponentsURL() {
-        String url = "";
-
-        try {
-            InputStream inputStream = ResourceManager.get().getUrl("datacleaner-home/conf.xml").openStream();
-            JaxbConfigurationReader jaxbConfigurationReader = new JaxbConfigurationReader();
-            Configuration configuration = jaxbConfigurationReader.unmarshall(inputStream);
-            List<Object> allProviders = configuration.getDescriptorProviders()
-                    .getCustomClassOrClasspathScannerOrRemoteComponents();
-
-            for (Object provider : allProviders) {
-                if (provider instanceof RemoteComponentsType) {
-                    url = ((RemoteComponentsType) provider).getServer().getUrl();
-                }
-            }
-        }
-        catch (IOException e) {
-            logger.warn(e.getMessage());
-        }
-
-        return url;
+    private Component getDescriptionComponent() {
+        return DCHtmlBox.bright("This dialog is for setting credentials of users registered at " +
+            "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>" +
+            "Remote components are a cloud service providing new functions. " +
+            "These remote components run at the server, consume provided input data and return the results. ");
     }
 
     private DCPanel getPerformanceTab() {

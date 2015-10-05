@@ -50,41 +50,42 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class DeleteTableRowAnalyzerTest {
-    
+public class DeleteFromTableAnalyzerTest {
+
     private static final String TEST_TABLE_NAME = "test_table";
     private static final String VARCHAR_COLUMN_NAME = "foo";
     private static final String INTEGER_COLUMN_NAME = "bar";
     private static final String VARCHAR_COLUMN_VALUE = "StringValue";
     private static final int INTEGER_COLUMN_VALUE = 1;
-    
 
     private JdbcDatastore jdbcDatastore;
-    
+
     public ExpectedException expectedException = ExpectedException.none();
-    
+
     @Before
     public void setUp() throws Exception {
-            jdbcDatastore = new JdbcDatastore("my datastore",
-                    "jdbc:hsqldb:mem:InsertIntoTable_testErrorHandlingOption", "org.hsqldb.jdbcDriver");
-            final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
-            final UpdateableDataContext dc = con.getUpdateableDataContext();
-            if (dc.getDefaultSchema().getTableByName(TEST_TABLE_NAME) == null) {
-                dc.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback cb) {
-                        cb.createTable(dc.getDefaultSchema(), TEST_TABLE_NAME).withColumn(VARCHAR_COLUMN_NAME)
-                                .ofType(ColumnType.VARCHAR).withColumn(INTEGER_COLUMN_NAME).ofType(ColumnType.INTEGER).execute();
-                        cb.insertInto(TEST_TABLE_NAME).value(VARCHAR_COLUMN_NAME, VARCHAR_COLUMN_VALUE).value(INTEGER_COLUMN_NAME, INTEGER_COLUMN_VALUE).execute();
-                    }
-                });
-            }
-            con.close();
+        jdbcDatastore = new JdbcDatastore("my datastore", "jdbc:hsqldb:mem:InsertIntoTable_testErrorHandlingOption",
+                "org.hsqldb.jdbcDriver");
+        final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
+        final UpdateableDataContext dc = con.getUpdateableDataContext();
+        if (dc.getDefaultSchema().getTableByName(TEST_TABLE_NAME) == null) {
+            dc.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback cb) {
+                    cb.createTable(dc.getDefaultSchema(), TEST_TABLE_NAME).withColumn(VARCHAR_COLUMN_NAME)
+                            .ofType(ColumnType.VARCHAR).withColumn(INTEGER_COLUMN_NAME).ofType(ColumnType.INTEGER)
+                            .execute();
+                    cb.insertInto(TEST_TABLE_NAME).value(VARCHAR_COLUMN_NAME, VARCHAR_COLUMN_VALUE)
+                            .value(INTEGER_COLUMN_NAME, INTEGER_COLUMN_VALUE).execute();
+                }
+            });
+        }
+        con.close();
     }
-    
+
     @Test
     public void shouldReturnTheCorrectMetricsFromDescriptor() throws Exception {
-        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(DeleteTableRowAnalyzer.class);
+        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(DeleteFromTableAnalyzer.class);
         Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
         assertThat(metrics.size(), is(3));
         WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
@@ -92,58 +93,57 @@ public class DeleteTableRowAnalyzerTest {
         assertThat(descriptor.getResultMetric("Updates").getValue(result, null).intValue(), is(5));
         assertThat(descriptor.getResultMetric("Errornous rows").getValue(result, null).intValue(), is(0));
     }
-    
+
     @Test
     public void shouldThrowExceptionForIncorrectErrorHandlingFile() throws Exception {
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("Error log file does not have required column header: foo");
-        final DeleteTableRowAnalyzer deleteFromTable = new DeleteTableRowAnalyzer();
+        final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
         deleteFromTable.datastore = jdbcDatastore;
         deleteFromTable.tableName = "test_table";
         deleteFromTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         deleteFromTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
-        deleteFromTable.conditionColumnNames = new String[]{"col1", "col2"};
-        
+        deleteFromTable.conditionColumnNames = new String[] { "col1", "col2" };
+
         InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
         InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
-        deleteFromTable.conditionValues = new InputColumn[]{col1, col2};
-        
+        deleteFromTable.conditionValues = new InputColumn[] { col1, col2 };
+
         deleteFromTable.validate();
     }
-    
+
     @Test
     public void shouldCorrectlyAppendErrorHandlingInfo() throws Exception {
         final File file = new File("target/valid-error-handling-file-for-update.csv.csv");
         FileHelper.copy(new File("src/test/resources/valid-error-handling-file-for-update.csv"), file);
 
-        final DeleteTableRowAnalyzer deleteFromTable = new DeleteTableRowAnalyzer();
+        final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
         deleteFromTable.datastore = jdbcDatastore;
         deleteFromTable.tableName = TEST_TABLE_NAME;
         deleteFromTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         deleteFromTable.errorLogFile = file;
-        deleteFromTable.conditionColumnNames = new String[]{INTEGER_COLUMN_NAME};
-        
+        deleteFromTable.conditionColumnNames = new String[] { INTEGER_COLUMN_NAME };
+
         InputColumn<Object> inputColumn = new MockInputColumn<Object>(INTEGER_COLUMN_NAME, Object.class);
-        deleteFromTable.conditionValues = new InputColumn[]{inputColumn};
-        
+        deleteFromTable.conditionValues = new InputColumn[] { inputColumn };
+
         deleteFromTable.validate();
         deleteFromTable.init();
 
         deleteFromTable.run(new MockInputRow().put(inputColumn, "blabla"), 1);
-        
+
         WriteDataResult result = deleteFromTable.getResult();
         assertThat(result.getUpdatesCount(), is(0));
         assertThat(result.getErrorRowCount(), is(1));
-        assertThat(FileHelper
-                .readFileAsString(file).replaceAll("\n", "\\[newline\\]"), 
+        assertThat(FileHelper.readFileAsString(file).replaceAll("\n", "\\[newline\\]"),
                 is(equalTo("foo,bar,extra1,update_table_error_message,extra2[newline]" + //
                         "f,b,e1,m,e2[newline]" + //
                         "\"\",\"\",\"\",\"Could not convert blabla to number\",\"\"")));//
     }
-    
+
     @Test
     public void shouldSuccessFullyDeleteRowFromTable() throws Exception {
-        final DeleteTableRowAnalyzer deleteFromTable = new DeleteTableRowAnalyzer();
+        final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
         deleteFromTable.datastore = jdbcDatastore;
         deleteFromTable.tableName = TEST_TABLE_NAME;
         deleteFromTable.conditionColumnNames = new String[] { VARCHAR_COLUMN_NAME, INTEGER_COLUMN_NAME };
@@ -158,10 +158,8 @@ public class DeleteTableRowAnalyzerTest {
 
         deleteFromTable.validate();
         deleteFromTable.init();
-        
-        
-        deleteFromTable.run(
-                new MockInputRow().put(col1, VARCHAR_COLUMN_VALUE), 1);
+
+        deleteFromTable.run(new MockInputRow().put(col1, VARCHAR_COLUMN_VALUE), 1);
 
         WriteDataResult result = deleteFromTable.getResult();
         assertThat(result.getUpdatesCount(), is(1));
@@ -177,5 +175,5 @@ public class DeleteTableRowAnalyzerTest {
 
         con.close();
     }
-    
+
 }

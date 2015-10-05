@@ -25,7 +25,6 @@ import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
 import static org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder.buildJsonArray;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

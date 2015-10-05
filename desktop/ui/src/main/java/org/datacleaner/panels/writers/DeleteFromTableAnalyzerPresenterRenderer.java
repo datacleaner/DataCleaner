@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.deletetablerow;
+package org.datacleaner.panels.writers;
 
 import javax.inject.Inject;
 
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.beans.writers.DeleteTableRowAnalyzer;
+import org.datacleaner.beans.writers.DeleteFromTableAnalyzer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
@@ -35,13 +35,11 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Specialized {@link Renderer} for a {@link AnalyzerComponentBuilder} for
- * {@link DeleteTableRowAnalyzer}.
- * 
- * @author Menno Booi
+ * {@link DeleteFromTableAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class DeleteTableRowPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<DeleteTableRowAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class DeleteFromTableAnalyzerPresenterRenderer implements
+        Renderer<AnalyzerComponentBuilder<DeleteFromTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -53,19 +51,19 @@ public class DeleteTableRowPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<DeleteTableRowAnalyzer> ajb) {
-        if (ajb.getDescriptor().getComponentClass() == DeleteTableRowAnalyzer.class) {
+    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
+        if (ajb.getDescriptor().getComponentClass() == DeleteFromTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
         return RendererPrecedence.NOT_CAPABLE;
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<DeleteTableRowAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new DeleteTableRowPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
+        return new DeleteFromTableAnalyzerPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }
 
 }

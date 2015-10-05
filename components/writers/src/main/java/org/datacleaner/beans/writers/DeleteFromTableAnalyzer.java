@@ -84,7 +84,7 @@ import org.slf4j.LoggerFactory;
 @Description("Delete records in a table in a registered datastore that match the specified condition.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
-public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
+public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
         PrecedingComponentConsumer {
 
     private static final String PROPERTY_NAME_CONDITION_VALUES = "Condition values";
@@ -93,7 +93,7 @@ public class DeleteTableRowAnalyzer implements Analyzer<WriteDataResult>, Action
 
     private static final String ERROR_MESSAGE_COLUMN_NAME = "update_table_error_message";
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteTableRowAnalyzer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeleteFromTableAnalyzer.class);
 
     @Inject
     @Configured(value = PROPERTY_NAME_CONDITION_VALUES, order = 1)

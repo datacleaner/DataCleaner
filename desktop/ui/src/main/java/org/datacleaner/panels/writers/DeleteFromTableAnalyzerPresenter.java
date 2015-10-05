@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.deletetablerow;
+package org.datacleaner.panels.writers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.writers.DeleteTableRowAnalyzer;
+import org.datacleaner.beans.writers.DeleteFromTableAnalyzer;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -52,11 +52,9 @@ import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
- * {@link DeleteTableRowAnalyzer}.
- * 
- * @author Menno Booi
+ * {@link DeleteFromTableAnalyzer}.
  */
-class DeleteTableRowPresenter extends AnalyzerComponentBuilderPanel {
+class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,14 +71,14 @@ class DeleteTableRowPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _conditionColumnNamesProperty;
     private final MultipleMappedColumnsPropertyWidget[] _inputColumnPropertyWidgets;
 
-    public DeleteTableRowPresenter(AnalyzerComponentBuilder<DeleteTableRowAnalyzer> analyzerJobBuilder,
+    public DeleteFromTableAnalyzerPresenter(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> analyzerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
             DataCleanerConfiguration configuration, DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-        final AnalyzerDescriptor<DeleteTableRowAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
-        assert descriptor.getComponentClass() == DeleteTableRowAnalyzer.class;
+        final AnalyzerDescriptor<DeleteFromTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
+        assert descriptor.getComponentClass() == DeleteFromTableAnalyzer.class;
 
         _datastoreProperty = descriptor.getConfiguredProperty("Datastore");
         _schemaNameProperty = descriptor.getConfiguredProperty("Schema name");

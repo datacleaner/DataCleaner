@@ -31,6 +31,7 @@ import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.pojo.PojoDataContext;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
@@ -39,6 +40,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.PojoDatastore;
+import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -58,15 +61,14 @@ public class DeleteFromTableAnalyzerTest {
     private static final String VARCHAR_COLUMN_VALUE = "StringValue";
     private static final int INTEGER_COLUMN_VALUE = 1;
 
-    private JdbcDatastore jdbcDatastore;
+    private UpdateableDatastore updateableDatastore;
 
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        jdbcDatastore = new JdbcDatastore("my datastore", "jdbc:hsqldb:mem:InsertIntoTable_testErrorHandlingOption",
-                "org.hsqldb.jdbcDriver");
-        final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
+        updateableDatastore = new PojoDatastore("my datastore");
+        final UpdateableDatastoreConnection con = updateableDatastore.openConnection();
         final UpdateableDataContext dc = con.getUpdateableDataContext();
         if (dc.getDefaultSchema().getTableByName(TEST_TABLE_NAME) == null) {
             dc.executeUpdate(new UpdateScript() {
@@ -99,7 +101,7 @@ public class DeleteFromTableAnalyzerTest {
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("Error log file does not have required column header: foo");
         final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
-        deleteFromTable.datastore = jdbcDatastore;
+        deleteFromTable.datastore = updateableDatastore;
         deleteFromTable.tableName = "test_table";
         deleteFromTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         deleteFromTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
@@ -118,7 +120,7 @@ public class DeleteFromTableAnalyzerTest {
         FileHelper.copy(new File("src/test/resources/valid-error-handling-file-for-update.csv"), file);
 
         final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
-        deleteFromTable.datastore = jdbcDatastore;
+        deleteFromTable.datastore = updateableDatastore;
         deleteFromTable.tableName = TEST_TABLE_NAME;
         deleteFromTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         deleteFromTable.errorLogFile = file;
@@ -144,7 +146,7 @@ public class DeleteFromTableAnalyzerTest {
     @Test
     public void shouldSuccessFullyDeleteRowFromTable() throws Exception {
         final DeleteFromTableAnalyzer deleteFromTable = new DeleteFromTableAnalyzer();
-        deleteFromTable.datastore = jdbcDatastore;
+        deleteFromTable.datastore = updateableDatastore;
         deleteFromTable.tableName = TEST_TABLE_NAME;
         deleteFromTable.conditionColumnNames = new String[] { VARCHAR_COLUMN_NAME, INTEGER_COLUMN_NAME };
         deleteFromTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;

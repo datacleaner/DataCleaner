@@ -28,105 +28,12 @@ import java.util.Date;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.MutableColumn;
 import org.junit.Test;
 
 public class TypeConverterTest {
-    class TestColumn implements Column {
 
-        private static final long serialVersionUID = 1L;
-        private ColumnType type;
-
-        TestColumn(ColumnType type) {
-            this.type = type;
-        }
-
-        @Override
-        public int compareTo(Column o) {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public String getQuote() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getQuotedName() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getQualifiedLabel() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public int getColumnNumber() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public ColumnType getType() {
-            return type;
-        }
-
-        @Override
-        public Table getTable() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Boolean isNullable() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getRemarks() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Integer getColumnSize() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getNativeType() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public boolean isIndexed() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
-        public boolean isPrimaryKey() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-    }
-
-    Date dateValue = createDate();
+    private final Date dateValue = createDate();
 
     private Date createDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -140,7 +47,7 @@ public class TypeConverterTest {
 
     @Test
     public void shouldReturnAStringTypeForLiteralColumn() {
-        Column literalColumn = new TestColumn(ColumnType.CHAR);
+        Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
 
         Object result = TypeConverter.convertType("bla", literalColumn);
         assertTrue(result instanceof String);
@@ -162,24 +69,23 @@ public class TypeConverterTest {
 
     @Test
     public void shouldReturnNumberForNumberColumn() {
-        Column numberColumn = new TestColumn(ColumnType.NUMERIC);
+        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
 
         Object result = TypeConverter.convertType(24, numberColumn);
         assertTrue(result instanceof Number);
         assertEquals(24, result);
-        
+
         result = TypeConverter.convertType(24.3d, numberColumn);
         assertTrue(result instanceof Number);
         assertEquals(24.3, result);
-        
+
         result = TypeConverter.convertType("33", numberColumn);
         assertTrue(result instanceof Number);
         assertEquals(33l, result);
-        
+
         result = TypeConverter.convertType("33.3", numberColumn);
         assertTrue(result instanceof Number);
         assertEquals(33.3, result);
-        
 
         result = TypeConverter.convertType(true, numberColumn);
         assertTrue(result instanceof Number);
@@ -189,12 +95,11 @@ public class TypeConverterTest {
         assertTrue(result instanceof Number);
         assertEquals(0, result);
 
-
     }
 
     @Test
     public void shouldReturnBooleanForBooleanColumn() {
-        Column booleanColumn = new TestColumn(ColumnType.BOOLEAN);
+        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
 
         Object result = TypeConverter.convertType(true, booleanColumn);
         assertTrue(result instanceof Boolean);
@@ -208,7 +113,7 @@ public class TypeConverterTest {
 
     @Test
     public void shouldNotConvertBooleanForLiteralColumn() {
-        Column literalColumn = new TestColumn(ColumnType.CHAR);
+        Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
 
         Object result = TypeConverter.convertType(false, literalColumn);
         assertTrue(result instanceof Boolean);
@@ -218,39 +123,38 @@ public class TypeConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForStringAndNumberColumn() {
-        Column numberColumn = new TestColumn(ColumnType.NUMERIC);
+        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
         TypeConverter.convertType("bla", numberColumn);
     }
 
     public void shouldThrowForDataAndNumberColumn() {
-        Column numberColumn = new TestColumn(ColumnType.NUMERIC);
+        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
         TypeConverter.convertType(dateValue, numberColumn);
     }
 
-
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForIntegerAndBooleanColumn() {
-        Column booleanColumn = new TestColumn(ColumnType.BOOLEAN);
+        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(42, booleanColumn);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForDoubleAndBooleanColumn() {
-        Column booleanColumn = new TestColumn(ColumnType.BOOLEAN);
+        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(42.3d, booleanColumn);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForStringAndBooleanColumn() {
-        Column booleanColumn = new TestColumn(ColumnType.BOOLEAN);
+        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType("bla", booleanColumn);
 
     }
 
     public void shouldThrowForDataAndBooleanColumn() {
-        Column booleanColumn = new TestColumn(ColumnType.BOOLEAN);
+        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(dateValue, booleanColumn);
     }
 

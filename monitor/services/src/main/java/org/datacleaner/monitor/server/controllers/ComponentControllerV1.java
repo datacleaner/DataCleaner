@@ -180,8 +180,8 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler = ComponentHandlerFactory.createComponent(
-                tenantContext, decodedName, createInput.configuration, _remoteComponentsConfiguration);
+        ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
+                createInput.configuration, _remoteComponentsConfiguration);
         handler.createComponent(createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
@@ -212,8 +212,8 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentHandlerFactory.createComponent(
-                tenantContext, decodedName, processStatelessInput.configuration, _remoteComponentsConfiguration);
+        ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
+                processStatelessInput.configuration, _remoteComponentsConfiguration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
         output.result = getJsonNode(handler.closeComponent());

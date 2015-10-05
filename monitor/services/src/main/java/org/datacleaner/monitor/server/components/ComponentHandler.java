@@ -86,7 +86,7 @@ public class ComponentHandler {
     private ComponentDescriptor<?> descriptor;
     private Map<String, MutableColumn> columns;
     private Map<String, InputColumn<?>> inputColumns;
-    private MyMutableTable table;
+    private MutableTable table;
     private Component component;
    
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
@@ -99,14 +99,16 @@ public class ComponentHandler {
     public void createComponent(ComponentConfiguration componentConfiguration) {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName);
+        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorByDisplayName(_componentName);
         if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
             LOGGER.info("Component {} is not allowed.", _componentName);
             throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
-        table = new MyMutableTable("inputData");
+        table = new MutableTable("inputData");
         if(descriptor == null) {
-            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorByDisplayName(componentName);
+            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                    .getAnalyzerDescriptorByDisplayName(_componentName);
         }
         if (descriptor == null) {
             throw ComponentNotFoundException.createTypeNotFound(_componentName);
@@ -160,7 +162,7 @@ public class ComponentHandler {
         }
 
         //Admin properties from xml context
-        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = remoteComponentsConfiguration.getDefaultValues(descriptor);
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = _remoteComponentsConfiguration.getDefaultValues(descriptor);
         configuredProperties.putAll(remoteDefaultPropertiesMap);
 
         //User properties

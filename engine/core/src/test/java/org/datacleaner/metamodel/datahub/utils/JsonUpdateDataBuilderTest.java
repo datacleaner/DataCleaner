@@ -29,12 +29,8 @@ import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.datacleaner.metamodel.datahub.update.UpdateField;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class JsonUpdateDataBuilderTest {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    
     @Test
     public void shouldConvertQueriesToJson() throws IOException {
         UpdateField[] fields =  { new UpdateField("testfield", "testvalue") };
@@ -44,7 +40,5 @@ public class JsonUpdateDataBuilderTest {
         String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertEquals(jsonString, "[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":\"testvalue\"}]}]");
     }
-    
-
 
 }

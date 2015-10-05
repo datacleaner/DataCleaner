@@ -54,13 +54,16 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
                 String columnName = columns[i].getName();
+                if (columnName.startsWith("_")) {
+                    throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\"");
+                }
                 final UpdateField field = new UpdateField(columnName, value.toString());
                 fields.add(field);
             }
         }
 
         List<FilterItem> whereItems = getWhereItems();
-        if (!(whereItems.size() == 1 && whereItems.get(0).getSelectItem().getColumn().getName().equals("gr_id"))) {
+        if (whereItems.size() != 1 || !"gr_id".equals(whereItems.get(0).getSelectItem().getColumn().getName())) {
             throw new IllegalArgumentException("Updates are only allowed on individual records, identified by gr_id (golden record id)");
         }
         String grId = (String) whereItems.get(0).getOperand();

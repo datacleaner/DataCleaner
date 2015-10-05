@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,10 +31,9 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
 
-import com.google.common.collect.Collections2;
-
 /**
- * DescriptorProvider that provides a composite view of descriptors from 2 delegate providers.
+ * DescriptorProvider that provides a composite view of descriptors from 2
+ * delegate providers.
  */
 public class CompositeDescriptorProvider implements DescriptorProvider {
 
@@ -47,60 +45,80 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         this.delegate2 = delegate2;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
-        return new CompositeCollection(new Collection[] {delegate1.getAnalyzerDescriptors(), delegate2.getAnalyzerDescriptors()});
+        return new CompositeCollection(
+                new Collection[] { delegate1.getAnalyzerDescriptors(), delegate2.getAnalyzerDescriptors() });
     }
 
     @Override
     public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> analyzerClass) {
         AnalyzerDescriptor<A> result = delegate1.getAnalyzerDescriptorForClass(analyzerClass);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getAnalyzerDescriptorForClass(analyzerClass);
     }
 
     @Override
     public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String name) {
         AnalyzerDescriptor<?> result = delegate1.getAnalyzerDescriptorByDisplayName(name);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getAnalyzerDescriptorByDisplayName(name);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
-        return new CompositeCollection(new Collection[] {delegate1.getTransformerDescriptors(), delegate2.getTransformerDescriptors()});
+        return new CompositeCollection(
+                new Collection[] { delegate1.getTransformerDescriptors(), delegate2.getTransformerDescriptors() });
     }
 
     @Override
-    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(Class<T> transformerClass) {
+    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(
+            Class<T> transformerClass) {
         TransformerDescriptor<T> result = delegate1.getTransformerDescriptorForClass(transformerClass);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getTransformerDescriptorForClass(transformerClass);
     }
 
     @Override
     public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String name) {
         TransformerDescriptor<?> result = delegate1.getTransformerDescriptorByDisplayName(name);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getTransformerDescriptorByDisplayName(name);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
-        return new CompositeCollection(new Collection[] {delegate1.getFilterDescriptors(), delegate2.getFilterDescriptors()});
+        return new CompositeCollection(
+                new Collection[] { delegate1.getFilterDescriptors(), delegate2.getFilterDescriptors() });
     }
 
     @Override
-    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(Class<F> filterClass) {
+    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(
+            Class<F> filterClass) {
         FilterDescriptor<F, C> result = delegate1.getFilterDescriptorForClass(filterClass);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getFilterDescriptorForClass(filterClass);
     }
 
     @Override
     public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String name) {
         FilterDescriptor<?, ?> result = delegate1.getFilterDescriptorByDisplayName(name);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getFilterDescriptorByDisplayName(name);
     }
 
@@ -115,32 +133,46 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
-        return new CompositeCollection(new Collection[] {delegate1.getComponentDescriptors(), delegate2.getComponentDescriptors()});
+        return new CompositeCollection(
+                new Collection[] { delegate1.getComponentDescriptors(), delegate2.getComponentDescriptors() });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(ComponentSuperCategory category) {
-        return new CompositeCollection(new Collection[] {delegate1.getComponentDescriptorsOfSuperCategory(category), delegate2.getComponentDescriptorsOfSuperCategory(category)});
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
+            ComponentSuperCategory category) {
+        return new CompositeCollection(new Collection[] { delegate1.getComponentDescriptorsOfSuperCategory(category),
+                delegate2.getComponentDescriptorsOfSuperCategory(category) });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
-        return new CompositeCollection(new Collection[] {delegate1.getRendererBeanDescriptors(), delegate2.getRendererBeanDescriptors()});
+        return new CompositeCollection(
+                new Collection[] { delegate1.getRendererBeanDescriptors(), delegate2.getRendererBeanDescriptors() });
     }
 
     @Override
-    public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(Class<R> rendererBeanClass) {
+    public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(
+            Class<R> rendererBeanClass) {
         RendererBeanDescriptor<R> result = delegate1.getRendererBeanDescriptorForClass(rendererBeanClass);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return delegate2.getRendererBeanDescriptorForClass(rendererBeanClass);
     }
 
     @Override
-    public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(Class<? extends RenderingFormat<?>> renderingFormat) {
-        Collection<RendererBeanDescriptor<?>> result = delegate1.getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
-        if(result != null && !result.isEmpty()) { return result; }
+    public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
+            Class<? extends RenderingFormat<?>> renderingFormat) {
+        Collection<RendererBeanDescriptor<?>> result = delegate1
+                .getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
+        if (result != null && !result.isEmpty()) {
+            return result;
+        }
         return delegate2.getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
     }
 
@@ -158,15 +190,17 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     public ClasspathScanDescriptorProvider findClasspathScanProvider() {
         ClasspathScanDescriptorProvider result = findClasspathScanProvider(delegate1);
-        if(result != null) { return result; }
+        if (result != null) {
+            return result;
+        }
         return findClasspathScanProvider(delegate2);
     }
 
     private ClasspathScanDescriptorProvider findClasspathScanProvider(DescriptorProvider delegate) {
-        if(delegate instanceof  ClasspathScanDescriptorProvider) {
-            return (ClasspathScanDescriptorProvider)delegate;
-        } else if(delegate instanceof CompositeDescriptorProvider) {
-            return ((CompositeDescriptorProvider)delegate).findClasspathScanProvider();
+        if (delegate instanceof ClasspathScanDescriptorProvider) {
+            return (ClasspathScanDescriptorProvider) delegate;
+        } else if (delegate instanceof CompositeDescriptorProvider) {
+            return ((CompositeDescriptorProvider) delegate).findClasspathScanProvider();
         }
         return null;
     }

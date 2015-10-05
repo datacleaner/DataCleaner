@@ -31,6 +31,7 @@ import org.datacleaner.util.http.MonitorHttpClient;
 public class DataHubUpdateConnection {
     public final static String CONTEXT_PATH = "/service/cdi/v1";
     public final static String UPDATE_PATH = "/goldenrecords/batch";
+    public final static String DELETE_PATH = "/goldenrecords/delete";
 
     private final DataHubConnection _connection;
 
@@ -41,6 +42,10 @@ public class DataHubUpdateConnection {
     public String getUpdateUrl() {
         return getContextUrl() + UPDATE_PATH + (isEmpty(_connection.getTenantId()) ? EMPTY
                 : "/" + urlPathSegmentEscaper().escape(_connection.getTenantId()));
+    }
+
+    public String getDeleteUrl() {
+        return getContextUrl() + DELETE_PATH;
     }
 
     public MonitorHttpClient getHttpClient() {
@@ -65,5 +70,6 @@ public class DataHubUpdateConnection {
 
         return uriBuilder.setPath(pathSegment);
     }
+
 
 }

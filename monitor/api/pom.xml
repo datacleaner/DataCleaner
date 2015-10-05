@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-api</artifactId>
 
@@ -90,6 +90,11 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-xml-config</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-rest-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

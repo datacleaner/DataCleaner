@@ -3,12 +3,13 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-components</artifactId>
 	<packaging>pom</packaging>
 	<modules>
 		<module>html-rendering</module>
+		<module>fuse</module>
 		<module>basic-transformers</module>
 		<module>basic-filters</module>
 		<module>basic-analyzers</module>
@@ -28,6 +29,7 @@
 		<module>el</module>
 		<module>javascript</module>
 		<module>i18n</module>
+		<module>standard-components</module>
 	</modules>
 
 	<dependencies>

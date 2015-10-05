@@ -19,27 +19,37 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.datacleaner.beans.transform.ConcatenatorTransformer;
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerEnvironment;
-import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.*;
-import org.datacleaner.monitor.server.components.ComponentList;
-import org.datacleaner.monitor.server.components.ComponentNotFoundException;
-import org.datacleaner.monitor.server.components.ProcessInput;
-import org.datacleaner.monitor.server.components.ProcessStatelessInput;
-import org.junit.Before;
-import org.junit.Test;
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.monitor.configuration.ComponentStore;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessInput;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -90,8 +100,8 @@ public class ComponentControllerV1Test {
 
     private ComponentConfiguration getComponentConfigurationMock() {
         ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
-        expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
-        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getColumns()).andReturn(Collections.<JsonNode> emptyList()).anyTimes();
+        expect(componentConfiguration.getProperties()).andReturn(Collections.<String, JsonNode> emptyMap()).anyTimes();
         replay(componentConfiguration);
 
         return componentConfiguration;
@@ -100,6 +110,8 @@ public class ComponentControllerV1Test {
     private DataCleanerConfiguration getDCConfigurationMock() {
         DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
         expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
+        expect(dataCleanerConfiguration.getHomeFolder()).andReturn(DataCleanerConfigurationImpl.defaultHomeFolder())
+                .anyTimes();
         replay(dataCleanerConfiguration);
 
         return dataCleanerConfiguration;
@@ -108,7 +120,8 @@ public class ComponentControllerV1Test {
     private DataCleanerEnvironment getEnvironmentMock() {
         DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
-        expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock()).anyTimes();
+        expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
+                .anyTimes();
         replay(dataCleanerEnvironment);
 
         return dataCleanerEnvironment;
@@ -122,19 +135,23 @@ public class ComponentControllerV1Test {
         return injectionManagerFactory;
     }
 
+    @SuppressWarnings("unchecked")
     private DescriptorProvider getDescriptorProviderMock() {
         DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
         Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
+        @SuppressWarnings("rawtypes")
         TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
         transformerDescriptorSet.add(transformerDescriptorMock);
         expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(transformerDescriptorMock).anyTimes();
+        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
+                transformerDescriptorMock).anyTimes();
         replay(descriptorProvider);
 
         return descriptorProvider;
     }
 
-    private TransformerDescriptor getTransformerDescriptorMock() {
+    @SuppressWarnings("rawtypes")
+    private TransformerDescriptor<?> getTransformerDescriptorMock() {
         TransformerDescriptor transformerDescriptor = createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
@@ -143,14 +160,45 @@ public class ComponentControllerV1Test {
         expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
+        expect(transformerDescriptor.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
+        expect(transformerDescriptor.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
         replay(transformerDescriptor);
 
         return transformerDescriptor;
     }
 
+    private ComponentSuperCategory getComponentSuperCategoryMock() {
+        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getName() {
+                return "superCategory";
+            }
+
+            @Override
+            public String getDescription() {
+                return getName();
+            }
+
+            @Override
+            public int getSortIndex() {
+                return 0;
+            }
+
+            @Override
+            public int compareTo(ComponentSuperCategory o) {
+                return 0;
+            }
+        };
+
+        return componentSuperCategory;
+    }
+
     private JsonNode getJsonNodeMock() {
         JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set set = new HashSet();
+        Set<JsonNode> set = new HashSet<>();
         expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
         replay(jsonNode);
 
@@ -164,7 +212,7 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents(tenant);
+        ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
     }
 

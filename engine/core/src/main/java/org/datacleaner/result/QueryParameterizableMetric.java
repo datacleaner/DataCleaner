@@ -59,11 +59,7 @@ public abstract class QueryParameterizableMetric implements ParameterizableMetri
             }
         }
 
-        Integer count = getInstanceCount(parameter);
-        if (count == null) {
-            return 0;
-        }
-        return count;
+        return getInstanceCount(parameter);
     }
 
     /**

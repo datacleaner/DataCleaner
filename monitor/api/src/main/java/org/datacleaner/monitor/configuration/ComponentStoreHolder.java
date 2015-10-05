@@ -20,9 +20,11 @@
 package org.datacleaner.monitor.configuration;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
+
+import org.datacleaner.restclient.CreateInput;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Class ComponentsStoreHolder
@@ -31,6 +33,8 @@ import java.io.Serializable;
  * @since 11.8.15
  */
 public class ComponentStoreHolder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private long timeout;
     private long useTimestamp;
@@ -89,7 +93,7 @@ public class ComponentStoreHolder implements Serializable {
         this.componentName = componentName;
     }
 
-    public void updateTimeStamp(){
+    public void updateTimestamp(){
         useTimestamp = System.currentTimeMillis();
     }
 

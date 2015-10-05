@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.tasks.Task;
+import org.datacleaner.util.ConcurrencyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public final class JobCompletionTaskListener implements StatusAwareTaskListener 
 
     @Override
     public void await() throws InterruptedException {
-        _countDownLatch.await();
+        ConcurrencyUtils.awaitCountDown(_countDownLatch, "job completion");
     }
 
     @Override

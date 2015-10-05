@@ -21,12 +21,14 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.runner.ActiveOutputDataStream;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.RowProcessingConsumer;
+import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +44,20 @@ public class CloseTaskListener implements TaskListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CloseTaskListener.class);
 
-    private final AtomicBoolean _errorsReported = new AtomicBoolean(false);
+    private final AtomicBoolean _success;
     private final LifeCycleHelper _lifeCycleHelper;
+    private final RowProcessingPublisher _publisher;
     private final RowProcessingConsumer _consumer;
     private final TaskListener _nextTaskListener;
     private final AnalysisListener _analysisListener;
     private final AnalysisJob _analysisJob;
 
-    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, AtomicBoolean success,
+    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, RowProcessingPublisher publisher, RowProcessingConsumer consumer, AtomicBoolean success,
             TaskListener nextTaskListener, AnalysisListener analysisListener, AnalysisJob analysisJob) {
         _lifeCycleHelper = lifeCycleHelper;
+        _publisher = publisher;
         _consumer = consumer;
+        _success = success;
         _nextTaskListener = nextTaskListener;
         _analysisListener = analysisListener;
         _analysisJob = analysisJob;
@@ -60,16 +65,19 @@ public class CloseTaskListener implements TaskListener {
 
     public void cleanup() {
         logger.debug("cleanup()");
-
-        final Object component = _consumer.getComponent();
-        final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
-
-        // close can occur AFTER completion
-        _lifeCycleHelper.close(descriptor, component, !_errorsReported.get());
-
-        final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
-        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-            activeOutputDataStream.close();
+        
+        final int publishersLeft = _consumer.onPublisherClosed(_publisher);
+        if (publishersLeft == 0) {
+            final Object component = _consumer.getComponent();
+            final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
+            
+            // close can occur AFTER completion
+            _lifeCycleHelper.close(descriptor, component, _success.get());
+            
+            final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
+            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+                activeOutputDataStream.close();
+            }
         }
     }
 
@@ -90,8 +98,9 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
-        final boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
-        if (!alreadyRegisteredError) {
+        final boolean previouslySuccessful = _success.getAndSet(false);
+        if (previouslySuccessful) {
+            // only report the first such error
             _analysisListener.errorUnknown(_analysisJob, throwable);
         }
         cleanup();

@@ -115,6 +115,9 @@ public class ComponentScopeButton extends JButton implements ActionListener {
      *
      */
     public boolean isRelevant() {
+        if (_componentBuilder.getDescriptor().isMultiStreamComponent()) {
+            return false;
+        }
         return _menuBuilder.getComponentBuildersWithOutputDataStreams(_topLevelJobBuilder).size() > 0;
     }
 }

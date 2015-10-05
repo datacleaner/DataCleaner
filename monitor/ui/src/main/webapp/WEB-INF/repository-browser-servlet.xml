@@ -9,10 +9,18 @@
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property
+						name="objectMapper"
+						ref="jacksonObjectMapper"/>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 
 	<!-- load controllers and secure them -->
-	<context:component-scan base-package="org.datacleaner.monitor.server.controllers" />
+	<context:component-scan base-package="org.datacleaner.monitor.server.controllers, org.datacleaner.documentation" />
 	<security:global-method-security jsr250-annotations="enabled" />
 
 	<!-- Multipart resolver needed to make file upload work -->

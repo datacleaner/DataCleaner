@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.descriptors.EnumerationProvider;
+import org.datacleaner.descriptors.EnumerationValue;
 
 import com.google.common.base.Splitter;
 
@@ -38,49 +40,44 @@ import com.google.common.base.Splitter;
  * <ul>
  * <li>The constant name of the enum</li>
  * <li>The name of the enum, if it implements {@link HasName}</li>
- * <li>The keywords of the enum, if it implements {@link HasKeywords}</li>
  * <li>The alias(es) of the enum, if it implements {@link HasAliases}</li>
  * </ul>
  * 
- * @param <E>
- *            the enum class
  */
-public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
+public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
-    private final Map<String, E> _exactMatchesMap;
+    private final Map<String, EnumerationValue> _exactMatchesMap;
 
-    public DefaultEnumMatcher(Class<E> enumClass) {
-        _exactMatchesMap = new HashMap<String, E>();
+    public DefaultEnumMatcher(Class<? extends Enum<?>> enumClass) {
+        this(EnumerationValue.providerFromEnumClass(enumClass));
+    }
 
-        final E[] enumConstants = enumClass.getEnumConstants();
+    public DefaultEnumMatcher(EnumerationProvider enumProvider) {
+        _exactMatchesMap = new HashMap<String, EnumerationValue>();
 
-        if (ReflectionUtils.is(enumClass, HasAliases.class)) {
-            for (final E e : enumConstants) {
-                final HasAliases hasAliases = (HasAliases) e;
-                final String[] aliases = hasAliases.getAliases();
-                if (aliases != null) {
-                    for (String alias : aliases) {
-                        putMatch(alias, e);
-                    }
+        final EnumerationValue[] enumConstants = enumProvider.values();
+        for (final EnumerationValue e : enumConstants) {
+            final String[] aliases = e.getAliases();
+            if (aliases != null) {
+                for (String alias : aliases) {
+                    putMatch(alias, e);
                 }
             }
         }
 
-        if (ReflectionUtils.is(enumClass, HasName.class)) {
-            for (final E e : enumConstants) {
-                final HasName hasName = (HasName) e;
-                final String name = hasName.getName();
-                putMatch(name, e);
-            }
+        for (final EnumerationValue e : enumConstants) {
+            final HasName hasName = (HasName) e;
+            final String name = hasName.getName();
+            putMatch(name, e);
         }
 
-        for (final E e : enumConstants) {
-            final String constantName = e.name();
+        for (final EnumerationValue e : enumConstants) {
+            final String constantName = e.getValue();
             putMatch(constantName, e);
         }
     }
 
-    private void putMatch(String string, E e) {
+    private void putMatch(String string, EnumerationValue e) {
         final Collection<String> normalizedStrings = normalize(string, false);
         for (String normalizedString : normalizedStrings) {
             _exactMatchesMap.put(normalizedString, e);
@@ -88,10 +85,10 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
     }
 
     @Override
-    public E suggestMatch(final String string) {
+    public EnumerationValue suggestMatch(final String string) {
         final Collection<String> normalizedStrings = normalize(string, true);
         for (String normalizedString : normalizedStrings) {
-            final E exactMatchResult = _exactMatchesMap.get(normalizedString);
+            final EnumerationValue exactMatchResult = _exactMatchesMap.get(normalizedString);
             if (exactMatchResult != null) {
                 return exactMatchResult;
             }
@@ -103,7 +100,6 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
      * Normalizes the incoming string before doing matching
      * 
      * @param string
-     * @param aggressive
      * @param tokenize
      * @return
      */

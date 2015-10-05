@@ -58,8 +58,8 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SourceColumnFinder;
 
+@SuppressWarnings("deprecation")
 public class RowProcessingQueryOptimizerTest extends TestCase {
 
     private final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, true);
@@ -74,7 +74,6 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     private InputColumn<?> lastNameInputColumn;
     private ArrayList<RowProcessingConsumer> consumers;
     private Query baseQuery;
-    private SourceColumnFinder sourceColumnFinder;
     private RowProcessingPublisher publisher;
 
     @Override
@@ -96,8 +95,6 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         lastNameInputColumn = ajb.getSourceColumnByName("lastname");
         stringAnalyzerBuilder.addInputColumn(lastNameInputColumn);
 
-        sourceColumnFinder = new SourceColumnFinder();
-
         consumers = new ArrayList<RowProcessingConsumer>();
 
         baseQuery = con.getDataContext().query().from("EMPLOYEES").select("LASTNAME").toQuery();
@@ -114,7 +111,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         final AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
         final TaskRunner taskRunner = new SingleThreadedTaskRunner();
         final RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, analysisListener, taskRunner,
-                lifeCycleHelper, sourceColumnFinder);
+                lifeCycleHelper);
         final Table table = ajb.getSourceColumns().get(0).getPhysicalColumn().getTable();
         return publishers.getRowProcessingPublisher(publishers.getStream(table));
     }

@@ -26,6 +26,7 @@ import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -104,8 +105,57 @@ public interface RowProcessingConsumer {
     public Object getComponent();
 
     /**
-     * Determines if the {@link ComponentJob} represented in this consumer is expected to produce an {@link AnalyzerResult}
+     * Determines if the {@link ComponentJob} represented in this consumer is
+     * expected to produce an {@link AnalyzerResult}
+     * 
      * @return
      */
     public boolean isResultProducer();
+
+    /**
+     * Gets the {@link AnalysisJob} that this consumer pertains to.
+     * 
+     * @return
+     */
+    public AnalysisJob getAnalysisJob();
+
+    /**
+     * Indicates to this consumer that a {@link RowProcessingPublisher} has
+     * initialized the component that is represented.
+     * 
+     * @param publisher
+     * @return the count of initialized publishers
+     */
+    public int onPublisherInitialized(RowProcessingPublisher publisher);
+
+    /**
+     * Indicates to this consumer that a {@link RowProcessingPublisher} has
+     * closed the component that is represented.
+     * 
+     * @param publisher
+     * @return the count of not-closed publishers
+     */
+    public int onPublisherClosed(RowProcessingPublisher publisher);
+
+    /**
+     * Registers a {@link RowProcessingPublisher} with this consumer to indicate
+     * that it will be publishing records to it.
+     * 
+     * @param publisher
+     */
+    public void registerPublisher(RowProcessingPublisher publisher);
+
+    /**
+     * Determines whether all registered publishers have been initialized.
+     * 
+     * @return
+     */
+    public boolean isAllPublishersInitialized();
+
+    /**
+     * Determines whether all registered publishers have been closed.
+     * 
+     * @return
+     */
+    public boolean isAllPublishersClosed();
 }

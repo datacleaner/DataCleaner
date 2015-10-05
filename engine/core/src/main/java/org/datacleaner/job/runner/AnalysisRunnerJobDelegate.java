@@ -20,6 +20,8 @@
 package org.datacleaner.job.runner;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.metamodel.schema.Table;
@@ -28,10 +30,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.FilterJob;
-import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.concurrent.JobCompletionTaskListener;
 import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;
@@ -57,10 +57,6 @@ final class AnalysisRunnerJobDelegate {
     private final AnalysisListener _analysisListener;
     private final Queue<JobAndResult> _resultQueue;
     private final ErrorAware _errorAware;
-    private final Collection<AnalyzerJob> _analyzerJobs;
-    private final Collection<TransformerJob> _transformerJobs;
-    private final Collection<FilterJob> _filterJobs;
-    private final SourceColumnFinder _sourceColumnFinder;
     private final boolean _includeNonDistributedTasks;
 
     /**
@@ -87,16 +83,7 @@ final class AnalysisRunnerJobDelegate {
         _analysisListener = analysisListener;
         _resultQueue = resultQueue;
         _includeNonDistributedTasks = includeNonDistributedTasks;
-
-        _sourceColumnFinder = new SourceColumnFinder();
-        _sourceColumnFinder.addSources(_job);
-
         _errorAware = errorAware;
-
-        _transformerJobs = _job.getTransformerJobs();
-        _filterJobs = _job.getFilterJobs();
-
-        _analyzerJobs = _job.getAnalyzerJobs();
     }
 
     /**
@@ -114,7 +101,7 @@ final class AnalysisRunnerJobDelegate {
                     _includeNonDistributedTasks);
 
             final RowProcessingPublishers publishers = new RowProcessingPublishers(_job, _analysisListener,
-                    _taskRunner, rowProcessingLifeCycleHelper, _sourceColumnFinder);
+                    _taskRunner, rowProcessingLifeCycleHelper);
 
             final AnalysisJobMetrics analysisJobMetrics = publishers.getAnalysisJobMetrics();
 
@@ -126,9 +113,7 @@ final class AnalysisRunnerJobDelegate {
 
             _analysisListener.jobBegin(_job, analysisJobMetrics);
 
-            validateSingleTableInput(_transformerJobs);
-            validateSingleTableInput(_filterJobs);
-            validateSingleTableInput(_analyzerJobs);
+            validateSingleTableInput(_job);
 
             // at this point we are done validating the job, it will run.
             scheduleRowProcessing(publishers, rowProcessingLifeCycleHelper, jobCompletionTaskListener,
@@ -160,9 +145,31 @@ final class AnalysisRunnerJobDelegate {
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
         logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
 
-        for (RowProcessingPublisher rowProcessingPublisher : rowProcessingPublishers) {
-            logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
-            rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);
+        dispatchWhenReady(rowProcessingPublishers, rowProcessorPublishersDoneCompletionListener);
+    }
+
+    private void dispatchWhenReady(final Collection<RowProcessingPublisher> rowProcessingPublishers,
+            final TaskListener rowProcessorPublishersDoneCompletionListener) {
+        final LinkedList<RowProcessingPublisher> remainingRowProcessingPublishers = new LinkedList<>(
+                rowProcessingPublishers);
+
+        while (!remainingRowProcessingPublishers.isEmpty()) {
+            boolean progressThisIteration = false;
+
+            for (Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext();) {
+                final RowProcessingPublisher rowProcessingPublisher = it.next();
+                final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
+                        rowProcessorPublishersDoneCompletionListener);
+                if (started) {
+                    logger.debug("Scheduled row processing publisher: {}", rowProcessingPublisher);
+                    it.remove();
+                    progressThisIteration = true;
+                }
+            }
+
+            if (!progressThisIteration) {
+                _taskRunner.assistExecution();
+            }
         }
     }
 
@@ -170,25 +177,48 @@ final class AnalysisRunnerJobDelegate {
      * Prevents that any row processing components have input from different
      * tables.
      * 
+     * @param job
+     */
+    private void validateSingleTableInput(AnalysisJob job) {
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(job);
+        validateSingleTableInput(sourceColumnFinder, job.getTransformerJobs());
+        validateSingleTableInput(sourceColumnFinder, job.getFilterJobs());
+        validateSingleTableInput(sourceColumnFinder, job.getAnalyzerJobs());
+    }
+
+    /**
+     * Prevents that any row processing components have input from different
+     * tables.
+     * 
+     * @param sourceColumnFinder
      * @param componentJobs
      */
-    private void validateSingleTableInput(Collection<? extends ComponentJob> componentJobs) {
+    private void validateSingleTableInput(final SourceColumnFinder sourceColumnFinder,
+            final Collection<? extends ComponentJob> componentJobs) {
         for (ComponentJob componentJob : componentJobs) {
-            Table originatingTable = null;
-            InputColumn<?>[] input = componentJob.getInput();
+            if (!componentJob.getDescriptor().isMultiStreamComponent()) {
+                Table originatingTable = null;
+                final InputColumn<?>[] input = componentJob.getInput();
 
-            for (InputColumn<?> inputColumn : input) {
-                Table table = _sourceColumnFinder.findOriginatingTable(inputColumn);
-                if (table != null) {
-                    if (originatingTable == null) {
-                        originatingTable = table;
-                    } else {
-                        if (!originatingTable.equals(table)) {
-                            throw new IllegalArgumentException("Input columns in " + componentJob
-                                    + " originate from different tables");
+                for (InputColumn<?> inputColumn : input) {
+                    final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
+                    if (table != null) {
+                        if (originatingTable == null) {
+                            originatingTable = table;
+                        } else {
+                            if (!originatingTable.equals(table)) {
+                                throw new IllegalArgumentException("Input columns in " + componentJob
+                                        + " originate from different tables");
+                            }
                         }
                     }
                 }
+            }
+
+            final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
+            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                validateSingleTableInput(outputDataStreamJob.getJob());
             }
         }
 

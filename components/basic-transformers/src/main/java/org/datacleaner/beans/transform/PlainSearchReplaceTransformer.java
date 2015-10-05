@@ -30,11 +30,11 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.TextCategory;
 
 @Named("Plain search/replace")
 @Description("Search and replace text in String values.")
-@Categorized(StringManipulationCategory.class)
+@Categorized(TextCategory.class)
 public class PlainSearchReplaceTransformer implements Transformer{
 
     @Configured(value = "Value", order = 1)

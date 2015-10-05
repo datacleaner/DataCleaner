@@ -127,8 +127,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         final BiMap<InputColumn<?>, String> columnMappings = HashBiMap.create(50);
         configureJobType(analysisJob, jobType, columnMappings, includeMetadata);
     }
-    
-    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, BiMap<InputColumn<?>, String> columnMappings, boolean includeMetadata) {
+
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType,
+            BiMap<InputColumn<?>, String> columnMappings, boolean includeMetadata) {
         if (includeMetadata) {
             try {
                 JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
@@ -529,7 +530,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return id;
     }
 
-    private void addComponents(final JobType jobType, final AnalysisJob analysisJob, final BiMap<InputColumn<?>, String> columnMappings,
+    private void addComponents(final JobType jobType, final AnalysisJob analysisJob,
+            final BiMap<InputColumn<?>, String> columnMappings,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings) {
         final TransformationType transformationType = new TransformationType();
@@ -544,6 +546,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             TransformerType transformerType = new TransformerType();
             transformerType.setName(transformerJob.getName());
             setDescriptor(transformerType, transformerJob.getDescriptor());
+
+            addOutputDataStreams(transformerType, transformerJob, columnMappings);
+
             transformationType.getTransformerOrFilter().add(transformerType);
             transformerMappings.put(transformerJob, transformerType);
         }
@@ -554,6 +559,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             FilterType filterType = new FilterType();
             filterType.setName(filterJob.getName());
             setDescriptor(filterType, filterJob.getDescriptor());
+
+            addOutputDataStreams(filterType, filterJob, columnMappings);
+
             transformationType.getTransformerOrFilter().add(filterType);
             filterMappings.put(filterJob, filterType);
         }
@@ -564,18 +572,25 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             AnalyzerType analyzerType = new AnalyzerType();
             analyzerType.setName(analyzerJob.getName());
             setDescriptor(analyzerType, analyzerJob.getDescriptor());
-            final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
 
-            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
-                final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
-                outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
-                final JobType childJobType = new JobType();
-                configureJobType(outputDataStreamJob.getJob(), childJobType, columnMappings, false);
-                outputDataStreamType.setJob(childJobType);
-                analyzerType.getOutputDataStream().add(outputDataStreamType);
-            }
+            addOutputDataStreams(analyzerType, analyzerJob, columnMappings);
+
             analysisType.getAnalyzer().add(analyzerType);
             analyzerMappings.put(analyzerJob, analyzerType);
+        }
+    }
+
+    private void addOutputDataStreams(final ComponentType componentType, final ComponentJob componentJob,
+            final BiMap<InputColumn<?>, String> columnMappings) {
+        final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
+
+        for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+            final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
+            outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
+            final JobType childJobType = new JobType();
+            configureJobType(outputDataStreamJob.getJob(), childJobType, columnMappings, false);
+            outputDataStreamType.setJob(childJobType);
+            componentType.getOutputDataStream().add(outputDataStreamType);
         }
     }
 

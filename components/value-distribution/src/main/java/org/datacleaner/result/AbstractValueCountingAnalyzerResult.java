@@ -20,20 +20,13 @@
 package org.datacleaner.result;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.datacleaner.api.Metric;
-import org.datacleaner.util.LabelUtils;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Predicate;
+import org.datacleaner.api.Metric;
+import org.datacleaner.util.LabelUtils;
 
 /**
  * An abstract implementation of {@link ValueCountingAnalyzerResult} which
@@ -82,7 +75,7 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
     @Override
     public Collection<ValueFrequency> getReducedValueFrequencies(final int preferredMaximum) {
         final Collection<ValueFrequency> original = getValueCounts();
-        
+
         final Collection<ValueFrequency> result = new TreeSet<ValueFrequency>(original);
 
         if (original.size() <= preferredMaximum) {
@@ -99,64 +92,10 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
                     }
                 }
             }
-
             return result;
+        } else {
+            return original;
         }
-
-        // Attempt to group/reduce values by frequency.
-        final SortedSet<List<ValueFrequency>> values;
-        {
-            Collection<List<ValueFrequency>> allValues;
-            {
-                // Add all the non-composite value freq's to a map where we can
-                // group
-                // them by their frequency
-                final Map<Integer, List<ValueFrequency>> frequencyMap = new HashMap<Integer, List<ValueFrequency>>();
-                for (ValueFrequency valueFrequency : original) {
-                    if (!valueFrequency.isComposite()) {
-                        int count = valueFrequency.getCount();
-                        List<ValueFrequency> list = frequencyMap.get(count);
-                        if (list == null) {
-                            list = new LinkedList<ValueFrequency>();
-                            frequencyMap.put(count, list);
-                        }
-                        list.add(valueFrequency);
-                    }
-                }
-                allValues = frequencyMap.values();
-            }
-            allValues = CollectionUtils.filter(allValues, new Predicate<List<ValueFrequency>>() {
-                @Override
-                public Boolean eval(List<ValueFrequency> list) {
-                    return list.size() > 1;
-                }
-            });
-
-            values = new TreeSet<List<ValueFrequency>>(new Comparator<List<?>>() {
-                @Override
-                public int compare(List<?> o1, List<?> o2) {
-                    int diff = o2.size() - o1.size();
-                    if (diff == 0) {
-                        return -1;
-                    }
-                    return diff;
-                }
-            });
-            values.addAll(allValues);
-        }
-
-        final Iterator<List<ValueFrequency>> iterator = values.iterator();
-        while (result.size() > preferredMaximum && iterator.hasNext()) {
-            final List<ValueFrequency> groupChildren = iterator.next();
-            final int groupFrequency = groupChildren.get(0).getCount();
-            final String groupName = "<count=" + groupFrequency + ">";
-            final ValueFrequency compositeValueFrequency = new CompositeValueFrequency(groupName, groupChildren);
-
-            result.removeAll(groupChildren);
-            result.add(compositeValueFrequency);
-        }
-
-        return result;
     }
 
     @Override

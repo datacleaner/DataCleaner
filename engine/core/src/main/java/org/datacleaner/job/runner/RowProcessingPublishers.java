@@ -22,6 +22,7 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,12 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Component;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.configuration.ContextAwareInjectionManager;
+import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
@@ -46,6 +50,8 @@ import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.SourceColumnFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class which partitions a single {@link AnalysisJob}'s components into
@@ -53,14 +59,54 @@ import org.datacleaner.util.SourceColumnFinder;
  */
 public final class RowProcessingPublishers {
 
+    private static final Logger logger = LoggerFactory.getLogger(RowProcessingPublishers.class);
+
+    private static class ConsumerCreation {
+        final RowProcessingConsumer _consumer;
+        final boolean _componentCreated;
+
+        public ConsumerCreation(RowProcessingConsumer consumer, boolean componentCreated) {
+            _consumer = consumer;
+            _componentCreated = componentCreated;
+        }
+    }
+
     private final AnalysisJob _analysisJob;
     private final AnalysisListener _analysisListener;
     private final TaskRunner _taskRunner;
     private final LifeCycleHelper _lifeCycleHelper;
     private final Map<RowProcessingStream, RowProcessingPublisher> _rowProcessingPublishers;
+    private final Map<ComponentJob, RowProcessingConsumer> _consumers;
 
+    /**
+     * Constructs a {@link RowProcessingPublishers}s instance.
+     * 
+     * @param analysisJob
+     * @param analysisListener
+     * @param taskRunner
+     * @param lifeCycleHelper
+     * @param sourceColumnFinder
+     * 
+     * @deprecated the {@link SourceColumnFinder} is no longer used here. Use
+     *             {@link #RowProcessingPublishers(AnalysisJob, AnalysisListener, TaskRunner, LifeCycleHelper)}
+     *             instead.
+     */
+    @Deprecated
     public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
             LifeCycleHelper lifeCycleHelper, SourceColumnFinder sourceColumnFinder) {
+        this(analysisJob, analysisListener, taskRunner, lifeCycleHelper);
+    }
+
+    /**
+     * Constructs a {@link RowProcessingPublishers}s instance.
+     * 
+     * @param analysisJob
+     * @param analysisListener
+     * @param taskRunner
+     * @param lifeCycleHelper
+     */
+    public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
+            LifeCycleHelper lifeCycleHelper) {
         _analysisJob = analysisJob;
         _analysisListener = analysisListener;
         _taskRunner = taskRunner;
@@ -70,7 +116,8 @@ public final class RowProcessingPublishers {
         // since OutputDataStreamJobs should be initialized after their parent
         // jobs. For this reason we use a LinkedHashMap and not a regular
         // HashMap.
-        _rowProcessingPublishers = new LinkedHashMap<RowProcessingStream, RowProcessingPublisher>();
+        _rowProcessingPublishers = new LinkedHashMap<>();
+        _consumers = new IdentityHashMap<>();
 
         registerAll();
     }
@@ -78,8 +125,13 @@ public final class RowProcessingPublishers {
     private void registerAll() {
         registerJob(_analysisJob);
 
-        for (RowProcessingPublisher publisher : _rowProcessingPublishers.values()) {
+        final Collection<RowProcessingPublisher> publishers = _rowProcessingPublishers.values();
+        for (RowProcessingPublisher publisher : publishers) {
             publisher.onAllConsumersRegistered();
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Registered {} publishers: {}", _rowProcessingPublishers.size(), publishers);
         }
     }
 
@@ -93,12 +145,12 @@ public final class RowProcessingPublishers {
     }
 
     private void registerJob(final AnalysisJob job, final RowProcessingStream dataStream,
-            final RowProcessingPublisher parentPublisher) {
+            final RowProcessingConsumer parentConsumer) {
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);
 
         for (ComponentJob componentJob : getAllComponents(job)) {
-            registerRowProcessingPublishers(sourceColumnFinder, job, dataStream, componentJob, parentPublisher);
+            registerRowProcessingPublishers(sourceColumnFinder, job, dataStream, componentJob, parentConsumer);
         }
     }
 
@@ -109,11 +161,10 @@ public final class RowProcessingPublishers {
 
     private void registerOutputDataStream(final RowProcessingPublisher parentPublisher,
             final RowProcessingConsumer publishingConsumer, OutputDataStreamJob outputDataStreamJob) {
-
-        // first initialize the nested job like any other set of components
         final RowProcessingStream dataStream = RowProcessingStream.ofOutputDataStream(outputDataStreamJob);
 
-        registerJob(outputDataStreamJob.getJob(), dataStream, parentPublisher);
+        // first initialize the nested job like any other set of components
+        registerJob(outputDataStreamJob.getJob(), dataStream, publishingConsumer);
 
         // then we wire the publisher for this output data stream to a
         // OutputRowCollector which will get injected via the
@@ -141,29 +192,6 @@ public final class RowProcessingPublishers {
         return physicalColumnsArray;
     }
 
-    /**
-     * 
-     * @param componentJob
-     * @return
-     * @deprecated use {@link #getTables(SourceColumnFinder, ComponentJob)}
-     *             instead
-     */
-    @Deprecated
-    public Table[] getTables(ComponentJob componentJob) {
-        RowProcessingPublisher publisher = getRowProcessingPublisher(componentJob);
-        return getTables(publisher.getSourceColumnFinder(), componentJob, null);
-    }
-
-    private RowProcessingPublisher getRowProcessingPublisher(ComponentJob componentJob) {
-        final Collection<RowProcessingPublisher> publishers = _rowProcessingPublishers.values();
-        for (RowProcessingPublisher rowProcessingPublisher : publishers) {
-            if (rowProcessingPublisher.containsComponentJob(componentJob)) {
-                return rowProcessingPublisher;
-            }
-        }
-        return null;
-    }
-
     public Table[] getTables(SourceColumnFinder sourceColumnFinder, ComponentJob componentJob) {
         return getTables(sourceColumnFinder, componentJob, null);
     }
@@ -187,7 +215,9 @@ public final class RowProcessingPublishers {
         }
 
         if (tables.length > 1) {
-            throw new IllegalStateException("Component has input columns from multiple tables: " + componentJob);
+            if (!componentJob.getDescriptor().isMultiStreamComponent()) {
+                throw new IllegalStateException("Component has input columns from multiple tables: " + componentJob);
+            }
         }
 
         if (tables.length == 0) {
@@ -210,50 +240,76 @@ public final class RowProcessingPublishers {
 
     private void registerRowProcessingPublishers(final SourceColumnFinder sourceColumnFinder, final AnalysisJob job,
             final RowProcessingStream dataStream, final ComponentJob componentJob,
-            final RowProcessingPublisher parentPublisher) {
+            final RowProcessingConsumer parentConsumer) {
         RowProcessingPublisher rowPublisher = _rowProcessingPublishers.get(dataStream);
         if (rowPublisher == null) {
-            if (parentPublisher == null) {
-                rowPublisher = new RowProcessingPublisher(this, dataStream, _taskRunner);
+            if (parentConsumer == null) {
+                final SourceTableRowProcessingPublisher sourceTableRowPublisher = new SourceTableRowProcessingPublisher(
+                        this, dataStream);
+                sourceTableRowPublisher.addPrimaryKeysIfSourced();
+                rowPublisher = sourceTableRowPublisher;
             } else {
-                rowPublisher = new RowProcessingPublisher(parentPublisher, dataStream);
+                rowPublisher = new OutputDataStreamRowProcessingPublisher(this, parentConsumer, dataStream);
             }
-            rowPublisher.addPrimaryKeysIfSourced();
             _rowProcessingPublishers.put(dataStream, rowPublisher);
         }
 
-        // register the physical columns needed by this job
-        final Column[] physicalColumns = getPhysicalColumns(sourceColumnFinder, componentJob);
-        rowPublisher.addPhysicalColumns(physicalColumns);
+        if (rowPublisher instanceof SourceTableRowProcessingPublisher) {
+            final SourceTableRowProcessingPublisher sourceTableRowPublisher = (SourceTableRowProcessingPublisher) rowPublisher;
+            // register the physical columns needed by this job
+            final Column[] physicalColumns = getPhysicalColumns(sourceColumnFinder, componentJob);
+            final Column[] relevantColumns = MetaModelHelper.getTableColumns(dataStream.getTable(), physicalColumns);
+
+            sourceTableRowPublisher.addPhysicalColumns(relevantColumns);
+        }
 
         // find which input columns (both physical or virtual) are needed by
         // this per-table instance
         final InputColumn<?>[] localInputColumns = getLocalInputColumns(sourceColumnFinder, dataStream.getTable(),
                 componentJob.getInput());
 
-        if (componentJob instanceof AnalyzerJob) {
-            final AnalyzerJob analyzerJob = (AnalyzerJob) componentJob;
-            final Analyzer<?> analyzer = analyzerJob.getDescriptor().newInstance();
-            rowPublisher.registerAnalyzer(analyzer, analyzerJob, localInputColumns);
-        } else if (componentJob instanceof TransformerJob) {
-            final TransformerJob transformerJob = (TransformerJob) componentJob;
-            final Transformer transformer = transformerJob.getDescriptor().newInstance();
-            rowPublisher.registerTransformer(transformer, transformerJob, localInputColumns);
-        } else if (componentJob instanceof FilterJob) {
-            final FilterJob filterJob = (FilterJob) componentJob;
-            final Filter<?> filter = filterJob.getDescriptor().newInstance();
-            rowPublisher.registerFilter(filter, filterJob, localInputColumns);
-        } else {
-            throw new UnsupportedOperationException("Unsupported component job type: " + componentJob);
-        }
+        final ConsumerCreation consumerCreation = getOrCreateConsumer(rowPublisher, componentJob, localInputColumns);
+        final RowProcessingConsumer consumer = consumerCreation._consumer;
 
-        final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
-        if (outputDataStreamJobs.length > 0) {
-            final RowProcessingConsumer consumer = rowPublisher.getConsumer(componentJob);
+        rowPublisher.registerConsumer(consumer);
+
+        if (consumerCreation._componentCreated) {
+            final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
             for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 registerOutputDataStream(rowPublisher, consumer, outputDataStreamJob);
             }
         }
+    }
+
+    public ConsumerCreation getOrCreateConsumer(final RowProcessingPublisher publisher,
+            final ComponentJob componentJob, final InputColumn<?>[] inputColumns) {
+        RowProcessingConsumer consumer = _consumers.get(componentJob);
+        final boolean create = consumer == null;
+        if (create) {
+            final Component component = (Component) componentJob.getDescriptor().newInstance();
+
+            if (componentJob instanceof AnalyzerJob) {
+                final AnalyzerJob analyzerJob = (AnalyzerJob) componentJob;
+                final Analyzer<?> analyzer = (Analyzer<?>) component;
+                consumer = new AnalyzerConsumer(analyzer, analyzerJob, inputColumns, publisher);
+            } else if (componentJob instanceof TransformerJob) {
+                final TransformerJob transformerJob = (TransformerJob) componentJob;
+                final Transformer transformer = (Transformer) component;
+                consumer = new TransformerConsumer(transformer, transformerJob, inputColumns, publisher);
+            } else if (componentJob instanceof FilterJob) {
+                final FilterJob filterJob = (FilterJob) componentJob;
+                final Filter<?> filter = (Filter<?>) component;
+                consumer = new FilterConsumer(filter, filterJob, inputColumns, publisher);
+            } else {
+                throw new UnsupportedOperationException("Unsupported component job type: " + componentJob);
+            }
+
+            _consumers.put(componentJob, consumer);
+        }
+        
+        consumer.registerPublisher(publisher);
+        
+        return new ConsumerCreation(consumer, create);
     }
 
     private InputColumn<?>[] getLocalInputColumns(final SourceColumnFinder sourceColumnFinder, final Table table,
@@ -261,9 +317,9 @@ public final class RowProcessingPublishers {
         if (table == null || inputColumns == null || inputColumns.length == 0) {
             return new InputColumn<?>[0];
         }
-        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
         for (InputColumn<?> inputColumn : inputColumns) {
-            Set<Column> sourcePhysicalColumns = sourceColumnFinder.findOriginatingColumns(inputColumn);
+            final Set<Column> sourcePhysicalColumns = sourceColumnFinder.findOriginatingColumns(inputColumn);
             for (Column physicalColumn : sourcePhysicalColumns) {
                 if (table.equals(physicalColumn.getTable())) {
                     result.add(inputColumn);
@@ -350,5 +406,20 @@ public final class RowProcessingPublishers {
 
     protected LifeCycleHelper getLifeCycleHelper() {
         return _lifeCycleHelper;
+    }
+
+    public TaskRunner getTaskRunner() {
+        return _taskRunner;
+    }
+
+    public LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
+        final LifeCycleHelper outerLifeCycleHelper = getLifeCycleHelper();
+        final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
+        final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();
+        final ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(outerInjectionManager,
+                consumer.getAnalysisJob(), consumer.getComponentJob(), getAnalysisListener());
+
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, includeNonDistributedTasks);
+        return lifeCycleHelper;
     }
 }

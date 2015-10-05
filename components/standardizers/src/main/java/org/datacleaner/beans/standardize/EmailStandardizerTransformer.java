@@ -40,6 +40,7 @@ import org.datacleaner.util.NamedPatternMatch;
 @Named("Email standardizer")
 @Description("Retrieve the username or domain from an email address.")
 @Categorized({ MatchingAndStandardizationCategory.class })
+@Deprecated
 public class EmailStandardizerTransformer implements Transformer {
 
 	public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<EmailPart>("USERNAME@DOMAIN",

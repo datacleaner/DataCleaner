@@ -38,7 +38,9 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.desktop.api.HiddenProperty;
+import org.datacleaner.descriptors.EnumerationProvider;
+import org.datacleaner.descriptors.EnumerationValue;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -102,8 +104,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             }
 
             // mapped enums
-            if (mappedProperty.getBaseType().isEnum()) {
-                final MultipleMappedEnumsPropertyWidget<Enum<?>> propertyWidget = new MultipleMappedEnumsPropertyWidget<Enum<?>>(
+            if (mappedProperty.getBaseType().isEnum() || mappedProperty.getBaseType() == EnumerationValue.class) {
+                final MultipleMappedEnumsPropertyWidget propertyWidget = new MultipleMappedEnumsPropertyWidget(
                         getComponentBuilder(), mappedToProperty, mappedProperty);
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
                 mapping.putMapping(mappedProperty, propertyWidget);
@@ -248,8 +250,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         if (propertyWidget != null) {
             return propertyWidget;
         }
-
-        if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+        final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+        if (hiddenProperty != null && hiddenProperty.hiddenForLocalAccess()) {
             return null;
         }
         if (propertyDescriptor.getAnnotation(Deprecated.class) != null) {
@@ -282,6 +284,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
             } else if (type == StringPattern.class) {
                 widgetClass = MultipleStringPatternPropertyWidget.class;
+            } else if(type == EnumerationValue.class && propertyDescriptor instanceof EnumerationProvider) {
+                widgetClass = MultipleRemoteEnumPropertyWidget.class;
             } else if (type.isEnum()) {
                 widgetClass = MultipleEnumPropertyWidget.class;
             } else if (type == Class.class) {
@@ -324,6 +328,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 widgetClass = SingleSynonymCatalogPropertyWidget.class;
             } else if (type == StringPattern.class) {
                 widgetClass = SingleStringPatternPropertyWidget.class;
+            } else if(type == EnumerationValue.class && propertyDescriptor instanceof EnumerationProvider) {
+                widgetClass = SingleRemoteEnumPropertyWidget.class;
             } else if (type.isEnum()) {
                 widgetClass = SingleEnumPropertyWidget.class;
             } else if (ReflectionUtils.is(type, Resource.class)) {

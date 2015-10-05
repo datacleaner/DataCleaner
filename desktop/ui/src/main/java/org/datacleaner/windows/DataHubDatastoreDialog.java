@@ -46,6 +46,7 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.metamodel.datahub.DataHubConnection;
+import org.datacleaner.metamodel.datahub.DataHubRepoConnection;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -84,9 +85,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     private final JButton _testButton;
     private final DCLabel _urlLabel;
 
-    // private final JXTextField _contextPathTextField;
-
-    public DataHubConnection createConnection() {
+    public DataHubRepoConnection createConnection() {
         int port = 8080;
         try {
             port = Integer.parseInt(_portTextField.getText());
@@ -97,14 +96,16 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
 
-        return new DataHubConnection(_hostTextField.getText(), port, username, password,
-                _tenantNameTextField.getText(),
-                /* _contextPathTextField.getText(), */_httpsCheckBox.isSelected(),
-                _acceptUnverifiedSslPeersCheckBox.isSelected(), _securityModeSelector.getSelectedItem().toString());
+        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username,
+                password, _tenantNameTextField.getText(),
+                /* _contextPathTextField.getText(), */_httpsCheckBox
+                        .isSelected(),
+                _acceptUnverifiedSslPeersCheckBox.isSelected(),
+                DataHubSecurityMode.valueOf(_securityModeSelector.getSelectedItem().toString())));
     }
 
     private void updateUrlLabel() {
-        final DataHubConnection connection = createConnection();
+        final DataHubRepoConnection connection = createConnection();
         _urlLabel.setText("Repository url: " + connection.getRepositoryUrl());
     }
 
@@ -166,7 +167,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                final DataHubConnection connection = createConnection();
+                final DataHubRepoConnection connection = createConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
                 try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
@@ -204,7 +205,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             _portTextField.setText(originalDatastore.getPort() + "");
             _httpsCheckBox.setSelected(originalDatastore.https());
             _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
-            if (originalDatastore.getSecurityMode().equalsIgnoreCase(DataHubSecurityMode.CAS.toString())) {
+            if(originalDatastore.getSecurityMode().equals(DataHubSecurityMode.CAS)) {
                 _securityModeSelector.setSelectedIndex(1);
             } else {
                 _securityModeSelector.setSelectedIndex(0);
@@ -281,10 +282,11 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String tenantName = _tenantNameTextField.getText();
         final boolean https = _httpsCheckBox.isSelected();
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
-        final String securityMode = _securityModeSelector.getSelectedItem().toString();
+        final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
-        return new DataHubDatastore(name, host, port, username, password, tenantName, https,
-                acceptUnverifiedSslPeersCheckBox, securityMode);
+        return new DataHubDatastore(name, host, port, username, password,
+                tenantName, https, acceptUnverifiedSslPeersCheckBox,
+                DataHubSecurityMode.valueOf(securityMode));
     }
 
     @Override

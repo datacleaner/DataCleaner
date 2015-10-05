@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
 
 	<build>
-        <plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
@@ -109,6 +109,14 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.jboss.tattletale</groupId>
+				<artifactId>tattletale-maven</artifactId>
+				<configuration>
+					<source>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</source>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -145,7 +153,13 @@
 			<version>3.3.0</version>
 			<scope>provided</scope>
 		</dependency>
-	
+
+		<!-- log4j-over-slf4j to ensure compatibility when we exclude log4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
+
 		<!-- DataCleaner monitor dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -157,7 +171,12 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-documentation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<!-- DataCleaner monitor extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -204,7 +223,7 @@
 			<artifactId>DataCleaner-monitor-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
@@ -222,7 +241,7 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>
 		</dependency>
-		
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -239,6 +258,7 @@
 			<groupId>javax.faces</groupId>
 			<artifactId>javax.faces-api</artifactId>
 			<version>2.2</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.el</groupId>
@@ -257,7 +277,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -274,12 +293,6 @@
 			<version>1.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-			<scope>runtime</scope>
-			<version>1.1.2</version>
-		</dependency>
 
 		<!-- Jetty used for dev mode testing -->
 		<dependency>
@@ -287,7 +300,12 @@
 			<artifactId>jetty-all</artifactId>
 			<version>7.2.0.v20101020</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
 	</dependencies>
 </project>

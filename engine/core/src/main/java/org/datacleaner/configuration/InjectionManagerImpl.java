@@ -109,48 +109,55 @@ public class InjectionManagerImpl implements InjectionManager {
         }
         return (E) instance;
     }
+    
+    private DataCleanerConfiguration getConfiguration() {
+        if (_configuration == null) {
+            return new DataCleanerConfigurationImpl();
+        }
+        return _configuration;
+    }
 
     @SuppressWarnings("deprecation")
     protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
         final Class<?> baseType = injectionPoint.getBaseType();
         if (baseType == ReferenceDataCatalog.class) {
-            return _configuration.getReferenceDataCatalog();
+            return getConfiguration().getReferenceDataCatalog();
         } else if (baseType == OutputRowCollector.class) {
             return new ThreadLocalOutputRowCollector();
         } else if (baseType == DatastoreCatalog.class) {
-            return _configuration.getDatastoreCatalog();
+            return getConfiguration().getDatastoreCatalog();
         } else if (baseType == CollectionFactory.class) {
-            return new CollectionFactoryImpl(_configuration.getEnvironment().getStorageProvider());
+            return new CollectionFactoryImpl(getConfiguration().getEnvironment().getStorageProvider());
         } else if (baseType == RendererFactory.class) {
-            return new RendererFactory(_configuration);
+            return new RendererFactory(getConfiguration());
         } else if (baseType == RowAnnotationFactory.class || baseType == RowAnnotationSampleContainer.class
                 || baseType == RowAnnotationHandler.class) {
             return _rowAnntationFactoryRef.get();
         } else if (baseType == RowAnnotation.class) {
             return _rowAnntationFactoryRef.get().createAnnotation();
         } else if (baseType == AnalyzerBeansConfiguration.class) {
-            if (_configuration instanceof AnalyzerBeansConfiguration) {
-                return _configuration;
+            if (getConfiguration() instanceof AnalyzerBeansConfiguration) {
+                return getConfiguration();
             } else {
                 return null;
             }
         } else if (baseType == DataCleanerConfiguration.class) {
-            return _configuration;
+            return getConfiguration();
         } else if (baseType == DataCleanerEnvironment.class) {
-            return _configuration.getEnvironment();
+            return getConfiguration().getEnvironment();
         } else if (baseType == DataCleanerHomeFolder.class) {
-            return _configuration.getHomeFolder();
+            return getConfiguration().getHomeFolder();
         } else if (baseType == TaskRunner.class) {
-            return _configuration.getEnvironment().getTaskRunner();
+            return getConfiguration().getEnvironment().getTaskRunner();
         } else if (baseType == AnalysisJob.class) {
             return _job;
         } else if (baseType == StringConverter.class) {
             // create a child injection manager (instead of using 'this') to
             // ensure that any wrapping/decoration is preserved
-            if (_configuration == null) {
+            if (getConfiguration() == null) {
                 return new StringConverter(this);
             }
-            return new StringConverter(_configuration, _job);
+            return new StringConverter(getConfiguration(), _job);
         } else if (baseType == ComponentContext.class) {
             final ComponentContext componentContext = new ComponentContextImpl(_job);
             return componentContext;
@@ -170,14 +177,14 @@ public class InjectionManagerImpl implements InjectionManager {
             if (injectionPoint.getAnnotation(Provided.class) != null && injectionPoint.isGenericType()) {
                 final Class<?> clazz1 = injectionPoint.getGenericTypeArgument(0);
                 if (baseType == List.class) {
-                    List<?> list = _configuration.getEnvironment().getStorageProvider().createList(clazz1);
+                    List<?> list = getConfiguration().getEnvironment().getStorageProvider().createList(clazz1);
                     return list;
                 } else if (baseType == Set.class) {
-                    Set<?> set = _configuration.getEnvironment().getStorageProvider().createSet(clazz1);
+                    Set<?> set = getConfiguration().getEnvironment().getStorageProvider().createSet(clazz1);
                     return set;
                 } else if (baseType == Map.class) {
                     Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
-                    Map<?, ?> map = _configuration.getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
+                    Map<?, ?> map = getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
                     return map;
                 }
             }

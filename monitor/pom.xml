@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor</artifactId>
 	<packaging>pom</packaging>
@@ -15,6 +15,7 @@
 		<module>widgets</module>
 		<module>extensions</module>
 		<module>ui</module>
+		<module>documentation</module>
 	</modules>
 
 	<build>
@@ -33,10 +34,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.1.1</version>
 				<executions>
 					<execution>
-						<id>enforce-versions</id>
+						<id>enforce-versions-monitor</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
@@ -44,7 +44,6 @@
 							<rules>
 								<bannedDependencies>
 									<excludes>
-										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>log4j:log4j</exclude>
 										<exclude>org.slf4j:slf4j-log4j12</exclude>
 									</excludes>
@@ -126,6 +125,10 @@
 					<exclusion>
 						<groupId>commons-logging</groupId>
 						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

@@ -30,12 +30,12 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.EncodingCategory;
 import org.datacleaner.data.MockInputColumn;
 
 @Named("XML decoder")
 @Description("Decodes XML content into plain text")
-@Categorized(StringManipulationCategory.class)
+@Categorized(EncodingCategory.class)
 public class XmlDecoderTransformer implements Transformer {
 
     @Configured

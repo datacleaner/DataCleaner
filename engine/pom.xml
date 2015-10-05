@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-engine</artifactId>
 	<packaging>pom</packaging>
@@ -11,9 +11,11 @@
 
 	<modules>
 		<module>core</module>
-		<module>utils</module>
 		<module>env</module>
+		<module>rest-client</module>
+		<module>utils</module>
 		<module>xml-config</module>
+		<module>remote-components</module>
 	</modules>
 
 </project>

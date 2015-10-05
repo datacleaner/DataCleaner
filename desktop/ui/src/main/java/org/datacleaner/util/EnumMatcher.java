@@ -24,7 +24,7 @@ package org.datacleaner.util;
  * 
  * @param <E>
  */
-public interface EnumMatcher<E extends Enum<?>> {
+public interface EnumMatcher<E> {
 
     public E suggestMatch(String string);
 

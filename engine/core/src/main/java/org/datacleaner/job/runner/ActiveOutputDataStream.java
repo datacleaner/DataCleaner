@@ -29,6 +29,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.util.ConcurrencyUtils;
 
 public class ActiveOutputDataStream implements Closeable {
 
@@ -68,10 +69,12 @@ public class ActiveOutputDataStream implements Closeable {
         _outputRowCollector = new OutputDataStreamRowCollector(_publisher, selectItems, consumeRowHandler);
         final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
         _component.initializeOutputDataStream(outputDataStream, query, _outputRowCollector);
+        
+        _publisher.getAnalysisListener().rowProcessingBegin(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics());
     }
 
     public void await() throws InterruptedException {
-        _countDownLatch.await();
+        ConcurrencyUtils.awaitCountDown(_countDownLatch, "stream: " + _outputDataStreamJob.getOutputDataStream());
     }
 
     @Override

@@ -134,7 +134,6 @@ public class DeleteTableRowAnalyzerTest {
         WriteDataResult result = deleteFromTable.getResult();
         assertThat(result.getUpdatesCount(), is(0));
         assertThat(result.getErrorRowCount(), is(1));
-        System.out.println(FileHelper.readFileAsString(file).replaceAll("\n", "\\[newline\\]"));
         assertThat(FileHelper
                 .readFileAsString(file).replaceAll("\n", "\\[newline\\]"), 
                 is(equalTo("foo,bar,extra1,update_table_error_message,extra2[newline]" + //

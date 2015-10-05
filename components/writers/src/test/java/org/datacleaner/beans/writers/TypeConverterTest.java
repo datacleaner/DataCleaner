@@ -156,7 +156,7 @@ public class TypeConverterTest {
 
         result = TypeConverter.convertType(dateValue, literalColumn);
         assertTrue(result instanceof String);
-        assertEquals("Fri Dec 21 00:00:00 CET 2012", result);
+        assertEquals(dateValue.toString(), result);
 
     }
 

@@ -316,7 +316,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private Component getDescriptionComponent() {
-        return DCHtmlBox.bright("This dialog is for setting credentials of users registered at " +
+        return new DCHtmlBox("This dialog is for setting credentials of users registered at " +
             "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>" +
             "Remote components are a cloud service providing new functions. " +
             "These remote components run at the server, consume provided input data and return the results. ");

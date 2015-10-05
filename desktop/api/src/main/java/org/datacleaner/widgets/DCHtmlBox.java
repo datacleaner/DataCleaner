@@ -41,19 +41,13 @@ public class DCHtmlBox extends JEditorPane {
     private static final String HTML_END_TAG = "</html>";
     private static final String CONTENT_TYPE_HTML = "text/html";
 
-    public static DCHtmlBox bright(String text) {
-        return new DCHtmlBox(text, WidgetUtils.BG_COLOR_BRIGHTEST);
-    }
-
-    public static DCHtmlBox dark(String text) {
-        return new DCHtmlBox(text, WidgetUtils.BG_COLOR_DARKEST);
-    }
-
-    public DCHtmlBox(String text, Color textColor) {
+    public DCHtmlBox(String text) {
         super();
 
         setEditorKit(JEditorPane.createEditorKitForContentType(this.CONTENT_TYPE_HTML));
         setEditable(false);
+        putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        setFont(WidgetUtils.FONT_NORMAL);
         addHyperlinkListener(new HyperlinkListener() {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -64,10 +58,6 @@ public class DCHtmlBox extends JEditorPane {
 
         if (text != null) {
             setText(text);
-        }
-
-        if (textColor != null) {
-            setForeground(textColor);
         }
     }
 

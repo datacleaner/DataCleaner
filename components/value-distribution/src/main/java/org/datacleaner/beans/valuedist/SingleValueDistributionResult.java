@@ -171,6 +171,10 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         }
         return _bottomValues;
     }
+    
+    public InputColumn<?>[] getHighlightedColumns() {
+        return _highlightedColumns;
+    }
 
     @Override
     public int getNullCount() {

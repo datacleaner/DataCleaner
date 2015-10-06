@@ -162,7 +162,7 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
      * @param valueCombinations
      * @param partialCrosstab
      */
-    public void addValueCombinationsCrosstabDimension(Map<ValueCombination<Number>, Number> valueCombinations,
+    public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombinations,
             final Crosstab<Number> partialCrosstab) {
 
         final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);

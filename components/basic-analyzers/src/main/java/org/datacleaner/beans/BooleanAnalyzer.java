@@ -57,7 +57,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
     public static final String MEASURE_ROW_COUNT = "Row count";
     public static final String DIMENSION_COLUMN = "Column";
     public static final String DIMENSION_MEASURE = "Measure";
-    public static final String DIMENSION_COMBINATION = "Combination ";
+    public static final String DIMENSION_COMBINATION_PREFIX = "Combination ";
 
     // comparator used to sort entries, getting the most frequent value
     // combinations to the top
@@ -185,7 +185,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
                 } else if (row + 1 == entries.size()) {
                     measureName = MEASURE_LEAST_FREQUENT;
                 } else {
-                    measureName =  DIMENSION_COMBINATION + row;
+                    measureName =  DIMENSION_COMBINATION_PREFIX + row;
                 }
                 measureDimension.addCategory(measureName);
 

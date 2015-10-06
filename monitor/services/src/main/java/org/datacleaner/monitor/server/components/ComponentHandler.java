@@ -37,23 +37,23 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
-import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
+import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -101,10 +101,6 @@ public class ComponentHandler {
         inputColumns = new HashMap<>();
         descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
                 .getTransformerDescriptorByDisplayName(_componentName);
-        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
-            LOGGER.info("Component {} is not allowed.", _componentName);
-            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
-        }
         table = new MutableTable("inputData");
         if(descriptor == null) {
             descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
@@ -112,6 +108,11 @@ public class ComponentHandler {
         }
         if (descriptor == null) {
             throw ComponentNotFoundException.createTypeNotFound(_componentName);
+        }
+
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", _componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
 
         component = (Component) descriptor.newInstance();

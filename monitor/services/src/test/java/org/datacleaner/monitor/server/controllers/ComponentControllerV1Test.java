@@ -28,8 +28,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -40,7 +38,7 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
-import org.datacleaner.monitor.configuration.RemoteComponentsConfigurationImpl;
+import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
@@ -64,7 +62,7 @@ public class ComponentControllerV1Test {
     @Before
     public void setUp() {
         componentControllerV1._tenantContextFactory = getTenantContextFactoryMock();
-        componentControllerV1._remoteComponentsConfiguration = new RemoteComponentsConfigurationImpl();
+        componentControllerV1._remoteComponentsConfiguration = new SimpleRemoteComponentsConfigurationImpl();
         componentControllerV1.init();
     }
 

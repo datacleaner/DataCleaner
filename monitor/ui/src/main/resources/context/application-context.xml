@@ -40,7 +40,6 @@
 	<import resource="classpath:context/scheduling-context.xml" />
 	<import resource="classpath:context/security-context.xml" />
 	<import resource="classpath:context/cluster-context.xml" />
-	<import resource="classpath:context/remote-config-context.xml" />
 
 	<!-- Extensions can put a context/extension-context.xml file in the JAR 
 		file to include additional Spring config. -->

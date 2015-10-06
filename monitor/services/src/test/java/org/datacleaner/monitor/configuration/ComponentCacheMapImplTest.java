@@ -73,7 +73,7 @@ public class ComponentCacheMapImplTest {
             }
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new RemoteComponentsConfigurationImpl());
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new SimpleRemoteComponentsConfigurationImpl());
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
@@ -105,7 +105,7 @@ public class ComponentCacheMapImplTest {
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new RemoteComponentsConfigurationImpl());
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new SimpleRemoteComponentsConfigurationImpl());
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 

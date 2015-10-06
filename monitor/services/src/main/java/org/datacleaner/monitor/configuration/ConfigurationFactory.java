@@ -92,7 +92,7 @@ public class ConfigurationFactory {
 
     @Bean(name = "published-components")
     public RemoteComponentsConfiguration createRemoteComponentsConfiguration() {
-        return new RemoteComponentsConfigurationImpl();
+        return new SimpleRemoteComponentsConfigurationImpl();
     }
 
     @Bean(name = "taskRunner", destroyMethod = "shutdown")

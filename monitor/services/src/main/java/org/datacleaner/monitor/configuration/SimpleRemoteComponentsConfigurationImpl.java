@@ -17,20 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
 package org.datacleaner.monitor.configuration;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
 
 /**
- * Class RemoteComponentsConfigurationHandler
- *
- * @author k.houzvicka
- * @since 18.9.15
+ * Class SimpleRemoteComponentsConfigurationImpl
  */
-public class RemoteComponentsConfHandler extends NamespaceHandlerSupport {
+public class SimpleRemoteComponentsConfigurationImpl implements RemoteComponentsConfiguration {
+
+    public SimpleRemoteComponentsConfigurationImpl() {
+    }
+
+
     @Override
-    public void init() {
-        registerBeanDefinitionParser("published-components", new RemoteComponentsConfBeanDefinitionParser());
+    public boolean isAllowed(ComponentDescriptor componentDescriptor) {
+        return true;
+    }
+
+    @Override
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor componentDescriptor) {
+        Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
+        return configuredProperties;
     }
 }

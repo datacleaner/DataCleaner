@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -157,7 +158,6 @@ import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
-import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.ReflectionUtils;
@@ -166,8 +166,6 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * Configuration reader that uses the JAXB model to read XML file based
@@ -182,7 +180,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
     private final Deque<String> _variablePathBuilder;
-    private UserPreferences _userPreferences = null;
 
     public JaxbConfigurationReader() {
         this(null);
@@ -200,10 +197,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } catch (JAXBException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public void setUserPreferences(UserPreferences userPreferences) {
-        _userPreferences = userPreferences;
     }
 
     @Override
@@ -413,25 +406,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
         RemoteComponentServerType server = providerElement.getServer();
-        String username = server.getUsername();
-        String password = server.getPassword();
-
-        if (_userPreferences != null) {
-            username = getFirstNonEmpty(_userPreferences.getRemoteComponentsUsername(), username);
-            password = getFirstNonEmpty(_userPreferences.getRemoteComponentsPassword(), password);
-        }
-
-        return new RemoteDescriptorProvider(server.getUrl(), username, password);
-    }
-
-    private String getFirstNonEmpty(String... allValues) {
-        for (String value : allValues) {
-            if (value != null && ! value.isEmpty()) {
-                return value;
-            }
-        }
-
-        return "";
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

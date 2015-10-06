@@ -23,7 +23,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -32,6 +36,11 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
+import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
+import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -45,6 +54,7 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -61,12 +71,14 @@ import org.slf4j.LoggerFactory;
 
 public class OptionsDialog extends AbstractWindow {
     private static final long serialVersionUID = 1L;
+    private static final String CONFIGURATION_FILE_RELATIVE_PATH = "datacleaner-home/conf.xml";
     private static final Logger logger = LoggerFactory.getLogger(OptionsDialog.class);
 
     private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
     private final DataCleanerConfiguration _configuration;
+    private DataCleanerConfigurationUpdater _configurationUpdater;
     private Timer _updateMemoryTimer;
 
     @Inject
@@ -76,6 +88,7 @@ public class OptionsDialog extends AbstractWindow {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
+        _configurationUpdater = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileURI());
         _tabbedPane = new CloseableTabbedPane(true);
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
@@ -100,6 +113,10 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.setUnclosableTab(3);
         _tabbedPane.setUnclosableTab(4);
         _tabbedPane.setUnclosableTab(5);
+    }
+
+    private URL getDataCleanerConfigurationFileURI() {
+        return ResourceManager.get().getUrl(OptionsDialog.CONFIGURATION_FILE_RELATIVE_PATH);
     }
 
     public void selectDatabaseDriversTab() {
@@ -287,14 +304,16 @@ public class OptionsDialog extends AbstractWindow {
         int cellSpan = 2;
         int rowSpan = 1;
         WidgetUtils.addToGridBag(getDescriptionComponent(), credentialsPanel, left, row, cellSpan, rowSpan);
+        RemoteComponentServerType remoteServer = getRemoteComponentsServer();
 
         row++;
         final JTextField usernameTextField = WidgetFactory.createTextField("username");
-        usernameTextField.setText(_userPreferences.getRemoteComponentsUsername());
+        usernameTextField.setText(remoteServer.getUsername());
         usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent e) {
-                _userPreferences.setRemoteComponentsUsername(usernameTextField.getText());
+                _configurationUpdater.update(
+                    "descriptor-providers:remote-components:server:username".split(":"), usernameTextField.getText());
             }
         });
         WidgetUtils.addToGridBag(new JLabel("Username"), credentialsPanel, left, row);
@@ -302,17 +321,39 @@ public class OptionsDialog extends AbstractWindow {
 
         row++;
         final JTextField passwordTextField = WidgetFactory.createPasswordField();
-        passwordTextField.setText(_userPreferences.getRemoteComponentsPassword());
+        passwordTextField.setText(remoteServer.getPassword());
         passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent e) {
-                _userPreferences.setRemoteComponentsPassword(passwordTextField.getText());
+                _configurationUpdater.update(
+                    "descriptor-providers:remote-components:server:password".split(":"), passwordTextField.getText());
             }
         });
         WidgetUtils.addToGridBag(new JLabel("Password"), credentialsPanel, left, row);
         WidgetUtils.addToGridBag(passwordTextField, credentialsPanel, right, row);
 
         return credentialsPanel;
+    }
+
+    private RemoteComponentServerType getRemoteComponentsServer() {
+        try {
+            InputStream inputStream = getDataCleanerConfigurationFileURI().openStream();
+            JaxbConfigurationReader jaxbConfigurationReader = new JaxbConfigurationReader();
+            Configuration configuration = jaxbConfigurationReader.unmarshall(inputStream);
+            List<Object> allProviders = configuration.getDescriptorProviders()
+                    .getCustomClassOrClasspathScannerOrRemoteComponents();
+
+            for (Object provider : allProviders) {
+                if (provider instanceof RemoteComponentsType) {
+                    return ((RemoteComponentsType) provider).getServer();
+                }
+            }
+        }
+        catch (IOException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return null;
     }
 
     private Component getDescriptionComponent() {

@@ -97,14 +97,6 @@ public interface UserPreferences {
 
     public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
 
-    public String getRemoteComponentsUsername();
-
-    public void setRemoteComponentsUsername(String username);
-
-    public String getRemoteComponentsPassword();
-
-    public void setRemoteComponentsPassword(String password);
-
     /**
      * Creates a HTTP client based on the user preferences with regard to
      * proxying and more.

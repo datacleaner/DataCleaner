@@ -84,7 +84,6 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         // load the configuration file
         final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
                 new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
-        configurationReader.setUserPreferences(userPreferences);
 
         boolean exists;
         try {

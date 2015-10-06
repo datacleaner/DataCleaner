@@ -62,8 +62,13 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsUrlChooser extends JComponent {
+
+    protected static final Logger logger = LoggerFactory.getLogger(HdfsUrlChooser.class);
+    
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
 
@@ -91,15 +96,22 @@ public class HdfsUrlChooser extends JComponent {
             }
 
             FileStatus fileStatus = (FileStatus) value;
-            final String directoryName = fileStatus.getPath().getName();
-            setText(directoryName);
+            
 
+            final String name;
             if (fileStatus.isDirectory()) {
                 setIcon(DIRECTORY_ICON);
-            } else {
+                name = fileStatus.getPath().getName();
+            } else if (fileStatus.isFile()) {
                 setIcon(FILE_ICON);
+                name = fileStatus.getPath().getName();
+            } else {
+                name = "..";
+                setIcon(LEVEL_UP_ICON);
             }
-
+            
+            setText(name);
+            
             return this;
         }
     }
@@ -272,6 +284,19 @@ public class HdfsUrlChooser extends JComponent {
                 fileStatuses = _fileSystem.listStatus(_currentDirectory);
                 // Natural ordering is the URL
                 Arrays.sort(fileStatuses);
+
+                // Add pointer to the parent directory
+                if (!_currentDirectory.isRoot()) {
+                    FileStatus[] newFileStatuses = new FileStatus[fileStatuses.length + 1];
+                    final FileStatus levelUp = new FileStatus();
+                    levelUp.setSymlink(_currentDirectory.getParent());
+                    newFileStatuses[0] = levelUp;
+                    
+                    for (int i = 0; i < fileStatuses.length; i++) {
+                        newFileStatuses[i + 1] = fileStatuses[i];
+                    }
+                    fileStatuses = newFileStatuses;
+                }
             } catch (IOException e) {
                 fileStatuses = new FileStatus[0];
             }
@@ -305,6 +330,7 @@ public class HdfsUrlChooser extends JComponent {
     public static final Icon DIRECTORY_ICON = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon FILE_ICON = UIManager.getIcon("FileView.fileIcon");
     public static final Icon COMPUTER_ICON = UIManager.getIcon("FileView.computerIcon");
+    public static final Icon LEVEL_UP_ICON = UIManager.getIcon("FileChooser.upFolderIcon");
 
     final static int space = 10;
     public static String HDFS_SCHEME = "hdfs";
@@ -349,7 +375,16 @@ public class HdfsUrlChooser extends JComponent {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     // Double-click detected
-                    _currentDirectory = _fileList.getModel().getElementAt(_fileList.getSelectedIndex()).getPath();
+                    final FileStatus element = _fileList.getModel().getElementAt(_fileList.getSelectedIndex());
+                    if (element.isSymlink()) {
+                        try {
+                            _currentDirectory = element.getSymlink();
+                        } catch (IOException e) {
+                            logger.warn("Could not get the symlink value for element {}", element, e);
+                        }
+                    } else {
+                        _currentDirectory = element.getPath();
+                    }
                     ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
                 }
             }

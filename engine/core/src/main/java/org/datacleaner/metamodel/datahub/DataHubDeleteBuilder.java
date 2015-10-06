@@ -16,7 +16,8 @@
  * Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
- */package org.datacleaner.metamodel.datahub;
+ */
+package org.datacleaner.metamodel.datahub;
 
 import java.util.List;
 
@@ -25,11 +26,19 @@ import org.apache.metamodel.delete.AbstractRowDeletionBuilder;
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.schema.Table;
 
-public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder{
+public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
 
-    
+    enum RecordType {
+        PERSON("P"), ORGANIZATION("O");
+        private String shortname;
+
+        RecordType(String shortname) {
+            this.shortname = shortname;
+        }
+    }
+
     private final DataHubUpdateCallback _callback;
-    
+
     public DataHubDeleteBuilder(DataHubUpdateCallback callback, Table table) {
         super(table);
         _callback = callback;
@@ -37,17 +46,33 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder{
 
     @Override
     public void execute() throws MetaModelException {
-        String grId = createDeleteData();
-        _callback.executeDelete(grId);
-        
+        List<FilterItem> whereItems = getWhereItems();
+        if (whereItems.size() != 1) {
+            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by id only)");
+        }
+        String columnName = whereItems.get(0).getSelectItem().getColumn().getName();
+        String id = (String) whereItems.get(0).getOperand();
+        if (columnName.equals("gr_id")) {
+            _callback.executeDeleteGoldenRecord(id);
+        } else if (columnName.equalsIgnoreCase("source_id")) {
+            _callback.executeDeleteSourceRecord(getSourceName(), id, getRecordType());
+        } else {
+            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by id)");            
+        }
     }
 
-    private String createDeleteData() {
-        List<FilterItem> whereItems = getWhereItems();
-        if (whereItems.size() != 1 || !"gr_id".equals(whereItems.get(0).getSelectItem().getColumn().getName())) {
-            throw new IllegalArgumentException("Updates are only allowed on individual records, identified by gr_id (golden record id)");
-        }
-        return (String) whereItems.get(0).getOperand();
+    private String getSourceName() {
+        //TODO currently the schema of the table always refers to the "GoldenRecords" schema. Should be fixed(?)
+        // We now get the correct schema name from the where item.
+        //return getTable().getSchema().getName();
+        String prefixedName = getWhereItems().get(0).getSelectItem().getColumn().getTable().getSchema().getName();
+        String[] parts = prefixedName.split("-");
+        return parts[parts.length - 1];
+    }
+
+    private String getRecordType() {
+        String tableName = getTable().getName();
+        return RecordType.valueOf(tableName.toUpperCase()).shortname;
     }
 
 }

@@ -63,7 +63,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCLabel;
 
-
 public class HdfsUrlChooser extends JComponent {
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
@@ -81,8 +80,7 @@ public class HdfsUrlChooser extends JComponent {
 
     static class HdfsFileListRenderer extends DefaultListCellRenderer {
 
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -131,8 +129,7 @@ public class HdfsUrlChooser extends JComponent {
     class ServerComboBoxRenderer extends DefaultListCellRenderer {
         IndentIcon ii = new IndentIcon();
 
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -351,10 +348,9 @@ public class HdfsUrlChooser extends JComponent {
         _fileList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-
                     // Double-click detected
-                     _currentDirectory = _fileList.getModel().getElementAt(_fileList.getSelectedIndex()).getPath();
-
+                    _currentDirectory = _fileList.getModel().getElementAt(_fileList.getSelectedIndex()).getPath();
+                    ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
                 }
             }
         });
@@ -370,11 +366,11 @@ public class HdfsUrlChooser extends JComponent {
         add(_fileList, BorderLayout.CENTER);
     }
 
-    public static URI showDialog(Component parent, URI currentUri, OpenType openType)
-            throws HeadlessException {
+    public static URI showDialog(Component parent, URI currentUri, OpenType openType) throws HeadlessException {
         final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
-            // Prevent to show second instance of _dialog if the previous one still exists
+            // Prevent to show second instance of _dialog if the previous one
+            // still exists
             return null;
         }
 

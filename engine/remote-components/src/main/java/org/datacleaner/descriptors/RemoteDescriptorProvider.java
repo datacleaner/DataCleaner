@@ -29,11 +29,8 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
-import org.datacleaner.restclient.Serializator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Provides descriptors of components that are available for remote calls on a DataCleaner Monitor server.
@@ -92,9 +89,10 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
             try {
                 logger.info("Loading remote components list from " + url);
-                // TODO: There is currently no "close" method in client, although Jersey client has "destroy" method.
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant, true);
+                client.close();
+
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {
                         RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(

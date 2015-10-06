@@ -57,4 +57,9 @@ public interface RESTClient {
      * @return
      */
     public String getResponse(HttpMethod httpMethod, String url, String requestBody);
+
+    /**
+     * It frees the resources.
+     */
+    public void close();
 }

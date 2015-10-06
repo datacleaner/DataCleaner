@@ -38,15 +38,25 @@ public class RESTClientImpl implements RESTClient {
     private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
 
     public RESTClientImpl(String username, String password) {
-        if(username == null) { username = ""; }
+        if (username == null) {
+            username = "";
+        }
+
         client = clientCache.get(username);
-        if(client == null) {
+
+        if (client == null) {
             client = Client.create();
+
             if (username != null && password != null) {
                 client.addFilter(new HTTPBasicAuthFilter(username, password));
             }
+
             clientCache.put(username, client);
         }
+    }
+
+    public void close() {
+        client.destroy();
     }
 
     /**

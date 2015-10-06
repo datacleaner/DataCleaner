@@ -27,6 +27,11 @@ package org.datacleaner.restclient;
  */
 public interface ComponentController {
     /**
+     * It frees the resources.
+     */
+    public void close();
+
+    /**
      * It returns a list of all components and their configurations (with/without icon data).
      * @param tenant
      * @param iconData

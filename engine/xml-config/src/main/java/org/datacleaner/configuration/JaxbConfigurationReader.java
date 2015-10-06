@@ -157,6 +157,7 @@ import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.ReflectionUtils;
@@ -181,6 +182,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
     private final Deque<String> _variablePathBuilder;
+    private UserPreferences _userPreferences = null;
 
     public JaxbConfigurationReader() {
         this(null);
@@ -198,6 +200,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } catch (JAXBException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public void setUserPreferences(UserPreferences userPreferences) {
+        _userPreferences = userPreferences;
     }
 
     @Override
@@ -373,7 +379,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof RemoteComponentsType) {
             return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
         } else {
-            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+            throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
     }
 
@@ -407,7 +413,25 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        String username = server.getUsername();
+        String password = server.getPassword();
+
+        if (_userPreferences != null) {
+            username = getFirstNonEmpty(_userPreferences.getRemoteComponentsUsername(), username);
+            password = getFirstNonEmpty(_userPreferences.getRemoteComponentsPassword(), password);
+        }
+
+        return new RemoteDescriptorProvider(server.getUrl(), username, password);
+    }
+
+    private String getFirstNonEmpty(String... allValues) {
+        for (String value : allValues) {
+            if (value != null && ! value.isEmpty()) {
+                return value;
+            }
+        }
+
+        return "";
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

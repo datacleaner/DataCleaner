@@ -35,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -339,6 +340,9 @@ public class HdfsUrlChooser extends JComponent {
     private FileSystem _fileSystem;
     private JDialog _dialog = null;
     private Path _currentDirectory;
+    private Path _selectedFile;
+
+    
 
     private HdfsComboBoxModel _directoryComboBoxModel = new HdfsComboBoxModel();
     private DCComboBox<Path> _pathsComboBox;
@@ -382,8 +386,12 @@ public class HdfsUrlChooser extends JComponent {
                         } catch (IOException e) {
                             logger.warn("Could not get the symlink value for element {}", element, e);
                         }
-                    } else {
+                    } else if (element.isDirectory()) {
                         _currentDirectory = element.getPath();
+                    } else if (element.isFile()) {
+                        _selectedFile = element.getPath();
+                        logger.info("Selected: " + _selectedFile);
+                        _dialog.dispose();
                     }
                     ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
                 }
@@ -429,7 +437,15 @@ public class HdfsUrlChooser extends JComponent {
             chooser.rescanServer();
         }
 
-        return chooser.getUri();
+        final Path selectedFile = chooser.getSelectedFile();
+        if (selectedFile != null) {
+            try {
+                return new URI(selectedFile.toString());
+            } catch (URISyntaxException e1) {
+                throw new IllegalStateException(e1);
+            }
+        } 
+        return null;
     }
 
     private void updateCurrentDirectory(final Path directory) {
@@ -476,6 +492,10 @@ public class HdfsUrlChooser extends JComponent {
     public URI getUri() {
         return _currentDirectory == null ? null : _currentDirectory.toUri();
     }
+    
+    public Path getSelectedFile() {
+        return _selectedFile;
+    }
 
     // Test
     public static void main(String[] args) {
@@ -488,14 +508,14 @@ public class HdfsUrlChooser extends JComponent {
         frame.setVisible(true);
 
         try {
-            HdfsUrlChooser.showDialog(frame, null, OpenType.LOAD);
+            URI selectedFile = HdfsUrlChooser.showDialog(frame, null, OpenType.LOAD);
+            System.out.println("Normal exit, selected file: " + selectedFile);
+            System.exit(0);
         } catch (Exception e) {
             System.err.println("Abnormal exit");
             e.printStackTrace(System.err);
             System.exit(1);
         }
 
-        System.out.println("Normal exit");
-        System.exit(0);
     }
 }

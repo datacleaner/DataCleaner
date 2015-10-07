@@ -493,7 +493,7 @@ public class HdfsUrlChooser extends JComponent {
         return _currentDirectory == null ? null : _currentDirectory.toUri();
     }
     
-    public Path getSelectedFile() {
+    private Path getSelectedFile() {
         return _selectedFile;
     }
 

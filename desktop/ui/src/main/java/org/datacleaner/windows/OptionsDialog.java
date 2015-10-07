@@ -300,39 +300,46 @@ public class OptionsDialog extends AbstractWindow {
         int left = 0;
         int right = 1;
         int row = 0;
-
         int cellSpan = 2;
         int rowSpan = 1;
+
         WidgetUtils.addToGridBag(getDescriptionComponent(), credentialsPanel, left, row, cellSpan, rowSpan);
+        final JTextField usernameTextField = WidgetFactory.createTextField("username");
+        usernameTextField.setName("username");
+        final JTextField passwordTextField = WidgetFactory.createPasswordField();
+        passwordTextField.setName("password");
         RemoteComponentServerType remoteServer = getRemoteComponentsServer();
 
+        if (remoteServer == null) {
+            usernameTextField.setEnabled(false);
+            passwordTextField.setEnabled(false);
+        }
+        else {
+            setupFieldForRemoteComponentsTab(usernameTextField, remoteServer.getUsername());
+            setupFieldForRemoteComponentsTab(passwordTextField, remoteServer.getPassword());
+        }
+
         row++;
-        final JTextField usernameTextField = WidgetFactory.createTextField("username");
-        usernameTextField.setText(remoteServer.getUsername());
-        usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
-                _configurationUpdater.update(
-                    "descriptor-providers:remote-components:server:username".split(":"), usernameTextField.getText());
-            }
-        });
         WidgetUtils.addToGridBag(new JLabel("Username"), credentialsPanel, left, row);
         WidgetUtils.addToGridBag(usernameTextField, credentialsPanel, right, row);
 
         row++;
-        final JTextField passwordTextField = WidgetFactory.createPasswordField();
-        passwordTextField.setText(remoteServer.getPassword());
-        passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
-                _configurationUpdater.update(
-                    "descriptor-providers:remote-components:server:password".split(":"), passwordTextField.getText());
-            }
-        });
         WidgetUtils.addToGridBag(new JLabel("Password"), credentialsPanel, left, row);
         WidgetUtils.addToGridBag(passwordTextField, credentialsPanel, right, row);
 
         return credentialsPanel;
+    }
+
+    private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
+        textField.setText(value);
+        textField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent e) {
+                String fieldName = textField.getName();
+                String[] nodePath = ("descriptor-providers:remote-components:server:" + fieldName).split(":");
+                _configurationUpdater.update(nodePath, textField.getText());
+            }
+        });
     }
 
     private RemoteComponentServerType getRemoteComponentsServer() {

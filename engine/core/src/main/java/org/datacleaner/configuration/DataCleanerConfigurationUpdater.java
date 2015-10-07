@@ -37,10 +37,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * Class for updating values (content of tags) in the XML configuration file (conf.xml).
+ * It does not create new tags nor removes any.
  */
 public class DataCleanerConfigurationUpdater {
-    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationUpdater.class);
     private String configurationFilePath = null;
     private Document document = null;

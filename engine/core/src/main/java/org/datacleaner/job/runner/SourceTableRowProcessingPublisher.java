@@ -140,12 +140,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
                     logger.debug("Base query for row processing: {}", baseQuery);
 
-                    final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(getConsumers());
-                    final List<RowProcessingConsumer> sortedConsumers = sorter.createProcessOrderedConsumerList();
-
                     // try to optimize
                     final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore,
-                            sortedConsumers, baseQuery);
+                            getConsumersSorted(), baseQuery);
 
                     return optimizer;
                 } catch (RuntimeException e) {

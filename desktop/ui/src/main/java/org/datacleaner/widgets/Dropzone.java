@@ -115,10 +115,12 @@ public class Dropzone extends DCPanel {
             public void mouseClicked(MouseEvent e) {
                 URI selectedFile = HdfsUrlChooser.showDialog(dropZone, null, OpenType.LOAD);
                 logger.info("Selected HDFS file: " + selectedFile);
-
-                final Datastore datastore = new CsvDatastore(selectedFile.getPath(), new HdfsResource(selectedFile
-                        .toString()));
-                _datastoreSelectListener.datastoreSelected(datastore);
+                
+                if (selectedFile != null) {
+                    final Datastore datastore = new CsvDatastore(selectedFile.getPath(), new HdfsResource(selectedFile
+                            .toString()));
+                    _datastoreSelectListener.datastoreSelected(datastore);
+                }
             }
 
         });

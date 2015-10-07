@@ -144,6 +144,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
                 final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
                         .addAnalyzer(analyzerClass);
+
                 analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
 
                 final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());

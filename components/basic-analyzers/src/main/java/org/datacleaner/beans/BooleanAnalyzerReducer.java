@@ -159,10 +159,10 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
      * Gather the sum of all possible value combinations of the partial
      * crosstabs
      * 
-     * @param valueCombinationList
+     * @param valueCombMapList
      * @param partialCrosstab
      */
-    public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombinationList,
+    public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombMapList,
             final Crosstab<Number> partialCrosstab) {
 
         final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
@@ -187,12 +187,13 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
                     BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY);
             final Number frequency = where.safeGet(null);
             final Number frequencyVal = frequency != null ? frequency : 0;
-            final ValueCombination<Number> valueCombination = new ValueCombination<Number>(values);
-            final Number combination = valueCombinationList.get(valueCombination);
+            final ValueCombination<Number> valComb = new ValueCombination<Number>(values);
+            final Number combination = valueCombMapList.get(valComb);
             if (combination == null) {
-                valueCombinationList.put(valueCombination, frequencyVal);
+                valueCombMapList.put(valComb, frequencyVal);
             } else {
-                valueCombinationList.replace(valueCombination, CrosstabReducerHelper.sum(combination, frequencyVal));
+                final Number newValue = CrosstabReducerHelper.sum(combination, frequencyVal);
+                valueCombMapList.put(valComb, newValue);
             }
         }
     }

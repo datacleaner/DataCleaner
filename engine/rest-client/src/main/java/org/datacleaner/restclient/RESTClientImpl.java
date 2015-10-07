@@ -55,10 +55,6 @@ public class RESTClientImpl implements RESTClient {
         }
     }
 
-    public void close() {
-        client.destroy();
-    }
-
     /**
      * It returns the response for the given request.
      *

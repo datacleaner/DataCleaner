@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.List;
@@ -54,7 +55,6 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
-import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -71,7 +71,6 @@ import org.slf4j.LoggerFactory;
 
 public class OptionsDialog extends AbstractWindow {
     private static final long serialVersionUID = 1L;
-    private static final String CONFIGURATION_FILE_RELATIVE_PATH = "datacleaner-home/conf.xml";
     private static final Logger logger = LoggerFactory.getLogger(OptionsDialog.class);
 
     private final ImageManager imageManager = ImageManager.get();
@@ -116,7 +115,15 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private URL getDataCleanerConfigurationFileURI() {
-        return ResourceManager.get().getUrl(OptionsDialog.CONFIGURATION_FILE_RELATIVE_PATH);
+        try {
+            String path = "file://" + _configuration.getHomeFolder().toFile().getAbsolutePath() + "/conf.xml";
+
+            return new URL(path);
+        } catch (MalformedURLException e) {
+            logger.warn("Configuration file was not found: " + e.getMessage());
+        }
+
+        return null;
     }
 
     public void selectDatabaseDriversTab() {

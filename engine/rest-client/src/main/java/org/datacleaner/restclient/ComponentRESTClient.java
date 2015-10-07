@@ -33,10 +33,6 @@ public class ComponentRESTClient implements ComponentController {
         restClient = new RESTClientImpl(username, password);
     }
 
-    public void close() {
-        restClient.close();
-    }
-
     public ComponentList getAllComponents(final String tenant, final boolean iconData) {
         this.tenantName = tenant;
         String response = call(RESTClient.HttpMethod.GET, getURL("?iconData=" + iconData), "");

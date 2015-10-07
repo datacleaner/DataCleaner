@@ -91,7 +91,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 logger.info("Loading remote components list from " + url);
                 ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 ComponentList components = client.getAllComponents(tenant, true);
-                client.close();
 
                 for(ComponentList.ComponentInfo component: components.getComponents()) {
                     try {

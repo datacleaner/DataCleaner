@@ -132,7 +132,7 @@ public class CrosstabReducerHelper {
         return new BigDecimal(n1.doubleValue()).add(new BigDecimal(n2.doubleValue()));
     }
 
-    public static Number substract(Number n1, Number n2) {
+    public static Number subtract(Number n1, Number n2) {
         if (isIntegerType(n1) && isIntegerType(n2)) {
             return BigInteger.valueOf(n1.longValue()).subtract(BigInteger.valueOf(n2.longValue()));
         }

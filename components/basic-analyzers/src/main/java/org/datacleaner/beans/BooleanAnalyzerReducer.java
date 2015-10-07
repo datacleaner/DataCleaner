@@ -42,7 +42,7 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
         @Override
         public int compare(Entry<ValueCombination<Number>, Number> o1, Entry<ValueCombination<Number>, Number> o2) {
 
-            Number result = CrosstabReducerHelper.substract(o2.getValue(), o1.getValue());
+            Number result = CrosstabReducerHelper.subtract(o2.getValue(), o1.getValue());
             if (result.intValue() == 0) {
                 result = o2.getKey().compareTo(o1.getKey());
             }
@@ -159,10 +159,10 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
      * Gather the sum of all possible value combinations of the partial
      * crosstabs
      * 
-     * @param valueCombinations
+     * @param valueCombinationList
      * @param partialCrosstab
      */
-    public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombinations,
+    public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombinationList,
             final Crosstab<Number> partialCrosstab) {
 
         final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
@@ -188,11 +188,11 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
             final Number frequency = where.safeGet(null);
             final Number frequencyVal = frequency != null ? frequency : 0;
             final ValueCombination<Number> valueCombination = new ValueCombination<Number>(values);
-            final Number combination = valueCombinations.get(valueCombination);
+            final Number combination = valueCombinationList.get(valueCombination);
             if (combination == null) {
-                valueCombinations.put(valueCombination, frequencyVal);
+                valueCombinationList.put(valueCombination, frequencyVal);
             } else {
-                valueCombinations.replace(valueCombination, CrosstabReducerHelper.sum(combination, frequencyVal));
+                valueCombinationList.replace(valueCombination, CrosstabReducerHelper.sum(combination, frequencyVal));
             }
         }
     }

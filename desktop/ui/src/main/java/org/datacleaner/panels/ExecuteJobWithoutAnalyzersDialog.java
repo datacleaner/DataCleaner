@@ -151,7 +151,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
                 final FileResource resource = createResource("datacleaner-" + formattedDate + "-output",
                         filenameExtension);
-                if (filenameExtension.equals(".xls") || filenameExtension.equals(".xlsx")) {
+                if (analyzerClass == CreateExcelSpreadsheetAnalyzer.class) {
                     final File file = resource.getFile();
                     analyzer.setConfiguredProperty("File", file);
                 } else {
@@ -189,7 +189,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
             }
 
             final File file = new File(directory, filename);
-            FileResource resourceCandidate = new FileResource(file);
+            final FileResource resourceCandidate = new FileResource(file);
             if (!resourceCandidate.isExists()) {
                 return resourceCandidate;
             }

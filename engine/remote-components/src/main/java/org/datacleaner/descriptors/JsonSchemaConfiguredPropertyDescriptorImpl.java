@@ -19,39 +19,43 @@
  */
 package org.datacleaner.descriptors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.*;
-import org.datacleaner.api.Converter;
-import org.datacleaner.components.remote.RemoteTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.BooleanSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
+
 /**
- * Property descriptor for properties of RemoteTransformer, which has no appropriate class on the client side.
- * (Class is available only on server, but is not part of standard DataCleaner installation).
- * The data type of the property is represented by Json Schema. Special care was taken to support enumerations.
+ * Property descriptor for properties of RemoteTransformer, which has no
+ * appropriate class on the client side. (Class is available only on server, but
+ * is not part of standard DataCleaner installation). The data type of the
+ * property is represented by Json Schema. Special care was taken to support
+ * enumerations.
  *
  * @Since 9/1/15
  */
-public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor implements EnumerationProvider {
+public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor
+        implements EnumerationProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaConfiguredPropertyDescriptorImpl.class);
+    private static final long serialVersionUID = 1L;
 
-    private JsonSchema schema;
-    private boolean isInputColumn;
+    private final JsonSchema schema;
+    private final boolean isInputColumn;
     private boolean isArray;
-    private Class baseType;
+    private Class<?> baseType;
     private EnumerationValue[] enumValues;
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn, String description, boolean required, ComponentDescriptor component, Map<Class<Annotation>, Annotation> annotations, JsonNode defaultValue) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn,
+            String description, boolean required, ComponentDescriptor<?> component,
+            Map<Class<? extends Annotation>, Annotation> annotations, JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);
         this.schema = schema;
         this.isInputColumn = isInputColumn;
@@ -62,29 +66,29 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
         isArray = schema.isArraySchema();
         JsonSchema baseSchema;
 
-        if(isArray) {
-            baseSchema = ((ArraySchema)schema).getItems().asSingleItems().getSchema();
+        if (isArray) {
+            baseSchema = ((ArraySchema) schema).getItems().asSingleItems().getSchema();
         } else {
             baseSchema = schema;
         }
 
         enumValues = new EnumerationValue[0]; // default
-        if(baseSchema instanceof ValueTypeSchema) {
-            Set<String> enums = ((ValueTypeSchema)baseSchema).getEnums();
-            if(enums != null && !enums.isEmpty()) {
+        if (baseSchema instanceof ValueTypeSchema) {
+            Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
+            if (enums != null && !enums.isEmpty()) {
                 enumValues = new EnumerationValue[enums.size()];
                 int i = 0;
-                for(String value: enums) {
+                for (String value : enums) {
                     String enumValue, enumName;
                     int idx = value.indexOf("::");
-                    if(idx >= 0) {
+                    if (idx >= 0) {
                         enumValue = value.substring(0, idx);
-                        enumName = value.substring(idx+2);
+                        enumName = value.substring(idx + 2);
                     } else {
                         enumValue = value;
                         enumName = value;
                     }
-                    if(enumName.trim().isEmpty()) {
+                    if (enumName.trim().isEmpty()) {
                         enumName = value;
                     }
 
@@ -96,9 +100,10 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
         // must be called after enums are initialized
         baseType = schemaToJavaType(baseSchema);
     }
+
     @Override
     public Class<?> getType() {
-        if(isArray()) {
+        if (isArray()) {
             return Array.newInstance(getBaseType(), 0).getClass();
         }
         return baseType;
@@ -118,15 +123,24 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     public boolean isInputColumn() {
         return isInputColumn;
     }
+
     private Class<?> schemaToJavaType(JsonSchema schema) {
         // try to convert
-        if(isEnum()) {
+        if (isEnum()) {
             return EnumerationValue.class;
         }
-        if(schema instanceof StringSchema) { return String.class; }
-        if(schema instanceof IntegerSchema) { return Integer.class; }
-        if(schema instanceof BooleanSchema) { return Boolean.class; }
-        if(schema instanceof NumberSchema) { return Double.class; }
+        if (schema instanceof StringSchema) {
+            return String.class;
+        }
+        if (schema instanceof IntegerSchema) {
+            return Integer.class;
+        }
+        if (schema instanceof BooleanSchema) {
+            return Boolean.class;
+        }
+        if (schema instanceof NumberSchema) {
+            return Double.class;
+        }
         // fallback
         return JsonNode.class;
     }

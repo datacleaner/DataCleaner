@@ -72,11 +72,17 @@ public interface RowProcessingPublisher {
      * @param finishedTaskListener
      *            a task listener which will be invoked once the processing is
      *            done.
+     * @return a boolean indicating whether or not the
+     *         {@link RowProcessingPublisher} was ready to start processing. If
+     *         false is returned it is typically because some dependent
+     *         {@link RowProcessingPublisher}s should be run first in which case
+     *         the call to {@link #runRowProcessing(Queue, TaskListener)} should
+     *         be repeated again when other publishers have run.
      * 
      * @see #processRows(RowProcessingMetrics)
      * @see #initializeConsumers(TaskListener)
      */
-    public void runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener);
+    public boolean runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener);
 
     /**
      * Initializes consumers of this {@link RowProcessingPublisher}.

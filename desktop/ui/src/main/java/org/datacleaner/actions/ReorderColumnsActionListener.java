@@ -42,24 +42,28 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.datacleaner.widgets.table.DCTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReorderColumnsActionListener implements ActionListener {
 
+    public static interface ReorderColumnsCallback {
+        public InputColumn<?>[] getColumns();
+        public void reorderColumns(InputColumn<?>[] newValue);
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(ReorderColumnsActionListener.class);
 
-    private final MultipleInputColumnsPropertyWidget _propertyWidget;
+    private final ReorderColumnsCallback _callback;
 
-    public ReorderColumnsActionListener(MultipleInputColumnsPropertyWidget propertyWidget) {
-        _propertyWidget = propertyWidget;
+    public ReorderColumnsActionListener(ReorderColumnsCallback callback) {
+        _callback = callback;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        InputColumn<?>[] currentValue = _propertyWidget.getValue();
+        InputColumn<?>[] currentValue = _callback.getColumns();
         if (currentValue == null || currentValue.length == 0) {
             WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.");
             return;
@@ -186,6 +190,6 @@ public class ReorderColumnsActionListener implements ActionListener {
         logger.info("Saving reordered columns: {}", list);
 
         final InputColumn<?>[] newValue = list.toArray(new InputColumn[list.size()]);
-        _propertyWidget.reorderValue(newValue);
+        _callback.reorderColumns(newValue);
     }
 }

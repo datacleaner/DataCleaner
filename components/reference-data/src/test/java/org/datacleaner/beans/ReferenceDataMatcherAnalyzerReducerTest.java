@@ -141,7 +141,7 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
         partialsResults.add(partialResult2);
         partialsResults.add(partialResult3);
 
-        final ReferenceDataMatcherAnalyzerReducer reducer = new ReferenceDataMatcherAnalyzerReducer();
+        final BooleanAnalyzerReducer reducer = new BooleanAnalyzerReducer();
         final BooleanAnalyzerResult reducedResult = reducer.reduce(partialsResults);
 
         // Assert the reduced values

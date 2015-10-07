@@ -54,6 +54,7 @@ import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
 
+@SuppressWarnings("deprecation")
 public class AnalysisJobBuilderTest extends TestCase {
 
     private AnalysisJobBuilder analysisJobBuilder;

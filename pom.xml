@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sshwagon.version>2.6</sshwagon.version>
+		
+		<!-- Maven plugin versions -->
 		<javadoc.version>2.9.1</javadoc.version>
+		
+		<!-- Dependency versions -->
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
@@ -28,7 +30,7 @@
 		<javax.jsp.version>2.0</javax.jsp.version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
-		<jersy.version>1.19</jersy.version>
+		<jersey.version>1.19</jersey.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -40,7 +42,7 @@
 
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>4.1-SNAPSHOT</version>
+	<version>4.5-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
@@ -49,7 +51,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
-		<module>standard-components</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -436,15 +437,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
-		<extensions>
-			<extension>
-				<!-- Provide support for scp based deployment of site -->
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>${sshwagon.version}</version>
-			</extension>
-		</extensions>
 
 		<pluginManagement>
 			<plugins>
@@ -1136,12 +1128,12 @@
 			<dependency>
 				<groupId>com.sun.jersey</groupId>
 				<artifactId>jersey-client</artifactId>
-				<version>${jersy.version}</version>
+				<version>${jersey.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.jersey</groupId>
 				<artifactId>jersey-core</artifactId>
-				<version>${jersy.version}</version>
+				<version>${jersey.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->

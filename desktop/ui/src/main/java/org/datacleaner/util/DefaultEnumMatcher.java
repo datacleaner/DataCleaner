@@ -48,6 +48,10 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
     private final Map<String, EnumerationValue> _exactMatchesMap;
 
+    public DefaultEnumMatcher(Class<? extends Enum<?>> enumClass) {
+        this(EnumerationValue.providerFromEnumClass(enumClass));
+    }
+
     public DefaultEnumMatcher(EnumerationProvider enumProvider) {
         _exactMatchesMap = new HashMap<String, EnumerationValue>();
 

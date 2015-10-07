@@ -140,12 +140,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
                     logger.debug("Base query for row processing: {}", baseQuery);
 
-                    final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(getConsumers());
-                    final List<RowProcessingConsumer> sortedConsumers = sorter.createProcessOrderedConsumerList();
-
                     // try to optimize
                     final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore,
-                            sortedConsumers, baseQuery);
+                            getConsumersSorted(), baseQuery);
 
                     return optimizer;
                 } catch (RuntimeException e) {
@@ -196,6 +193,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         } else {
             idGenerator = new SimpleRowIdGenerator(finalQuery.getFirstRow());
         }
+        
+        analysisListener.rowProcessingBegin(getAnalysisJob(), rowProcessingMetrics);
 
         final ConsumeRowHandler consumeRowHandler = createConsumeRowHandler();
 
@@ -249,7 +248,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     }
 
     @Override
-    protected void runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
+    protected boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
         final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
                 getTaskRunner(), postProcessingTasks);
 
@@ -259,10 +258,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         final TaskListener initFinishedListener = new RunNextTaskTaskListener(getTaskRunner(), runTask,
                 runCompletionListener);
 
-        final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(getTaskRunner(),
-                new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
-
         // kick off the initialization
-        initializeConsumers(consumerInitFinishedListener);
+        initializeConsumers(initFinishedListener);
+        
+        return true;
     }
 }

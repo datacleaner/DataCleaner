@@ -20,6 +20,8 @@
 package org.datacleaner.job.runner;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.metamodel.schema.Table;
@@ -143,9 +145,31 @@ final class AnalysisRunnerJobDelegate {
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
         logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
 
-        for (RowProcessingPublisher rowProcessingPublisher : rowProcessingPublishers) {
-            logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
-            rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);
+        dispatchWhenReady(rowProcessingPublishers, rowProcessorPublishersDoneCompletionListener);
+    }
+
+    private void dispatchWhenReady(final Collection<RowProcessingPublisher> rowProcessingPublishers,
+            final TaskListener rowProcessorPublishersDoneCompletionListener) {
+        final LinkedList<RowProcessingPublisher> remainingRowProcessingPublishers = new LinkedList<>(
+                rowProcessingPublishers);
+
+        while (!remainingRowProcessingPublishers.isEmpty()) {
+            boolean progressThisIteration = false;
+
+            for (Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext();) {
+                final RowProcessingPublisher rowProcessingPublisher = it.next();
+                final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
+                        rowProcessorPublishersDoneCompletionListener);
+                if (started) {
+                    logger.debug("Scheduled row processing publisher: {}", rowProcessingPublisher);
+                    it.remove();
+                    progressThisIteration = true;
+                }
+            }
+
+            if (!progressThisIteration) {
+                _taskRunner.assistExecution();
+            }
         }
     }
 
@@ -173,18 +197,20 @@ final class AnalysisRunnerJobDelegate {
     private void validateSingleTableInput(final SourceColumnFinder sourceColumnFinder,
             final Collection<? extends ComponentJob> componentJobs) {
         for (ComponentJob componentJob : componentJobs) {
-            Table originatingTable = null;
-            final InputColumn<?>[] input = componentJob.getInput();
+            if (!componentJob.getDescriptor().isMultiStreamComponent()) {
+                Table originatingTable = null;
+                final InputColumn<?>[] input = componentJob.getInput();
 
-            for (InputColumn<?> inputColumn : input) {
-                final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
-                if (table != null) {
-                    if (originatingTable == null) {
-                        originatingTable = table;
-                    } else {
-                        if (!originatingTable.equals(table)) {
-                            throw new IllegalArgumentException("Input columns in " + componentJob
-                                    + " originate from different tables");
+                for (InputColumn<?> inputColumn : input) {
+                    final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
+                    if (table != null) {
+                        if (originatingTable == null) {
+                            originatingTable = table;
+                        } else {
+                            if (!originatingTable.equals(table)) {
+                                throw new IllegalArgumentException("Input columns in " + componentJob
+                                        + " originate from different tables");
+                            }
                         }
                     }
                 }

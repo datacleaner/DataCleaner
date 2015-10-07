@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
 public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
-
+    
     private final Charset charset = Charset.forName("UTF-8");
 
     private final CloseableHttpClient _httpClient;
@@ -122,18 +122,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         context.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
         context.setRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build());
 
-        final String ticketGrantingTicket;
-        try {
-            ticketGrantingTicket = _ticketGrantingTicketRef.get();
-        } catch (IllegalStateException e) {
-            if (e.getCause() instanceof SSLPeerUnverifiedException) {
-                // Unverified SSL peer exceptions needs to be rethrown
-                // specifically, since they can be caught and the user may
-                // decide to remove certificate checks.
-                throw (SSLPeerUnverifiedException) e.getCause();
-            }
-            throw e;
-        }
+        final String ticketGrantingTicket = retrieveTicketGrantingTicket();
 
         final String ticket = getTicket(_requestedService, _casRestServiceUrl, ticketGrantingTicket, context);
         logger.debug("Got a service ticket: {}", ticketGrantingTicket);
@@ -147,13 +136,39 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());
 
+        addSecurityHeaders(request);
+        
         final HttpResponse result = executeHttpRequest(request, context);
         logger.debug("Cookies 4: {}", cookieStore.getCookies());
 
         return result;
     }
 
-    public String getTicket(final String requestedService, final String casServiceUrl,
+    protected String retrieveTicketGrantingTicket() throws Exception {
+        try {
+            return _ticketGrantingTicketRef.get();
+        } catch (IllegalStateException e) {
+            if (e.getCause() instanceof SSLPeerUnverifiedException) {
+                // Unverified SSL peer exceptions needs to be rethrown
+                // specifically, since they can be caught and the user may
+                // decide to remove certificate checks.
+                throw (SSLPeerUnverifiedException) e.getCause();
+            }
+            throw e;
+        }        
+    }
+    
+    /**
+     * Override this method to add extra security headers when needed.
+     * 
+     * @param request The request.
+     * @throws Exception Adding the headers resulted in a problem.
+     */
+    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+        // Nothing to do...
+    }
+    
+    protected String getTicket(final String requestedService, final String casServiceUrl,
             final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
@@ -167,12 +182,12 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         return ticket;
     }
 
-    private HttpResponse executeHttpRequest(HttpUriRequest req, HttpContext context) throws IOException {
+    protected HttpResponse executeHttpRequest(HttpUriRequest req, HttpContext context) throws IOException {
         logger.debug("Executing HTTP request: {}", req);
         return _httpClient.execute(req, context);
     }
 
-    public String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
+    private String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
         final HttpPost ticketServiceRequest = new HttpPost(casServiceUrl);
         ticketServiceRequest.setEntity(new StringEntity("username=" + _username + "&password=" + _password));
         final HttpResponse casResponse = executeHttpRequest(ticketServiceRequest, null);
@@ -263,5 +278,21 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         }
         
         FileHelper.safeClose(_httpClient);
+    }
+
+    /**
+     * Returns the CAS server URL
+     * @return the CAS Server Url
+     */
+    protected String getCasServerUrl() {
+        return _casServerUrl;
+    }
+    
+    /**
+     * Returns the user name.
+     * @return The username.
+     */
+    protected String getUsername() {
+        return _username;
     }
 }

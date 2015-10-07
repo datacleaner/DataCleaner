@@ -731,6 +731,15 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
+    public AnalysisJobBuilder getOutputDataStreamJobBuilder(String outputDataStreamName) {
+        final OutputDataStream outputDataStream = getOutputDataStream(outputDataStreamName);
+        if (outputDataStream == null) {
+            throw new IllegalArgumentException("No such OutputDataStream: " + outputDataStreamName);
+        }
+        return getOutputDataStreamJobBuilder(outputDataStream);
+    }
+
+    @Override
     public AnalysisJobBuilder getOutputDataStreamJobBuilder(OutputDataStream outputDataStream) {
         AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
         if (analysisJobBuilder == null) {

@@ -34,6 +34,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class ComponentStoreHolder implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private long timeout;
     private long useTimestamp;
     private CreateInput createInput;
@@ -91,7 +93,7 @@ public class ComponentStoreHolder implements Serializable {
         this.componentName = componentName;
     }
 
-    public void updateTimeStamp(){
+    public void updateTimestamp(){
         useTimestamp = System.currentTimeMillis();
     }
 

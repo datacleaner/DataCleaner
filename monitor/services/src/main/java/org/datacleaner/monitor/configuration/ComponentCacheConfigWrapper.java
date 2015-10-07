@@ -29,7 +29,6 @@ public class ComponentCacheConfigWrapper {
     private String tenantName;
 
     private ComponentStoreHolder componentStoreHolder;
-
     private ComponentHandler handler;
 
     public ComponentCacheConfigWrapper() {
@@ -39,7 +38,7 @@ public class ComponentCacheConfigWrapper {
         this.tenantName = tenantName;
         this.componentStoreHolder = componentStoreHolder;
         this.handler = handler;
-        componentStoreHolder.updateTimeStamp();
+        componentStoreHolder.updateTimestamp();
     }
 
     public String getTenantName() {
@@ -67,7 +66,7 @@ public class ComponentCacheConfigWrapper {
     }
 
     public void updateTimeStamp(){
-        componentStoreHolder.updateTimeStamp();
+        componentStoreHolder.updateTimestamp();
     }
 
     /**

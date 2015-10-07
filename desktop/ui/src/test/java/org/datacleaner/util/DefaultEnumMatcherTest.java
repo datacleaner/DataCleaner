@@ -84,7 +84,7 @@ public class DefaultEnumMatcherTest extends TestCase {
     }
 
     public void testDontMatchTooEager() throws Exception {
-        final DefaultEnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(ColumnMeaning.class));
+        final DefaultEnumMatcher matcher = new DefaultEnumMatcher(ColumnMeaning.class);
 
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone no").asJavaEnum());
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone ID").asJavaEnum());

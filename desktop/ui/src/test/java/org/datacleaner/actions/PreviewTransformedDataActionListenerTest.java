@@ -28,6 +28,8 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -60,14 +62,27 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
-        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(
-                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("orderdb");
         analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.EMAIL");
         emailTransformerBuilder = analysisJobBuilder.addTransformer(EmailStandardizerTransformer.class);
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
+    }
+
+    public void testJobWithMaxRowsFilter() throws Exception {
+        FilterComponentBuilder<MaxRowsFilter, Category> filter = analysisJobBuilder.addFilter(MaxRowsFilter.class);
+        filter.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
+        filter.getComponentInstance().setMaxRows(5);
+
+        emailTransformerBuilder.setRequirement(filter, Category.VALID);
+
+        PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null,
+                emailTransformerBuilder);
+        TableModel tableModel = action.call();
+        assertEquals(5, tableModel.getRowCount());
     }
 
     public void testSingleTransformer() throws Exception {

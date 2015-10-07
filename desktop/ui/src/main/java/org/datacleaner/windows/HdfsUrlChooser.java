@@ -26,6 +26,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -45,6 +46,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -108,6 +110,7 @@ public class HdfsUrlChooser extends JComponent {
                 name = fileStatus.getPath().getName();
             } else {
                 name = "..";
+                
                 setIcon(LEVEL_UP_ICON);
             }
             
@@ -331,7 +334,7 @@ public class HdfsUrlChooser extends JComponent {
     public static final Icon DIRECTORY_ICON = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon FILE_ICON = UIManager.getIcon("FileView.fileIcon");
     public static final Icon COMPUTER_ICON = UIManager.getIcon("FileView.computerIcon");
-    public static final Icon LEVEL_UP_ICON = UIManager.getIcon("FileChooser.upFolderIcon");
+    public static final Icon LEVEL_UP_ICON = UIManager.getLookAndFeelDefaults().getIcon("FileChooser.upFolderIcon");
 
     final static int space = 10;
     public static String HDFS_SCHEME = "hdfs";

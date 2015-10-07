@@ -93,9 +93,7 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
             }
         }
         // create a new measure dimension for Value Combination crosstab
-        if (valueCombinations != null && columnValueCombinationCrosstabDimensions != null) {
-            createMeasureDimensionValueCombinationCrosstab(valueCombinations, newResultColumnValueCombination);
-        }
+        createMeasureDimensionValueCombinationCrosstab(valueCombinations, newResultColumnValueCombination);
 
         return new BooleanAnalyzerResult(newResultColumnStatistics, newResultColumnValueCombination);
 

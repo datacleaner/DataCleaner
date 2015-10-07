@@ -41,7 +41,7 @@ public class ComponentRESTClientTest {
     private static final String PASSWORD = "admin";
     private static final String COMPONENT_NAME = "Concatenator";
     private static final String INSTANCE_ID = "0166fb12-d403-408f-b2bc-61eb898ee338";
-    private ComponentRESTClient componentRESTClient = new ComponentRESTClient(this.HOST, this.USERNAME, this.PASSWORD);
+    private ComponentRESTClient componentRESTClient = new ComponentRESTClient(this.HOST, this.USERNAME, this.PASSWORD, "demo");
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

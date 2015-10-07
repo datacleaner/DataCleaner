@@ -38,6 +38,13 @@ public class ComponentRESTClient {
         getUserTenantName();
     }
 
+    /** Mainly for tests, tenant can be recognized automatically when other constructor is used */
+    public ComponentRESTClient(String url, String username, String password, String tenantName) {
+        this.url = url;
+        restClient = new RESTClientImpl(username, password);
+        this.tenantName = tenantName;
+    }
+
     public ComponentList getAllComponents(final boolean iconData) {
         String response = call(RESTClient.HttpMethod.GET, getURL("?iconData=" + iconData), "");
 

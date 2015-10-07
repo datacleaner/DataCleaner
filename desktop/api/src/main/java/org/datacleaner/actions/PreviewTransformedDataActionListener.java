@@ -141,7 +141,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                 .addFilter(MaxRowsFilter.class);
         maxRowFilter.setName(getClass().getName() + "-MaxRows");
         maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
-        maxRowFilter.addInputColumn(sourceColumns.get(0));
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
         final String[] columnNames = new String[rowCollector.getInputColumns().size()];

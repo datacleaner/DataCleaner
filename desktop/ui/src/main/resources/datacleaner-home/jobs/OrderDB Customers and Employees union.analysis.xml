@@ -1,106 +1,187 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
-    <job-metadata>
-        <job-description>Created with DataCleaner Community edition UNKNOWN</job-description>
-        <author>tomaszg</author>
-        <updated-date>2015-10-08+02:00</updated-date>
-        <metadata-properties>
-            <property name="CoordinatesY.PUBLIC.EMPLOYEES">166</property>
-            <property name="CoordinatesX.PUBLIC.EMPLOYEES">105</property>
-            <property name="CoordinatesX.PUBLIC.CUSTOMERS">104</property>
-            <property name="CoordinatesY.PUBLIC.CUSTOMERS">54</property>
-        </metadata-properties>
-    </job-metadata>
-    <source>
-        <data-context ref="orderdb"/>
-        <columns>
-            <column id="col_customernumber" path="CUSTOMERS.CUSTOMERNUMBER" type="INTEGER"/>
-            <column id="col_customername" path="CUSTOMERS.CUSTOMERNAME" type="VARCHAR"/>
-            <column id="col_contactlastname" path="CUSTOMERS.CONTACTLASTNAME" type="VARCHAR"/>
-            <column id="col_contactfirstname" path="CUSTOMERS.CONTACTFIRSTNAME" type="VARCHAR"/>
-            <column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR"/>
-            <column id="col_addressline1" path="CUSTOMERS.ADDRESSLINE1" type="VARCHAR"/>
-            <column id="col_addressline2" path="CUSTOMERS.ADDRESSLINE2" type="VARCHAR"/>
-            <column id="col_city" path="CUSTOMERS.CITY" type="VARCHAR"/>
-            <column id="col_state" path="CUSTOMERS.STATE" type="VARCHAR"/>
-            <column id="col_postalcode" path="CUSTOMERS.POSTALCODE" type="VARCHAR"/>
-            <column id="col_country" path="CUSTOMERS.COUNTRY" type="VARCHAR"/>
-            <column id="col_salesrepemployeenumber" path="CUSTOMERS.SALESREPEMPLOYEENUMBER" type="INTEGER"/>
-            <column id="col_creditlimit" path="CUSTOMERS.CREDITLIMIT" type="NUMERIC"/>
-            <column id="col_jobtitle" path="CUSTOMERS.JOBTITLE" type="VARCHAR"/>
-            <column id="col_employeenumber" path="EMPLOYEES.EMPLOYEENUMBER" type="INTEGER"/>
-            <column id="col_lastname" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
-            <column id="col_firstname" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
-            <column id="col_extension" path="EMPLOYEES.EXTENSION" type="VARCHAR"/>
-            <column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
-            <column id="col_officecode" path="EMPLOYEES.OFFICECODE" type="VARCHAR"/>
-            <column id="col_reportsto" path="EMPLOYEES.REPORTSTO" type="INTEGER"/>
-            <column id="col_jobtitle2" path="EMPLOYEES.JOBTITLE" type="VARCHAR"/>
-        </columns>
-    </source>
-    <transformation>
-        <transformer>
-            <descriptor ref="Union"/>
-            <metadata-properties>
-                <property name="CoordinatesY">113</property>
-                <property name="CoordinatesX">374</property>
-            </metadata-properties>
-            <properties>
-                <property name="Units" value="[&amp;#91;CONTACTLASTNAME&amp;#44;LASTNAME&amp;#93;,&amp;#91;CONTACTFIRSTNAME&amp;#44;FIRSTNAME&amp;#93;,&amp;#91;JOBTITLE&amp;#44;JOBTITLE&amp;#93;]"/>
-            </properties>
-            <input ref="col_contactlastname"/>
-            <input ref="col_contactfirstname"/>
-            <input ref="col_jobtitle"/>
-            <input ref="col_customernumber"/>
-            <input ref="col_customername"/>
-            <input ref="col_phone"/>
-            <input ref="col_addressline1"/>
-            <input ref="col_addressline2"/>
-            <input ref="col_city"/>
-            <input ref="col_state"/>
-            <input ref="col_postalcode"/>
-            <input ref="col_country"/>
-            <input ref="col_salesrepemployeenumber"/>
-            <input ref="col_creditlimit"/>
-            <input ref="col_lastname"/>
-            <input ref="col_firstname"/>
-            <input ref="col_jobtitle2"/>
-            <input ref="col_employeenumber"/>
-            <input ref="col_extension"/>
-            <input ref="col_email"/>
-            <input ref="col_officecode"/>
-            <input ref="col_reportsto"/>
-            <output-data-stream name="output">
-                <job>
-                    <source>
-                        <columns>
-                            <column id="col_contactlastname2" path="CONTACTLASTNAME" type="VARCHAR"/>
-                            <column id="col_contactfirstname2" path="CONTACTFIRSTNAME" type="VARCHAR"/>
-                            <column id="col_jobtitle3" path="JOBTITLE" type="VARCHAR"/>
-                        </columns>
-                    </source>
-                    <transformation/>
-                    <analysis>
-                        <analyzer>
-                            <descriptor ref="Create staging table"/>
-                            <metadata-properties>
-<property name="CoordinatesY">115</property>
-<property name="CoordinatesX">590</property>
-                            </metadata-properties>
-                            <properties>
-<property name="Datastore name" value="orderdb-union"/>
-<property name="Table name" value="customers-employees-union"/>
-<property name="Write mode" value="TRUNCATE"/>
-<property name="Fields" value="[CONTACTLASTNAME,CONTACTFIRSTNAME,JOBTITLE]"/>
-                            </properties>
-                            <input ref="col_contactlastname2"/>
-                            <input ref="col_contactfirstname2"/>
-                            <input ref="col_jobtitle3"/>
-                        </analyzer>
-                    </analysis>
-                </job>
-            </output-data-stream>
-        </transformer>
-    </transformation>
-    <analysis/>
+	<job-metadata>
+		<job-description>Created with DataCleaner Community edition UNKNOWN
+		</job-description>
+		<author>tomaszg</author>
+		<updated-date>2015-10-08+02:00</updated-date>
+		<metadata-properties>
+			<property name="CoordinatesY.PUBLIC.EMPLOYEES">166</property>
+			<property name="CoordinatesX.PUBLIC.EMPLOYEES">105</property>
+			<property name="CoordinatesX.PUBLIC.CUSTOMERS">104</property>
+			<property name="CoordinatesY.PUBLIC.CUSTOMERS">54</property>
+		</metadata-properties>
+	</job-metadata>
+	<source>
+		<data-context ref="orderdb" />
+		<columns>
+			<column id="col_customernumber" path="CUSTOMERS.CUSTOMERNUMBER"
+				type="INTEGER" />
+			<column id="col_customername" path="CUSTOMERS.CUSTOMERNAME"
+				type="VARCHAR" />
+			<column id="col_contactlastname" path="CUSTOMERS.CONTACTLASTNAME"
+				type="VARCHAR" />
+			<column id="col_contactfirstname" path="CUSTOMERS.CONTACTFIRSTNAME"
+				type="VARCHAR" />
+			<column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR" />
+			<column id="col_addressline1" path="CUSTOMERS.ADDRESSLINE1"
+				type="VARCHAR" />
+			<column id="col_addressline2" path="CUSTOMERS.ADDRESSLINE2"
+				type="VARCHAR" />
+			<column id="col_city" path="CUSTOMERS.CITY" type="VARCHAR" />
+			<column id="col_state" path="CUSTOMERS.STATE" type="VARCHAR" />
+			<column id="col_postalcode" path="CUSTOMERS.POSTALCODE" type="VARCHAR" />
+			<column id="col_country" path="CUSTOMERS.COUNTRY" type="VARCHAR" />
+			<column id="col_salesrepemployeenumber" path="CUSTOMERS.SALESREPEMPLOYEENUMBER"
+				type="INTEGER" />
+			<column id="col_creditlimit" path="CUSTOMERS.CREDITLIMIT"
+				type="NUMERIC" />
+			<column id="col_jobtitle" path="CUSTOMERS.JOBTITLE" type="VARCHAR" />
+			<column id="col_employeenumber" path="EMPLOYEES.EMPLOYEENUMBER"
+				type="INTEGER" />
+			<column id="col_lastname" path="EMPLOYEES.LASTNAME" type="VARCHAR" />
+			<column id="col_firstname" path="EMPLOYEES.FIRSTNAME" type="VARCHAR" />
+			<column id="col_extension" path="EMPLOYEES.EXTENSION" type="VARCHAR" />
+			<column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR" />
+			<column id="col_officecode" path="EMPLOYEES.OFFICECODE" type="VARCHAR" />
+			<column id="col_reportsto" path="EMPLOYEES.REPORTSTO" type="INTEGER" />
+			<column id="col_jobtitle2" path="EMPLOYEES.JOBTITLE" type="VARCHAR" />
+		</columns>
+	</source>
+	<transformation>
+		<transformer>
+			<descriptor ref="Union" />
+			<metadata-properties>
+				<property name="CoordinatesY">113</property>
+				<property name="CoordinatesX">374</property>
+			</metadata-properties>
+			<properties>
+				<property name="Units"
+					value="[&amp;#91;CUSTOMERNUMBER&amp;#44;EMPLOYEENUMBER&amp;#93;,&amp;#91;CONTACTFIRSTNAME&amp;#44;FIRSTNAME&amp;#93;,&amp;#91;CONTACTLASTNAME&amp;#44;LASTNAME&amp;#93;,&amp;#91;JOBTITLE&amp;#44;JOBTITLE&amp;#93;]" />
+			</properties>
+			<input ref="col_customernumber" />
+			<input ref="col_contactfirstname" />
+			<input ref="col_contactlastname" />
+			<input ref="col_jobtitle" />
+			<input ref="col_customername" />
+			<input ref="col_phone" />
+			<input ref="col_addressline1" />
+			<input ref="col_addressline2" />
+			<input ref="col_city" />
+			<input ref="col_state" />
+			<input ref="col_postalcode" />
+			<input ref="col_country" />
+			<input ref="col_salesrepemployeenumber" />
+			<input ref="col_creditlimit" />
+			<input ref="col_employeenumber" />
+			<input ref="col_firstname" />
+			<input ref="col_lastname" />
+			<input ref="col_jobtitle2" />
+			<input ref="col_extension" />
+			<input ref="col_email" />
+			<input ref="col_officecode" />
+			<input ref="col_reportsto" />
+			<input ref="col_jobtitle2" />
+			<output-data-stream name="output">
+				<job>
+					<source>
+						<columns>
+							<column id="col_customernumber2" path="CUSTOMERNUMBER"
+								type="INTEGER" />
+							<column id="col_contactfirstname2" path="CONTACTFIRSTNAME"
+								type="VARCHAR" />
+							<column id="col_contactlastname2" path="CONTACTLASTNAME"
+								type="VARCHAR" />
+							<column id="col_jobtitle3" path="JOBTITLE" type="VARCHAR" />
+						</columns>
+					</source>
+					<transformation />
+					<analysis>
+						<analyzer>
+							<descriptor ref="Completeness analyzer" />
+							<metadata-properties>
+								<property name="CoordinatesY">112</property>
+								<property name="CoordinatesX">619</property>
+							</metadata-properties>
+							<properties>
+								<property name="Conditions"
+									value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]" />
+								<property name="Evaluation mode" value="ANY_FIELD" />
+							</properties>
+							<input ref="col_customernumber2" />
+							<input ref="col_contactfirstname2" />
+							<input ref="col_contactlastname2" />
+							<input ref="col_jobtitle3" />
+							<output-data-stream name="Complete rows">
+								<job>
+									<source>
+										<columns>
+											<column id="col_jobtitle4" path="JOBTITLE" type="VARCHAR" />
+											<column id="col_customernumber3" path="CUSTOMERNUMBER"
+												type="INTEGER" />
+											<column id="col_contactfirstname3" path="CONTACTFIRSTNAME"
+												type="VARCHAR" />
+											<column id="col_contactlastname3" path="CONTACTLASTNAME"
+												type="VARCHAR" />
+										</columns>
+									</source>
+									<transformation />
+									<analysis>
+										<analyzer name="Unique person identifier check">
+											<descriptor ref="Unique key check" />
+											<metadata-properties>
+												<property name="CoordinatesY">57</property>
+												<property name="CoordinatesX">897</property>
+											</metadata-properties>
+											<properties>
+												<property name="Buffer size" value="20000" />
+											</properties>
+											<input ref="col_customernumber3" />
+										</analyzer>
+									</analysis>
+								</job>
+							</output-data-stream>
+							<output-data-stream name="Incomplete rows">
+								<job>
+									<source>
+										<columns>
+											<column id="col_jobtitle5" path="JOBTITLE" type="VARCHAR" />
+											<column id="col_customernumber4" path="CUSTOMERNUMBER"
+												type="INTEGER" />
+											<column id="col_contactfirstname4" path="CONTACTFIRSTNAME"
+												type="VARCHAR" />
+											<column id="col_contactlastname4" path="CONTACTLASTNAME"
+												type="VARCHAR" />
+										</columns>
+									</source>
+									<transformation />
+									<analysis>
+										<analyzer>
+											<descriptor ref="Create staging table" />
+											<metadata-properties>
+												<property name="CoordinatesY">244</property>
+												<property name="CoordinatesX">896</property>
+											</metadata-properties>
+											<properties>
+												<property name="Datastore name" value="orderdb-people" />
+												<property name="Table name" value="incomplete-records" />
+												<property name="Write mode" value="TRUNCATE" />
+												<property name="Fields"
+													value="[CONTACTFIRSTNAME,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME]" />
+											</properties>
+											<input ref="col_jobtitle5" />
+											<input ref="col_customernumber4" />
+											<input ref="col_contactfirstname4" />
+											<input ref="col_contactlastname4" />
+										</analyzer>
+									</analysis>
+								</job>
+							</output-data-stream>
+						</analyzer>
+					</analysis>
+				</job>
+			</output-data-stream>
+		</transformer>
+	</transformation>
+	<analysis />
 </job>

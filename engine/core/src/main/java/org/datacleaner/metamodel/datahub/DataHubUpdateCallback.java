@@ -123,12 +123,12 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     public void executeDeleteGoldenRecord(String grId) {
-        _dataContext.executeDeleteGoldenRecord(grId);
+        _dataContext.executeGoldenRecordDelete(grId);
         
     }
 
     public void executeDeleteSourceRecord(String source, String id, String recordType) {
-        _dataContext.executeDeleteSourceRecord(source, id, recordType);
+        _dataContext.executeSourceRecordDelete(source, id, recordType);
         
     }
 

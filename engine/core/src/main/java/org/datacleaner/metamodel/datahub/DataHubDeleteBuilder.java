@@ -47,27 +47,22 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     @Override
     public void execute() throws MetaModelException {
         List<FilterItem> whereItems = getWhereItems();
-        if (whereItems.size() != 1) {
-            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by id only)");
-        }
         String columnName = whereItems.get(0).getSelectItem().getColumn().getName();
+        String sourceIdName = (whereItems.size() > 1) ? whereItems.get(1).getSelectItem().getColumn().getName() :null;
         String id = (String) whereItems.get(0).getOperand();
-        if (columnName.equals("gr_id")) {
+        if (whereItems.size() == 1 && columnName.equals("gr_id")) {
             _callback.executeDeleteGoldenRecord(id);
-        } else if (columnName.equalsIgnoreCase("source_id")) {
+        } else if (whereItems.size() == 2 && columnName.equalsIgnoreCase("source_id") && "source_name".equals(sourceIdName)) {
             _callback.executeDeleteSourceRecord(getSourceName(), id, getRecordType());
         } else {
-            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by id)");            
+            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by their id)");            
         }
     }
+    
+    
 
     private String getSourceName() {
-        //TODO currently the schema of the table always refers to the "GoldenRecords" schema. Should be fixed(?)
-        // We now get the correct schema name from the where item.
-        //return getTable().getSchema().getName();
-        String prefixedName = getWhereItems().get(0).getSelectItem().getColumn().getTable().getSchema().getName();
-        String[] parts = prefixedName.split("-");
-        return parts[parts.length - 1];
+        return (String)getWhereItems().get(1).getOperand();
     }
 
     private String getRecordType() {

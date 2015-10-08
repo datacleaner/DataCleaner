@@ -166,7 +166,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     //"/sources/delete/{source}/{id}/{recordType}"
-    public void executeDeleteSourceRecord(String source, String id, String recordType) {
+    public void executeSourceRecordDelete(String source, String id, String recordType) {
         String uri = _updateConnection.getDeleteSourceRecordUrl();
         uri = uri + "/" + source + "/" + id + "/" + recordType;
         logger.debug("request {}", uri);

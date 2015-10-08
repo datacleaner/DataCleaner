@@ -19,6 +19,8 @@
  */
 package org.datacleaner.extension.output;
 
+import java.io.File;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -39,7 +41,6 @@ import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.datacleaner.output.datastore.DatastoreOutputWriterFactory;
-import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 
 @Named("Create staging table")
@@ -75,8 +76,7 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     DatastoreCatalog datastoreCatalog;
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor,
-            String categoryName) {
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         tableName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
     }
@@ -88,7 +88,6 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     }
 
     @Override
-    
     public String getSuggestedLabel() {
         if (datastoreName == null || tableName == null) {
             return null;
@@ -104,12 +103,12 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
         }
 
         final boolean truncate = (writeMode == WriteMode.TRUNCATE);
-        final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
-                (MutableDatastoreCatalog) datastoreCatalog);
+        final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(datastoreCatalog);
 
-        final OutputWriter outputWriter = DatastoreOutputWriterFactory.getWriter(
-                userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, tableName, truncate,
-                columns);
+        final File saveDatastoreDirectory = (userPreferences == null ? new File("datastores") : userPreferences
+                .getSaveDatastoreDirectory());
+        final OutputWriter outputWriter = DatastoreOutputWriterFactory.getWriter(saveDatastoreDirectory,
+                creationDelegate, datastoreName, tableName, truncate, columns);
 
         // update the tablename property with the actual name (whitespace
         // escaped etc.)

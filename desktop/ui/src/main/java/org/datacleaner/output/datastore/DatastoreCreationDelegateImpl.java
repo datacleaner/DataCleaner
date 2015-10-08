@@ -20,6 +20,7 @@
 package org.datacleaner.output.datastore;
 
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +30,28 @@ import org.slf4j.LoggerFactory;
  */
 public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreCreationDelegateImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreCreationDelegateImpl.class);
 
-	private final MutableDatastoreCatalog _datastoreCatalog;
+    private final DatastoreCatalog _datastoreCatalog;
 
-	public DatastoreCreationDelegateImpl(MutableDatastoreCatalog datastoreCatalog) {
-		_datastoreCatalog = datastoreCatalog;
-	}
+    public DatastoreCreationDelegateImpl(DatastoreCatalog datastoreCatalog) {
+        _datastoreCatalog = datastoreCatalog;
+    }
 
-	@Override
-	public void createDatastore(Datastore datastore) {
-		final String name = datastore.getName();
-		synchronized (_datastoreCatalog) {
-			if (_datastoreCatalog.containsDatastore(name)) {
-				logger.warn("Datastore '{}' already exists. No new datastore will be created!", name);
-			} else {
-				_datastoreCatalog.addDatastore(datastore);
-			}
-		}
-	}
+    @Override
+    public void createDatastore(Datastore datastore) {
+        final String name = datastore.getName();
+        synchronized (_datastoreCatalog) {
+            if (_datastoreCatalog.containsDatastore(name)) {
+                logger.warn("Datastore '{}' already exists. No new datastore will be created!", name);
+            } else {
+                if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
+                    ((MutableDatastoreCatalog) _datastoreCatalog).addDatastore(datastore);
+                } else {
+                    throw new IllegalStateException("Tried to create datastore '" + name
+                            + "', but the datastore catalog is not mutable");
+                }
+            }
+        }
+    }
 }

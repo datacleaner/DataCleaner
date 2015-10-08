@@ -116,8 +116,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                         initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()),
                                         propInfo.getDefaultValue()));
                             } catch (ClassNotFoundException e) {
-                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}'",
-                                        component.getName(), propertyName, e);
+                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}' because of {}",
+                                        component.getName(), propertyName, e.toString());
                                 // class not available on this server.
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         propertyName, propInfo.getSchema(), propInfo.isInputColumn(),

@@ -111,7 +111,9 @@ public class SchemaTreePanel extends DCPanel {
                     _schemaTree.addKeyListener(new KeyAdapter() {
                         @Override
                         public void keyPressed(KeyEvent e) {
-                            if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
+                            if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                                _searchTextField.setText("");
+                            } else if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
                                 final char keyChar = e.getKeyChar();
                                 if (Character.isLetter(keyChar)) {
                                     _searchTextField.requestFocus();
@@ -167,6 +169,14 @@ public class SchemaTreePanel extends DCPanel {
             @Override
             protected void onChange(DocumentEvent event) {
                 _schemaTree.filter(searchTextField.getText());
+            }
+        });
+        searchTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    searchTextField.setText("");
+                }
             }
         });
         searchTextField.setBorder(WidgetUtils.BORDER_EMPTY);

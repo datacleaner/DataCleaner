@@ -21,6 +21,7 @@ package org.datacleaner.descriptors;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,6 +95,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
 
                     enumValues[i++] = new EnumerationValue(enumValue, enumName);
                 }
+                Arrays.sort(enumValues);
             }
         }
 

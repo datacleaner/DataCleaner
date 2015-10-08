@@ -104,6 +104,7 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
     protected RowProcessingQueryOptimizer getQueryOptimizer() {
         final Table table = getStream().getTable();
         final Query q = new Query().from(table).select(table.getColumns());
-        return new NoopRowProcessingQueryOptimizer(q, getConsumers());
+
+        return new NoopRowProcessingQueryOptimizer(q, getConsumersSorted());
     }
 }

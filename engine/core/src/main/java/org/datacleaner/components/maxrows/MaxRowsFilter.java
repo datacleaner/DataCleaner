@@ -129,14 +129,37 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
     @Override
     public Query optimizeQuery(Query q, Category category) {
         if (category == Category.VALID) {
-            q.setMaxRows(maxRows);
+            final Integer previousMaxRows = q.getMaxRows();
+            final Integer previousFirstRow = q.getFirstRow();
 
             if (firstRow > 1) {
-                q.setFirstRow(firstRow);
+                if (previousFirstRow == null) {
+                    q.setFirstRow(firstRow);
+                } else {
+                    final int newFirstRow = previousFirstRow.intValue() + firstRow;
+                    q.setFirstRow(newFirstRow);
+                }
+            }
+
+            if (previousMaxRows == null) {
+                q.setMaxRows(maxRows);
+            } else {
+                int newMaxRows = Math.min(previousMaxRows.intValue(), maxRows);
+                if (previousFirstRow != null) {
+                    final Integer newFirstRow = q.getFirstRow();
+                    final int maxWindowSizeFrombefore = previousFirstRow.intValue() + previousMaxRows.intValue()
+                            - newFirstRow;
+                    newMaxRows = Math.min(newMaxRows, maxWindowSizeFrombefore);
+                }
+
+                // avoid negative max rows
+                newMaxRows = Math.max(0, newMaxRows);
+
+                q.setMaxRows(newMaxRows);
             }
 
             if (orderColumn != null) {
-                Column physicalColumn = orderColumn.getPhysicalColumn();
+                final Column physicalColumn = orderColumn.getPhysicalColumn();
                 q.orderBy(physicalColumn);
             }
         } else {

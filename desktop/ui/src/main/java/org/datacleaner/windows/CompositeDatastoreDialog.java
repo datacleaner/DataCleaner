@@ -175,20 +175,20 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
             checkBoxPanel.add(checkBox);
         }
 
-        JScrollPane checkBoxScrollPane = WidgetUtils.scrolleable(checkBoxPanel);
+        final JScrollPane checkBoxScrollPane = WidgetUtils.scrolleable(checkBoxPanel);
         checkBoxScrollPane.setPreferredSize(new Dimension(checkBoxPanel.getWidth(), 300));
         checkBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         checkBoxScrollPane.setBackground(_outerPanel.getBackground());
         WidgetUtils.addToGridBag(checkBoxScrollPane, formPanel, 0, 1, 2, 1);
 
-        DCPanel buttonPanel = getButtonPanel();
+        final DCPanel buttonPanel = getButtonPanel();
 
-        DCPanel centerPanel = new DCPanel();
+        final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new VerticalLayout(4));
         centerPanel.add(formPanel);
         centerPanel.add(buttonPanel);
 
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

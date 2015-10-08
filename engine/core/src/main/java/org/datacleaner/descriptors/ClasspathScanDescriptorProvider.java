@@ -611,7 +611,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofAnalyzer(clazz);
                 _analyzerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -625,7 +625,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofTransformer(clazz);
                 _transformerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -638,7 +638,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofFilterUnbound(clazz);
                 _filterBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -651,7 +651,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofRenderer(clazz);
                 _rendererBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }

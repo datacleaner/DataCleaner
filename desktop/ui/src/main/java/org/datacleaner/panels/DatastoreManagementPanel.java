@@ -262,23 +262,25 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
 
         // set of databases that are displayed directly on panel
-        final Set<String> databaseNames = new HashSet<String>();
+        final Set<String> promotedDatabaseNames = new HashSet<String>();
 
         final int panel1ItemsCount = 11;
 
         final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);
         for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
-            panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                    datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
-                    datastoreDescriptor.getDatastoreDialogClass(), DCPopupBubble.Position.BOTTOM));
-            databaseNames.add(datastoreDescriptor.getName());
+            if (datastoreDescriptor.isPromoted()) {
+                panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
+                        datastoreDescriptor.getDescription(), datastoreDescriptor.getIconPath(),
+                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass(),
+                        DCPopupBubble.Position.BOTTOM));
+                promotedDatabaseNames.add(datastoreDescriptor.getName());
+            }
         }
 
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        int panel2ItemsCount = 0;
         for (int i = panel1ItemsCount; i < datastoreDescriptors.getAvailableDatastoreDescriptors().size(); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
@@ -286,14 +288,13 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                         datastoreDescriptor.getDescription(), datastoreDescriptor.getIconPath(),
                         datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass(),
                         DCPopupBubble.Position.TOP));
-                databaseNames.add(datastoreDescriptor.getName());
-                panel2ItemsCount++;
+                promotedDatabaseNames.add(datastoreDescriptor.getName());
             }
         }
 
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(datastoreDescriptors.getAvailableDatastoreDescriptors(), panel1ItemsCount
-                + panel2ItemsCount, databaseNames));
+        panel2.add(createMoreDatabasesButton(datastoreDescriptors.getAvailableDatastoreDescriptors(),
+                promotedDatabaseNames));
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
@@ -304,21 +305,23 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private Component createMoreDatabasesButton(List<DatastoreDescriptor> availableDatastoreDescriptors,
-            int startIndex, Set<String> databaseNames) {
+            Set<String> promotedDatabases) {
         final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
 
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
 
-        for (int i = startIndex; i < availableDatastoreDescriptors.size(); i++) {
+        for (int i = 0; i < availableDatastoreDescriptors.size(); i++) {
             DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
-            final String imagePath = datastoreDescriptor.getIconPath();
-            final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
-            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
-            menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
-                    datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
-            moreDatastoreTypesMenu.add(menuItem);
+            if (!promotedDatabases.contains(datastoreDescriptor.getName())) {
+                final String imagePath = datastoreDescriptor.getIconPath();
+                final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+                final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
+                menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
+                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
+                moreDatastoreTypesMenu.add(menuItem);
+            }
         }
 
         moreDatastoreTypesMenu.addSeparator();

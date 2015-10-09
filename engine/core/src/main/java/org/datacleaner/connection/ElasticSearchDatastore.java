@@ -113,8 +113,10 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
                 if (_ssl) {
-                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
-                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    if(_keystorePath != null && !_keystorePath.isEmpty()) {
+                        settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
+                        settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    }
                     settingsBuilder.put("shield.transport.ssl", "true");
                 }
             }

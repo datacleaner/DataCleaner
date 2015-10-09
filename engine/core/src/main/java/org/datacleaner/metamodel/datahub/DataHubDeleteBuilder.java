@@ -27,6 +27,10 @@ import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.schema.Table;
 
 public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
+    private static final String GR_ID_COLUMN_NAME = "gr_id";
+    private static final String SOURCE_ID_COLUMN_NAME = "source_id";
+    private static final String SOURCE_NAME_COLUMN_NAME = "source_name";
+
 
     enum RecordType {
         PERSON("P"), ORGANIZATION("O");
@@ -47,25 +51,54 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     @Override
     public void execute() throws MetaModelException {
         List<FilterItem> whereItems = getWhereItems();
-        String columnName = whereItems.get(0).getSelectItem().getColumn().getName();
-        String sourceIdName = (whereItems.size() > 1) ? whereItems.get(1).getSelectItem().getColumn().getName() :null;
-        String id = (String) whereItems.get(0).getOperand();
-        if (whereItems.size() == 1 && columnName.equals("gr_id")) {
-            _callback.executeDeleteGoldenRecord(id);
-        } else if (whereItems.size() == 2 && columnName.equalsIgnoreCase("source_id") && "source_name".equals(sourceIdName)) {
-            _callback.executeDeleteSourceRecord(getSourceName(), id, getRecordType());
+        if(whereItems == null) {
+            throw new IllegalArgumentException("Delete requires a condition");             
+        }
+        String firstColumnName = getConditionColumnName(whereItems.get(0));
+        if (firstColumnName.equals(GR_ID_COLUMN_NAME)) {
+            deleteGoldenRecord(whereItems);
+        } else if (firstColumnName.equalsIgnoreCase(SOURCE_ID_COLUMN_NAME)) {
+            deleteSourceRecord(whereItems);
         } else {
-            throw new IllegalArgumentException("Deletes are only allowed on individual records, identified by their id)");            
+            throw new IllegalArgumentException("Delete condition is not valid");                        
         }
     }
-    
-    
 
-    private String getSourceName() {
-        return (String)getWhereItems().get(1).getOperand();
+    private void deleteSourceRecord(List<FilterItem> whereItems) {
+        if (whereItems.size() != 2) {
+            throw new IllegalArgumentException("Delete must be executed on a SourceRecordsGoldenRecordFormat table using source_id and source_name as condition values.");                                    
+        }
+        FilterItem firstWhereItem = whereItems.get(0);
+        FilterItem secondWhereItem = whereItems.get(1);
+       
+        String secondColumnName = getConditionColumnName(secondWhereItem);
+        if(SOURCE_NAME_COLUMN_NAME.equals(secondColumnName)) {
+            String id = getConditionColumnValue(firstWhereItem);
+            String sourceName = getConditionColumnValue(secondWhereItem);
+            _callback.executeDeleteSourceRecord(sourceName, id, getRecordType());
+        } else {
+            throw new IllegalArgumentException("Delete must be executed on a SourceRecordsGoldenRecordFormat table using source_id and source_name as condition values.");                                                
+        }
     }
 
-    private String getRecordType() {
+    private void deleteGoldenRecord(List<FilterItem> whereItems) {
+        if (whereItems.size() != 1) {
+            throw new IllegalArgumentException("Delete must be executed using the golden record id as the sole condition value");                                    
+        }        
+        FilterItem whereItem = whereItems.get(0);
+        String grId = getConditionColumnValue(whereItem);
+        _callback.executeDeleteGoldenRecord(grId);
+    }
+
+    private String getConditionColumnValue(FilterItem filterItem) {
+        return (String)filterItem.getOperand();
+    }
+
+    private String getConditionColumnName(FilterItem filterItem) {
+        return filterItem.getSelectItem().getColumn().getName();
+    }
+
+     private String getRecordType() {
         String tableName = getTable().getName();
         return RecordType.valueOf(tableName.toUpperCase()).shortname;
     }

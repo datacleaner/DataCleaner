@@ -19,6 +19,8 @@
  */
 package org.datacleaner.result.renderer;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -29,14 +31,13 @@ import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.ResultProducer;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.util.FormatHelper;
 
 @RendererBean(TextRenderingFormat.class)
 public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, String> {
 
     private static class TextCrosstabRendererCallback implements CrosstabRendererCallback<String> {
 
-        private NumberFormat decimalFormat = FormatHelper.getUiNumberFormat();
+        private final NumberFormat decimalFormat = getUiNumberFormat();
 
         private boolean leftAligned;
         private StringBuilder sb;
@@ -182,4 +183,12 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         return new CrosstabRenderer(crosstab).render(new TextCrosstabRendererCallback());
     }
 
+    public static NumberFormat getUiNumberFormat() {
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+        final DecimalFormat format = new DecimalFormat("###.##", symbols);
+        format.setGroupingUsed(false);
+        format.setMaximumFractionDigits(2);
+        return format;
+    }
 }

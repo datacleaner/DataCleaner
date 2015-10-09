@@ -202,9 +202,7 @@ public class RemoteTransformer extends BatchTransformer {
             if(cl == File.class) {
                 return StringConverter.simpleInstance().deserialize(value.asText(), cl);
             }
-            if(value.isArray() || value.isObject()) {
-                return mapper.readValue(value.traverse(), cl);
-            }
+            return mapper.readValue(value.traverse(), cl);
         } catch(Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + cl + "': " + value.toString(), e);
         }

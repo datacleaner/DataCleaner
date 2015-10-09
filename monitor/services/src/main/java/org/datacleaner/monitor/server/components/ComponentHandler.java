@@ -261,11 +261,7 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class<?> type = propDesc.getType();
         try {
-            if (value.isArray() || value.isObject() || type.isEnum()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return _stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
-            }
+            return mapper.readValue(value.traverse(), type);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
                     + "': " + value.toString(), e);

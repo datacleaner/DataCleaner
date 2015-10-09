@@ -141,7 +141,7 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForTooManyColumnsInGoldenRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete requires the golden record id as the sole condition value.");        
+        thrown.expectMessage("Delete requires the gr_id as the sole condition value.");        
         Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
         final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                 OperatorType.EQUALS_TO, "123");

@@ -51,8 +51,8 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     @Override
     public void execute() throws MetaModelException {
         List<FilterItem> whereItems = getWhereItems();
-        if(whereItems == null) {
-            throw new IllegalArgumentException("Delete requires a condition");             
+        if(whereItems == null || whereItems.size() == 0) {
+            throw new IllegalArgumentException("Delete requires a condition.");             
         }
         String firstColumnName = getConditionColumnName(whereItems.get(0));
         if (firstColumnName.equals(GR_ID_COLUMN_NAME)) {
@@ -60,7 +60,7 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
         } else if (firstColumnName.equalsIgnoreCase(SOURCE_ID_COLUMN_NAME)) {
             deleteSourceRecord(whereItems);
         } else {
-            throw new IllegalArgumentException("Delete condition is not valid");                        
+            throw new IllegalArgumentException("Delete condition is not valid.");                        
         }
     }
 
@@ -83,7 +83,7 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
 
     private void deleteGoldenRecord(List<FilterItem> whereItems) {
         if (whereItems.size() != 1) {
-            throw new IllegalArgumentException("Delete must be executed using the golden record id as the sole condition value");                                    
+            throw new IllegalArgumentException("Delete requires the golden record id as the sole condition value.");                                    
         }        
         FilterItem whereItem = whereItems.get(0);
         String grId = getConditionColumnValue(whereItem);
@@ -100,7 +100,11 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
 
      private String getRecordType() {
         String tableName = getTable().getName();
+        try {
         return RecordType.valueOf(tableName.toUpperCase()).shortname;
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Illegal table name: \"" + tableName + "\". Table name should be either \"person\" or \"organization\".");
+        }
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.components.remote;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -160,6 +161,9 @@ public class RemoteTransformer extends BatchTransformer {
                 for(Object value: ((Collection)propValue)) {
                     if(value instanceof InputColumn) {
                         columns.add((InputColumn)value);
+                    } else {
+                        // don't iterate the rest if the first item is not an input column.
+                        break;
                     }
                 }
             }
@@ -191,16 +195,16 @@ public class RemoteTransformer extends BatchTransformer {
     }
 
     private Object convertOutputValue(JsonNode value, Class cl) {
-        // TODO: this is code duplicate with ComponentHandler.convertTableValue
-        // (which is used to transform input rows on the server side)
         try {
             if(cl == JsonNode.class) {
                 return value;
             }
+            if(cl == File.class) {
+                return StringConverter.simpleInstance().deserialize(value.asText(), cl);
+            }
             if(value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), cl);
             }
-            return StringConverter.simpleInstance().deserialize(value.asText(), cl);
         } catch(Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + cl + "': " + value.toString(), e);
         }

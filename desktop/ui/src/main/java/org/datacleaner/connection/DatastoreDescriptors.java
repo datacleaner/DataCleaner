@@ -50,96 +50,96 @@ public class DatastoreDescriptors {
 
     private static final DatastoreDescriptor CSV_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("CSV file",
             "Comma-separated values (CSV) file (or file with other separators)", CsvDatastore.class,
-            CsvDatastoreDialog.class, IconUtils.CSV_IMAGEPATH);
+            CsvDatastoreDialog.class, IconUtils.CSV_IMAGEPATH, true);
 
     private static final DatastoreDescriptor EXCEL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Excel spreadsheet", "Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
-            ExcelDatastore.class, ExcelDatastoreDialog.class, IconUtils.EXCEL_IMAGEPATH);
+            ExcelDatastore.class, ExcelDatastoreDialog.class, IconUtils.EXCEL_IMAGEPATH, true);
 
     private static final DatastoreDescriptor ACCESS_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Access database", "Microsoft Access database file (.mdb).", AccessDatastore.class,
-            AccessDatastoreDialog.class, IconUtils.ACCESS_IMAGEPATH);
+            AccessDatastoreDialog.class, IconUtils.ACCESS_IMAGEPATH, true);
 
     private static final DatastoreDescriptor SAS_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("SAS library",
             "A directory of SAS library files (.sas7bdat).", SasDatastore.class, SasDatastoreDialog.class,
-            IconUtils.SAS_IMAGEPATH);
+            IconUtils.SAS_IMAGEPATH, true);
 
     private static final DatastoreDescriptor DBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DBase database",
-            "DBase database file (.dbf)", DbaseDatastore.class, DbaseDatastoreDialog.class, IconUtils.DBASE_IMAGEPATH);
+            "DBase database file (.dbf)", DbaseDatastore.class, DbaseDatastoreDialog.class, IconUtils.DBASE_IMAGEPATH, true);
 
     private static final DatastoreDescriptor FIXEDWIDTH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Fixed width file",
             "Text file with fixed width values. Each value spans a fixed amount of text characters.",
-            FixedWidthDatastore.class, FixedWidthDatastoreDialog.class, IconUtils.FIXEDWIDTH_IMAGEPATH);
+            FixedWidthDatastore.class, FixedWidthDatastoreDialog.class, IconUtils.FIXEDWIDTH_IMAGEPATH, true);
 
     private static final DatastoreDescriptor XML_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("XML file",
             "Extensible Markup Language file (.xml)", XmlDatastore.class, XmlDatastoreDialog.class,
-            IconUtils.XML_IMAGEPATH);
+            IconUtils.XML_IMAGEPATH, true);
 
     private static final DatastoreDescriptor JSON_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("JSON file",
             "JavaScript Object NOtation file (.json).", JsonDatastore.class, JsonDatastoreDialog.class,
-            IconUtils.JSON_IMAGEPATH);
+            IconUtils.JSON_IMAGEPATH, true);
 
     private static final DatastoreDescriptor SALESFORCE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Salesforce.com", "Connect to a Salesforce.com account", SalesforceDatastore.class,
-            SalesforceDatastoreDialog.class, IconUtils.SALESFORCE_IMAGEPATH);
+            SalesforceDatastoreDialog.class, IconUtils.SALESFORCE_IMAGEPATH, true);
 
     private static final DatastoreDescriptor SUGARCRM_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("SugarCRM",
             "Connect to a SugarCRM system", SugarCrmDatastore.class, SugarCrmDatastoreDialog.class,
-            IconUtils.SUGAR_CRM_IMAGEPATH);
+            IconUtils.SUGAR_CRM_IMAGEPATH, true);
 
     private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DataHub",
             "Connect to DataHub", DataHubDatastore.class, DataHubDatastoreDialog.class,
-            IconUtils.DATAHUB_IMAGEPATH);
+            IconUtils.DATAHUB_IMAGEPATH, true);
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "MongoDB database", "Connect to a MongoDB database", MongoDbDatastore.class, MongoDbDatastoreDialog.class,
-            IconUtils.MONGODB_IMAGEPATH);
+            IconUtils.MONGODB_IMAGEPATH, true);
 
     private static final DatastoreDescriptor COUCHDB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "CouchDB database", "Connect to an Apache CouchDB database", CouchDbDatastore.class,
-            CouchDbDatastoreDialog.class, IconUtils.COUCHDB_IMAGEPATH);
+            CouchDbDatastoreDialog.class, IconUtils.COUCHDB_IMAGEPATH, true);
 
     private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class,
-            ElasticSearchDatastoreDialog.class, IconUtils.ELASTICSEARCH_IMAGEPATH);
+            ElasticSearchDatastoreDialog.class, IconUtils.ELASTICSEARCH_IMAGEPATH, true);
 
     private static final DatastoreDescriptor CASSANDRA_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Cassandra database", "Connect to an Apache Cassandra database", CassandraDatastore.class,
-            CassandraDatastoreDialog.class, IconUtils.CASSANDRA_IMAGEPATH);
+            CassandraDatastoreDialog.class, IconUtils.CASSANDRA_IMAGEPATH, true);
 
     private static final DatastoreDescriptor HBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("HBase database",
             "Connect to an Apache HBase database", HBaseDatastore.class, HBaseDatastoreDialog.class,
-            IconUtils.HBASE_IMAGEPATH);
+            IconUtils.HBASE_IMAGEPATH, true);
 
     private static final DatastoreDescriptor HIVE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database", JdbcDatastore.class,
-            JdbcDatastoreDialog.class, "images/datastore-types/databases/hive.png");
+            JdbcDatastoreDialog.class, "images/datastore-types/databases/hive.png", true);
 
     private static final DatastoreDescriptor MYSQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             DatabaseDriverCatalog.DATABASE_NAME_MYSQL, "Connect to a MySQL database", JdbcDatastore.class,
-            JdbcDatastoreDialog.class, "images/datastore-types/databases/mysql.png");
+            JdbcDatastoreDialog.class, "images/datastore-types/databases/mysql.png", true);
 
     private static final DatastoreDescriptor POSTGRESQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL, "Connect to a PostgreSQL database", JdbcDatastore.class,
-            JdbcDatastoreDialog.class, "images/datastore-types/databases/postgresql.png");
+            JdbcDatastoreDialog.class, "images/datastore-types/databases/postgresql.png", true);
 
     private static final DatastoreDescriptor ORACLE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             DatabaseDriverCatalog.DATABASE_NAME_ORACLE, "Connect to a Oracle database", JdbcDatastore.class,
-            JdbcDatastoreDialog.class, "images/datastore-types/databases/oracle.png");
+            JdbcDatastoreDialog.class, "images/datastore-types/databases/oracle.png", true);
 
     private static final DatastoreDescriptor SQLSERVER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
             "Connect to a Microsoft SQL Server database", JdbcDatastore.class, JdbcDatastoreDialog.class,
-            "images/datastore-types/databases/microsoft.png");
+            "images/datastore-types/databases/microsoft.png", true);
 
     private static final DatastoreDescriptor COMPOSITE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Composite datastore", "Create a composite datastore", CompositeDatastore.class,
-            CompositeDatastoreDialog.class, IconUtils.COMPOSITE_IMAGEPATH);
+            CompositeDatastoreDialog.class, IconUtils.COMPOSITE_IMAGEPATH, false);
 
     private static final DatastoreDescriptor OTHER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Other database",
             "Connect to other database", JdbcDatastore.class, JdbcDatastoreDialog.class,
-            IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+            IconUtils.GENERIC_DATASTORE_IMAGEPATH, false);
 
     private DatabaseDriverCatalog _databaseDriverCatalog;
 
@@ -259,7 +259,7 @@ public class DatastoreDescriptors {
             if (!alreadyAddedDatabaseNames.contains(databaseName)) {
                 DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName, "Connect to "
                         + databaseName, JdbcDatastore.class, JdbcDatastoreDialog.class,
-                        databaseDriver.getIconImagePath());
+                        databaseDriver.getIconImagePath(), false);
                 datastoreDescriptors.add(jdbcDatastoreDescriptor);
             }
         }

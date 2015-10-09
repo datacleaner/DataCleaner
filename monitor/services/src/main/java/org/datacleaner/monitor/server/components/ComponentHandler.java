@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
@@ -47,7 +50,6 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.restclient.ComponentConfiguration;
@@ -78,7 +80,7 @@ public class ComponentHandler {
 
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
-    private final StringConverter _stringConverter;
+    private StringConverter _stringConverter;
 
     private ComponentDescriptor<?> descriptor;
     private Map<String, MutableColumn> columns;
@@ -89,7 +91,6 @@ public class ComponentHandler {
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
-        _stringConverter = new StringConverter(dcConfiguration);
     }
 
     public void createComponent(ComponentConfiguration componentConfiguration) {
@@ -252,7 +253,7 @@ public class ComponentHandler {
                 break;
             }
             Column col = table.getColumn(i);
-            values.add(convertTableValue(_stringConverter, col.getType().getJavaEquivalentClass(), value));
+            values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
             i++;
         }
         return values.toArray(new Object[values.size()]);
@@ -261,23 +262,26 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class<?> type = propDesc.getType();
         try {
-            return mapper.readValue(value.traverse(), type);
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
                     + "': " + value.toString(), e);
         }
     }
 
-    private Object convertTableValue(StringConverter stringConverter, Class<?> type, JsonNode value) {
+    private Object convertTableValue(Class<?> type, JsonNode value) {
         try {
-            if (value.isArray() || value.isObject()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return stringConverter.deserialize(value.asText(), type);
-            }
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
+    }
+
+    private Object convertValue(Class<?> type, JsonNode value) throws IOException {
+        if(type == File.class) {
+            return getStringConverter().deserialize(value.asText(), type);
+        }
+        return mapper.readValue(value.traverse(), type);
     }
 
     private String toString(JsonNode item) {
@@ -303,5 +307,12 @@ public class ComponentHandler {
             result.add(toString(json));
         }
         return result;
+    }
+
+    protected StringConverter getStringConverter() {
+        if(_stringConverter == null) {
+            _stringConverter = new StringConverter(_dcConfiguration);
+        }
+        return _stringConverter;
     }
 }

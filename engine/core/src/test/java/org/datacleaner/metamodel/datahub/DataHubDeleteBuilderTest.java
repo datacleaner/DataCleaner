@@ -83,7 +83,7 @@ public class DataHubDeleteBuilderTest {
                 OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
         sut.execute();
-        verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "P");
+        verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "person");
     }
 
     @Test
@@ -99,27 +99,9 @@ public class DataHubDeleteBuilderTest {
                 OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
         sut.execute();
-        verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "O");
+        verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "organization");
     }
- 
-    @Test
-    public void shouldThrowForInvalidRecordType() {
-        Mockito.when(table.getName()).thenReturn("invalid-type");
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Illegal table name: \"invalid-type\". Table name should be either \"person\" or \"organization\".");        
-
-        Column sourceIdColumn = new MutableColumn("source_id", ColumnType.CHAR);
-        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
-                OperatorType.EQUALS_TO, "456");
-        sut = sut.where(sourceIdFilter);
-
-        Column sourceNameColumn = new MutableColumn("source_name", ColumnType.CHAR);
-        final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
-                OperatorType.EQUALS_TO, "testSource");
-        sut = sut.where(sourceNameFilter);
-        sut.execute();
-    }
-    
+     
     @Test
     public void shouldThrowForMissingWhereClause() {
         thrown.expect(IllegalArgumentException.class);

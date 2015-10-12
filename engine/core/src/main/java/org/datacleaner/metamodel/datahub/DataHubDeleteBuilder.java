@@ -31,15 +31,6 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     private static final String SOURCE_ID_COLUMN_NAME = "source_id";
     private static final String SOURCE_NAME_COLUMN_NAME = "source_name";
 
-    enum RecordType {
-        PERSON("P"), ORGANIZATION("O");
-        private String shortname;
-
-        RecordType(String shortname) {
-            this.shortname = shortname;
-        }
-    }
-
     private final DataHubUpdateCallback _callback;
 
     public DataHubDeleteBuilder(DataHubUpdateCallback callback, Table table) {
@@ -103,13 +94,7 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     }
 
     private String getRecordType() {
-        String tableName = getTable().getName();
-        try {
-            return RecordType.valueOf(tableName.toUpperCase()).shortname;
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Illegal table name: \"" + tableName
-                    + "\". Table name should be either \"person\" or \"organization\".");
-        }
+        return getTable().getName();
     }
 
 }

@@ -1222,10 +1222,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<repositories>
-		<repository>
-			<id>Metamodel repository</id>
-			<url>https://repository.apache.org/content/repositories/orgapachemetamodel-1012</url>
-		</repository>
-	</repositories>
 </project>

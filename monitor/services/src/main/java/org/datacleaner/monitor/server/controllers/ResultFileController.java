@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/{tenant}/results/{result:.+}")
+@RequestMapping("/{tenant}/results/{result:.+}.analysis.result.dat")
 public class ResultFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ResultFileController.class);

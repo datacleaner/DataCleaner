@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,14 +70,11 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     private final DCPanel _unitContainerPanel;
 
     private final Set<InputColumn<?>> _pickedInputColumns;
-    private final Set<InputColumn<?>> _hiddenInputColumns;
-
     public ColumnListMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
         _unitProperty = unitProperty;
-        _pickedInputColumns = new HashSet<InputColumn<?>>();
-        _hiddenInputColumns = new HashSet<InputColumn<?>>();
+        _pickedInputColumns = new HashSet<>();
         _unitContainerPanel = new DCPanel();
         _unitContainerPanel.setLayout(new VerticalLayout(2));
 
@@ -134,7 +132,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     public void onPanelRemove() {
         super.onPanelRemove();
         getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
-        getAnalysisJobBuilder().addTransformerChangeListener(this);
+        getAnalysisJobBuilder().removeTransformerChangeListener(this);
     }
 
     public void removeCoalesceUnit() {
@@ -216,7 +214,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     private List<CoalesceUnitPanel> getCoalesceUnitPanels() {
-        List<CoalesceUnitPanel> result = new ArrayList<CoalesceUnitPanel>();
+        List<CoalesceUnitPanel> result = new ArrayList<>();
         Component[] components = _unitContainerPanel.getComponents();
         for (Component component : components) {
             if (component instanceof CoalesceUnitPanel) {
@@ -240,7 +238,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
     public CoalesceUnit[] getCoalesceUnits() {
         final List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
-        final List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
+        final List<CoalesceUnit> result = new ArrayList<>();
         for (final CoalesceUnitPanel panel : panels) {
             if (panel.isSet()) {
                 final CoalesceUnit unit = panel.getCoalesceUnit();
@@ -256,7 +254,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
                 Object.class);
         final InputColumn<?>[] allInputColumns = availableInputColumns.toArray(new InputColumn[availableInputColumns
                 .size()]);
-        final List<InputColumn<?>> resultList = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> resultList = new ArrayList<>();
 
         final CoalesceUnit[] units = getCoalesceUnits();
         if (units.length == 0) {
@@ -266,9 +264,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
         for (CoalesceUnit unit : units) {
             final InputColumn<?>[] inputColumns = unit.getInputColumns(allInputColumns);
-            for (final InputColumn<?> inputColumn : inputColumns) {
-                resultList.add(inputColumn);
-            }
+            Collections.addAll(resultList, inputColumns);
         }
 
         logger.debug("Returning Input.value = {}", resultList);
@@ -342,11 +338,6 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
     @Override
     public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
-        if (hidden) {
-            _hiddenInputColumns.add(inputColumn);
-        } else {
-            _hiddenInputColumns.remove(inputColumn);
-        }
     }
 
     @Override

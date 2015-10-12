@@ -93,15 +93,8 @@ public class MaxRowsFilterTest extends TestCase {
 
         final Query q = new Query();
         f1.optimizeQuery(q, Category.VALID);
-        try {
-            f2.optimizeQuery(q, Category.VALID);
-            assertEquals(45, q.getFirstRow().intValue());
-            assertEquals(0, q.getMaxRows().intValue());
-        } catch (IllegalArgumentException e) {
-            // Currently MetaModel does not support max rows = 0. See
-            // METAMODEL-194. For this reason we allow this to not work ...
-            // temporarily!
-            assertEquals("Max rows cannot be zero", e.getMessage());
-        }
+        f2.optimizeQuery(q, Category.VALID);
+        assertEquals(55, q.getFirstRow().intValue());
+        assertEquals(0, q.getMaxRows().intValue());
     }
 }

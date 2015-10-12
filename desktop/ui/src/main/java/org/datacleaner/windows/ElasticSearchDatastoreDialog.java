@@ -34,6 +34,7 @@ import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -51,6 +52,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
@@ -58,7 +60,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     private static final long serialVersionUID = 1L;
 
-    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.TRANSPORT;
+    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE =
+            ElasticSearchDatastore.ClientType.TRANSPORT;
     private static final boolean DEFAULT_SSL = false;
 
     private final JComboBox<ClientType> _clientTypeComboBox;
@@ -128,7 +131,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _sslCheckBox.setEnabled(true);
                         if (_sslCheckBox.isSelected()) {
                             _keystorePathField.setEnabled(true);
-                            _keystorePasswordField.setEnabled(true);
+                            _keystorePasswordField.setEnabled(_keystorePathField.getResource() != null);
                         }
 
                         if (originalDatastore != null) {
@@ -160,13 +163,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
 
         final DCDocumentListener verifyAndUpdateDocumentListener = new DCDocumentListener() {
-            
+
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
             }
         };
-        
+
         _sslCheckBox = new JCheckBox("Enable SSL", DEFAULT_SSL);
         _sslCheckBox.setOpaque(false);
         _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -178,7 +181,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
                 if (stateChange == ItemEvent.SELECTED) {
                     _keystorePathField.setEnabled(true);
-                    _keystorePasswordField.setEnabled(true);
+                    _keystorePasswordField.setEnabled(_keystorePathField.getResource() != null);
                     validateAndUpdate();
                 }
 
@@ -187,6 +190,18 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                     _keystorePasswordField.setEnabled(false);
                     validateAndUpdate();
                 }
+            }
+        });
+
+        _keystorePathField.addListener(new ResourceTypePresenter.Listener() {
+            @Override
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
+                _keystorePasswordField.setEnabled(true);
+            }
+
+            @Override
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
+                _keystorePasswordField.setEnabled(false);
             }
         });
 
@@ -199,11 +214,11 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _passwordField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _keystorePathField.getTextField().getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
-            
+
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
                 validateAndUpdate();
-                
+
             }
         });
 
@@ -270,20 +285,15 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             setStatusError("Please enter index name");
             return false;
         }
-        
+
         if (_sslCheckBox.isSelected()) {
             if (StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
                 setStatusError("Please enter the username");
                 return false;
             }
-            
+
             if (StringUtils.isNullOrEmpty(new String(_passwordField.getPassword()))) {
                 setStatusError("Please enter the password");
-                return false;
-            }
-            
-            if (StringUtils.isNullOrEmpty(_keystorePathField.getFilename())) {
-                setStatusError("Please enter the keystore path");
                 return false;
             }
         }
@@ -360,13 +370,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Client type", _clientTypeComboBox));
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Credentials, if needed", new JLabel()));
         result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
+        result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Keystore path", _keystorePathField));
         result.add(new ImmutableEntry<String, JComponent>("Keystore password", _keystorePasswordField));
         return result;
     }
-
 }

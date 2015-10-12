@@ -28,6 +28,8 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -70,10 +72,24 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
     }
 
-    public void testSingleTransformer() throws Exception {
-        PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+    public void testJobWithMaxRowsFilter() throws Exception {
+        final FilterComponentBuilder<MaxRowsFilter, Category> filter = analysisJobBuilder
+                .addFilter(MaxRowsFilter.class);
+        filter.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
+        filter.getComponentInstance().setMaxRows(5);
+
+        emailTransformerBuilder.setRequirement(filter, Category.VALID);
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null,
                 emailTransformerBuilder);
-        TableModel tableModel = action.call();
+        final TableModel tableModel = action.call();
+        assertEquals(5, tableModel.getRowCount());
+    }
+
+    public void testSingleTransformer() throws Exception {
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                emailTransformerBuilder);
+        final TableModel tableModel = action.call();
 
         assertEquals(3, tableModel.getColumnCount());
         assertEquals("EMAIL", tableModel.getColumnName(0));
@@ -98,7 +114,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
     }
 
     public void testChainedTransformers() throws Exception {
-        TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
+        final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
                 .addTransformer(ConcatenatorTransformer.class);
         lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         lengthTransformerBuilder.addInputColumn(new ConstantInputColumn("foo"));
@@ -131,14 +147,14 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         }
 
         // add a filter
-        FilterComponentBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
+        final FilterComponentBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
                 .addFilter(StringLengthRangeFilter.class);
         rangeFilter.addInputColumn(lengthTransformerBuilder.getOutputColumnByName("Concat of Username,\"foo\""));
         rangeFilter.setConfiguredProperty("Minimum length", 5);
         rangeFilter.setConfiguredProperty("Maximum length", 20);
 
         // add a multi-row transformer
-        TransformerComponentBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
+        final TransformerComponentBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
                 .addTransformer(TokenizerTransformer.class);
         tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         tokenizer.setRequirement(rangeFilter.getFilterOutcome(RangeFilterCategory.VALID));
@@ -149,9 +165,9 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 
         // run advanced
         {
-            PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+            final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
                     tokenizer);
-            TableModel tableModel = action.call();
+            final TableModel tableModel = action.call();
 
             assertEquals(29, tableModel.getRowCount());
 

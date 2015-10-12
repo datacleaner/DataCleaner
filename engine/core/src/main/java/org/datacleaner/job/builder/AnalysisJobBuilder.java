@@ -1074,7 +1074,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener) {
-        _sourceColumnListeners.add(sourceColumnChangeListener);
+        if(!_sourceColumnListeners.contains(sourceColumnChangeListener)) {
+            _sourceColumnListeners.add(sourceColumnChangeListener);
+        }
     }
 
     public void removeSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener) {
@@ -1082,7 +1084,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addTransformerChangeListener(TransformerChangeListener transformerChangeListener) {
-        _transformerChangeListeners.add(transformerChangeListener);
+        if(!_transformerChangeListeners.contains(transformerChangeListener)) {
+            _transformerChangeListeners.add(transformerChangeListener);
+        }
     }
 
     public void removeTransformerChangeListener(TransformerChangeListener transformerChangeListener) {
@@ -1090,7 +1094,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener) {
-        _analyzerChangeListeners.add(analyzerChangeListener);
+        if(!_analyzerChangeListeners.contains(analyzerChangeListener)) {
+            _analyzerChangeListeners.add(analyzerChangeListener);
+        }
     }
 
     public void removeAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener) {
@@ -1106,7 +1112,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener) {
-        _analysisJobChangeListeners.add(analysisJobChangeListener);
+        if(!_analysisJobChangeListeners.contains(analysisJobChangeListener)){
+            _analysisJobChangeListeners.add(analysisJobChangeListener);
+        }
     }
 
     public void removeAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener) {

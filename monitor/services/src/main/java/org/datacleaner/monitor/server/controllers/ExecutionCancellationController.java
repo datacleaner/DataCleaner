@@ -55,7 +55,7 @@ public class ExecutionCancellationController {
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public Map<String, String> executionLogXml(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName) throws IOException {
 

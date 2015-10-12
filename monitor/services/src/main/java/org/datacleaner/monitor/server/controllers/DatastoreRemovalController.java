@@ -49,7 +49,7 @@ public class DatastoreRemovalController {
     @Autowired
     DatastoreDao datastoreDao;
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     @RolesAllowed({ SecurityRoles.CONFIGURATION_EDITOR })
     public Map<String, String> removeDatastore(@PathVariable("tenant") final String tenant,

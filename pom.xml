@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<!-- Maven plugin versions -->
 		<javadoc.version>2.9.1</javadoc.version>
-		
+
 		<!-- Dependency versions -->
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
@@ -17,7 +17,7 @@
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
-		<metamodel.version>4.4.0-RC1</metamodel.version>
+		<metamodel.version>4.4.0</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
@@ -394,8 +394,9 @@
 										<exclude>org.eobjects.metamodel:*</exclude>
 										<exclude>log4j:apache-log4j-extras:*</exclude>
 										<exclude>org.apache.logging.log4j:*</exclude>
-										
-										<!-- commons-beanutils-core is redundant when we already depend on commons-beanutils -->
+
+										<!-- commons-beanutils-core is redundant when we already depend 
+											on commons-beanutils -->
 										<exclude>commons-beanutils:commons-beanutils-core:*</exclude>
 
 										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
@@ -413,20 +414,20 @@
 										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
 											required by Hadoop) -->
 										<exclude>org.glassfish.jersey:*</exclude>
-										
+
 										<!-- asm groupId is conflicting with org.ow2.asm groupId -->
 										<exclude>asm:asm:*</exclude>
-									
+
 										<!-- findbugs-annotations is overlapping with annotations -->
 										<exclude>com.github.stephenc.findbugs:findbugs-annotations:*</exclude>
-										
+
 										<!-- jcip-annotations is overlapping with annotations -->
 										<exclude>net.jcip:jcip-annotations</exclude>
 
 										<!-- stax-api is overlapping with xml-apis -->
 										<exclude>stax:stax-api:*</exclude>
 										<exclude>javax.xml.stream:stax-api</exclude>
-										
+
 										<!-- standard is overlapping with jstl -->
 										<exclude>taglibs:standard:*</exclude>
 									</excludes>

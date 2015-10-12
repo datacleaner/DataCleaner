@@ -53,7 +53,7 @@ public class JobDeletionController {
     @Autowired
     TenantContextFactory _contextFactory;
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     @RolesAllowed({ SecurityRoles.JOB_EDITOR })
     public Map<String, String> deleteJob(@PathVariable("tenant") final String tenant,

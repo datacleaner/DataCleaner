@@ -19,6 +19,7 @@
  */
 package org.datacleaner.beans.valuedist;
 
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Metric;
 import org.datacleaner.result.AbstractValueCountingAnalyzerResult;
 
@@ -26,6 +27,7 @@ import org.datacleaner.result.AbstractValueCountingAnalyzerResult;
  * Defines abstract methods, metrics etc. for analyzer results of the Value
  * Distribution analyzer.
  */
+@Distributed(reducer = ValueDistributionAnalyzerResultReducer.class)
 public abstract class ValueDistributionAnalyzerResult extends AbstractValueCountingAnalyzerResult {
 
     private static final long serialVersionUID = 1L;

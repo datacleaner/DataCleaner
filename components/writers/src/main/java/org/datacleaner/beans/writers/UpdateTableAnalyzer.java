@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,7 +41,6 @@ import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.RowUpdationBuilder;
@@ -69,8 +67,6 @@ import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.WriteSuperCategory;
-import org.datacleaner.components.convert.ConvertToBooleanTransformer;
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.SchemaNavigator;
@@ -370,7 +366,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
             // the
             // error data will be more complete if first loop finished.
             for (int i = 0; i < values.length; i++) {
-                rowData[i] = convertType(rowData[i], _targetColumns[i]);
+                rowData[i] = TypeConverter.convertType(rowData[i], _targetColumns[i]);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("Value for {} set to: {}", columnNames[i], rowData[i]);
@@ -378,7 +374,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
             }
             for (int i = 0; i < conditionValues.length; i++) {
                 int index = i + values.length;
-                rowData[index] = convertType(rowData[index], _targetConditionColumns[i]);
+                rowData[index] = TypeConverter.convertType(rowData[index], _targetConditionColumns[i]);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("Value for {} set to: {}", conditionColumnNames[i], rowData[index]);
@@ -400,34 +396,6 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
         }
     }
 
-    private Object convertType(final Object value, Column targetColumn) throws IllegalArgumentException {
-        if (value == null) {
-            return null;
-        }
-        Object result = value;
-        ColumnType type = targetColumn.getType();
-        if (type.isLiteral()) {
-            // for strings, only convert some simple cases, since JDBC drivers
-            // typically also do a decent job here (with eg. Clob types, char[]
-            // types etc.)
-            if (value instanceof Number || value instanceof Date) {
-                result = value.toString();
-            }
-        } else if (type.isNumber()) {
-            Number numberValue = ConvertToNumberTransformer.transformValue(value);
-            if (numberValue == null && !"".equals(value)) {
-                throw new IllegalArgumentException("Could not convert " + value + " to number");
-            }
-            result = numberValue;
-        } else if (type == ColumnType.BOOLEAN) {
-            Boolean booleanValue = ConvertToBooleanTransformer.transformValue(value);
-            if (booleanValue == null && !"".equals(value)) {
-                throw new IllegalArgumentException("Could not convert " + value + " to boolean");
-            }
-            result = booleanValue;
-        }
-        return result;
-    }
 
     @Override
     public WriteDataResult getResult() {

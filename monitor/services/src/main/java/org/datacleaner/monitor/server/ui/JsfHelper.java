@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.ui;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;

@@ -27,8 +27,10 @@ import java.util.concurrent.Callable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -102,7 +104,25 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         final AnalysisJobBuilder ajb = copy(_transformerJobBuilder.getAnalysisJobBuilder());
 
-        TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(ajb);
+
+        final TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
+        final List<Table> tables = ajb.getSourceTables();
+        if (tables.size() > 1) {
+            final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
+            tables.remove(originatingTable);
+            for (Table otherTable : tables) {
+                ajb.removeSourceTable(otherTable);
+            }
+        }
+
+        final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
+        if (sourceColumns.isEmpty()) {
+            logger.error("No source columns left after removing irrelevant source tables. Component: {}",
+                    _transformerJobBuilder);
+            return new DefaultTableModel(0, 0);
+        }
 
         // remove all analyzers, except the dummy
         ajb.removeAllAnalyzers();
@@ -119,11 +139,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         // add a max rows filter
         final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb
                 .addFilter(MaxRowsFilter.class);
+        maxRowFilter.setName(getClass().getName() + "-MaxRows");
         maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
-
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(ajb);
 
         final String[] columnNames = new String[rowCollector.getInputColumns().size()];
         for (int i = 0; i < columnNames.length; i++) {
@@ -172,8 +190,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb,
             TransformerComponentBuilder<?> transformerJobBuilder) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
-        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(
-                _transformerJobBuilder);
+        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders()
+                .indexOf(_transformerJobBuilder);
         return ajb.getTransformerComponentBuilders().get(transformerIndex);
     }
 

@@ -22,6 +22,8 @@ package org.datacleaner.widgets.properties;
 import javax.inject.Inject;
 
 import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
@@ -100,8 +102,18 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
     protected void setValue(String value) {
         if (value == null) {
             _comboBox.setSelectedItem(null);
+            return;
         }
+
+        if (_comboBox.getTable() == null) {
+            final MutableTable placeholderTable = new MutableTable("table");
+            placeholderTable.addColumn(new MutableColumn(value, placeholderTable));
+            _comboBox.setModel(placeholderTable);
+        }
+
         _comboBox.setSelectedItem(value);
+        
+        fireValueChanged(value);
     }
 
 }

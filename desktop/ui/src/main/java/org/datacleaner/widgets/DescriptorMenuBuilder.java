@@ -168,11 +168,8 @@ public final class DescriptorMenuBuilder {
 
             for (ComponentCategory category : sortedCategories) {
                 final int count = categories.get(category).size();
-                if (count <= 1) {
-                    // disregard categories with only a single component in
-                    // them!
-                    logger.info("Disregarding menu for category '{}' because of too few components ({})", category,
-                            count);
+                if (count == 0) {
+                    logger.info("Disregarding menu for category '{}' because of no components", category);
                     categories.remove(category);
                 } else {
                     // add menu

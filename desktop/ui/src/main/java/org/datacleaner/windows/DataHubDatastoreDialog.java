@@ -80,7 +80,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     private final JPasswordField _passwordTextField;
     private final JXTextField _tenantNameTextField;
     private final JCheckBox _acceptUnverifiedSslPeersCheckBox;
-    // private final JXTextField _securityModeTextField;
     private final JComboBox<String> _securityModeSelector;
     private final JButton _testButton;
     private final DCLabel _urlLabel;
@@ -162,6 +161,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                 updateUrlLabel();
             }
         });
+        _tenantNameTextField.getDocument().addDocumentListener(genericDocumentListener);
 
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         _testButton.addActionListener(new ActionListener() {

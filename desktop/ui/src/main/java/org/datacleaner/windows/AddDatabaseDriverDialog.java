@@ -51,7 +51,7 @@ import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FileNameTextField;
+import org.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -64,7 +64,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private final ImageManager imageManager = ImageManager.get();
-	private final List<FileNameTextField> _filenameTextFields;
+	private final List<FilenameTextField> _filenameTextFields;
 	private final DCPanel _filesPanel;
 	private final DCComboBox<String> _driverClassNameComboBox;
 	private final DatabaseDriverCatalog _databaseDriverCatalog;
@@ -140,12 +140,12 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	}
 
 	private void addFilenameTextField() {
-		final FileNameTextField filenameTextField = new FileNameTextField(_userPreferences.getConfiguredFileDirectory(),
+		final FilenameTextField filenameTextField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(),
 				true);
 		filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
 		filenameTextField.addSelectionListener(new FileSelectionListener() {
 			@Override
-			public void onSelected(final FileNameTextField filenameTextField, final File file) {
+			public void onSelected(final FilenameTextField filenameTextField, final File file) {
 				updateStatus();
 			}
 		});

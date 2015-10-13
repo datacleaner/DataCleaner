@@ -51,7 +51,7 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FileNameTextField;
+import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
@@ -72,7 +72,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordField;
     private final JCheckBox _sslCheckBox;
-    private final FileNameTextField _keystorePathField;
+    private final FilenameTextField _keystorePathField;
     private final JPasswordField _keystorePasswordField;
 
     @Inject
@@ -95,7 +95,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _portTextField.setDocument(new NumberDocument(false));
         _usernameTextField = WidgetFactory.createTextField();
         _passwordField = WidgetFactory.createPasswordField();
-        _keystorePathField = new FileNameTextField(userPreferences.getOpenDatastoreDirectory(), true);
+        _keystorePathField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
         // FIXME: Hack-ish way to make it fit...
         final double columns = WidgetFactory.TEXT_FIELD_COLUMNS * 0.6;
         _keystorePathField.getTextField().setColumns((int) columns);
@@ -216,7 +216,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _keystorePathField.addSelectionListener(new FileSelectionListener() {
 
             @Override
-            public void onSelected(final FileNameTextField filenameTextField, final File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 validateAndUpdate();
 
             }

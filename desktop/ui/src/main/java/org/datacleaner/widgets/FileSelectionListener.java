@@ -22,5 +22,5 @@ package org.datacleaner.widgets;
 import java.io.File;
 
 public interface FileSelectionListener {
-	void onSelected(FileNameTextField filenameTextField, File file);
+	void onSelected(FilenameTextField filenameTextField, File file);
 }

@@ -64,7 +64,7 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FileNameTextField;
+import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
@@ -95,7 +95,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
      */
     private static final int PREVIEW_COLUMNS = 10;
 
-    private final FileNameTextField _filenameField;
+    private final FilenameTextField _filenameField;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
@@ -104,7 +104,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             WindowContext windowContext, UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel.setText("Please select file");
-        _filenameField = new FileNameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
+        _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
 
         if (originalDatastore != null) {
             if (originalDatastore instanceof ResourceDatastore) {
@@ -125,7 +125,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         setFileFilters(_filenameField);
         _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FileNameTextField filenameTextField, File file) {
+            public void onSelected(FilenameTextField filenameTextField, File file) {
                 final File dir;
                 if (file.isDirectory()) {
                     dir = file;

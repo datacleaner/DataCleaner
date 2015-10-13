@@ -37,14 +37,14 @@ import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FileResourceTextField;
+import org.datacleaner.widgets.FileNameTextField;
 
 /**
  * Property widget for a single {@link File} field.
  */
 public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File> {
 
-    private final FileResourceTextField _filenameField;
+    private final FileNameTextField _filenameField;
     private final UserPreferences _userPreferences;
     private final FileResolver _fileResolver;
     private final FileAccessMode _accessMode;
@@ -70,7 +70,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             _accessMode = FileAccessMode.OPEN;
         }
 
-        _filenameField = new FileResourceTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
+        _filenameField = new FileNameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
 
         if (_extensions != null && _extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(_extensions.length);
@@ -97,7 +97,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
         _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(final FileResourceTextField filenameTextField, final File file) {
+            public void onSelected(final FileNameTextField filenameTextField, final File file) {
                 if (file != null) {
                     final File dir = file.getParentFile();
                     _userPreferences.setConfiguredFileDirectory(dir);

@@ -59,7 +59,7 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FileResourceTextField;
+import org.datacleaner.widgets.FileNameTextField;
 import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
@@ -111,13 +111,13 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getGeneralTab() {
-        final FileResourceTextField saveDatastoreDirectoryField = new FileResourceTextField(
+        final FileNameTextField saveDatastoreDirectoryField = new FileNameTextField(
                 _userPreferences.getSaveDatastoreDirectory(), true);
         saveDatastoreDirectoryField.setFile(_userPreferences.getSaveDatastoreDirectory());
         saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         saveDatastoreDirectoryField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(final FileResourceTextField filenameTextField, final File file) {
+            public void onSelected(final FileNameTextField filenameTextField, final File file) {
                 _userPreferences.setSaveDatastoreDirectory(file);
             }
         });

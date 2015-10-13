@@ -491,18 +491,31 @@
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
 				<all>
-					<element name="base-url" type="string" minOccurs="1"
+					<element name="host" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="port" type="int" minOccurs="1"
 						maxOccurs="1" />
 					<element name="username" type="string" minOccurs="1"
 						maxOccurs="1" />
-					<element name="security-token" type="string" minOccurs="1"
+					<element name="password" type="string" minOccurs="1"
 						maxOccurs="1" />
-					<element name="endpoint-url" type="string" minOccurs="0"
+					<element name="tenantname" type="string" minOccurs="1"
+						maxOccurs="1" />
+				    <element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
 						maxOccurs="1" />
 				</all>
 			</extension>
 		</complexContent>
 	</complexType>
+
+	<simpleType name="datahubsecuritymodeEnum">
+		<restriction base="string">
+			<enumeration value="CAS" />
+			<enumeration value="DEFAULT" />
+		</restriction>
+	</simpleType>
 
 	<complexType name="pojoDatastoreType">
 		<complexContent>

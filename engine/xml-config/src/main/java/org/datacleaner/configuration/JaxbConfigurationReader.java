@@ -920,7 +920,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String host = getStringVariable("host", datastoreType.getHost());
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getStringVariable("password", datastoreType.getPassword());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
         String tenantName = getStringVariable("tenantname", datastoreType.getTenantname());
         boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
         boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);

@@ -123,10 +123,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Validate
     public void validate() {
 
-        if (sheetName.length() == 0) {
-            throw new IllegalStateException("Sheet name cannot be empty");
-        }
-
         for (char c : ILLEGAL_SHEET_CHARS) {
             if (sheetName.indexOf(c) != -1) {
                 throw new IllegalStateException("Sheet name cannot contain '" + c + "'");

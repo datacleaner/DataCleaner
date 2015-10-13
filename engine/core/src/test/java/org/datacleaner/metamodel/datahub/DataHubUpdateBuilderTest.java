@@ -19,7 +19,10 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -54,7 +57,7 @@ public class DataHubUpdateBuilderTest {
         @Mock
         Table table;
         
-        RowUpdationBuilder sut;
+        RowUpdationBuilder rowUpdationBuilder;
 
         
         @Before
@@ -65,7 +68,7 @@ public class DataHubUpdateBuilderTest {
                             new MutableColumn("_trackcode", ColumnType.CHAR), 
                             new MutableColumn("name", ColumnType.CHAR), 
                             new MutableColumn("age", ColumnType.CHAR)});
-            sut = new DataHubUpdateBuilder(callback, table);
+            rowUpdationBuilder = new DataHubUpdateBuilder(callback, table);
         }
         
         
@@ -74,12 +77,12 @@ public class DataHubUpdateBuilderTest {
             Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
             final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                     OperatorType.EQUALS_TO, "123");
-            sut = sut.where(grIdFilter);
+            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
             Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
-            sut.value(updateColumn1, "billy");
+            rowUpdationBuilder.value(updateColumn1, "billy");
             Column updateColumn2 = new MutableColumn("age", ColumnType.CHAR);
-            sut.value(updateColumn2, "10");
-            sut.execute();
+            rowUpdationBuilder.value(updateColumn2, "10");
+            rowUpdationBuilder.execute();
             ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
             verify(callback, times(1)).executeUpdate(argument.capture());
             UpdateData data = argument.getValue();
@@ -90,12 +93,30 @@ public class DataHubUpdateBuilderTest {
             assertEquals("age", data.getFields()[1].getName());
             assertEquals("10", data.getFields()[1].getValue());
         }
+        
+        @Test
+        public void shouldHandleNullValuesInUpdate() {
+            Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+            final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
+                    OperatorType.EQUALS_TO, "123");
+            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
+            Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
+            rowUpdationBuilder.value(updateColumn1, null);
+            rowUpdationBuilder.execute();
+            ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
+            verify(callback, times(1)).executeUpdate(argument.capture());
+            UpdateData data = argument.getValue();
+            assertThat(data.getGrId(), is("123"));
+            assertThat(data.getFields().length, is(1));
+            assertThat(data.getFields()[0].getName(), is("name"));
+            assertThat(data.getFields()[0].getValue(), is(nullValue(String.class)));
+        }
 
         @Test
         public void shouldThrowForMissingWhereClause() {
             thrown.expect(IllegalArgumentException.class);
             thrown.expectMessage("Updates should have the gr_id as the sole condition value.");        
-            sut.execute();
+            rowUpdationBuilder.execute();
         }
 
         @Test
@@ -105,8 +126,8 @@ public class DataHubUpdateBuilderTest {
             Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
             final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
                     OperatorType.EQUALS_TO, "nonsense");
-            sut = sut.where(illegalFilter);
-            sut.execute();
+            rowUpdationBuilder = rowUpdationBuilder.where(illegalFilter);
+            rowUpdationBuilder.execute();
         }
 
         @Test
@@ -116,10 +137,10 @@ public class DataHubUpdateBuilderTest {
             Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
             final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                     OperatorType.EQUALS_TO, "123");
-            sut = sut.where(grIdFilter);
+            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
             Column illegalColumn = new MutableColumn("_trackcode", ColumnType.CHAR);
-            sut.value(illegalColumn, "updated");
-            sut.execute();
+            rowUpdationBuilder.value(illegalColumn, "updated");
+            rowUpdationBuilder.execute();
         }
 
         @Test
@@ -129,10 +150,10 @@ public class DataHubUpdateBuilderTest {
             Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
             final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                     OperatorType.EQUALS_TO, "123");
-            sut = sut.where(grIdFilter);
+            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
             Column nonExistingColumn = new MutableColumn("nonsense", ColumnType.CHAR);
-            sut.value(nonExistingColumn, "bla");
-            sut.execute();
+            rowUpdationBuilder.value(nonExistingColumn, "bla");
+            rowUpdationBuilder.execute();
         }
 
 }

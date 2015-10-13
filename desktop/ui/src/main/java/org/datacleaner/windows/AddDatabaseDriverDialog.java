@@ -143,7 +143,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		final FilenameTextField filenameTextField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(),
 				true);
 		filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
-		filenameTextField.addSelectionListener(new FileSelectionListener() {
+		filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(final FilenameTextField filenameTextField, final File file) {
 				updateStatus();

@@ -123,7 +123,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         // add listeners after setting initial values.
         setFileFilters(_filenameField);
-        _filenameField.addSelectionListener(new FileSelectionListener() {
+        _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
                 final File dir;

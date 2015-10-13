@@ -125,7 +125,7 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
         });
     }
 
-    public void addSelectionListener(FileSelectionListener listener) {
+    public void addFileSelectionListener(FileSelectionListener listener) {
         _fileSelectionListeners.add(listener);
     }
 

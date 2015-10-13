@@ -95,7 +95,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             _filenameField.setFile(currentValue);
         }
 
-        _filenameField.addSelectionListener(new FileSelectionListener() {
+        _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
             public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 if (file != null) {

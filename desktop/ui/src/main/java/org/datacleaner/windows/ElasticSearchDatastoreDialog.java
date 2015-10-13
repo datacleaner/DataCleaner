@@ -213,7 +213,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _usernameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _passwordField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _keystorePathField.getTextField().getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
-        _keystorePathField.addSelectionListener(new FileSelectionListener() {
+        _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
 
             @Override
             public void onSelected(final FilenameTextField filenameTextField, final File file) {

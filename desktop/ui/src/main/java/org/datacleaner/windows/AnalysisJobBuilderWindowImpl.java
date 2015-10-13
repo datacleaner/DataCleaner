@@ -655,7 +655,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 executeable = true;
             }
             try {
-                checkJobIsConfigured();
+                checkAnalyzerJobsAreConfigured();
             } catch (Exception ex) {
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
@@ -688,7 +688,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     /**
      * Checks if a job including its child jobs are correctly configured.
      **/
-    private void checkJobIsConfigured() {
+    private void checkAnalyzerJobsAreConfigured() {
 
         checkAnalysisJobBuilderConfigured(_analysisJobBuilder);
         final List<AnalyzerComponentBuilder<?>> analyzerComponentBuilders = _analysisJobBuilder

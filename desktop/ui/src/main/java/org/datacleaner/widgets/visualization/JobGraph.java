@@ -305,7 +305,7 @@ public final class JobGraph {
                     imagePath = null;
 
                     try {
-                        if (checkAnalysisJobIsConfigured()) {
+                        if (checkAnalysisJobBuilderIsConfigured()) {
                             title = "Ready to execute";
                             subTitle = "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
                             imagePath = "images/window/canvas-bg-execute.png";
@@ -463,7 +463,7 @@ public final class JobGraph {
      * 
      * @return
      */
-    private boolean checkAnalysisJobIsConfigured() {
+    private boolean checkAnalysisJobBuilderIsConfigured() {
 
         boolean isConfigurated = true;
         final List<AnalyzerComponentBuilder<?>> analyzerComponentBuilders = _analysisJobBuilder

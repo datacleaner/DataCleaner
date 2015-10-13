@@ -172,12 +172,15 @@ public class RemoteTransformer extends BatchTransformer {
         return columns;
     }
 
-    private void convertOutputRows(JsonNode rows, BatchSink<Object[]> sink) {
+    private void convertOutputRows(JsonNode rows, BatchSink<Object[]> sink, int sinkSize) {
         OutputColumns outCols = getOutputColumns();
         if(rows == null || rows.size() < 1) { throw new RuntimeException("Expected exactly 1 row in response"); }
 
         int rowI = 0;
         for(JsonNode row: rows) {
+            if(rowI >= sinkSize) {
+                throw new RuntimeException("Expected " + sinkSize + " rows, but got more");
+            }
             List values = new ArrayList();
             int i = 0;
             for(JsonNode value: row) {
@@ -189,8 +192,12 @@ public class RemoteTransformer extends BatchTransformer {
                 values.add(convertOutputValue(value, cl));
                 i++;
             }
+            logger.debug("Setting output {}. Sink: @{}", rowI, sink.hashCode());
             sink.setOutput(rowI, values.toArray(new Object[values.size()]));
             rowI++;
+        }
+        if(rowI < sinkSize) {
+            throw new RuntimeException("Expected " + sinkSize + " rows, but got only " + rowI);
         }
     }
 
@@ -248,7 +255,7 @@ public class RemoteTransformer extends BatchTransformer {
         input.data = mapper.valueToTree(rows);
         logger.debug("Processing remotely {} rows", size);
         ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
-        convertOutputRows(out.rows, sink);
+        convertOutputRows(out.rows, sink, size);
     }
 
 }

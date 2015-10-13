@@ -137,6 +137,7 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
             @Override
             protected void onChange(DocumentEvent event) {
                 _textFieldUpdating = true;
+                _textField.setToolTipText(_textField.getText().isEmpty() ? "Filename" : _textField.getText());
                 try {
                     final File file = getFile();
                     if (file == null) {

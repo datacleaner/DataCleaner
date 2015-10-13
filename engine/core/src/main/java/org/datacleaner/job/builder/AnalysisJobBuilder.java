@@ -1368,4 +1368,17 @@ public final class AnalysisJobBuilder implements Closeable {
         }
         return consumedOutputDataStreamJobBuilders;
     }
+
+    /**
+     * Checks if a job including its child jobs are correctly configured.
+     **/
+    public boolean isConsumedOutDataStreamsJobBuilderConfigured(final boolean throwException) {
+        final List<AnalysisJobBuilder> consumedOutputDataStreamsJobBuilders = getConsumedOutputDataStreamsJobBuilders();
+        boolean isConfigurated = true;
+        for (final AnalysisJobBuilder analysisJobBuilder : consumedOutputDataStreamsJobBuilders) {
+            isConfigurated &= analysisJobBuilder.isConfigured(throwException);
+        }
+
+        return isConfigurated;
+    }
 }

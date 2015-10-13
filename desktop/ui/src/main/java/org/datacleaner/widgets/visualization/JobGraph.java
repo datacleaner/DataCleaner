@@ -46,14 +46,12 @@ import javax.swing.TransferHandler;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCPanel;
@@ -305,7 +303,8 @@ public final class JobGraph {
                     imagePath = null;
 
                     try {
-                        if (checkAnalysisJobBuilderIsConfigured()) {
+                        if (_analysisJobBuilder.isConfigured(true)
+                                && _analysisJobBuilder.isConsumedOutDataStreamsJobBuilderConfigured(true)) {
                             title = "Ready to execute";
                             subTitle = "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
                             imagePath = "images/window/canvas-bg-execute.png";
@@ -458,28 +457,4 @@ public final class JobGraph {
         scrollBar.setValues(value, scrollModel.getExtent(), scrollModel.getMinimum(), scrollModel.getMaximum());
     }
 
-    /**
-     * Checks if a job including its child jobs are correctly configured.
-     * 
-     * @return
-     */
-    private boolean checkAnalysisJobBuilderIsConfigured() {
-
-        boolean isConfigurated = true;
-        final List<AnalyzerComponentBuilder<?>> analyzerComponentBuilders = _analysisJobBuilder
-                .getAnalyzerComponentBuilders();
-        for (AnalyzerComponentBuilder<?> analyzerComponentBuilder : analyzerComponentBuilders) {
-            final List<OutputDataStream> outputDataStreams = analyzerComponentBuilder.getOutputDataStreams();
-            if (!outputDataStreams.isEmpty()) {
-                for (OutputDataStream outputDataStream : outputDataStreams) {
-                    final AnalysisJobBuilder outputDataStreamJobBuilder = analyzerComponentBuilder
-                            .getOutputDataStreamJobBuilder(outputDataStream);
-                    isConfigurated &= outputDataStreamJobBuilder.isConfigured(true);
-                }
-            }
-        }
-        isConfigurated &= _analysisJobBuilder.isConfigured(true);
-
-        return isConfigurated;
-    }
 }

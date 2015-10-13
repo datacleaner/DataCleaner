@@ -69,7 +69,6 @@ import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
@@ -655,7 +654,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 executeable = true;
             }
             try {
-                checkAnalyzerJobsAreConfigured();
+                checkAnalysisJobBuilderConfigured();
             } catch (Exception ex) {
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
@@ -685,28 +684,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executionAlternativesButton.setEnabled(executeable);
     }
 
-    /**
-     * Checks if a job including its child jobs are correctly configured.
-     **/
-    private void checkAnalyzerJobsAreConfigured() {
-
-        checkAnalysisJobBuilderConfigured(_analysisJobBuilder);
-        final List<AnalyzerComponentBuilder<?>> analyzerComponentBuilders = _analysisJobBuilder
-                .getAnalyzerComponentBuilders();
-        for (AnalyzerComponentBuilder<?> analyzerComponentBuilder : analyzerComponentBuilders) {
-            final List<OutputDataStream> outputDataStreams = analyzerComponentBuilder.getOutputDataStreams();
-            if (!outputDataStreams.isEmpty()) {
-                for (OutputDataStream outputDataStream : outputDataStreams) {
-                    final AnalysisJobBuilder outputDataStreamJobBuilder = analyzerComponentBuilder
-                            .getOutputDataStreamJobBuilder(outputDataStream);
-                    checkAnalysisJobBuilderConfigured(outputDataStreamJobBuilder);
-                }
-            }
-        }
-    }
-
-    private void checkAnalysisJobBuilderConfigured(final AnalysisJobBuilder analysisJobBuilder) {
-        if (analysisJobBuilder.isConfigured(true)) {
+    private void checkAnalysisJobBuilderConfigured() {
+        if (_analysisJobBuilder.isConfigured(true)
+                && _analysisJobBuilder.isConsumedOutDataStreamsJobBuilderConfigured(true)) {
             setStatusLabelText("Job is correctly configured");
             setStatusLabelValid();
         } else {

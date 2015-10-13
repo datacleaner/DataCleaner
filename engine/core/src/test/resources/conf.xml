@@ -70,18 +70,9 @@
         <remote-components>
             <server>
                 <url>http://localhost:8888</url>
-                <username>admin1</username>
-                <password>superSecretPassword</password>
+                <username>admin</username>
+                <password>oFm53KJ9K+w=</password>
             </server>
         </remote-components>
-        <!--
-        <remote-components>
-            <server>
-                <url>http://localhost:9999</url>
-                <username>admin2</username>
-                <password>admin2</password>
-            </server>
-        </remote-components>
-        -->
     </descriptor-providers>
 </configuration>

@@ -26,12 +26,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.datacleaner.util.SecurityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DataCleanerConfigurationUpdaterTest {
-    private String originalPassword = "superSecretPassword";
-    private String newPassword = "newPassword";
+    private String originalPassword = encode("admin");
+    private String newPassword = encode("newPassword");
     private String tagName = "password";
     private String nodePathString = "descriptor-providers:remote-components:server:" + tagName;
     private String configurationFileName = "conf.xml";
@@ -51,6 +52,10 @@ public class DataCleanerConfigurationUpdaterTest {
 
         Assert.assertTrue(isValuePresent(originalPassword));
         Assert.assertFalse(isValuePresent(newPassword));
+    }
+
+    private static String encode(String value) {
+        return SecurityUtils.encodePassword(value);
     }
 
     private boolean isValuePresent(String value) {

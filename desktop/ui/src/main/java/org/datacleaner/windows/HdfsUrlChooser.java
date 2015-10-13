@@ -69,9 +69,9 @@ import org.slf4j.LoggerFactory;
 public class HdfsUrlChooser extends JComponent {
 
     private static final long serialVersionUID = 1L;
-    
+
     protected static final Logger logger = LoggerFactory.getLogger(HdfsUrlChooser.class);
-    
+
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
 
@@ -101,7 +101,6 @@ public class HdfsUrlChooser extends JComponent {
             }
 
             FileStatus fileStatus = (FileStatus) value;
-            
 
             final String name;
             if (fileStatus.isDirectory()) {
@@ -112,12 +111,12 @@ public class HdfsUrlChooser extends JComponent {
                 name = fileStatus.getPath().getName();
             } else {
                 name = "..";
-                
+
                 setIcon(LEVEL_UP_ICON);
             }
-            
+
             setText(name);
-            
+
             return this;
         }
     }
@@ -129,14 +128,14 @@ public class HdfsUrlChooser extends JComponent {
         public void paintIcon(Component c, Graphics g, int x, int y) {
 
             if (c.getComponentOrientation().isLeftToRight()) {
-                _icon.paintIcon(c, g, x + _depth * space, y);
+                _icon.paintIcon(c, g, x + _depth * SPACE, y);
             } else {
                 _icon.paintIcon(c, g, x, y);
             }
         }
 
         public int getIconWidth() {
-            return _icon.getIconWidth() + _depth * space;
+            return _icon.getIconWidth() + _depth * SPACE;
         }
 
         public int getIconHeight() {
@@ -145,9 +144,9 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     class ServerComboBoxRenderer extends DefaultListCellRenderer {
-        
+
         private static final long serialVersionUID = 1L;
-        
+
         IndentIcon ii = new IndentIcon();
 
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
@@ -182,7 +181,7 @@ public class HdfsUrlChooser extends JComponent {
     class HdfsComboBoxModel extends AbstractListModel<Path> implements ComboBoxModel<Path> {
 
         private static final long serialVersionUID = 1L;
-        
+
         LinkedList<Path> directories = new LinkedList<>();
         int[] depths = null;
 
@@ -280,7 +279,7 @@ public class HdfsUrlChooser extends JComponent {
     public class HdfsDirectoryModel extends AbstractListModel<FileStatus> implements PropertyChangeListener {
 
         private static final long serialVersionUID = 1L;
-        
+
         private FileStatus[] _files;
 
         public HdfsDirectoryModel() {
@@ -305,7 +304,7 @@ public class HdfsUrlChooser extends JComponent {
                     final FileStatus levelUp = new FileStatus();
                     levelUp.setSymlink(_currentDirectory.getParent());
                     newFileStatuses[0] = levelUp;
-                    
+
                     for (int i = 0; i < fileStatuses.length; i++) {
                         newFileStatuses[i + 1] = fileStatuses[i];
                     }
@@ -346,16 +345,18 @@ public class HdfsUrlChooser extends JComponent {
     public static final Icon COMPUTER_ICON = UIManager.getIcon("FileView.computerIcon");
     public static final Icon LEVEL_UP_ICON = UIManager.getLookAndFeelDefaults().getIcon("FileChooser.upFolderIcon");
 
-    final static int space = 10;
+    private static final int DEFAULT_WIDTH = 600;
+
     public static String HDFS_SCHEME = "hdfs";
+
+    private static final int SPACE = 10;
     private final OpenType _openType;
     private final JList<FileStatus> _fileList;
+
     private FileSystem _fileSystem;
     private JDialog _dialog = null;
     private Path _currentDirectory;
     private Path _selectedFile;
-
-    
 
     private HdfsComboBoxModel _directoryComboBoxModel = new HdfsComboBoxModel();
     private DCComboBox<Path> _pathsComboBox;
@@ -375,7 +376,7 @@ public class HdfsUrlChooser extends JComponent {
         final DCLabel lookInLabel = DCLabel.dark("Look in:");
         _pathsComboBox = new DCComboBox<>(_directoryComboBoxModel);
         _pathsComboBox.setRenderer(new ServerComboBoxRenderer());
-        _pathsComboBox.setMinimumSize(new Dimension(300, 40));
+        _pathsComboBox.setMinimumSize(new Dimension(DEFAULT_WIDTH, 40));
         _pathsComboBox.addListener(new DCComboBox.Listener<Path>() {
             @Override
             public void onItemSelected(final Path directory) {
@@ -386,7 +387,8 @@ public class HdfsUrlChooser extends JComponent {
         });
         _fileList = new JList<>(new HdfsDirectoryModel());
         _fileList.setLayoutOrientation(JList.VERTICAL_WRAP);
-        _fileList.setPreferredSize(new Dimension(300, 200));
+        _fileList.setPreferredSize(new Dimension(DEFAULT_WIDTH, 350));
+        _fileList.setBorder(WidgetUtils.BORDER_THIN);
         _fileList.setCellRenderer(new HdfsFileListRenderer());
         _fileList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -413,13 +415,16 @@ public class HdfsUrlChooser extends JComponent {
         setLayout(new BorderLayout());
         final DCPanel topPanel = new DCPanel();
         topPanel.setLayout(new GridBagLayout());
-        topPanel.setPreferredSize(new Dimension(300, 40));
+        topPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH, 40));
         WidgetUtils.addToGridBag(lookInLabel, topPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 5);
         WidgetUtils.addToGridBag(_pathsComboBox, topPanel, 1, 0, 100, 40, GridBagConstraints.WEST, 5, 1, 1,
                 GridBagConstraints.HORIZONTAL);
 
         add(topPanel, BorderLayout.NORTH);
-        add(_fileList, BorderLayout.CENTER);
+
+        final DCPanel panel = DCPanel.around(_fileList);
+        panel.setBorder(WidgetUtils.BORDER_EMPTY);
+        add(panel, BorderLayout.CENTER);
     }
 
     public static URI showDialog(Component parent, URI currentUri, OpenType openType) throws HeadlessException {
@@ -457,7 +462,7 @@ public class HdfsUrlChooser extends JComponent {
             } catch (URISyntaxException e1) {
                 throw new IllegalStateException(e1);
             }
-        } 
+        }
         return null;
     }
 
@@ -505,7 +510,7 @@ public class HdfsUrlChooser extends JComponent {
     public URI getUri() {
         return _currentDirectory == null ? null : _currentDirectory.toUri();
     }
-    
+
     private Path getSelectedFile() {
         return _selectedFile;
     }
@@ -516,7 +521,7 @@ public class HdfsUrlChooser extends JComponent {
         final JFrame frame = new JFrame("test");
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
+        frame.setSize(DEFAULT_WIDTH, 400);
         frame.pack();
         frame.setVisible(true);
 

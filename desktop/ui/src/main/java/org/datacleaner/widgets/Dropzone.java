@@ -41,8 +41,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
-import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -115,10 +115,11 @@ public class Dropzone extends DCPanel {
             public void mouseClicked(MouseEvent e) {
                 URI selectedFile = HdfsUrlChooser.showDialog(dropZone, null, OpenType.LOAD);
                 logger.info("Selected HDFS file: " + selectedFile);
-                
+
                 if (selectedFile != null) {
-                    final Datastore datastore = new CsvDatastore(selectedFile.getPath(), new HdfsResource(selectedFile
-                            .toString()));
+                    final HdfsResource resource = new HdfsResource(selectedFile.toString());
+                    final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
+                            _datastoreCatalog, resource);
                     _datastoreSelectListener.datastoreSelected(datastore);
                 }
             }
@@ -160,7 +161,8 @@ public class Dropzone extends DCPanel {
                     }
                 }
                 if (datastore == null) {
-                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
+                            new FileResource(file));
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
@@ -220,8 +222,8 @@ public class Dropzone extends DCPanel {
                     return false;
                 }
 
-                Datastore datastore = DatastoreCreationUtil
-                        .createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
+                        new FileResource(file));
                 _datastoreSelectListener.datastoreSelected(datastore);
                 return true;
             }

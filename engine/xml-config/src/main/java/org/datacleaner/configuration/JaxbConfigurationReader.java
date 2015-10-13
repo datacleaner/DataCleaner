@@ -406,7 +406,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        final String decodedPassword = SecurityUtils.decodePassword(server.getPassword());
+
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), decodedPassword);
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

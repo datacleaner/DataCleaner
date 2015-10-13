@@ -55,6 +55,7 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -341,13 +342,17 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-        textField.setText(value);
+        String finalInputValue = (textField instanceof JPasswordField) ?
+            SecurityUtils.decodePassword(value) : value;
+        textField.setText(finalInputValue);
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent e) {
                 String fieldName = textField.getName();
                 String[] nodePath = ("descriptor-providers:remote-components:server:" + fieldName).split(":");
-                _configurationUpdater.update(nodePath, textField.getText());
+                String finalOutputValue = (textField instanceof JPasswordField) ?
+                    SecurityUtils.encodePassword(textField.getText()) : textField.getText();
+                _configurationUpdater.update(nodePath, finalOutputValue);
             }
         });
     }

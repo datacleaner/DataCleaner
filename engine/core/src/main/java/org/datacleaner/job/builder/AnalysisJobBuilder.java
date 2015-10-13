@@ -1380,7 +1380,7 @@ public final class AnalysisJobBuilder implements Closeable {
     private boolean isConsumedOutDataStreamsJobBuilderConfigured(final boolean throwException) {
         final List<AnalysisJobBuilder> consumedOutputDataStreamsJobBuilders = getConsumedOutputDataStreamsJobBuilders();
         for (final AnalysisJobBuilder analysisJobBuilder : consumedOutputDataStreamsJobBuilders) {
-            if (!analysisJobBuilder.checkConfiguration(throwException)) {
+            if (!analysisJobBuilder.isConfigured(throwException)) {
                 return false;
             }
         }

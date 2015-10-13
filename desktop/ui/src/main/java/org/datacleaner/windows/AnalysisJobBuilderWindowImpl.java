@@ -69,6 +69,7 @@ import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
@@ -149,8 +150,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
             builder.addAnalysisJobChangeListener(this);
 
-            // We'll need to listen to already added output data stream job builders
-            for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
+            // We'll need to listen to already added output data stream job
+            // builders
+            for (AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
                 onActivation(analysisJobBuilder);
             }
         }
@@ -283,7 +285,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -394,7 +395,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -653,13 +655,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 executeable = true;
             }
             try {
-                if (_analysisJobBuilder.isConfigured(true)) {
-                    setStatusLabelText("Job is correctly configured");
-                    setStatusLabelValid();
-                } else {
-                    setStatusLabelText("Job is not correctly configured");
-                    setStatusLabelWarning();
-                }
+                checkJobIsConfigured();
             } catch (Exception ex) {
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
@@ -687,6 +683,36 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton.setEnabled(executeable);
         _executionAlternativesButton.setEnabled(executeable);
+    }
+
+    /**
+     * Checks if a job including its child jobs are correctly configured.
+     **/
+    private void checkJobIsConfigured() {
+
+        checkAnalysisJobBuilderConfigured(_analysisJobBuilder);
+        final List<AnalyzerComponentBuilder<?>> analyzerComponentBuilders = _analysisJobBuilder
+                .getAnalyzerComponentBuilders();
+        for (AnalyzerComponentBuilder<?> analyzerComponentBuilder : analyzerComponentBuilders) {
+            final List<OutputDataStream> outputDataStreams = analyzerComponentBuilder.getOutputDataStreams();
+            if (!outputDataStreams.isEmpty()) {
+                for (OutputDataStream outputDataStream : outputDataStreams) {
+                    final AnalysisJobBuilder outputDataStreamJobBuilder = analyzerComponentBuilder
+                            .getOutputDataStreamJobBuilder(outputDataStream);
+                    checkAnalysisJobBuilderConfigured(outputDataStreamJobBuilder);
+                }
+            }
+        }
+    }
+
+    private void checkAnalysisJobBuilderConfigured(final AnalysisJobBuilder analysisJobBuilder) {
+        if (analysisJobBuilder.isConfigured(true)) {
+            setStatusLabelText("Job is correctly configured");
+            setStatusLabelValid();
+        } else {
+            setStatusLabelText("Job is not correctly configured");
+            setStatusLabelWarning();
+        }
     }
 
     @Override

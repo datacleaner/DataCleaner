@@ -33,6 +33,7 @@ import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -99,6 +100,11 @@ public class MetricValueUtils {
         } else {
             logger.debug("Resolved AnalyzerResult using key={}", componentJob);
         }
+
+        if (result instanceof AnalyzerResultFuture) {
+            result = ((AnalyzerResultFuture<?>) result).get();
+        }
+
         return result;
     }
 

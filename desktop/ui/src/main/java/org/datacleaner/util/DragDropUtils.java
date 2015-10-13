@@ -109,11 +109,13 @@ public class DragDropUtils {
     protected static Object getModelObject(JComponent c) {
         if (c instanceof JTree) {
             final TreePath path = ((JTree) c).getSelectionPath();
-            final Object pathComponent = path.getLastPathComponent();
-            if (pathComponent instanceof DefaultMutableTreeNode) {
-                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathComponent;
-                final Object userObject = node.getUserObject();
-                return userObject;
+            if (path != null) {
+                final Object pathComponent = path.getLastPathComponent();
+                if (pathComponent instanceof DefaultMutableTreeNode) {
+                    final DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathComponent;
+                    final Object userObject = node.getUserObject();
+                    return userObject;
+                }
             }
         }
         return null;

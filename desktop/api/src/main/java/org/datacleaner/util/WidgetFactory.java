@@ -343,6 +343,9 @@ public final class WidgetFactory {
             public synchronized JFormattedTextField.AbstractFormatter getFormatter(final JFormattedTextField tf) {
                 if (_formatter == null) {
                     _formatter = new JFormattedTextField.AbstractFormatter() {
+
+                        private static final long serialVersionUID = 1L;
+
                         @Override
                         public Object stringToValue(final String text) throws ParseException {
                             return format.parseObject(text);

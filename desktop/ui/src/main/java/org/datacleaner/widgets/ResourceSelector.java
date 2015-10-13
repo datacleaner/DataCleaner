@@ -96,7 +96,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         final ResourceTypePresenter<?> presenter;
         switch (scheme) {
         case "file":
-            presenter = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
+            presenter = new FileResourceTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
             break;
         case "hdfs":
             presenter = new HdfsResourceTypePresenter();

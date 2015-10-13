@@ -25,22 +25,22 @@ import java.awt.event.ActionListener;
 import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.windows.HdfsUrlChooser;
 
-public class HdfsUrlTextField extends AbstractFileTextField<HdfsResource> {
+public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResource> {
     String _hdfsUri;
 
-    public HdfsUrlTextField(String uri, final HdfsUrlChooser.OpenType openType) {
+    public HdfsResourceTextField(String uri, final HdfsUrlChooser.OpenType openType) {
         _hdfsUri = uri;
 
         getBrowseButton().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    HdfsUrlChooser.showDialog(HdfsUrlTextField.this, null, openType);
+                    HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, openType);
                 }
             }
         );
     }
 
-    HdfsUrlTextField(HdfsUrlChooser.OpenType openType) {
+    HdfsResourceTextField(HdfsUrlChooser.OpenType openType) {
         this("", openType);
     }
 

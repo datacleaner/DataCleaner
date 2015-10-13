@@ -20,5 +20,5 @@
 package org.datacleaner.widgets;
 
 public interface SelectionListener<N> {
-    void onSelected(FilenameTextField filenameTextField, N selected);
+    void onSelected(FileResourceTextField filenameTextField, N selected);
 }

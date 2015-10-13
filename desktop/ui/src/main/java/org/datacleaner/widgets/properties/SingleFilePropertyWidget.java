@@ -35,16 +35,16 @@ import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.widgets.AbstractFileTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.FileResourceTextField;
 
 /**
  * Property widget for a single {@link File} field.
  */
 public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File> {
 
-    private final FilenameTextField _filenameField;
+    private final FileResourceTextField _filenameField;
     private final UserPreferences _userPreferences;
     private final FileResolver _fileResolver;
     private final FileAccessMode _accessMode;
@@ -70,7 +70,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             _accessMode = FileAccessMode.OPEN;
         }
 
-        _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
+        _filenameField = new FileResourceTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
 
         if (_extensions != null && _extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(_extensions.length);
@@ -97,7 +97,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
         _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(final FilenameTextField filenameTextField, final File file) {
+            public void onSelected(final FileResourceTextField filenameTextField, final File file) {
                 if (file != null) {
                     final File dir = file.getParentFile();
                     _userPreferences.setConfiguredFileDirectory(dir);
@@ -114,7 +114,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         return _filenameField.getFile() != null;
     }
 
-    public AbstractFileTextField getFilenameField() {
+    public AbstractResourceTextField getFilenameField() {
         return _filenameField;
     }
 

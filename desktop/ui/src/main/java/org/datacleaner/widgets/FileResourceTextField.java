@@ -44,7 +44,7 @@ import org.datacleaner.util.WidgetUtils;
  * {@link ResourceSelector} which will work with any type of {@link Resource},
  * not just files (e.g. {@link FileResource} and others).
  */
-public final class FilenameTextField extends AbstractFileTextField<FileResource> {
+public final class FileResourceTextField extends AbstractResourceTextField<FileResource> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +58,7 @@ public final class FilenameTextField extends AbstractFileTextField<FileResource>
      *            true if browse dialog should be an "open file" dialog or false
      *            if it should be a "save file" dialog.
      */
-    public FilenameTextField(File directory, final boolean fileOpenDialog) {
+    public FileResourceTextField(File directory, final boolean fileOpenDialog) {
         _directory = directory;
 
         _browseButton.addActionListener(new ActionListener() {
@@ -88,9 +88,9 @@ public final class FilenameTextField extends AbstractFileTextField<FileResource>
 
                 int result;
                 if (fileOpenDialog) {
-                    result = fileChooser.showOpenDialog(FilenameTextField.this);
+                    result = fileChooser.showOpenDialog(FileResourceTextField.this);
                 } else {
-                    result = fileChooser.showSaveDialog(FilenameTextField.this);
+                    result = fileChooser.showSaveDialog(FileResourceTextField.this);
                 }
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();

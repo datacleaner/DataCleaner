@@ -33,7 +33,7 @@ import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.AbstractFileTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.eobjects.metamodel.sas.SasFilenameFilter;
 
@@ -97,7 +97,7 @@ public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<S
 	}
 
 	@Override
-	protected void setFileFilters(AbstractFileTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField filenameField) {
 	}
 
 	@Override

@@ -45,13 +45,13 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractFileTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.FileResourceTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -64,7 +64,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private final ImageManager imageManager = ImageManager.get();
-	private final List<FilenameTextField> _filenameTextFields;
+	private final List<FileResourceTextField> _filenameTextFields;
 	private final DCPanel _filesPanel;
 	private final DCComboBox<String> _driverClassNameComboBox;
 	private final DatabaseDriverCatalog _databaseDriverCatalog;
@@ -122,7 +122,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 	private File[] getDriverFiles() {
 		List<File> files = new ArrayList<File>();
-		for (AbstractFileTextField filenameTextField : _filenameTextFields) {
+		for (AbstractResourceTextField filenameTextField : _filenameTextFields) {
 			final String filename = filenameTextField.getFilename();
 			if (!StringUtils.isNullOrEmpty(filename)) {
 				files.add(new File(filename));
@@ -140,12 +140,12 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	}
 
 	private void addFilenameTextField() {
-		final FilenameTextField filenameTextField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(),
+		final FileResourceTextField filenameTextField = new FileResourceTextField(_userPreferences.getConfiguredFileDirectory(),
 				true);
 		filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
 		filenameTextField.addSelectionListener(new FileSelectionListener() {
 			@Override
-			public void onSelected(final FilenameTextField filenameTextField, final File file) {
+			public void onSelected(final FileResourceTextField filenameTextField, final File file) {
 				updateStatus();
 			}
 		});

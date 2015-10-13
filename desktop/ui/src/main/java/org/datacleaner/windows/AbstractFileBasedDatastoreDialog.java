@@ -60,11 +60,11 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractFileTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.FileResourceTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
@@ -95,7 +95,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
      */
     private static final int PREVIEW_COLUMNS = 10;
 
-    private final FilenameTextField _filenameField;
+    private final FileResourceTextField _filenameField;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
@@ -104,7 +104,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             WindowContext windowContext, UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel.setText("Please select file");
-        _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
+        _filenameField = new FileResourceTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
 
         if (originalDatastore != null) {
             if (originalDatastore instanceof ResourceDatastore) {
@@ -125,7 +125,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         setFileFilters(_filenameField);
         _filenameField.addSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(FileResourceTextField filenameTextField, File file) {
                 final File dir;
                 if (file.isDirectory()) {
                     dir = file;
@@ -172,7 +172,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract D createDatastore(String name, String filename);
 
-    protected abstract void setFileFilters(AbstractFileTextField filenameField);
+    protected abstract void setFileFilters(AbstractResourceTextField filenameField);
 
     @Override
     protected final void validateAndUpdate() {

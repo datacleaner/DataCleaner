@@ -38,7 +38,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
 
-public abstract class AbstractFileTextField<R extends Resource> extends DCPanel
+public abstract class AbstractResourceTextField<R extends Resource> extends DCPanel
         implements ResourceTypePresenter<R> {
     protected final JXTextField _textField = WidgetFactory.createTextField("Filename");
     protected final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
@@ -48,7 +48,7 @@ public abstract class AbstractFileTextField<R extends Resource> extends DCPanel
     protected boolean _textFieldUpdating = false;
     protected int _fileSelectionMode = JFileChooser.FILES_ONLY;
 
-    public AbstractFileTextField() {
+    public AbstractResourceTextField() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         add(_textField);
         add(Box.createHorizontalStrut(4));

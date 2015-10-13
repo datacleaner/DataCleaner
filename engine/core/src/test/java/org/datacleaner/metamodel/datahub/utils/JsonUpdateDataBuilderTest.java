@@ -19,7 +19,8 @@
  */
 package org.datacleaner.metamodel.datahub.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,16 @@ public class JsonUpdateDataBuilderTest {
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
         String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
-        assertEquals(jsonString, "[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":\"testvalue\"}]}]");
+        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":\"testvalue\"}]}]"));
     }
-
+    
+    @Test
+    public void shouldHandleNullValuesInUpdateData() throws IOException {
+        UpdateField[] fields =  { new UpdateField("testfield", null) };
+        UpdateData data = new UpdateData("21", fields );
+        List<UpdateData> updateData = new ArrayList<UpdateData>();
+        updateData.add(data);
+        String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
+        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":null}]}]"));
+    }
 }

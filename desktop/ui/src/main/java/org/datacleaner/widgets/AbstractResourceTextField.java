@@ -40,6 +40,9 @@ import org.jdesktop.swingx.JXTextField;
 
 public abstract class AbstractResourceTextField<R extends Resource> extends DCPanel
         implements ResourceTypePresenter<R> {
+    
+    private static final long serialVersionUID = 1L;
+    
     protected final JXTextField _textField = WidgetFactory.createTextField("Filename");
     protected final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
     protected final List<Listener> _resourceListeners = new ArrayList<>();

@@ -26,7 +26,6 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -46,7 +45,6 @@ import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -70,6 +68,8 @@ import org.slf4j.LoggerFactory;
 
 public class HdfsUrlChooser extends JComponent {
 
+    private static final long serialVersionUID = 1L;
+    
     protected static final Logger logger = LoggerFactory.getLogger(HdfsUrlChooser.class);
     
     public enum OpenType {
@@ -87,6 +87,8 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     static class HdfsFileListRenderer extends DefaultListCellRenderer {
+
+        private static final long serialVersionUID = 1L;
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
@@ -143,6 +145,9 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     class ServerComboBoxRenderer extends DefaultListCellRenderer {
+        
+        private static final long serialVersionUID = 1L;
+        
         IndentIcon ii = new IndentIcon();
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -176,6 +181,8 @@ public class HdfsUrlChooser extends JComponent {
 
     class HdfsComboBoxModel extends AbstractListModel<Path> implements ComboBoxModel<Path> {
 
+        private static final long serialVersionUID = 1L;
+        
         LinkedList<Path> directories = new LinkedList<>();
         int[] depths = null;
 
@@ -271,6 +278,9 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     public class HdfsDirectoryModel extends AbstractListModel<FileStatus> implements PropertyChangeListener {
+
+        private static final long serialVersionUID = 1L;
+        
         private FileStatus[] _files;
 
         public HdfsDirectoryModel() {

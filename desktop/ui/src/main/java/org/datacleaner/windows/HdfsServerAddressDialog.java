@@ -49,6 +49,9 @@ import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class HdfsServerAddressDialog extends JComponent {
+
+    private static final long serialVersionUID = 1L;
+    
     private final JXTextField _hostnameField;
     private final JXFormattedTextField _portField;
     private final JButton _okButton;

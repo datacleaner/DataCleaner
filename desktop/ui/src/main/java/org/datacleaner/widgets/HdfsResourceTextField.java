@@ -26,6 +26,9 @@ import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.windows.HdfsUrlChooser;
 
 public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResource> {
+
+    private static final long serialVersionUID = 1L;
+    
     String _hdfsUri;
 
     public HdfsResourceTextField(String uri, final HdfsUrlChooser.OpenType openType) {

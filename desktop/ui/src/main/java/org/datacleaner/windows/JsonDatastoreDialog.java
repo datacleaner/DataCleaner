@@ -31,7 +31,7 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 
 /**
  * Dialog for {@link JsonDatastore}s
@@ -69,7 +69,7 @@ public final class JsonDatastoreDialog extends AbstractFileBasedDatastoreDialog<
     }
 
     @Override
-    protected void setFileFilters(AbstractFilenameTextField filenameField) {
+    protected void setFileFilters(AbstractFileTextField filenameField) {
         filenameField.addChoosableFileFilter(FileFilters.JSON);
         filenameField.addChoosableFileFilter(FileFilters.ALL);
         filenameField.setSelectedFileFilter(FileFilters.JSON);

@@ -35,7 +35,7 @@ import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 
@@ -114,7 +114,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         return _filenameField.getFile() != null;
     }
 
-    public AbstractFilenameTextField getFilenameField() {
+    public AbstractFileTextField getFilenameField() {
         return _filenameField;
     }
 

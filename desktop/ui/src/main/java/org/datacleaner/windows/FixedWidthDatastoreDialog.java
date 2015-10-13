@@ -50,7 +50,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
@@ -277,7 +277,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected void setFileFilters(AbstractFilenameTextField filenameField) {
+	protected void setFileFilters(AbstractFileTextField filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any text or data file (.txt, .dat)", FileFilters.TXT,
 				FileFilters.DAT);
 		filenameField.addChoosableFileFilter(combinedFilter);

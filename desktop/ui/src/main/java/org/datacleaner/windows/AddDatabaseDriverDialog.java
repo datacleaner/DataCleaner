@@ -45,7 +45,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -122,7 +122,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 	private File[] getDriverFiles() {
 		List<File> files = new ArrayList<File>();
-		for (AbstractFilenameTextField filenameTextField : _filenameTextFields) {
+		for (AbstractFileTextField filenameTextField : _filenameTextFields) {
 			final String filename = filenameTextField.getFilename();
 			if (!StringUtils.isNullOrEmpty(filename)) {
 				files.add(new File(filename));

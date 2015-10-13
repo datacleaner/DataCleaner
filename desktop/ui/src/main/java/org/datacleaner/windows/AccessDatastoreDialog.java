@@ -29,7 +29,7 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 
 /**
  * Datastore configuration dialog for MS Access datastores.
@@ -67,7 +67,7 @@ public final class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialo
 	}
 
 	@Override
-	protected void setFileFilters(AbstractFilenameTextField filenameField) {
+	protected void setFileFilters(AbstractFileTextField filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB,
 				FileFilters.ACCDB);
 		filenameField.addChoosableFileFilter(FileFilters.MDB);

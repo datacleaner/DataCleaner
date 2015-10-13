@@ -44,7 +44,7 @@ import org.datacleaner.util.WidgetUtils;
  * {@link ResourceSelector} which will work with any type of {@link Resource},
  * not just files (e.g. {@link FileResource} and others).
  */
-public final class FilenameTextField extends AbstractFilenameTextField<FileResource> {
+public final class FilenameTextField extends AbstractFileTextField<FileResource> {
 
     private static final long serialVersionUID = 1L;
 

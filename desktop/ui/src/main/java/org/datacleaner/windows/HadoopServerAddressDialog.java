@@ -48,7 +48,7 @@ import org.jdesktop.swingx.JXFormattedTextField;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class ServerAddressDialog extends JComponent {
+public class HadoopServerAddressDialog extends JComponent {
     private final JXTextField _hostnameField;
     private final JXFormattedTextField _portField;
     private final JButton _okButton;
@@ -56,7 +56,7 @@ public class ServerAddressDialog extends JComponent {
 
     private URI _serverUri = null;
 
-    public ServerAddressDialog(final String host, final int port) {
+    public HadoopServerAddressDialog(final String host, final int port) {
         _hostnameField = WidgetFactory.createTextField("hostname", 10);
         if (host == null) {
             _hostnameField.setText("localhost");
@@ -101,7 +101,7 @@ public class ServerAddressDialog extends JComponent {
             port = oldUri.getPort();
         }
 
-        final ServerAddressDialog serverChoiceDialog = new ServerAddressDialog(host, port);
+        final HadoopServerAddressDialog serverChoiceDialog = new HadoopServerAddressDialog(host, port);
         final JDialog dialog = WidgetFactory.createModalDialog(serverChoiceDialog, parent, "Enter HDFS namenode details", false);
         serverChoiceDialog._okButton.addActionListener(new ActionListener() {
             @Override

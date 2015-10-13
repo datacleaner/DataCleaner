@@ -60,7 +60,7 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractFilenameTextField;
+import org.datacleaner.widgets.AbstractFileTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
@@ -172,7 +172,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract D createDatastore(String name, String filename);
 
-    protected abstract void setFileFilters(AbstractFilenameTextField filenameField);
+    protected abstract void setFileFilters(AbstractFileTextField filenameField);
 
     @Override
     protected final void validateAndUpdate() {

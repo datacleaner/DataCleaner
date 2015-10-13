@@ -61,6 +61,7 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
             @Override
             protected void onChange(DocumentEvent event) {
                 _textFieldUpdating = true;
+                _textField.setToolTipText(_textField.getText().isEmpty() ? "Filename" : _textField.getText());
                 try {
                     final String text = _textField.getText();
                     notifyListeners(text);

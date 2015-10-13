@@ -424,7 +424,7 @@ public class HdfsUrlChooser extends JComponent {
             @Override
             public void componentShown(final ComponentEvent e) {
                 if (chooser._currentDirectory == null) {
-                    final URI uri = HadoopServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
+                    final URI uri = HdfsServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
                     if (uri != null) {
                         chooser.updateCurrentDirectory(new Path(uri));
                     } else {

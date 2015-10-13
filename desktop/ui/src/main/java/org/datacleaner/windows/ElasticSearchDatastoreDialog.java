@@ -216,7 +216,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
 
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 validateAndUpdate();
 
             }

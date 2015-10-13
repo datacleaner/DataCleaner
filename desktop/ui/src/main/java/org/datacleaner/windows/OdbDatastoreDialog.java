@@ -28,7 +28,7 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 
 public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbDatastore> {
 
@@ -61,7 +61,7 @@ public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<O
 	}
 
 	@Override
-	protected void setFileFilters(FilenameTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		filenameField.addChoosableFileFilter(FileFilters.ODB);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
 		filenameField.setSelectedFileFilter(FileFilters.ODB);

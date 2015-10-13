@@ -19,10 +19,10 @@
  */
 package org.datacleaner.widgets;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
@@ -44,6 +44,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
     private final JXTextField _hostnameField;
     private final JXTextField _portField;
     private final JXTextField _pathTextField;
+
     private final DCPanel _panel;
     private final List<ResourceTypePresenter.Listener> _listeners = new ArrayList<>(1);
     private final List<FileFilter> _fileFilters = new ArrayList<>();
@@ -56,6 +57,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
         _portField.setText("9000");
         _pathTextField = WidgetFactory.createTextField("path", 12);
         _pathTextField.setText("/");
+
 
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
@@ -104,19 +106,13 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
 
         final String qualifiedPath = resource.getQualifiedPath();
 
-        // TODO: Currently we don't have getHostname(), getPort() and
-        // getFilepath() methods so we have to resort to parsing the qualified
-        // path.
-        final Pattern pattern = Pattern.compile("hdfs://(.+):([0-9]+)/(.+)");
-        final Matcher matcher = pattern.matcher(qualifiedPath);
-        if (matcher.find()) {
-            final String hostname = matcher.group(1);
-            final String port = matcher.group(2);
-            final String path = '/' + matcher.group(3);
-
-            _hostnameField.setText(hostname);
-            _portField.setText(port);
-            _pathTextField.setText(path);
+        try {
+            URI uri = new URI(qualifiedPath);
+            _hostnameField.setText(uri.getHost());
+            _portField.setText(Integer.toString(uri.getPort()));
+            _pathTextField.setText(uri.getPath());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Not a valid URI", e);
         }
     }
 

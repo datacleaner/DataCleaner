@@ -29,7 +29,7 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.apache.metamodel.util.FileResource;
 
 public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
@@ -43,7 +43,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 	}
 
 	@Override
-	protected void setFileFilters(FilenameTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
 				FileFilters.XLSX);
 		filenameField.addChoosableFileFilter(combinedFilter);

@@ -116,7 +116,7 @@ public class OptionsDialog extends AbstractWindow {
         saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         saveDatastoreDirectoryField.addFileSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 _userPreferences.setSaveDatastoreDirectory(file);
             }
         });

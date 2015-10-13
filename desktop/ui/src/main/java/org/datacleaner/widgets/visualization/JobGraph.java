@@ -303,8 +303,7 @@ public final class JobGraph {
                     imagePath = null;
 
                     try {
-                        if (_analysisJobBuilder.isConfigured(true)
-                                && _analysisJobBuilder.isConsumedOutDataStreamsJobBuilderConfigured(true)) {
+                        if (_analysisJobBuilder.isConfigured(true)) {
                             title = "Ready to execute";
                             subTitle = "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
                             imagePath = "images/window/canvas-bg-execute.png";

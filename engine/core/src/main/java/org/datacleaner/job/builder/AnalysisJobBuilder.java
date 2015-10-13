@@ -724,8 +724,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Used to verify whether or not the builder's configuration is valid and
-     * all properties are satisfied.
+     * Used to verify whether or not the builder's and its immediate children
+     * configuration is valid and all properties are satisfied.
      *
      * @param throwException
      *            whether or not an exception should be thrown in case of
@@ -746,6 +746,11 @@ public final class AnalysisJobBuilder implements Closeable {
      */
     public boolean isConfigured(final boolean throwException) throws UnconfiguredConfiguredPropertyException,
             ComponentValidationException, NoResultProducingComponentsException, IllegalStateException {
+        return checkConfiguration(throwException) && isConsumedOutDataStreamsJobBuilderConfigured(throwException);
+    }
+
+    private boolean checkConfiguration(final boolean throwException) throws IllegalStateException,
+            NoResultProducingComponentsException, ComponentValidationException, UnconfiguredConfiguredPropertyException {
         if (_datastoreConnection == null) {
             if (throwException) {
                 throw new IllegalStateException("No Datastore or DatastoreConnection set");
@@ -789,8 +794,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Used to verify whether or not the builder's configuration is valid and
-     * all properties are satisfied.
+     * Used to verify whether or not the builder's and its immediate children
+     * configuration is valid and all properties are satisfied.
      *
      * @return true if the analysis job builder is correctly configured
      */
@@ -1370,15 +1375,15 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Checks if a job including its child jobs are correctly configured.
+     * Checks if a job children are configured.
      **/
-    public boolean isConsumedOutDataStreamsJobBuilderConfigured(final boolean throwException) {
+    private boolean isConsumedOutDataStreamsJobBuilderConfigured(final boolean throwException) {
         final List<AnalysisJobBuilder> consumedOutputDataStreamsJobBuilders = getConsumedOutputDataStreamsJobBuilders();
-        boolean isConfigurated = true;
         for (final AnalysisJobBuilder analysisJobBuilder : consumedOutputDataStreamsJobBuilders) {
-            isConfigurated &= analysisJobBuilder.isConfigured(throwException);
+            if (!analysisJobBuilder.checkConfiguration(throwException)) {
+                return false;
+            }
         }
-
-        return isConfigurated;
+        return true;
     }
 }

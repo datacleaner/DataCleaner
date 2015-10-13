@@ -654,7 +654,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 executeable = true;
             }
             try {
-                checkAnalysisJobBuilderConfigured();
+                if (_analysisJobBuilder.isConfigured(true)) {
+                    setStatusLabelText("Job is correctly configured");
+                    setStatusLabelValid();
+                } else {
+                    setStatusLabelText("Job is not correctly configured");
+                    setStatusLabelWarning();
+                }
             } catch (Exception ex) {
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
@@ -682,17 +688,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton.setEnabled(executeable);
         _executionAlternativesButton.setEnabled(executeable);
-    }
-
-    private void checkAnalysisJobBuilderConfigured() {
-        if (_analysisJobBuilder.isConfigured(true)
-                && _analysisJobBuilder.isConsumedOutDataStreamsJobBuilderConfigured(true)) {
-            setStatusLabelText("Job is correctly configured");
-            setStatusLabelValid();
-        } else {
-            setStatusLabelText("Job is not correctly configured");
-            setStatusLabelWarning();
-        }
     }
 
     @Override

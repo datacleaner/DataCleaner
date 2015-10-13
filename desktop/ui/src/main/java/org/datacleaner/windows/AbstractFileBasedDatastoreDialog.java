@@ -172,7 +172,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract D createDatastore(String name, String filename);
 
-    protected abstract void setFileFilters(AbstractResourceTextField filenameField);
+    protected abstract void setFileFilters(AbstractResourceTextField<?> filenameField);
 
     @Override
     protected final void validateAndUpdate() {

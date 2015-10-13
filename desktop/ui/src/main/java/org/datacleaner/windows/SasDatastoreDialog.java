@@ -97,7 +97,7 @@ public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<S
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 	}
 
 	@Override

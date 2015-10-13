@@ -131,10 +131,10 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
      * @deprecated use {@link #getResourceTextField()} instead
      */
     @Deprecated
-    public AbstractResourceTextField getFilenameField() {
+    public AbstractResourceTextField<?> getFilenameField() {
         final ResourceTypePresenter<?> presenter = _resourceTextField.getResourceTypePresenter("file");
         if (presenter instanceof AbstractResourceTextField) {
-            return (AbstractResourceTextField) presenter;
+            return (AbstractResourceTextField<?>) presenter;
         }
         return null;
     }

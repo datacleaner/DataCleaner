@@ -61,7 +61,7 @@ public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<O
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		filenameField.addChoosableFileFilter(FileFilters.ODB);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
 		filenameField.setSelectedFileFilter(FileFilters.ODB);

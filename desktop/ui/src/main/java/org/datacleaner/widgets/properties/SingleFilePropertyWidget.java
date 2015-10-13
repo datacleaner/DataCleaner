@@ -114,7 +114,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         return _filenameField.getFile() != null;
     }
 
-    public AbstractResourceTextField getFilenameField() {
+    public AbstractResourceTextField<?> getFilenameField() {
         return _filenameField;
     }
 

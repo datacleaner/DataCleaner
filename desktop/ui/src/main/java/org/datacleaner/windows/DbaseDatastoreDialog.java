@@ -21,8 +21,8 @@ package org.datacleaner.windows;
 
 import javax.inject.Inject;
 
-import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -61,7 +61,7 @@ public final class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		filenameField.addChoosableFileFilter(FileFilters.DBF);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
 		filenameField.setSelectedFileFilter(FileFilters.DBF);

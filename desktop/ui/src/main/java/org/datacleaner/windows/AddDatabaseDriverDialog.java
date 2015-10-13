@@ -122,7 +122,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 	private File[] getDriverFiles() {
 		List<File> files = new ArrayList<File>();
-		for (AbstractResourceTextField filenameTextField : _filenameTextFields) {
+		for (AbstractResourceTextField<?> filenameTextField : _filenameTextFields) {
 			final String filename = filenameTextField.getFilename();
 			if (!StringUtils.isNullOrEmpty(filename)) {
 				files.add(new File(filename));

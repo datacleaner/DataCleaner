@@ -41,7 +41,7 @@ public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<X
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		filenameField.addChoosableFileFilter(FileFilters.XML);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
 		filenameField.setSelectedFileFilter(FileFilters.XML);

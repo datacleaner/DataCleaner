@@ -43,7 +43,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField filenameField) {
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
 				FileFilters.XLSX);
 		filenameField.addChoosableFileFilter(combinedFilter);

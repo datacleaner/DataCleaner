@@ -90,7 +90,7 @@ public class HdfsUrlChooser extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -150,7 +150,7 @@ public class HdfsUrlChooser extends JComponent {
         
         IndentIcon ii = new IndentIcon();
 
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

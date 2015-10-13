@@ -69,7 +69,7 @@ public final class JsonDatastoreDialog extends AbstractFileBasedDatastoreDialog<
     }
 
     @Override
-    protected void setFileFilters(AbstractResourceTextField filenameField) {
+    protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
         filenameField.addChoosableFileFilter(FileFilters.JSON);
         filenameField.addChoosableFileFilter(FileFilters.ALL);
         filenameField.setSelectedFileFilter(FileFilters.JSON);

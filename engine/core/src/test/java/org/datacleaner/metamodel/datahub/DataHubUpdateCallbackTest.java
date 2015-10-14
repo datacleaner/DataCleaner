@@ -23,8 +23,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.datacleaner.metamodel.datahub.update.UpdateData;
-import org.datacleaner.metamodel.datahub.update.UpdateField;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,48 +46,50 @@ public class DataHubUpdateCallbackTest {
 
     private UpdateData updateData;
 
-    private UpdateField field1;
-    private UpdateField field2;
-
     private static final int MAX_BATCH_SIZE = DataHubUpdateCallback.INSERT_BATCH_SIZE;
 
     @Before
     public void init() {
-        UpdateField[] fields = new UpdateField[2];
-        field1 = new UpdateField("field1", "value1");
-        field2 = new UpdateField("field2", "value2");
-        fields[0] = field1;
-        fields[1] = field2;
-        updateData = new UpdateData("20", fields );
+        Map<String, Object> fields = new HashMap<String, Object>();
+        fields.put("field1", "value1");
+        fields.put("field2", "value2");
+        updateData = new UpdateData("20", fields);
     }
-    
+
     @Test
     public void shouldFlushBatchWhenThresholdIsReached() {
 
         for (int x = 0; x < MAX_BATCH_SIZE + 1; x++) {
             callback.executeUpdate(updateData);
         }
-        
+
         verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
     }
-    
+
     @Test
     public void shouldNotFlushBatchPrematurely() {
         for (int x = 0; x < MAX_BATCH_SIZE - 1; x++) {
             callback.executeUpdate(updateData);
         }
-        
+
         verify(dataContext, never()).executeUpdates(Matchers.anyListOf(UpdateData.class));
     }
-    
+
     @Test
     public void shouldFlushBatchInTWRContext() {
-        try(DataHubUpdateCallback callback = new DataHubUpdateCallback(dataContext)) {
+        try (DataHubUpdateCallback callback = new DataHubUpdateCallback(dataContext)) {
             for (int x = 0; x < MAX_BATCH_SIZE; x++) {
                 callback.executeUpdate(updateData);
             }
             verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
         }
-        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); //Tests if it was called a second time
+        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); // Tests
+                                                                                            // if
+                                                                                            // it
+                                                                                            // was
+                                                                                            // called
+                                                                                            // a
+                                                                                            // second
+                                                                                            // time
     }
 }

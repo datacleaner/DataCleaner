@@ -47,113 +47,108 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataHubUpdateBuilderTest {
-        
-        @Rule
-        public ExpectedException thrown= ExpectedException.none();
-        
-        @Mock
-        DataHubUpdateCallback callback;
-        
-        @Mock
-        Table table;
-        
-        RowUpdationBuilder rowUpdationBuilder;
 
-        
-        @Before
-        public void init() {
-            Mockito.when(table.getName()).thenReturn("person");
-            Mockito.when(table.getColumns()).thenReturn(
-                    new Column[] {
-                            new MutableColumn("_trackcode", ColumnType.CHAR), 
-                            new MutableColumn("name", ColumnType.CHAR), 
-                            new MutableColumn("age", ColumnType.CHAR)});
-            rowUpdationBuilder = new DataHubUpdateBuilder(callback, table);
-        }
-        
-        
-        @Test
-        public void shouldCallExecuteGoldenRecord() {
-            Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-            final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                    OperatorType.EQUALS_TO, "123");
-            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
-            Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
-            rowUpdationBuilder.value(updateColumn1, "billy");
-            Column updateColumn2 = new MutableColumn("age", ColumnType.CHAR);
-            rowUpdationBuilder.value(updateColumn2, "10");
-            rowUpdationBuilder.execute();
-            ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
-            verify(callback, times(1)).executeUpdate(argument.capture());
-            UpdateData data = argument.getValue();
-            assertEquals("123", data.getGrId());
-            assertEquals(2, data.getFields().length);
-            assertEquals("name", data.getFields()[0].getName());
-            assertEquals("billy", data.getFields()[0].getValue());
-            assertEquals("age", data.getFields()[1].getName());
-            assertEquals("10", data.getFields()[1].getValue());
-        }
-        
-        @Test
-        public void shouldHandleNullValuesInUpdate() {
-            Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-            final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                    OperatorType.EQUALS_TO, "123");
-            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
-            Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
-            rowUpdationBuilder.value(updateColumn1, null);
-            rowUpdationBuilder.execute();
-            ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
-            verify(callback, times(1)).executeUpdate(argument.capture());
-            UpdateData data = argument.getValue();
-            assertThat(data.getGrId(), is("123"));
-            assertThat(data.getFields().length, is(1));
-            assertThat(data.getFields()[0].getName(), is("name"));
-            assertThat(data.getFields()[0].getValue(), is(nullValue(String.class)));
-        }
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-        @Test
-        public void shouldThrowForMissingWhereClause() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Updates should have the gr_id as the sole condition value.");        
-            rowUpdationBuilder.execute();
-        }
+    @Mock
+    DataHubUpdateCallback callback;
 
-        @Test
-        public void shouldThrowForInvalidColumnInWhereClause() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Updates should have the gr_id as the sole condition value.");        
-            Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
-            final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
-                    OperatorType.EQUALS_TO, "nonsense");
-            rowUpdationBuilder = rowUpdationBuilder.where(illegalFilter);
-            rowUpdationBuilder.execute();
-        }
+    @Mock
+    Table table;
 
-        @Test
-        public void shouldThrowForIllegalUpdateColumn() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");        
-            Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-            final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                    OperatorType.EQUALS_TO, "123");
-            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
-            Column illegalColumn = new MutableColumn("_trackcode", ColumnType.CHAR);
-            rowUpdationBuilder.value(illegalColumn, "updated");
-            rowUpdationBuilder.execute();
-        }
+    RowUpdationBuilder rowUpdationBuilder;
 
-        @Test
-        public void shouldThrowForNonExistingUpdateColumn() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("No such column in table: Column[name=nonsense,columnNumber=0,type=CHAR,nullable=null,nativeType=null,columnSize=null]");        
-            Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-            final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                    OperatorType.EQUALS_TO, "123");
-            rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
-            Column nonExistingColumn = new MutableColumn("nonsense", ColumnType.CHAR);
-            rowUpdationBuilder.value(nonExistingColumn, "bla");
-            rowUpdationBuilder.execute();
-        }
+    @Before
+    public void init() {
+        Mockito.when(table.getName()).thenReturn("person");
+        Mockito.when(table.getColumns()).thenReturn(
+                new Column[] {
+                        new MutableColumn("_trackcode", ColumnType.CHAR),
+                        new MutableColumn("name", ColumnType.CHAR),
+                        new MutableColumn("age", ColumnType.CHAR) });
+        rowUpdationBuilder = new DataHubUpdateBuilder(callback, table);
+    }
+
+    @Test
+    public void shouldCallExecuteGoldenRecord() {
+        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
+                OperatorType.EQUALS_TO, "123");
+        rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
+        Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
+        rowUpdationBuilder.value(updateColumn1, "billy");
+        Column updateColumn2 = new MutableColumn("age", ColumnType.CHAR);
+        rowUpdationBuilder.value(updateColumn2, "10");
+        rowUpdationBuilder.execute();
+        ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
+        verify(callback, times(1)).executeUpdate(argument.capture());
+        UpdateData data = argument.getValue();
+        assertEquals("123", data.getGrId());
+        assertEquals(2, data.getFields().size());
+        assertEquals("billy", data.getFields().get("name"));
+        assertEquals("10", data.getFields().get("age"));
+    }
+
+    @Test
+    public void shouldHandleNullValuesInUpdate() {
+        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
+                OperatorType.EQUALS_TO, "123");
+        rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
+        Column updateColumn1 = new MutableColumn("name", ColumnType.CHAR);
+        rowUpdationBuilder.value(updateColumn1, null);
+        rowUpdationBuilder.execute();
+        ArgumentCaptor<UpdateData> argument = ArgumentCaptor.forClass(UpdateData.class);
+        verify(callback, times(1)).executeUpdate(argument.capture());
+        UpdateData data = argument.getValue();
+        assertThat(data.getGrId(), is("123"));
+        assertThat(data.getFields().size(), is(1));
+        assertThat(data.getFields().get("name"), is(nullValue(Object.class)));
+    }
+
+    @Test
+    public void shouldThrowForMissingWhereClause() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Updates should have the gr_id as the sole condition value.");
+        rowUpdationBuilder.execute();
+    }
+
+    @Test
+    public void shouldThrowForInvalidColumnInWhereClause() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Updates should have the gr_id as the sole condition value.");
+        Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
+        final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
+                OperatorType.EQUALS_TO, "nonsense");
+        rowUpdationBuilder = rowUpdationBuilder.where(illegalFilter);
+        rowUpdationBuilder.execute();
+    }
+
+    @Test
+    public void shouldThrowForIllegalUpdateColumn() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
+        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
+                OperatorType.EQUALS_TO, "123");
+        rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
+        Column illegalColumn = new MutableColumn("_trackcode", ColumnType.CHAR);
+        rowUpdationBuilder.value(illegalColumn, "updated");
+        rowUpdationBuilder.execute();
+    }
+
+    @Test
+    public void shouldThrowForNonExistingUpdateColumn() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("No such column in table: Column[name=nonsense,columnNumber=0,type=CHAR,nullable=null,nativeType=null,columnSize=null]");
+        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
+                OperatorType.EQUALS_TO, "123");
+        rowUpdationBuilder = rowUpdationBuilder.where(grIdFilter);
+        Column nonExistingColumn = new MutableColumn("nonsense", ColumnType.CHAR);
+        rowUpdationBuilder.value(nonExistingColumn, "bla");
+        rowUpdationBuilder.execute();
+    }
 
 }

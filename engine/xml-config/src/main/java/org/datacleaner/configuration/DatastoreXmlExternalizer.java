@@ -441,7 +441,6 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "tenantname", datastore.getTenantName());
         appendElement(ds, "https", datastore.https());
         appendElement(ds, "acceptunverifiedsslpeers", datastore.acceptUnverifiedSslPeers());
-        appendElement(ds, "host", datastore.getHost());
         appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());
         
         return ds;

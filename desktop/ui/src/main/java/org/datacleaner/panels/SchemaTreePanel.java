@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -116,8 +118,8 @@ public class SchemaTreePanel extends DCPanel {
                             } else if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
                                 final char keyChar = e.getKeyChar();
                                 if (Character.isLetter(keyChar)) {
-                                    _searchTextField.requestFocus();
                                     _searchTextField.setText("" + keyChar);
+                                    _searchTextField.requestFocusInWindow();
                                 }
                             }
                         }
@@ -165,6 +167,13 @@ public class SchemaTreePanel extends DCPanel {
 
     protected JXTextField createSearchTextField() {
         final JXTextField searchTextField = new JXTextField(DEFAULT_SEARCH_FIELD_TEXT);
+        searchTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                final int length = searchTextField.getText().length();
+                searchTextField.select(length, length);
+            }
+        });
         searchTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {

@@ -211,7 +211,7 @@ public class JobGraphLinkPainter {
             } catch (Exception e) {
                 outputColumns = new InputColumn[0];
             }
-            sourceColumns = Arrays.<InputColumn<?>> asList(outputColumns);
+            sourceColumns = Arrays.asList(outputColumns);
             filterOutcomes = null;
         } else if (fromVertex.getVertex() instanceof HasFilterOutcomes) {
             final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex.getVertex();
@@ -343,9 +343,7 @@ public class JobGraphLinkPainter {
     }
 
     private void transformEdgeShape(Point2D down, Point2D out) {
-        Shape shape = new Line2D.Float(down, out);
-        _edgeShape = shape;
-        return;
+        _edgeShape = new Line2D.Float(down, out);
     }
 
     private void transformArrowShape(Point2D down, Point2D out) {

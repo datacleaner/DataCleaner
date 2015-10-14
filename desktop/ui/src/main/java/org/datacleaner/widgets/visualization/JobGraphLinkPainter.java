@@ -34,6 +34,7 @@ import java.util.List;
 import javax.swing.*;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -240,11 +241,17 @@ public class JobGraphLinkPainter {
 
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
-                    if (inputProperty.isArray()) {
-                        componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
+
+                    final ColumnProperty columnProperty = inputProperty.getAnnotation(ColumnProperty.class);
+                    if (inputProperty.isArray() || (columnProperty != null && columnProperty.escalateToMultipleJobs())) {
+                        componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        componentBuilder.setConfiguredProperty(inputProperty, sourceColumns.get(0));
+                        final InputColumn firstRelevantSourceColumn =
+                                getFirstRelevantSourceColumn(sourceColumns, inputProperty);
+                        if(firstRelevantSourceColumn != null){
+                            componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
+                        }
                     }
                     _actions.showConfigurationDialog(componentBuilder);
 
@@ -303,11 +310,27 @@ public class JobGraphLinkPainter {
         componentBuilder.setComponentRequirement(requirement);
     }
 
-    private Collection<? extends InputColumn<?>> getRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+    private InputColumn getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+            ConfiguredPropertyDescriptor inputProperty){
+        assert inputProperty.isInputColumn();
+
+        final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
+        for (InputColumn<?> inputColumn : sourceColumns) {
+            final Class<?> actualDataType = inputColumn.getDataType();
+            if (ReflectionUtils.is(actualDataType, expectedDataType, false)) {
+                return inputColumn;
+            }
+        }
+
+        return null;
+    }
+
+
+    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(List<? extends InputColumn<?>> sourceColumns,
             ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
-        List<InputColumn<?>> result = new ArrayList<>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
         for (InputColumn<?> inputColumn : sourceColumns) {
             final Class<?> actualDataType = inputColumn.getDataType();

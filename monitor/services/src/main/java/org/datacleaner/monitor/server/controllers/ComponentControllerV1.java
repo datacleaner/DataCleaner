@@ -114,8 +114,13 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     @PreDestroy
-    public void close() throws InterruptedException {
-        _componentCache.close();
+    public void close() {
+        try {
+            _componentCache.close();
+        }
+        catch (InterruptedException e) {
+            logger.warn(e.getMessage());
+        }
     }
 
     /**

@@ -95,10 +95,9 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
             try {
                 logger.info("Loading remote components list from " + url);
-                // TODO: There is currently no "close" method in client,
-                // although Jersey client has "destroy" method.
                 final ComponentRESTClient client = new ComponentRESTClient(url, username, password);
                 final ComponentList components = client.getAllComponents(tenant, true);
+                
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(url,

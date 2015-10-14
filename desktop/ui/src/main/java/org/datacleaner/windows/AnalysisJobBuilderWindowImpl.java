@@ -149,8 +149,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
             builder.addAnalysisJobChangeListener(this);
 
-            // We'll need to listen to already added output data stream job builders
-            for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
+            // We'll need to listen to already added output data stream job
+            // builders
+            for (AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
                 onActivation(analysisJobBuilder);
             }
         }
@@ -283,7 +284,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -394,7 +394,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());

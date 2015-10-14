@@ -24,31 +24,34 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.datacleaner.metamodel.datahub.update.UpdateData;
-import org.datacleaner.metamodel.datahub.update.UpdateField;
 import org.junit.Test;
 
 public class JsonUpdateDataBuilderTest {
 
     @Test
     public void shouldConvertQueriesToJson() throws IOException {
-        UpdateField[] fields =  { new UpdateField("testfield", "testvalue") };
-        UpdateData data = new UpdateData("21", fields );
+        Map<String, Object> fields = new HashMap<String, Object>();
+        fields.put("testfield", "testvalue");
+        UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
         String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
-        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":\"testvalue\"}]}]"));
+        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":\"testvalue\"}}]"));
     }
-    
+
     @Test
     public void shouldHandleNullValuesInUpdateData() throws IOException {
-        UpdateField[] fields =  { new UpdateField("testfield", null) };
-        UpdateData data = new UpdateData("21", fields );
+        Map<String, Object> fields = new HashMap<String, Object>();
+        fields.put("testfield", null);
+        UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
         String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
-        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":[{\"name\":\"testfield\",\"value\":null}]}]"));
+        assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":null}}]"));
     }
 }

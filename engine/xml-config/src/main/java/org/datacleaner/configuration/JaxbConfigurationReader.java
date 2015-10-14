@@ -66,6 +66,8 @@ import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
 import org.datacleaner.configuration.jaxb.CsvDatastoreType;
 import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatahubDatastoreType;
+import org.datacleaner.configuration.jaxb.DatahubsecuritymodeEnum;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
@@ -111,6 +113,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -140,6 +143,7 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -693,6 +697,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (SalesforceDatastoreType) datastoreType);
             } else if (datastoreType instanceof SugarCrmDatastoreType) {
                 ds = createDatastore(name, (SugarCrmDatastoreType) datastoreType);
+            } else if (datastoreType instanceof DatahubDatastoreType) {
+                ds = createDatastore(name, (DatahubDatastoreType) datastoreType);
             } else if (datastoreType instanceof CompositeDatastoreType) {
                 // skip composite datastores at this point
                 continue;
@@ -909,6 +915,20 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
     }
+
+    private Datastore createDatastore(String name, DatahubDatastoreType datastoreType) {
+        String host = getStringVariable("host", datastoreType.getHost());
+        Integer port = getIntegerVariable("port", datastoreType.getPort());
+        String username = getStringVariable("username", datastoreType.getUsername());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
+        String tenantName = getStringVariable("tenantname", datastoreType.getTenantname());
+        boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
+        boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
+        DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
+        DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
+        return new DataHubDatastore(name, host, port, username, password, tenantName, https, acceptUnverifiedSslPeers, dataHubSecurityMode);
+    }
+
 
     private Datastore createDatastore(String name, MongodbDatastoreType mongodbDatastoreType) {
         String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());

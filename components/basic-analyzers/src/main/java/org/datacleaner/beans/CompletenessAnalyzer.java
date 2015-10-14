@@ -90,22 +90,22 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     }
 
     @Inject
-    @Configured(PROPERTY_VALUES)
+    @Configured(order=1, value=PROPERTY_VALUES)
     @Description("Values to check for completeness")
     InputColumn<?>[] _valueColumns;
 
     @Inject
-    @Configured(PROPERTY_CONDITIONS)
+    @Configured(order=1, value=PROPERTY_CONDITIONS)
     @Description("The conditions of which a value is determined to be filled or not")
     @MappedProperty(PROPERTY_VALUES)
     Condition[] _conditions;
 
     @Inject
-    @Configured(PROPERTY_EVALUATION_MODE)
+    @Configured(order=3, value=PROPERTY_EVALUATION_MODE)
     EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
 
     @Inject
-    @Configured(value = PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
+    @Configured(order=100, value= PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
     @Description("Optional additional values to add to output data streams")
     InputColumn<?>[] _additionalOutputValueColumns;
 

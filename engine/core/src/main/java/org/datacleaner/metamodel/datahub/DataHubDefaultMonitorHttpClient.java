@@ -21,18 +21,20 @@ package org.datacleaner.metamodel.datahub;
 
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.datacleaner.util.http.CASMonitorHttpClient;
+import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 
 /**
  * CAS HTTP client version specific for use with DataHub. Adds extra request headers
  * to drive security on the DataHub REST services.
  *
  */
-public class DataHubMonitorHttpClient extends CASMonitorHttpClient {
+public class DataHubDefaultMonitorHttpClient extends HttpBasicMonitorHttpClient {
+    
+    private final String _userName;
 
-    public DataHubMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
-            String monitorBaseUrl) {
-        super(client, casServerUrl, username, password, monitorBaseUrl);
+    public DataHubDefaultMonitorHttpClient(CloseableHttpClient client, String host, int port, String username, String password) {
+        super(client, host, port, username,password);
+        this._userName = username;
     }
     
     private static final String CDI_TICKET_HEADER = "CDI-ticket";
@@ -41,9 +43,9 @@ public class DataHubMonitorHttpClient extends CASMonitorHttpClient {
 
     @Override
     protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
-        request.addHeader(CDI_TICKET_HEADER, retrieveTicketGrantingTicket());
-        request.addHeader(CDI_SERVICE_URL_HEADER, getCasServerUrl());
-        request.addHeader(CDI_USERID, getUsername());        
+        request.addHeader(CDI_TICKET_HEADER, "dummy-string");
+        request.addHeader(CDI_SERVICE_URL_HEADER, "dummy-string");
+        request.addHeader(CDI_USERID, _userName);        
     }
 
 }

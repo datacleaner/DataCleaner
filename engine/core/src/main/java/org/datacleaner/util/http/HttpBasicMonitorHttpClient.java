@@ -51,6 +51,7 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
 
     @Override
     public HttpResponse execute(HttpUriRequest request) throws Exception {
+        addSecurityHeaders(request);
         return _httpClient.execute(request, _context);
     }
 
@@ -58,5 +59,10 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
     public void close() {
         FileHelper.safeClose(_httpClient);
     }
+    
+    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+        // DO NOTHING BY DEFAULT
+    }
+
 
 }

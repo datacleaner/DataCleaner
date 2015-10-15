@@ -210,7 +210,7 @@ public class CompletenessAnalyzerTest extends TestCase {
             final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 = incompleteDataStreamJobBuilder
                     .addAnalyzer(MockAnalyzer.class);
             analyzer3.addInputColumns(incompleteDataStreamColumns);
-            analyzer3.setName("analyzer2");
+            analyzer3.setName("analyzer3");
             assertTrue(analyzer2.isConfigured());
             assertTrue(analyzer1.isOutputDataStreamConsumed(incompleteStream));
 
@@ -314,7 +314,7 @@ public class CompletenessAnalyzerTest extends TestCase {
             final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 = incompleteDataStreamJobBuilder
                     .addAnalyzer(MockAnalyzer.class);
             analyzer3.addInputColumns(incompleteDataStreamColumns);
-            analyzer3.setName("analyzer2");
+            analyzer3.setName("analyzer3");
             assertTrue(analyzer2.isConfigured());
             assertTrue(analyzer1.isOutputDataStreamConsumed(incompleteStream));
 

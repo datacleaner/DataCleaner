@@ -95,7 +95,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     InputColumn<?>[] _valueColumns;
 
     @Inject
-    @Configured(order=1, value=PROPERTY_CONDITIONS)
+    @Configured(order=2, value=PROPERTY_CONDITIONS)
     @Description("The conditions of which a value is determined to be filled or not")
     @MappedProperty(PROPERTY_VALUES)
     Condition[] _conditions;

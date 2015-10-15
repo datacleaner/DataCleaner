@@ -45,7 +45,7 @@
 				<property name="CoordinatesX">236</property>
 			</metadata-properties>
 			<properties>
-				<property name="Connection" value="named:demo" />
+				<property name="Connection" value="demo" />
 				<property name="Suggestion Handling" value="TOP_SUGGESTION" />
 				<property name="Name parts"
 					value="[Representation,Representation,Representation]" />

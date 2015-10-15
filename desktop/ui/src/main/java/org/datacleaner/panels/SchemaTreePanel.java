@@ -37,7 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -121,21 +120,41 @@ public class SchemaTreePanel extends DCPanel {
                     _schemaTree.addKeyListener(new KeyAdapter() {
                         @Override
                         public void keyPressed(KeyEvent e) {
-                            if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                            if (_searchTextField.isFocusOwner()) {
+                                // let the normal search text work as it should
+                                return;
+                            }
+
+                            final char keyChar = e.getKeyChar();
+                            switch (keyChar) {
+                            case KeyEvent.VK_ESCAPE:
+                            case KeyEvent.VK_DELETE:
                                 _searchTextField.setText("");
                                 _searchTextField.requestFocusInWindow();
-                            } else if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
-                                final char keyChar = e.getKeyChar();
-                                if (Character.isLetter(keyChar)) {
-                                    _searchTextField.setText("");
+                                break;
+                            case KeyEvent.VK_SHIFT:
+                                _searchTextField.requestFocusInWindow();
+                                break;
+                            case KeyEvent.VK_BACK_SPACE:
+                                try {
                                     final Document document = _searchTextField.getDocument();
+                                    final int index = document.getLength() - 1;
+                                    if (index >= 0) {
+                                        document.remove(index, 1);
+                                    }
+                                } catch (BadLocationException ex) {
+                                    logger.debug("Document.remove() failed", ex);
+                                }
+                                break;
+                            default:
+                                if (!e.isActionKey() && Character.isLetter(keyChar)) {
                                     try {
+                                        final Document document = _searchTextField.getDocument();
                                         document.insertString(document.getLength(), "" + keyChar,
                                                 SimpleAttributeSet.EMPTY);
                                     } catch (BadLocationException ex) {
                                         logger.debug("Document.insertString({}) failed", keyChar, ex);
                                     }
-                                    _searchTextField.requestFocusInWindow();
                                 }
                             }
                         }

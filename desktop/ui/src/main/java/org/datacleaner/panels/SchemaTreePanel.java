@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -35,6 +37,9 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
@@ -43,6 +48,8 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
@@ -54,6 +61,8 @@ import com.google.inject.Injector;
 public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(SchemaTreePanel.class);
 
     private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
@@ -111,13 +120,37 @@ public class SchemaTreePanel extends DCPanel {
                     _schemaTree.addKeyListener(new KeyAdapter() {
                         @Override
                         public void keyPressed(KeyEvent e) {
-                            if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                            if (_searchTextField.isFocusOwner()) {
+                                // let the normal search text work as it should
+                                return;
+                            }
+
+                            final char keyChar = e.getKeyChar();
+                            switch (keyChar) {
+                            case KeyEvent.VK_ESCAPE:
+                            case KeyEvent.VK_DELETE:
                                 _searchTextField.setText("");
-                            } else if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
-                                final char keyChar = e.getKeyChar();
-                                if (Character.isLetter(keyChar)) {
-                                    _searchTextField.requestFocus();
-                                    _searchTextField.setText("" + keyChar);
+                                break;
+                            case KeyEvent.VK_BACK_SPACE:
+                                try {
+                                    final Document document = _searchTextField.getDocument();
+                                    final int index = document.getLength() - 1;
+                                    if (index >= 0) {
+                                        document.remove(index, 1);
+                                    }
+                                } catch (BadLocationException ex) {
+                                    logger.debug("Document.remove() failed", ex);
+                                }
+                                break;
+                            default:
+                                if (!e.isActionKey() && Character.isLetter(keyChar)) {
+                                    try {
+                                        final Document document = _searchTextField.getDocument();
+                                        document.insertString(document.getLength(), "" + keyChar,
+                                                SimpleAttributeSet.EMPTY);
+                                    } catch (BadLocationException ex) {
+                                        logger.debug("Document.insertString({}) failed", keyChar, ex);
+                                    }
                                 }
                             }
                         }
@@ -165,6 +198,13 @@ public class SchemaTreePanel extends DCPanel {
 
     protected JXTextField createSearchTextField() {
         final JXTextField searchTextField = new JXTextField(DEFAULT_SEARCH_FIELD_TEXT);
+        searchTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                final int length = searchTextField.getText().length();
+                searchTextField.select(length, length);
+            }
+        });
         searchTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {

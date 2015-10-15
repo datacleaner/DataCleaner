@@ -109,7 +109,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      * 
      * @see http://eobjects.org/trac/ticket/417
      * 
-     * @param clazz
+     * @param filterClass
      * @return
      */
     protected final FilterDescriptor<?, ?> getFilterBeanDescriptorForClassUnbounded(Class<?> filterClass) {
@@ -258,16 +258,16 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     protected void notifyComponentDescriptorsUpdatedListeners() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (_componentDescriptorsUpdatedListeners) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (_componentDescriptorsUpdatedListeners) {
                     for (ComponentDescriptorsUpdatedListener listener : _componentDescriptorsUpdatedListeners) {
                         listener.componentDescriptorsUpdated();
-                    }                
                     }
                 }
-            }).start();
+            }
+        }).start();
     }
 
     @Override

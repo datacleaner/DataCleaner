@@ -45,6 +45,16 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         this.delegate2 = delegate2;
     }
 
+    public void refresh() {
+        if (delegate1 != null) {
+            delegate1.refresh();
+        }
+
+        if (delegate2 != null) {
+            delegate2.refresh();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {

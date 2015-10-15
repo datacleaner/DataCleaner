@@ -98,12 +98,12 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 logger.info("Loading remote components list from " + credentialsProvider.getHost());
                 final ComponentRESTClient client = new ComponentRESTClient(
                         credentialsProvider.getHost(), credentialsProvider.getUsername(), credentialsProvider.getPassword());
-                final ComponentList components = client.getAllComponents(tenant, true);
+                final ComponentList components = client.getAllComponents(true);
                 
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                                credentialsProvider.getHost(), component.getName(), tenant,
+                                credentialsProvider.getHost(), component.getName(),
                                 component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData(),
                                 credentialsProvider.getUsername(), credentialsProvider.getPassword());
 

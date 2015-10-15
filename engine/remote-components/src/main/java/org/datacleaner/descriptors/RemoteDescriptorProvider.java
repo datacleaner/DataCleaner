@@ -46,8 +46,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private final String url;
     private final String username;
     private final String password;
-    
-    private String tenant = "test"; // TODO
 
     private final LazyRef<Data> data = new LazyRef<Data>() {
         @Override
@@ -96,12 +94,11 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             try {
                 logger.info("Loading remote components list from " + url);
                 final ComponentRESTClient client = new ComponentRESTClient(url, username, password);
-                final ComponentList components = client.getAllComponents(tenant, true);
-                
+                final ComponentList components = client.getAllComponents(true);
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(url,
-                                component.getName(), tenant, component.getSuperCategoryName(),
+                                component.getName(), component.getSuperCategoryName(),
                                 component.getCategoryNames(), component.getIconData(), username, password);
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {

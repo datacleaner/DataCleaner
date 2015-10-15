@@ -104,13 +104,13 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             _previewAlternativesButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    final JMenuItem executeNormallyMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " rows",
+                    final JMenuItem defaultPreviewMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " rows",
                             IconUtils.ACTION_PREVIEW);
-                    executeNormallyMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+                    defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                    final JMenuItem executePreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
+                    final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
                             IconUtils.ACTION_PREVIEW);
-                    executePreviewMenuItem.addActionListener(new ActionListener() {
+                    maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
                         
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -125,9 +125,9 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
                     });
 
                     final JPopupMenu menu = new JPopupMenu();
-                    menu.add(executeNormallyMenutItem);
+                    menu.add(defaultPreviewMenutItem);
                     menu.addSeparator();
-                    menu.add(executePreviewMenuItem);
+                    menu.add(maxRowsPreviewMenuItem);
 
                     final int horizontalPosition = -1 * menu.getPreferredSize().width
                             + _previewAlternativesButton.getWidth();

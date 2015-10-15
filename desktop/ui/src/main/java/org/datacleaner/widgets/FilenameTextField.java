@@ -113,16 +113,6 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
             }
 
         });
-
-        _textField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                final File file = getFile();
-                if (file != null) {
-                    notifySelectionListeners(file);
-                }
-            }
-        });
     }
 
     public void addFileSelectionListener(FileSelectionListener listener) {
@@ -133,6 +123,15 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
         _fileSelectionListeners.remove(listener);
     }
 
+    @Override
+    protected void notifyListeners(final String text) {
+        final File file = getFile();
+        if (file != null) {
+            notifySelectionListeners(file);
+        } else {
+            super.notifyListeners(text);
+        }
+    }
 
     private void notifySelectionListeners(final File file) {
         for (FileSelectionListener listener : _fileSelectionListeners) {

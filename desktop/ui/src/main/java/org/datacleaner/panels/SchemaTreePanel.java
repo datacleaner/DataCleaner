@@ -37,6 +37,10 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
@@ -45,6 +49,8 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
@@ -56,6 +62,8 @@ import com.google.inject.Injector;
 public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(SchemaTreePanel.class);
 
     private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
@@ -115,10 +123,18 @@ public class SchemaTreePanel extends DCPanel {
                         public void keyPressed(KeyEvent e) {
                             if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                                 _searchTextField.setText("");
+                                _searchTextField.requestFocusInWindow();
                             } else if (!e.isActionKey() && !_searchTextField.isFocusOwner()) {
                                 final char keyChar = e.getKeyChar();
                                 if (Character.isLetter(keyChar)) {
-                                    _searchTextField.setText("" + keyChar);
+                                    _searchTextField.setText("");
+                                    final Document document = _searchTextField.getDocument();
+                                    try {
+                                        document.insertString(document.getLength(), "" + keyChar,
+                                                SimpleAttributeSet.EMPTY);
+                                    } catch (BadLocationException ex) {
+                                        logger.debug("Document.insertString({}) failed", keyChar, ex);
+                                    }
                                     _searchTextField.requestFocusInWindow();
                                 }
                             }

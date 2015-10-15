@@ -75,11 +75,11 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return _tenantName;
     }
 
-    public boolean https() {
+    public boolean isHttps() {
         return _https;
     }
 
-    public boolean acceptUnverifiedSslPeers() {
+    public boolean isAcceptUnverifiedSslPeers() {
         return _acceptUnverifiedSslPeers;
     }
 

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -430,7 +432,7 @@ public class DatastoreXmlExternalizer {
     private Element toElement(DataHubDatastore datastore) {
         final Element ds = getDocument().createElement("datahub-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -439,8 +441,8 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "tenantname", datastore.getTenantName());
-        appendElement(ds, "https", datastore.https());
-        appendElement(ds, "acceptunverifiedsslpeers", datastore.acceptUnverifiedSslPeers());
+        appendElement(ds, "https", datastore.isHttps());
+        appendElement(ds, "acceptunverifiedsslpeers", datastore.isAcceptUnverifiedSslPeers());
         appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());
         
         return ds;

@@ -203,8 +203,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         if (originalDatastore != null) {
             _hostTextField.setText(originalDatastore.getHost());
             _portTextField.setText(originalDatastore.getPort() + "");
-            _httpsCheckBox.setSelected(originalDatastore.https());
-            _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
+            _httpsCheckBox.setSelected(originalDatastore.isHttps());
+            _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.isAcceptUnverifiedSslPeers());
             if(originalDatastore.getSecurityMode().equals(DataHubSecurityMode.CAS)) {
                 _securityModeSelector.setSelectedIndex(1);
             } else {

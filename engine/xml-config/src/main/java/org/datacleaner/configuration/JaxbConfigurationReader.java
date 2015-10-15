@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -169,8 +170,6 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * Configuration reader that uses the JAXB model to read XML file based
@@ -377,7 +376,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof RemoteComponentsType) {
             return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
         } else {
-            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+            throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
     }
 
@@ -411,7 +410,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        final String decodedPassword = SecurityUtils.decodePassword(server.getPassword());
+
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), decodedPassword);
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

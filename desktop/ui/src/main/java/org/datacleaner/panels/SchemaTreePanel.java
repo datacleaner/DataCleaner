@@ -130,10 +130,6 @@ public class SchemaTreePanel extends DCPanel {
                             case KeyEvent.VK_ESCAPE:
                             case KeyEvent.VK_DELETE:
                                 _searchTextField.setText("");
-                                _searchTextField.requestFocusInWindow();
-                                break;
-                            case KeyEvent.VK_SHIFT:
-                                _searchTextField.requestFocusInWindow();
                                 break;
                             case KeyEvent.VK_BACK_SPACE:
                                 try {

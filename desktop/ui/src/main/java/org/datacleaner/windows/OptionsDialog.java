@@ -28,7 +28,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -36,6 +38,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.CredentialsProvider;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
 import org.datacleaner.configuration.JaxbConfigurationReader;
@@ -79,8 +82,9 @@ public class OptionsDialog extends AbstractWindow {
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
     private final DataCleanerConfiguration _configuration;
-    private DataCleanerConfigurationUpdater _configurationUpdater;
     private Timer _updateMemoryTimer;
+    private DataCleanerConfigurationUpdater _dcConfigurationUpdater;
+    private final Map<String, String> _dcConfigurationUpdates = new HashMap<>();
 
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
@@ -89,7 +93,7 @@ public class OptionsDialog extends AbstractWindow {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
-        _configurationUpdater = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileURI());
+        _dcConfigurationUpdater = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileURI());
         _tabbedPane = new CloseableTabbedPane(true);
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
@@ -342,17 +346,23 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-        String finalInputValue = (textField instanceof JPasswordField) ?
-            SecurityUtils.decodePassword(value) : value;
+        final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
+        String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePassword(value) : value;
         textField.setText(finalInputValue);
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent e) {
                 String fieldName = textField.getName();
-                String[] nodePath = ("descriptor-providers:remote-components:server:" + fieldName).split(":");
-                String finalOutputValue = (textField instanceof JPasswordField) ?
-                    SecurityUtils.encodePassword(textField.getText()) : textField.getText();
-                _configurationUpdater.update(nodePath, finalOutputValue);
+                String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
+
+                if (textField instanceof JPasswordField) {
+                    credentialsProvider.setPassword(textField.getText());
+                    _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePassword(textField.getText()));
+                }
+                else {
+                    credentialsProvider.setUsername(textField.getText());
+                    _dcConfigurationUpdates.put(nodePath, credentialsProvider.getUsername());
+                }
             }
         });
     }
@@ -503,6 +513,8 @@ public class OptionsDialog extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 _userPreferences.save();
+                updateDcConfiguration();
+                _configuration.getEnvironment().getDescriptorProvider().refresh();
                 OptionsDialog.this.dispose();
             }
         });
@@ -519,6 +531,13 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(700, 500);
         return panel;
+    }
+
+    private void updateDcConfiguration() {
+        for (String nodePathString : _dcConfigurationUpdates.keySet()) {
+            String[] nodePath = nodePathString.split(":");
+            _dcConfigurationUpdater.update(nodePath, _dcConfigurationUpdates.get(nodePathString));
+        }
     }
 
     @Override

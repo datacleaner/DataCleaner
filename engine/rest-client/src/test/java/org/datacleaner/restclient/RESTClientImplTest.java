@@ -22,6 +22,8 @@ package org.datacleaner.restclient;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.sun.jersey.api.client.Client;
+
 public class RESTClientImplTest {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
@@ -55,5 +57,19 @@ public class RESTClientImplTest {
         catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
+    }
+
+    @Test
+    public void testCache() {
+        String username = "username";
+        String password = "password";
+        Client instance1 = new RESTClientImpl(username, password).getClient();
+        Client instance2 = new RESTClientImpl(username + "2", password + "2").getClient();
+        Client instance3 = new RESTClientImpl(username, password).getClient();
+        Client instance4 = new RESTClientImpl(username, password + "4").getClient();
+
+        Assert.assertEquals(instance1, instance3);
+        Assert.assertNotEquals(instance1, instance2);
+        Assert.assertNotEquals(instance1, instance4);
     }
 }

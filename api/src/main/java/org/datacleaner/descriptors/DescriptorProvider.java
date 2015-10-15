@@ -45,6 +45,13 @@ import org.datacleaner.job.AnalysisJob;
  */
 public interface DescriptorProvider {
     /**
+     * It refreshes the descriptor list.
+     *
+     * @return
+     */
+    public void refresh();
+
+    /**
      * Gets all the {@link AnalyzerDescriptor}s currently registered.
      * 
      * @return

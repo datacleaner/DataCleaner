@@ -31,6 +31,13 @@ import org.datacleaner.storage.StorageProvider;
 public interface DataCleanerEnvironment {
 
     /**
+     * Gets the {@link CredentialsProvider}.
+     *
+     * @return the box for credentials defined for this environment.
+     */
+    public CredentialsProvider getCredentialsProvider();
+
+    /**
      * Gets the {@link TaskRunner} defined in this environment
      * 
      * @return the task runner defined in this environment

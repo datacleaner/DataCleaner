@@ -31,6 +31,7 @@
 		<javax.el.version>2.2.4</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
+		<commons.collection.version>3.2.1</commons.collection.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -1104,6 +1105,12 @@
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>${commons.collection.version}</version>
+			</dependency>
+
 
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>

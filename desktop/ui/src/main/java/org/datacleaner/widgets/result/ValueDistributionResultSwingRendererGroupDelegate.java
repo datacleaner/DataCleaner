@@ -242,7 +242,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
         
         if (uniqueValueFrequency != null) {
-            List<ValueFrequency> valueCountsList = new ArrayList<>(valueCounts);
+            final List<ValueFrequency> valueCountsList = new ArrayList<>(valueCounts);
             valueCountsList.remove(uniqueValueFrequency);
             valueCountsList.add(uniqueValueFrequency);
             return valueCountsList;

@@ -66,7 +66,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     /** Available only if this object represents a Java enum value */
-    public Enum asJavaEnum() {
+    public Enum<?> asJavaEnum() {
         return enumValue;
     }
 
@@ -154,10 +154,11 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int compareTo(EnumerationValue o) {
         if(enumValue != null && o.asJavaEnum() != null) {
             try {
-                return asJavaEnum().compareTo(o.asJavaEnum());
+                return ((Enum)asJavaEnum()).compareTo(o.asJavaEnum());
             } catch (Exception e) {
                 // nothing to do
             }

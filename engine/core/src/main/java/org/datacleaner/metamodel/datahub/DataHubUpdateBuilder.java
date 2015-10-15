@@ -19,8 +19,9 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.query.FilterItem;
@@ -28,7 +29,6 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.AbstractRowUpdationBuilder;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
-import org.datacleaner.metamodel.datahub.update.UpdateField;
 
 public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
@@ -49,7 +49,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
         final Object[] values = getValues();
         Column[] columns = getColumns();
         boolean[] explicitNulls = getExplicitNulls();
-        List<UpdateField> fields = new ArrayList<UpdateField>();
+        Map<String, Object> fields = new HashMap<String, Object>();
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
@@ -57,8 +57,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
                 if (columnName.startsWith("_")) {
                     throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
                 }
-                final UpdateField field = new UpdateField(columnName, (String)value);
-                fields.add(field);
+                fields.put(columnName, value);
             }
         }
 
@@ -67,7 +66,6 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
             throw new IllegalArgumentException("Updates should have the gr_id as the sole condition value.");
         }
         String grId = (String) whereItems.get(0).getOperand();
-        return new UpdateData(grId, fields.toArray(new UpdateField[fields.size()]));
+        return new UpdateData(grId, fields);
     }
-
 }

@@ -130,6 +130,8 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * The main window in the DataCleaner GUI. This window is called the
  * AnalysisJobBuilderWindow because it's main purpose is to present a job that
@@ -149,8 +151,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
             builder.addAnalysisJobChangeListener(this);
 
-            // We'll need to listen to already added output data stream job builders
-            for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
+            // We'll need to listen to already added output data stream job
+            // builders
+            for (AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
                 onActivation(analysisJobBuilder);
             }
         }
@@ -283,7 +286,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -394,7 +396,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -1022,6 +1025,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             public void actionPerformed(ActionEvent e) {
                 final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
                         "100");
+                if (Strings.isNullOrEmpty(maxRowsString)) {
+                    return;
+                }
                 final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
                 if (maxRows == null || maxRows.intValue() < 1) {
                     WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");

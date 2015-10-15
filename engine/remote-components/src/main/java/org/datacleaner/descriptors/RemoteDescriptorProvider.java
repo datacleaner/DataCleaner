@@ -44,7 +44,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
     private final CredentialsProvider credentialsProvider;
-    private String tenant = "test"; // TODO
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
     public RemoteDescriptorProvider(CredentialsProvider credentialsProvider) {

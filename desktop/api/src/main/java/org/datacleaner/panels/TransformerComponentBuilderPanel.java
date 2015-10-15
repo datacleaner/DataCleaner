@@ -22,11 +22,15 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
@@ -92,9 +96,44 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
         if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
-            final int previewRows = getPreviewRows();
-            _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-                    _componentBuilder, previewRows));
+            final int defaultPreviewRows = getPreviewRows();
+            final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(_windowContext, this,
+                    _componentBuilder, defaultPreviewRows);
+            final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
+            _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
+            _previewAlternativesButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final JMenuItem executeNormallyMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " rows",
+                            IconUtils.ACTION_PREVIEW);
+                    executeNormallyMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+
+                    final JMenuItem executePreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
+                            IconUtils.ACTION_PREVIEW);
+                    executePreviewMenuItem.addActionListener(new ActionListener() {
+                        
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
+                            
+                            if (maxRows != null) {
+                                final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(_windowContext, transformerComponentBuilderPanel,
+                                        _componentBuilder, maxRows);
+                                maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
+                            }
+                        }
+                    });
+
+                    final JPopupMenu menu = new JPopupMenu();
+                    menu.add(executeNormallyMenutItem);
+                    menu.addSeparator();
+                    menu.add(executePreviewMenuItem);
+
+                    final int horizontalPosition = -1 * menu.getPreferredSize().width
+                            + _previewAlternativesButton.getWidth();
+                    menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
+                }
+            });
         } else {
             // we cannot provide a preview-function for transformers in non-root
             // AnalysisJobBuilders

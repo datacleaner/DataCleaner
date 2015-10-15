@@ -19,7 +19,7 @@
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
             </properties>
-            <input ref="col_firstname"/>
+            <input ref="col_firstname" name="Values"/>
             <output-data-stream name="Complete rows">
                 <job>
                     <source>

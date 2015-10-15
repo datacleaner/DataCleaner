@@ -40,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -50,6 +51,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
 import org.elasticsearch.common.base.Strings;
@@ -449,6 +451,20 @@ public final class WidgetFactory {
         }
 
         return createModalDialog(component, (Window) windowComponent, title, resizable);
+    }
+    
+    public static Integer showMaxRowsDialog(int defaultValue) {
+        final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
+                defaultValue);
+        if (Strings.isNullOrEmpty(maxRowsString)) {
+            return null;
+        }
+        final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
+        if (maxRows == null || maxRows.intValue() < 1) {
+            WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
+            return null;
+        }
+        return maxRows.intValue();
     }
 
 }

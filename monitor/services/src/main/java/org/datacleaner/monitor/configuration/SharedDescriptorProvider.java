@@ -52,6 +52,9 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     public void refresh() {
+        if (_delegate != null) {
+            _delegate.refresh();
+        }
     }
 
     public DescriptorProvider getDelegate() {

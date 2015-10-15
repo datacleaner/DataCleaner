@@ -35,7 +35,7 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     private final DescriptorProvider _descriptorProvider;
     private final StorageProvider _storageProvider;
     private final InjectionManagerFactory _injectionManagerFactory;
-    private static CredentialsProvider _credentialsProvider = null;
+    private final CredentialsProvider _credentialsProvider;
 
     /**
      * Creates a {@link DataCleanerEnvironment}
@@ -174,10 +174,6 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     }
 
     public static CredentialsProvider defaultCredentialsProvider() {
-        if (_credentialsProvider == null) {
-            _credentialsProvider = new RemoteComponentsCredentialsProvider();
-        }
-
-        return _credentialsProvider;
+        return new RemoteComponentsCredentialsProvider();
     }
 }

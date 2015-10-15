@@ -19,6 +19,9 @@
  */
 package org.datacleaner.configuration;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -38,11 +41,13 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.w3c.dom.Element;
 
 public class DatastoreXmlExternalizerTest extends TestCase {
@@ -179,6 +184,22 @@ public class DatastoreXmlExternalizerTest extends TestCase {
         assertEquals("<salesforce-datastore name=\"name\"><username>username</username>" + "<password>enc:"
                 + PASSWORD_ENCODED + "</password>"
                 + "<security-token>securityToken</security-token></salesforce-datastore>", transform(externalized));
+    }
+    
+    public void testExternalizeDataHubDatastoreWithPassword() throws Exception {
+        Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", "tenant", false, false,
+                DataHubSecurityMode.DEFAULT);
+
+        Element externalized = externalizer.externalize(datastore);
+        StringBuilder expectedConfiguration = new StringBuilder();
+        expectedConfiguration.append("<datahub-datastore name=\"name\">")
+                .append("<host>hostname</host>").append("<port>1234</port>")
+                .append("<username>user</username>").append("<password>" + "enc:" + PASSWORD_ENCODED + "</password>")
+                .append("<tenantname>tenant</tenantname>").append("<https>false</https>")
+                .append("<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>")
+                .append("<datahubsecuritymode>DEFAULT</datahubsecuritymode>").append("</datahub-datastore>");
+
+        assertThat(transform(externalized), is(expectedConfiguration.toString()));
     }
 
     private String transform(Element elem) throws Exception {

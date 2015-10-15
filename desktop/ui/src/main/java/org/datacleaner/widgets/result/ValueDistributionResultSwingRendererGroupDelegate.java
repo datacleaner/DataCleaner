@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -143,21 +141,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         final int totalCount = result.getTotalCount();
 
         _valueCounts = result.getReducedValueFrequencies(_preferredSlices);
-        List<ValueFrequency> valueCountsList = new ArrayList<>(_valueCounts);
-        Collections.sort(valueCountsList, new Comparator<ValueFrequency>() {
-
-            @Override
-            public int compare(ValueFrequency o1, ValueFrequency o2) {
-                if ((o1 != null) && ("<unique>".equals(o1.getName()))) {
-                    return 1;
-                }
-                if ((o2 != null) && ("<unique>".equals(o2.getName()))) {
-                    return -1;
-                }
-                return 0;
-            }
-        });
-        _valueCounts = valueCountsList;
+        _valueCounts = moveUniqueToEnd(_valueCounts);
+        
         for (ValueFrequency valueCount : _valueCounts) {
             setDataSetValue(valueCount.getName(), valueCount.getCount());
         }
@@ -244,6 +229,26 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         split.setDividerLocation(550);
 
         return split;
+    }
+
+    private Collection<ValueFrequency> moveUniqueToEnd(Collection<ValueFrequency> valueCounts) {
+        
+        ValueFrequency uniqueValueFrequency = null;
+        for (ValueFrequency valueFrequency : valueCounts) {
+            if ("<unique>".equals(valueFrequency.getName())) {
+                uniqueValueFrequency = valueFrequency;
+                break;
+            }
+        }
+        
+        if (uniqueValueFrequency != null) {
+            List<ValueFrequency> valueCountsList = new ArrayList<>(valueCounts);
+            valueCountsList.remove(uniqueValueFrequency);
+            valueCountsList.add(uniqueValueFrequency);
+            return valueCountsList;
+        } else {
+            return valueCounts;
+        }
     }
 
     public CategoryDataset getDataset() {

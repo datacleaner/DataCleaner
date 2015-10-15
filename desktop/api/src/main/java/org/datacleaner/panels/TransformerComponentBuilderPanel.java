@@ -58,6 +58,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     private final TransformerComponentBuilder<?> _componentBuilder;
     private final ColumnListTable _outputColumnsTable;
     private final JButton _previewButton;
+    private final JButton _previewAlternativesButton;
     private final JButton _writeDataButton;
     private final WindowContext _windowContext;
 
@@ -88,6 +89,8 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_componentBuilder));
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
+        _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
+        _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
         if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
             final int previewRows = getPreviewRows();
             _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
@@ -96,6 +99,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             // we cannot provide a preview-function for transformers in non-root
             // AnalysisJobBuilders
             _previewButton.setVisible(false);
+            _previewAlternativesButton.setVisible(false);
         }
     }
 
@@ -128,6 +132,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bottomButtonPanel.add(_writeDataButton);
         bottomButtonPanel.add(_previewButton);
+        bottomButtonPanel.add(_previewAlternativesButton);
 
         if (!_componentBuilder.getDescriptor().isMultiStreamComponent()) {
             final DCPanel outputColumnsPanel = new DCPanel();

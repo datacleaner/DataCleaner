@@ -281,6 +281,49 @@
 				job.
 			</para>
 		</tip>
+		<section id="wiring_components_output_data_streams">
+			<title>Output data streams</title>
+			<para>The "Link to..." option wires components together in the "main
+				flow". However, some components are able to produce additional
+				output
+				data streams. For example, Completeness Analyzer's main
+				feature is to
+				produce a summary of records completeness in the job
+				result window.
+				However, it also produces two output data streams -
+				"Complete
+				records" and "Incomplete records". Output data streams
+				behave
+				similarly to a source table, although such a source table is
+				created
+				dynamically by a component. This enables further processing
+				of
+				such output.
+			</para>
+			<para>Components producing output data streams have additional "Link
+				to..." position in the right-click menu to wire the output with
+				subsequent components.
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="output_data_streams_link_to.png"
+						format="PNG" scalefit="1" />
+				</imageobject>
+			</mediaobject>
+			<para>Instead of wiring components with "Link to..." menu option,
+				double-clicking a component brings up a configuration dialog that
+				can be used to choose its input columns. In the top-right corner of
+				the dialog, the scope of the component can be chosen. Switching
+				between scopes gives us the possibility to choose input columns from
+				the "main flow" (default scope) or from output data streams.
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="output_data_streams_change_scope.png"
+						format="PNG" scalefit="1" />
+				</imageobject>
+			</mediaobject>
+		</section>
 	</section>
 
 	<section id="executing">

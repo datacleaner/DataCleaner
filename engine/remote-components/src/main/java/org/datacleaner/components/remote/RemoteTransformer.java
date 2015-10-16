@@ -19,27 +19,13 @@
  */
 package org.datacleaner.components.remote;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
-import org.datacleaner.api.Close;
-import org.datacleaner.api.Initialize;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
+import org.datacleaner.api.*;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentRESTClient;
-import org.datacleaner.restclient.ComponentsRestClientUtils;
-import org.datacleaner.restclient.CreateInput;
-import org.datacleaner.restclient.ProcessStatelessInput;
-import org.datacleaner.restclient.ProcessStatelessOutput;
-import org.datacleaner.restclient.Serializator;
+import org.datacleaner.restclient.*;
 import org.datacleaner.util.batch.BatchSink;
 import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.batch.BatchTransformer;
@@ -47,8 +33,8 @@ import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.util.*;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -128,28 +114,6 @@ public class RemoteTransformer extends BatchTransformer {
                 closeClient();
             }
         }
-    }
-
-    @Override
-    public Object[] transform(InputRow inputRow) {
-
-        if(client == null) {
-            throw new RuntimeException("Remote transformer not initialized");
-        }
-
-        List values = new ArrayList();
-        List<InputColumn> cols = getUsedInputColumns();
-        for(InputColumn col: cols) {
-            values.add(inputRow.getValue(col));
-        }
-
-        Object[] rows = new Object[] {values};
-
-        ProcessStatelessInput input = new ProcessStatelessInput();
-        input.configuration = getConfiguration(cols);
-        input.data = mapper.valueToTree(rows);
-        ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
-        return convertOutputRows(out.rows);
     }
 
     private ComponentConfiguration getConfiguration(List<InputColumn> inputColumns) {
@@ -274,7 +238,7 @@ public class RemoteTransformer extends BatchTransformer {
         input.configuration = getConfiguration(cols);
         input.data = mapper.valueToTree(rows);
         logger.debug("Processing remotely {} rows", size);
-        ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
+        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
         convertOutputRows(out.rows, sink, size);
     }
 

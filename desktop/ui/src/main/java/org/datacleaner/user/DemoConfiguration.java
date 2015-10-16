@@ -50,7 +50,7 @@ public class DemoConfiguration {
     public static final String JOB_ORDERDB_DUPLICATE_TRAINING = addFile("jobs/OrderDB Customers dedup Training.analysis.xml");
     public static final String JOB_ORDERDB_UNION = addFile("jobs/OrderDB Customers and Employees union.analysis.xml");
     public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = addFile("jobs/US Customer STATE check.analysis.xml");
-    public static final String JOB_CUSTOMER_AGE_FILTERING = addFile("jobs/Customer Age Filtering.analysis.xml");
+    public static final String JOB_CUSTOMER_AGE_FILTERING = addFile("jobs/Customer filtering.analysis.xml");
     public static final String JOB_ORDERDB_NAME_PHONE_CLEANSING = addFile("jobs/OrderDB Name and Phone Cleansing.analysis.xml");
 
     public static final String OTHER_DEDUP_MODEL_SFDC_USERS = addFile("jobs/sfdc_dupe_model_users.dedupmodel.xml");

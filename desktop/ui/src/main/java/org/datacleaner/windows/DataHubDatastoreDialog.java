@@ -100,12 +100,11 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
 
-        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username,
-                password, _tenantName,
-                /* _contextPathTextField.getText(), */_httpsCheckBox
-                        .isSelected(),
-                _acceptUnverifiedSslPeersCheckBox.isSelected(),
-                DataHubSecurityMode.valueOf(_securityModeSelector.getSelectedItem().toString())));
+        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
+                _tenantName,
+                /* _contextPathTextField.getText(), */_httpsCheckBox.isSelected(),
+                _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
+                        .getSelectedItem().toString())));
     }
 
     private void updateUrlLabel() {
@@ -135,6 +134,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
+                disableTestedConnection();
                 validateAndUpdate();
                 updateUrlLabel();
             }
@@ -146,14 +146,23 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _httpsCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+                disableTestedConnection();
                 updateUrlLabel();
+                validateAndUpdate();
             }
         });
 
         _acceptUnverifiedSslPeersCheckBox = new JCheckBox("Accept unverified SSL peers?", false);
         _acceptUnverifiedSslPeersCheckBox.setOpaque(false);
         _acceptUnverifiedSslPeersCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-
+        _acceptUnverifiedSslPeersCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                disableTestedConnection();
+                validateAndUpdate();
+            }
+        });
+        
         _hostTextField.getDocument().addDocumentListener(genericDocumentListener);
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
@@ -161,15 +170,18 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _securityModeSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                disableTestedConnection();
                 validateAndUpdate();
                 updateUrlLabel();
             }
+
         });
 
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+                disableTestedConnection();
                 final DataHubRepoConnection connection = createConnection();
                 final String getTenantInfoUrl = connection.getRepositoryUrl() + "/_user";
                 final HttpGet request = new HttpGet(getTenantInfoUrl);
@@ -178,7 +190,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
                     final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == HttpStatus.SC_OK || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
+                    if (statusLine.getStatusCode() == HttpStatus.SC_OK
+                            || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
                         // read response as JSON.
                         final InputStream content = response.getEntity().getContent();
                         final UserInfo userInfo;
@@ -200,6 +213,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                     WidgetUtils.showErrorMessage("Connection failed",
                             "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?", e);
                 }
+                validateAndUpdate();
             }
 
         });
@@ -209,7 +223,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             _portTextField.setText(originalDatastore.getPort() + "");
             _httpsCheckBox.setSelected(originalDatastore.https());
             _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
-            if(originalDatastore.getSecurityMode().equals(DataHubSecurityMode.CAS)) {
+            if (originalDatastore.getSecurityMode().equals(DataHubSecurityMode.CAS)) {
                 _securityModeSelector.setSelectedIndex(1);
             } else {
                 _securityModeSelector.setSelectedIndex(0);
@@ -225,6 +239,14 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             _portTextField.setText("8080");
         }
         updateUrlLabel();
+    }
+
+    /**
+     * When a setting changes, the connection must be retested. Setting the
+     * tenant name to null forces this.
+     */
+    private void disableTestedConnection() {
+        _tenantName = null;
     }
 
     @Override
@@ -264,6 +286,11 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             return false;
         }
 
+        if (_tenantName == null) {
+            setStatusError("Please test the connection first");
+            return false;
+        }
+
         setStatusValid();
         return true;
     }
@@ -280,9 +307,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
-        return new DataHubDatastore(name, host, port, username, password,
-                _tenantName, https, acceptUnverifiedSslPeersCheckBox,
-                DataHubSecurityMode.valueOf(securityMode));
+        return new DataHubDatastore(name, host, port, username, password, _tenantName, https,
+                acceptUnverifiedSslPeersCheckBox, DataHubSecurityMode.valueOf(securityMode));
     }
 
     @Override

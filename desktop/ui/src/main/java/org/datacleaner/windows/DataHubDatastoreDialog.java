@@ -25,7 +25,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
@@ -78,11 +77,16 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     private final JCheckBox _httpsCheckBox;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
-    private final JXTextField _tenantNameTextField;
     private final JCheckBox _acceptUnverifiedSslPeersCheckBox;
     private final JComboBox<String> _securityModeSelector;
     private final JButton _testButton;
     private final DCLabel _urlLabel;
+    private String _tenantName;
+
+    public static class UserInfo {
+        public String username;
+        public String tenant;
+    }
 
     public DataHubRepoConnection createConnection() {
         int port = 8080;
@@ -96,7 +100,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String password = new String(_passwordTextField.getPassword());
 
         return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username,
-                password, _tenantNameTextField.getText(),
+                password, _tenantName,
                 /* _contextPathTextField.getText(), */_httpsCheckBox
                         .isSelected(),
                 _acceptUnverifiedSslPeersCheckBox.isSelected(),
@@ -117,7 +121,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _portTextField = WidgetFactory.createTextField("Port");
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
-        _tenantNameTextField = WidgetFactory.createTextField("Tenant id");
         // _contextPathTextField =
         // WidgetFactory.createTextField("Context path");
         _securityModeSelector = new JComboBox<>(new String[] { DataHubSecurityMode.DEFAULT.toString(),
@@ -161,15 +164,14 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                 updateUrlLabel();
             }
         });
-        _tenantNameTextField.getDocument().addDocumentListener(genericDocumentListener);
 
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 final DataHubRepoConnection connection = createConnection();
-                final String pingUrl = connection.getRepositoryUrl() + "/ping";
-                final HttpGet request = new HttpGet(pingUrl);
+                final String getTenantInfoUrl = connection.getRepositoryUrl() + "/_user";
+                final HttpGet request = new HttpGet(getTenantInfoUrl);
                 try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
 
@@ -178,13 +180,14 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                     if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
                         // read response as JSON.
                         final InputStream content = response.getEntity().getContent();
-                        final Map<?, ?> map;
+                        final UserInfo userInfo;
                         try {
-                            map = new ObjectMapper().readValue(content, Map.class);
+                            userInfo = new ObjectMapper().readValue(content, UserInfo.class);
+                            _tenantName = userInfo.tenant;
                         } finally {
                             FileHelper.safeClose(content);
                         }
-                        LOGGER.info("Ping request responded: {}", map);
+                        LOGGER.info("Get tenant info request responded with tenant name: {}", userInfo.tenant);
                         JOptionPane.showMessageDialog(DataHubDatastoreDialog.this, "Connection successful!");
                     } else {
                         final String reasonPhrase = statusLine.getReasonPhrase();
@@ -216,7 +219,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
-            _tenantNameTextField.setText(originalDatastore.getTenantName());
         } else {
             _hostTextField.setText("localhost");
             _portTextField.setText("8080");
@@ -261,12 +263,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             return false;
         }
 
-        final String tenantName = _tenantNameTextField.getText();
-        if (StringUtils.isNullOrEmpty(tenantName)) {
-            setStatusError("Please enter tenant name");
-            return false;
-        }
-
         setStatusValid();
         return true;
     }
@@ -279,13 +275,12 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
-        final String tenantName = _tenantNameTextField.getText();
         final boolean https = _httpsCheckBox.isSelected();
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
         return new DataHubDatastore(name, host, port, username, password,
-                tenantName, https, acceptUnverifiedSslPeersCheckBox,
+                _tenantName, https, acceptUnverifiedSslPeersCheckBox,
                 DataHubSecurityMode.valueOf(securityMode));
     }
 
@@ -314,7 +309,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         result.add(new ImmutableEntry<String, JComponent>("Security mode", _securityModeSelector));
         result.add(new ImmutableEntry<String, JComponent>("DataHub username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("DataHub password", _passwordTextField));
-        result.add(new ImmutableEntry<String, JComponent>("DataHub tenant name", _tenantNameTextField));
         result.add(new ImmutableEntry<String, JComponent>(null, _urlLabel));
         result.add(new ImmutableEntry<String, JComponent>(null, _testButton));
         return result;

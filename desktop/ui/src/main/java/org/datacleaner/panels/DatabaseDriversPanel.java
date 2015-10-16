@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -101,6 +102,10 @@ public class DatabaseDriversPanel extends DCPanel {
             }
         }
 
+        for (UserDatabaseDriver driver : _userPreferences.getDatabaseDrivers()) {
+            _usedDriverClassNames.add(driver.getDriverClassName());
+        }
+
         updateComponents();
     }
 
@@ -112,7 +117,8 @@ public class DatabaseDriversPanel extends DCPanel {
         final JPopupMenu addDriverMenu = addDriverButton.getMenu();
 
         final JMenu automaticDownloadAndInstallMenu = new JMenu("Automatic download and install");
-        automaticDownloadAndInstallMenu.setIcon(imageManager.getImageIcon(IconUtils.ACTION_DOWNLOAD, IconUtils.ICON_SIZE_MENU_ITEM));
+        automaticDownloadAndInstallMenu.setIcon(imageManager.getImageIcon(IconUtils.ACTION_DOWNLOAD,
+                IconUtils.ICON_SIZE_MENU_ITEM));
 
         final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
         for (DatabaseDriverDescriptor dd : drivers) {
@@ -157,8 +163,11 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private DCTable getDatabaseDriverTable() {
         final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getDatabaseDrivers();
+        final List<UserDatabaseDriver> userPreferencesDatabaseDrivers = _userPreferences.getDatabaseDrivers();
+        final List<UserDatabaseDriver> unknownManuallyInstalledDrivers = getUnknownManuallyInstalledDrivers(
+                userPreferencesDatabaseDrivers, databaseDrivers);
         final TableModel tableModel = new DefaultTableModel(new String[] { "", "Database", "Driver class",
-                "Installed?", "Used?" }, databaseDrivers.size());
+                "Installed?", "Used?" }, databaseDrivers.size() + unknownManuallyInstalledDrivers.size());
 
         final DCTable table = new DCTable(tableModel);
 
@@ -209,6 +218,29 @@ public class DatabaseDriversPanel extends DCPanel {
             row++;
         }
 
+        for (UserDatabaseDriver driver : unknownManuallyInstalledDrivers) {
+            final String driverClassName = driver.getDriverClassName();
+            final Icon driverIcon = imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+                    IconUtils.ICON_SIZE_SMALL);
+            tableModel.setValueAt(driverIcon, row, 0);
+            tableModel.setValueAt("", row, 1);
+            tableModel.setValueAt(driverClassName, row, 2);
+            final DatabaseDriverState state = driver.getState();
+            if (state == DatabaseDriverState.INSTALLED_WORKING) {
+                tableModel.setValueAt(validIcon, row, installedCol);
+            } else if (state == DatabaseDriverState.INSTALLED_NOT_WORKING) {
+                tableModel.setValueAt(invalidIcon, row, installedCol);
+            } else if (state == DatabaseDriverState.NOT_INSTALLED) {
+                final Icon icon = imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL);
+                tableModel.setValueAt(icon, row, installedCol);
+
+            }
+            if (isUsed(driverClassName)) {
+                tableModel.setValueAt(validIcon, row, usedCol);
+            }
+            row++;
+        }
+
         table.setAlignment(installedCol, Alignment.CENTER);
         table.setAlignment(usedCol, Alignment.CENTER);
 
@@ -222,6 +254,29 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private boolean isUsed(String driverClassName) {
         return _usedDriverClassNames.contains(driverClassName);
+    }
+
+    private List<UserDatabaseDriver> getUnknownManuallyInstalledDrivers(
+            final List<UserDatabaseDriver> userPreferencesDatabaseDrivers,
+            final List<DatabaseDriverDescriptor> databaseDrivers) {
+        final List<UserDatabaseDriver> unknownDrivers = new ArrayList<>();
+        for (UserDatabaseDriver driver : userPreferencesDatabaseDrivers) {
+            if (isDriverMissing(driver, databaseDrivers)) {
+                unknownDrivers.add(driver);
+            }
+        }
+        return unknownDrivers;
+    }
+
+    private boolean isDriverMissing(final UserDatabaseDriver driver,
+            final List<DatabaseDriverDescriptor> databaseDrivers) {
+        final String driverClassName = driver.getDriverClassName();
+        for (DatabaseDriverDescriptor descriptor : databaseDrivers) {
+            if (descriptor.getDriverClassName().equals(driverClassName)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {

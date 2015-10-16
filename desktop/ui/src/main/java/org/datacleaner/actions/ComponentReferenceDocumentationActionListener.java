@@ -26,8 +26,8 @@ import java.io.File;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.documentation.ComponentDocumentationWrapper;
 import org.datacleaner.documentation.ComponentReferenceDocumentationBuilder;
-import org.datacleaner.documentation.IndexDocumentationBuilder;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
@@ -55,8 +55,10 @@ public class ComponentReferenceDocumentationActionListener implements ActionList
             docDirectory.mkdir();
         }
 
-        final File documentationFile = new File(docDirectory,
-                IndexDocumentationBuilder.getFilename(_componentDescriptor));
+        final ComponentDocumentationWrapper componentDocumentationWrapper = new ComponentDocumentationWrapper(
+                _componentDescriptor);
+
+        final File documentationFile = new File(docDirectory, componentDocumentationWrapper.getHref());
         if (!documentationFile.exists()) {
             final ComponentReferenceDocumentationBuilder builder = new ComponentReferenceDocumentationBuilder(
                     _configuration.getEnvironment().getDescriptorProvider());

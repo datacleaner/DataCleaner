@@ -164,7 +164,7 @@ public class DatabaseDriversPanel extends DCPanel {
     private DCTable getDatabaseDriverTable() {
         final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getDatabaseDrivers();
         final List<UserDatabaseDriver> userPreferencesDatabaseDrivers = _userPreferences.getDatabaseDrivers();
-        final List<UserDatabaseDriver> unknownManuallyInstalledDrivers = getUnknownManuallyInstalledDriversNumber(
+        final List<UserDatabaseDriver> unknownManuallyInstalledDrivers = getUnknownManuallyInstalledDrivers(
                 userPreferencesDatabaseDrivers, databaseDrivers);
         final TableModel tableModel = new DefaultTableModel(new String[] { "", "Database", "Driver class",
                 "Installed?", "Used?" }, databaseDrivers.size() + unknownManuallyInstalledDrivers.size());
@@ -256,24 +256,27 @@ public class DatabaseDriversPanel extends DCPanel {
         return _usedDriverClassNames.contains(driverClassName);
     }
 
-    private List<UserDatabaseDriver> getUnknownManuallyInstalledDriversNumber(
+    private List<UserDatabaseDriver> getUnknownManuallyInstalledDrivers(
             final List<UserDatabaseDriver> userPreferencesDatabaseDrivers,
             final List<DatabaseDriverDescriptor> databaseDrivers) {
         final List<UserDatabaseDriver> unknownDrivers = new ArrayList<>();
         for (UserDatabaseDriver driver : userPreferencesDatabaseDrivers) {
-            final String driverClassName = driver.getDriverClassName();
-            boolean found = false;
-            for (DatabaseDriverDescriptor descriptor : databaseDrivers) {
-                if (descriptor.getDriverClassName().equals(driverClassName)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
+            if (isDriverMissing(driver, databaseDrivers)) {
                 unknownDrivers.add(driver);
             }
         }
         return unknownDrivers;
+    }
+
+    private boolean isDriverMissing(final UserDatabaseDriver driver,
+            final List<DatabaseDriverDescriptor> databaseDrivers) {
+        final String driverClassName = driver.getDriverClassName();
+        for (DatabaseDriverDescriptor descriptor : databaseDrivers) {
+            if (descriptor.getDriverClassName().equals(driverClassName)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {

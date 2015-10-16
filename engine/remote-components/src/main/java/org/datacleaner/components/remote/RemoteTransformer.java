@@ -19,13 +19,27 @@
  */
 package org.datacleaner.components.remote;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
-import org.datacleaner.api.*;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.restclient.*;
+import org.datacleaner.restclient.ComponentConfiguration;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.ComponentsRestClientUtils;
+import org.datacleaner.restclient.CreateInput;
+import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.batch.BatchSink;
 import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.batch.BatchTransformer;
@@ -33,8 +47,8 @@ import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -52,7 +66,11 @@ public class RemoteTransformer extends BatchTransformer {
     private String componentDisplayName;
     private String username;
     private String password;
-    private OutputColumns cachedOutputColumns;
+
+    private OutputColumns lastOutputColumns;
+    private CreateInput lastCreateInput;
+
+
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
@@ -78,18 +96,22 @@ public class RemoteTransformer extends BatchTransformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        OutputColumns outCols = cachedOutputColumns;
-        if(outCols != null) { return outCols; }
+        OutputColumns outCols;
 
+        try {
+            CreateInput createInput = new CreateInput();
+            createInput.configuration = getConfiguration(getUsedInputColumns());
+            if(lastOutputColumns != null && createInput.equals(lastCreateInput)) {
+                logger.debug("Reusing cached output columns, nothing changed");
+                outCols = lastOutputColumns;
+            } else {
+                logger.debug("Getting output columns from server");
         boolean wasInit = false;
         if(client == null) {
             wasInit = true;
             initClient();
         }
         try {
-            CreateInput createInput = new CreateInput();
-            createInput.configuration = getConfiguration(getUsedInputColumns());
-
             org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
 
             outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
@@ -105,14 +127,17 @@ public class RemoteTransformer extends BatchTransformer {
                 }
                 i++;
             }
-            cachedOutputColumns = outCols;
+                    lastOutputColumns = outCols;
+                    lastCreateInput = createInput;
+                } finally {
+                    if(wasInit) {
+                        closeClient();
+                    }
+                }
+            }
             return outCols;
         } catch(Exception e) {
             return new OutputColumns(String.class, "Unknown");
-        } finally {
-            if(wasInit) {
-                closeClient();
-            }
         }
     }
 
@@ -210,8 +235,6 @@ public class RemoteTransformer extends BatchTransformer {
         } else {
             configuredProperties.put(propertyName, value);
         }
-        // invalidate the cached output columns
-        cachedOutputColumns = null;
     }
 
     public Object getPropertyValue(String propertyName) {

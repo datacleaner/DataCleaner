@@ -66,16 +66,14 @@ public class RemoteTransformer extends BatchTransformer {
     private String componentDisplayName;
     private String username;
     private String password;
-    private String tenant;
     private OutputColumns cachedOutputColumns;
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
-    public RemoteTransformer(String baseUrl, String componentDisplayName, String tenant, String username, String password) {
+    public RemoteTransformer(String baseUrl, String componentDisplayName, String username, String password) {
         this.baseUrl = baseUrl;
         this.username = username;
         this.password = password;
-        this.tenant = tenant;
         this.componentDisplayName = componentDisplayName;
     }
 
@@ -106,7 +104,7 @@ public class RemoteTransformer extends BatchTransformer {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
 
-            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, createInput);
+            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
 
             outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
             int i = 0;
@@ -130,6 +128,28 @@ public class RemoteTransformer extends BatchTransformer {
                 closeClient();
             }
         }
+    }
+
+    @Override
+    public Object[] transform(InputRow inputRow) {
+
+        if(client == null) {
+            throw new RuntimeException("Remote transformer not initialized");
+        }
+
+        List values = new ArrayList();
+        List<InputColumn> cols = getUsedInputColumns();
+        for(InputColumn col: cols) {
+            values.add(inputRow.getValue(col));
+        }
+
+        Object[] rows = new Object[] {values};
+
+        ProcessStatelessInput input = new ProcessStatelessInput();
+        input.configuration = getConfiguration(cols);
+        input.data = mapper.valueToTree(rows);
+        ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
+        return convertOutputRows(out.rows);
     }
 
     private ComponentConfiguration getConfiguration(List<InputColumn> inputColumns) {

@@ -70,9 +70,9 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public RowDeletionBuilder deleteFrom(Table arg0) throws IllegalArgumentException, IllegalStateException,
+    public RowDeletionBuilder deleteFrom(Table table) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
-        throw new UnsupportedOperationException();
+        return new DataHubDeleteBuilder(this,table);
     }
 
     @Override
@@ -120,6 +120,11 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     @Override
     public void close() {
         flushUpdates();
+    }
+
+    public void executeDelete(String grId) {
+        _dataContext.executeDelete(grId);
+        
     }
 
 

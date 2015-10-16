@@ -110,13 +110,17 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         }
 
         if (value == null) {
-            return _nullValueAnnotation != null;
+            if (_nullValueAnnotation != null) {
+                return annotationFactory.hasSampleRows(_nullValueAnnotation);
+            } else {
+                return false;
+            }
         }
         final RowAnnotation annotation = _annotations.get(value);
         if (annotation == null) {
             return false;
         }
-        
+
         return annotationFactory.hasSampleRows(annotation);
     }
 
@@ -170,6 +174,10 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
             return ValueCountListImpl.emptyList();
         }
         return _bottomValues;
+    }
+
+    public InputColumn<?>[] getHighlightedColumns() {
+        return _highlightedColumns;
     }
 
     @Override

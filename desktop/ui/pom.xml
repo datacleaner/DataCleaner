@@ -87,21 +87,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-network-tools</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-visualization</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-data-structures</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-remote-components</artifactId>
 			<version>${project.version}</version>
 		</dependency>

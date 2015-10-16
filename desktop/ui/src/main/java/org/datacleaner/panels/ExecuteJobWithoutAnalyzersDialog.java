@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;
@@ -143,12 +144,19 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
                 final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
                         .addAnalyzer(analyzerClass);
+
                 analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
 
                 final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                analyzer.setConfiguredProperty("File",
-                        createFile("datacleaner-" + formattedDate + "-output", filenameExtension));
+                final FileResource resource = createResource("datacleaner-" + formattedDate + "-output",
+                        filenameExtension);
+                if (analyzerClass == CreateExcelSpreadsheetAnalyzer.class) {
+                    final File file = resource.getFile();
+                    analyzer.setConfiguredProperty("File", file);
+                } else {
+                    analyzer.setConfiguredProperty("File", resource);
+                }
 
                 final ConfiguredPropertyDescriptor sheetNameProperty = analyzer.getDescriptor().getConfiguredProperty(
                         "Sheet name");
@@ -169,7 +177,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         return button;
     }
 
-    private File createFile(String filenamePrefix, String extension) {
+    private FileResource createResource(String filenamePrefix, String extension) {
         final File directory = _userPreferences.getSaveDatastoreDirectory();
         int attempt = 0;
         while (true) {
@@ -180,11 +188,11 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
                 filename = filenamePrefix + "_" + attempt + extension;
             }
 
-            File candidate = new File(directory, filename);
-            if (!candidate.exists()) {
-                return candidate;
+            final File file = new File(directory, filename);
+            final FileResource resourceCandidate = new FileResource(file);
+            if (!resourceCandidate.isExists()) {
+                return resourceCandidate;
             }
-
             attempt++;
         }
     }

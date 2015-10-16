@@ -32,16 +32,18 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 /**
- * This class represents enumeration type for property of remote transformer, in situation when the enumeration class
- * is not on clients classpath.
+ * This class represents enumeration type for property of remote transformer, in
+ * situation when the enumeration class is not on clients classpath.
  *
  * @Since 9/15/15
  */
 public class EnumerationValue implements HasName, JsonSerializable, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String value;
     private String name;
-    private Enum enumValue;
+    private Enum<?> enumValue;
 
     public EnumerationValue(String value, String name) {
         this.value = value;
@@ -52,18 +54,20 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         this(value, value);
     }
 
-    public EnumerationValue(Enum value) {
+    public EnumerationValue(Enum<?> value) {
         this.enumValue = value;
         this.value = enumValue.name();
-        if(enumValue instanceof HasName) {
-            name = ((HasName)enumValue).getName();
+        if (enumValue instanceof HasName) {
+            name = ((HasName) enumValue).getName();
         } else {
             name = value.toString();
         }
     }
 
     /** Available only if this object represents a Java enum value */
-    public Enum asJavaEnum() { return enumValue; }
+    public Enum<?> asJavaEnum() {
+        return enumValue;
+    }
 
     /** The enum constant */
     public String getValue() {
@@ -82,18 +86,22 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     @Override
-    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
+    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer)
+            throws IOException, JsonProcessingException {
         jgen.writeString(value);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         EnumerationValue that = (EnumerationValue) o;
 
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null)
+            return false;
 
         return true;
     }
@@ -104,18 +112,18 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     public static EnumerationValue[] fromArray(Object value) {
-        if(value == null) {
+        if (value == null) {
             return null;
         }
 
-        if(value instanceof EnumerationValue[]) {
-            return (EnumerationValue[])value;
+        if (value instanceof EnumerationValue[]) {
+            return (EnumerationValue[]) value;
         }
 
         // Array of java enums will be converted
-        if(value != null && value.getClass().isArray()) {
+        if (value != null && value.getClass().isArray()) {
             if (value.getClass().getComponentType().isEnum()) {
-                Enum[] values = (Enum[]) value;
+                Enum<?>[] values = (Enum[]) value;
                 EnumerationValue[] result = new EnumerationValue[values.length];
                 for (int i = 0; i < result.length; i++) {
                     result[i] = new EnumerationValue(values[i]);
@@ -123,17 +131,18 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
                 return result;
             }
         }
-        throw new IllegalArgumentException("Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
+        throw new IllegalArgumentException(
+                "Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
     }
 
     public String[] getAliases() {
-        if(enumValue instanceof HasAliases) {
-            return ((HasAliases)enumValue).getAliases();
+        if (enumValue instanceof HasAliases) {
+            return ((HasAliases) enumValue).getAliases();
         }
         return new String[0];
     }
 
-    public static EnumerationProvider providerFromEnumClass(Class<? extends Enum> enumClass) {
+    public static EnumerationProvider providerFromEnumClass(Class<? extends Enum<?>> enumClass) {
         final EnumerationValue[] values = EnumerationValue.fromArray(enumClass.getEnumConstants());
         return new EnumerationProvider() {
             @Override

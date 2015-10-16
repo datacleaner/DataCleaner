@@ -117,6 +117,14 @@
 			datastores. And furthermore, DataCleaner can update the data of most
 			of these datastores as well.
 		</para>
+		<para> A composite datastore contains multiple datastores. A composite datastore allows you to analyze data from multiple sources in the same job.  
+		<mediaobject>
+				<imageobject>
+					<imagedata fileref="composite_datastore.png"
+						format="PNG" scalefit="1" />
+				</imageobject>
+			</mediaobject>
+		</para>
 	</section>
 
 	<section id="what_is_data_monitoring">

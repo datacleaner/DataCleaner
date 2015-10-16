@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -94,7 +95,9 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_componentBuilder));
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
+        _previewButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
+        _previewAlternativesButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
         if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
             final int defaultPreviewRows = getPreviewRows();
@@ -109,7 +112,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
                             IconUtils.ACTION_PREVIEW);
                     defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                    final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
+                    final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
                             IconUtils.ACTION_PREVIEW);
                     maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
                         
@@ -127,7 +130,6 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
                     final JPopupMenu menu = new JPopupMenu();
                     menu.add(defaultPreviewMenutItem);
-                    menu.addSeparator();
                     menu.add(maxRowsPreviewMenuItem);
 
                     final int horizontalPosition = -1 * menu.getPreferredSize().width
@@ -173,8 +175,9 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.add(_writeDataButton);
         
         final ComboButton previewButtonPanel = new ComboButton();
-        previewButtonPanel.add(_previewButton);
-        previewButtonPanel.add(_previewAlternativesButton);
+        previewButtonPanel.addButton(_previewButton);
+        previewButtonPanel.add(new JLabel("|"));
+        previewButtonPanel.addButton(_previewAlternativesButton);
         
         bottomButtonPanel.add(previewButtonPanel);
 

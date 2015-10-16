@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	id="improve" xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Improve</title>
@@ -400,11 +400,18 @@
 			</mediaobject>
 
 			<para>Once you have a duplicate detection result that you wish to
-				post-process, e.g. for merging or manual inspection, you can export
+				post-process, e.g. manual inspection, you can export
 				the result by clicking the 'Write duplicates' button in the top of the result screen.
 				You can save the duplicate records, the duplicate pairs and also the unique records in
 				a datastore table of your choice. Or you can create an excel file or a staging table.
 			</para>
+
+			<tip>
+				<para>It is now possible to feed the result directly to the merger, using the new data
+					streams feature. You can read more about linking them together in the documentation of
+					<link linkend="merge_duplicates">merge duplicates</link>
+				</para>
+			</tip>
 
 			<para>The Duplicate detection analyzer can run stand-alone to
 				find
@@ -455,123 +462,35 @@
 
 		<para>
 			In this section, we assume that the steps from previous section
-			"Duplicate detection" are completed and the duplicates are available
-			in a staging datastore "Duplicates export".
+			"Duplicate detection" has been completed, and you have a job with the
+			duplicate detection analyzer prepared.
 		</para>
-
-		<section>
-			<title>
-				Copy the unique records
-			</title>
-
-			<para>
-				Before we get into merging the duplicates, let's make sure all
-				the unique entries in our datasets are propagated to the new
-				(cleansed) dataset.
-			</para>
-
-			<para>
-				Open the original dataset.
-				Apply "Table lookup" transformer to
-				it and configure "Table lookup" to
-				check if a record is present in
-				the
-				results of duplicate detection
-				staging table (lookup in RECORDS
-				table). Choose a unique identifier
-				column as condition value (in
-				this
-				case: CUSTOMERNUMBER). As an
-				output column choose GROUPID, which is
-				an additional
-				information in
-				RECORDS table.
-			</para>
-
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="merge_duplicates_table_lookup_properties.png"
-						format="PNG" />
-				</imageobject>
-			</mediaobject>
-
-			<para>
-				Table lookup will output the value of GROUPID or NULL. We are
-				interested in NULL values as it means the record has not been
-				found
-				in duplicates table, so this is the unique record we would
-				like to
-				transfer to the final dataset. Therefore, we add Null check
-				filter to
-				save only the unique records (GROUPID is equal to NULL).
-			</para>
-
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="merge_duplicates_null_check.png"
-						format="PNG" />
-				</imageobject>
-			</mediaobject>
-
-			<para>
-				Save the output of the filter to a a new staging table.
-				<mediaobject>
-					<imageobject>
-						<imagedata fileref="merge_duplicates_create_staging_table_properties.png"
-							format="PNG" />
-					</imageobject>
-				</mediaobject>
-			</para>
-
-			<para>
-				The whole job should look
-				like this:
-			</para>
-
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="merge_duplicates_unique_job.png"
-						format="PNG" />
-				</imageobject>
-			</mediaobject>
-
-		</section>
 
 		<section>
 			<title>
 				Merge duplicates
 			</title>
 
-			<para>Now it is time to merge the duplicates into one record in our
-				final dataset.
-			</para>
-
 			<para>In the Improve menu, in the
 				Deduplication submenu, there are two
 				components that are useful for
-				this task - Merge duplicates (simple)
+				merging duplicates into a single record
+				- Merge duplicates (simple)
 				and Merge duplicates (advanced).
 				The simple version just picks one
 				record from the group of duplicates
 				while the advanced one enables
-				the
-				user to combine records, taking
+				the	user to combine records, taking
 				some values from one record, some
 				from another. In this example we
 				will use the simple version.
 			</para>
 
 			<para>
-				Open the duplicates staging datastore as the job source
-				datastore.
-				Apply
-				"Merge duplicates (Simple)" transformer to the
-				RECORDS table
-				from the duplicates datastore. Select all the relevant
-				columns as
-				input (in our case all of them) and select GROUPID column
-				in "Group
-				id" dropdown menu and GROUPSIZE column in "Group count".
+				Add "Merge duplicates (Simple)" transformer to your job, right click the
+				duplicate detection analyzer, click <emphasis>Link "Duplicate and unique
+				rows" to ...</emphasis> and click on the Merge duplicates transformer.
+
 			</para>
 
 			<mediaobject>
@@ -587,7 +506,7 @@
 				record. One of them is "Merge status" that can have three possible
 				values: SURVIVOR, NON_SURVIVOR and UNIQUE.</para>
 			<para>UNIQUE will not be relevant here since it is only used if records
-				with group size 1 (or null) are given to the merge transformation. 
+				with group size 1 (or null) are given to the merge transformation.
 				SURVIVOR indicates the record that has been chosen as the final one.
 				Let's add an Equals filter to the job in order to write only these
 				SURVIVOR records into our final dataset.

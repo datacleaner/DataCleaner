@@ -130,6 +130,8 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * The main window in the DataCleaner GUI. This window is called the
  * AnalysisJobBuilderWindow because it's main purpose is to present a job that
@@ -1023,6 +1025,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             public void actionPerformed(ActionEvent e) {
                 final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
                         "100");
+                if (Strings.isNullOrEmpty(maxRowsString)) {
+                    return;
+                }
                 final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
                 if (maxRows == null || maxRows.intValue() < 1) {
                     WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");

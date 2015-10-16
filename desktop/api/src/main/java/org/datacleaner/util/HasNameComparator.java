@@ -17,19 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans.filter;
+package org.datacleaner.util;
 
-import junit.framework.TestCase;
+import java.io.Serializable;
+import java.util.Comparator;
 
-@SuppressWarnings("deprecation")
-public class SingleWordFilterTest extends TestCase {
+import org.apache.metamodel.util.HasName;
 
-    public void testFilter() throws Exception {
-        SingleWordFilter filter = new SingleWordFilter();
-        assertEquals(ValidationCategory.INVALID, filter.filter("hello world"));
-        assertEquals(ValidationCategory.VALID, filter.filter("hello"));
-        assertEquals(ValidationCategory.INVALID, filter.filter(""));
-        assertEquals(ValidationCategory.INVALID, filter.filter(null));
-        assertEquals(ValidationCategory.INVALID, filter.filter("hello_world"));
+/**
+ * Comparator of {@link HasName} objects, which sorts based on the name.
+ */
+public class HasNameComparator implements Comparator<HasName>, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public int compare(HasName o1, HasName o2) {
+        return o1.getName().compareTo(o2.getName());
     }
+
 }

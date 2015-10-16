@@ -44,6 +44,7 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.ComboButton;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
@@ -94,7 +95,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
         _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
-        _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
+        _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
         if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
             final int defaultPreviewRows = getPreviewRows();
             final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(_windowContext, this,
@@ -170,8 +171,12 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bottomButtonPanel.add(_writeDataButton);
-        bottomButtonPanel.add(_previewButton);
-        bottomButtonPanel.add(_previewAlternativesButton);
+        
+        final ComboButton previewButtonPanel = new ComboButton();
+        previewButtonPanel.add(_previewButton);
+        previewButtonPanel.add(_previewAlternativesButton);
+        
+        bottomButtonPanel.add(previewButtonPanel);
 
         if (!_componentBuilder.getDescriptor().isMultiStreamComponent()) {
             final DCPanel outputColumnsPanel = new DCPanel();

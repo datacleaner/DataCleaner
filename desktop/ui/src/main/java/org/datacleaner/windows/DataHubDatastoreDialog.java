@@ -36,6 +36,7 @@ import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
@@ -177,7 +178,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
                     final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
+                    if (statusLine.getStatusCode() == HttpStatus.SC_OK || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
                         // read response as JSON.
                         final InputStream content = response.getEntity().getContent();
                         final UserInfo userInfo;

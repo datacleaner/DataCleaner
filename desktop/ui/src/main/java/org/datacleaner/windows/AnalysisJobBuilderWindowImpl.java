@@ -70,7 +70,6 @@ import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -129,8 +128,6 @@ import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * The main window in the DataCleaner GUI. This window is called the
@@ -1023,32 +1020,25 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
-                        "100");
-                if (Strings.isNullOrEmpty(maxRowsString)) {
-                    return;
-                }
-                final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
-                if (maxRows == null || maxRows.intValue() < 1) {
-                    WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
-                    return;
-                }
+                Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
 
-                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
-                final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
-                        .addFilter(MaxRowsFilter.class);
-                maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
-                maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
-                final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
-                final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
-                for (ComponentBuilder componentBuilder : componentBuilders) {
-                    if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
-                        componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                if (maxRows != null) {
+                    final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                    final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
+                    final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
+                            .addFilter(MaxRowsFilter.class);
+                    maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
+                    maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
+                    final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
+                    final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
+                    for (ComponentBuilder componentBuilder : componentBuilders) {
+                        if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
+                            componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                        }
                     }
-                }
 
-                execute(jobBuilderCopy).actionPerformed(e);
+                    execute(jobBuilderCopy).actionPerformed(e);
+                }
             }
         };
     }

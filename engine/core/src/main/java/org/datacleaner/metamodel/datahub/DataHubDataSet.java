@@ -179,7 +179,7 @@ public class DataHubDataSet extends AbstractDataSet {
         }
         final SelectClause selectClause = query.getSelectClause();
         for (SelectItem selectItem : selectClause.getItems()) {
-            if (selectItem.getFunction() != null) {
+            if (selectItem.getAggregateFunction() != null) {
                 return false;
             }
         }

@@ -247,7 +247,7 @@ public class JobGraphLinkPainter {
                         componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        final InputColumn firstRelevantSourceColumn =
+                        final InputColumn<?> firstRelevantSourceColumn =
                                 getFirstRelevantSourceColumn(sourceColumns, inputProperty);
                         if(firstRelevantSourceColumn != null){
                             componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
@@ -310,7 +310,7 @@ public class JobGraphLinkPainter {
         componentBuilder.setComponentRequirement(requirement);
     }
 
-    private InputColumn getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+    private InputColumn<?> getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
             ConfiguredPropertyDescriptor inputProperty){
         assert inputProperty.isInputColumn();
 

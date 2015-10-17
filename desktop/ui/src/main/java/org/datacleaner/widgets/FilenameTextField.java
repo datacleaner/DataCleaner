@@ -27,12 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 

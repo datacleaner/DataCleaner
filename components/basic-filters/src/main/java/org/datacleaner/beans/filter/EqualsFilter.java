@@ -57,9 +57,9 @@ import com.google.common.base.Joiner;
 public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>, HasLabelAdvice {
 
     public static enum Category {
-        @Alias({ "Valid", "VALID" }) EQUALS,
+        @Alias("VALID") @Description("Outcome when the operands of the filter are equal.") EQUALS,
 
-        @Alias({ "Invalid", "INVALID" }) NOT_EQUALS;
+        @Alias("INVALID") @Description("Outcome when the operands of the filter are not equal.") NOT_EQUALS;
     }
 
     @Inject

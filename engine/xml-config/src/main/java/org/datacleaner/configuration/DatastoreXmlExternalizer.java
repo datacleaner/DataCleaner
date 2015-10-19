@@ -438,7 +438,6 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
-        appendElement(ds, "tenantname", datastore.getTenantName());
         appendElement(ds, "https", datastore.https());
         appendElement(ds, "acceptunverifiedsslpeers", datastore.acceptUnverifiedSslPeers());
         appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());

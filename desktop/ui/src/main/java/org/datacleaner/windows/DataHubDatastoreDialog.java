@@ -82,7 +82,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     private final JComboBox<String> _securityModeSelector;
     private final JButton _testButton;
     private final DCLabel _urlLabel;
-    private String _tenantName;
 
     public static class UserInfo {
         public String username;
@@ -101,15 +100,14 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String password = new String(_passwordTextField.getPassword());
 
         return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
-                _tenantName,
-                /* _contextPathTextField.getText(), */_httpsCheckBox.isSelected(),
+                _httpsCheckBox.isSelected(),
                 _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
                         .getSelectedItem().toString())));
     }
 
     private void updateUrlLabel() {
         final DataHubRepoConnection connection = createConnection();
-        _urlLabel.setText("Repository url: " + connection.getRepositoryUrl());
+        _urlLabel.setText("Repository url: " + connection.getRepoUrl());
     }
 
     @Inject
@@ -134,7 +132,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                disableTestedConnection();
                 validateAndUpdate();
                 updateUrlLabel();
             }
@@ -146,7 +143,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _httpsCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                disableTestedConnection();
                 updateUrlLabel();
                 validateAndUpdate();
             }
@@ -158,7 +154,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _acceptUnverifiedSslPeersCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                disableTestedConnection();
                 validateAndUpdate();
             }
         });
@@ -170,7 +165,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _securityModeSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                disableTestedConnection();
                 validateAndUpdate();
                 updateUrlLabel();
             }
@@ -181,9 +175,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                disableTestedConnection();
                 final DataHubRepoConnection connection = createConnection();
-                final String getTenantInfoUrl = connection.getRepositoryUrl() + "/_user";
+                final String getTenantInfoUrl = connection.getUserInfoUrl();
                 final HttpGet request = new HttpGet(getTenantInfoUrl);
                 try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
@@ -197,7 +190,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                         final UserInfo userInfo;
                         try {
                             userInfo = new ObjectMapper().readValue(content, UserInfo.class);
-                            _tenantName = userInfo.tenant;
                         } finally {
                             FileHelper.safeClose(content);
                         }
@@ -241,14 +233,6 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         updateUrlLabel();
     }
 
-    /**
-     * When a setting changes, the connection must be retested. Setting the
-     * tenant name to null forces this.
-     */
-    private void disableTestedConnection() {
-        _tenantName = null;
-    }
-
     @Override
     protected boolean validateForm() {
         final String host = _hostTextField.getText();
@@ -286,8 +270,9 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             return false;
         }
 
-        if (_tenantName == null) {
-            setStatusError("Please test the connection first");
+        final char[] password = _passwordTextField.getPassword();
+        if (password.length < 1) {
+            setStatusError("Please enter password");
             return false;
         }
 
@@ -307,7 +292,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
-        return new DataHubDatastore(name, host, port, username, password, _tenantName, https,
+        return new DataHubDatastore(name, host, port, username, password, https,
                 acceptUnverifiedSslPeersCheckBox, DataHubSecurityMode.valueOf(securityMode));
     }
 

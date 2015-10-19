@@ -28,19 +28,18 @@ import org.datacleaner.windows.HdfsUrlChooser;
 public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResource> {
 
     private static final long serialVersionUID = 1L;
-    
-    String _hdfsUri;
+
+    private String _hdfsUri;
 
     public HdfsResourceTextField(String uri, final HdfsUrlChooser.OpenType openType) {
         _hdfsUri = uri;
 
         getBrowseButton().addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, openType);
-                }
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, openType);
             }
-        );
+        });
     }
 
     HdfsResourceTextField(HdfsUrlChooser.OpenType openType) {

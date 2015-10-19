@@ -126,9 +126,8 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
         final File file = getFile();
         if (file != null) {
             notifySelectionListeners(file);
-        } else {
-            super.notifyListeners(text);
         }
+        super.notifyListeners(text);
     }
 
     private void notifySelectionListeners(final File file) {

@@ -499,8 +499,6 @@
 						maxOccurs="1" />
 					<element name="password" type="string" minOccurs="1"
 						maxOccurs="1" />
-					<element name="tenantname" type="string" minOccurs="1"
-						maxOccurs="1" />
 				    <element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
 				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
 				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"

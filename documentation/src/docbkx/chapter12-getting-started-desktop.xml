@@ -254,7 +254,7 @@
 			impact if you wire them together.
 		</para>
 		<section>
-			<title>Wiring transformers</title>
+			<title>Transformer output</title>
 			<para>To wire a transformer you simply need to draw an arrow between
 				the components in the graph. You can start drawing it by
 				right-clicking the first of the components and choosing "Link to..."
@@ -270,7 +270,7 @@
 			</imageobject>
 		</mediaobject>
 		<section>
-		<title>Wiring filters</title>
+		<title>Filter requirement</title>
 		<para>To wire a filter you need to set up a dependency on either of
 			it's outcomes. All components have a button for selecting filter
 			outcomes in the top-right corners of their configuration dialogs.

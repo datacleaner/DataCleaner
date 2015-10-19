@@ -31,19 +31,17 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final Integer _port;
     private final String _username;
     private final String _password;
-    private final String _tenantName;
     private final boolean _https;
     private final boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
 
-    public DataHubDatastore(String name, String host, Integer port, String username, String password, String tenantName,
+    public DataHubDatastore(String name, String host, Integer port, String username, String password,
             boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
         super(name);
         _host = host;
         _port = port;
         _username = username;
         _password = password;
-        _tenantName = tenantName;
         _https = https;
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
         _securityMode = dataHubSecurityMode;
@@ -71,10 +69,6 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return _password;
     }
 
-    public String getTenantName() {
-        return _tenantName;
-    }
-
     public boolean https() {
         return _https;
     }
@@ -95,7 +89,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
 
     @Override
     protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
-        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName,
+        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password,
                 _https, _acceptUnverifiedSslPeers, _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
         return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
@@ -103,9 +97,8 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
 
     @Override
     public String toString() {
-        return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username + ", tenant="
-                + _tenantName + ", https=" + _https + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
+        return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username
+                + ", https=" + _https + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
                 + ", securityMode=" + _securityMode + "]";
     }
-
 }

@@ -43,21 +43,19 @@ public class DataHubConnection {
     private final String _hostname;
     private final int _port;
     private final boolean _useHTTPS;
-    private final String _tenantId;
     private final String _username;
     private final String _password;
 
     private final String _scheme;
     private boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
-
-    public DataHubConnection(String hostname, Integer port, String username, String password, String tenantId,
+    
+    public DataHubConnection(String hostname, Integer port, String username, String password,
             boolean useHTTPS, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
 
         _hostname = hostname;
         _port = port;
         _useHTTPS = useHTTPS;
-        _tenantId = tenantId;
         _username = username;
         _password = password;
         _scheme = _useHTTPS ? "https" : "http";
@@ -107,10 +105,6 @@ public class DataHubConnection {
         return _port;
     }
 
-    public String getTenantId() {
-        return _tenantId;
-    }
-    
     private String getCasServerUrl() {
         
         URIBuilder uriBuilder = getBaseUrlBuilder();
@@ -142,6 +136,4 @@ public class DataHubConnection {
         
         return uriBuilder.setPath(pathSegment);
     }
-
-
 }

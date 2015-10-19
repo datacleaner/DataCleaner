@@ -415,8 +415,8 @@
 		</para>
 
 		<para>
-			Here is an example with a job with
-			<emphasis>union</emphasis>
+			Here is an example of a job with
+			<emphasis>union</emphasis> transformer
 			and a
 			<link linkend="what_is_datastore">composite datastore</link>
 			. The

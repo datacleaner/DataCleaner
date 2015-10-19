@@ -190,12 +190,12 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
     }
 
     public void testFilterOnTimestampsWithNanos() throws Exception {
-        final Timestamp ts1 = new Timestamp(
-                ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03").getTime());
+        final Timestamp ts1 = new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03")
+                .getTime());
         ts1.setNanos(1234);
 
-        final Timestamp ts2 = new Timestamp(
-                ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03").getTime());
+        final Timestamp ts2 = new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03")
+                .getTime());
         ts2.setNanos(999999999);
 
         final MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastId", Timestamp.class);
@@ -217,8 +217,9 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
                 return FileHelper.readInputStreamAsString(in, "UTF8");
             }
         });
-        assertEquals("my_timestamp.GreatestLastModifiedValue=1357167600000.000001234", str.split("\n")[1].trim());
-        
+        assertEquals("my_timestamp.GreatestLastModifiedValue=" + ts1.getTime() + ".000001234",
+                str.split("\n")[1].trim());
+
         filter.initialize();
 
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, ts1)));

@@ -192,6 +192,7 @@ body>div {
 
 .mediaobject {
 	text-align: center;
+	margin-bottom: 1em;
 }
 
 .abstract {
@@ -230,9 +231,7 @@ pre.programlisting {
 	background-color: white;
 }
 
-.tip {
-	background-color: #adc6e7;
-	background-image: url("info.png");
+.tip, .warning {
 	background-position: 10px 10px;
 	background-repeat: no-repeat;
 	border: 1px solid silver;
@@ -242,9 +241,27 @@ pre.programlisting {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	behavior: url("border-radius.htc");
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
-.tip p {
+.tip p, .warning p {
+	color: black;
+	padding: 0px;
+	padding-top: 10px;
+}
+
+.tip {
+	background-color: #adc6e7;
+	background-image: url("info.png");
+}
+
+.warning {
+	background-color: #e6e2b8;
+	background-image: url("warning.png");
+}
+
+.warning p {
 	color: black;
 	padding: 0px;
 	padding-top: 10px;

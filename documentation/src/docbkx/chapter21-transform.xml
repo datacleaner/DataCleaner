@@ -397,5 +397,11 @@
 			want to sample the data used in your job.
 		</para>
 	</section>
+	<section id="union">
+		<title> Union </title> 
+ 	<para>The <emphasis> Union</emphasis> transformer allows you to com
+		
+		</para>
+	</section>
 
 </chapter>

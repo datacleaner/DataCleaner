@@ -332,6 +332,14 @@
 						format="PNG" scalefit="1" />
 				</imageobject>
 			</mediaobject>
+			<para>An example job using output data streams: 
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="wiring_components_output_data_streams_job.png"
+						format="PNG" scalefit="1" />
+				</imageobject>
+			</mediaobject>
 		</section>
 	</section>
 

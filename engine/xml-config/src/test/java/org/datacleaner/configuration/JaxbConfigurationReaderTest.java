@@ -360,7 +360,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertThat(dataHubDatastore.getPort(), is(1234));
         assertThat(dataHubDatastore.getUsername(), is("user"));
         assertThat(dataHubDatastore.getPassword(), is("SECRET"));
-        assertThat(dataHubDatastore.getTenantName(), is("tenant"));
         assertThat(dataHubDatastore.isHttps(), is(false));
         assertThat(dataHubDatastore.isAcceptUnverifiedSslPeers(), is(false));
         assertThat(dataHubDatastore.getSecurityMode(), is(DataHubSecurityMode.DEFAULT));

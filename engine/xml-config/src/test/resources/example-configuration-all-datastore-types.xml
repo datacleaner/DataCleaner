@@ -201,7 +201,6 @@
 			<port>1234</port>
 			<username>user</username>
 			<password>SECRET</password>
-			<tenantname>tenant</tenantname>
 			<https>false</https>
 			<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>
 			<datahubsecuritymode>DEFAULT</datahubsecuritymode>

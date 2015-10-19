@@ -187,17 +187,21 @@ public class DatastoreXmlExternalizerTest extends TestCase {
     }
     
     public void testExternalizeDataHubDatastoreWithPassword() throws Exception {
-        Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", "tenant", false, false,
+        Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", false, false,
                 DataHubSecurityMode.DEFAULT);
 
         Element externalized = externalizer.externalize(datastore);
         StringBuilder expectedConfiguration = new StringBuilder();
-        expectedConfiguration.append("<datahub-datastore name=\"name\">")
-                .append("<host>hostname</host>").append("<port>1234</port>")
-                .append("<username>user</username>").append("<password>" + "enc:" + PASSWORD_ENCODED + "</password>")
-                .append("<tenantname>tenant</tenantname>").append("<https>false</https>")
-                .append("<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>")
-                .append("<datahubsecuritymode>DEFAULT</datahubsecuritymode>").append("</datahub-datastore>");
+        expectedConfiguration//
+                .append("<datahub-datastore name=\"name\">")//
+                .append("<host>hostname</host>")//
+                .append("<port>1234</port>")//
+                .append("<username>user</username>")//
+                .append("<password>" + "enc:" + PASSWORD_ENCODED + "</password>")//
+                .append("<https>false</https>")//
+                .append("<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>")//
+                .append("<datahubsecuritymode>DEFAULT</datahubsecuritymode>")//
+                .append("</datahub-datastore>");//
 
         assertThat(transform(externalized), is(expectedConfiguration.toString()));
     }

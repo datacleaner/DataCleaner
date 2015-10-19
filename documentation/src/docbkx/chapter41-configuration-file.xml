@@ -130,8 +130,7 @@
 				SQLEXPRESS instance:
 			</para>
 			<programlisting lang="xml">
-				&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
-			</programlisting>
+				&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt; </programlisting>
 		</section>
 
 		<section id="configuration_file_datastore_csv">
@@ -379,36 +378,13 @@
 		<section>
 			<title>Composite datastore</title>
 			<para> This is an example of a composite datastore. It contains data
-				from 2 other datastores.
+				from 2 other datastores: Datastore1 and Datastore 2.
 			</para>
 			<programlisting lang="xml">
-				&lt;source&gt;
-					&lt;data-context ref=&#34;My composite datastore&#34; /&gt;
-					&lt;columns&gt;
-						&lt;column id="col_id" path="datastores.customers.csv.id" type="STRING" /&gt;
-						&lt;column id="col_given_name" path="datastores.customers.csv.given_name" type="STRING" /&gt;
-						&lt;column id="col_family_name" path="datastores.customers.csv.family_name" type="STRING" /&gt;
-						&lt;column id="col_company" path="datastores.customers.csv.company" type="STRING" /&gt;
-						&lt;column id="col_address_line" path="datastores.customers.csv.address_line" type="STRING" /&gt;
-						&lt;column id="col_post_code" path="datastores.customers.csv.post_code" type="STRING" /&gt;
-						&lt;column id="col_city" path="datastores.customers.csv.city" type="STRING" /&gt;
-						&lt;column id="col_country" path="datastores.customers.csv.country"	type="STRING" /&gt;
-						&lt;column id="col_email" path="datastores.customers.csv.email" type="STRING" /&gt;
-						&lt;column id="col_birthdate" path="datastores.customers.csv.birthdate"	type="STRING" /&gt;
-						&lt;column id="col_gender" path="datastores.customers.csv.gender" type="STRING" /&gt;
-						&lt;column id="col_job_title" path="datastores.customers.csv.job_title" type="STRING" /&gt;
-						&lt;column id="col_income_amount" path="datastores.customers.csv.income_amount" type="STRING" /&gt;
-						&lt;column id="col_income_currency" path="datastores.customers.csv.income_currency" type="STRING" /&gt;
-						&lt;column id="col_employeenumber" path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER" type="INTEGER" /&gt;
-						&lt;column id="col_lastname" path="PUBLIC.EMPLOYEES.LASTNAME" type="VARCHAR" /&gt;
-						&lt;column id="col_firstname" path="PUBLIC.EMPLOYEES.FIRSTNAME" type="VARCHAR" /&gt;
-						&lt;column id="col_extension" path="PUBLIC.EMPLOYEES.EXTENSION" type="VARCHAR" /&gt;
-						&lt;column id="col_email2" path="PUBLIC.EMPLOYEES.EMAIL" type="VARCHAR" /&gt;
-						&lt;column id="col_officecode" path="PUBLIC.EMPLOYEES.OFFICECODE" type="VARCHAR" /&gt;
-						&lt;column id="col_reportsto" path="PUBLIC.EMPLOYEES.REPORTSTO" type="INTEGER" /&gt;
-						&lt;column id="col_jobtitle" path="PUBLIC.EMPLOYEES.JOBTITLE" type="VARCHAR" /&gt;
-					&lt;/columns&gt;
-				&lt;/source&gt;
+				&lt;composite-datastore name="my composite"&gt;
+					&lt;datastore-name&gt;Datastore 1&lt;/datastore-name&gt;
+					&lt;datastore-name&gt;Datastore 2&lt;/datastore-name&gt;
+				&lt;/composite-datastore&gt;
 			</programlisting>
 		</section>
 	</section>
@@ -532,8 +508,7 @@
 				&#160;&#160;&#160;&#160;&lt;/regex-pattern&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/string-patterns&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 			<para>
 				<emphasis>Simple string patterns</emphasis>
 			</para>
@@ -557,8 +532,7 @@
 			execute the tasks of an analysis job. Typically you shouldn't edit
 			this element. However, here are the two options:
 		</para>
-		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt;
-		</programlisting>
+		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt; </programlisting>
 		<para>Defines a multi threaded task runner with a thread pool of 30
 			available threads. Beware that although 30 might seem like a high
 			number that too small a pool of threads might cause issues because

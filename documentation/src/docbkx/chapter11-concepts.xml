@@ -117,44 +117,21 @@
 			datastores. And furthermore, DataCleaner can update the data of most
 			of these datastores as well.
 		</para>
-		<section>
-			<title>How to create a datastore ?</title>
-			<para>
-				A datastore can be created in the UI or via <link linkend="chapter_configuration_file"> the configuration file</link>. The UI version is very straight forward. On the front screen of
-				DataCleaner click the button "Manage Datastores".
-			</para> 
-			<screenshot>
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="manage_datastores.png" format="PNG"
-						scalefit="1" />
-				</imageobject>
-			</mediaobject>
-			</screenshot>
-			<para>
-				You can create a datastore from any type of source such
-				as:
-				CSV,
-				EXCEL, Oracle Database,MySQL, etc.
-			</para>
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="register_datastore.png" format="PNG"
-						scalefit="1" />
-				</imageobject>
-			</mediaobject>
-
-			<para>
-				Example of a configuration dialog for a CSV file:
-				<mediaobject>
-					<imageobject>
-						<imagedata fileref="csv_datastore.png" format="PNG"
-							scalefit="1" />
-					</imageobject>
-				</mediaobject>
-			</para>
-		</section>
-
+		<para>
+			A datastore can be created in the UI or via
+			<link linkend="chapter_configuration_file"> the configuration file</link>
+			.
+			You can create a datastore from any type of source such
+			as:
+			CSV,
+			EXCEL, Oracle Database,MySQL, etc.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="register_datastore.png" format="PNG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
 		<section>
 			<subtitle>Composite datastore</subtitle>
 			<para>
@@ -165,12 +142,6 @@
 				. The main advantage of a composite datastore is that it allows you
 				to analyze and process data from multiple
 				sources in the same job.
-				<mediaobject>
-					<imageobject>
-						<imagedata fileref="composite_datastore.png" format="PNG"
-							scalefit="1" />
-					</imageobject>
-				</mediaobject>
 			</para>
 		</section>
 	</section>

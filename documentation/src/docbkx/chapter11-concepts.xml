@@ -122,7 +122,8 @@
 			<emphasis>composite</emphasis>
 			datastore contains
 			<emphasis>multiple datastores</emphasis>
-			. A composite datastore allows you to analyze data from multiple
+			. The main advantage of a composite datastore is that it allows you
+			to analyze and process data from multiple
 			sources in the same job.
 			<mediaobject>
 				<imageobject>

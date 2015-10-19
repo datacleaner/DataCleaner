@@ -148,7 +148,7 @@
 				Example of a configuration dialog for a CSV file:
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="csv-datastore.png" format="PNG"
+						<imagedata fileref="csv_datastore.png" format="PNG"
 							scalefit="1" />
 					</imageobject>
 				</mediaobject>

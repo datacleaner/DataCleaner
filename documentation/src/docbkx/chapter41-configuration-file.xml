@@ -71,9 +71,9 @@
 
 		<section id="configuration_file_datastore_jdbc">
 			<title>Database (JDBC) connections</title>
-	
+
 			<para>Here are a few examples of common database types.</para>
-	
+
 			<tip>
 				<para>The DataCleaner User Interface makes it a lot easier to figure
 					out the
@@ -84,7 +84,7 @@
 					properties already.
 				</para>
 			</tip>
-	
+
 			<para>
 				<emphasis>MySQL</emphasis>
 			</para>
@@ -96,7 +96,7 @@
 				&#160;&lt;password&gt;password&lt;/password&gt;
 				&#160;&lt;multiple-connections&gt;true&lt;/multiple-connections&gt;
 				&lt;/jdbc-datastore&gt; </programlisting>
-	
+
 			<para>
 				<emphasis>Oracle</emphasis>
 			</para>
@@ -108,7 +108,7 @@
 				&#160;&lt;password&gt;password&lt;/password&gt;
 				&#160;&lt;multiple-connections&gt;true&lt;/multiple-connections&gt;
 				&lt;/jdbc-datastore&gt; </programlisting>
-	
+
 			<para>
 				<emphasis>Microsoft SQL Server</emphasis>
 			</para>
@@ -125,14 +125,15 @@
 				&lt;/jdbc-datastore&gt; </programlisting>
 			<para>However, if you want to use an instance name based connection,
 				then the SQL Server Browser service MUST BE RUNNING and then you can
-				include the instance parameter: Here's an example for connecting to a
+				include the instance parameter: Here's an example for connecting to
+				a
 				SQLEXPRESS instance:
 			</para>
 			<programlisting lang="xml">
 				&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
 			</programlisting>
 		</section>
-	
+
 		<section id="configuration_file_datastore_csv">
 			<title>Comma-Separated Values (CSV) files</title>
 			<para>This is an example of a CSV file datastore</para>
@@ -146,7 +147,7 @@
 				&#160;&lt;header-line-number&gt;1&lt;/header-line-number&gt;
 				&lt;/csv-datastore&gt; </programlisting>
 		</section>
-	
+
 		<section id="configuration_file_datastore_fixed_width">
 			<title>Fixed width value files</title>
 			<para>Files with fixed width values can be registered in two ways -
@@ -180,7 +181,7 @@
 				&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
 				&lt;/fixed-width-datastore&gt; </programlisting>
 		</section>
-	
+
 		<section id="configuration_file_datastore_excel">
 			<title>Excel spreadsheets</title>
 			<para>This is an example of an Excel spreadsheet datastore</para>
@@ -189,7 +190,7 @@
 				&#160;&lt;filename&gt;/path/to/file.xls&lt;/filename&gt;
 				&lt;/excel-datastore&gt; </programlisting>
 		</section>
-	
+
 		<section id="configuration_file_datastore_xml">
 			<title>XML file datastores</title>
 			<para>Defining XML datastores can be done in both a simple
@@ -206,7 +207,8 @@
 			<para>This kind of XML datastore works find when the file size is
 				small and the hierarchy is not too complex. The downside to it is
 				that it tries to automatically detect a table structure that is
-				fitting to represent the XML contents (which is a tree structure, not
+				fitting to represent the XML contents (which is a tree structure,
+				not
 				really a table).
 			</para>
 			<para>To get around this problem you can also define your own table
@@ -223,19 +225,23 @@
 				&#160;&lt;/table-def&gt;
 				&lt;/xml-datastore&gt; </programlisting>
 			<para>The datastore defines a single table, where each record is
-				defined as the element which matches the XPath "/greetings/greeting".
-				The table has two columns, which are represented by the "how" and
-				"what" elements that are child elements to the row's path.
+				defined as the element which matches the XPath
+				"/greetings/greeting".
+				The table has two columns, which are
+				represented by the "how" and
+				"what" elements that are child elements
+				to the row's path.
 			</para>
 			<para>
-				For more details on the XPath expressions that define the table model
+				For more details on the XPath expressions that define the table
+				model
 				of XML datastores, please refer to
 				<link xl:href="http://metamodel.eobjects.org/example_xml_mapping.html">MetaModel's tutorial on the topic</link>
 				(MetaModel is the data access library used to read data in
 				DataCleaner).
 			</para>
 		</section>
-	
+
 		<section id="configuration_file_datastore_elasticsearch">
 			<title>ElasticSearch index</title>
 			<para>This is an example of an ElasticSearch index datastore</para>
@@ -247,7 +253,7 @@
 				&#160;&lt;index-name&gt;my_index&lt;/index-name&gt;
 				&lt;/elasticsearch-datastore&gt; </programlisting>
 		</section>
-	
+
 		<section id="configuration_file_datastore_mongodb">
 			<title>MongoDB databases</title>
 			<para>This is an example of a fully specified MongoDB datastore, with
@@ -298,7 +304,8 @@
 			<para>If the hostname and port elements are left out, localhost:27017
 				will be assumed.
 			</para>
-			<para>If the username and password elements are left out, an anonymous
+			<para>If the username and password elements are left out, an
+				anonymous
 				connection will be made.
 			</para>
 			<para>If there are no table-def elements, the database will be
@@ -306,7 +313,7 @@
 				first 1000 documents of each collection.
 			</para>
 		</section>
-	
+
 		<section id="configuration_file_datastore_couchdb">
 			<title>CouchDB databases</title>
 			<para>This is an example of a fully specified CouchDB datastore, with
@@ -357,7 +364,8 @@
 			<para>If the hostname and port elements are left out, localhost:5984
 				will be assumed.
 			</para>
-			<para>If the username and password elements are left out, an anonymous
+			<para>If the username and password elements are left out, an
+				anonymous
 				connection will be made.
 			</para>
 			<para>If the "ssl" element is false or left out, a regular HTTP
@@ -368,17 +376,57 @@
 				first 1000 documents of each database.
 			</para>
 		</section>
+		<section>
+			<title>Composite datastore</title>
+			<para> This is an example of a composite datastore. It contains data
+				from 2 other datastores.
+			</para>
+			<programlisting lang="xml">
+				&lt;source&gt;
+					&lt;data-context ref=&#34;My composite datastore&#34; /&gt;
+					&lt;columns&gt;
+						&lt;column id="col_id" path="datastores.customers.csv.id" type="STRING" /&gt;
+						&lt;column id="col_given_name" path="datastores.customers.csv.given_name" type="STRING" /&gt;
+						&lt;column id="col_family_name" path="datastores.customers.csv.family_name" type="STRING" /&gt;
+						&lt;column id="col_company" path="datastores.customers.csv.company" type="STRING" /&gt;
+						&lt;column id="col_address_line" path="datastores.customers.csv.address_line" type="STRING" /&gt;
+						&lt;column id="col_post_code" path="datastores.customers.csv.post_code" type="STRING" /&gt;
+						&lt;column id="col_city" path="datastores.customers.csv.city" type="STRING" /&gt;
+						&lt;column id="col_country" path="datastores.customers.csv.country"	type="STRING" /&gt;
+						&lt;column id="col_email" path="datastores.customers.csv.email" type="STRING" /&gt;
+						&lt;column id="col_birthdate" path="datastores.customers.csv.birthdate"	type="STRING" /&gt;
+						&lt;column id="col_gender" path="datastores.customers.csv.gender" type="STRING" /&gt;
+						&lt;column id="col_job_title" path="datastores.customers.csv.job_title" type="STRING" /&gt;
+						&lt;column id="col_income_amount" path="datastores.customers.csv.income_amount" type="STRING" /&gt;
+						&lt;column id="col_income_currency" path="datastores.customers.csv.income_currency" type="STRING" /&gt;
+						&lt;column id="col_employeenumber" path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER" type="INTEGER" /&gt;
+						&lt;column id="col_lastname" path="PUBLIC.EMPLOYEES.LASTNAME" type="VARCHAR" /&gt;
+						&lt;column id="col_firstname" path="PUBLIC.EMPLOYEES.FIRSTNAME" type="VARCHAR" /&gt;
+						&lt;column id="col_extension" path="PUBLIC.EMPLOYEES.EXTENSION" type="VARCHAR" /&gt;
+						&lt;column id="col_email2" path="PUBLIC.EMPLOYEES.EMAIL" type="VARCHAR" /&gt;
+						&lt;column id="col_officecode" path="PUBLIC.EMPLOYEES.OFFICECODE" type="VARCHAR" /&gt;
+						&lt;column id="col_reportsto" path="PUBLIC.EMPLOYEES.REPORTSTO" type="INTEGER" /&gt;
+						&lt;column id="col_jobtitle" path="PUBLIC.EMPLOYEES.JOBTITLE" type="VARCHAR" /&gt;
+					&lt;/columns&gt;
+				&lt;/source&gt;
+			</programlisting>
+		</section>
 	</section>
 
 	<section id="configuration_file_reference_data">
 		<title>Reference data</title>
-		<para>Reference data items (dictionaries, synonym catalogs and string patterns) are defined
-		in the configuration file in the element &lt;reference-data-catalog&gt;. Below some examples:</para>
-		
+		<para>Reference data items (dictionaries, synonym catalogs and string
+			patterns) are defined
+			in the configuration file in the element
+			&lt;reference-data-catalog&gt;. Below some examples:</para>
+
 		<section>
 			<title>Dictionaries</title>
-			<para>Dictionaries are stored within the &lt;dictionaries&gt; element within the reference data section. Three types of dictionaries can be added.</para>
-			
+			<para>Dictionaries are stored within the &lt;dictionaries&gt; element
+				within the reference data section. Three types of dictionaries can
+				be added.
+			</para>
+
 			<para>
 				<emphasis>Datastore dictionaries</emphasis>
 			</para>
@@ -392,8 +440,7 @@
 				&#160;&#160;&#160;&#160;&lt;/datastore-dictionary&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/dictionaries&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 			<para>
 				<emphasis>Text file dictionaries</emphasis>
 			</para>
@@ -407,8 +454,7 @@
 				&#160;&#160;&#160;&#160;&lt;/text-file-dictionary&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/dictionaries&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 			<para>
 				<emphasis>Value list dictionaries</emphasis>
 			</para>
@@ -418,18 +464,20 @@
 				&#160;&#160;&#160;...
 				&#160;&#160;&#160;&#160;&lt;value-list-dictionary&#160;name="Greetings"&#160;description="My&#160;simple&#160;value&#160;list"&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;hello&lt;/value&gt;
-				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;hi&lt;/value&gt;	
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;hi&lt;/value&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;greetings&lt;/value&gt;
 				&#160;&#160;&#160;&#160;&lt;value&gt;godday&lt;/value&gt;
 				&#160;&#160;&#160;&#160;&lt;/value-list-dictionary&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/dictionaries&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 		</section>
 		<section>
 			<title>Synonym catalogs</title>
-			<para>Synonym catalogs are stored within the &lt;synonym-catalogs&gt; element within the reference data section. Two types of dictionaries can be added.</para>
+			<para>Synonym catalogs are stored within the &lt;synonym-catalogs&gt;
+				element within the reference data section. Two types of dictionaries
+				can be added.
+			</para>
 			<para>
 				<emphasis>Text file synonym catalogs</emphasis>
 			</para>
@@ -437,15 +485,15 @@
 				&lt;reference-data-catalog&gt;
 				&#160;&#160;&lt;synonym-catalogs&gt;
 				&#160;&#160;&#160;...
-				&#160;&#160;&#160;&#160;&lt;text-file-synonym-catalog name="textfile_syn" description="My text file synonyms"&gt;
+				&#160;&#160;&#160;&#160;&lt;text-file-synonym-catalog
+				name="textfile_syn" description="My text file synonyms"&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;filename&gt;/path/to/synonyms.txt&lt;/filename&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;case-sensitive&gt;false&lt;/case-sensitive&gt;
 				&#160;&#160;&#160;&#160;&lt;/text-file-synonym-catalog&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/synonym-catalogs&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 			<para>
 				<emphasis>Datastore synonym catalogs</emphasis>
 			</para>
@@ -453,7 +501,8 @@
 				&lt;reference-data-catalog&gt;
 				&#160;&#160;&lt;synonym-catalogs&gt;
 				&#160;&#160;&#160;...
-				&#160;&#160;&#160;&#160;&lt;datastore-synonym-catalog name="datastore_syn" description="My datastore synonyms"&gt;
+				&#160;&#160;&#160;&#160;&lt;datastore-synonym-catalog
+				name="datastore_syn" description="My datastore synonyms"&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;datastore-name&gt;orderdb&lt;/datastore-name&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;master-term-column-path&gt;CUSTOMERS.CUSTOMERNAME&lt;/master-term-column-path&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;synonym-column-path&gt;CUSTOMERS.CUSTOMERNUMBER&lt;/synonym-column-path&gt;
@@ -461,12 +510,14 @@
 				&#160;&#160;&#160;&#160;&lt;/datastore-synonym-catalog&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/synonym-catalogs&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 		</section>
 		<section>
 			<title>String patterns</title>
-			<para>Dictionaries are stored within the &lt;string-patterns&gt; element within the reference data section. Two types of string patterns can be added.</para>
+			<para>Dictionaries are stored within the &lt;string-patterns&gt;
+				element within the reference data section. Two types of string
+				patterns can be added.
+			</para>
 			<para>
 				<emphasis>Regular expression (regex) string patterns</emphasis>
 			</para>
@@ -474,7 +525,8 @@
 				&lt;reference-data-catalog&gt;
 				&#160;&#160;&lt;string-patterns&gt;
 				&#160;&#160;&#160;...
-				&#160;&#160;&#160;&#160;&lt;regex-pattern name="regex danish email" description="Danish email addresses"&gt;
+				&#160;&#160;&#160;&#160;&lt;regex-pattern name="regex danish email"
+				description="Danish email addresses"&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;expression&gt;[a-z]+@[a-z]+\.dk&lt;/expression&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;match-entire-string&gt;true&lt;/match-entire-string&gt;
 				&#160;&#160;&#160;&#160;&lt;/regex-pattern&gt;
@@ -489,13 +541,13 @@
 				&lt;reference-data-catalog&gt;
 				&#160;&#160;&lt;string-patterns&gt;
 				&#160;&#160;&#160;...
-				&#160;&#160;&#160;&#160;&lt;simple-pattern name="simple email" description="Simple email pattern"&gt;
+				&#160;&#160;&#160;&#160;&lt;simple-pattern name="simple email"
+				description="Simple email pattern"&gt;
 				&#160;&#160;&#160;&#160;&#160;&#160;&lt;expression&gt;aaaa@aaaaa.aa&lt;/expression&gt;
 				&#160;&#160;&#160;&#160;&lt;/simple-pattern&gt;
 				&#160;&#160;&#160;...
 				&#160;&#160;&lt;/string-patterns&gt;
-				&lt;/reference-data-catalog&gt;
-			</programlisting>
+				&lt;/reference-data-catalog&gt; </programlisting>
 		</section>
 	</section>
 
@@ -526,8 +578,10 @@
 		<para>The storage provider is used for storing temporary data used
 			while executing an analysis job. There are two types of storage:
 			Large collections of (single) values and
-			"annotated rows", ie. rows that have been sampled or marked with
-			a specific category which will be of interest to the user to inspect.
+			"annotated rows", ie. rows
+			that have been sampled or marked with
+			a specific category which will
+			be of interest to the user to inspect.
 		</para>
 		<para>To explain the storage provider configuration let's look at the
 			default element:
@@ -552,13 +606,20 @@
 		</para>
 		<para>
 			Row annotations are stored in memory. There's a threshold of
-			1000 rows in maximum 200 sets. This means that if more than 1000 records are annotated
-			with the same category then additional records will not be saved (and
-			thus is not viewable by the user). Furthermore it means that only up until 200 sample
-			sets will be saved. Further annotations will not be sampled, but metrics still be counted.
-			Most user scenarios will not
-			require more than max. 1000 annotated records for inspection, but if
-			this is really neccessary a different strategy can be pursued:
+			1000 rows in maximum 200 sets. This means that if more than 1000
+			records are annotated
+			with the same category then additional records
+			will not be saved (and
+			thus is not viewable by the user). Furthermore
+			it means that only up until 200 sample
+			sets will be saved. Further
+			annotations will not be sampled, but metrics still be counted.
+			Most
+			user scenarios will not
+			require more than max. 1000 annotated records
+			for inspection, but if
+			this is really neccessary a different strategy
+			can be pursued:
 		</para>
 
 		<sect2>
@@ -580,4 +641,5 @@
 			</para>
 		</sect2>
 	</section>
+
 </chapter>

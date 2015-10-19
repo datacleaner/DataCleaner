@@ -253,19 +253,24 @@
 			your job as such! This is because these components only have an
 			impact if you wire them together.
 		</para>
-		<para>To wire a transformer you simply need to draw an arrow between
-			the components in the graph. You can start drawing it by
-			right-clicking the first of the components and choosing "Link to..."
-			from the context menu. An alternative way to enter the drawing mode
-			is to select the component and connect the components with Shift
-			button pressed.
-		</para>
+		<section>
+			<title>Wiring transformers</title>
+			<para>To wire a transformer you simply need to draw an arrow between
+				the components in the graph. You can start drawing it by
+				right-clicking the first of the components and choosing "Link to..."
+				from the context menu. An alternative way to enter the drawing mode
+				is to select the component and connect the components with Shift
+				button pressed.
+			</para>
+		</section>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="connecting_components.jpg" format="JPG"
 					scalefit="1" />
 			</imageobject>
 		</mediaobject>
+		<section>
+		<title>Wiring filters</title>
 		<para>To wire a filter you need to set up a dependency on either of
 			it's outcomes. All components have a button for selecting filter
 			outcomes in the top-right corners of their configuration dialogs.
@@ -274,6 +279,7 @@
 			multiple filters you can chain these simply by having dependent
 			outcomes of the individual filters.
 		</para>
+		</section>
 		<tip>
 			<para>
 				In the bottom part of the canvas, a help message is displayed
@@ -283,7 +289,8 @@
 		</tip>
 		<section id="wiring_components_output_data_streams">
 			<title>Output data streams</title>
-			<para>The "Link to..." option wires components together in the "main
+			<para>
+				The "Link to..." option wires components together in the "main
 				flow". However, some components are able to produce additional
 				output
 				data streams. For example, the main feature of a Completeness
@@ -292,10 +299,13 @@
 				result window.
 				Additionally, it produces two output data streams -
 				"Complete
-				records" and "Incomplete records". <emphasis role="bold">Output data streams
-				behave
-				similarly to a source table, although such a table is created
-				dynamically by a component.</emphasis> This enables further processing
+				records" and "Incomplete records".
+				<emphasis role="bold">Output data streams
+					behave
+					similarly to a source table, although such a table is created
+					dynamically by a component.
+				</emphasis>
+				This enables further processing
 				of such
 				output.
 			</para>

@@ -117,21 +117,62 @@
 			datastores. And furthermore, DataCleaner can update the data of most
 			of these datastores as well.
 		</para>
-		<para>
-			A
-			<emphasis>composite</emphasis>
-			datastore contains
-			<emphasis>multiple datastores</emphasis>
-			. The main advantage of a composite datastore is that it allows you
-			to analyze and process data from multiple
-			sources in the same job.
+		<section>
+			<title>How to create a datastore ?</title>
+			<para>
+				A datastore can be created in the UI or via <link linkend="chapter_configuration_file"> the configuration file</link>. The UI version is very straight forward. On the front screen of
+				DataCleaner click the button "Manage Datastores".
+			</para> 
+			<screenshot>
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="composite_datastore.png" format="PNG"
+					<imagedata fileref="manage_datastores.png" format="PNG"
 						scalefit="1" />
 				</imageobject>
 			</mediaobject>
-		</para>
+			</screenshot>
+			<para>
+				You can create a datastore from your type of source such
+				as:
+				CSV,
+				EXCEL, Oracle Database,MySQL, etc.
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="register_datastore.png" format="PNG"
+						scalefit="1" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Example of a configuration dialog for a CSV file:
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="csv-datastore.png" format="PNG"
+							scalefit="1" />
+					</imageobject>
+				</mediaobject>
+			</para>
+		</section>
+
+		<section>
+			<subtitle>Composite datastore</subtitle>
+			<para>
+				A
+				<emphasis>composite</emphasis>
+				datastore contains
+				<emphasis>multiple datastores</emphasis>
+				. The main advantage of a composite datastore is that it allows you
+				to analyze and process data from multiple
+				sources in the same job.
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="composite_datastore.png" format="PNG"
+							scalefit="1" />
+					</imageobject>
+				</mediaobject>
+			</para>
+		</section>
 	</section>
 
 	<section id="what_is_data_monitoring">

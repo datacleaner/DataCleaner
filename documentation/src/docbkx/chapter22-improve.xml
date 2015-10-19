@@ -165,7 +165,7 @@
 				you can toggle the button on the right side to determine if the pair
 				is a duplicate or not:
 			</para>
-			
+
 			<mediaobject>
 				<imageobject>
 					<imagedata fileref="analyzer_reference_training_tool.png"
@@ -183,7 +183,7 @@
 				or uniques. You can mark all examples as duplicates, review, and only toggle the
 				examples that are no duplicates.
 			</para>
-			
+
 			<para>You do not need to classify all samples shown. Recommended
 				usage is:
 			</para>
@@ -212,10 +212,10 @@
 				is no need to save the model by hand. The saved model includes the
 				matching rules, settings, and all pairs the user classified as duplicate or unique.
 			</para>
-			
+
 			<para>Some more hints for training:
 			</para>
-			
+
 			<orderedlist>
 				<listitem>
 					<para>Classifying uniques is just as important as classifying
@@ -224,7 +224,7 @@
 					</para>
 				</listitem>
 				<listitem>
-					<para>Try to find and mark some examples of every duplicate 
+					<para>Try to find and mark some examples of every duplicate
 					category that you know of. You can use the "search pairs" tool to help you.
 					</para>
 				</listitem>
@@ -238,7 +238,7 @@
 					</para>
 				</listitem>
 			</orderedlist>
-			
+
 			<para>
 				All duplicate detection models may have irregularities. When
 				you ask a computer to do a complex task like matching, it may come
@@ -265,12 +265,12 @@
 			<para>Finally, the tab 'Training parameters' presents buttons and
 				sliders for you to influence the Machine Learning approach.
 			</para>
-			
+
 			<para>Moving the top slider to the left makes duplicate detection compare
 				more records. This will take more time, but also increase the matching
 				quality. Moving this slider to the right makes duplicate detection to
 				make less comparisons, resulting in higher speed, but can lead to more
-				missed matches (false negatives). 
+				missed matches (false negatives).
 			</para>
 
 			<para>Moving the bottom slider to the left makes comparison of records more
@@ -278,14 +278,14 @@
 			</para>
 
 			<para>The user defined rules enable you to enforce fixed rules. The possible
-			     types of fixed rules are listed below. You can apply a rule to each column. 
-			     Rules that force a pair to be unique take precedence over rules that force 
+			     types of fixed rules are listed below. You can apply a rule to each column.
+			     Rules that force a pair to be unique take precedence over rules that force
 			     a pair to be duplicate. Empty values count as different.
 			</para>
 
 			<orderedlist>
 				<listitem>
-					<para>forces pairs to be duplicate when equals - The pair is always 
+					<para>forces pairs to be duplicate when equals - The pair is always
 						a duplicate if any column marked with this value is equal.
 					</para>
 				</listitem>
@@ -301,7 +301,7 @@
 				</listitem>
 				<listitem>
 					<para>forces pairs to be duplicate when equals and unique when different -
-						The pair is never a duplicate if any columns marked with this value is different, 
+						The pair is never a duplicate if any columns marked with this value is different,
 						but the pairs is always a duplicate if all columns marked with this value are equal.
 					</para>
 				</listitem>
@@ -311,11 +311,11 @@
 					</para>
 				</listitem>
 			</orderedlist>
-			
+
 			<para>We recommend applying fixed rules only after training the model and only
 				when strictly necessary.
 			</para>
-			
+
 			<para>
 				After updating the matching model, the user can continue in 2
 				ways. If
@@ -384,7 +384,7 @@
 			</title>
 			<para>When the matching model is complete you are ready to find all
 				the duplicates in the dataset. Use the same Duplicate detection
-				component, but change the execution mode in "Duplicate detection".  
+				component, but change the execution mode in "Duplicate detection".
 			</para>
 
 			<para>When you run the job, you will see
@@ -487,10 +487,17 @@
 			</para>
 
 			<para>
-				Add "Merge duplicates (Simple)" transformer to your job, right click the
-				duplicate detection analyzer, click <emphasis>Link "Duplicate and unique
-				rows" to ...</emphasis> and click on the Merge duplicates transformer.
+				Add "Merge duplicates (Simple)" transformer to your job, and configure the new component.
+				change the scope to <emphasis>"Duplicate Detection: Duplicate and unique
+				rows"</emphasis>. Now click "Select all", then disable the four synthetic columns
+				<emphasis>Record id</emphasis>,<emphasis>Group id</emphasis>,
+				<emphasis>Group size</emphasis> and <emphasis>Group score</emphasis>.
+			</para>
 
+			<para>
+				Set the property <emphasis>Group id</emphasis> to the column <emphasis>Group id</emphasis>,
+				and the property <emphasis>Group count</emphasis> to the column
+				<emphasis>Group size</emphasis>.
 			</para>
 
 			<mediaobject>
@@ -498,6 +505,11 @@
 					<imagedata fileref="merge_duplicates_merge_simple_properties.png"
 						format="PNG" />
 				</imageobject>
+				<caption>
+					<para>
+						The resulting configuration should look something like this.
+					</para>
+				</caption>
 			</mediaobject>
 
 			<para>
@@ -505,11 +517,28 @@
 				columns as output + additional colums carrying metadata about the
 				record. One of them is "Merge status" that can have three possible
 				values: SURVIVOR, NON_SURVIVOR and UNIQUE.</para>
-			<para>UNIQUE will not be relevant here since it is only used if records
-				with group size 1 (or null) are given to the merge transformation.
-				SURVIVOR indicates the record that has been chosen as the final one.
+
+			<orderedlist>
+				<listitem>
+					<para>SURVIVOR records are records that has duplicates, but has been chosen as the
+						representative of their duplicate group, and should therefore "survive".
+					</para>
+				</listitem>
+				<listitem>
+					<para>NON_SURVIVOR records are records that has duplicates, but where another
+						record has been chosen as the representative of the duplicate group. These records
+						should not be used.
+					</para>
+				</listitem>
+				<listitem>
+					<para>UNIQUE records are records that never had any duplicates.
+					</para>
+				</listitem>
+			</orderedlist>
+
+			<para>
 				Let's add an Equals filter to the job in order to write only these
-				SURVIVOR records into our final dataset.
+				SURVIVOR and UNIQUE records, to create a data set with has no duplicates.
 			</para>
 
 			<mediaobject>
@@ -520,19 +549,27 @@
 			</mediaobject>
 
 			<para>
-				Save the output of the filter to a the staging table created in
-				the
-				previous section (where the unique records had been written).
+				Save the output of the filter to a new staging table.
 			</para>
-			<para>
-				The whole job graph should look similar to this:
-			</para>
+
+			<warning>
+				<para>
+					Unlike duplicate detection, "Merge duplicates" is a transformer, which
+					means that new columns are created with the result in them. Make sure that you only choose
+					the merged columns in your staging table.
+				</para>
+			</warning>
 
 			<mediaobject>
 				<imageobject>
 					<imagedata fileref="merge_duplicates_merge_job.png"
 						format="PNG" />
 				</imageobject>
+				<caption>
+					<para>
+						The whole job graph should look similar to this:
+					</para>
+				</caption>
 			</mediaobject>
 
 		</section>

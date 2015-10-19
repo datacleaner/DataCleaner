@@ -398,10 +398,40 @@
 		</para>
 	</section>
 	<section id="union">
-		<title> Union </title> 
- 	<para>The <emphasis> Union</emphasis> transformer allows you to com
-		
+		<title> Union </title>
+		<para>
+			The
+			<emphasis> Union</emphasis>
+			transformer allows you to combine multiple streams into one.
+			Providing what is equivalent to a union of tables.
+			Use it to fuse data
+			streams coming from different filter requirements,
+			different output
+			data streams or different source tables. You can
+			define new fields
+			whose values represent whatever is available from
+			one of the input
+			streams.
 		</para>
+
+		<para>
+			Here is an example with a job with
+			<emphasis>union</emphasis>
+			and a
+			<link linkend="what_is_datastore">composite datastore</link>
+			. The
+			composite datastore which constains a database and a csv file
+			datastore.
+			The union transformer aims to union data of the 2 source
+			tables named
+			"Customers" coming from the 2 datastores.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="union_example_job.png" format="PNG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
 	</section>
 
 </chapter>

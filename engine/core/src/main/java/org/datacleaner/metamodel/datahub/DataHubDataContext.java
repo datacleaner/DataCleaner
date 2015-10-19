@@ -208,8 +208,11 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
                 final String reasonPhrase = statusLine.getReasonPhrase();
                 throw new RuntimeException("Failed to retrieve the tenant name: " + reasonPhrase);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve the tenant name: " + e.getMessage());
+        } catch (Exception exception) {
+            if(exception instanceof RuntimeException) {
+                throw (RuntimeException)exception;
+            }
+            throw new RuntimeException("Failed to retrieve the tenant name: " + exception.getMessage());
         }
     }
 

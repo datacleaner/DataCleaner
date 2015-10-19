@@ -405,18 +405,19 @@
 			transformer allows you to combine multiple streams into one.
 			Providing what is equivalent to a union of tables.
 			Use it to fuse data
-			streams coming from different filter requirements,
-			different output
-			data streams or different source tables. You can
+			streams coming from different source
+			tables. You can
 			define new fields
-			whose values represent whatever is available from
+			whose values represent whatever is
+			available from
 			one of the input
 			streams.
 		</para>
 
 		<para>
 			Here is an example of a job with
-			<emphasis>union</emphasis> transformer
+			<emphasis>union</emphasis>
+			transformer
 			and a
 			<link linkend="what_is_datastore">composite datastore</link>
 			. The

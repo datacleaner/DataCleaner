@@ -18,7 +18,7 @@
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
 		<metamodel.version>4.4.0</metamodel.version>
-		<metamodel.extras.version>4.3.1</metamodel.extras.version>
+		<metamodel.extras.version>4.4.0</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
 		<spring.security.version>3.2.7.RELEASE</spring.security.version>

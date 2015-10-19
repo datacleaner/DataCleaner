@@ -371,7 +371,7 @@
 		<section>
 			<title>Composite datastore</title>
 			<para> This is an example of a composite datastore. It contains data
-				from 2 other datastores: Datastore1 and Datastore 2.
+				from 2 other datastores: Datastore 1 and Datastore 2.
 			</para>
 			<programlisting lang="xml">
 				&lt;composite-datastore name="my composite"&gt;

@@ -43,7 +43,6 @@ import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.batch.BatchRowCollectingTransformer;
 import org.datacleaner.util.batch.BatchSink;
 import org.datacleaner.util.batch.BatchSource;
-import org.datacleaner.util.batch.BatchTransformer;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,6 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     private OutputColumns lastOutputColumns;
     private CreateInput lastCreateInput;
-
 
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
@@ -107,27 +105,27 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                 outCols = lastOutputColumns;
             } else {
                 logger.debug("Getting output columns from server");
-        boolean wasInit = false;
-        if(client == null) {
-            wasInit = true;
-            initClient();
-        }
-        try {
-            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
-
-            outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
-            int i = 0;
-            for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
-                outCols.setColumnName(i, colSpec.name);
-                try {
-                    outCols.setColumnType(i, Class.forName(colSpec.type));
-                } catch (ClassNotFoundException e) {
-                    // TODO: what to do with data types - classes that are not on our classpath?
-                    // Provide it as pure JsonNode?
-                    outCols.setColumnType(i, JsonNode.class);
+                boolean wasInit = false;
+                if(client == null) {
+                    wasInit = true;
+                    initClient();
                 }
-                i++;
-            }
+                try {
+                    org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
+
+                    outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
+                    int i = 0;
+                    for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
+                        outCols.setColumnName(i, colSpec.name);
+                        try {
+                            outCols.setColumnType(i, Class.forName(colSpec.type));
+                        } catch (ClassNotFoundException e) {
+                            // TODO: what to do with data types - classes that are not on our classpath?
+                            // Provide it as pure JsonNode?
+                            outCols.setColumnType(i, JsonNode.class);
+                        }
+                        i++;
+                    }
                     lastOutputColumns = outCols;
                     lastCreateInput = createInput;
                 } finally {
@@ -208,7 +206,6 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                 }
                 outRowSet.add(values.toArray(new Object[values.size()]));
             }
-            logger.debug("Setting output {}. Sink: @{}", rowI, sink.hashCode());
             sink.setOutput(rowI, outRowSet);
             rowI++;
         }

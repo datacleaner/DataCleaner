@@ -83,40 +83,27 @@ import com.fasterxml.jackson.databind.node.TextNode;
 public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
-
-    public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
+    public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
     private final StringConverter _stringConverter;
+    private final ComponentDescriptor<?> descriptor;
+    private final Map<String, MutableColumn> columns;
+    private final Map<String, InputColumn<?>> inputColumns;
+    private final MutableTable table;
+    private final Component component;
+    private final LifeCycleHelper lifeCycleHelper;
 
-    private ComponentDescriptor<?> descriptor;
-    private Map<String, MutableColumn> columns;
-    private Map<String, InputColumn<?>> inputColumns;
-    private MutableTable table;
-    private Component component;
-    LifeCycleHelper lifeCycleHelper;
-
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration) {
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
         _stringConverter = new StringConverter(dcConfiguration);
-    }
 
-    public void createComponent(ComponentConfiguration componentConfiguration) {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(_componentName);
+        descriptor = resolveDescriptor(_componentName);
         table = new MutableTable("inputData");
-        if (descriptor == null) {
-            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                    .getAnalyzerDescriptorByDisplayName(_componentName);
-        }
-        if (descriptor == null) {
-            throw ComponentNotFoundException.createTypeNotFound(_componentName);
-        }
-
         component = (Component) descriptor.newInstance();
 
         // create "table" according to the columns specification (for now only a
@@ -193,8 +180,6 @@ public class ComponentHandler {
         }
         org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        InjectionManager origInjMan = _dcConfiguration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_dcConfiguration);
-        InjectionManager injMan = new RemoteComponentsInjectionManager(origInjMan);
         lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
@@ -209,61 +194,7 @@ public class ComponentHandler {
     public Collection<List<Object[]>> runComponent(JsonNode data) {
 
         if (component instanceof Transformer) {
-            final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
-            final Map<Integer, List<Object[]>> results = new TreeMap<>();
-            final List<Throwable> errors = new ArrayList<>();
-            final AtomicInteger tasksPending = new AtomicInteger();
-            final TaskRunner taskRunner = _dcConfiguration.getEnvironment().getTaskRunner();
-
-            int id = 0;
-            for (JsonNode jsonRow : data) {
-                final DefaultRow row = new DefaultRow(header, toRowValues((ArrayNode) jsonRow));
-                final InputRow inputRow = new MetaModelInputRow(id, row);
-                id++;
-
-                if(!errors.isEmpty()) {
-                    break;
-                }
-                taskRunner.run(new Task() {
-                    @Override
-                    public void execute() throws Exception {
-                        if(!errors.isEmpty()) {
-                            LOGGER.debug("Skipping row " + inputRow);
-                            return;
-                        }
-                        try {
-                            transform(inputRow, results);
-                        } catch(Throwable t) {
-                            errors.add(t);
-                        } finally {
-                            LOGGER.debug(inputRow.getId() + ": --");
-                            tasksPending.decrementAndGet();
-                        }
-                    }
-                }, null);
-                LOGGER.debug(inputRow.getId() + ": ++");
-                tasksPending.incrementAndGet();
-            }
-
-            while(tasksPending.get() > 0) {
-                try {
-                    taskRunner.assistExecution();
-                } catch(Throwable t) {
-                    errors.add(t);
-                }
-            }
-
-            if(!errors.isEmpty()) {
-                Throwable firstError = errors.get(0);
-                if(firstError instanceof RuntimeException) {
-                    throw (RuntimeException)firstError;
-                } else {
-                    throw new RuntimeException(firstError);
-                }
-            }
-
-            LOGGER.debug("Returning " + results.size() + " rows");
-            return results.values();
+            return runTransformer(data);
         } else if (component instanceof Analyzer) {
             throw new RuntimeException("NOT YET IMPLEMENTED");
         } else {
@@ -271,9 +202,80 @@ public class ComponentHandler {
         }
     }
 
+    public AnalyzerResult closeComponent() {
+        lifeCycleHelper.close(descriptor, component, true);
+        if (component instanceof HasAnalyzerResult) {
+            return ((HasAnalyzerResult<?>) component).getResult();
+        } else {
+            return null;
+        }
+    }
+
+    private Collection<List<Object[]>> runTransformer(JsonNode data) {
+        final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
+        final List<Throwable> errors = new ArrayList<>();
+        final AtomicInteger tasksPending = new AtomicInteger();
+        final TaskRunner taskRunner = _dcConfiguration.getEnvironment().getTaskRunner();
+
+        // Results will be collected in a tree map, sorted by row ID, to return the rows
+        // in the same order. It is needed because we do the transformation in threads and
+        // results could be computed in different order.
+        final Map<Integer, List<Object[]>> results = new TreeMap<>();
+
+        int id = 0;
+        for (JsonNode jsonRow : data) {
+            final DefaultRow row = new DefaultRow(header, toRowValues((ArrayNode) jsonRow));
+            final InputRow inputRow = new MetaModelInputRow(id, row);
+            id++;
+
+            if(!errors.isEmpty()) {
+                break;
+            }
+            taskRunner.run(new Task() {
+                @Override
+                public void execute() throws Exception {
+                    if(!errors.isEmpty()) {
+                        LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
+                        return;
+                    }
+                    try {
+                        transform(inputRow, results);
+                    } catch(Throwable t) {
+                        errors.add(t);
+                    } finally {
+                        tasksPending.decrementAndGet();
+                    }
+                }
+            }, null);
+            tasksPending.incrementAndGet();
+        }
+
+        // Wait for threads
+        while(tasksPending.get() > 0) {
+            try {
+                taskRunner.assistExecution();
+            } catch(Throwable t) {
+                errors.add(t);
+            }
+        }
+
+        // Check if there were some errors in the threads
+        if(!errors.isEmpty()) {
+            Throwable firstError = errors.get(0);
+            if(firstError instanceof RuntimeException) {
+                throw (RuntimeException)firstError;
+            } else {
+                throw new RuntimeException(firstError);
+            }
+        }
+
+        LOGGER.debug("Returning " + results.size() + " rows");
+        return results.values();
+    }
+
     /**
-     * Thread-safe transformation method that runs transformer for a 'inputRow'
-     * and puts a list of output rows to the 'results' list.
+     * Thread-safe transformation method that runs transformer for an 'inputRow'
+     * and puts a list of output rows to the 'results' map (key is the row ID).
      */
     private void transform(InputRow inputRow, Map<Integer, List<Object[]>> results) {
         ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
@@ -281,17 +283,8 @@ public class ComponentHandler {
         final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor
                 .getProvidedPropertiesByType(OutputRowCollector.class);
         try {
-            // register output values listener
-            if (outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
-                for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
-                    OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
-                    if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
-                        ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(outputListener);
-                    } else {
-                        throw new UnsupportedOperationException("Unsupported output row collector type: " + outputRowCollector);
-                    }
-                }
-            }
+            // register output values listener in the transformer row collectors.
+            registerOutputListener(outputRowCollectorProperties, outputListener);
 
             Object[] values = ((Transformer) component).transform(inputRow);
             if(values != null) {
@@ -302,31 +295,31 @@ public class ComponentHandler {
             }
         } finally {
             // unregister output values listener
-            if(outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
-                for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
-                    OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
-                    if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
-                        ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
-                    }
+            unregisterOutputListener(outputRowCollectorProperties);
+        }
+    }
+
+    private void unregisterOutputListener(Set<ProvidedPropertyDescriptor> outputRowCollectorProperties) {
+        if(outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+            for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                    ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
                 }
             }
         }
     }
 
-    static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
-        List<Object[]> outputRows = new ArrayList<>();
-        @Override
-        public void onValues(Object[] values) {
-            outputRows.add(values);
-        }
-    }
-
-    public AnalyzerResult closeComponent() {
-        lifeCycleHelper.close(descriptor, component, true);
-        if (component instanceof HasAnalyzerResult) {
-            return ((HasAnalyzerResult<?>) component).getResult();
-        } else {
-            return null;
+    private void registerOutputListener(Set<ProvidedPropertyDescriptor> outputRowCollectorProperties, ThreadLocalOutputListener outputListener) {
+        if (outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+            for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                    ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(outputListener);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported output row collector type: " + outputRowCollector);
+                }
+            }
         }
     }
 
@@ -410,19 +403,25 @@ public class ComponentHandler {
         return result;
     }
 
-    /** Injection manager that overrides some of the injected values */
-    private class RemoteComponentsInjectionManager implements InjectionManager {
-        InjectionManager delegate;
-        RemoteComponentsInjectionManager(InjectionManager delegate) {
-            this.delegate = delegate;
+    private ComponentDescriptor<?> resolveDescriptor(String componentName) {
+        ComponentDescriptor<?> descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorByDisplayName(componentName);
+        if (descriptor == null) {
+            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                    .getAnalyzerDescriptorByDisplayName(componentName);
         }
-        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
-            final Class<E> baseType = injectionPoint.getBaseType();
-            if (baseType == OutputRowCollector.class) {
-                return (E)new ThreadLocalOutputRowCollector();
-            }
-            return delegate.getInstance(injectionPoint);
+        if (descriptor == null) {
+            throw ComponentNotFoundException.createTypeNotFound(componentName);
         }
-
+        return descriptor;
     }
+
+    private static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
+        private final List<Object[]> outputRows = new ArrayList<>();
+        @Override
+        public void onValues(Object[] values) {
+            outputRows.add(values);
+        }
+    }
+
 }

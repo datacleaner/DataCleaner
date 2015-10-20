@@ -172,7 +172,6 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
                 createInput.configuration);
-        handler.createComponent(createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();

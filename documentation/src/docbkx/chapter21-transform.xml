@@ -415,17 +415,14 @@
 		</para>
 
 		<para>
-			Here is an example of a job with
-			<emphasis>union</emphasis>
-			transformer
-			and a
+			Below is an example of a job with the
+			<emphasis>Union</emphasis>
+			transformation and a
 			<link linkend="what_is_datastore">composite datastore</link>
-			. The
-			composite datastore which constains a database and a csv file
-			datastore.
-			The union transformer aims to union data of the 2 source
-			tables named
-			"Customers" coming from the 2 datastores.
+			. The composite datastore constains several data sources,
+			each with customer information. The Union transformer in this
+			example aims to combine tables of these data sources so that a
+			single stream of data can be consumed with record from all the sources.
 		</para>
 		<mediaobject>
 			<imageobject>
@@ -433,6 +430,12 @@
 					scalefit="1" />
 			</imageobject>
 		</mediaobject>
+		<para>
+			The configuration of the Union transformation is done by lining up
+			column from the sources that should be combined. In the example shown
+			'CUSTOMERNUMBER' and 'id' are combined into one new field. Similarly
+			'CUSTOMERNAME' and 'family_name' is combined and so on.
+		</para>
 	</section>
 
 </chapter>

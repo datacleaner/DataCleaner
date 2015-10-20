@@ -368,6 +368,18 @@
 				first 1000 documents of each database.
 			</para>
 		</section>
+		<section>
+			<title>Composite datastore</title>
+			<para> This is an example of a composite datastore. It contains data
+				from 2 other datastores: Datastore 1 and Datastore 2.
+			</para>
+			<programlisting lang="xml">
+				&lt;composite-datastore name="my composite"&gt;
+					&lt;datastore-name&gt;Datastore 1&lt;/datastore-name&gt;
+					&lt;datastore-name&gt;Datastore 2&lt;/datastore-name&gt;
+				&lt;/composite-datastore&gt;
+			</programlisting>
+		</section>
 	</section>
 
 	<section id="configuration_file_reference_data">

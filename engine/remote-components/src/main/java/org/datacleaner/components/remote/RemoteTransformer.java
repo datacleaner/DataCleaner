@@ -40,6 +40,7 @@ import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.datacleaner.restclient.Serializator;
+import org.datacleaner.util.batch.BatchRowCollectingTransformer;
 import org.datacleaner.util.batch.BatchSink;
 import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.batch.BatchTransformer;
@@ -57,7 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @Since 9/1/15
  */
-public class RemoteTransformer extends BatchTransformer {
+public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformer.class);
     private static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
@@ -181,28 +182,34 @@ public class RemoteTransformer extends BatchTransformer {
         return columns;
     }
 
-    private void convertOutputRows(JsonNode rows, BatchSink<Object[]> sink, int sinkSize) {
+    private void convertOutputRows(JsonNode rowSets, BatchSink<Collection<Object[]>> sink, int sinkSize) {
         OutputColumns outCols = getOutputColumns();
-        if(rows == null || rows.size() < 1) { throw new RuntimeException("Expected exactly 1 row in response"); }
+        if(rowSets == null || rowSets.size() < 1) { throw new RuntimeException("Expected exactly 1 row in response"); }
 
         int rowI = 0;
-        for(JsonNode row: rows) {
+        for(JsonNode rowSet: rowSets) {
             if(rowI >= sinkSize) {
                 throw new RuntimeException("Expected " + sinkSize + " rows, but got more");
             }
-            List values = new ArrayList();
-            int i = 0;
-            for(JsonNode value: row) {
-                // TODO: should JsonNode be the default?
-                Class cl = String.class;
-                if(i < outCols.getColumnCount()) {
-                    cl = outCols.getColumnType(i);
+
+            List<Object[]> outRowSet = new ArrayList<>();
+
+            for(JsonNode row: rowSet) {
+                List values = new ArrayList();
+                int i = 0;
+                for (JsonNode value : row) {
+                    // TODO: should JsonNode be the default?
+                    Class cl = String.class;
+                    if (i < outCols.getColumnCount()) {
+                        cl = outCols.getColumnType(i);
+                    }
+                    values.add(convertOutputValue(value, cl));
+                    i++;
                 }
-                values.add(convertOutputValue(value, cl));
-                i++;
+                outRowSet.add(values.toArray(new Object[values.size()]));
             }
             logger.debug("Setting output {}. Sink: @{}", rowI, sink.hashCode());
-            sink.setOutput(rowI, values.toArray(new Object[values.size()]));
+            sink.setOutput(rowI, outRowSet);
             rowI++;
         }
         if(rowI < sinkSize) {
@@ -242,7 +249,7 @@ public class RemoteTransformer extends BatchTransformer {
     }
 
     @Override
-    public void map(BatchSource<InputRow> source, BatchSink<Object[]> sink) {
+    public void map(BatchSource<InputRow> source, BatchSink<Collection<Object[]>> sink) {
         List<InputColumn> cols = getUsedInputColumns();
         int size = source.size();
         Object[] rows = new Object[size];
@@ -260,8 +267,10 @@ public class RemoteTransformer extends BatchTransformer {
         ProcessStatelessInput input = new ProcessStatelessInput();
         input.configuration = getConfiguration(cols);
         input.data = mapper.valueToTree(rows);
+
         logger.debug("Processing remotely {} rows", size);
         ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
+
         convertOutputRows(out.rows, sink, size);
     }
 

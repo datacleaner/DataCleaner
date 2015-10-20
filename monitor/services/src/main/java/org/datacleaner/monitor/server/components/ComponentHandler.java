@@ -20,10 +20,13 @@
 package org.datacleaner.monitor.server.components;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
@@ -37,18 +40,25 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
+import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
+import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentNotFoundException;
@@ -85,6 +95,7 @@ public class ComponentHandler {
     private Map<String, InputColumn<?>> inputColumns;
     private MutableTable table;
     private Component component;
+    LifeCycleHelper lifeCycleHelper;
 
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
         _dcConfiguration = dcConfiguration;
@@ -182,7 +193,9 @@ public class ComponentHandler {
         }
         org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
+        InjectionManager origInjMan = _dcConfiguration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_dcConfiguration);
+        InjectionManager injMan = new RemoteComponentsInjectionManager(origInjMan);
+        lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
@@ -193,34 +206,122 @@ public class ComponentHandler {
         return ((Transformer) component).getOutputColumns();
     }
 
-    public List<Object[]> runComponent(JsonNode data) {
-        final List<InputRow> inputRows = new ArrayList<>();
-        final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
-        int id = 0;
-        for (JsonNode row : data) {
-            final DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
-            inputRows.add(new MetaModelInputRow(id, inputRow));
-            id++;
-        }
+    public Collection<List<Object[]>> runComponent(JsonNode data) {
 
         if (component instanceof Transformer) {
-            final List<Object[]> results = new ArrayList<>();
-            for (InputRow inputRow : inputRows) {
-                results.add(((Transformer) component).transform(inputRow));
+            final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
+            final Map<Integer, List<Object[]>> results = new TreeMap<>();
+            final List<Throwable> errors = new ArrayList<>();
+            final AtomicInteger tasksPending = new AtomicInteger();
+            final TaskRunner taskRunner = _dcConfiguration.getEnvironment().getTaskRunner();
+
+            int id = 0;
+            for (JsonNode jsonRow : data) {
+                final DefaultRow row = new DefaultRow(header, toRowValues((ArrayNode) jsonRow));
+                final InputRow inputRow = new MetaModelInputRow(id, row);
+                id++;
+
+                if(!errors.isEmpty()) {
+                    break;
+                }
+                taskRunner.run(new Task() {
+                    @Override
+                    public void execute() throws Exception {
+                        if(!errors.isEmpty()) {
+                            LOGGER.debug("Skipping row " + inputRow);
+                            return;
+                        }
+                        try {
+                            transform(inputRow, results);
+                        } catch(Throwable t) {
+                            errors.add(t);
+                        } finally {
+                            LOGGER.debug(inputRow.getId() + ": --");
+                            tasksPending.decrementAndGet();
+                        }
+                    }
+                }, null);
+                LOGGER.debug(inputRow.getId() + ": ++");
+                tasksPending.incrementAndGet();
             }
-            return results;
+
+            while(tasksPending.get() > 0) {
+                try {
+                    taskRunner.assistExecution();
+                } catch(Throwable t) {
+                    errors.add(t);
+                }
+            }
+
+            if(!errors.isEmpty()) {
+                Throwable firstError = errors.get(0);
+                if(firstError instanceof RuntimeException) {
+                    throw (RuntimeException)firstError;
+                } else {
+                    throw new RuntimeException(firstError);
+                }
+            }
+
+            LOGGER.debug("Returning " + results.size() + " rows");
+            return results.values();
         } else if (component instanceof Analyzer) {
-            for (InputRow inputRow : inputRows) {
-                ((Analyzer<?>) component).run(inputRow, 1);
-            }
-            return null;
+            throw new RuntimeException("NOT YET IMPLEMENTED");
         } else {
             throw new IllegalArgumentException("Unknown component type " + component.getClass());
         }
     }
 
+    /**
+     * Thread-safe transformation method that runs transformer for a 'inputRow'
+     * and puts a list of output rows to the 'results' list.
+     */
+    private void transform(InputRow inputRow, Map<Integer, List<Object[]>> results) {
+        ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
+
+        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor
+                .getProvidedPropertiesByType(OutputRowCollector.class);
+        try {
+            // register output values listener
+            if (outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+                for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                    OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                    if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                        ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(outputListener);
+                    } else {
+                        throw new UnsupportedOperationException("Unsupported output row collector type: " + outputRowCollector);
+                    }
+                }
+            }
+
+            Object[] values = ((Transformer) component).transform(inputRow);
+            if(values != null) {
+                outputListener.onValues(values);
+            }
+            synchronized (results) {
+                results.put(inputRow.getId(), outputListener.outputRows);
+            }
+        } finally {
+            // unregister output values listener
+            if(outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+                for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                    OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                    if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                        ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
+                    }
+                }
+            }
+        }
+    }
+
+    static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
+        List<Object[]> outputRows = new ArrayList<>();
+        @Override
+        public void onValues(Object[] values) {
+            outputRows.add(values);
+        }
+    }
+
     public AnalyzerResult closeComponent() {
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.close(descriptor, component, true);
         if (component instanceof HasAnalyzerResult) {
             return ((HasAnalyzerResult<?>) component).getResult();
@@ -307,5 +408,21 @@ public class ComponentHandler {
             result.add(toString(json));
         }
         return result;
+    }
+
+    /** Injection manager that overrides some of the injected values */
+    private class RemoteComponentsInjectionManager implements InjectionManager {
+        InjectionManager delegate;
+        RemoteComponentsInjectionManager(InjectionManager delegate) {
+            this.delegate = delegate;
+        }
+        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+            final Class<E> baseType = injectionPoint.getBaseType();
+            if (baseType == OutputRowCollector.class) {
+                return (E)new ThreadLocalOutputRowCollector();
+            }
+            return delegate.getInstance(injectionPoint);
+        }
+
     }
 }

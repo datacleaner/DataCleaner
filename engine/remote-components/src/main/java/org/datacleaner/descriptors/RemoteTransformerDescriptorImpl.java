@@ -51,7 +51,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     public RemoteTransformerDescriptorImpl(String baseUrl, String displayName,
                                            String superCategoryName, Set<String> categoryNames, byte[] iconData,
                                            String username, String password) {
-        super(RemoteTransformer.class);
+        super(RemoteTransformer.class, true);
         this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
@@ -59,16 +59,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
-        try {
-            for(Method initMethod: ReflectionUtils.getMethods(RemoteTransformer.class, Initialize.class)) {
-                this._initializeMethods.add(new InitializeMethodDescriptorImpl(initMethod, this));
-            }
-            for(Method closeMethod: ReflectionUtils.getMethods(RemoteTransformer.class, Close.class)) {
-                this._closeMethods.add(new CloseMethodDescriptorImpl(closeMethod, this));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {

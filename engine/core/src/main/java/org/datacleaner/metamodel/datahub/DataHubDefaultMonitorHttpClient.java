@@ -24,7 +24,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 
 /**
- * CAS HTTP client version specific for use with DataHub. Adds extra request headers
+ * Default HTTP client version specific for use with DataHub. Adds extra request headers
  * to drive security on the DataHub REST services.
  *
  */

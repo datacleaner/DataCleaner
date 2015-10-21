@@ -39,11 +39,13 @@ import org.datacleaner.descriptors.InitializeMethodDescriptor;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
+import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 
 public class ComponentHandlerTest {
     private ComponentHandler componentHandler = null;
@@ -53,7 +55,7 @@ public class ComponentHandlerTest {
 
     @Before
     public void setUp() {
-        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName);
+        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, new SimpleRemoteComponentsConfigurationImpl());
         componentConfiguration = getComponentConfiguration();
         jsonData = getJsonDataMock();
     }

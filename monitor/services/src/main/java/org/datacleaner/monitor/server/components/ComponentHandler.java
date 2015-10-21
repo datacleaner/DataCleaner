@@ -37,6 +37,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
@@ -47,11 +48,12 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -79,14 +81,16 @@ public class ComponentHandler {
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
     private final StringConverter _stringConverter;
-
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
+    
     private ComponentDescriptor<?> descriptor;
     private Map<String, MutableColumn> columns;
     private Map<String, InputColumn<?>> inputColumns;
     private MutableTable table;
     private Component component;
-
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+   
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, RemoteComponentsConfiguration remoteComponentsConfiguration) {
+        _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
         _stringConverter = new StringConverter(dcConfiguration);
@@ -98,12 +102,17 @@ public class ComponentHandler {
         descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
                 .getTransformerDescriptorByDisplayName(_componentName);
         table = new MutableTable("inputData");
-        if (descriptor == null) {
+        if(descriptor == null) {
             descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
                     .getAnalyzerDescriptorByDisplayName(_componentName);
         }
         if (descriptor == null) {
             throw ComponentNotFoundException.createTypeNotFound(_componentName);
+        }
+
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", _componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
 
         component = (Component) descriptor.newInstance();
@@ -152,7 +161,13 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
-        for (String propertyName : componentConfiguration.getProperties().keySet()) {
+
+        //Admin properties from xml context
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = _remoteComponentsConfiguration.getDefaultValues(descriptor);
+        configuredProperties.putAll(remoteDefaultPropertiesMap);
+
+        //User properties
+        for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if (propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);

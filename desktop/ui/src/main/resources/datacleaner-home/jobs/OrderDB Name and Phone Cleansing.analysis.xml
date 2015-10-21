@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+	<job-metadata>
+		<job-description>Example job that cleanses the names, phone in the
+			database
+		</job-description>
+		<metadata-properties>
+			<property name="CoordinatesY.PUBLIC.CUSTOMERS">93</property>
+			<property name="CoordinatesX.PUBLIC.CUSTOMERS">62</property>
+			<property name="DemoJob">true</property>
+		</metadata-properties>
+	</job-metadata>
+	<source>
+		<data-context ref="orderdb" />
+		<columns>
+			<column id="col_customernumber" path="CUSTOMERS.CUSTOMERNUMBER"
+				type="INTEGER" />
+			<column id="col_customername" path="CUSTOMERS.CUSTOMERNAME"
+				type="VARCHAR" />
+			<column id="col_contactlastname" path="CUSTOMERS.CONTACTLASTNAME"
+				type="VARCHAR" />
+			<column id="col_contactfirstname" path="CUSTOMERS.CONTACTFIRSTNAME"
+				type="VARCHAR" />
+			<column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR" />
+			<column id="col_addressline1" path="CUSTOMERS.ADDRESSLINE1"
+				type="VARCHAR" />
+			<column id="col_addressline2" path="CUSTOMERS.ADDRESSLINE2"
+				type="VARCHAR" />
+			<column id="col_city" path="CUSTOMERS.CITY" type="VARCHAR" />
+			<column id="col_state" path="CUSTOMERS.STATE" type="VARCHAR" />
+			<column id="col_postalcode" path="CUSTOMERS.POSTALCODE" type="VARCHAR" />
+			<column id="col_country" path="CUSTOMERS.COUNTRY" type="VARCHAR" />
+			<column id="col_salesrepemployeenumber" path="CUSTOMERS.SALESREPEMPLOYEENUMBER"
+				type="INTEGER" />
+			<column id="col_creditlimit" path="CUSTOMERS.CREDITLIMIT"
+				type="NUMERIC" />
+			<column id="col_jobtitle" path="CUSTOMERS.JOBTITLE" type="VARCHAR" />
+		</columns>
+	</source>
+	<transformation>
+		<transformer>
+			<descriptor ref="Name Correction" />
+			<metadata-properties>
+				<property name="CoordinatesY">87</property>
+				<property name="CoordinatesX">236</property>
+			</metadata-properties>
+			<properties>
+				<property name="Connection" value="demo" />
+				<property name="Suggestion Handling" value="TOP_SUGGESTION" />
+				<property name="Name parts"
+					value="[Representation,Representation,Representation]" />
+			</properties>
+			<input ref="col_customername" />
+			<input ref="col_contactlastname" />
+			<input ref="col_contactfirstname" />
+			<output id="col_trafficlightname" name="Traffic light (name)" />
+			<output id="col_titlepreceding" name="Title preceding" />
+			<output id="col_honorific" name="Honorific" />
+			<output id="col_givenname" name="Given name" />
+			<output id="col_initial" name="Initial" />
+			<output id="col_familyname" name="Family name" />
+			<output id="col_titlesucceeding" name="Title succeeding" />
+			<output id="col_gender" name="Gender" />
+			<output id="col_completename" name="Complete name" />
+			<output id="col_messagesname" name="Messages (name)" />
+		</transformer>
+		<transformer requires="outcome_0">
+			<descriptor ref="Phone Correction" />
+			<metadata-properties>
+				<property name="CoordinatesY">90</property>
+				<property name="CoordinatesX">666</property>
+			</metadata-properties>
+			<properties>
+				<property name="Default country" value="&lt;null&gt;" />
+				<property name="Status policy" value="&lt;null&gt;" />
+				<property name="Message language" value="&lt;null&gt;" />
+				<property name="Output format" value="&lt;null&gt;" />
+				<property name="Output format template" value="&lt;null&gt;" />
+			</properties>
+			<input ref="col_phone" name="Phone number column" />
+			<output id="col_trafficlightphone" name="Traffic light (phone)" />
+			<output id="col_severityphone" name="Severity (phone)" />
+			<output id="col_severitydescriptionphone" name="Severity description (phone)" />
+			<output id="col_formattedphonenumber" name="Formatted phone number" />
+			<output id="col_linetype" name="Line type" />
+			<output id="col_internationalcallprefix" name="International call prefix" />
+			<output id="col_countrycallingcode" name="Country calling code" />
+			<output id="col_trunkprefix" name="Trunk prefix" />
+			<output id="col_areacode" name="Area code" />
+			<output id="col_subscribernumber" name="Subscriber number" />
+			<output id="col_messagesphone" name="Messages (phone)" />
+		</transformer>
+		<filter>
+			<descriptor ref="Equals" />
+			<metadata-properties>
+				<property name="CoordinatesY">90</property>
+				<property name="CoordinatesX">420</property>
+			</metadata-properties>
+			<properties>
+				<property name="Compare values" value="[GREEN]" />
+			</properties>
+			<input ref="col_trafficlightname" name="Input column" />
+			<outcome id="outcome_0" category="VALID" />
+			<outcome id="outcome_1" category="INVALID" />
+		</filter>
+		<filter>
+			<descriptor ref="Equals" />
+			<metadata-properties>
+				<property name="CoordinatesY">95</property>
+				<property name="CoordinatesX">896</property>
+			</metadata-properties>
+			<properties>
+				<property name="Compare values" value="[GREEN]" />
+			</properties>
+			<input ref="col_trafficlightphone" name="Input column" />
+			<outcome id="outcome_3" category="VALID" />
+			<outcome id="outcome_2" category="INVALID" />
+		</filter>
+	</transformation>
+	<analysis>
+		<analyzer requires="outcome_1 OR outcome_2" name="output-orderb-INVALID-contact-data.csv">
+			<descriptor ref="Create CSV file" />
+			<metadata-properties>
+				<property name="CoordinatesY">303</property>
+				<property name="CoordinatesX">569</property>
+			</metadata-properties>
+			<properties>
+				<property name="File"
+					value="file://datastores/output-orderb-invalid-data.csv" />
+				<property name="Separator char" value="&amp;#44;" />
+				<property name="Quote char" value="&amp;quot;" />
+				<property name="Escape char" value="\" />
+				<property name="Include header" value="true" />
+				<property name="Encoding" value="UTF-8" />
+				<property name="Fields"
+					value="[CUSTOMERNUMBER,CUSTOMERNAME,CONTACTLASTNAME,CONTACTFIRSTNAME,PHONE,ADDRESSLINE1,ADDRESSLINE2,CITY,STATE,POSTALCODE,COUNTRY,SALESREPEMPLOYEENUMBER,CREDITLIMIT,JOBTITLE,Traffic light (name),Gender,Traffic light (phone)]" />
+				<property name="Overwrite file if exists" value="true" />
+			</properties>
+			<input ref="col_customernumber" name="Columns" />
+			<input ref="col_customername" name="Columns" />
+			<input ref="col_contactlastname" name="Columns" />
+			<input ref="col_contactfirstname" name="Columns" />
+			<input ref="col_phone" name="Columns" />
+			<input ref="col_addressline1" name="Columns" />
+			<input ref="col_addressline2" name="Columns" />
+			<input ref="col_city" name="Columns" />
+			<input ref="col_state" name="Columns" />
+			<input ref="col_postalcode" name="Columns" />
+			<input ref="col_country" name="Columns" />
+			<input ref="col_salesrepemployeenumber" name="Columns" />
+			<input ref="col_creditlimit" name="Columns" />
+			<input ref="col_jobtitle" name="Columns" />
+			<input ref="col_trafficlightname" name="Columns" />
+			<input ref="col_gender" name="Columns" />
+			<input ref="col_trafficlightphone" name="Columns" />
+		</analyzer>
+		<analyzer requires="outcome_3" name="output-orderdb-VALID-contact-data.csv">
+			<descriptor ref="Create CSV file" />
+			<metadata-properties>
+				<property name="CoordinatesX">1119</property>
+				<property name="CoordinatesY">84</property>
+			</metadata-properties>
+			<properties>
+				<property name="File"
+					value="file://datastores/output-orderdb-Equals-VALID.csv" />
+				<property name="Separator char" value="&amp;#44;" />
+				<property name="Quote char" value="&amp;quot;" />
+				<property name="Escape char" value="\" />
+				<property name="Include header" value="true" />
+				<property name="Encoding" value="UTF-8" />
+				<property name="Fields"
+					value="[CUSTOMERNUMBER,CUSTOMERNAME,CONTACTLASTNAME,CONTACTFIRSTNAME,PHONE,ADDRESSLINE1,ADDRESSLINE2,CITY,STATE,POSTALCODE,COUNTRY,SALESREPEMPLOYEENUMBER,CREDITLIMIT,JOBTITLE,Title preceding,Honorific,Given name,Family name,Gender,Complete name,Subscriber number,Traffic light (name),Traffic light (phone)]" />
+				<property name="Overwrite file if exists" value="true" />
+			</properties>
+			<input ref="col_customernumber" name="Columns" />
+			<input ref="col_customername" name="Columns" />
+			<input ref="col_contactlastname" name="Columns" />
+			<input ref="col_contactfirstname" name="Columns" />
+			<input ref="col_phone" name="Columns" />
+			<input ref="col_addressline1" name="Columns" />
+			<input ref="col_addressline2" name="Columns" />
+			<input ref="col_city" name="Columns" />
+			<input ref="col_state" name="Columns" />
+			<input ref="col_postalcode" name="Columns" />
+			<input ref="col_country" name="Columns" />
+			<input ref="col_salesrepemployeenumber" name="Columns" />
+			<input ref="col_creditlimit" name="Columns" />
+			<input ref="col_jobtitle" name="Columns" />
+			<input ref="col_titlepreceding" name="Columns" />
+			<input ref="col_honorific" name="Columns" />
+			<input ref="col_givenname" name="Columns" />
+			<input ref="col_familyname" name="Columns" />
+			<input ref="col_gender" name="Columns" />
+			<input ref="col_completename" name="Columns" />
+			<input ref="col_subscribernumber" name="Columns" />
+			<input ref="col_trafficlightname" name="Columns" />
+			<input ref="col_trafficlightphone" name="Columns" />
+		</analyzer>
+	</analysis>
+</job>

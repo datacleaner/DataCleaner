@@ -19,9 +19,17 @@
  */
 package org.datacleaner.documentation;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Concurrent;
@@ -35,7 +43,9 @@ import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.SimpleHasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
 
 /**
  * A wrapper around the {@link ComponentDescriptor} object to make it easier for
@@ -43,6 +53,8 @@ import org.datacleaner.util.ReflectionUtils;
  * in the documentation.
  */
 public class ComponentDocumentationWrapper {
+
+    private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
 
     private final ComponentDescriptor<?> _componentDescriptor;
 
@@ -60,6 +72,10 @@ public class ComponentDocumentationWrapper {
 
     public String getSuperCategory() {
         return _componentDescriptor.getComponentSuperCategory().getName();
+    }
+
+    public ComponentDescriptor<?> getComponentDescriptor() {
+        return _componentDescriptor;
     }
 
     public String[] getCategories() {
@@ -103,6 +119,33 @@ public class ComponentDocumentationWrapper {
             return false;
         }
         return true;
+    }
+
+    public String getIconSrc() throws IOException {
+        // Attach the image
+        final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor).getImage();
+
+        /* We need a buffered image type in order to obtain the */
+        final BufferedImage bufferedImage = ComponentDocumentationBuilder.toBufferedImage(descriptorIcon);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final byte[] imageInByte;
+        try {
+            ImageIO.write(bufferedImage, "png", baos);
+            imageInByte = baos.toByteArray();
+        } finally {
+            FileHelper.safeClose(baos);
+        }
+
+        /* Encode the image */
+        final String encodedImage = Base64.encodeBase64String(imageInByte);
+
+        /*
+         * Atach the prefix that will make html <img> know how to decode the
+         * image
+         */
+        final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
+
+        return iconHtmlRepresentation;
     }
 
     public boolean isAnalyzer() {
@@ -161,5 +204,18 @@ public class ComponentDocumentationWrapper {
             return result;
         }
         return new FilterOutcomeDocumentationWrapper[0];
+    }
+
+    /**
+     * Gets the "href" attribute content if a link to this component should be
+     * made from elsewhere in the component docs.
+     * 
+     * @return
+     */
+    public String getHref() {
+        final String displayName = _componentDescriptor.getDisplayName();
+        final String filename = StringUtils.replaceWhitespaces(displayName.toLowerCase().trim(), "_")
+                .replaceAll("\\/", "_").replaceAll("\\\\", "_");
+        return filename + ".html";
     }
 }

@@ -141,6 +141,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         final int totalCount = result.getTotalCount();
 
         _valueCounts = result.getReducedValueFrequencies(_preferredSlices);
+        _valueCounts = moveUniqueToEnd(_valueCounts);
+        
         for (ValueFrequency valueCount : _valueCounts) {
             setDataSetValue(valueCount.getName(), valueCount.getCount());
         }
@@ -227,6 +229,26 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         split.setDividerLocation(550);
 
         return split;
+    }
+
+    private Collection<ValueFrequency> moveUniqueToEnd(Collection<ValueFrequency> valueCounts) {
+        
+        ValueFrequency uniqueValueFrequency = null;
+        for (ValueFrequency valueFrequency : valueCounts) {
+            if ("<unique>".equals(valueFrequency.getName())) {
+                uniqueValueFrequency = valueFrequency;
+                break;
+            }
+        }
+        
+        if (uniqueValueFrequency != null) {
+            final List<ValueFrequency> valueCountsList = new ArrayList<>(valueCounts);
+            valueCountsList.remove(uniqueValueFrequency);
+            valueCountsList.add(uniqueValueFrequency);
+            return valueCountsList;
+        } else {
+            return valueCounts;
+        }
     }
 
     public CategoryDataset getDataset() {

@@ -22,7 +22,6 @@ package org.datacleaner.documentation;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -33,14 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.codec.binary.Base64;
 import org.datacleaner.api.Component;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
-import org.datacleaner.util.IconUtils;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -51,17 +46,8 @@ import freemarker.template.TemplateException;
 /**
  * An object capable of building documentation for DataCleaner {@link Component}
  * s in HTML format.
- * 
- * TODO list:
- * 
- * Check what is actually output - what about result type, result metrics,
- * output columns, filter outcomes.
- * 
- * Plug in to CLI to generate complete documentation based on configuration
  */
 public class ComponentDocumentationBuilder {
-
-    private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
 
     private final Configuration _freemarkerConfiguration;
     private final Template _template;
@@ -78,7 +64,7 @@ public class ComponentDocumentationBuilder {
         final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(), "");
         _freemarkerConfiguration.setTemplateLoader(templateLoader);
         try {
-            _template = _freemarkerConfiguration.getTemplate("template.html");
+            _template = _freemarkerConfiguration.getTemplate("template_component.html");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to load template", e);
         }
@@ -95,23 +81,37 @@ public class ComponentDocumentationBuilder {
      * @throws IOException
      */
     public void write(ComponentDescriptor<?> componentDescriptor, OutputStream outputStream) throws IOException {
+        write(new ComponentDocumentationWrapper(componentDescriptor), outputStream);
+    }
+
+    /**
+     * Creates the reference documentation for a {@link Component}.
+     * 
+     * @param componentWrapper
+     *            the {@link ComponentDocumentationWrapper} of the
+     *            {@link Component} of interest.
+     * @param outputStream
+     *            the target {@link OutputStream} to write to
+     * @throws IOException
+     */
+    public void write(ComponentDocumentationWrapper componentWrapper, OutputStream outputStream) throws IOException {
 
         final Map<String, Object> data = new HashMap<>();
 
         try {
             data.put("breadcrumbs", _breadcrumbs);
-            data.put("component", new ComponentDocumentationWrapper(componentDescriptor));
+            data.put("component", componentWrapper);
 
             {
-                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentDescriptor
-                        .getConfiguredProperties();
+                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentWrapper
+                        .getComponentDescriptor().getConfiguredProperties();
                 final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
                         configuredProperties);
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
                 for (ConfiguredPropertyDescriptor property : properties) {
                     final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
                     final Deprecated deprecatedProperty = property.getAnnotation(Deprecated.class);
-                    
+
                     // we do not show hidden or deprecated properties in docs
                     if ((hiddenProperty == null || hiddenProperty.hiddenForLocalAccess() == false)
                             && deprecatedProperty == null) {
@@ -124,31 +124,8 @@ public class ComponentDocumentationBuilder {
                 data.put("properties", propertyList);
             }
 
-            { // Attach the image
-                final Image descriptorIcon = IconUtils.getDescriptorIcon(componentDescriptor).getImage();
-
-                /* We need a buffered image type in order to obtain the */
-                final BufferedImage bufferedImage = toBufferedImage(descriptorIcon);
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, "png", baos);
-                byte[] imageInByte = baos.toByteArray();
-                baos.flush();
-                baos.close();
-
-                /* Encode the image */
-                final String encodedImage = Base64.encodeBase64String(imageInByte);
-
-                /*
-                 * Atach the prefix that will make html <img> know how to decode
-                 * the image
-                 */
-                final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
-
-                data.put("icon", iconHtmlRepresentation);
-            }
-
             /* Write data to a file */
-            Writer out = new OutputStreamWriter(outputStream);
+            final Writer out = new OutputStreamWriter(outputStream);
             _template.process(data, out);
             out.flush();
             out.close();

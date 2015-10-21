@@ -28,6 +28,12 @@ import java.net.URISyntaxException;
 import org.apache.http.client.utils.URIBuilder;
 import org.datacleaner.util.http.MonitorHttpClient;
 
+/**
+ * Implements a connection from the DataHub datastore to the DataHub
+ * REST services in the service war.
+ *
+ * Note: Some REST controllers do not need the tenant info. Others do.
+ */
 public class DataHubUpdateConnection {
     public final static String CONTEXT_PATH = "/service/cdi/v1";
     public final static String GOLDEN_RECORDS_PATH = "/goldenrecords";
@@ -42,9 +48,8 @@ public class DataHubUpdateConnection {
         _connection = connection;
     }
 
-    public String getUpdateUrl() {
-        return getContextUrl() + UPDATE_PATH + (isEmpty(_connection.getTenantId()) ? EMPTY
-                : "/" + urlPathSegmentEscaper().escape(_connection.getTenantId()));
+    public String getUpdateUrl(String tenantName) {
+        return getContextUrl() + UPDATE_PATH + "/" + urlPathSegmentEscaper().escape(tenantName);
     }
 
     public String getDeleteGoldenRecordUrl() {

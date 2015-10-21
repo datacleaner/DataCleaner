@@ -927,12 +927,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         String username = getStringVariable("username", datastoreType.getUsername());
         String password = getPasswordVariable("password", datastoreType.getPassword());
-        String tenantName = getStringVariable("tenantname", datastoreType.getTenantname());
         boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
         boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
         DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
         DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
-        return new DataHubDatastore(name, host, port, username, password, tenantName, https, acceptUnverifiedSslPeers, dataHubSecurityMode);
+        return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers, dataHubSecurityMode);
     }
 
 

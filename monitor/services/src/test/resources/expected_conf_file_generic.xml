@@ -75,6 +75,10 @@
                         <name>CREDITLIMIT</name>
                         <type>NUMERIC</type>
                     </column>
+                    <column>
+                        <name>JOBTITLE</name>
+                        <type>VARCHAR</type>
+                    </column>
                 </columns>
             </table>
             <table>

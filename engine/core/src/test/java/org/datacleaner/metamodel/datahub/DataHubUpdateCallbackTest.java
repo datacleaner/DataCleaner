@@ -83,13 +83,7 @@ public class DataHubUpdateCallbackTest {
             }
             verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
         }
-        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); // Tests
-                                                                                            // if
-                                                                                            // it
-                                                                                            // was
-                                                                                            // called
-                                                                                            // a
-                                                                                            // second
-                                                                                            // time
+        // Tests if it was called a second time
+        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); 
     }
 }

@@ -27,12 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 
@@ -113,16 +111,6 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
             }
 
         });
-
-        _textField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                final File file = getFile();
-                if (file != null) {
-                    notifySelectionListeners(file);
-                }
-            }
-        });
     }
 
     public void addFileSelectionListener(FileSelectionListener listener) {
@@ -133,6 +121,14 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
         _fileSelectionListeners.remove(listener);
     }
 
+    @Override
+    protected void notifyListeners(final String text) {
+        final File file = getFile();
+        if (file != null) {
+            notifySelectionListeners(file);
+        }
+        super.notifyListeners(text);
+    }
 
     private void notifySelectionListeners(final File file) {
         for (FileSelectionListener listener : _fileSelectionListeners) {

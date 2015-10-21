@@ -130,6 +130,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                             }
                         }
                         _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
+                        logger.info("Registered remote component {}", transformer.getDisplayName());
                     } catch (Exception e) {
                         logger.error("Cannot create remote component representation for: " + component.getName(), e);
                     }

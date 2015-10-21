@@ -29,4 +29,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CreateInput {
     @JsonProperty
     public ComponentConfiguration configuration;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CreateInput that = (CreateInput) o;
+
+        return !(configuration != null ? !configuration.equals(that.configuration) : that.configuration != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return configuration != null ? configuration.hashCode() : 0;
+    }
 }

@@ -29,6 +29,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -50,6 +51,7 @@ import org.datacleaner.reference.SynonymCatalogConnection;
 @Alias("Matching analyzer")
 @Description("Check your data values against multiple forms of reference data in one simple analyzer step.\n"
         + "This analyzer provides a handy shortcut for doing matching with dictionaries, synonym lookups or string patterns matching, retrieving matching matrices for all matches.")
+@Distributed(reducer = BooleanAnalyzerReducer.class)
 public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
     @Configured(order = 1)

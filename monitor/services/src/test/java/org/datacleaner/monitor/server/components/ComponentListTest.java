@@ -47,6 +47,7 @@ import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
 
+@SuppressWarnings("rawtypes")
 public class ComponentListTest {
     private static final int COMPONENTS_COUNT = 5;
     private static final String tenant = "demo";
@@ -94,6 +95,8 @@ public class ComponentListTest {
 
     private ComponentSuperCategory getComponentSuperCategoryMock() {
         ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public String getName() {
                 return "superCategory";
@@ -118,6 +121,7 @@ public class ComponentListTest {
         return componentSuperCategory;
     }
 
+    @SuppressWarnings("unchecked")
     private Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesMock() {
         configuredPropertyDescriptorMock = createNiceMock(ConfiguredPropertyDescriptor.class);
         expect(configuredPropertyDescriptorMock.getName()).andReturn("propertyName").anyTimes();
@@ -158,7 +162,6 @@ public class ComponentListTest {
         componentInfo.setName("name" + id);
         componentInfo.setDescription("description of " + id);
         componentInfo.setCreateURL("create URL" + id);
-        String[][] properties = { { "propertyName" + id, "propertyDescription" + id, "required" } };
         Map<String, ComponentList.PropertyInfo> props = new HashMap<>();
         ComponentList.PropertyInfo prop = new ComponentList.PropertyInfo();
         prop.setName("propertyName" + id);

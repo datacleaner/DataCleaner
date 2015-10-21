@@ -22,21 +22,27 @@ package org.datacleaner.connection;
 import org.datacleaner.windows.AbstractDatastoreDialog;
 
 /**
- * A descriptor class for a datastore types in DataCleaner. 
+ * A descriptor class for a datastore types in DataCleaner.
  *
  */
 public interface DatastoreDescriptor {
-    
+
     public String getName();
-    
+
     public String getDescription();
-    
+
     public Class<? extends Datastore> getDatastoreClass();
-    
+
     public Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDatastoreDialogClass();
-    
+
     public String getIconPath();
-    
+
+    /**
+     * Determines if the datastore is promoted, fx: should have its own icon in
+     * the @{link DatastoreManagementPanel} or be hidden in the dropdown menu.
+     */
+    public boolean isPromoted();
+
     public boolean isUpdatable();
-    
+
 }

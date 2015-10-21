@@ -61,16 +61,14 @@ public class RemoteTransformer implements Transformer {
     private String componentDisplayName;
     private String username;
     private String password;
-    private String tenant;
     private OutputColumns cachedOutputColumns;
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
-    public RemoteTransformer(String baseUrl, String componentDisplayName, String tenant, String username, String password) {
+    public RemoteTransformer(String baseUrl, String componentDisplayName, String username, String password) {
         this.baseUrl = baseUrl;
         this.username = username;
         this.password = password;
-        this.tenant = tenant;
         this.componentDisplayName = componentDisplayName;
     }
 
@@ -99,7 +97,7 @@ public class RemoteTransformer implements Transformer {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
 
-            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(tenant, componentDisplayName, createInput);
+            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
 
             outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
             int i = 0;
@@ -143,7 +141,7 @@ public class RemoteTransformer implements Transformer {
         ProcessStatelessInput input = new ProcessStatelessInput();
         input.configuration = getConfiguration(cols);
         input.data = mapper.valueToTree(rows);
-        ProcessStatelessOutput out = client.processStateless(tenant, componentDisplayName, input);
+        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
         return convertOutputRows(out.rows);
     }
 

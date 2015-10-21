@@ -130,7 +130,7 @@ public class DCBannerPanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         final int x = getX();
         final int y = 0;
         final int w = getWidth();
@@ -152,7 +152,7 @@ public class DCBannerPanel extends JPanel {
             g.drawImage(_rightImage, x + w - rightImageWidth, y, this);
         }
 
-        super.paint(g);
+        super.paintComponent(g);
 
         if (_title1 != null) {
             int titleY = 45;

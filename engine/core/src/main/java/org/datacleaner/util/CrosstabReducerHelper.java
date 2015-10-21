@@ -42,7 +42,7 @@ public class CrosstabReducerHelper {
      * @param partialCrosstab
      *            - crosstab
      */
-    public static void createDimensions(List<CrosstabDimension> crosstabDimensions,
+    public static void createDimensionsColumnCrosstab(List<CrosstabDimension> crosstabDimensions,
             final Crosstab<Number> partialCrosstab) {
         if (partialCrosstab != null) {
             final List<CrosstabDimension> dimensions = partialCrosstab.getDimensions();
@@ -54,7 +54,7 @@ public class CrosstabReducerHelper {
         }
     }
 
-    private static boolean dimensionExits(Collection<CrosstabDimension> list, CrosstabDimension dimension) {
+    public static boolean dimensionExits(Collection<CrosstabDimension> list, CrosstabDimension dimension) {
         if (list.size() > 0) {
             boolean allreadyExits = false;
             for (CrosstabDimension dim : list) {
@@ -76,36 +76,67 @@ public class CrosstabReducerHelper {
      * @param partialCrosstab
      *            - partial crosstab
      */
-    public static void addData(final Crosstab<Number> mainCrosstab, final Crosstab<Number> partialCrosstab) {
+    public static void addData(final Crosstab<Number> mainCrosstab, final Crosstab<Number> partialCrosstab,
+            CrosstabDimension columnDimension, CrosstabDimension measureDimension) {
         if (partialCrosstab != null) {
 
             final CrosstabNavigator<Number> mainNavigator = new CrosstabNavigator<Number>(mainCrosstab);
             final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
-            final List<CrosstabDimension> dimensions = partialCrosstab.getDimensions();
-            for (CrosstabDimension dimension : dimensions) {
-                final List<String> categories = dimension.getCategories();
-                for (String category : categories) {
-                    final Number categoryValue = nav.where(dimension, category).safeGet(null);
-                    final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
-                    if (categoryValue != null) {
-                        final Number oldValue = whereToPut.safeGet(null);
-                        if (oldValue != null) {
-                            final Number newValue = sum(oldValue, categoryValue);
-                            whereToPut.put(newValue);
-                        } else {
-                            whereToPut.put(categoryValue);
-                        }
-                    }
+
+            for (String columnCategory : columnDimension.getCategories()) {
+                // just navigate through the dimensions because is the column
+                // dimension
+                nav.where(columnDimension, columnCategory);
+                mainNavigator.where(columnDimension, columnCategory);
+                // navigate and sum up data
+                final List<String> categories = measureDimension.getCategories();
+                for (String measureCategory : categories) {
+                    sumUpData(mainNavigator, nav, measureDimension, measureCategory);
                 }
             }
         }
     }
 
-    private static Number sum(Number n1, Number n2) {
+    private static void sumUpData(final CrosstabNavigator<Number> mainNavigator, final CrosstabNavigator<Number> nav,
+            CrosstabDimension dimension, String category) {
+        final CrosstabNavigator<Number> where = nav.where(dimension, category);
+        final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
+        final Number categoryValue = where.safeGet(null);
+        if (categoryValue != null) {
+            final Number oldValue = whereToPut.safeGet(null);
+            if (oldValue != null) {
+                final Number newValue = sum(oldValue, categoryValue);
+                whereToPut.put(newValue);
+            } else {
+                whereToPut.put(categoryValue);
+            }
+        }
+    }
+
+    public static boolean findDimension(final Crosstab<Number> crosstab, String dimensionName) {
+        try {
+            final CrosstabDimension dimension = crosstab.getDimension(dimensionName);
+            if (dimension == null) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static Number sum(Number n1, Number n2) {
         if (isIntegerType(n1) && isIntegerType(n2)) {
             return BigInteger.valueOf(n1.longValue()).add(BigInteger.valueOf(n2.longValue()));
-        } 
+        }
         return new BigDecimal(n1.doubleValue()).add(new BigDecimal(n2.doubleValue()));
+    }
+
+    public static Number subtract(Number n1, Number n2) {
+        if (isIntegerType(n1) && isIntegerType(n2)) {
+            return BigInteger.valueOf(n1.longValue()).subtract(BigInteger.valueOf(n2.longValue()));
+        }
+        return new BigDecimal(n1.doubleValue()).subtract(new BigDecimal(n2.doubleValue()));
     }
 
     private static boolean isIntegerType(Number n) {

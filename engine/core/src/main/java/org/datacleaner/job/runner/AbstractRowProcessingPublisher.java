@@ -103,6 +103,13 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         return _consumers;
     }
 
+    protected final List<RowProcessingConsumer> getConsumersSorted() {
+        final List<RowProcessingConsumer> consumers = getConsumers();
+        final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(consumers);
+        final List<RowProcessingConsumer> sortedConsumers = sorter.createProcessOrderedConsumerList();
+        return sortedConsumers;
+    }
+
     @Override
     public final void registerConsumer(final RowProcessingConsumer consumer) {
         _consumers.add(consumer);
@@ -151,8 +158,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         for (RowProcessingConsumer consumer : getConsumers()) {
             final ComponentJob componentJob = consumer.getComponentJob();
             final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
-            final ComponentMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics().getComponentMetrics(
-                    componentJob);
+            final ComponentMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics()
+                    .getComponentMetrics(componentJob);
             analysisListener.componentBegin(getStream().getAnalysisJob(), componentJob, metrics);
 
             if (consumer instanceof TransformerConsumer) {
@@ -208,7 +215,7 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         if (!isReadyForRowProcessing()) {
             return false;
         }
-        
+
         final List<TaskRunnable> postProcessingTasks = createPostProcessingTasks(resultQueue, finishedTaskListener);
 
         return runRowProcessingInternal(postProcessingTasks);

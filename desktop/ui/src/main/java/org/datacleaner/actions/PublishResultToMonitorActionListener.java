@@ -69,8 +69,9 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     @Override
     protected boolean doBeforeAction() {
         if (_jobFilename == null) {
-            final String jobName = JOptionPane.showInputDialog(null, "Enter the name of a (new or existing) job on the server that this result refers to?", "Job name on server",
-                    JOptionPane.QUESTION_MESSAGE);
+            final String jobName = JOptionPane.showInputDialog(null,
+                    "Enter the name of a (new or existing) job on the server that this result refers to?",
+                    "Job name on server", JOptionPane.QUESTION_MESSAGE);
             if (Strings.isNullOrEmpty(jobName)) {
                 return false;
             }
@@ -89,6 +90,10 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
 
     @Override
     protected String getTransferredFilename() {
+        final String extension = FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        if (!_resultFilename.endsWith(extension)) {
+            return _resultFilename + extension;
+        }
         return _resultFilename;
     }
 

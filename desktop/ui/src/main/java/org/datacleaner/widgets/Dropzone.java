@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -41,8 +41,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.connection.CsvDatastore;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -54,9 +54,8 @@ import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.convert.HdfsResourceTypeHandler;
-import org.datacleaner.util.convert.ResourceConverter;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.datacleaner.windows.HdfsUrlChooser;
+import org.datacleaner.windows.HdfsUrlChooser.OpenType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,27 +108,19 @@ public class Dropzone extends DCPanel {
         add(selectHadoopButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 
-        // error label
-        final DCLabel errorResourceLabel = DCLabel
-                .dark("<html><p color='red'>The HDFS file does not exist</p></html>");
-        errorResourceLabel.setVisible(false);
-        add(errorResourceLabel, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        
-        // hdfs resource selector
-        final DCPanel hdfsResourceSelectorPanel = createHdfsResourcePanel(errorResourceLabel);
-        add(hdfsResourceSelectorPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, -5, 10, 0), 0, 0));
-        hdfsResourceSelectorPanel.setVisible(false);
+        final Component dropZone = this;
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (hdfsResourceSelectorPanel.isVisible()) {
-                    hdfsResourceSelectorPanel.setVisible(false);
-                    errorResourceLabel.setVisible(false);
-                } else {
-                    hdfsResourceSelectorPanel.setVisible(true);
+                URI selectedFile = HdfsUrlChooser.showDialog(dropZone, null, OpenType.LOAD);
+                logger.info("Selected HDFS file: " + selectedFile);
+
+                if (selectedFile != null) {
+                    final HdfsResource resource = new HdfsResource(selectedFile.toString());
+                    final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
+                            _datastoreCatalog, resource);
+                    _datastoreSelectListener.datastoreSelected(datastore);
                 }
             }
 
@@ -143,40 +134,6 @@ public class Dropzone extends DCPanel {
         });
 
         makeDroppable();
-    }
-
-    private DCPanel createHdfsResourcePanel(final DCLabel errorResourceLabel) {
-
-        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
-        handlers.add(new HdfsResourceTypeHandler());
-        final ResourceConverter resourceConverter = new ResourceConverter(handlers);
-        final ResourceSelector resourceSelector = new ResourceSelector(resourceConverter, _userPreferences, true);
-        resourceSelector.setScheme("hdfs");
-        resourceSelector.setVisibleResourceTypeCombox(false);
-        final ResourceTypePresenter<?> resourceTypePresenter = resourceSelector.getResourceTypePresenter("hdfs");
-        resourceSelector.setCurrentPresenter(resourceTypePresenter);
-
-        final DCPanel panel = new DCPanel();
-        panel.add(resourceSelector);
-        final JButton okButton = WidgetFactory.createDefaultButton("OK");
-        okButton.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                final Resource resource = resourceSelector.getResource();
-                if (resource != null && resource.isExists()) {
-                    errorResourceLabel.setVisible(false);
-                    final Datastore datastore = new CsvDatastore(resource.getName(), resource);
-                    _datastoreSelectListener.datastoreSelected(datastore);
-                } else {
-                    errorResourceLabel.setVisible(true);
-                }
-
-            }
-        });
-
-        panel.add(okButton);
-        return panel;
     }
 
     protected void showFileChooser() {
@@ -204,7 +161,8 @@ public class Dropzone extends DCPanel {
                     }
                 }
                 if (datastore == null) {
-                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
+                            new FileResource(file));
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
@@ -264,8 +222,8 @@ public class Dropzone extends DCPanel {
                     return false;
                 }
 
-                Datastore datastore = DatastoreCreationUtil
-                        .createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
+                        new FileResource(file));
                 _datastoreSelectListener.datastoreSelected(datastore);
                 return true;
             }

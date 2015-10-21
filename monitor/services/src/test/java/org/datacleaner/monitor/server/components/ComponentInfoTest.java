@@ -19,30 +19,24 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertTrue;
+
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertTrue;
 
 public class ComponentInfoTest {
     private ComponentInfo componentInfo = new ComponentInfo();
     private String name = "name";
     private String description = "description";
     private String createURL = "create URL";
-    private List<String[]> propertyList = null;
     private ComponentConfiguration componentConfigurationMock = null;
 
     @Before
     public void setUp() {
-        String[][] properties = { { "propertyName", "property description", "required" } };
-        propertyList = Arrays.asList(properties);
         componentConfigurationMock = createNiceMock(ComponentConfiguration.class);
 
         replay(componentConfigurationMock);

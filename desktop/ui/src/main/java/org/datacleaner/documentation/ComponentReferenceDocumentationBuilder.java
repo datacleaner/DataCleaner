@@ -68,11 +68,13 @@ public class ComponentReferenceDocumentationBuilder {
                 .getComponentDescriptors();
         for (final ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
             try {
-                final String filename = IndexDocumentationBuilder.getFilename(componentDescriptor);
+                final ComponentDocumentationWrapper componentWrapper = new ComponentDocumentationWrapper(
+                        componentDescriptor);
+                final String filename = componentWrapper.getHref();
                 final RepositoryFile file = createOrUpdateFile(folder, filename, new Action<OutputStream>() {
                     @Override
                     public void run(OutputStream out) throws Exception {
-                        componentDocumentationBuilder.write(componentDescriptor, out);
+                        componentDocumentationBuilder.write(componentWrapper, out);
                     }
                 });
                 logger.info("Wrote: {}", file);

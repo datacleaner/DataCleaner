@@ -35,18 +35,33 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 public class RESTClientImpl implements RESTClient {
     private Client client = null;
 
-    private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
+    private static Map<Integer, Client> clientCache = new ConcurrentHashMap<>();
 
     public RESTClientImpl(String username, String password) {
-        if(username == null) { username = ""; }
-        client = clientCache.get(username);
-        if(client == null) {
+        if (username == null) {
+            username = "";
+        }
+
+        int cacheKey = makeKey(username, password);
+        client = clientCache.get(cacheKey);
+
+        if (client == null) {
             client = Client.create();
+
             if (username != null && password != null) {
                 client.addFilter(new HTTPBasicAuthFilter(username, password));
             }
-            clientCache.put(username, client);
+
+            clientCache.put(cacheKey, client);
         }
+    }
+
+    protected Client getClient() {
+        return client;
+    }
+
+    private int makeKey(String username, String password) {
+        return (username+password).hashCode();
     }
 
     /**

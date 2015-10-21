@@ -88,6 +88,7 @@ public class BatchTransformationBuffer<I, O> {
                 try {
                     flushBuffer(true);
                 } catch(Throwable t) {
+                    logger.warn("Cannot flush buffer", t);
                     exception = t;
                     shutdown();
                 }
@@ -181,6 +182,9 @@ public class BatchTransformationBuffer<I, O> {
                 flushBuffer();
                 attemptIndex++;
             } catch (Exception e) {
+                if(exception == null) {
+                    exception = e;
+                }
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }

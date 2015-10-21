@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -87,7 +89,7 @@ public class ComponentHandler {
 
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
-    private final StringConverter _stringConverter;
+    private StringConverter _stringConverter;
     private final ComponentDescriptor<?> descriptor;
     private final Map<String, MutableColumn> columns;
     private final Map<String, InputColumn<?>> inputColumns;
@@ -98,7 +100,7 @@ public class ComponentHandler {
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration) {
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
-        _stringConverter = new StringConverter(dcConfiguration);
+    }
 
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
@@ -349,7 +351,7 @@ public class ComponentHandler {
                 break;
             }
             Column col = table.getColumn(i);
-            values.add(convertTableValue(_stringConverter, col.getType().getJavaEquivalentClass(), value));
+            values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
             i++;
         }
         return values.toArray(new Object[values.size()]);
@@ -358,27 +360,26 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class<?> type = propDesc.getType();
         try {
-            if (value.isArray() || value.isObject() || type.isEnum()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return _stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
-            }
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
                     + "': " + value.toString(), e);
         }
     }
 
-    private Object convertTableValue(StringConverter stringConverter, Class<?> type, JsonNode value) {
+    private Object convertTableValue(Class<?> type, JsonNode value) {
         try {
-            if (value.isArray() || value.isObject()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return stringConverter.deserialize(value.asText(), type);
-            }
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
+    }
+
+    private Object convertValue(Class<?> type, JsonNode value) throws IOException {
+        if(type == File.class) {
+            return getStringConverter().deserialize(value.asText(), type);
+        }
+        return mapper.readValue(value.traverse(), type);
     }
 
     private String toString(JsonNode item) {
@@ -404,6 +405,13 @@ public class ComponentHandler {
             result.add(toString(json));
         }
         return result;
+    }
+
+    protected StringConverter getStringConverter() {
+        if(_stringConverter == null) {
+            _stringConverter = new StringConverter(_dcConfiguration);
+        }
+        return _stringConverter;
     }
 
     private ComponentDescriptor<?> resolveDescriptor(String componentName) {

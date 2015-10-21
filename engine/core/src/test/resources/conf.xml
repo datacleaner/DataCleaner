@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <configuration-metadata>
+        <configuration-name>DataCleaner configuration</configuration-name>
+        <configuration-description>Configures DataCleaner's initial
+            environment.
+            This includes example datastores and example reference
+            data.
+        </configuration-description>
+        <configuration-version>4.0</configuration-version>
+        <author>DataCleaner.org</author>
+    </configuration-metadata>
+
+    <datastore-catalog>
+        <jdbc-datastore description="Example database for use with DataCleaner" name="orderdb">
+            <url>jdbc:hsqldb:res:orderdb;readonly=true</url>
+            <driver>org.hsqldb.jdbcDriver</driver>
+            <username>SA</username>
+            <password/>
+        </jdbc-datastore>
+
+        <salesforce-datastore description="Example connection to SFDC - credentials not provided" name="Salesforce.com">
+            <username>username</username>
+            <password>password</password>
+            <security-token>token</security-token>
+        </salesforce-datastore>
+
+        <csv-datastore description="Example CSV-file with representing customers' details" name="Customers">
+            <filename>datastores/customers.csv</filename>
+            <encoding>UTF8</encoding>
+            <quote-char>"</quote-char>
+            <separator-char>,</separator-char>
+        </csv-datastore>
+    </datastore-catalog>
+
+    <reference-data-catalog>
+        <dictionaries>
+        </dictionaries>
+        <synonym-catalogs>
+            <text-file-synonym-catalog description="Example synonym catalog used for standardizing job titles" name="Job titles">
+                <filename>datastores/job_title_synonyms.txt</filename>
+                <encoding>UTF8</encoding>
+                <case-sensitive>false</case-sensitive>
+            </text-file-synonym-catalog>
+        </synonym-catalogs>
+    </reference-data-catalog>
+
+    <multithreaded-taskrunner max-threads="30"/>
+
+    <storage-provider>
+        <combined>
+            <collections-storage>
+                <berkeley-db>
+                    <clean-directory-on-startup>true</clean-directory-on-startup>
+                </berkeley-db>
+            </collections-storage>
+            <row-annotation-storage>
+                <in-memory max-rows-threshold="500"/>
+            </row-annotation-storage>
+        </combined>
+    </storage-provider>
+
+    <descriptor-providers>
+        <classpath-scanner>
+            <package recursive="true">org.datacleaner</package>
+            <package recursive="true">com.hi</package>
+            <package recursive="true">com.neopost</package>
+        </classpath-scanner>
+        <remote-components>
+            <server>
+                <url>http://localhost:8888</url>
+                <username>admin</username>
+                <password>oFm53KJ9K+w=</password>
+            </server>
+        </remote-components>
+    </descriptor-providers>
+</configuration>

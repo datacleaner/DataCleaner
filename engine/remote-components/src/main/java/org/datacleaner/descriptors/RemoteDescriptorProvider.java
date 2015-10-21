@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.configuration.CredentialsProvider;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.slf4j.Logger;
@@ -42,66 +43,70 @@ import org.slf4j.LoggerFactory;
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+    private final CredentialsProvider credentialsProvider;
+    private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
-    private final String url;
-    private final String username;
-    private final String password;
-
-    private final LazyRef<Data> data = new LazyRef<Data>() {
-        @Override
-        protected Data fetch() throws Throwable {
-            Data data = new Data();
-            data.downloadDescriptors();
-            return data;
-        }
-    };
-
-    public RemoteDescriptorProvider(String url, String username, String password) {
+    public RemoteDescriptorProvider(CredentialsProvider credentialsProvider) {
         super(false);
-        this.url = url.replaceAll("/+$", "");
-        this.username = username;
-        this.password = password;
-        data.requestLoad();
+        this.credentialsProvider = credentialsProvider;
+        dataLazyReference.requestLoad();
+    }
+
+    public void refresh() {
+        dataLazyReference = new RemoteLazyRef<>();
+        notifyComponentDescriptorsUpdatedListeners();
     }
 
     @Override
     public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
-        return Collections.unmodifiableCollection(data.get()._filterBeanDescriptors.values());
+        return Collections.unmodifiableCollection(dataLazyReference.get()._filterBeanDescriptors.values());
     }
 
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
-        return Collections.unmodifiableCollection(data.get()._analyzerBeanDescriptors.values());
+        return Collections.unmodifiableCollection(dataLazyReference.get()._analyzerBeanDescriptors.values());
     }
 
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
-        return Collections.unmodifiableCollection(data.get()._transformerBeanDescriptors.values());
+        return Collections.unmodifiableCollection(dataLazyReference.get()._transformerBeanDescriptors.values());
     }
 
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
-        return Collections.unmodifiableCollection(data.get()._rendererBeanDescriptors.values());
+        return Collections.unmodifiableCollection(dataLazyReference.get()._rendererBeanDescriptors.values());
+    }
+
+    private final class RemoteLazyRef<E> extends LazyRef<E> {
+        @Override
+        public E fetch() throws Throwable {
+            Data data = new Data();
+            data.downloadDescriptors();
+
+            return (E) data;
+        }
     }
 
     private final class Data {
-        final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerDescriptor<?>>();
-        final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterDescriptor<?, ?>>();
-        final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerDescriptor<?>>();
-        final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
+        final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<>();
+        final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<>();
+        final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<>();
+        final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<>();
 
         private void downloadDescriptors() {
             try {
-                logger.info("Loading remote components list from " + url);
-                // TODO: There is currently no "close" method in client,
-                // although Jersey client has "destroy" method.
-                final ComponentRESTClient client = new ComponentRESTClient(url, username, password);
+                logger.info("Loading remote components list from " + credentialsProvider.getHost());
+                final ComponentRESTClient client = new ComponentRESTClient(
+                        credentialsProvider.getHost(), credentialsProvider.getUsername(), credentialsProvider.getPassword());
                 final ComponentList components = client.getAllComponents(true);
+                
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
-                        final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(url,
-                                component.getName(), component.getSuperCategoryName(),
-                                component.getCategoryNames(), component.getIconData(), username, password);
+                        final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
+                                credentialsProvider.getHost(), component.getName(),
+                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData(),
+                                credentialsProvider.getUsername(), credentialsProvider.getPassword());
+
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {
                             final String propertyName = propE.getKey();
@@ -114,8 +119,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                         initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()),
                                         propInfo.getDefaultValue()));
                             } catch (ClassNotFoundException e) {
-                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}'",
-                                        component.getName(), propertyName, e);
+                                logger.debug("Cannot initialize typed property descriptor '{}'.'{}' because of {}",
+                                        component.getName(), propertyName, e.toString());
                                 // class not available on this server.
                                 transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
                                         propertyName, propInfo.getSchema(), propInfo.isInputColumn(),
@@ -131,7 +136,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Cannot get list of remote components on " + url, e);
+                logger.error("Cannot get list of remote components on " + credentialsProvider.getHost(), e);
                 // TODO: plan a task to try again after somw while. And then
                 // notify listeners...
             }

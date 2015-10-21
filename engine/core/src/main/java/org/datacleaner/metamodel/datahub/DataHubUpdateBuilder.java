@@ -19,8 +19,9 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.query.FilterItem;
@@ -28,7 +29,6 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.AbstractRowUpdationBuilder;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
-import org.datacleaner.metamodel.datahub.update.UpdateField;
 
 public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
@@ -49,25 +49,23 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
         final Object[] values = getValues();
         Column[] columns = getColumns();
         boolean[] explicitNulls = getExplicitNulls();
-        List<UpdateField> fields = new ArrayList<UpdateField>();
+        Map<String, Object> fields = new HashMap<String, Object>();
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
                 String columnName = columns[i].getName();
                 if (columnName.startsWith("_")) {
-                    throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\"");
+                    throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
                 }
-                final UpdateField field = new UpdateField(columnName, value.toString());
-                fields.add(field);
+                fields.put(columnName, value);
             }
         }
 
         List<FilterItem> whereItems = getWhereItems();
         if (whereItems.size() != 1 || !"gr_id".equals(whereItems.get(0).getSelectItem().getColumn().getName())) {
-            throw new IllegalArgumentException("Updates are only allowed on individual records, identified by gr_id (golden record id)");
+            throw new IllegalArgumentException("Updates should have the gr_id as the sole condition value.");
         }
         String grId = (String) whereItems.get(0).getOperand();
-        return new UpdateData(grId, fields.toArray(new UpdateField[fields.size()]));
+        return new UpdateData(grId, fields);
     }
-
 }

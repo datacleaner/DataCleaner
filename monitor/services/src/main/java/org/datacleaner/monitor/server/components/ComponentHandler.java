@@ -194,9 +194,14 @@ public class ComponentHandler {
     }
 
     public List<Object[]> runComponent(JsonNode data) {
+        if (data == null) {
+            return null;
+        }
+
         final List<InputRow> inputRows = new ArrayList<>();
         final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
         int id = 0;
+
         for (JsonNode row : data) {
             final DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
             inputRows.add(new MetaModelInputRow(id, inputRow));

@@ -27,6 +27,8 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.beans.CharacterSetDistributionAnalyzer;
 import org.datacleaner.beans.ReferenceDataMatcherAnalyzer;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.junit.Test;
@@ -43,6 +45,9 @@ public class ComponentReferenceDocumentationBuilderTest {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CharacterSetDistributionAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(ReferenceDataMatcherAnalyzer.class));
+        
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
 
         final ComponentReferenceDocumentationBuilder docBuilder = new ComponentReferenceDocumentationBuilder(
                 descriptorProvider);
@@ -50,6 +55,6 @@ public class ComponentReferenceDocumentationBuilderTest {
         assertTrue(success);
 
         assertTrue(new File(directory, "index.html").exists());
-        assertEquals(3, directory.list().length);
+        assertEquals(5, directory.list().length);
     }
 }

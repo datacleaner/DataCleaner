@@ -106,4 +106,5 @@ public class NumberAnalyzerTest extends TestCase {
         assertEquals("Second moment      98745.67 9874568    242 ", resultLines[10]);
         assertEquals("Sum of squares     337624.39 33762440   1300 ", resultLines[11]);
     }
+
 }

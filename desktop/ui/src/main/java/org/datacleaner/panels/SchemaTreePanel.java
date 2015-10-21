@@ -23,8 +23,10 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -32,36 +34,56 @@ import javax.inject.Inject;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
 
+/**
+ * Panel that wraps the {@link SchemaTree} as well as actions around it for
+ * searching/filtering etc.
+ */
 public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger logger = LoggerFactory.getLogger(SchemaTreePanel.class);
+
     private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
     private final InjectorBuilder _injectorBuilder;
+    private final JXTextField _searchTextField;
+    private final JComponent _resetSearchButton;
     private JComponent _updatePanel;
+    private SchemaTree _schemaTree;
 
     @Inject
     protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _injectorBuilder = injectorBuilder;
+        _searchTextField = createSearchTextField();
+        _resetSearchButton = createResetSearchButton();
+
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(4, 4, 4, 4));
         setDatastore(null, false);
+
+        setFocusable(true);
     }
 
     public void setDatastore(final Datastore datastore, final boolean expandTree) {
@@ -85,25 +107,66 @@ public class SchemaTreePanel extends DCPanel {
 
             protected void done() {
                 try {
-                    final SchemaTree schemaTree = get();
-                    final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(schemaTree);
+                    _schemaTree = get();
+                    final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(_schemaTree);
                     schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                    schemaTree.addComponentListener(new ComponentAdapter() {
+                    _schemaTree.addComponentListener(new ComponentAdapter() {
                         @Override
                         public void componentResized(ComponentEvent e) {
                             updateParentPanel();
                         }
+                    });
+                    _schemaTree.setFocusable(true);
+                    _schemaTree.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            if (_searchTextField.isFocusOwner()) {
+                                // let the normal search text work as it should
+                                return;
+                            }
 
+                            final char keyChar = e.getKeyChar();
+                            switch (keyChar) {
+                            case KeyEvent.VK_ESCAPE:
+                            case KeyEvent.VK_DELETE:
+                                _searchTextField.setText("");
+                                break;
+                            case KeyEvent.VK_BACK_SPACE:
+                                try {
+                                    final Document document = _searchTextField.getDocument();
+                                    final int index = document.getLength() - 1;
+                                    if (index >= 0) {
+                                        document.remove(index, 1);
+                                    }
+                                } catch (BadLocationException ex) {
+                                    logger.debug("Document.remove() failed", ex);
+                                }
+                                break;
+                            default:
+                                if (!e.isActionKey() && Character.isLetter(keyChar)) {
+                                    try {
+                                        final Document document = _searchTextField.getDocument();
+                                        document.insertString(document.getLength(), "" + keyChar,
+                                                SimpleAttributeSet.EMPTY);
+                                    } catch (BadLocationException ex) {
+                                        logger.debug("Document.insertString({}) failed", keyChar, ex);
+                                    }
+                                }
+                            }
+                        }
                     });
                     removeAll();
                     add(schemaTreeScroll, BorderLayout.CENTER);
 
-                    final JComponent searchComponent = createSearchTextField(schemaTree);
+                    final DCPanel searchComponent = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST);
+                    searchComponent.setLayout(new BorderLayout());
+                    searchComponent.add(_searchTextField, BorderLayout.CENTER);
+                    searchComponent.add(_resetSearchButton, BorderLayout.EAST);
 
                     add(searchComponent, BorderLayout.SOUTH);
-                    schemaTree.expandStandardPaths();
+                    _schemaTree.expandStandardPaths();
                     if (expandTree) {
-                        schemaTree.expandSelectedData();
+                        _schemaTree.expandSelectedData();
                     }
                     updateParentPanel();
                 } catch (Exception e) {
@@ -114,49 +177,50 @@ public class SchemaTreePanel extends DCPanel {
         }.execute();
     }
 
-    protected JComponent createSearchTextField(final SchemaTree schemaTree) {
-        final JXTextField searchTextField = new JXTextField(DEFAULT_SEARCH_FIELD_TEXT);
-        searchTextField.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                JTextField source = (JTextField) e.getSource();
-                schemaTree.filter(source.getText());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
-        });
-
+    private JComponent createResetSearchButton() {
         final JLabel resetSearchFieldIcon = new JLabel("X");
         resetSearchFieldIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         resetSearchFieldIcon.setBorder(WidgetUtils.BORDER_EMPTY);
         resetSearchFieldIcon.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseReleased(MouseEvent e) {
-                final String currentText = searchTextField.getText();
+                final String currentText = _searchTextField.getText();
                 if (Strings.isNullOrEmpty(currentText)) {
                     // do nothing
                     return;
                 }
-                searchTextField.setText("");
-                schemaTree.filter("");
+                _searchTextField.setText("");
+                _schemaTree.filter("");
             }
-            
+        });
+        return resetSearchFieldIcon;
+    }
+
+    protected JXTextField createSearchTextField() {
+        final JXTextField searchTextField = new JXTextField(DEFAULT_SEARCH_FIELD_TEXT);
+        searchTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                final int length = searchTextField.getText().length();
+                searchTextField.select(length, length);
+            }
+        });
+        searchTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                _schemaTree.filter(searchTextField.getText());
+            }
+        });
+        searchTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    searchTextField.setText("");
+                }
+            }
         });
         searchTextField.setBorder(WidgetUtils.BORDER_EMPTY);
-
-        final DCPanel searchPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST);
-        searchPanel.setLayout(new BorderLayout());
-        searchPanel.add(searchTextField, BorderLayout.CENTER);
-        searchPanel.add(resetSearchFieldIcon, BorderLayout.EAST);
-        return searchPanel;
+        return searchTextField;
     }
 
     private void updateParentPanel() {

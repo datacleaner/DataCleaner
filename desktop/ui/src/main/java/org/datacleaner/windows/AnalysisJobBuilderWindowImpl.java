@@ -70,7 +70,6 @@ import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -149,8 +148,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             builder.addSourceColumnChangeListener(_sourceColumnChangeListener);
             builder.addAnalysisJobChangeListener(this);
 
-            // We'll need to listen to already added output data stream job builders
-            for(AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()){
+            // We'll need to listen to already added output data stream job
+            // builders
+            for (AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
                 onActivation(analysisJobBuilder);
             }
         }
@@ -283,7 +283,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -394,7 +393,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -1020,29 +1020,25 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
-                        "100");
-                final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
-                if (maxRows == null || maxRows.intValue() < 1) {
-                    WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
-                    return;
-                }
+                Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
 
-                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
-                final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
-                        .addFilter(MaxRowsFilter.class);
-                maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
-                maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
-                final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
-                final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
-                for (ComponentBuilder componentBuilder : componentBuilders) {
-                    if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
-                        componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                if (maxRows != null) {
+                    final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                    final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
+                    final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
+                            .addFilter(MaxRowsFilter.class);
+                    maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
+                    maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
+                    final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
+                    final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
+                    for (ComponentBuilder componentBuilder : componentBuilders) {
+                        if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
+                            componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                        }
                     }
-                }
 
-                execute(jobBuilderCopy).actionPerformed(e);
+                    execute(jobBuilderCopy).actionPerformed(e);
+                }
             }
         };
     }

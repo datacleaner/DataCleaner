@@ -63,6 +63,10 @@
                         <name>CREDITLIMIT</name>
                         <type>NUMERIC</type>
                     </column>
+                    <column>
+                        <name>JOBTITLE</name>
+                        <type>VARCHAR</type>
+                    </column>
                 </columns>
                 <rows>
                     <row>
@@ -79,6 +83,7 @@
                         <v>France</v>
                         <v>1370</v>
                         <v>21000.0</v>
+                        <v>owner</v>
                     </row>
                     <row>
                         <v>112</v>
@@ -94,6 +99,7 @@
                         <v>USA</v>
                         <v>1166</v>
                         <v>71800.0</v>
+                        <v>coo</v>
                     </row>
                     <row>
                         <v>114</v>
@@ -109,6 +115,7 @@
                         <v>Australia</v>
                         <v>1611</v>
                         <v>117300.0</v>
+                        <v>coo</v>
                     </row>
                     <row>
                         <v>119</v>
@@ -124,6 +131,7 @@
                         <v>France</v>
                         <v>1370</v>
                         <v>118200.0</v>
+                        <v>Manager</v>
                     </row>
                     <row>
                         <v>121</v>
@@ -139,6 +147,7 @@
                         <v>Norway</v>
                         <v>1504</v>
                         <v>81700.0</v>
+                        <v>database specialist</v>
                     </row>
                     <row>
                         <v>124</v>
@@ -154,6 +163,7 @@
                         <v>USA</v>
                         <v>1165</v>
                         <v>210500.0</v>
+                        <v>vice-president</v>
                     </row>
                     <row>
                         <v>125</v>
@@ -169,6 +179,7 @@
                         <v>Poland</v>
                         <v/>
                         <v>0.0</v>
+                        <v>marketing manager</v>
                     </row>
                     <row>
                         <v>128</v>
@@ -184,6 +195,7 @@
                         <v>Germany</v>
                         <v>1504</v>
                         <v>59700.0</v>
+                        <v>student assistant</v>
                     </row>
                     <row>
                         <v>129</v>
@@ -199,6 +211,7 @@
                         <v>USA</v>
                         <v>1165</v>
                         <v>64600.0</v>
+                        <v>programmer</v>
                     </row>
                     <row>
                         <v>131</v>
@@ -214,6 +227,7 @@
                         <v>USA</v>
                         <v>1323</v>
                         <v>114900.0</v>
+                        <v>owner</v>
                     </row>
                     <row>
                         <v>141</v>
@@ -229,6 +243,7 @@
                         <v>Spain</v>
                         <v>1370</v>
                         <v>227600.0</v>
+                        <v>head of marketing</v>
                     </row>
                     <row>
                         <v>144</v>
@@ -244,6 +259,7 @@
                         <v>Sweden</v>
                         <v>1504</v>
                         <v>53100.0</v>
+                        <v>database designer</v>
                     </row>
                     <row>
                         <v>145</v>
@@ -259,6 +275,7 @@
                         <v>Denmark</v>
                         <v>1401</v>
                         <v>83400.0</v>
+                        <v>software engineer</v>
                     </row>
                     <row>
                         <v>146</v>
@@ -274,6 +291,7 @@
                         <v>France</v>
                         <v>1337</v>
                         <v>123900.0</v>
+                        <v>web developer</v>
                     </row>
                     <row>
                         <v>148</v>
@@ -289,6 +307,7 @@
                         <v>Singapore</v>
                         <v>1621</v>
                         <v>103800.0</v>
+                        <v>Marketeer</v>
                     </row>
                     <row>
                         <v>151</v>
@@ -304,6 +323,7 @@
                         <v>USA</v>
                         <v>1286</v>
                         <v>138500.0</v>
+                        <v>database specialist</v>
                     </row>
                     <row>
                         <v>157</v>
@@ -319,6 +339,7 @@
                         <v>USA</v>
                         <v>1216</v>
                         <v>100600.0</v>
+                        <v>marketing manager</v>
                     </row>
                     <row>
                         <v>161</v>
@@ -334,6 +355,7 @@
                         <v>USA</v>
                         <v>1165</v>
                         <v>84600.0</v>
+                        <v>ceo</v>
                     </row>
                     <row>
                         <v>166</v>
@@ -349,6 +371,7 @@
                         <v>Singapore</v>
                         <v>1612</v>
                         <v>97900.0</v>
+                        <v>cio</v>
                     </row>
                     <row>
                         <v>167</v>
@@ -364,6 +387,7 @@
                         <v>Norway</v>
                         <v>1504</v>
                         <v>96800.0</v>
+                        <v>student assistant</v>
                     </row>
                 </rows>
             </table>

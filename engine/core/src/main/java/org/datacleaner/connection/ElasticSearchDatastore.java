@@ -33,6 +33,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 
+import com.google.common.base.Strings;
+
 /**
  * Datastore providing access to an ElasticSearch index.
  */
@@ -113,8 +115,10 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
                 if (_ssl) {
-                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
-                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    if(!Strings.isNullOrEmpty(_keystorePath)) {
+                        settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
+                        settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    }
                     settingsBuilder.put("shield.transport.ssl", "true");
                 }
             }

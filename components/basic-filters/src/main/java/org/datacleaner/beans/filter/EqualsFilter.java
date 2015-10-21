@@ -54,7 +54,13 @@ import com.google.common.base.Joiner;
 @Description("A filter that excludes values that are not equal (=) to specific set of valid values")
 @Categorized(FilterCategory.class)
 @Distributed(true)
-public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, HasLabelAdvice {
+public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>, HasLabelAdvice {
+
+    public static enum Category {
+        @Alias("VALID") @Description("Outcome when the operands of the filter are equal.") EQUALS,
+
+        @Alias("INVALID") @Description("Outcome when the operands of the filter are not equal.") NOT_EQUALS;
+    }
 
     @Inject
     @Configured(order = 1)
@@ -168,7 +174,7 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
     }
 
     @Override
-    public ValidationCategory categorize(InputRow inputRow) {
+    public EqualsFilter.Category categorize(InputRow inputRow) {
         Object inputValue = inputRow.getValue(inputColumn);
 
         final Object compareValue;
@@ -181,11 +187,11 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
         return filter(inputValue, compareValue);
     }
 
-    public ValidationCategory filter(final Object v) {
+    public EqualsFilter.Category filter(final Object v) {
         return filter(v, null);
     }
 
-    public ValidationCategory filter(final Object v, final Object compareValue) {
+    public EqualsFilter.Category filter(final Object v, final Object compareValue) {
         if (compareColumn != null) {
             operands[0] = toOperand(compareValue);
         }
@@ -193,10 +199,10 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
         if (v == null) {
             for (Object obj : operands) {
                 if (obj == null) {
-                    return ValidationCategory.VALID;
+                    return Category.EQUALS;
                 }
             }
-            return ValidationCategory.INVALID;
+            return Category.NOT_EQUALS;
         } else {
             for (Object operand : operands) {
                 if (operand != null) {
@@ -205,18 +211,18 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
                         Number n1 = (Number) operand;
                         Number n2 = (Number) v;
                         if (equals(n1, n2)) {
-                            return ValidationCategory.VALID;
+                            return Category.EQUALS;
                         }
                     } else {
                         if (operand.equals(v)) {
-                            return ValidationCategory.VALID;
+                            return Category.EQUALS;
                         }
                         if (operand instanceof String) {
                             // convert to string to check
                             String str1 = operand.toString();
                             String str2 = v.toString();
                             if (str1.equals(str2)) {
-                                return ValidationCategory.VALID;
+                                return Category.EQUALS;
                             }
                         }
                     }
@@ -224,7 +230,7 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
             }
         }
 
-        return ValidationCategory.INVALID;
+        return Category.NOT_EQUALS;
     }
 
     private boolean equals(Number n1, Number n2) {
@@ -237,7 +243,7 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
     }
 
     @Override
-    public boolean isOptimizable(ValidationCategory category) {
+    public boolean isOptimizable(Category category) {
         if (compareColumn != null && compareValues != null && compareValues.length > 0) {
             boolean hasCompareValues = false;
             for (String compareValue : compareValues) {
@@ -251,9 +257,9 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
     }
 
     @Override
-    public Query optimizeQuery(Query q, ValidationCategory category) {
+    public Query optimizeQuery(Query q, Category category) {
         final Column inputPhysicalColumn = inputColumn.getPhysicalColumn();
-        if (category == ValidationCategory.VALID) {
+        if (category == Category.EQUALS) {
             if (compareColumn == null) {
                 final SelectItem selectItem = new SelectItem(inputPhysicalColumn);
                 final List<FilterItem> filterItems = new ArrayList<FilterItem>();

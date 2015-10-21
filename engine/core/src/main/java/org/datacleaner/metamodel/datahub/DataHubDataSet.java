@@ -74,13 +74,13 @@ public class DataHubDataSet extends AbstractDataSet {
      * @param query
      * @param connection
      */
-    public DataHubDataSet(Query query, DataHubRepoConnection connection) {
+    public DataHubDataSet(String tenantName, Query query, DataHubRepoConnection connection) {
         super(getSelectItems(query));
         Table table = query.getFromClause().getItem(0).getTable();
         _queryString = getQueryString(query, table);
         _query = query;
         _connection = connection;
-        _uri = createEncodedUri(connection, table);
+        _uri = createEncodedUri(tenantName, table);
         _paging = query.getMaxRows() == null;
         _nextPageFirstRow = 1;
         _nextPageMaxRows = PAGE_SIZE;
@@ -153,9 +153,10 @@ public class DataHubDataSet extends AbstractDataSet {
         return query.getSelectClause().getItems();
     }
 
-    private String createEncodedUri(DataHubRepoConnection connection, Table table) {
+    private String createEncodedUri(String tenantName, Table table) {
         String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
-        return _connection.getQueryUrl(connection, datastoreName);
+        
+        return _connection.getQueryUrl(tenantName, datastoreName);
     }
 
     private String getQueryString(Query query, Table table) {
@@ -179,7 +180,7 @@ public class DataHubDataSet extends AbstractDataSet {
         }
         final SelectClause selectClause = query.getSelectClause();
         for (SelectItem selectItem : selectClause.getItems()) {
-            if (selectItem.getFunction() != null) {
+            if (selectItem.getAggregateFunction() != null) {
                 return false;
             }
         }

@@ -73,6 +73,7 @@
             <package recursive="true">com.hi</package>
             <package recursive="true">com.neopost</package>
         </classpath-scanner>
+        <!--
         <remote-components>
             <server>
                 <url>http://localhost:8888</url>
@@ -80,5 +81,6 @@
                 <password>oFm53KJ9K+w=</password>
             </server>
         </remote-components>
+        -->
     </descriptor-providers>
 </configuration>

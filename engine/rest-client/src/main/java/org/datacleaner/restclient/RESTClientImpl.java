@@ -24,8 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.MediaType;
 
-import org.datacleaner.util.SecurityUtils;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -37,14 +35,14 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 public class RESTClientImpl implements RESTClient {
     private Client client = null;
 
-    private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
+    private static Map<Integer, Client> clientCache = new ConcurrentHashMap<>();
 
     public RESTClientImpl(String username, String password) {
         if (username == null) {
             username = "";
         }
 
-        String cacheKey = makeKey(username, password);
+        int cacheKey = makeKey(username, password);
         client = clientCache.get(cacheKey);
 
         if (client == null) {
@@ -62,8 +60,8 @@ public class RESTClientImpl implements RESTClient {
         return client;
     }
 
-    private String makeKey(String username, String password) {
-        return SecurityUtils.encodePassword(username+password);
+    private int makeKey(String username, String password) {
+        return (username+password).hashCode();
     }
 
     /**

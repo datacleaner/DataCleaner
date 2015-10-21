@@ -27,7 +27,7 @@ import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 
 /**
- * Default (immutable) implementation of {@liDataCleanerEnvironmentImplnk DataCleanerEnvironment}.
+ * Default (immutable) implementation of {@link DataCleanerEnvironmentImpl}.
  */
 public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
 

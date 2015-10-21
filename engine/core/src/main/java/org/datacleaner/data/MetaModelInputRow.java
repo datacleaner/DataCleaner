@@ -70,7 +70,7 @@ public final class MetaModelInputRow extends AbstractInputRow {
         Column physicalColumn = inputColumn.getPhysicalColumn();
         SelectItem[] selectItems = _row.getSelectItems();
         for (SelectItem selectItem : selectItems) {
-            if (selectItem.getColumn() != null && selectItem.getFunction() == null) {
+            if (selectItem.getColumn() != null && selectItem.getAggregateFunction() == null) {
                 Column column = selectItem.getColumn();
                 if (physicalColumn.equals(column)) {
                     return true;
@@ -133,7 +133,7 @@ public final class MetaModelInputRow extends AbstractInputRow {
         List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
         SelectItem[] selectItems = _row.getSelectItems();
         for (SelectItem selectItem : selectItems) {
-            if (selectItem.getColumn() != null && selectItem.getFunction() == null) {
+            if (selectItem.getColumn() != null && selectItem.getAggregateFunction() == null) {
                 result.add(new MetaModelInputColumn(selectItem.getColumn()));
             }
         }

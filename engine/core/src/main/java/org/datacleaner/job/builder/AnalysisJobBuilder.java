@@ -724,8 +724,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Used to verify whether or not the builder's configuration is valid and
-     * all properties are satisfied.
+     * Used to verify whether or not the builder's and its immediate children
+     * configuration is valid and all properties are satisfied.
      *
      * @param throwException
      *            whether or not an exception should be thrown in case of
@@ -746,6 +746,11 @@ public final class AnalysisJobBuilder implements Closeable {
      */
     public boolean isConfigured(final boolean throwException) throws UnconfiguredConfiguredPropertyException,
             ComponentValidationException, NoResultProducingComponentsException, IllegalStateException {
+        return checkConfiguration(throwException) && isConsumedOutDataStreamsJobBuilderConfigured(throwException);
+    }
+
+    private boolean checkConfiguration(final boolean throwException) throws IllegalStateException,
+            NoResultProducingComponentsException, ComponentValidationException, UnconfiguredConfiguredPropertyException {
         if (_datastoreConnection == null) {
             if (throwException) {
                 throw new IllegalStateException("No Datastore or DatastoreConnection set");
@@ -789,8 +794,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Used to verify whether or not the builder's configuration is valid and
-     * all properties are satisfied.
+     * Used to verify whether or not the builder's and its immediate children
+     * configuration is valid and all properties are satisfied.
      *
      * @return true if the analysis job builder is correctly configured
      */
@@ -1074,7 +1079,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener) {
-        _sourceColumnListeners.add(sourceColumnChangeListener);
+        if(!_sourceColumnListeners.contains(sourceColumnChangeListener)) {
+            _sourceColumnListeners.add(sourceColumnChangeListener);
+        }
     }
 
     public void removeSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener) {
@@ -1082,7 +1089,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addTransformerChangeListener(TransformerChangeListener transformerChangeListener) {
-        _transformerChangeListeners.add(transformerChangeListener);
+        if(!_transformerChangeListeners.contains(transformerChangeListener)) {
+            _transformerChangeListeners.add(transformerChangeListener);
+        }
     }
 
     public void removeTransformerChangeListener(TransformerChangeListener transformerChangeListener) {
@@ -1090,7 +1099,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener) {
-        _analyzerChangeListeners.add(analyzerChangeListener);
+        if(!_analyzerChangeListeners.contains(analyzerChangeListener)) {
+            _analyzerChangeListeners.add(analyzerChangeListener);
+        }
     }
 
     public void removeAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener) {
@@ -1106,7 +1117,9 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener) {
-        _analysisJobChangeListeners.add(analysisJobChangeListener);
+        if(!_analysisJobChangeListeners.contains(analysisJobChangeListener)){
+            _analysisJobChangeListeners.add(analysisJobChangeListener);
+        }
     }
 
     public void removeAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener) {
@@ -1367,5 +1380,18 @@ public final class AnalysisJobBuilder implements Closeable {
             }
         }
         return consumedOutputDataStreamJobBuilders;
+    }
+
+    /**
+     * Checks if a job children are configured.
+     **/
+    private boolean isConsumedOutDataStreamsJobBuilderConfigured(final boolean throwException) {
+        final List<AnalysisJobBuilder> consumedOutputDataStreamsJobBuilders = getConsumedOutputDataStreamsJobBuilders();
+        for (final AnalysisJobBuilder analysisJobBuilder : consumedOutputDataStreamsJobBuilders) {
+            if (!analysisJobBuilder.isConfigured(throwException)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -167,7 +167,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().addTransformerChangeListener(this);
+        getAnalysisJobBuilder().removeTransformerChangeListener(this);
     }
 
     public PropertyWidget<?> getUnitPropertyWidget() {

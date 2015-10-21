@@ -38,7 +38,6 @@ import org.datacleaner.beans.NumberAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.filter.EqualsFilter;
-import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzer;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
@@ -493,7 +492,7 @@ public class ClusterTestHelper {
                 jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME",
                         "CUSTOMERS.CONTACTLASTNAME");
 
-                final FilterComponentBuilder<EqualsFilter, ValidationCategory> equalsFilter = jobBuilder
+                final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> equalsFilter = jobBuilder
                         .addFilter(EqualsFilter.class);
                 equalsFilter.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
                 equalsFilter.getComponentInstance().setValues(new String[] { "-1000000" });
@@ -501,7 +500,7 @@ public class ClusterTestHelper {
                 final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder
                         .addAnalyzer(StringAnalyzer.class);
                 stringAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(String.class));
-                stringAnalyzer.setRequirement(equalsFilter, ValidationCategory.VALID);
+                stringAnalyzer.setRequirement(equalsFilter, EqualsFilter.Category.EQUALS);
 
                 job = jobBuilder.toAnalysisJob();
             } finally {

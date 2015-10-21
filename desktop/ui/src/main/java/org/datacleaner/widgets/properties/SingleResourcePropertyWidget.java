@@ -35,7 +35,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.convert.ResourceConverter;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
 
@@ -131,10 +131,10 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
      * @deprecated use {@link #getResourceTextField()} instead
      */
     @Deprecated
-    public FilenameTextField getFilenameField() {
+    public AbstractResourceTextField<?> getFilenameField() {
         final ResourceTypePresenter<?> presenter = _resourceTextField.getResourceTypePresenter("file");
-        if (presenter instanceof FilenameTextField) {
-            return (FilenameTextField) presenter;
+        if (presenter instanceof AbstractResourceTextField) {
+            return (AbstractResourceTextField<?>) presenter;
         }
         return null;
     }

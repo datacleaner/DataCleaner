@@ -121,7 +121,7 @@ public class ResultMetricsController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<MetricIdentifier> getMetricsJson(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName) throws IOException {

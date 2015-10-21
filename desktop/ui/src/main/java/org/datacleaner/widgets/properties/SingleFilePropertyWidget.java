@@ -35,6 +35,7 @@ import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 
@@ -96,7 +97,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
         _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onSelected(final FilenameTextField filenameTextField, final File file) {
                 if (file != null) {
                     final File dir = file.getParentFile();
                     _userPreferences.setConfiguredFileDirectory(dir);
@@ -113,7 +114,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         return _filenameField.getFile() != null;
     }
 
-    public FilenameTextField getFilenameField() {
+    public AbstractResourceTextField<?> getFilenameField() {
         return _filenameField;
     }
 

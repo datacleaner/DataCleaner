@@ -192,6 +192,9 @@ public class ComponentHandler {
     }
 
     public Collection<List<Object[]>> runComponent(JsonNode data) {
+        if (data == null) {
+            return null;
+        }
 
         if (component instanceof Transformer) {
             return runTransformer(data);

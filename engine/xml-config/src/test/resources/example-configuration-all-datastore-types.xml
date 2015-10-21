@@ -196,6 +196,16 @@
 			</table-def>
 		</couchdb-datastore>
 
+		<datahub-datastore name="my_datahub">
+			<host>hostname</host>
+			<port>1234</port>
+			<username>user</username>
+			<password>SECRET</password>
+			<https>false</https>
+			<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>
+			<datahubsecuritymode>DEFAULT</datahubsecuritymode>
+		</datahub-datastore>
+
 		<pojo-datastore name="my_pojo"
 			description="A datastore based on plain values">
 			<schema-name>my_schema</schema-name>

@@ -88,8 +88,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
-        ComponentDescriptorsUpdatedListener {
+public class SchemaTree extends JXTree
+        implements TreeWillExpandListener, TreeCellRenderer, ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
 
@@ -282,8 +282,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             final List<ComponentDescriptor<?>> filteredComponentDescriptors = new ArrayList<>();
 
             for (ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
-                final String displayName = componentDescriptor.getDisplayName();
-                if (displayName.toLowerCase().contains(_searchTerm.toLowerCase())) {
+                if (matchesSearchTerm(componentDescriptor)) {
                     filteredComponentDescriptors.add(componentDescriptor);
                 }
             }
@@ -326,6 +325,40 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             libraryRoot.add(new DefaultMutableTreeNode(NO_COMPONENTS_FOUND_SEARCH_RESULT));
         }
         return libraryRoot;
+    }
+
+    private boolean matchesSearchTerm(ComponentDescriptor<?> componentDescriptor) {
+        final String searchTerm = normalizeStringForMatching(_searchTerm);
+        if (searchTerm.isEmpty()) {
+            return true;
+        }
+        
+        final String displayName = normalizeStringForMatching(componentDescriptor.getDisplayName());
+        if (displayName.contains(searchTerm)) {
+            return true;
+        }
+        
+        final String[] aliases = componentDescriptor.getAliases();
+        for (String alias : aliases) {
+            alias = normalizeStringForMatching(alias);
+            if (alias.contains(searchTerm)) {
+                return true;
+            }
+        }
+        
+        final Set<ComponentCategory> categories = componentDescriptor.getComponentCategories();
+        for (ComponentCategory category : categories) {
+            final String categoryString = normalizeStringForMatching(category.getName());
+            if (categoryString.contains(searchTerm)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private static String normalizeStringForMatching(String str) {
+     return   StringUtils.replaceWhitespaces(str, "").toLowerCase();
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
@@ -487,8 +520,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         } else if (value instanceof Column) {
             Column column = (Column) value;
             String columnLabel = column.getName();
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf,
-                    row, hasFocus);
+            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf, row,
+                    hasFocus);
             icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentSuperCategory) {
             ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
@@ -629,10 +662,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         if (!searchTerm.equals("")) {
             final TreeNode root = (TreeNode) getModel().getRoot();
             final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
-            Enumeration<?> depthFirstEnumeration = libraryNode.depthFirstEnumeration();
+            final Enumeration<?> depthFirstEnumeration = libraryNode.depthFirstEnumeration();
             while (depthFirstEnumeration.hasMoreElements()) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
-                TreePath treePath = new TreePath(node.getPath());
+                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
+                final TreePath treePath = new TreePath(node.getPath());
                 expandPath(treePath);
             }
         }

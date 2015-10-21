@@ -100,8 +100,6 @@ public class ComponentHandler {
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration) {
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
-    }
-
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
         descriptor = resolveDescriptor(_componentName);

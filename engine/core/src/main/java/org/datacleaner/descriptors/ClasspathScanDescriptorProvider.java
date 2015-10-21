@@ -40,6 +40,7 @@ import java.util.jar.JarFile;
 
 import javax.inject.Named;
 
+import com.fasterxml.jackson.databind.annotation.NoClass;
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
@@ -610,7 +611,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofAnalyzer(clazz);
                 _analyzerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -624,7 +625,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofTransformer(clazz);
                 _transformerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -637,7 +638,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofFilterUnbound(clazz);
                 _filterBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -650,7 +651,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofRenderer(clazz);
                 _rendererBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }

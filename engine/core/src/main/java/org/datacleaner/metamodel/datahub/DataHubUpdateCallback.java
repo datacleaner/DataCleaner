@@ -122,8 +122,13 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         flushUpdates();
     }
 
-    public void executeDelete(String grId) {
-        _dataContext.executeDelete(grId);
+    public void executeDeleteGoldenRecord(String grId) {
+        _dataContext.executeGoldenRecordDelete(grId);
+        
+    }
+
+    public void executeDeleteSourceRecord(String source, String id, String recordType) {
+        _dataContext.executeSourceRecordDelete(source, id, recordType);
         
     }
 

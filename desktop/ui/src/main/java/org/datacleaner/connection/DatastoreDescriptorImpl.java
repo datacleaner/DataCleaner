@@ -28,11 +28,12 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     private final Class<? extends Datastore> _datastoreClass;
     private final Class<? extends AbstractDatastoreDialog<? extends Datastore>> _datastoreDialogClass;
     private final String _iconPath;
+    private final boolean _promoted;
 
     public DatastoreDescriptorImpl(final String name, String description,
             final Class<? extends Datastore> datastoreClass,
             final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
-            final String iconPath) {
+            final String iconPath, final boolean promoted) {
         if (name == null) {
             throw new IllegalArgumentException("The name of the datastore cannot be null");
         }
@@ -46,6 +47,7 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         _datastoreClass = datastoreClass;
         _datastoreDialogClass = datastoreDialogClass;
         _iconPath = iconPath;
+        _promoted = promoted;
     }
 
     @Override
@@ -71,6 +73,11 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     @Override
     public String getIconPath() {
         return _iconPath;
+    }
+
+    @Override
+    public boolean isPromoted() {
+        return _promoted;
     }
 
     @Override

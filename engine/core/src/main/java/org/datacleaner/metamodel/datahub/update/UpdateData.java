@@ -19,26 +19,28 @@
  */
 package org.datacleaner.metamodel.datahub.update;
 
+import java.util.Map;
+
 /**
- * POJO for transferring updated records from DataCleaner
- * to the DataHub update REST service. 
+ * POJO for transferring updated records from DataCleaner to the DataHub update
+ * REST service.
  *
  */
 public class UpdateData {
-    
+
     private final String grId;
-    private final UpdateField[] fields;
-    
-    public UpdateData(String grId, UpdateField[] fields) {
+    private final Map<String, Object> fields;
+
+    public UpdateData(String grId, Map<String, Object> fields) {
         this.grId = grId;
-        this.fields = fields;       
+        this.fields = fields;
     }
 
     public String getGrId() {
         return grId;
     }
 
-    public UpdateField[] getFields() {
+    public Map<String, Object> getFields() {
         return fields;
     }
 

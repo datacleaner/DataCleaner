@@ -19,12 +19,9 @@
  */
 package org.datacleaner.job.runner;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
-import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -39,6 +36,8 @@ import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
 import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 public class RowProcessingMetricsImplTest extends TestCase {
 
@@ -78,11 +77,11 @@ public class RowProcessingMetricsImplTest extends TestCase {
     public void testGetExpectedRowCountEquals() throws Exception {
         AnalysisJobBuilder ajb = createAnalysisJobBuilder();
 
-        FilterComponentBuilder<EqualsFilter, ValidationCategory> filter = ajb.addFilter(EqualsFilter.class);
+        FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> filter = ajb.addFilter(EqualsFilter.class);
         filter.addInputColumns(ajb.getSourceColumns());
         filter.getComponentInstance().setValues(new String[] { "1002", "1165" });
 
-        ajb.setDefaultRequirement(filter.getFilterOutcome(ValidationCategory.VALID));
+        ajb.setDefaultRequirement(filter.getFilterOutcome(EqualsFilter.Category.EQUALS));
 
         job = ajb.toAnalysisJob();
 
@@ -93,7 +92,7 @@ public class RowProcessingMetricsImplTest extends TestCase {
         AnalysisJobBuilder ajb = createAnalysisJobBuilder();
 
         // there's 21 records that are not 1056 or 1165
-        FilterComponentBuilder<EqualsFilter, ValidationCategory> filter1 = ajb.addFilter(EqualsFilter.class);
+        FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> filter1 = ajb.addFilter(EqualsFilter.class);
         filter1.addInputColumns(ajb.getSourceColumns());
         filter1.getComponentInstance().setValues(new String[] { "1056", "1165" });
 
@@ -103,7 +102,7 @@ public class RowProcessingMetricsImplTest extends TestCase {
         ajb.addSourceColumns("PUBLIC.EMPLOYEES.REPORTSTO");
         filter2.addInputColumn(ajb.getSourceColumnByName("reportsto"));
         filter2.getComponentInstance().setConsiderEmptyStringAsNull(true);
-        filter2.setRequirement(filter1.getFilterOutcome(ValidationCategory.INVALID));
+        filter2.setRequirement(filter1.getFilterOutcome(EqualsFilter.Category.NOT_EQUALS));
 
         ajb.getAnalyzerComponentBuilders().get(0)
                 .setRequirement(filter2.getFilterOutcome(NullCheckFilter.NullCheckCategory.NOT_NULL));

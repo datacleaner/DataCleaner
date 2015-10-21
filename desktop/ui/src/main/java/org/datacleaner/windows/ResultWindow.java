@@ -552,8 +552,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             @Override
             public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
                     final int currentRow) {
-                logger.info("rowProcessingProgress: {}", job.getDatastore().getName());
-
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 

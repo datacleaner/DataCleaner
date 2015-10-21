@@ -88,12 +88,12 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
     @Override
     public final void actionPerformed(ActionEvent e) {
-        MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+        final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
         if (monitorConnection == null) {
-            MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
+            final MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
             dialog.open();
         } else {
-            boolean cont = doBeforeAction();
+            final boolean cont = doBeforeAction();
             if (!cont) {
                 return;
             }

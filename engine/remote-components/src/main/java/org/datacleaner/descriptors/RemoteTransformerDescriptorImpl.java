@@ -38,14 +38,13 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
     private String baseUrl;
-    private String tenant;
     private String superCategoryName;
     private Set<String> categoryNames;
     private String username;
     private String password;
     private byte[] iconData;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String tenant,
+    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName,
                                            String superCategoryName, Set<String> categoryNames, byte[] iconData,
                                            String username, String password) {
         super(RemoteTransformer.class);
@@ -56,7 +55,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
-        this.tenant = tenant;
         try {
             this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
             this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
@@ -117,7 +115,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
         for(ConfiguredPropertyDescriptor prop: (Set<ConfiguredPropertyDescriptor>)_configuredProperties) {
             if(prop instanceof RemoteConfiguredPropertyDescriptor) {
                 ((RemoteConfiguredPropertyDescriptor)prop).setDefaultValue(t);

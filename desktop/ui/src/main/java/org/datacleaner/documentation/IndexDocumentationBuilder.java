@@ -22,42 +22,97 @@ package org.datacleaner.documentation;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Collection;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.widgets.DescriptorMenuBuilder;
+import org.datacleaner.widgets.DescriptorMenuBuilder.MenuCallback;
+
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class IndexDocumentationBuilder {
 
     private final DescriptorProvider _descriptorProvider;
+    private final Configuration _freemarkerConfiguration;
+    private final Template _template;
 
     public IndexDocumentationBuilder(DescriptorProvider descriptorProvider) {
         _descriptorProvider = descriptorProvider;
-    }
+        _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
-    public void write(OutputStream out) throws IOException {
-        final OutputStreamWriter writer = new OutputStreamWriter(out);
-        final Collection<? extends ComponentDescriptor<?>> componentDescriptors = _descriptorProvider
-                .getComponentDescriptors();
-        writer.write("<ul>");
-        for (ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
-            String filename = getFilename(componentDescriptor);
-            writer.write("<li><a href=\"");
-            writer.write(filename);
-            writer.write("\">");
-            writer.write(componentDescriptor.getDisplayName());
-            writer.write("</a></li>");
+        final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(), "");
+        _freemarkerConfiguration.setTemplateLoader(templateLoader);
+        try {
+            _template = _freemarkerConfiguration.getTemplate("template_index.html");
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load template", e);
         }
-        writer.write("</ul>");
-        writer.flush();
     }
 
-    public static String getFilename(ComponentDescriptor<?> componentDescriptor) {
-        final String displayName = componentDescriptor.getDisplayName();
-        final String filename = StringUtils.replaceWhitespaces(displayName.toLowerCase().trim(), "_")
-                .replaceAll("\\/", "_").replaceAll("\\\\", "_");
-        return filename + ".html";
+    public void write(OutputStream outputStream) throws IOException {
+        final Map<ComponentSuperCategory, SuperCategoryDocumentationWrapper> superCategories = new TreeMap<>();
+
+        final MenuCallback callback = new MenuCallback() {
+            @Override
+            public void addComponentDescriptor(ComponentDescriptor<?> descriptor) {
+                final ComponentSuperCategory superCategory = descriptor.getComponentSuperCategory();
+                SuperCategoryDocumentationWrapper superCategoryWrapper = superCategories.get(superCategory);
+                if (superCategoryWrapper == null) {
+                    superCategoryWrapper = new SuperCategoryDocumentationWrapper(superCategory);
+                    superCategories.put(superCategory, superCategoryWrapper);
+                }
+
+                final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
+                final ComponentDocumentationWrapper componentWrapper = new ComponentDocumentationWrapper(descriptor);
+
+                if (componentCategories.isEmpty()) {
+                    superCategoryWrapper.addComponent(componentWrapper);
+                } else {
+                    for (ComponentCategory componentCategory : componentCategories) {
+                        superCategoryWrapper.addComponent(componentCategory, componentWrapper);
+                    }
+                }
+            }
+
+            @Override
+            public void addCategory(ComponentCategory category) {
+            }
+
+        };
+        DescriptorMenuBuilder.createMenuStructure(callback, _descriptorProvider.getComponentDescriptors(), true);
+
+        final Map<String, Object> data = new HashMap<>();
+
+        try {
+            data.put("superCategories", superCategories.values());
+
+            /* Write data to a file */
+            final Writer out = new OutputStreamWriter(outputStream);
+            _template.process(data, out);
+            out.flush();
+            out.close();
+        } catch (TemplateException e) {
+            throw new IllegalStateException("Unexpected templare exception", e);
+        }
     }
 
+    /**
+     * Gets the freemarker configuration.
+     * 
+     * @return
+     */
+    public Configuration getFreemarkerconfiguration() {
+        return _freemarkerConfiguration;
+    }
 }

@@ -40,6 +40,6 @@ public class ComponentHandlerFactory {
      */
     public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
             ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, remoteComponentsConfiguration);
+        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, remoteComponentsConfiguration);
     }
 }

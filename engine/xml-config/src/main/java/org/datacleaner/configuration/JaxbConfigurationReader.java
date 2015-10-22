@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -169,8 +170,6 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * Configuration reader that uses the JAXB model to read XML file based
@@ -375,9 +374,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof ClasspathScannerType) {
             return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
         } else if(providerElement instanceof RemoteComponentsType) {
-            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
         } else {
-            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+            throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
     }
 
@@ -409,9 +408,16 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement,
+                                                              DataCleanerEnvironment dataCleanerEnvironment) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        CredentialsProvider credentialsProvider = dataCleanerEnvironment.getCredentialsProvider();
+
+        credentialsProvider.setHost(server.getUrl());
+        credentialsProvider.setUsername(server.getUsername());
+        credentialsProvider.setPassword(SecurityUtils.decodePassword(server.getPassword()));
+
+        return new RemoteDescriptorProvider(dataCleanerEnvironment.getCredentialsProvider());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

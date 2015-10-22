@@ -51,6 +51,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
         _delegate = delegate;
     }
 
+    public void refresh() {
+        if (_delegate != null) {
+            _delegate.refresh();
+        }
+    }
+
     public DescriptorProvider getDelegate() {
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
@@ -158,7 +164,4 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
         getDelegate().removeComponentDescriptorsUpdatedListener(listener);
     }
-
-    
-    
 }

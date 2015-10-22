@@ -17,32 +17,46 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package org.datacleaner.configuration;
 
 /**
- * @Since 7/31/15
- *
- * Simple holder for configuration data. It is used for creating components.
+ * @since 15. 10. 2015
  */
-public class CreateInput {
-    @JsonProperty
-    public ComponentConfiguration configuration;
+public class RemoteComponentsCredentialsProvider implements CredentialsProvider {
+    private String host;
+    private String username;
+    private String password;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CreateInput that = (CreateInput) o;
-
-        return !(configuration != null ? !configuration.equals(that.configuration) : that.configuration != null);
-
+    public CredentialsProvider setHost(String host) {
+        this.host = host.replaceAll("/+$", "");
+        return this;
     }
 
     @Override
-    public int hashCode() {
-        return configuration != null ? configuration.hashCode() : 0;
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public CredentialsProvider setUsername(String username) {
+        this.username = username.trim();
+        return this;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public CredentialsProvider setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 }

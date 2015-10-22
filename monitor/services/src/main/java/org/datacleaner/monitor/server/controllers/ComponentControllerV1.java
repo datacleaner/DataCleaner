@@ -119,8 +119,13 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     @PreDestroy
-    public void close() throws InterruptedException {
-        _componentCache.close();
+    public void close() {
+        try {
+            _componentCache.close();
+        }
+        catch (InterruptedException e) {
+            logger.warn(e.getMessage());
+        }
     }
 
     /**
@@ -182,7 +187,6 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
                 createInput.configuration, _remoteComponentsConfiguration);
-        handler.createComponent(createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();

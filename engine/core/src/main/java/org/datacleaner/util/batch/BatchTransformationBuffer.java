@@ -61,6 +61,8 @@ public class BatchTransformationBuffer<I, O> {
     private final ScheduledExecutorService _threadPool;
     private final int _flushInterval;
 
+    private Throwable exception;
+
     public BatchTransformationBuffer(BatchTransformation<I, O> transformation) {
         this(transformation, DEFAULT_MAX_BATCH_SIZE, DEFAULT_FLUSH_INTERVAL);
     }
@@ -83,7 +85,13 @@ public class BatchTransformationBuffer<I, O> {
         return new Runnable() {
             @Override
             public void run() {
-                flushBuffer(true);
+                try {
+                    flushBuffer(true);
+                } catch(Throwable t) {
+                    logger.warn("Cannot flush buffer", t);
+                    exception = t;
+                    shutdown();
+                }
             }
         };
     }
@@ -156,6 +164,12 @@ public class BatchTransformationBuffer<I, O> {
 
         int attemptIndex = 0;
         while (true) {
+            rethrowException();
+            if(_threadPool.isShutdown()) {
+                // Re-check the exception from background thread - it is preferred
+                rethrowException();
+                throw new RuntimeException("Transformer closed");
+            }
             final long waitTime = (attemptIndex < AWAIT_TIMES.length ? AWAIT_TIMES[attemptIndex]
                     : AWAIT_TIMES[AWAIT_TIMES.length - 1]);
 
@@ -168,11 +182,22 @@ public class BatchTransformationBuffer<I, O> {
                 flushBuffer();
                 attemptIndex++;
             } catch (Exception e) {
+                if(exception == null) {
+                    exception = e;
+                }
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    /** Re-throws the exception from background thread */
+    private void rethrowException() {
+        if(exception != null) {
+            if(exception instanceof RuntimeException) { throw (RuntimeException) exception; }
+            throw new RuntimeException(exception);
         }
     }
 }

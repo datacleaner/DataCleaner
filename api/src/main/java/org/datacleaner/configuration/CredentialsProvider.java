@@ -17,29 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
-
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+package org.datacleaner.configuration;
 
 /**
- * Class ComponentsFactory
- * 
- * @since 18.8.15
+ * Box for credentials.
+ * @since 15. 10. 2015
  */
-public class ComponentHandlerFactory {
-
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, remoteComponentsConfiguration);
-    }
+public interface CredentialsProvider {
+    public CredentialsProvider setHost(String host);
+    public String getHost();
+    public CredentialsProvider setUsername(String username);
+    public String getUsername();
+    public CredentialsProvider setPassword(String password);
+    public String getPassword();
 }

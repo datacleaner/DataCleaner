@@ -74,6 +74,9 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
         super(autoDiscover);
     }
 
+    public void refresh() {
+    }
+
     public void addAnalyzerBeanDescriptor(AnalyzerDescriptor<?> analyzerBeanDescriptor) {
         _analyzerBeanDescriptors.add(analyzerBeanDescriptor);
     }
@@ -171,5 +174,4 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
     }
-
 }

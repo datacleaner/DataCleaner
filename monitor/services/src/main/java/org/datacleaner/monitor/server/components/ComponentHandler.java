@@ -62,8 +62,10 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -96,8 +98,10 @@ public class ComponentHandler {
     private final MutableTable table;
     private final Component component;
     private final LifeCycleHelper lifeCycleHelper;
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration) {
+        _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
         columns = new HashMap<>();
@@ -150,7 +154,13 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
-        for (String propertyName : componentConfiguration.getProperties().keySet()) {
+
+        //Admin properties from xml context
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = _remoteComponentsConfiguration.getDefaultValues(descriptor);
+        configuredProperties.putAll(remoteDefaultPropertiesMap);
+
+        //User properties
+        for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if (propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
@@ -420,7 +430,12 @@ public class ComponentHandler {
                     .getAnalyzerDescriptorByDisplayName(componentName);
         }
         if (descriptor == null) {
+            LOGGER.info("Component {} not found.", _componentName);
             throw ComponentNotFoundException.createTypeNotFound(componentName);
+        }
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", _componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
         return descriptor;
     }

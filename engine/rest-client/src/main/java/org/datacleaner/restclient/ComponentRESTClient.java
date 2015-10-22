@@ -81,21 +81,20 @@ public class ComponentRESTClient {
         return call(RESTClient.HttpMethod.POST, getURL(componentName + "?timeout=" + timeout), configuration);
     }
 
-    public ProcessOutput processComponent(final String instanceId, final ProcessInput processInput)
-            throws ComponentNotFoundException {
+    public ProcessOutput processComponent(final String instanceId, final ProcessInput processInput) {
         String inputData = Serializator.stringProcessInput(processInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL("/_instance/" + instanceId), inputData);
 
         return Serializator.processOutput(response);
     }
 
-    public ProcessResult getFinalResult(final String instanceId) throws ComponentNotFoundException {
+    public ProcessResult getFinalResult(final String instanceId) {
         String response = call(RESTClient.HttpMethod.GET, getURL(instanceId + "/result"), "");
 
         return Serializator.processResult(response);
     }
 
-    public void deleteComponent(final String instanceId) throws ComponentNotFoundException {
+    public void deleteComponent(final String instanceId) {
         call(RESTClient.HttpMethod.DELETE, getURL(instanceId), "");
     }
 

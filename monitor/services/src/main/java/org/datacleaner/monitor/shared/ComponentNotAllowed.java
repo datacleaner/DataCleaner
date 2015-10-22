@@ -17,29 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.shared;
 
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Class ComponentsFactory
+ * Class ComponentNotAllowed
  * 
- * @since 18.8.15
  */
-public class ComponentHandlerFactory {
+@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Component is not allowed.")
+public class ComponentNotAllowed extends RuntimeException {
+    private ComponentNotAllowed(String msg) {
+        super(msg);
+    }
 
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, remoteComponentsConfiguration);
+    public static ComponentNotAllowed createInstanceNotAllowed(String componentName) {
+        return new ComponentNotAllowed("Component with name " + componentName + " is not allowed.");
     }
 }

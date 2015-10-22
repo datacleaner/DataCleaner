@@ -74,8 +74,7 @@ public interface ComponentController {
      * @param processInput
      * @return
      */
-    public ProcessOutput processComponent(final String tenant, final String id, final ProcessInput processInput)
-            throws ComponentNotFoundException;
+    public ProcessOutput processComponent(final String tenant, final String id, final ProcessInput processInput);
 
     /**
      * It returns the component's final result.
@@ -83,14 +82,12 @@ public interface ComponentController {
      * @param id
      * @return
      */
-    public ProcessResult getFinalResult(final String tenant, final String id)
-            throws ComponentNotFoundException;
+    public ProcessResult getFinalResult(final String tenant, final String id);
 
     /**
      * It deletes the component.
      * @param tenant
      * @param id
      */
-    public void deleteComponent(final String tenant, final String id)
-            throws ComponentNotFoundException;
+    public void deleteComponent(final String tenant, final String id);
 }

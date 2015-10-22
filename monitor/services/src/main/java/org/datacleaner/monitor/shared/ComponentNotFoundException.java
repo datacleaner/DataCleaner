@@ -17,29 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.shared;
 
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-/**
- * Class ComponentsFactory
- * 
- * @since 18.8.15
- */
-public class ComponentHandlerFactory {
-
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, remoteComponentsConfiguration);
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class ComponentNotFoundException extends RuntimeException {
+    private ComponentNotFoundException(String msg) {
+        super(msg);
+    }
+    public static ComponentNotFoundException createTypeNotFound(String type) {
+        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
+    }
+    public static ComponentNotFoundException createInstanceNotFound(String id) {
+        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
     }
 }

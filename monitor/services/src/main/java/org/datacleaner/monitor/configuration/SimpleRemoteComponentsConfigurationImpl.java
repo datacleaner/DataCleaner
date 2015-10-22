@@ -19,27 +19,29 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
 
 /**
- * Class ComponentsFactory
- * 
- * @since 18.8.15
+ * Class SimpleRemoteComponentsConfigurationImpl
  */
-public class ComponentHandlerFactory {
+public class SimpleRemoteComponentsConfigurationImpl implements RemoteComponentsConfiguration {
 
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, remoteComponentsConfiguration);
+    public SimpleRemoteComponentsConfigurationImpl() {
+    }
+
+
+    @Override
+    public boolean isAllowed(ComponentDescriptor componentDescriptor) {
+        return true;
+    }
+
+    @Override
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor componentDescriptor) {
+        Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
+        return configuredProperties;
     }
 }

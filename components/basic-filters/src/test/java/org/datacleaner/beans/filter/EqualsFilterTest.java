@@ -142,7 +142,7 @@ public class EqualsFilterTest extends TestCase {
 
         Query result;
         result = filter.optimizeQuery(query.clone(), EqualsFilter.Category.EQUALS);
-        assertEquals(originalSql + " WHERE (\"EMPLOYEES\".\"FIRSTNAME\" = 'foobar')", result.toSql());
+        assertEquals(originalSql + " WHERE \"EMPLOYEES\".\"FIRSTNAME\" = 'foobar'", result.toSql());
 
         result = filter.optimizeQuery(query.clone(), EqualsFilter.Category.NOT_EQUALS);
         assertEquals(originalSql + " WHERE \"EMPLOYEES\".\"FIRSTNAME\" <> 'foobar'", result.toSql());

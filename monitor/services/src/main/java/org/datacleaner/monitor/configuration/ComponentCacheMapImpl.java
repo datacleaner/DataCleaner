@@ -56,10 +56,6 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
     /**
      * Put configuration of component to the cache
-     *
-     * @param tenant
-     * @param tenantContext
-     * @param componentsHolder
      */
     public void put(String tenant, TenantContext tenantContext, ComponentStoreHolder componentsHolder) {
         logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
@@ -77,9 +73,6 @@ public class ComponentCacheMapImpl implements ComponentCache {
     /**
      * Read configuration from cache. If configurationHolder is not in cache, is loaded from repository,
      * but in this case in holder is only configuration
-     *
-     * @param id
-     * @return
      */
     public ComponentCacheConfigWrapper get(String id, String tenant, TenantContext tenantContext) {
         logger.info("Get component with id: " + id);
@@ -107,9 +100,6 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
     /**
      * Remove configuration from memory and store. And this component is destroyed.
-     *
-     * @param id
-     * @param tenantContext
      */
     public boolean remove(String id, TenantContext tenantContext) {
         boolean inCache = removeConfigurationOnlyFromCache(id);
@@ -137,8 +127,6 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
     /**
      * Close all component in memory. All components configuration are still in repository.
-     *
-     * @throws InterruptedException
      */
     public void close() throws InterruptedException {
         logger.info("Closing Components cache.");
@@ -174,8 +162,6 @@ public class ComponentCacheMapImpl implements ComponentCache {
         boolean running = true;
         boolean firstRun = true;
         private Set<String> allIdInCache = null;
-        private TenantContext tenantContext = null;
-        private ComponentStoreHolder componentStoreHolder = null;
 
         public void stop() {
             running = false;
@@ -207,49 +193,43 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
         private void check() {
             allIdInCache = new HashSet<>(data.keySet());
-            Iterator<TenantContext> tenantContextIterator = _tenantContextFactory.getActiveTenantContexts().iterator();
-
-            while (tenantContextIterator.hasNext()) {
-                tenantContext = tenantContextIterator.next();
-                checkTenantComponents();
+            for(TenantContext tenantContext: _tenantContextFactory.getActiveTenantContexts()) {
+                checkTenantComponents(tenantContext);
             }
-
             for (String instanceId : allIdInCache) {
                 removeConfigurationOnlyFromCache(instanceId);
-                logger.info("TimeoutChecker - Configuration {} is not in the store. It was removed from the cache.",
-                        instanceId);
+                logger.info("TimeoutChecker - Configuration {} is not in the store. It was removed from the cache.", instanceId);
             }
         }
 
-        private void checkTenantComponents() {
+        private void checkTenantComponents(TenantContext tenantContext) {
             List<ComponentStoreHolder> configurationList = tenantContext.getComponentStore().getList();
 
-            for (ComponentStoreHolder storeHolder: configurationList) {
-                componentStoreHolder = storeHolder;
-                checkComponentStoreHolder();
+            for (ComponentStoreHolder componentStoreHolder: configurationList) {
+                checkComponentStoreHolder(tenantContext, componentStoreHolder);
             }
         }
 
-        private void checkComponentStoreHolder() {
+        private void checkComponentStoreHolder(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
             String instanceId = componentStoreHolder.getInstanceId();
             allIdInCache.remove(instanceId);
             ComponentCacheConfigWrapper cache = data.get(instanceId);
 
             if (cache == null) {
-                removeFromStore();
+                removeFromStore(tenantContext, componentStoreHolder);
             } else {
                 long maxTimestamp = Math.max(
                         cache.getComponentStoreHolder().getUseTimestamp(), componentStoreHolder.getUseTimestamp());
 
                 if (maxTimestamp + componentStoreHolder.getTimeout() < System.currentTimeMillis()) {
-                    remove();
+                    remove(tenantContext, componentStoreHolder);
                 } else {
-                    update(cache);
+                    update(cache, tenantContext, componentStoreHolder);
                 }
             }
         }
 
-        private void remove() {
+        private void remove(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
             String instanceId = componentStoreHolder.getInstanceId();
             logger.info("TimeoutChecker - Old configuration {} for tenant {} was removed from the store and the cache.",
                     instanceId, tenantContext.getTenantId());
@@ -257,7 +237,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
             removeConfigurationOnlyFromStore(instanceId, tenantContext);
         }
 
-        private void removeFromStore() {
+        private void removeFromStore(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
             String instanceId = componentStoreHolder.getInstanceId();
 
             if (!componentStoreHolder.isValid()) {
@@ -267,7 +247,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
             }
         }
 
-        private void update(ComponentCacheConfigWrapper cache) {
+        private void update(ComponentCacheConfigWrapper cache, TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
             String instanceId = componentStoreHolder.getInstanceId();
 
             if (cache.getComponentStoreHolder().getUseTimestamp() <= componentStoreHolder.getUseTimestamp()) {

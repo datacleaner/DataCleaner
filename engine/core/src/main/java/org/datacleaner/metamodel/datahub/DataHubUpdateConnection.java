@@ -1,9 +1,3 @@
-package org.datacleaner.metamodel.datahub;
-
-import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -23,14 +17,18 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+package org.datacleaner.metamodel.datahub;
+
+import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
+
 import java.net.URISyntaxException;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.datacleaner.util.http.MonitorHttpClient;
 
 /**
- * Implements a connection from the DataHub datastore to the DataHub
- * REST services in the service war.
+ * Implements a connection from the DataHub datastore to the DataHub REST
+ * services in the service war.
  *
  * Note: Some REST controllers do not need the tenant info. Others do.
  */
@@ -82,6 +80,5 @@ public class DataHubUpdateConnection {
 
         return uriBuilder.setPath(pathSegment);
     }
-
 
 }

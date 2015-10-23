@@ -65,15 +65,11 @@ public class CompletenessAnalyzerTest extends TestCase {
     }
 
     public void testAllFieldsEvaluationMode() throws Exception {
-        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
-
         final InputColumn<?> col1 = new MockInputColumn<String>("foo");
         final InputColumn<?> col2 = new MockInputColumn<String>("bar");
 
         final CompletenessAnalyzer analyzer = new CompletenessAnalyzer();
         analyzer._evaluationMode = CompletenessAnalyzer.EvaluationMode.ALL_FIELDS;
-        analyzer._annotationFactory = annotationFactory;
-        analyzer._invalidRecords = annotationFactory.createAnnotation();
         analyzer._valueColumns = new InputColumn[] { col1, col2 };
         analyzer._conditions = new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_NULL,
                 CompletenessAnalyzer.Condition.NOT_NULL };
@@ -105,15 +101,11 @@ public class CompletenessAnalyzerTest extends TestCase {
     }
 
     public void testSimpleScenario() throws Exception {
-        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
-
         final InputColumn<?> col1 = new MockInputColumn<String>("foo");
         final InputColumn<?> col2 = new MockInputColumn<String>("bar");
         final InputColumn<?> col3 = new MockInputColumn<String>("baz");
 
         final CompletenessAnalyzer analyzer = new CompletenessAnalyzer();
-        analyzer._annotationFactory = annotationFactory;
-        analyzer._invalidRecords = annotationFactory.createAnnotation();
         analyzer._valueColumns = new InputColumn[] { col1, col2, col3 };
         analyzer._conditions = new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_NULL,
                 CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL, CompletenessAnalyzer.Condition.NOT_NULL };

@@ -190,7 +190,9 @@ public class ComponentHandler {
         }
         org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
+        InjectionManager origInjMan = _dcConfiguration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_dcConfiguration);
+        InjectionManager injMan = new ComponentHandlerInjectionManager(origInjMan, descriptor, component);
+        lifeCycleHelper = new LifeCycleHelper(injMan, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
@@ -247,12 +249,12 @@ public class ComponentHandler {
             taskRunner.run(new Task() {
                 @Override
                 public void execute() throws Exception {
-                    if(!errors.isEmpty()) {
-                        LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
-                        return;
-                    }
                     try {
-                        transform(inputRow, results);
+                        if(!errors.isEmpty()) {
+                            LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
+                            return;
+                        }
+                        transformRow(inputRow, results);
                     } catch(Throwable t) {
                         errors.add(t);
                     } finally {
@@ -290,7 +292,7 @@ public class ComponentHandler {
      * Thread-safe transformation method that runs transformer for an 'inputRow'
      * and puts a list of output rows to the 'results' map (key is the row ID).
      */
-    private void transform(InputRow inputRow, Map<Integer, List<Object[]>> results) {
+    private void transformRow(InputRow inputRow, Map<Integer, List<Object[]>> results) {
         ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
 
         final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor
@@ -446,6 +448,34 @@ public class ComponentHandler {
         public void onValues(Object[] values) {
             outputRows.add(values);
         }
+    }
+
+    private class ComponentHandlerInjectionManager implements InjectionManager {
+        InjectionManager delegate;
+        ComponentDescriptor componentDescriptor;
+        Component component;
+
+        ComponentHandlerInjectionManager(InjectionManager delegate, ComponentDescriptor<?> componentDescriptor, Component component) {
+            this.delegate = delegate;
+            this.component = component;
+            this.componentDescriptor = componentDescriptor;
+        }
+
+        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+            E obj;
+            final Class<E> baseType = injectionPoint.getBaseType();
+            if (baseType == OutputRowCollector.class) {
+                obj = (E)new ThreadLocalOutputRowCollector();
+            } else {
+                obj = delegate.getInstance(injectionPoint);
+            }
+            if(obj instanceof ComponentAware) {
+                ComponentAware componentAware = (ComponentAware)obj;
+                componentAware.setComponent(component, componentDescriptor);
+            }
+            return obj;
+        }
+
     }
 
 }

@@ -111,18 +111,13 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     InputColumn<?>[] _additionalOutputValueColumns;
 
     // Do not inject the shared RowAnnotations, available rows are always needed.
-    final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
-    final RowAnnotation _invalidRecords;
+    private final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
+    private final RowAnnotation _invalidRecords = _annotationFactory.createAnnotation();
+    private final AtomicInteger _rowCount = new AtomicInteger();
 
-    private final AtomicInteger _rowCount;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
     private List<InputColumn<?>> _outputDataStreamColumns;
-
-    public CompletenessAnalyzer() {
-        _invalidRecords = _annotationFactory.createAnnotation();
-        _rowCount = new AtomicInteger();
-    }
 
     @Initialize
     public void init() {

@@ -68,6 +68,8 @@ public class DataHubDataSet extends AbstractDataSet {
     private Iterator<Object[]> _resultSetIterator;
     private Row _row;
 
+    private boolean _endReached;
+
     /**
      * Constructor
      * 
@@ -84,6 +86,7 @@ public class DataHubDataSet extends AbstractDataSet {
         _paging = query.getMaxRows() == null;
         _nextPageFirstRow = 1;
         _nextPageMaxRows = PAGE_SIZE;
+        _endReached = false;
         _resultSetIterator = getNextPage();
     }
 
@@ -101,7 +104,7 @@ public class DataHubDataSet extends AbstractDataSet {
     @Override
     public boolean next() {
         if (!_resultSetIterator.hasNext()) {
-            if (_paging) {
+            if (_paging && !_endReached) {
                 _resultSetIterator = getNextPage();
                 if (!_resultSetIterator.hasNext()) {
                     _row = null;
@@ -122,20 +125,22 @@ public class DataHubDataSet extends AbstractDataSet {
 
         _nextPageFirstRow = _nextPageFirstRow + _nextPageMaxRows;
 
-        String uri = _uri + createParams(firstRow, maxRows);
+        final String uri = _uri + createParams(firstRow, maxRows);
 
-        HttpGet request = new HttpGet(uri);
+        final HttpGet request = new HttpGet(uri);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        HttpResponse response = executeRequest(request);
-
-        return getResultSet(response.getEntity());
+        final HttpResponse response = executeRequest(request);
+        final List<Object[]> resultSet = getResultSet(response.getEntity());
+        final int resultSetSize = resultSet.size();
+        _endReached = (resultSetSize < maxRows);
+        return resultSet.iterator();
     }
 
-    private Iterator<Object[]> getResultSet(HttpEntity entity) {
+    private List<Object[]> getResultSet(HttpEntity entity) {
         JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         try {
             List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
-            return resultSet.iterator();
+            return resultSet;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

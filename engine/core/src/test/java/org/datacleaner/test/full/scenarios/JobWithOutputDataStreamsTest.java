@@ -150,7 +150,7 @@ public class JobWithOutputDataStreamsTest {
 
         final byte[] serialized = SerializationUtils.serialize(new SimpleAnalysisResult(resultFuture.getResultMap()));
 
-        SimpleAnalysisResult deSerializedResult = (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
+        final SimpleAnalysisResult deSerializedResult = (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
 
         // the first result should be trivial - it was also there before issue
         // #224

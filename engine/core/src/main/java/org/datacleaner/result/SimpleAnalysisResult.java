@@ -41,6 +41,10 @@ public class SimpleAnalysisResult extends AbstractAnalysisResult implements Seri
     private final Map<ComponentJob, AnalyzerResult> _results;
     private final Date _creationDate;
 
+    public SimpleAnalysisResult(AnalysisResult result){
+        this(result.getResultMap(), new Date());
+    }
+
     public SimpleAnalysisResult(Map<ComponentJob, AnalyzerResult> results) {
         this(results, new Date());
     }

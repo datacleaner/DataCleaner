@@ -76,7 +76,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     private Map<String, DataHubSchema> getDatahubSchemas() {
         Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
         for (final String datastoreName : getDataStoreNames()) {
-            final String uri = _repoConnection.getSchemaUrl(_tenantName,datastoreName);
+            final String uri = _repoConnection.getSchemaUrl(_tenantName, datastoreName);
             LOGGER.debug("request {}", uri);
             final HttpGet request = new HttpGet(uri);
             final HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
@@ -160,14 +160,16 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates),
+                ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
-    
+
     /**
      * Invokes DataHub REST service to delete a batch of golden records.
      * 
-     * @param pendingGoldenRecordDeletes The golden records to delete.
+     * @param pendingGoldenRecordDeletes
+     *            The golden records to delete.
      */
     public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
         final String uri = _updateConnection.getDeleteGoldenRecordUrl();
@@ -175,14 +177,17 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<String>> buildJsonArray(pendingGoldenRecordDeletes), ContentType.APPLICATION_JSON));
+        request.setEntity(
+                new StringEntity(JsonUpdateDataBuilder.<List<String>> buildJsonArray(pendingGoldenRecordDeletes),
+                        ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
     /**
      * Invokes DataHub REST service to delete a batch of source records.
      * 
-     * @param pendingSourceDeletes The batch of sources to delete.
+     * @param pendingSourceDeletes
+     *            The batch of sources to delete.
      */
     public void executeSourceDelete(List<SourceRecordByDescriptionIdentifier> pendingSourceDeletes) {
         final String uri = _updateConnection.getDeleteSourceRecordUrl();
@@ -190,10 +195,12 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(pendingSourceDeletes), ContentType.APPLICATION_JSON));
-        executeRequest(request, _updateConnection.getHttpClient());                
+        request.setEntity(new StringEntity(
+                JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(pendingSourceDeletes),
+                ContentType.APPLICATION_JSON));
+        executeRequest(request, _updateConnection.getHttpClient());
     }
-    
+
     private static class UserInfo {
         @SuppressWarnings("unused")
         public String username;
@@ -208,8 +215,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
             final StatusLine statusLine = response.getStatusLine();
 
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK
-                    || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
+            if (statusLine.getStatusCode() == HttpStatus.SC_OK || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
                 // read response as JSON.
                 final InputStream content = response.getEntity().getContent();
                 final UserInfo userInfo;
@@ -224,8 +230,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
                 throw new RuntimeException("Failed to retrieve the tenant name: " + reasonPhrase);
             }
         } catch (Exception exception) {
-            if(exception instanceof RuntimeException) {
-                throw (RuntimeException)exception;
+            if (exception instanceof RuntimeException) {
+                throw (RuntimeException) exception;
             }
             throw new RuntimeException("Failed to retrieve the tenant name: " + exception.getMessage());
         }

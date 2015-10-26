@@ -49,7 +49,8 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     /**
      * Constructor. Initializes pending updates and deletes to be empty.
      * 
-     * @param dataContext The data context.
+     * @param dataContext
+     *            The data context.
      */
     public DataHubUpdateCallback(DataHubDataContext dataContext) {
         super(dataContext);

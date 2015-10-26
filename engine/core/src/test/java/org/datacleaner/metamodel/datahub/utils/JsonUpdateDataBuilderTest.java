@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.metamodel.datahub.update.SourceRecordByDescriptionIdentifier;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.junit.Test;
 
@@ -41,7 +40,7 @@ public class JsonUpdateDataBuilderTest {
         UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(updateData);
+        String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":\"testvalue\"}}]"));
     }
 
@@ -52,19 +51,7 @@ public class JsonUpdateDataBuilderTest {
         UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(updateData);
+        String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":null}}]"));
-    }
-    
-    @Test
-    public void shouldConvertSourceRecordByDescriptionIdentifierToJSON() {
-        Map<String, Object> fields = new HashMap<String, Object>();
-        fields.put("testfield", "testvalue");
-        SourceRecordByDescriptionIdentifier data = new SourceRecordByDescriptionIdentifier("mySource", "myId", "myType");
-        List<SourceRecordByDescriptionIdentifier> updateData = new ArrayList<SourceRecordByDescriptionIdentifier>();
-        updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(updateData);
-        assertThat(jsonString, is("[{\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myType\"}]"));
-        
     }
 }

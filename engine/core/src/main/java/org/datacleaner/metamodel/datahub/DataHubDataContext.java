@@ -23,7 +23,6 @@ import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.datacleaner.metamodel.datahub.DataHubConnection.DEFAULT_SCHEMA;
 import static org.datacleaner.metamodel.datahub.DataHubConnectionHelper.validateReponseStatusCode;
-import static org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder.buildJsonArray;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -47,8 +46,10 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.datahub.update.SourceRecordByDescriptionIdentifier;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
+import org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +160,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
     
@@ -171,14 +172,21 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
-    public void executeSourceRecordDelete(String source, String id, String recordType) {
-        String uri = _updateConnection.getDeleteSourceRecordUrl();
-        uri = uri + "/" + source + "/" + id + "/" + recordType;
+    /**
+     * Invokes DataHub REST service to delete a batch of source records.
+     * 
+     * @param pendingSourceDeletes The batch of sources to delete.
+     */
+    public void executeSourceDelete(List<SourceRecordByDescriptionIdentifier> pendingSourceDeletes) {
+        final String uri = _updateConnection.getDeleteSourceRecordUrl();
         LOGGER.debug("request {}", uri);
-        final HttpDelete request = new HttpDelete(uri);
-        executeRequest(request, _updateConnection.getHttpClient());        
+        final HttpPost request = new HttpPost(uri);
+        request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
+        request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(pendingSourceDeletes), ContentType.APPLICATION_JSON));
+        executeRequest(request, _updateConnection.getHttpClient());                
     }
-    
+
     private static class UserInfo {
         @SuppressWarnings("unused")
         public String username;

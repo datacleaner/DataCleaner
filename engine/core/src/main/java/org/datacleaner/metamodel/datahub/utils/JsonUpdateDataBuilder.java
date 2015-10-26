@@ -22,21 +22,31 @@ package org.datacleaner.metamodel.datahub.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-
-import org.datacleaner.metamodel.datahub.update.UpdateData;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Helper class to serialize JAVA objects to JSON.
+ *
+ */
 public class JsonUpdateDataBuilder {
 
-    public static String buildJsonArray(List<UpdateData> updateData) {
+    /**
+     * Serialize an object to a JSON string.
+     * 
+     * @param <T>
+     *            The Java class to serialize
+     * @param objectToSerialize
+     *            The object to serialize.
+     * @return The JSON string
+     */
+    public static <T> String buildJsonArray(T objectToSerialize) {
 
         final OutputStream os = new ByteArrayOutputStream();
         final ObjectMapper mapper = new ObjectMapper();
         final String json;
         try {
-            mapper.writeValue(os, updateData);
+            mapper.writeValue(os, objectToSerialize);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
             json = new String(data, "UTF-8");
         } catch (IOException e) {

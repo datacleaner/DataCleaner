@@ -38,7 +38,7 @@ public class DataHubUpdateConnection {
     public final static String SOURCE_RECORDS_PATH = "/sources";
     public final static String UPDATE_PATH = GOLDEN_RECORDS_PATH + "/batch";
     public final static String DELETE_GR_PATH = GOLDEN_RECORDS_PATH + "/delete";
-    public final static String DELETE_SR_PATH = SOURCE_RECORDS_PATH + "/delete";
+    public final static String DELETE_SR_PATH = SOURCE_RECORDS_PATH + "/sources/delete/batch";
 
     private final DataHubConnection _connection;
 
@@ -54,6 +54,11 @@ public class DataHubUpdateConnection {
         return getContextUrl() + DELETE_GR_PATH;
     }
 
+    /**
+     * Returns the path to the DataHub service to delete source records in batches. 
+     * 
+     * @return The URL path to the DataHub service to delete source records in batches.
+     */
     public String getDeleteSourceRecordUrl() {
         return getContextUrl() + DELETE_SR_PATH;
     }

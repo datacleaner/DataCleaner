@@ -172,11 +172,8 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         _pendingGoldenRecordDeletes.add(grId);
 
         if (_pendingGoldenRecordDeletes.size() >= DELETE_BATCH_SIZE) {
-            flushSourceDeletes();
+            flushGoldenRecordDeletes();
         }
-        
-        _dataContext.executeGoldenRecordDelete(grId);
-
     }
 
     /**

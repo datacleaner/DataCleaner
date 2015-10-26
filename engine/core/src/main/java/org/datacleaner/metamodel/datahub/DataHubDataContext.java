@@ -164,11 +164,18 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         executeRequest(request, _updateConnection.getHttpClient());
     }
     
-    public void executeGoldenRecordDelete(String goldenRecordId) {        
-        String uri = _updateConnection.getDeleteGoldenRecordUrl();
-        uri = uri + "/" + goldenRecordId;
+    /**
+     * Invokes DataHub REST service to delete a batch of golden records.
+     * 
+     * @param pendingGoldenRecordDeletes The golden records to delete.
+     */
+    public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
+        final String uri = _updateConnection.getDeleteGoldenRecordUrl();
         LOGGER.debug("request {}", uri);
-        final HttpDelete request = new HttpDelete(uri);
+        final HttpPost request = new HttpPost(uri);
+        request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
+        request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<String>> buildJsonArray(pendingGoldenRecordDeletes), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
@@ -185,16 +192,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
         request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(pendingSourceDeletes), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());                
-    }
-
-    /**
-     * Invokes DataHub REST service to delete a batch of golden records.
-     * 
-     * @param pendingGoldenRecordDeletes The golden records to delete.
-     */
-    public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
-        // TODO Auto-generated method stub
-        
     }
     
     private static class UserInfo {

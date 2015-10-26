@@ -266,7 +266,12 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
                 for (Object operand : operands) {
                     filterItems.add(new FilterItem(selectItem, OperatorType.EQUALS_TO, operand));
                 }
-                q.where(new FilterItem(filterItems.toArray(new FilterItem[filterItems.size()])));
+                
+                if (filterItems.size() == 1) {
+                    q.where(filterItems.get(0));
+                } else {
+                    q.where(new FilterItem(filterItems.toArray(new FilterItem[filterItems.size()])));
+                }
             } else {
                 final Column valuePhysicalColumn = compareColumn.getPhysicalColumn();
                 q.where(inputPhysicalColumn, OperatorType.EQUALS_TO, valuePhysicalColumn);

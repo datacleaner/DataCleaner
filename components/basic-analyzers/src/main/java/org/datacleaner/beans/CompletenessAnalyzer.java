@@ -43,6 +43,7 @@ import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.StringUtils;
@@ -109,22 +110,14 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Description("Optional additional values to add to output data streams")
     InputColumn<?>[] _additionalOutputValueColumns;
 
-    @Inject
-    @Provided
-    RowAnnotation _invalidRecords;
+    // Do not inject the shared RowAnnotations, available rows are always needed.
+    private final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
+    private final RowAnnotation _invalidRecords = _annotationFactory.createAnnotation();
+    private final AtomicInteger _rowCount = new AtomicInteger();
 
-    @Inject
-    @Provided
-    RowAnnotationFactory _annotationFactory;
-
-    private final AtomicInteger _rowCount;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
     private List<InputColumn<?>> _outputDataStreamColumns;
-
-    public CompletenessAnalyzer() {
-        _rowCount = new AtomicInteger();
-    }
 
     @Initialize
     public void init() {

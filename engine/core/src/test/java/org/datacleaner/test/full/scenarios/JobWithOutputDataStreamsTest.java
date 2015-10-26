@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -41,6 +42,7 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
+import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestEnvironment;
@@ -146,14 +148,18 @@ public class JobWithOutputDataStreamsTest {
 
         assertEquals(2, resultFuture.getResults().size());
 
+        final byte[] serialized = SerializationUtils.serialize(new SimpleAnalysisResult(resultFuture.getResultMap()));
+
+        final SimpleAnalysisResult deSerializedResult = (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
+
         // the first result should be trivial - it was also there before issue
         // #224
-        final ListResult<?> result1 = (ListResult<?>) resultFuture.getResult(analyzerJob1);
+        final ListResult<?> result1 = (ListResult<?>) deSerializedResult.getResult(analyzerJob1);
         assertNotNull(result1);
         assertEquals(40, result1.getValues().size());
 
         // this result is the "new part" of issue #224
-        final ListResult<?> result2 = (ListResult<?>) resultFuture.getResult(analyzerJob2);
+        final ListResult<?> result2 = (ListResult<?>) deSerializedResult.getResult(analyzerJob2);
         assertNotNull(result2);
         assertEquals(83, result2.getValues().size());
         final Object lastElement = result2.getValues().get(result2.getValues().size() - 1);

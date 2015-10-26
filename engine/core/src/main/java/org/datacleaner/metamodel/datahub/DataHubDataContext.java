@@ -187,6 +187,16 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         executeRequest(request, _updateConnection.getHttpClient());                
     }
 
+    /**
+     * Invokes DataHub REST service to delete a batch of golden records.
+     * 
+     * @param pendingGoldenRecordDeletes The golden records to delete.
+     */
+    public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
+        // TODO Auto-generated method stub
+        
+    }
+    
     private static class UserInfo {
         @SuppressWarnings("unused")
         public String username;

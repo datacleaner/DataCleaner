@@ -44,12 +44,19 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     private final DataHubDataContext _dataContext;
     private List<UpdateData> _pendingUpdates;
     private List<SourceRecordByDescriptionIdentifier> _pendingSourceDeletes;
+    private List<String> _pendingGoldenRecordDeletes;
 
+    /**
+     * Constructor. Initializes pending updates and deletes to be empty.
+     * 
+     * @param dataContext The data context.
+     */
     public DataHubUpdateCallback(DataHubDataContext dataContext) {
         super(dataContext);
         _dataContext = dataContext;
         _pendingUpdates = null;
         _pendingSourceDeletes = null;
+        _pendingGoldenRecordDeletes = null;
     }
 
     @Override
@@ -124,6 +131,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     public void close() {
         flushUpdates();
         flushSourceDeletes();
+        flushGoldenRecordDeletes();
     }
 
     private void flushUpdates() {
@@ -141,7 +149,15 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         _dataContext.executeSourceDelete(_pendingSourceDeletes);
         _pendingSourceDeletes = null;
     }
-    
+
+    private void flushGoldenRecordDeletes() {
+        if (_pendingGoldenRecordDeletes == null || _pendingGoldenRecordDeletes.isEmpty()) {
+            return;
+        }
+        _dataContext.executeGoldenRecordDelete(_pendingGoldenRecordDeletes);
+        _pendingGoldenRecordDeletes = null;
+    }
+
     /**
      * Deletes a golden record by its golden record id. The deletes are buffered
      * and executed in batches.
@@ -150,6 +166,15 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      *            The golden record id to delete.
      */
     public void executeDeleteGoldenRecord(String grId) {
+        if (_pendingGoldenRecordDeletes == null) {
+            _pendingGoldenRecordDeletes = new ArrayList<String>();
+        }
+        _pendingGoldenRecordDeletes.add(grId);
+
+        if (_pendingGoldenRecordDeletes.size() >= DELETE_BATCH_SIZE) {
+            flushSourceDeletes();
+        }
+        
         _dataContext.executeGoldenRecordDelete(grId);
 
     }

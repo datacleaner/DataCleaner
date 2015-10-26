@@ -41,7 +41,7 @@ public class JsonUpdateDataBuilderTest {
         UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(updateData);
+        String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":\"testvalue\"}}]"));
     }
 
@@ -52,7 +52,7 @@ public class JsonUpdateDataBuilderTest {
         UpdateData data = new UpdateData("21", fields);
         List<UpdateData> updateData = new ArrayList<UpdateData>();
         updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(updateData);
+        String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":null}}]"));
     }
     

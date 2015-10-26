@@ -54,11 +54,6 @@ public class DataHubUpdateConnection {
         return getContextUrl() + DELETE_GR_PATH;
     }
 
-    /**
-     * Returns the path to the DataHub service to delete source records in batches. 
-     * 
-     * @return The URL path to the DataHub service to delete source records in batches.
-     */
     public String getDeleteSourceRecordUrl() {
         return getContextUrl() + DELETE_SR_PATH;
     }

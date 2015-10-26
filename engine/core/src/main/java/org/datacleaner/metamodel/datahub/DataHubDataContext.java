@@ -33,7 +33,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -200,7 +199,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
-
+    
     private static class UserInfo {
         @SuppressWarnings("unused")
         public String username;

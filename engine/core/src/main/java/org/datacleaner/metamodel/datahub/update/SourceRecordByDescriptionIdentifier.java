@@ -23,8 +23,8 @@ package org.datacleaner.metamodel.datahub.update;
  * Unique identifier of a source record by its source name, source record id and
  * record type description
  * 
- * Warning: This class copies the contract of the corresponding DataHub REST service.
- * Changes will likely break the contract with the server.
+ * Warning: This class copies the contract of the corresponding DataHub REST
+ * service. Changes will likely break the contract with the server.
  */
 
 public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIdentifier {

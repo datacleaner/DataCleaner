@@ -27,7 +27,7 @@ import java.util.Map;
  * Message that can be used to report a component usage (by the component). Consumer of this message type can
  * use the information provided to gather usage statistics/metering etc.
  */
-public class UsageMeteringMessage implements Serializable {
+public class UsageMeteringMessage implements Serializable, ComponentMessage {
 
     private final String type;
     private final Map<String, String> additionalInfo;

@@ -40,8 +40,8 @@ import org.datacleaner.components.categories.ConversionCategory;
 @Categorized(ConversionCategory.class)
 public class ConvertToBooleanTransformer implements Transformer {
 
-    public static final String[] DEFAULT_TRUE_TOKENS = new String[] { "true", "yes", "1", "x" };
-    public static final String[] DEFAULT_FALSE_TOKENS = new String[] { "false", "no", "0", "-" };
+    public static final String[] DEFAULT_TRUE_TOKENS = new String[] { "true", "yes", "1", "x", "y" };
+    public static final String[] DEFAULT_FALSE_TOKENS = new String[] { "false", "no", "0", "-", "n" };
 
     @Inject
     @Configured

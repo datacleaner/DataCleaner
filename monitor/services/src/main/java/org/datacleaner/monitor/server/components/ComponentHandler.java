@@ -83,6 +83,8 @@ import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -268,6 +270,8 @@ public class ComponentHandler {
         // results could be computed in different order.
         final Map<Integer, List<Object[]>> results = new TreeMap<>();
 
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+
         int id = 0;
         for (JsonNode jsonRow : data) {
             final DefaultRow row = new DefaultRow(header, toRowValues((ArrayNode) jsonRow));
@@ -285,11 +289,13 @@ public class ComponentHandler {
                         return;
                     }
                     try {
+                        SecurityContextHolder.setContext(securityContext);
                         transform(inputRow, results);
                     } catch(Throwable t) {
                         errors.add(t);
                     } finally {
                         tasksPending.decrementAndGet();
+                        SecurityContextHolder.clearContext();
                     }
                 }
             }, null);

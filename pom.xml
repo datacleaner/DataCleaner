@@ -53,7 +53,7 @@
 	<repositories>
 		<repository>
 			<id>metamodel-4.4.1-staging-repo</id>
-			<url>http://repository.apache.org/content/repositories/orgapachemetamodel-1013</url>
+			<url>http://repository.apache.org/content/repositories/orgapachemetamodel-1014</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

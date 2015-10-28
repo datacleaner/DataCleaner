@@ -22,21 +22,18 @@ package org.datacleaner.metamodel.datahub.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-
-import org.datacleaner.metamodel.datahub.update.UpdateData;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUpdateDataBuilder {
 
-    public static String buildJsonArray(List<UpdateData> updateData) {
+    public static <T> String buildJsonArray(T objectData) {
 
         final OutputStream os = new ByteArrayOutputStream();
         final ObjectMapper mapper = new ObjectMapper();
         final String json;
         try {
-            mapper.writeValue(os, updateData);
+            mapper.writeValue(os, objectData);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
             json = new String(data, "UTF-8");
         } catch (IOException e) {

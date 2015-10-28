@@ -45,7 +45,7 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.metamodel.datahub.update.SourceRecordByDescriptionIdentifier;
+import org.datacleaner.metamodel.datahub.update.SourceRecordIdentifier;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder;
@@ -188,14 +188,14 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
      * @param pendingSourceDeletes
      *            The batch of sources to delete.
      */
-    public void executeSourceDelete(List<SourceRecordByDescriptionIdentifier> pendingSourceDeletes) {
+    public void executeSourceDelete(List<SourceRecordIdentifier> pendingSourceDeletes) {
         final String uri = _updateConnection.getDeleteSourceRecordUrl();
         LOGGER.debug("request {}", uri);
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
         request.setEntity(new StringEntity(
-                JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(pendingSourceDeletes),
+                JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(pendingSourceDeletes),
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }

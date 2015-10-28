@@ -21,35 +21,104 @@ package org.datacleaner.metamodel.datahub.update;
 
 /**
  * Unique identifier of a source record by its source name, source record id and
- * record type description
- * 
- * Warning: This class copies the contract of the corresponding DataHub REST
- * service. Changes will likely break the contract with the server.
+ * record type key
  */
 
-public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIdentifier {
+public class SourceRecordIdentifier {
 
+    String recordTypeKey;
+    String sourceName;
+    String sourceRecordId;
     String recordTypeDescription;
-
+    
     /**
-     * Constructor
+     * Constructor taking a record type key
      * 
      * @param sourceName
      * @param sourceRecordId
-     * @param recordTypeDescription
+     * @param recordTypeKey
      */
-    public SourceRecordByDescriptionIdentifier(String sourceName, String sourceRecordId, String recordTypeDescription) {
+    public SourceRecordIdentifier(String sourceName, String sourceRecordId, String recordTypeKey) {
         this.sourceName = sourceName;
         this.sourceRecordId = sourceRecordId;
+        this.recordTypeKey = recordTypeKey;
+    }
+    
+    /**
+     * Constructor taking record type key and description
+     * 
+     * @param sourceName
+     * @param sourceRecordId
+     * @param recordTypeKey
+     * @param recordTypeDescription
+     */
+    public SourceRecordIdentifier(String sourceName, String sourceRecordId, String recordTypeKey, String recordTypeDescription) {
+        this.sourceName = sourceName;
+        this.sourceRecordId = sourceRecordId;
+        this.recordTypeKey = recordTypeKey;
         this.recordTypeDescription = recordTypeDescription;
     }
 
     /**
      * Default constructor for JSON deserializing
      */
-    public SourceRecordByDescriptionIdentifier() {
+    public SourceRecordIdentifier() {
     }
 
+    /**
+     * Sets the source name
+     * 
+     * @param sourceName
+     */
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    /**
+     * Sets the source record id
+     * 
+     * @param sourceRecordId
+     */
+    public void setSourceRecordId(String sourceRecordId) {
+        this.sourceRecordId = sourceRecordId;
+    }
+
+    /**
+     * Gets the source name
+     * 
+     * @return The source name
+     */
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    /**
+     * Gets the source record id
+     * 
+     * @return The source record id
+     */
+    public String getSourceRecordId() {
+        return sourceRecordId;
+    }
+
+    /**
+     * Gets the record type key
+     * 
+     * @return The record type key
+     */
+    public String getRecordTypeKey() {
+        return recordTypeKey;
+    }
+
+    /**
+     * Sets the record type key
+     * 
+     * @param recordTypeKey
+     */
+    public void setRecordTypeKey(String recordTypeKey) {
+        this.recordTypeKey = recordTypeKey;
+    }
+    
     /**
      * Gets the record type description
      * 
@@ -64,7 +133,7 @@ public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIde
      * 
      * @param recordTypeDescription
      */
-    public void setrecordTypeDescription(String recordTypeDescription) {
+    public void setRecordTypeDescription(String recordTypeDescription) {
         this.recordTypeDescription = recordTypeDescription;
     }
 
@@ -72,9 +141,10 @@ public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIde
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((recordTypeDescription == null) ? 0 : recordTypeDescription.hashCode());
+        result = prime * result + ((recordTypeKey == null) ? 0 : recordTypeKey.hashCode());
         result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
         result = prime * result + ((sourceRecordId == null) ? 0 : sourceRecordId.hashCode());
+        result = prime * result + ((recordTypeDescription == null) ? 0 : recordTypeDescription.hashCode());
         return result;
     }
 
@@ -86,11 +156,11 @@ public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIde
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SourceRecordByDescriptionIdentifier other = (SourceRecordByDescriptionIdentifier) obj;
-        if (recordTypeDescription == null) {
-            if (other.recordTypeDescription != null)
+        SourceRecordIdentifier other = (SourceRecordIdentifier) obj;
+        if (recordTypeKey == null) {
+            if (other.recordTypeKey != null)
                 return false;
-        } else if (!recordTypeDescription.equals(other.recordTypeDescription))
+        } else if (!recordTypeKey.equals(other.recordTypeKey))
             return false;
         if (sourceName == null) {
             if (other.sourceName != null)
@@ -102,6 +172,12 @@ public class SourceRecordByDescriptionIdentifier extends AbstractSourceRecordIde
                 return false;
         } else if (!sourceRecordId.equals(other.sourceRecordId))
             return false;
+        if(recordTypeDescription == null){
+            if(other.recordTypeDescription != null)
+                return false;
+        } else if (!recordTypeDescription.equals(other.recordTypeDescription))
+            return false;
         return true;
     }
 }
+

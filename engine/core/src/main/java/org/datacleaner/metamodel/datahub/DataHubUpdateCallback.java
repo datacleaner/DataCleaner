@@ -32,7 +32,7 @@ import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.RowUpdationBuilder;
-import org.datacleaner.metamodel.datahub.update.SourceRecordByDescriptionIdentifier;
+import org.datacleaner.metamodel.datahub.update.SourceRecordIdentifier;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
 
 public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback, Closeable {
@@ -41,7 +41,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     public static final int DELETE_BATCH_SIZE = 100;
     private final DataHubDataContext _dataContext;
     private List<UpdateData> _pendingUpdates;
-    private List<SourceRecordByDescriptionIdentifier> _pendingSourceDeletes;
+    private List<SourceRecordIdentifier> _pendingSourceDeletes;
     private List<String> _pendingGoldenRecordDeletes;
 
     /**
@@ -151,9 +151,9 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      */
     public void executeDeleteSourceRecord(String source, String id, String recordType) {
         if (_pendingSourceDeletes == null) {
-            _pendingSourceDeletes = new ArrayList<SourceRecordByDescriptionIdentifier>();
+            _pendingSourceDeletes = new ArrayList<SourceRecordIdentifier>();
         }
-        _pendingSourceDeletes.add(new SourceRecordByDescriptionIdentifier());
+        _pendingSourceDeletes.add(new SourceRecordIdentifier(source, id, null, recordType));
 
         if (_pendingSourceDeletes.size() >= DELETE_BATCH_SIZE) {
             flushSourceDeletes();

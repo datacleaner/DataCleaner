@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.metamodel.datahub.update.SourceRecordByDescriptionIdentifier;
+import org.datacleaner.metamodel.datahub.update.SourceRecordIdentifier;
 import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.junit.Test;
 
@@ -60,10 +60,10 @@ public class JsonUpdateDataBuilderTest {
     public void shouldConvertSourceRecordByDescriptionIdentifierToJSON() {
         Map<String, Object> fields = new HashMap<String, Object>();
         fields.put("testfield", "testvalue");
-        SourceRecordByDescriptionIdentifier data = new SourceRecordByDescriptionIdentifier("mySource", "myId", "myType");
-        List<SourceRecordByDescriptionIdentifier> updateData = new ArrayList<SourceRecordByDescriptionIdentifier>();
+        SourceRecordIdentifier data = new SourceRecordIdentifier("mySource", "myId", "myType");
+        List<SourceRecordIdentifier> updateData = new ArrayList<SourceRecordIdentifier>();
         updateData.add(data);
-        String jsonString = JsonUpdateDataBuilder.<List<SourceRecordByDescriptionIdentifier>> buildJsonArray(updateData);
+        String jsonString = JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myType\"}]"));
         
     }

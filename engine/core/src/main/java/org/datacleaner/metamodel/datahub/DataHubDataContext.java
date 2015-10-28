@@ -50,8 +50,6 @@ import org.datacleaner.metamodel.datahub.update.UpdateData;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.metamodel.datahub.utils.JsonUpdateDataBuilder;
 import org.datacleaner.util.http.MonitorHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

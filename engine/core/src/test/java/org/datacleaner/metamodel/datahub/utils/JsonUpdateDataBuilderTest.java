@@ -60,11 +60,11 @@ public class JsonUpdateDataBuilderTest {
     public void shouldConvertSourceRecordByDescriptionIdentifierToJSON() {
         Map<String, Object> fields = new HashMap<String, Object>();
         fields.put("testfield", "testvalue");
-        SourceRecordIdentifier data = new SourceRecordIdentifier("mySource", "myId", "myType");
+        SourceRecordIdentifier data = new SourceRecordIdentifier("mySource", "myId", "myTypeKey","myTypeDescription");
         List<SourceRecordIdentifier> updateData = new ArrayList<SourceRecordIdentifier>();
         updateData.add(data);
         String jsonString = JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(updateData);
-        assertThat(jsonString, is("[{\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myType\"}]"));
+        assertThat(jsonString, is("[{\"recordTypeKey\":\"myTypeKey\",\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myTypeDescription\"}]"));
         
     }
 }

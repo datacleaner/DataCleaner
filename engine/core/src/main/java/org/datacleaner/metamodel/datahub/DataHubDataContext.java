@@ -55,7 +55,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
 
-    private static final String JSON_CONTENT_TYPE = "application/json";
+    private static final String JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON.getMimeType();
 
     private DataHubRepoConnection _repoConnection;
     private DataHubUpdateConnection _updateConnection;

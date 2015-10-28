@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDataContext.class);
 
     private static final String JSON_CONTENT_TYPE = "application/json";
 
@@ -76,7 +75,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
         for (final String datastoreName : getDataStoreNames()) {
             final String uri = _repoConnection.getSchemaUrl(_tenantName, datastoreName);
-            LOGGER.debug("request {}", uri);
             final HttpGet request = new HttpGet(uri);
             final HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
             final HttpEntity entity = response.getEntity();
@@ -108,7 +106,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     private List<String> getDataStoreNames() {
         String uri = _repoConnection.getDatastoreUrl(_tenantName);
-        LOGGER.debug("request {}", uri);
         HttpGet request = new HttpGet(uri);
         HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
         HttpEntity entity = response.getEntity();
@@ -155,7 +152,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     public void executeUpdates(List<UpdateData> pendingUpdates) {
         String uri = _updateConnection.getUpdateUrl(_tenantName);
-        LOGGER.debug("request {}", uri);
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
@@ -172,7 +168,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
      */
     public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
         final String uri = _updateConnection.getDeleteGoldenRecordUrl();
-        LOGGER.debug("request {}", uri);
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
@@ -190,7 +185,6 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
      */
     public void executeSourceDelete(List<SourceRecordIdentifier> pendingSourceDeletes) {
         final String uri = _updateConnection.getDeleteSourceRecordUrl();
-        LOGGER.debug("request {}", uri);
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);

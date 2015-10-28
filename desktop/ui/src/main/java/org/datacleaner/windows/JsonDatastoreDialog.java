@@ -38,7 +38,6 @@ import org.datacleaner.widgets.ResourceSelector;
 public final class JsonDatastoreDialog extends AbstractResourceBasedDatastoreDialog<JsonDatastore> {
 
     private static final long serialVersionUID = 1L;
-    private volatile boolean showPreview = true;
 
     @Inject
     protected JsonDatastoreDialog(@Nullable JsonDatastore originalDatastore,
@@ -81,7 +80,7 @@ public final class JsonDatastoreDialog extends AbstractResourceBasedDatastoreDia
 
     @Override
     protected boolean isPreviewDataAvailable() {
-        return showPreview;
+        return true;
     }
 
 }

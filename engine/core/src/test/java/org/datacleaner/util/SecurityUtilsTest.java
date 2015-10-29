@@ -58,7 +58,7 @@ public class SecurityUtilsTest extends TestCase {
         String decoded = SecurityUtils.decodePasswordWithPrefix(encodedWithPrefix);
         assertEquals(PLAIN_TEXT_VALUE, decoded);
 
-        decoded= SecurityUtils.decodePasswordWithPrefix(ENCODED_VALUE);
+        decoded = SecurityUtils.decodePasswordWithPrefix(ENCODED_VALUE);
         assertEquals(PLAIN_TEXT_VALUE, decoded);
     }
 }

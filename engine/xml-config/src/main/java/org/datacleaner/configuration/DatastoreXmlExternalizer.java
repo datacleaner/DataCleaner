@@ -315,15 +315,12 @@ public class DatastoreXmlExternalizer {
         if (password == null) {
             return null;
         }
+
         return SecurityUtils.encodePasswordWithPrefix(password);
     }
 
     private String encodePassword(char[] password) {
-        if (password == null) {
-            return null;
-        }
-
-        return SecurityUtils.encodePasswordWithPrefix(password.toString());
+        return encodePassword(new String(password));
     }
 
     /**

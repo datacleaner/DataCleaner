@@ -151,8 +151,13 @@ public class SecurityUtils {
      * @return a String containing the encoded password
      */
     public static String encodePasswordWithPrefix(String passwordInPlainText) {
+        if (hasPrefix(passwordInPlainText)) {
+            return passwordInPlainText;
+        }
+
         return PREFIX + encodePassword(passwordInPlainText);
     }
+
     /**
      * It decodes/deobfuscates an encoded password with a human readable prefix.
      *

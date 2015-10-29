@@ -34,7 +34,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.FileResource;
@@ -54,7 +53,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
 
     private DatastoreXmlExternalizer externalizer;
 
-    private static final String PASSWORD_ENCODED = "00em6E9KEO9FG42CH0yrVQ==";
+    private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
 
     @Override
     protected void setUp() throws Exception {
@@ -152,7 +151,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
 
         Element externalized = externalizer.externalize(ds1);
         assertEquals(
-                "<jdbc-datastore name=\"name\"><url>jdbcUrl</url><driver>driverClass</driver><username>username</username><password>enc:"
+                "<jdbc-datastore name=\"name\"><url>jdbcUrl</url><driver>driverClass</driver><username>username</username><password>"
                         + PASSWORD_ENCODED
                         + "</password>"
                         + "<multiple-connections>true</multiple-connections><table-types><table-type>ALIAS</table-type></table-types><catalog-name>catalogName</catalog-name></jdbc-datastore>",
@@ -164,7 +163,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
 
         Element externalized = externalizer.externalize(ds1);
         assertEquals("<mongodb-datastore name=\"name\"><hostname>hostname</hostname><port>1234</port>"
-                + "<database-name>database</database-name><username>user</username>" + "<password>enc:"
+                + "<database-name>database</database-name><username>user</username>" + "<password>"
                 + PASSWORD_ENCODED + "</password></mongodb-datastore>", transform(externalized));
     }
 
@@ -173,7 +172,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
 
         Element externalized = externalizer.externalize(ds1);
         assertEquals("<couchdb-datastore name=\"name\"><hostname>hostname</hostname><port>1234</port>"
-                + "<username>user</username><password>enc:" + PASSWORD_ENCODED + "</password>"
+                + "<username>user</username><password>" + PASSWORD_ENCODED + "</password>"
                 + "<ssl>true</ssl></couchdb-datastore>", transform(externalized));
     }
 
@@ -181,7 +180,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
         Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
 
         Element externalized = externalizer.externalize(ds1);
-        assertEquals("<salesforce-datastore name=\"name\"><username>username</username>" + "<password>enc:"
+        assertEquals("<salesforce-datastore name=\"name\"><username>username</username>" + "<password>"
                 + PASSWORD_ENCODED + "</password>"
                 + "<security-token>securityToken</security-token></salesforce-datastore>", transform(externalized));
     }
@@ -197,7 +196,7 @@ public class DatastoreXmlExternalizerTest extends TestCase {
                 .append("<host>hostname</host>")//
                 .append("<port>1234</port>")//
                 .append("<username>user</username>")//
-                .append("<password>" + "enc:" + PASSWORD_ENCODED + "</password>")//
+                .append("<password>" + PASSWORD_ENCODED + "</password>")//
                 .append("<https>false</https>")//
                 .append("<acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>")//
                 .append("<datahubsecuritymode>DEFAULT</datahubsecuritymode>")//

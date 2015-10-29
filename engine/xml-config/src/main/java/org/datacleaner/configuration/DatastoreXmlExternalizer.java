@@ -273,7 +273,6 @@ public class DatastoreXmlExternalizer {
      * Externalizes a {@link JdbcDatastore} to a XML element.
      * 
      * @param datastore
-     * @param doc
      * @return
      */
     public Element toElement(JdbcDatastore datastore) {
@@ -316,14 +315,15 @@ public class DatastoreXmlExternalizer {
         if (password == null) {
             return null;
         }
-        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
+        return SecurityUtils.encodePasswordWithPrefix(password);
     }
 
     private String encodePassword(char[] password) {
         if (password == null) {
             return null;
         }
-        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
+
+        return SecurityUtils.encodePasswordWithPrefix(password.toString());
     }
 
     /**
@@ -377,7 +377,7 @@ public class DatastoreXmlExternalizer {
     }
 
     /**
-     * Externalizes a {@link CouchDa} to a XML element
+     * Externalizes a {@link CouchDbDatastore} to a XML element
      * 
      * @param datastore
      * @return
@@ -399,7 +399,7 @@ public class DatastoreXmlExternalizer {
     }
 
     /**
-     * Externalizes a {@link CouchDa} to an XML element
+     * Externalizes a {@link CouchDbDatastore} to an XML element
      * 
      * @param datastore
      * @return

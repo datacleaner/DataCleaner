@@ -179,8 +179,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationReader.class);
 
-    public static final String ENCODED_PASSWORD_PREFIX = "enc:";
-
     private final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
     private final Deque<String> _variablePathBuilder;
@@ -415,7 +413,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         credentialsProvider.setHost(server.getUrl());
         credentialsProvider.setUsername(server.getUsername());
-        credentialsProvider.setPassword(SecurityUtils.decodePassword(server.getPassword()));
+        credentialsProvider.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
 
         return new RemoteDescriptorProvider(dataCleanerEnvironment.getCredentialsProvider());
     }
@@ -1250,12 +1248,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private String getPasswordVariable(String key, String valueIfNull) {
         final String possiblyEncodedPassword = getStringVariable(key, valueIfNull);
+
         if (possiblyEncodedPassword == null) {
             return null;
         }
-        if (possiblyEncodedPassword.startsWith(ENCODED_PASSWORD_PREFIX)) {
-            return SecurityUtils.decodePassword(possiblyEncodedPassword.substring(ENCODED_PASSWORD_PREFIX.length()));
+
+        if (SecurityUtils.hasPrefix(possiblyEncodedPassword)) {
+            return SecurityUtils.decodePasswordWithPrefix(possiblyEncodedPassword);
         }
+
         return possiblyEncodedPassword;
     }
 

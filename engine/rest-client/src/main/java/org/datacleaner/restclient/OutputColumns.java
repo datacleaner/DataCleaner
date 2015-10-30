@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * @Since 9/11/15
@@ -32,10 +33,11 @@ public class OutputColumns {
     @JsonProperty
     List<OutputColumn> columns = new ArrayList<>();
 
-    public void add(String columnName, Class<?> columnClass) {
+    public void add(String columnName, Class<?> columnClass, JsonSchema schema) {
         OutputColumn col = new OutputColumn();
         col.name = columnName;
         col.type = columnClass.getName();
+        col.schema = schema;
         columns.add(col);
     }
 
@@ -48,6 +50,8 @@ public class OutputColumns {
         public String name;
         @JsonProperty
         public String type;
+        @JsonProperty
+        public JsonSchema schema;
     }
 
 }

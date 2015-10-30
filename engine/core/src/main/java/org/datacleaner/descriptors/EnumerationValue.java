@@ -165,4 +165,9 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         }
         return getName().compareTo(o.getName());
     }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }

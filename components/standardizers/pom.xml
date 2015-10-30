@@ -7,34 +7,6 @@
 		<version>4.5.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-standardizers</artifactId>
-	
-		<build>
-		<plugins>
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-scala-test-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/scala</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

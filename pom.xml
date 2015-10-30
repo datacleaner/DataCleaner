@@ -50,19 +50,6 @@
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 
-	<repositories>
-		<repository>
-			<id>metamodel-4.4.1-staging-repo</id>
-			<url>http://repository.apache.org/content/repositories/orgapachemetamodel-1014</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	
 	<modules>
 		<module>engine</module>
 	</modules>

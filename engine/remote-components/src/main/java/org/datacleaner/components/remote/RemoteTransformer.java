@@ -150,6 +150,9 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     }
 
     private boolean isOutputColumnEnumeration(JsonSchema schema) {
+        if(schema == null){
+            return false;
+        }
         boolean isArray = schema.isArraySchema();
         JsonSchema baseSchema;
         if (isArray) {

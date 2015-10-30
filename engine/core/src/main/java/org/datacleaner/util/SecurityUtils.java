@@ -37,6 +37,7 @@ import org.datacleaner.util.ws.NaiveTrustManager;
  * Utility methods for security concerns.
  */
 public class SecurityUtils {
+    static final String PREFIX = "enc:";
 
     private SecurityUtils() {
         // prevent instantiation
@@ -141,5 +142,37 @@ public class SecurityUtils {
         final EncodedStringConverter converter = new EncodedStringConverter();
         final String password = converter.fromString(String.class, encodedPassword);
         return password;
+    }
+
+    /**
+     * It encodes/obfuscates a password and adds a human readable prefix that clarifies it.
+     *
+     * @param passwordInPlainText
+     * @return a String containing the encoded password
+     */
+    public static String encodePasswordWithPrefix(String passwordInPlainText) {
+        if (hasPrefix(passwordInPlainText)) {
+            return passwordInPlainText;
+        }
+
+        return PREFIX + encodePassword(passwordInPlainText);
+    }
+
+    /**
+     * It decodes/deobfuscates an encoded password with a human readable prefix.
+     *
+     * @param encodedPasswordWithPrefix
+     * @return a String containing the decoded password
+     */
+    public static String decodePasswordWithPrefix(String encodedPasswordWithPrefix) {
+        String encodedPasswordWithoutPrefix = hasPrefix(encodedPasswordWithPrefix) ?
+                encodedPasswordWithPrefix.substring(PREFIX.length()) :
+                encodedPasswordWithPrefix;
+
+        return decodePassword(encodedPasswordWithoutPrefix);
+    }
+
+    public static boolean hasPrefix(String password) {
+        return password.startsWith(PREFIX);
     }
 }

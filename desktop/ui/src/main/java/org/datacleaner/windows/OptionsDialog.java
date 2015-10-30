@@ -347,7 +347,7 @@ public class OptionsDialog extends AbstractWindow {
 
     private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
         final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
-        String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePassword(value) : value;
+        String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePasswordWithPrefix(value) : value;
         textField.setText(finalInputValue);
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
@@ -357,7 +357,7 @@ public class OptionsDialog extends AbstractWindow {
 
                 if (textField instanceof JPasswordField) {
                     credentialsProvider.setPassword(textField.getText());
-                    _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePassword(textField.getText()));
+                    _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePasswordWithPrefix(textField.getText()));
                 }
                 else {
                     credentialsProvider.setUsername(textField.getText());

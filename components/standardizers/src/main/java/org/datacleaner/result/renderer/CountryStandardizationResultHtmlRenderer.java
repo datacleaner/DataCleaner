@@ -38,8 +38,6 @@ import org.datacleaner.result.html.SimpleHtmlFragment;
 @RendererBean(HtmlRenderingFormat.class)
 public class CountryStandardizationResultHtmlRenderer implements Renderer<CountryStandardizationResult, HtmlFragment> {
 
-    private final AtomicInteger _elementCounter = new AtomicInteger(0);
-
     @Inject
     @Provided
     RendererFactory _rendererFactory;
@@ -51,7 +49,7 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
 
     @Override
     public HtmlFragment render(CountryStandardizationResult result) {
-
+        final AtomicInteger _elementCounter = new AtomicInteger(0);
         final SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
         final Collection<String> categoryNames = result.getCategoryNames();
         final StringBuilder sb = new StringBuilder();
@@ -82,7 +80,7 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
         return htmlFragment;
     }
 
-    private String createElementId() {
-        return "country_stand_" + _elementCounter.incrementAndGet();
+    private String createElementId(AtomicInteger elementCounter) {
+        return "country_stand_" + elementCounter.incrementAndGet();
     }
 }

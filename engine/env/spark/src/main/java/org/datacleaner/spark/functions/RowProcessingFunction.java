@@ -95,7 +95,7 @@ public final class RowProcessingFunction implements
             Iterator<InputRow> inputRowIterator) throws Exception {
         final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
 
-        interceptComponentsBeforeBuilding(jobBuilder, partitionNumber.intValue());
+        configureComponentsBeforeBuilding(jobBuilder, partitionNumber.intValue());
 
         final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
@@ -105,7 +105,14 @@ public final class RowProcessingFunction implements
         return analyzerResults.iterator();
     }
 
-    private void interceptComponentsBeforeBuilding(AnalysisJobBuilder jobBuilder, int partitionNumber) {
+    /**
+     * Applies any partition-specific configuration to the job builder before
+     * building it.
+     * 
+     * @param jobBuilder
+     * @param partitionNumber
+     */
+    private void configureComponentsBeforeBuilding(AnalysisJobBuilder jobBuilder, int partitionNumber) {
         // update datastores and resource properties to point to node-specific
         // targets if possible. This way parallel writing to files on HDFS does
         // not cause any inconsistencies because each node is writing to a
@@ -129,7 +136,7 @@ public final class RowProcessingFunction implements
                     }
                 }
             }
-            
+
             final Set<ConfiguredPropertyDescriptor> resourceProperties = cb.getDescriptor()
                     .getConfiguredPropertiesByType(Resource.class, false);
             for (final ConfiguredPropertyDescriptor resourceProperty : resourceProperties) {
@@ -139,7 +146,7 @@ public final class RowProcessingFunction implements
                     cb.setConfiguredProperty(resourceProperty, replacementResource);
                 }
             }
-            
+
             // special handlings of specific component types are handled here
             if (cb.getComponentInstance() instanceof CreateCsvFileAnalyzer) {
                 if (partitionNumber > 0) {
@@ -152,7 +159,7 @@ public final class RowProcessingFunction implements
         // recursively apply this function also on output data stream jobs
         final List<AnalysisJobBuilder> children = jobBuilder.getConsumedOutputDataStreamsJobBuilders();
         for (AnalysisJobBuilder childJobBuilder : children) {
-            interceptComponentsBeforeBuilding(childJobBuilder, partitionNumber);
+            configureComponentsBeforeBuilding(childJobBuilder, partitionNumber);
         }
     }
 
@@ -174,13 +181,15 @@ public final class RowProcessingFunction implements
         if (resource instanceof FileResource) {
             final File file = ((FileResource) resource).getFile();
             if (file.exists() && file.isFile()) {
-                // a file already exists - we cannot just create a directory then
+                // a file already exists - we cannot just create a directory
+                // then
                 return resource;
             }
             if (!file.exists()) {
                 file.mkdirs();
             }
-            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-" + formattedPartitionNumber);
+            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-"
+                    + formattedPartitionNumber);
             return fileResource;
         }
         return null;

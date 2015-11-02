@@ -121,11 +121,20 @@ public class SparkJobContext implements Serializable {
             });
             _analysisJobBuilder = jobBuilder;
         }
-        interceptJobBuilder(_analysisJobBuilder, new AtomicInteger(0));
+        applyComponentIndexForKeyLookups(_analysisJobBuilder, new AtomicInteger(0));
         return _analysisJobBuilder;
     }
 
-    private void interceptJobBuilder(AnalysisJobBuilder analysisJobBuilder, AtomicInteger currentComponentIndex) {
+    /**
+     * Appliesc compopnent indices via the component metadata to enable proper
+     * functioning of the {@link #getComponentByKey(String)} and
+     * {@link #getComponentKey(ComponentJob)} methods.
+     * 
+     * @param analysisJobBuilder
+     * @param currentComponentIndex
+     */
+    private void applyComponentIndexForKeyLookups(AnalysisJobBuilder analysisJobBuilder,
+            AtomicInteger currentComponentIndex) {
         final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
         for (ComponentBuilder componentBuilder : componentBuilders) {
             componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
@@ -134,7 +143,7 @@ public class SparkJobContext implements Serializable {
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
         for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
-            interceptJobBuilder(childJobBuilder, currentComponentIndex);
+            applyComponentIndexForKeyLookups(childJobBuilder, currentComponentIndex);
         }
     }
 

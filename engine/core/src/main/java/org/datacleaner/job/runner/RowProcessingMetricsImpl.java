@@ -22,17 +22,16 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.ComponentJob;
-import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 
 final class RowProcessingMetricsImpl implements RowProcessingMetrics {
 

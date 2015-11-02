@@ -13,7 +13,7 @@
 		 <analyzer>
             <descriptor ref="Create CSV file"/>
             <properties>
-                <property name="File" value="target/out.csv"/>
+                <property name="File" value="target/write-job.csv"/>
                 <property name="Separator char" value="&amp;#44;"/>
                 <property name="Quote char" value="&amp;quot;"/>
                 <property name="Escape char" value="\"/>

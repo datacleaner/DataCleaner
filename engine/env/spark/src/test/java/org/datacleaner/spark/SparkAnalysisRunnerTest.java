@@ -19,12 +19,18 @@
  */
 package org.datacleaner.spark;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Func;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
@@ -89,6 +95,12 @@ public class SparkAnalysisRunnerTest extends TestCase {
     
     @Test
     public void testWriteDataScenario() throws Exception {
+        final String outputPath = "target/write-job.csv";
+        final File outputFile = new File(outputPath);
+        if (outputFile.exists() && outputFile.isDirectory()) {
+            FileUtils.deleteDirectory(outputFile);
+        }
+        
         final AnalysisResultFuture result;
 
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
@@ -116,6 +128,24 @@ public class SparkAnalysisRunnerTest extends TestCase {
 
         final WriteDataResult writeDataResult = result.getResults(WriteDataResult.class).get(0);
         assertEquals(7, writeDataResult.getWrittenRowCount());
+        
+        assertTrue(outputFile.isDirectory());
+        
+        // file resource is capable of viewing the directory like it is a single file
+        final FileResource fileResource = new FileResource(outputFile);
+        final String str = fileResource.read(new Func<InputStream, String>() {
+            @Override
+            public String eval(InputStream in) {
+                return FileHelper.readInputStreamAsString(in, "UTF8");
+            }
+        });
+        
+        final String[] lines = str.replaceAll("\r", "").split("\n");
+        assertEquals("\"COUNTRY\",\"CUSTOMERNUMBER\"", lines[0]);
+        assertEquals("\"Denmark\",\"HI\"", lines[1]);
+        
+        // asserting 8 lines is important - 7 data lines and 1 header line
+        assertEquals(8, lines.length);
     }
 
     @Test

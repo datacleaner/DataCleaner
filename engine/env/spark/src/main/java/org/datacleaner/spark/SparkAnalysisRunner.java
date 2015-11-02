@@ -86,8 +86,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
     @Override
     public AnalysisResultFuture run(AnalysisJob job) {
-        assert job == _sparkJobContext.getAnalysisJob();
-
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 

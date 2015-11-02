@@ -41,6 +41,7 @@ import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
 import org.datacleaner.spark.functions.CsvParserFunction;
 import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
 import org.datacleaner.spark.functions.RowProcessingFunction;
+import org.datacleaner.spark.functions.TuplesToTuplesFunction;
 import org.datacleaner.spark.functions.ValuesToInputRowFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,8 +94,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD;
         if (isDistributable(job)) {
             logger.info("Running the job in distributed mode");
-            final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = inputRowsRDD
-                    .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
+
+            final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
+                    .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), false);
+
+            final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
+                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>());
 
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                     _sparkJobContext));
@@ -105,7 +110,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
                     _sparkJobContext));
         }
 
-        JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
+        final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFunction());
 
         // log analyzer results

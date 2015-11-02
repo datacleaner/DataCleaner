@@ -71,7 +71,7 @@ import com.google.common.base.Strings;
 @Alias("Write to CSV file")
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(superCategory = WriteSuperCategory.class)
-@Distributed(false)
+@Distributed(true)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
     public static final String PROPERTY_FILE = "File";

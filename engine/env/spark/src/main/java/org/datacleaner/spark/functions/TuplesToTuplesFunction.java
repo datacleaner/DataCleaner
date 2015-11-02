@@ -17,36 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
-import java.io.Serializable;
+import java.util.Iterator;
 
-import org.datacleaner.api.AnalyzerResult;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 
-public class NamedAnalyzerResult implements Serializable {
+import scala.Tuple2;
+
+/**
+ * A utility {@link PairFlatMapFunction} for conversion between a
+ * {@link JavaRDD} of {@link Tuple2} into a {@link JavaPairRDD} of that same
+ * tuple type.
+ */
+public class TuplesToTuplesFunction<K, V> implements PairFlatMapFunction<Iterator<Tuple2<K, V>>, K, V> {
 
     private static final long serialVersionUID = 1L;
 
-    private final String _name;
-    private final AnalyzerResult _analyzerResult;
-    
-    public NamedAnalyzerResult(final String name, final AnalyzerResult analyzerResult) {
-        if (name == null) {
-            throw new IllegalArgumentException("NamedAnalyzerResult name cannot be null");
-        }
-        if (analyzerResult == null) {
-            throw new IllegalArgumentException("NamedAnalyzerResult result cannot be null");
-        }
-        _name = name;
-        _analyzerResult = analyzerResult;
+    @Override
+    public Iterable<Tuple2<K, V>> call(final Iterator<Tuple2<K, V>> iterator) throws Exception {
+        return new Iterable<Tuple2<K, V>>() {
+            @Override
+            public Iterator<Tuple2<K, V>> iterator() {
+                return iterator;
+            }
+        };
     }
-    
-    public String getName() {
-        return _name;
-    }
-    
-    public AnalyzerResult getAnalyzerResult() {
-        return _analyzerResult;
-    }
-    
+
 }

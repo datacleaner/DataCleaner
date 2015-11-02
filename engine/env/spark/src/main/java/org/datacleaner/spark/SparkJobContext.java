@@ -41,6 +41,7 @@ import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -61,7 +62,7 @@ public class SparkJobContext implements Serializable {
 
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
-    private transient AnalysisJob _analysisJob;
+    private transient AnalysisJobBuilder _analysisJobBuilder;
     private transient List<ComponentJob> _componentList;
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
@@ -101,20 +102,25 @@ public class SparkJobContext implements Serializable {
     }
 
     public AnalysisJob getAnalysisJob() {
-        if (_analysisJob == null) {
+        return getAnalysisJobBuilder().toAnalysisJob();
+    }
+
+    public AnalysisJobBuilder getAnalysisJobBuilder() {
+        if (_analysisJobBuilder == null) {
             _accumulators.get(ACCUMULATOR_JOB_READS).add(1);
             final Resource analysisJobResource = createResource(_analysisJobPath);
             final DataCleanerConfiguration configuration = getConfiguration();
-            _analysisJob = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
+            final AnalysisJobBuilder jobBuilder = analysisJobResource.read(new Func<InputStream, AnalysisJobBuilder>() {
                 @Override
-                public AnalysisJob eval(InputStream in) {
+                public AnalysisJobBuilder eval(InputStream in) {
                     final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                    final AnalysisJob analysisJob = jobReader.read(in);
-                    return analysisJob;
+                    final AnalysisJobBuilder jobBuilder = jobReader.create(in);
+                    return jobBuilder;
                 }
             });
+            _analysisJobBuilder = jobBuilder;
         }
-        return _analysisJob;
+        return _analysisJobBuilder;
     }
 
     public String getAnalysisJobPath() {
@@ -132,9 +138,9 @@ public class SparkJobContext implements Serializable {
                 return String.valueOf(i);
             }
         }
-        return null;
+        throw new IllegalArgumentException("Cannot find component in job: " + componentJob);
     }
-    
+
     public ComponentJob getComponentByKey(String key) {
         List<ComponentJob> componentJobList = getComponentList();
         for (int i = 0; i < componentJobList.size(); i++) {
@@ -143,16 +149,16 @@ public class SparkJobContext implements Serializable {
                 return componentJob;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Cannot resolve component with key: " + key);
     }
-    
+
     public List<ComponentJob> getComponentList() {
         if (_componentList == null) {
             _componentList = buildComponentList(getAnalysisJob());
         }
         return _componentList;
     }
-    
+
     private List<ComponentJob> buildComponentList(AnalysisJob analysisJob) {
         List<ComponentJob> componentJobList = new ArrayList<>();
         List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
@@ -170,28 +176,28 @@ public class SparkJobContext implements Serializable {
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             componentJobList.add(analyzerJob);
         }
-        
+
         for (TransformerJob transformerJob : analysisJob.getTransformerJobs()) {
             for (OutputDataStreamJob outputDataStreamJob : transformerJob.getOutputDataStreamJobs()) {
                 AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
                 componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
             }
         }
-        
+
         for (FilterJob filterJob : analysisJob.getFilterJobs()) {
             for (OutputDataStreamJob outputDataStreamJob : filterJob.getOutputDataStreamJobs()) {
                 AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
                 componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
             }
         }
-        
+
         for (AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
             for (OutputDataStreamJob outputDataStreamJob : analyzerJob.getOutputDataStreamJobs()) {
                 AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
                 componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
             }
         }
-        
+
         return componentJobList;
     }
 

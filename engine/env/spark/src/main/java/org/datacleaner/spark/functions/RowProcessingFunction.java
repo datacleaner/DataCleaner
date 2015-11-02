@@ -44,6 +44,7 @@ import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -128,7 +129,7 @@ public final class RowProcessingFunction implements
                     }
                 }
             }
-
+            
             final Set<ConfiguredPropertyDescriptor> resourceProperties = cb.getDescriptor()
                     .getConfiguredPropertiesByType(Resource.class, false);
             for (final ConfiguredPropertyDescriptor resourceProperty : resourceProperties) {
@@ -136,6 +137,14 @@ public final class RowProcessingFunction implements
                 final Resource replacementResource = createReplacementResource(resource, partitionNumber);
                 if (replacementResource != null) {
                     cb.setConfiguredProperty(resourceProperty, replacementResource);
+                }
+            }
+            
+            // special handlings of specific component types are handled here
+            if (cb.getComponentInstance() instanceof CreateCsvFileAnalyzer) {
+                if (partitionNumber > 0) {
+                    // ensure header is only created once
+                    cb.setConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_INCLUDE_HEADER, false);
                 }
             }
         }

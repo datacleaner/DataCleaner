@@ -77,6 +77,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
+    public static final String PROPERTY_INCLUDE_HEADER = "Include header";
 
     @Inject
     @Configured(value = PROPERTY_FILE, order = 1)
@@ -96,7 +97,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     Character escapeChar = '\\';
 
     @Inject
-    @Configured(order = 5, required = false)
+    @Configured(order = 5, required = false, value = PROPERTY_INCLUDE_HEADER)
     boolean includeHeader = true;
 
     @Inject

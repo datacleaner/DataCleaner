@@ -19,6 +19,7 @@
  */
 package org.datacleaner.spark;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,8 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
@@ -92,7 +94,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         final JavaRDD<InputRow> inputRowsRDD = openSourceDatastore(datastore);
 
         final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD;
-        if (isDistributable(job)) {
+        if (isDistributable()) {
             logger.info("Running the job in distributed mode");
 
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
@@ -134,12 +136,26 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         return new SparkAnalysisResultFuture(results);
     }
 
-    private boolean isDistributable(AnalysisJob job) {
-        for (ComponentJob componentJob : _sparkJobContext.getComponentList()) {
-            if (!componentJob.getDescriptor().isDistributable()) {
+    private boolean isDistributable() {
+        final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
+        return isDistributable(jobBuilder);
+    }
+
+    private boolean isDistributable(AnalysisJobBuilder jobBuilder) {
+        final Collection<ComponentBuilder> componentBuilders = jobBuilder.getComponentBuilders();
+        for (ComponentBuilder componentBuilder : componentBuilders) {
+            if (!componentBuilder.getDescriptor().isDistributable()) {
                 return false;
             }
         }
+
+        final List<AnalysisJobBuilder> childJobBuilders = jobBuilder.getConsumedOutputDataStreamsJobBuilders();
+        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+            if (!isDistributable(childJobBuilder)) {
+                return false;
+            }
+        }
+
         return true;
     }
 

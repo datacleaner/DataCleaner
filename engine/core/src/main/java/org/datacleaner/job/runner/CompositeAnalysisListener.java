@@ -91,7 +91,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.jobBegin(job, metrics);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -102,7 +102,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.onComponentMessage(job, componentJob, message);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -113,7 +113,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.jobSuccess(job, metrics);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -124,7 +124,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingBegin(job, metrics);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -135,7 +135,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingProgress(job, metrics, row, currentRow);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -146,7 +146,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingSuccess(job, metrics);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -157,7 +157,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.componentBegin(job, componentJob, metrics);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -168,7 +168,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.componentSuccess(job, componentJob, result);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -179,7 +179,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.errorInComponent(job, componentJob, row, throwable);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
@@ -190,7 +190,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.errorUnknown(job, throwable);
             } catch (Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getSimpleName(), e);
+                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }

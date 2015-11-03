@@ -32,7 +32,7 @@ The main application modules are:
 
 ## Code style and formatting
 
-In the root of the project you can find 'formatter-[IDE].xml' files which enable you to import the code formatting rules of the project into your IDE.
+In the root of the project you can find 'Formatter-[IDE].xml' files which enable you to import the code formatting rules of the project into your IDE.
 
 ## Continuous Integration
 

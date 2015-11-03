@@ -167,8 +167,7 @@ public class SecurityUtils {
     public static String decodePasswordWithPrefix(String encodedPasswordWithPrefix) {
         if (hasPrefix(encodedPasswordWithPrefix)) {
             return decodePassword(encodedPasswordWithPrefix.substring(PREFIX.length()));
-        }
-        else {
+        } else {
             return encodedPasswordWithPrefix;
         }
     }

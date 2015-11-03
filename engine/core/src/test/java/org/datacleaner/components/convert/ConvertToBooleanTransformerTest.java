@@ -52,6 +52,8 @@ public class ConvertToBooleanTransformerTest extends TestCase {
 		assertTrue(ConvertToBooleanTransformer.transformValue("true", t, f));
 		assertTrue(ConvertToBooleanTransformer.transformValue(1, t, f));
 		assertTrue(ConvertToBooleanTransformer.transformValue("yes", t, f));
+		assertTrue(ConvertToBooleanTransformer.transformValue("y", t, f));
+		assertTrue(ConvertToBooleanTransformer.transformValue("Y", t, f));
 		assertTrue(ConvertToBooleanTransformer.transformValue("tRUe", t, f));
 		assertTrue(ConvertToBooleanTransformer.transformValue("1", t, f));
 
@@ -59,6 +61,8 @@ public class ConvertToBooleanTransformerTest extends TestCase {
 		assertFalse(ConvertToBooleanTransformer.transformValue("false", t, f));
 		assertFalse(ConvertToBooleanTransformer.transformValue(0, t, f));
 		assertFalse(ConvertToBooleanTransformer.transformValue("no", t, f));
+		assertFalse(ConvertToBooleanTransformer.transformValue("n", t, f));
+		assertFalse(ConvertToBooleanTransformer.transformValue("N", t, f));
 		assertFalse(ConvertToBooleanTransformer.transformValue("fALse", t, f));
 		assertFalse(ConvertToBooleanTransformer.transformValue("0", t, f));
 	}

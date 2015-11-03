@@ -47,7 +47,7 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
 
     public void testScenario() throws Exception {
         final List<Integer> rowNumbers = new ArrayList<Integer>();
-        final AtomicInteger expectedRows = new AtomicInteger();
+        final AtomicInteger expectedRows = new AtomicInteger(-1);
 
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
@@ -55,6 +55,7 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         final AnalysisListener analysisListener = new AnalysisListenerAdaptor() {
             @Override
             public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+                expectedRows.set(-2);
                 final int expected = metrics.getExpectedRows();
                 expectedRows.set(expected);
             }

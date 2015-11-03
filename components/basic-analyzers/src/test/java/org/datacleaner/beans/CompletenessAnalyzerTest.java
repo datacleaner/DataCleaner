@@ -53,8 +53,6 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
-import org.datacleaner.storage.RowAnnotationFactory;
-import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.test.MockAnalyzer;
 
 public class CompletenessAnalyzerTest extends TestCase {

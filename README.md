@@ -30,6 +30,10 @@ The main application modules are:
   * ui - the actual web user interface, based primarily on GWT and JSF
  * documentation - end-user reference documentation, published on http://datacleaner.org/docs
 
+## Code style and formatting
+
+In the root of the project you can find 'Formatter-[IDE].xml' files which enable you to import the code formatting rules of the project into your IDE.
+
 ## Continuous Integration
 
 There's a public build of DataCleaner that can be found on Travis CI:

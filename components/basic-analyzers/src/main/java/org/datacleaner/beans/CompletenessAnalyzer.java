@@ -40,7 +40,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
-import org.datacleaner.api.Provided;
 import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2;

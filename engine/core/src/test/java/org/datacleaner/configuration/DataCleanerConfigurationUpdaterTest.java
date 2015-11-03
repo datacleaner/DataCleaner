@@ -55,14 +55,22 @@ public class DataCleanerConfigurationUpdaterTest {
     }
 
     private boolean isValuePresent(String value) {
-        try {
-            InputStream inStream = getClass().getResourceAsStream(configurationFileClasspath);
-            BufferedReader inReader = new BufferedReader(new InputStreamReader(inStream));
-            String line;
+        InputStream inStream = null;
 
-            while ((line = inReader.readLine()) != null) {
-                if (line.contains(value)) {
-                    return true;
+        try {
+            try {
+                inStream = getClass().getResourceAsStream(configurationFileClasspath);
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(inStream));
+                String line;
+
+                while ((line = inReader.readLine()) != null) {
+                    if (line.contains(value)) {
+                        return true;
+                    }
+                }
+            } finally {
+                if (inStream != null) {
+                    inStream.close();
                 }
             }
         } catch (IOException e) {

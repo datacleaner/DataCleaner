@@ -44,6 +44,7 @@ import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
+import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.Provided;
@@ -371,7 +372,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     public boolean isDistributable() {
         final Distributed distributed = getAnnotation(Distributed.class);
         if (distributed == null) {
-            return false;
+            return ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class);
         }
         return distributed.value();
     }

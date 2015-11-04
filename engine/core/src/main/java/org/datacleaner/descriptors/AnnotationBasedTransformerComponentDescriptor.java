@@ -63,9 +63,7 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
         if (annotation != null) {
             return annotation.value();
         }
-        if (ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class)) {
-            return true;
-        }
-        return true;
+        
+        return ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class);
     }
 }

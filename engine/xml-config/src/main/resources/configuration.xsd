@@ -173,12 +173,13 @@
 
     <complexType name="remoteComponentsType">
         <sequence>
-            <element name="server" type="ab:remoteComponentServerType"/>
+            <element name="server" type="ab:remoteComponentServerType" minOccurs="1" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
 
     <complexType name="remoteComponentServerType">
         <sequence>
+            <element name="name" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="url" type="string" minOccurs="0" maxOccurs="1">
                 <annotation>
                     <documentation>

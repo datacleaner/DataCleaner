@@ -40,7 +40,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.google.common.base.Strings;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -170,6 +169,8 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Configuration reader that uses the JAXB model to read XML file based
@@ -352,30 +353,38 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         // now go through providers specification and create them
         for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
-            DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
-            if(result != null) {
-                result = new CompositeDescriptorProvider(result, prov);
-            } else {
-                result = prov;
+            List<DescriptorProvider> newProviders = createDescriptorProvider(provider, environment, temporaryConfiguration);
+            for (DescriptorProvider newProvider : newProviders) {
+                if(result != null) {
+                    result = new CompositeDescriptorProvider(result, newProvider);
+                } else {
+                    result = newProvider;
+                }
             }
         }
-
         return result;
     }
 
-    private DescriptorProvider createDescriptorProvider(Object providerElement, DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private List<DescriptorProvider> createDescriptorProvider(Object providerElement, DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        ArrayList<DescriptorProvider> providerList = new ArrayList<>();
         if(providerElement instanceof CustomElementType) {
-            return createCustomElement(
+            providerList.add(
+                    createCustomElement(
                     ((CustomElementType) providerElement),
                     DescriptorProvider.class,
-                    temporaryConfiguration, true);
-        } else if(providerElement instanceof ClasspathScannerType) {
-            return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
+                    temporaryConfiguration, true)
+            );
+
+        } else if (providerElement instanceof ClasspathScannerType) {
+            DescriptorProvider classPathProvider = createClasspathScanDescriptorProvider((ClasspathScannerType) providerElement, environment);
+            providerList.add(classPathProvider);
         } else if(providerElement instanceof RemoteComponentsType) {
-            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
+            List<DescriptorProvider> remoteProviders = createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
+            providerList.addAll(remoteProviders);
         } else {
             throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
+        return providerList;
     }
 
     private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(final ClasspathScannerType classpathScannerElement, DataCleanerEnvironment environment) {
@@ -406,16 +415,21 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement,
-                                                              DataCleanerEnvironment dataCleanerEnvironment) {
-        RemoteComponentServerType server = providerElement.getServer();
-        CredentialsProvider credentialsProvider = dataCleanerEnvironment.getCredentialsProvider();
-
-        credentialsProvider.setHost(server.getUrl());
-        credentialsProvider.setUsername(server.getUsername());
-        credentialsProvider.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-
-        return new RemoteDescriptorProvider(dataCleanerEnvironment.getCredentialsProvider());
+    private  List<DescriptorProvider> createRemoteDescriptorProvider(RemoteComponentsType providerElement,
+            DataCleanerEnvironment dataCleanerEnvironment) {
+        ArrayList<DescriptorProvider> descriptorProviders = new ArrayList<>();
+        for (RemoteComponentServerType server : providerElement.getServer()) {
+            List<CredentialsProvider> credentialsProviders = dataCleanerEnvironment.getCredentialsProviders();
+            CredentialsProvider credentialsProvider = new RemoteComponentsCredentialsProvider();
+            String serverName = server.getName();
+            credentialsProvider.setServerName(serverName == null ? "server" + credentialsProviders.size() : serverName);
+            credentialsProvider.setHost(server.getUrl());
+            credentialsProvider.setUsername(server.getUsername());
+            credentialsProvider.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
+            credentialsProviders.add(credentialsProvider);
+            descriptorProviders.add(new RemoteDescriptorProvider(credentialsProvider));
+        }
+        return descriptorProviders;
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

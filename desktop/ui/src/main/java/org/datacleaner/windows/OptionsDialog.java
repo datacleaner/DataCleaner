@@ -19,7 +19,9 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -33,7 +35,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
@@ -346,7 +355,12 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-        final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
+        List<CredentialsProvider> credentials = _configuration.getEnvironment().getCredentialsProviders();
+        final CredentialsProvider credentialsProvider;
+        if (credentials == null || credentials.isEmpty()) {
+            return;
+        }
+        credentialsProvider = credentials.get(0);
         String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePasswordWithPrefix(value) : value;
         textField.setText(finalInputValue);
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -377,7 +391,9 @@ public class OptionsDialog extends AbstractWindow {
 
             for (Object provider : allProviders) {
                 if (provider instanceof RemoteComponentsType) {
-                    return ((RemoteComponentsType) provider).getServer();
+                    // Only for the first server
+                    List<RemoteComponentServerType> servers = ((RemoteComponentsType) provider).getServer();
+                    return servers == null || servers.isEmpty() ? null : servers.get(0);
                 }
             }
         }

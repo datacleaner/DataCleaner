@@ -23,9 +23,21 @@ package org.datacleaner.configuration;
  * @since 15. 10. 2015
  */
 public class RemoteComponentsCredentialsProvider implements CredentialsProvider {
+    private String serverName;
     private String host;
     private String username;
     private String password;
+
+    @Override
+    public CredentialsProvider setServerName(String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+
+    @Override
+    public String getServerName() {
+        return serverName;
+    }
 
     @Override
     public CredentialsProvider setHost(String host) {

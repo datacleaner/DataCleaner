@@ -24,6 +24,8 @@ package org.datacleaner.configuration;
  * @since 15. 10. 2015
  */
 public interface CredentialsProvider {
+    public CredentialsProvider setServerName(String serverName);
+    public String getServerName();
     public CredentialsProvider setHost(String host);
     public String getHost();
     public CredentialsProvider setUsername(String username);

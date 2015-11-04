@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import java.util.List;
+
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.storage.StorageProvider;
@@ -35,7 +37,7 @@ public interface DataCleanerEnvironment {
      *
      * @return the box for credentials defined for this environment.
      */
-    public CredentialsProvider getCredentialsProvider();
+    public List<CredentialsProvider> getCredentialsProviders();
 
     /**
      * Gets the {@link TaskRunner} defined in this environment

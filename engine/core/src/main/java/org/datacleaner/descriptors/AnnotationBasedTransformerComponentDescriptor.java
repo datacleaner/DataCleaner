@@ -21,7 +21,6 @@ package org.datacleaner.descriptors;
 
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
-import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
@@ -64,6 +63,6 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
             return annotation.value();
         }
         
-        return ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class);
+        return true;
     }
 }

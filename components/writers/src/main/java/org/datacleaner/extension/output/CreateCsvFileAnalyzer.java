@@ -153,8 +153,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
-                + categoryName + ".csv"));
+        file = new FileResource(new File(saveDatastoreDirectory, dsName + "-" + displayName + "-" + categoryName
+                + ".csv"));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv"));
+        file = new FileResource(new File(saveDatastoreDirectory, dsName + "-" + displayName + ".csv"));
     }
 
     @Override

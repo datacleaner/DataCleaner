@@ -78,7 +78,10 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     public static final String PROPERTY_OVERWRITE_SHEET_IF_EXISTS = "Overwrite sheet if exists";
     private static final String[] excelExtension = { "xlsx", "xls" };
 
-    private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
+    // excel breaks when sheet names are longer than 31 chars - see
+    // https://github.com/datacleaner/DataCleaner/issues/864
+    private static final int SHEET_NAME_MAX_LENGTH = 31;
+    private static final char[] SHEET_NAME_ILLEGAL_CHARS = new char[] { '.', ':' };
 
     @Configured(PROPERTY_FILE)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
@@ -122,8 +125,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Validate
     public void validate() {
+        sheetName = sheetName.trim();
 
-        for (char c : ILLEGAL_SHEET_CHARS) {
+        if (sheetName.length() > SHEET_NAME_MAX_LENGTH) {
+            throw new IllegalStateException("Sheet name must be maximum " + SHEET_NAME_MAX_LENGTH + " characters long");
+        }
+
+        for (char c : SHEET_NAME_ILLEGAL_CHARS) {
             if (sheetName.indexOf(c) != -1) {
                 throw new IllegalStateException("Sheet name cannot contain '" + c + "'");
             }
@@ -163,10 +171,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     }
 
     private String fixSheetName(String sheet) {
-        for (char c : ILLEGAL_SHEET_CHARS) {
+        for (char c : SHEET_NAME_ILLEGAL_CHARS) {
             while (sheet.indexOf(c) != -1) {
                 sheet = sheet.replace(c, '-');
             }
+        }
+        if (sheet.length() > SHEET_NAME_MAX_LENGTH) {
+            sheet = sheet.substring(0, SHEET_NAME_MAX_LENGTH);
         }
         return sheet;
     }

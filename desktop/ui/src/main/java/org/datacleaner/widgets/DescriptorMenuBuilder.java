@@ -190,7 +190,7 @@ public final class DescriptorMenuBuilder {
         Collection<ComponentDescriptor<?>> componentDescriptorsWithoutDuplicates = new ArrayList<>();
 
         for (ComponentDescriptor<?> componentDescriptor : filteredDescriptors) {
-            String displayName = componentDescriptor.getDisplayName().replace(" (remote)", "");
+            String displayName = componentDescriptor.getDisplayName();
 
             if (! lastName.equals(displayName)) {
                 componentDescriptorsWithoutDuplicates.add(componentDescriptor);

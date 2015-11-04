@@ -19,17 +19,13 @@
  */
 package org.datacleaner.descriptors;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.datacleaner.api.Close;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
-import org.datacleaner.api.Initialize;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
-import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +63,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public String getDisplayName() {
-        return remoteDisplayName + " (remote)";
+        return remoteDisplayName;
     }
 
     @Override

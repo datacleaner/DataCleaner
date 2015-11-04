@@ -83,8 +83,8 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @throws ComponentValidationException
      * @throws UnconfiguredConfiguredPropertyException
      */
-    public boolean isConfigured(boolean throwException) throws ComponentValidationException,
-            UnconfiguredConfiguredPropertyException;
+    public boolean isConfigured(boolean throwException)
+            throws ComponentValidationException, UnconfiguredConfiguredPropertyException;
 
     /**
      * Sets a metadata property
@@ -295,4 +295,12 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      *            the new {@link }AnalysisJobBuilder}
      */
     public void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder);
+
+    /**
+     * Determines if the component being built is going to be distributable in a
+     * cluster execution environment.
+     * 
+     * @return
+     */
+    public boolean isDistributable();
 }

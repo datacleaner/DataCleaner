@@ -21,7 +21,6 @@ package org.datacleaner.cluster;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.metamodel.schema.Column;
@@ -34,9 +33,7 @@ import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
@@ -350,20 +347,13 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     }
 
     private void failIfJobIsUnsupported(AnalysisJob job) throws UnsupportedOperationException {
-        failIfComponentsAreUnsupported(job.getFilterJobs());
-        failIfComponentsAreUnsupported(job.getTransformerJobs());
-        failIfComponentsAreUnsupported(job.getAnalyzerJobs());
-    }
-
-    private void failIfComponentsAreUnsupported(Collection<? extends ComponentJob> jobs)
-            throws UnsupportedOperationException {
-        for (ComponentJob job : jobs) {
-            final ComponentDescriptor<?> descriptor = job.getDescriptor();
-            final boolean distributable = descriptor.isDistributable();
-            if (!distributable) {
-                throw new UnsupportedOperationException("Component is not distributable: " + job);
+        final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job);
+        try {
+            if (!jobBuilder.isDistributable()) {
+                throw new UnsupportedOperationException("Job is not distributable!");
             }
+        } finally {
+            jobBuilder.close();
         }
     }
-
 }

@@ -161,13 +161,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Override
     public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
         final String dsName = ajb.getDatastore().getName();
-        sheetName = fixSheetName("output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName);
+        sheetName = fixSheetName(dsName + "-" + descriptor.getDisplayName() + "-" + categoryName);
     }
 
     @Override
     public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
         final String dsName = ajb.getDatastore().getName();
-        sheetName = fixSheetName("output-" + dsName + "-" + descriptor.getDisplayName());
+        sheetName = fixSheetName(dsName + "-" + descriptor.getDisplayName());
     }
 
     private String fixSheetName(String sheet) {

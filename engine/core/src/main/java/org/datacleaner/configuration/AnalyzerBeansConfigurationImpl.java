@@ -165,6 +165,11 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
+    public CredentialsProvider getCredentialsProvider() {
+        return _environment.getCredentialsProvider();
+    }
+
+    @Override
     public DatastoreCatalog getDatastoreCatalog() {
         return _datastoreCatalog;
     }

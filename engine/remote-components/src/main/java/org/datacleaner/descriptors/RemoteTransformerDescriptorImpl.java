@@ -19,13 +19,17 @@
  */
 package org.datacleaner.descriptors;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.datacleaner.api.Close;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +42,16 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
     private String baseUrl;
-    private String tenant;
     private String superCategoryName;
     private Set<String> categoryNames;
     private String username;
     private String password;
     private byte[] iconData;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String tenant,
+    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName,
                                            String superCategoryName, Set<String> categoryNames, byte[] iconData,
                                            String username, String password) {
-        super(RemoteTransformer.class);
+        super(RemoteTransformer.class, true);
         this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
@@ -56,13 +59,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
-        this.tenant = tenant;
-        try {
-            this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
-            this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -117,7 +113,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
+        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
         for(ConfiguredPropertyDescriptor prop: (Set<ConfiguredPropertyDescriptor>)_configuredProperties) {
             if(prop instanceof RemoteConfiguredPropertyDescriptor) {
                 ((RemoteConfiguredPropertyDescriptor)prop).setDefaultValue(t);

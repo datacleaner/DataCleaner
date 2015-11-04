@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  *
  * @Since 9/15/15
  */
-public class EnumerationValue implements HasName, JsonSerializable, Serializable {
+public class EnumerationValue implements HasName, JsonSerializable, Serializable, Comparable<EnumerationValue> {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
 
     public EnumerationValue(String value, String name) {
         this.value = value;
-        this.name = name;
+        this.name = name == null ? "" : name;
     }
 
     public EnumerationValue(String value) {
@@ -59,6 +59,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         this.value = enumValue.name();
         if (enumValue instanceof HasName) {
             name = ((HasName) enumValue).getName();
+            if(name == null) { name = ""; }
         } else {
             name = value.toString();
         }
@@ -152,4 +153,16 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         };
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public int compareTo(EnumerationValue o) {
+        if(enumValue != null && o.asJavaEnum() != null) {
+            try {
+                return ((Enum)asJavaEnum()).compareTo(o.asJavaEnum());
+            } catch (Exception e) {
+                // nothing to do
+            }
+        }
+        return getName().compareTo(o.getName());
+    }
 }

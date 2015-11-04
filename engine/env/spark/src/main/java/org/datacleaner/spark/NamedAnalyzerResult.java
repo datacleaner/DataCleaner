@@ -31,6 +31,12 @@ public class NamedAnalyzerResult implements Serializable {
     private final AnalyzerResult _analyzerResult;
     
     public NamedAnalyzerResult(final String name, final AnalyzerResult analyzerResult) {
+        if (name == null) {
+            throw new IllegalArgumentException("NamedAnalyzerResult name cannot be null");
+        }
+        if (analyzerResult == null) {
+            throw new IllegalArgumentException("NamedAnalyzerResult result cannot be null");
+        }
         _name = name;
         _analyzerResult = analyzerResult;
     }

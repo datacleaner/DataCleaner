@@ -78,6 +78,10 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
     @Override
     public boolean isDistributable() {
+        final Distributed annotation = getAnnotation(Distributed.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
         return getResultReducerClass() != null;
     }
 }

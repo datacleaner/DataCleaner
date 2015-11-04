@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.common.base.Strings;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -66,6 +67,8 @@ import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
 import org.datacleaner.configuration.jaxb.CsvDatastoreType;
 import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatahubDatastoreType;
+import org.datacleaner.configuration.jaxb.DatahubsecuritymodeEnum;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
@@ -111,6 +114,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -140,6 +144,7 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -166,8 +171,6 @@ import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 /**
  * Configuration reader that uses the JAXB model to read XML file based
  * configurations for DataCleaner.
@@ -175,8 +178,6 @@ import com.google.common.base.Strings;
 public final class JaxbConfigurationReader implements ConfigurationReader<InputStream> {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationReader.class);
-
-    public static final String ENCODED_PASSWORD_PREFIX = "enc:";
 
     private final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
@@ -371,9 +372,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else if(providerElement instanceof ClasspathScannerType) {
             return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
         } else if(providerElement instanceof RemoteComponentsType) {
-            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement, environment);
         } else {
-            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+            throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
     }
 
@@ -405,9 +406,16 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement,
+                                                              DataCleanerEnvironment dataCleanerEnvironment) {
         RemoteComponentServerType server = providerElement.getServer();
-        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
+        CredentialsProvider credentialsProvider = dataCleanerEnvironment.getCredentialsProvider();
+
+        credentialsProvider.setHost(server.getUrl());
+        credentialsProvider.setUsername(server.getUsername());
+        credentialsProvider.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
+
+        return new RemoteDescriptorProvider(dataCleanerEnvironment.getCredentialsProvider());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,
@@ -693,6 +701,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (SalesforceDatastoreType) datastoreType);
             } else if (datastoreType instanceof SugarCrmDatastoreType) {
                 ds = createDatastore(name, (SugarCrmDatastoreType) datastoreType);
+            } else if (datastoreType instanceof DatahubDatastoreType) {
+                ds = createDatastore(name, (DatahubDatastoreType) datastoreType);
             } else if (datastoreType instanceof CompositeDatastoreType) {
                 // skip composite datastores at this point
                 continue;
@@ -909,6 +919,19 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
     }
+
+    private Datastore createDatastore(String name, DatahubDatastoreType datastoreType) {
+        String host = getStringVariable("host", datastoreType.getHost());
+        Integer port = getIntegerVariable("port", datastoreType.getPort());
+        String username = getStringVariable("username", datastoreType.getUsername());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
+        boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
+        boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
+        DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
+        DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
+        return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers, dataHubSecurityMode);
+    }
+
 
     private Datastore createDatastore(String name, MongodbDatastoreType mongodbDatastoreType) {
         String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());
@@ -1225,12 +1248,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private String getPasswordVariable(String key, String valueIfNull) {
         final String possiblyEncodedPassword = getStringVariable(key, valueIfNull);
+
         if (possiblyEncodedPassword == null) {
             return null;
         }
-        if (possiblyEncodedPassword.startsWith(ENCODED_PASSWORD_PREFIX)) {
-            return SecurityUtils.decodePassword(possiblyEncodedPassword.substring(ENCODED_PASSWORD_PREFIX.length()));
+
+        if (SecurityUtils.hasPrefix(possiblyEncodedPassword)) {
+            return SecurityUtils.decodePasswordWithPrefix(possiblyEncodedPassword);
         }
+
         return possiblyEncodedPassword;
     }
 

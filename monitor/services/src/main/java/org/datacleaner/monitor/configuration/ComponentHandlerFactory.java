@@ -39,10 +39,7 @@ public class ComponentHandlerFactory {
      * @throws RuntimeException
      */
     public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration) throws RuntimeException {
-        ComponentHandler handler = new ComponentHandler(tenantContext.getConfiguration(), componentName);
-        handler.createComponent(configuration);
-
-        return handler;
+            ComponentConfiguration configuration, RemoteComponentsConfiguration remoteComponentsConfiguration) throws RuntimeException {
+        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, remoteComponentsConfiguration);
     }
 }

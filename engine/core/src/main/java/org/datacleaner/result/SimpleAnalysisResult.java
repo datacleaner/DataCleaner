@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,14 @@ public class SimpleAnalysisResult extends AbstractAnalysisResult implements Seri
 
     private final Map<ComponentJob, AnalyzerResult> _results;
     private final Date _creationDate;
+
+    public SimpleAnalysisResult() {
+        this(new HashMap<ComponentJob, AnalyzerResult>());
+    }
+
+    public SimpleAnalysisResult(AnalysisResult result){
+        this(result.getResultMap(), new Date());
+    }
 
     public SimpleAnalysisResult(Map<ComponentJob, AnalyzerResult> results) {
         this(results, new Date());

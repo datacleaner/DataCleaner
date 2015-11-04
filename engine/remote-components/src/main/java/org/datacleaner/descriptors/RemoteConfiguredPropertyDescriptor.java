@@ -24,12 +24,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.restclient.Serializator;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * A Base class for property descriptors of remote transformers, implementing
@@ -149,7 +148,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @Override
     public Class<?> getTypeArgument(int i) throws IndexOutOfBoundsException {
-        return null;
+        return Object.class;
     }
 
     @Override

@@ -107,27 +107,12 @@ public final class Main {
             }
 
             final File dataCleanerHome = DataCleanerHome.getAsFile();
-
-            try {
-                final File xmlConfigurationFile = new File(dataCleanerHome, "log4j.xml");
-                if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
-                    println("Using custom log configuration: " + xmlConfigurationFile);
-                    DOMConfigurator.configure(xmlConfigurationFile.toURI().toURL());
-                    return true;
-                }
-            } catch (MalformedURLException e) {
-                // no xml logging found, ignore
+            if (initializeLoggingFromDirectory(dataCleanerHome)) {
+                return true;
             }
 
-            try {
-                final File propertiesConfigurationFile = new File(dataCleanerHome, "log4j.properties");
-                if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
-                    println("Using custom log configuration: " + propertiesConfigurationFile);
-                    PropertyConfigurator.configure(propertiesConfigurationFile.toURI().toURL());
-                    return true;
-                }
-            } catch (MalformedURLException e) {
-                // no properties logging found, ignore
+            if (initializeLoggingFromDirectory(new File("."))) {
+                return true;
             }
 
             // fall back to default log4j.xml file in classpath
@@ -142,6 +127,31 @@ public final class Main {
             println("Failed to initialize logging, class not found: " + e.getMessage());
             return false;
         }
+    }
+
+    private static boolean initializeLoggingFromDirectory(File directory) {
+        try {
+            final File xmlConfigurationFile = new File(directory, "log4j.xml");
+            if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
+                println("Using custom log configuration: " + xmlConfigurationFile);
+                DOMConfigurator.configure(xmlConfigurationFile.toURI().toURL());
+                return true;
+            }
+        } catch (MalformedURLException e) {
+            // no xml logging found, ignore
+        }
+
+        try {
+            final File propertiesConfigurationFile = new File(directory, "log4j.properties");
+            if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
+                println("Using custom log configuration: " + propertiesConfigurationFile);
+                PropertyConfigurator.configure(propertiesConfigurationFile.toURI().toURL());
+                return true;
+            }
+        } catch (MalformedURLException e) {
+            // no properties logging found, ignore
+        }
+        return false;
     }
 
     /**

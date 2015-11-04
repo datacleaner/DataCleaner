@@ -31,8 +31,8 @@
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ALL_FIELDS"/>
             </properties>
-            <input ref="col_concatoffirstnamelastname3"/>
-            <input ref="col_reportsto"/>
+            <input ref="col_concatoffirstnamelastname3" name="Values"/>
+            <input ref="col_reportsto" name="Values"/>
             <output-data-stream name="Complete rows">
                 <job>
                     <source>

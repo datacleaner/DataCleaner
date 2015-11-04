@@ -51,9 +51,9 @@ public final class AnalyzerResultReduceFunction implements
 
         assert namedAnalyzerResult1.getName().equals(namedAnalyzerResult2.getName());
 
-        String key = namedAnalyzerResult1.getName();
+        final String key = namedAnalyzerResult1.getName();
 
-        ComponentJob componentJob = _sparkJobContext.getComponentByKey(key);
+        final ComponentJob componentJob = _sparkJobContext.getComponentByKey(key);
 
         final AnalyzerResult analyzerResult1 = namedAnalyzerResult1.getAnalyzerResult();
         final AnalyzerResult analyzerResult2 = namedAnalyzerResult2.getAnalyzerResult();
@@ -65,11 +65,11 @@ public final class AnalyzerResultReduceFunction implements
             throw new IllegalStateException("The analyzer (" + analyzerResult1 + ") is not distributable!");
         }
 
-        AnalyzerResultReducer<AnalyzerResult> reducer = initializeReducer(resultReducerClass);
-        
-        AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1, analyzerResult2));
+        final AnalyzerResultReducer<AnalyzerResult> reducer = initializeReducer(resultReducerClass);
 
-        NamedAnalyzerResult reducedTuple = new NamedAnalyzerResult(key, reducedAnalyzerResult);
+        final AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1, analyzerResult2));
+
+        final NamedAnalyzerResult reducedTuple = new NamedAnalyzerResult(key, reducedAnalyzerResult);
         return reducedTuple;
     }
 
@@ -83,13 +83,14 @@ public final class AnalyzerResultReduceFunction implements
 
         final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor = Descriptors
                 .ofComponent(resultReducerClass);
-        
+
         @SuppressWarnings("unchecked")
-        AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) reducerDescriptor.newInstance();
-        
+        final AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) reducerDescriptor
+                .newInstance();
+
         lifeCycleHelper.assignProvidedProperties(reducerDescriptor, reducer);
         lifeCycleHelper.initialize(reducerDescriptor, reducer);
-        
+
         return reducer;
     }
 

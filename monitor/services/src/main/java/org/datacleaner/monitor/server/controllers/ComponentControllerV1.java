@@ -49,12 +49,14 @@ import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
 import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
-import org.datacleaner.restclient.ComponentNotFoundException;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.OutputColumns;
@@ -107,15 +109,23 @@ public class ComponentControllerV1 implements ComponentController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
+    
+    @Autowired
+    RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
     @PostConstruct
     public void init() {
-        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory);
+        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory, _remoteComponentsConfiguration);
     }
 
     @PreDestroy
-    public void close() throws InterruptedException {
-        _componentCache.close();
+    public void close() {
+        try {
+            _componentCache.close();
+        }
+        catch (InterruptedException e) {
+            logger.warn(e.getMessage());
+        }
     }
 
     /**
@@ -135,10 +145,12 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor<?> descriptor : transformerDescriptors) {
-            try {
-                componentList.add(createComponentInfo(tenant, descriptor, iconData));
-            } catch (Exception e) {
-                logger.error("Cannot create info about component {}", descriptor, e);
+            if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
+                try {
+                    componentList.add(createComponentInfo(tenant, descriptor, iconData));
+                } catch(Exception e) {
+                    logger.error("Cannot create info about component {}", descriptor, e);
+                }
             }
         }
 
@@ -152,10 +164,13 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
-        logger.debug("Informing about '{}'", name);
+        logger.debug("Informing about '" + name + "'");
         DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
-        ComponentDescriptor<?> descriptor = dcConfig.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(name);
+        ComponentDescriptor<?> descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            logger.info("Component {} is not allowed.", name);
+            throw ComponentNotAllowed.createInstanceNotAllowed(name);
+        }
         return createComponentInfo(tenant, descriptor, iconData);
     }
 
@@ -171,8 +186,7 @@ public class ComponentControllerV1 implements ComponentController {
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
-                createInput.configuration);
-        handler.createComponent(createInput.configuration);
+                createInput.configuration, _remoteComponentsConfiguration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
@@ -203,7 +217,7 @@ public class ComponentControllerV1 implements ComponentController {
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
-                processStatelessInput.configuration);
+                processStatelessInput.configuration, _remoteComponentsConfiguration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
         output.result = getJsonNode(handler.closeComponent());

@@ -19,7 +19,10 @@
  */
 package org.datacleaner.beans;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -37,9 +40,9 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
-import org.datacleaner.api.Provided;
 import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.StringUtils;
@@ -53,6 +56,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     public static final String PROPERTY_VALUES = "Values";
     public static final String PROPERTY_CONDITIONS = "Conditions";
     public static final String PROPERTY_EVALUATION_MODE = "Evaluation mode";
+    public static final String PROPERTY_ADDITIONAL_OUTPUT_VALUES = "Additional output values";
 
     public static enum Condition implements HasName {
         NOT_BLANK_OR_NULL("Not <blank> or <null>"), NOT_NULL("Not <null>");
@@ -86,39 +90,51 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     }
 
     @Inject
-    @Configured(PROPERTY_VALUES)
+    @Configured(order=1, value=PROPERTY_VALUES)
     @Description("Values to check for completeness")
     InputColumn<?>[] _valueColumns;
 
     @Inject
-    @Configured(PROPERTY_CONDITIONS)
+    @Configured(order=2, value=PROPERTY_CONDITIONS)
     @Description("The conditions of which a value is determined to be filled or not")
     @MappedProperty(PROPERTY_VALUES)
     Condition[] _conditions;
 
     @Inject
-    @Configured(PROPERTY_EVALUATION_MODE)
+    @Configured(order=3, value=PROPERTY_EVALUATION_MODE)
     EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
 
     @Inject
-    @Provided
-    RowAnnotation _invalidRecords;
+    @Configured(order=100, value= PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
+    @Description("Optional additional values to add to output data streams")
+    InputColumn<?>[] _additionalOutputValueColumns;
 
-    @Inject
-    @Provided
-    RowAnnotationFactory _annotationFactory;
+    // Do not inject the shared RowAnnotations, available rows are always needed.
+    private final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
+    private final RowAnnotation _invalidRecords = _annotationFactory.createAnnotation();
+    private final AtomicInteger _rowCount = new AtomicInteger();
 
-    private final AtomicInteger _rowCount;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
-
-    public CompletenessAnalyzer() {
-        _rowCount = new AtomicInteger();
-    }
+    private List<InputColumn<?>> _outputDataStreamColumns;
 
     @Initialize
     public void init() {
         _rowCount.set(0);
+        _outputDataStreamColumns = createOutputDataStreamColumns();
+    }
+
+    private List<InputColumn<?>> createOutputDataStreamColumns() {
+        final List<InputColumn<?>> outputDataStreamColumns = new ArrayList<>();
+        Collections.addAll(outputDataStreamColumns, _valueColumns);
+        if (_additionalOutputValueColumns != null) {
+            for (InputColumn<?> inputColumn : _additionalOutputValueColumns) {
+                if (!outputDataStreamColumns.contains(inputColumn)) {
+                    outputDataStreamColumns.add(inputColumn);
+                }
+            }
+        }
+        return outputDataStreamColumns;
     }
 
     @Override
@@ -136,7 +152,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             if (_evaluationMode == EvaluationMode.ANY_FIELD && !valid) {
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);
                 if (_incompleteRowCollector != null) {
-                    _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
+                    _incompleteRowCollector.putValues(row.getValues(_outputDataStreamColumns).toArray());
                 }
                 return;
             }
@@ -148,13 +164,13 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         if (_evaluationMode == EvaluationMode.ALL_FIELDS && allInvalid) {
             _annotationFactory.annotate(row, distinctCount, _invalidRecords);
             if (_incompleteRowCollector != null) {
-                _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
+                _incompleteRowCollector.putValues(row.getValues(_outputDataStreamColumns).toArray());
             }
             return;
         }
 
         if (_completeRowCollector != null) {
-            _completeRowCollector.putValues(row.getValues(_valueColumns).toArray());
+            _completeRowCollector.putValues(row.getValues(_outputDataStreamColumns).toArray());
         }
     }
 
@@ -191,7 +207,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams
                 .pushDataStream(OUTPUT_STREAM_INCOMPLETE);
 
-        for (InputColumn<?> column : _valueColumns) {
+        for (InputColumn<?> column : createOutputDataStreamColumns()) {
             completeStreamBuilder.withColumnLike(column);
             incompleteStreamBuilder.withColumnLike(column);
         }

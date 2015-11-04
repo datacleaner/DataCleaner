@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
-import org.datacleaner.configuration.CredentialsProvider;
+import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.slf4j.Logger;
@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
-    private final CredentialsProvider credentialsProvider;
+    private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
-    public RemoteDescriptorProvider(CredentialsProvider credentialsProvider) {
+    public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
         super(false);
-        this.credentialsProvider = credentialsProvider;
+        this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
     }
 
@@ -95,17 +95,17 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
         private void downloadDescriptors() {
             try {
-                logger.info("Loading remote components list from " + credentialsProvider.getHost());
+                logger.info("Loading remote components list from " + remoteServerData.getHost());
                 final ComponentRESTClient client = new ComponentRESTClient(
-                        credentialsProvider.getHost(), credentialsProvider.getUsername(), credentialsProvider.getPassword());
+                        remoteServerData.getHost(), remoteServerData.getUsername(), remoteServerData.getPassword());
                 final ComponentList components = client.getAllComponents(true);
                 
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                                credentialsProvider.getHost(), component.getName(),
+                                remoteServerData.getHost(), component.getName(),
                                 component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData(),
-                                credentialsProvider.getUsername(), credentialsProvider.getPassword());
+                                remoteServerData.getUsername(), remoteServerData.getPassword());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {
@@ -136,7 +136,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Cannot get list of remote components on " + credentialsProvider.getHost(), e);
+                logger.error("Cannot get list of remote components on " + remoteServerData.getHost(), e);
                 // TODO: plan a task to try again after somw while. And then
                 // notify listeners...
             }

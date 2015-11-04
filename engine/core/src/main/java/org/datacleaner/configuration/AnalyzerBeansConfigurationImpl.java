@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.util.List;
-
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -167,9 +165,10 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
-    public List<CredentialsProvider> getCredentialsProviders() {
-        return _environment.getCredentialsProviders();
+    public RemoteServerConfiguration getRemoteServerConfiguration() {
+        return _environment.getRemoteServerConfiguration();
     }
+
     @Override
     public DatastoreCatalog getDatastoreCatalog() {
         return _datastoreCatalog;

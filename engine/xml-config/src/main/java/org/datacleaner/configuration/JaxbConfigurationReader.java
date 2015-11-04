@@ -418,16 +418,17 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private  List<DescriptorProvider> createRemoteDescriptorProvider(RemoteComponentsType providerElement,
             DataCleanerEnvironment dataCleanerEnvironment) {
         ArrayList<DescriptorProvider> descriptorProviders = new ArrayList<>();
+        RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
+        remoteServerConfiguration.setShowAllServers(providerElement.isShowAll());
         for (RemoteComponentServerType server : providerElement.getServer()) {
-            List<CredentialsProvider> credentialsProviders = dataCleanerEnvironment.getCredentialsProviders();
-            CredentialsProvider credentialsProvider = new RemoteComponentsCredentialsProvider();
+            RemoteServerData remoteServerData = new RemoteServerDataImpl();
             String serverName = server.getName();
-            credentialsProvider.setServerName(serverName == null ? "server" + credentialsProviders.size() : serverName);
-            credentialsProvider.setHost(server.getUrl());
-            credentialsProvider.setUsername(server.getUsername());
-            credentialsProvider.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-            credentialsProviders.add(credentialsProvider);
-            descriptorProviders.add(new RemoteDescriptorProvider(credentialsProvider));
+            remoteServerData.setServerName(serverName == null ? "server" + remoteServerConfiguration.getServerList().size() : serverName);
+            remoteServerData.setHost(server.getUrl());
+            remoteServerData.setUsername(server.getUsername());
+            remoteServerData.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
+            remoteServerConfiguration.addServer(remoteServerData);
+            descriptorProviders.add(new RemoteDescriptorProvider(remoteServerData));
         }
         return descriptorProviders;
     }

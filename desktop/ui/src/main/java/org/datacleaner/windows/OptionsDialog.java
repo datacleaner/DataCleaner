@@ -47,10 +47,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.CredentialsProvider;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
 import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.configuration.RemoteServerConfiguration;
+import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
 import org.datacleaner.configuration.jaxb.RemoteComponentsType;
@@ -355,12 +356,12 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-        List<CredentialsProvider> credentials = _configuration.getEnvironment().getCredentialsProviders();
-        final CredentialsProvider credentialsProvider;
-        if (credentials == null || credentials.isEmpty()) {
+        RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment().getRemoteServerConfiguration();
+        final RemoteServerData remoteServerData;
+        if (remoteServerConfiguration == null || remoteServerConfiguration.isEmpty()) {
             return;
         }
-        credentialsProvider = credentials.get(0);
+        remoteServerData = remoteServerConfiguration.getServerList().get(0);
         String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePasswordWithPrefix(value) : value;
         textField.setText(finalInputValue);
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -370,12 +371,12 @@ public class OptionsDialog extends AbstractWindow {
                 String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
 
                 if (textField instanceof JPasswordField) {
-                    credentialsProvider.setPassword(textField.getText());
+                    remoteServerData.setPassword(textField.getText());
                     _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePasswordWithPrefix(textField.getText()));
                 }
                 else {
-                    credentialsProvider.setUsername(textField.getText());
-                    _dcConfigurationUpdates.put(nodePath, credentialsProvider.getUsername());
+                    remoteServerData.setUsername(textField.getText());
+                    _dcConfigurationUpdates.put(nodePath, remoteServerData.getUsername());
                 }
             }
         });

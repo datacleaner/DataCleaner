@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.util.List;
-
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.storage.StorageProvider;
@@ -36,19 +34,19 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
     private StorageProvider _storageProvider;
     private DescriptorProvider _descriptorProvider;
     private TaskRunner _taskRunner;
-    private final List<CredentialsProvider> _credentialsProviders;
+    private final RemoteServerConfiguration _remoteServerConfiguration;
 
     public TemporaryMutableDataCleanerEnvironment(DataCleanerEnvironment baseEnvironment) {
         _injectionManagerFactory = baseEnvironment.getInjectionManagerFactory();
         _storageProvider = baseEnvironment.getStorageProvider();
         _descriptorProvider = baseEnvironment.getDescriptorProvider();
         _taskRunner = baseEnvironment.getTaskRunner();
-        _credentialsProviders = baseEnvironment.getCredentialsProviders();
+        _remoteServerConfiguration = baseEnvironment.getRemoteServerConfiguration();
     }
 
     @Override
-    public List<CredentialsProvider> getCredentialsProviders() {
-        return _credentialsProviders;
+    public RemoteServerConfiguration getRemoteServerConfiguration() {
+        return _remoteServerConfiguration;
     }
 
     @Override

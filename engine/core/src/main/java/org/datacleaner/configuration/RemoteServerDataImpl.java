@@ -22,14 +22,14 @@ package org.datacleaner.configuration;
 /**
  * @since 15. 10. 2015
  */
-public class RemoteComponentsCredentialsProvider implements CredentialsProvider {
+public class RemoteServerDataImpl implements RemoteServerData {
     private String serverName;
     private String host;
     private String username;
     private String password;
 
     @Override
-    public CredentialsProvider setServerName(String serverName) {
+    public RemoteServerDataImpl setServerName(String serverName) {
         this.serverName = serverName;
         return this;
     }
@@ -40,7 +40,7 @@ public class RemoteComponentsCredentialsProvider implements CredentialsProvider 
     }
 
     @Override
-    public CredentialsProvider setHost(String host) {
+    public RemoteServerDataImpl setHost(String host) {
         this.host = host.replaceAll("/+$", "");
         return this;
     }
@@ -51,7 +51,7 @@ public class RemoteComponentsCredentialsProvider implements CredentialsProvider 
     }
 
     @Override
-    public CredentialsProvider setUsername(String username) {
+    public RemoteServerDataImpl setUsername(String username) {
         this.username = username.trim();
         return this;
     }
@@ -62,7 +62,7 @@ public class RemoteComponentsCredentialsProvider implements CredentialsProvider 
     }
 
     @Override
-    public CredentialsProvider setPassword(String password) {
+    public RemoteServerDataImpl setPassword(String password) {
         this.password = password;
         return this;
     }

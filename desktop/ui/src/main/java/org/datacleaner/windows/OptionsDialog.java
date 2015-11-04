@@ -88,8 +88,8 @@ public class OptionsDialog extends AbstractWindow {
 
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
-            UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
-            ExtensionPackagesPanel extensionPackagesPanel) {
+                            UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
+                            ExtensionPackagesPanel extensionPackagesPanel) {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
@@ -104,7 +104,7 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
         _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/network.png",
-                IconUtils.ICON_SIZE_TAB), getRemoteComponentsTab());
+                IconUtils.ICON_SIZE_TAB), new RemoteComponentsTab());
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
@@ -309,92 +309,6 @@ public class OptionsDialog extends AbstractWindow {
         return networkTabPanel;
     }
 
-    private DCPanel getRemoteComponentsTab() {
-        final DCPanel credentialsPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND)
-                .setTitledBorder("Credentials");
-        int left = 0;
-        int right = 1;
-        int row = 0;
-        int cellSpan = 2;
-        int rowSpan = 1;
-
-        WidgetUtils.addToGridBag(getDescriptionComponent(), credentialsPanel, left, row, cellSpan, rowSpan);
-        final JTextField usernameTextField = WidgetFactory.createTextField("username");
-        usernameTextField.setName("username");
-        final JTextField passwordTextField = WidgetFactory.createPasswordField();
-        passwordTextField.setName("password");
-        RemoteComponentServerType remoteServer = getRemoteComponentsServer();
-
-        if (remoteServer == null) {
-            usernameTextField.setEnabled(false);
-            passwordTextField.setEnabled(false);
-        }
-        else {
-            setupFieldForRemoteComponentsTab(usernameTextField, remoteServer.getUsername());
-            setupFieldForRemoteComponentsTab(passwordTextField, remoteServer.getPassword());
-        }
-
-        row++;
-        WidgetUtils.addToGridBag(new JLabel("Username"), credentialsPanel, left, row);
-        WidgetUtils.addToGridBag(usernameTextField, credentialsPanel, right, row);
-
-        row++;
-        WidgetUtils.addToGridBag(new JLabel("Password"), credentialsPanel, left, row);
-        WidgetUtils.addToGridBag(passwordTextField, credentialsPanel, right, row);
-
-        return credentialsPanel;
-    }
-
-    private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-        final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
-        String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePassword(value) : value;
-        textField.setText(finalInputValue);
-        textField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
-                String fieldName = textField.getName();
-                String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
-
-                if (textField instanceof JPasswordField) {
-                    credentialsProvider.setPassword(textField.getText());
-                    _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePassword(textField.getText()));
-                }
-                else {
-                    credentialsProvider.setUsername(textField.getText());
-                    _dcConfigurationUpdates.put(nodePath, credentialsProvider.getUsername());
-                }
-            }
-        });
-    }
-
-    private RemoteComponentServerType getRemoteComponentsServer() {
-        try {
-            InputStream inputStream = getDataCleanerConfigurationFileURI().openStream();
-            JaxbConfigurationReader jaxbConfigurationReader = new JaxbConfigurationReader();
-            Configuration configuration = jaxbConfigurationReader.unmarshall(inputStream);
-            List<Object> allProviders = configuration.getDescriptorProviders()
-                    .getCustomClassOrClasspathScannerOrRemoteComponents();
-
-            for (Object provider : allProviders) {
-                if (provider instanceof RemoteComponentsType) {
-                    return ((RemoteComponentsType) provider).getServer();
-                }
-            }
-        }
-        catch (IOException e) {
-            logger.warn(e.getMessage());
-        }
-
-        return null;
-    }
-
-    private Component getDescriptionComponent() {
-        return new DCHtmlBox("This dialog is for credentials setting of users registered at " +
-            "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>" +
-            "Remote components are a cloud service providing new functions. " +
-            "These remote components run at the server, consume provided input data and return the results. ");
-    }
-
     private DCPanel getPerformanceTab() {
         DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
@@ -570,5 +484,134 @@ public class OptionsDialog extends AbstractWindow {
 
     public UserPreferences getUserPreferences() {
         return _userPreferences;
+    }
+
+
+    private class RemoteComponentsTab extends DCPanel {
+        private int left = 0;
+        private int row = 0;
+        private int wholeLineSpan = 3;
+        private int rowSpan = 1;
+        private int padding = 5;
+        private int maxWeightx = 100;
+        private int weightx = 1;
+        private int weighty = 0;
+        private RemoteComponentServerType remoteServer = getRemoteComponentsServer();
+        private JTextField usernameTextField;
+        private JPasswordField passwordTextField;
+
+        public RemoteComponentsTab() {
+            setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+            setTitledBorder("Credentials");
+            addDescription();
+            createFields();
+            setupFields();
+            addAllFields();
+        }
+
+        private void addDescription() {
+            WidgetUtils.addToGridBag(getDescriptionComponent(), this, left, row, wholeLineSpan, rowSpan,
+                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.BOTH);
+        }
+
+        private void createFields() {
+            usernameTextField = WidgetFactory.createTextField("username");
+            usernameTextField.setName("username");
+            setSize(usernameTextField);
+
+            passwordTextField = WidgetFactory.createPasswordField();
+            passwordTextField.setName("password");
+            setSize(passwordTextField);
+        }
+
+        private void setSize(JTextField field) {
+            Dimension size = field.getPreferredSize();
+
+            field.setMinimumSize(size);
+            field.setPreferredSize(size);
+            field.setMaximumSize(size);
+        }
+
+        private void setupFields() {
+            if (remoteServer == null) {
+                usernameTextField.setEnabled(false);
+                passwordTextField.setEnabled(false);
+            } else {
+                setupFieldForRemoteComponentsTab(usernameTextField, remoteServer.getUsername());
+                setupFieldForRemoteComponentsTab(passwordTextField, remoteServer.getPassword());
+            }
+        }
+
+        private void addAllFields() {
+            addField("Username", usernameTextField);
+            addField("Password", passwordTextField);
+        }
+
+        private void addField(String labelText, JTextField field) {
+            row++;
+
+            JPanel spaceFiller = new JPanel();
+            spaceFiller.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+            WidgetUtils.addToGridBag(new JLabel(labelText), this, left, row, 1, 1,
+                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+            WidgetUtils.addToGridBag(field, this, left + 1, row, 1, 1,
+                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+            WidgetUtils.addToGridBag(spaceFiller, this, left + 2, row, 1, 1,
+                    GridBagConstraints.LINE_END, padding, maxWeightx, weighty, GridBagConstraints.REMAINDER);
+        }
+
+        private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
+            final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
+            String finalInputValue = (textField instanceof JPasswordField) ?
+                    SecurityUtils.decodePasswordWithPrefix(value) :
+                    value;
+            textField.setText(finalInputValue);
+            textField.getDocument().addDocumentListener(new DCDocumentListener() {
+                @Override
+                protected void onChange(DocumentEvent e) {
+                    String fieldName = textField.getName();
+                    String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
+
+                    if (textField instanceof JPasswordField) {
+                        credentialsProvider.setPassword(textField.getText());
+                        _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePasswordWithPrefix(textField.getText()));
+                    }
+                    else {
+                        credentialsProvider.setUsername(textField.getText());
+                        _dcConfigurationUpdates.put(nodePath, credentialsProvider.getUsername());
+                    }
+                }
+            });
+        }
+
+        private RemoteComponentServerType getRemoteComponentsServer() {
+            try {
+                InputStream inputStream = getDataCleanerConfigurationFileURI().openStream();
+                JaxbConfigurationReader jaxbConfigurationReader = new JaxbConfigurationReader();
+                Configuration configuration = jaxbConfigurationReader.unmarshall(inputStream);
+                List<Object> allProviders = configuration.getDescriptorProviders()
+                        .getCustomClassOrClasspathScannerOrRemoteComponents();
+
+                for (Object provider : allProviders) {
+                    if (provider instanceof RemoteComponentsType) {
+                        return ((RemoteComponentsType) provider).getServer();
+                    }
+                }
+            }
+            catch (IOException e) {
+                logger.warn(e.getMessage());
+            }
+
+            return null;
+        }
+
+        private Component getDescriptionComponent() {
+            DCHtmlBox htmlBox = new DCHtmlBox("This dialog is for credentials setting of users registered at " +
+                    "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>" +
+                    "Remote components are a cloud service providing new functions. " +
+                    "These remote components run at the server, consume provided input data and return the results. ");
+
+            return htmlBox;
+        }
     }
 }

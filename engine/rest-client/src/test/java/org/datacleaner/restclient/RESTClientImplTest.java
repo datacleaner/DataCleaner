@@ -19,10 +19,9 @@
  */
 package org.datacleaner.restclient;
 
+import com.sun.jersey.api.client.Client;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.sun.jersey.api.client.Client;
 
 public class RESTClientImplTest {
     private static final String USERNAME = "admin";

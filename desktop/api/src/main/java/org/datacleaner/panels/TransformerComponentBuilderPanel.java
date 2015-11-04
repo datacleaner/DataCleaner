@@ -108,7 +108,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             _previewAlternativesButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    final JMenuItem defaultPreviewMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " rows",
+                    final JMenuItem defaultPreviewMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " records",
                             IconUtils.ACTION_PREVIEW);
                     defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 

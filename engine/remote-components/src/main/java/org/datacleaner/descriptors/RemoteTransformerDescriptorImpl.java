@@ -43,6 +43,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private String username;
     private String password;
     private byte[] iconData;
+    private String serverName;
 
     public RemoteTransformerDescriptorImpl(String baseUrl, String displayName,
                                            String superCategoryName, Set<String> categoryNames, byte[] iconData,
@@ -64,6 +65,14 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     @Override
     public String getDisplayName() {
         return remoteDisplayName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getServerName() {
+        return serverName;
     }
 
     @Override

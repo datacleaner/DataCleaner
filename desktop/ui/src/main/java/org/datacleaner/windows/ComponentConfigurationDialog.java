@@ -27,6 +27,7 @@ import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
@@ -113,7 +114,14 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     protected DCBannerPanel createBanner(Image bannerImage) {
-        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle());
+        String remoteServerName = "";
+
+        if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptorImpl) {
+            remoteServerName = " (" +
+                    ((RemoteTransformerDescriptorImpl)(_componentBuilder.getDescriptor())).getServerName() + ")";
+        }
+
+        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle() + remoteServerName);
         banner.setTitle2(getBannerTitle2(true));
 
         final JButton renameButton = WidgetFactory.createDefaultButton("Rename", IconUtils.ACTION_RENAME);

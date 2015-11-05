@@ -106,6 +106,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 remoteServerData.getHost(), component.getName(),
                                 component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData(),
                                 remoteServerData.getUsername(), remoteServerData.getPassword());
+                        transformer.setServerName(remoteServerData.getServerName());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {

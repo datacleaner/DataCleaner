@@ -44,8 +44,6 @@ public class Main {
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             sparkAnalysisRunner.run();
-        } catch (Exception e) {
-            sparkContext.cancelAllJobs();
         } finally {
             sparkContext.stop();
         }

@@ -23,6 +23,33 @@ import java.io.File;
 
 import org.apache.spark.launcher.SparkLauncher;
 
+/**
+ * Prerequisites:
+ * 
+ * <ul>
+ * <li>Make sure to set SPARK_HOME as either an environment variable or system
+ * property.</li>
+ * <li>Create a /datacleaner/lib directory on HDFS and upload the following JAR
+ * files to it:
+ * <ul>
+ * <li>DataCleaner-env-spark-[version].jar</li>
+ * <li>DataCleaner-basic-analyzers-[version].jar</li>
+ * <li>DataCleaner-value-distribution-[version].jar</li>
+ * </ul>
+ * or simply:
+ * <ul>
+ * <li>DataCleaner-env-spark-[version]-jar-with-dependencies.jar</li>
+ * </ul>
+ * this can be done with a command a la:
+ * 
+ * <pre>
+ * hadoop fs -mkdir /datacleaner/lib
+ * hadoop fs -put /path/to/DataCleaner-env-spark-4.5.1-SNAPSHOT-jar-with-dependencies.jar /datacleaner/lib
+ * </pre>
+ * 
+ * </li>
+ * </ul>
+ */
 public class ExampleLaunch {
 
     private static final String HDFS_HOSTNAME = "bigdatavm";

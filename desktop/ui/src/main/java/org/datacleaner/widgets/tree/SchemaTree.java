@@ -318,7 +318,9 @@ public class SchemaTree extends JXTree
                 }
             };
 
-            DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, true);
+            boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
+                    .getRemoteServerConfiguration().showAllServers();
+            DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, showAllRemoteComponents);
 
         }
         if (libraryRoot.getChildCount() == 0) {

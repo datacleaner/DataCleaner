@@ -80,22 +80,10 @@ public final class DescriptorMenuBuilder {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final UsageLogger _usageLogger;
     private final Collection<? extends ComponentDescriptor<?>> _componentDescriptors;
-    private final boolean _buildSubmenus;
     private final Point2D _coordinate;
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
             final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate) {
-        this(analysisJobBuilder, usageLogger, descriptors, coordinate, true);
-    }
-
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final ComponentSuperCategory superCategory, final Point2D coordinate) {
-        this(analysisJobBuilder, usageLogger, superCategory, coordinate, true);
-    }
-
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate,
-            final boolean buildSubmenus) {
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
                 new DeprecatedComponentPredicate());
         final List<ComponentDescriptor<?>> componentDescriptors = new ArrayList<>(filteredDescriptors);
@@ -104,18 +92,17 @@ public final class DescriptorMenuBuilder {
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
         _coordinate = coordinate;
-        _buildSubmenus = buildSubmenus;
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final ComponentSuperCategory superCategory, final Point2D coordinate, final boolean buildSubmenus) {
+            final ComponentSuperCategory superCategory, final Point2D coordinate) {
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
         _coordinate = coordinate;
-        _buildSubmenus = buildSubmenus;
 
-        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment()
+                .getDescriptorProvider();
         final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                 .getComponentDescriptorsOfSuperCategory(superCategory);
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
@@ -130,9 +117,9 @@ public final class DescriptorMenuBuilder {
     }
 
     public static void createMenuStructure(final MenuCallback callback,
-            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean buildSubmenus) {
-        final Collection<? extends ComponentDescriptor<?>> finalComponentDescriptors =
-                getFinalComponentDescriptors(componentDescriptors);
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean showAllRemoteComponents) {
+        final Collection<? extends ComponentDescriptor<?>> finalComponentDescriptors = getFinalComponentDescriptors(
+                componentDescriptors, showAllRemoteComponents);
         final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
         buildSubMenus(categories, finalComponentDescriptors);
         placeSubMenus(categories, callback);
@@ -143,7 +130,7 @@ public final class DescriptorMenuBuilder {
     }
 
     private static void buildSubMenus(Map<ComponentCategory, List<Class<?>>> categories,
-              Collection<? extends ComponentDescriptor<?>> componentDescriptors) {
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors) {
         for (ComponentDescriptor<?> descriptor : componentDescriptors) {
             final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
 
@@ -181,18 +168,23 @@ public final class DescriptorMenuBuilder {
     }
 
     private static Collection<? extends ComponentDescriptor<?>> getFinalComponentDescriptors(
-                Collection<? extends ComponentDescriptor<?>> allComponentDescriptors) {
+            Collection<? extends ComponentDescriptor<?>> allComponentDescriptors, boolean showAllRemoteComponents) {
         final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
                 .sorted(allComponentDescriptors);
-        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils
-                .filter(sortedComponentDescriptors, new DeprecatedComponentPredicate());
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
+                sortedComponentDescriptors, new DeprecatedComponentPredicate());
+
+        if (showAllRemoteComponents) {
+            return filteredDescriptors;
+        }
+
         String lastName = "";
         Collection<ComponentDescriptor<?>> componentDescriptorsWithoutDuplicates = new ArrayList<>();
 
         for (ComponentDescriptor<?> componentDescriptor : filteredDescriptors) {
             String displayName = componentDescriptor.getDisplayName();
 
-            if (! lastName.equals(displayName)) {
+            if (!lastName.equals(displayName)) {
                 componentDescriptorsWithoutDuplicates.add(componentDescriptor);
             }
 
@@ -230,7 +222,9 @@ public final class DescriptorMenuBuilder {
             }
         };
 
-        createMenuStructure(callback, _componentDescriptors, _buildSubmenus);
+        boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
+                .getRemoteServerConfiguration().showAllServers();
+        createMenuStructure(callback, _componentDescriptors, showAllRemoteComponents);
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
@@ -243,5 +237,4 @@ public final class DescriptorMenuBuilder {
         });
         return menuItem;
     }
-
 }

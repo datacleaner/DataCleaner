@@ -379,8 +379,7 @@ public class ClusterTestHelper {
             runner.run(job);
             Assert.fail("Exception expected");
         } catch (Exception e) {
-            Assert.assertEquals("Component is not distributable: ImmutableFilterJob[name=null,filter=Max rows]",
-                    e.getMessage());
+            Assert.assertEquals("Job is not distributable!", e.getMessage());
         }
     }
 

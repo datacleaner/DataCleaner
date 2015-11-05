@@ -21,8 +21,6 @@ package org.datacleaner.api;
 
 import java.io.Serializable;
 
-import com.google.common.base.Strings;
-
 /**
  * Represents a "Call to Action" for users when restricted functionality is
  * blocked, typically with the use of {@link RestrictedFunctionalityException}
@@ -62,10 +60,10 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
      *            tooltip, a smaller-font text or so
      */
     public RestrictedFunctionalityCallToAction(String name, String href, String description) {
-        if (Strings.isNullOrEmpty(name)) {
+        if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Action name cannot be null");
         }
-        if (Strings.isNullOrEmpty(href)) {
+        if (href == null || href.isEmpty()) {
             throw new IllegalArgumentException("Action href cannot be null");
         }
         _name = name;

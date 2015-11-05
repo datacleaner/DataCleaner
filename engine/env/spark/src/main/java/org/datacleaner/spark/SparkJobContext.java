@@ -35,6 +35,7 @@ import org.apache.metamodel.util.Resource;
 import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
@@ -59,6 +60,7 @@ public class SparkJobContext implements Serializable {
 
     private final String _configurationPath;
     private final String _analysisJobPath;
+    private final String _propertiesPath;
 
     private final Map<String, Accumulator<Integer>> _accumulators;
 
@@ -68,12 +70,18 @@ public class SparkJobContext implements Serializable {
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
+        this(sparkContext, dataCleanerConfigurationPath, analysisJobXmlPath, null);
+    }
+    
+    public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
+            final String analysisJobXmlPath, final String propertiesPath) {
         _accumulators = new HashMap<>();
         _accumulators.put(ACCUMULATOR_JOB_READS, sparkContext.accumulator(0));
         _accumulators.put(ACCUMULATOR_CONFIGURATION_READS, sparkContext.accumulator(0));
 
         _configurationPath = dataCleanerConfigurationPath;
         _analysisJobPath = analysisJobXmlPath;
+        _propertiesPath = propertiesPath;
     }
 
     public String getConfigurationPath() {
@@ -83,11 +91,18 @@ public class SparkJobContext implements Serializable {
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
             _accumulators.get(ACCUMULATOR_CONFIGURATION_READS).add(1);
+            final Resource propertiesResource;
+            if (_propertiesPath != null) {
+                propertiesResource = createResource(_propertiesPath);
+            } else {
+                propertiesResource = null;
+            }
+            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor(propertiesResource));
+
             final Resource configurationResource = createResource(_configurationPath);
             _dataCleanerConfiguration = configurationResource.read(new Func<InputStream, DataCleanerConfiguration>() {
                 @Override
                 public DataCleanerConfiguration eval(InputStream in) {
-                    final JaxbConfigurationReader confReader = new JaxbConfigurationReader();
                     return confReader.read(in);
                 }
             });

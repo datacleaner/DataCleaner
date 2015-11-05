@@ -42,7 +42,11 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -58,6 +62,7 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResultWriter;
 import org.datacleaner.util.VFSUtils;
+import org.datacleaner.util.convert.ResourceConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,13 +147,26 @@ public final class CliRunner implements Closeable {
 
     public void run() throws Throwable {
         final String configurationFilePath = _arguments.getConfigurationFile();
-        final FileObject configurationFile = VFSUtils.getFileSystemManager().resolveFile(configurationFilePath);
-        final InputStream inputStream = configurationFile.getContent().getInputStream();
+        final Resource configurationFile = resolveResource(configurationFilePath);
+        final Resource propertiesResource;
+        if (_arguments.getPropertiesFile() != null) {
+            propertiesResource = resolveResource(_arguments.getPropertiesFile());
+        } else {
+            propertiesResource = null;
+        }
+        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DefaultConfigurationReaderInterceptor(
+                propertiesResource);
+
+        final InputStream inputStream = configurationFile.read();
         try {
-            run(new JaxbConfigurationReader().create(inputStream));
+            run(new JaxbConfigurationReader(configurationReaderInterceptor).create(inputStream));
         } finally {
             FileHelper.safeClose(inputStream);
         }
+    }
+
+    private Resource resolveResource(String path) {
+        return new ResourceConverter(new DataCleanerConfigurationImpl()).fromString(Resource.class, path);
     }
 
     public void run(DataCleanerConfiguration configuration) throws Throwable {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="person_names" />
+		<columns>
+			<column id="col_country" path="country" />
+			<column id="col_company" path="company" />
+		</columns>
+	</source>
+
+	<analysis>
+		 <analyzer>
+            <descriptor ref="Create CSV file"/>
+            <properties>
+                <property name="File" value="target/write-job.csv"/>
+                <property name="Separator char" value="&amp;#44;"/>
+                <property name="Quote char" value="&amp;quot;"/>
+                <property name="Escape char" value="\"/>
+                <property name="Include header" value="true"/>
+                <property name="Encoding" value="UTF-8"/>
+                <property name="Fields" value="[COUNTRY,CUSTOMERNUMBER]"/>
+                <property name="Overwrite file if exists" value="true"/>
+            </properties>
+            <input ref="col_country" name="Columns"/>
+            <input ref="col_company" name="Columns"/>
+        </analyzer>
+	</analysis>
+
+</job>

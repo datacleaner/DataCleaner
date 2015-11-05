@@ -19,32 +19,31 @@
  */
 package org.datacleaner.windows;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
-import org.apache.metamodel.util.FileResource;
-import org.datacleaner.connection.JsonDatastore;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.AbstractResourceTextField;
+import org.datacleaner.widgets.ResourceSelector;
 
 /**
  * Dialog for {@link JsonDatastore}s
  */
-public final class JsonDatastoreDialog extends AbstractFileBasedDatastoreDialog<JsonDatastore> {
+public final class JsonDatastoreDialog extends AbstractResourceBasedDatastoreDialog<JsonDatastore> {
 
     private static final long serialVersionUID = 1L;
 
     @Inject
     protected JsonDatastoreDialog(@Nullable JsonDatastore originalDatastore,
             MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            UserPreferences userPreferences) {
-        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+            DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
     }
 
     @Override
@@ -58,20 +57,30 @@ public final class JsonDatastoreDialog extends AbstractFileBasedDatastoreDialog<
     }
 
     @Override
-    protected JsonDatastore createDatastore(String name, String filename) {
-        final File file = new File(filename);
-        return new JsonDatastore(name, new FileResource(file));
-    }
-
-    @Override
     protected String getDatastoreIconPath() {
         return IconUtils.JSON_IMAGEPATH;
     }
 
     @Override
-    protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-        filenameField.addChoosableFileFilter(FileFilters.JSON);
-        filenameField.addChoosableFileFilter(FileFilters.ALL);
-        filenameField.setSelectedFileFilter(FileFilters.JSON);
+    protected JsonDatastore createDatastore(String name, Resource resource) {
+        return new JsonDatastore(name, resource);
     }
+
+    @Override
+    protected void initializeFileFilters(ResourceSelector resourceSelector) {
+        resourceSelector.addChoosableFileFilter(FileFilters.JSON);
+        resourceSelector.addChoosableFileFilter(FileFilters.ALL);
+        resourceSelector.setSelectedFileFilter(FileFilters.JSON);
+    }
+
+    @Override
+    protected boolean isPreviewTableEnabled() {
+        return true;
+    }
+
+    @Override
+    protected boolean isPreviewDataAvailable() {
+        return true;
+    }
+
 }

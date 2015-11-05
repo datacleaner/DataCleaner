@@ -19,12 +19,8 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 import org.datacleaner.util.SecurityUtils;
 import org.junit.Assert;
@@ -59,13 +55,22 @@ public class DataCleanerConfigurationUpdaterTest {
     }
 
     private boolean isValuePresent(String value) {
-        try {
-            String path = getClass().getResource(configurationFileClasspath).getPath();
-            List<String> allLines = Files.readAllLines(Paths.get(path), StandardCharsets.UTF_8);
+        InputStream inStream = null;
 
-            for (String line : allLines) {
-                if (line.contains(value)) {
-                    return true;
+        try {
+            try {
+                inStream = getClass().getResourceAsStream(configurationFileClasspath);
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(inStream));
+                String line;
+
+                while ((line = inReader.readLine()) != null) {
+                    if (line.contains(value)) {
+                        return true;
+                    }
+                }
+            } finally {
+                if (inStream != null) {
+                    inStream.close();
                 }
             }
         } catch (IOException e) {

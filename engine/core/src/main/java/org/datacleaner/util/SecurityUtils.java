@@ -165,11 +165,11 @@ public class SecurityUtils {
      * @return a String containing the decoded password
      */
     public static String decodePasswordWithPrefix(String encodedPasswordWithPrefix) {
-        String encodedPasswordWithoutPrefix = hasPrefix(encodedPasswordWithPrefix) ?
-                encodedPasswordWithPrefix.substring(PREFIX.length()) :
-                encodedPasswordWithPrefix;
-
-        return decodePassword(encodedPasswordWithoutPrefix);
+        if (hasPrefix(encodedPasswordWithPrefix)) {
+            return decodePassword(encodedPasswordWithPrefix.substring(PREFIX.length()));
+        } else {
+            return encodedPasswordWithPrefix;
+        }
     }
 
     public static boolean hasPrefix(String password) {

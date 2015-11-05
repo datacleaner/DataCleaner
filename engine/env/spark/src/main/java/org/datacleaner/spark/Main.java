@@ -42,8 +42,12 @@ public class Main {
         final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath);
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
-        sparkAnalysisRunner.run();
-
-        sparkContext.stop();
+        try {
+            sparkAnalysisRunner.run();
+        } catch (Exception e) {
+            sparkContext.cancelAllJobs();
+        } finally {
+            sparkContext.stop();
+        }
     }
 }

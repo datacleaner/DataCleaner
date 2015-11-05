@@ -61,7 +61,9 @@ public class ExampleLaunch {
     private static final String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("SPARK_HOME", SPARK_HOME);
+        if (System.getenv("SPARK_HOME") == null) {
+            System.setProperty("SPARK_HOME", SPARK_HOME);
+        }
         
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
 

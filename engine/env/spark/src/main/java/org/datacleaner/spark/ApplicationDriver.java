@@ -247,10 +247,19 @@ public class ApplicationDriver {
 
     public void copyFileToHdfs(final File file, final String hdfsPath, final boolean overwrite) {
         final HdfsResource hdfsResource = createResource(hdfsPath);
-        if (!overwrite && hdfsResource.isExists()) {
+        final boolean exists = hdfsResource.isExists();
+        if (!overwrite && exists) {
             // no need to copy
+            logger.debug("Skipping file-copy to {} because file already exists", hdfsPath);
             return;
         }
+        
+        if (exists) {
+            logger.info("Overwriting file on HDFS: {}", hdfsPath);
+        } else {
+            logger.debug("Copying file to HDFS: {}", hdfsPath);
+        }
+        
         hdfsResource.write(new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {

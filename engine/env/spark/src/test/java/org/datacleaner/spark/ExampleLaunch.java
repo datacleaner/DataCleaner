@@ -68,9 +68,9 @@ public class ExampleLaunch {
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location
-        launcher.copyFileToHdfs(new File("src/test/resources/person_names.txt"), DATA_LOCATION, false);
-        launcher.copyFileToHdfs(new File("src/test/resources/conf_hdfs.xml"), CONFIGURATION_LOCATION, false);
-        launcher.copyFileToHdfs(new File("src/test/resources/vanilla-job.analysis.xml"), JOB_LOCATION, false);
+        launcher.copyFileToHdfs(new File("src/test/resources/person_names.txt"), DATA_LOCATION, true);
+        launcher.copyFileToHdfs(new File("src/test/resources/conf_hdfs.xml"), CONFIGURATION_LOCATION, true);
+        launcher.copyFileToHdfs(new File("src/test/resources/vanilla-job.analysis.xml"), JOB_LOCATION, true);
 
         final File hadoopConfDir = launcher.createTemporaryHadoopConfDir();
         final SparkLauncher sparkLauncher = launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION,

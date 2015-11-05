@@ -77,12 +77,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
     }
 
-    public void run() {
-        run(_sparkJobContext.getAnalysisJob());
-    }
-
     @Override
     public AnalysisResultFuture run(AnalysisJob job) {
+        return run();
+    }
+
+    public AnalysisResultFuture run() {
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 

@@ -20,20 +20,15 @@
 package org.datacleaner.configuration;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
+import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.HdfsResourceTypeHandler;
@@ -41,8 +36,6 @@ import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
 import org.datacleaner.util.convert.VfsResourceTypeHandler;
-
-import com.google.common.collect.Maps;
 
 /**
  * Defines a default implementation of the
@@ -69,24 +62,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         if (propertiesResource == null || !propertiesResource.isExists()) {
             _propertyOverrides = Collections.emptyMap();
         } else {
-            _propertyOverrides = propertiesResource.read(new Func<InputStream, Map<String, String>>() {
-                @Override
-                public Map<String, String> eval(InputStream in) {
-                    final Properties properties = new Properties();
-                    try {
-                        properties.load(in);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    final HashMap<String, String> map = Maps.newHashMapWithExpectedSize(properties.size());
-                    for (Entry<?,?> e : properties.entrySet()) {
-                        final String key = (String) e.getKey();
-                        final String value = (String) e.getValue();
-                        map.put(key, value);
-                    }
-                    return map;
-                }
-            });
+            _propertyOverrides = propertiesResource.read(new InputStreamToPropertiesMapFunc());
         }
     }
 

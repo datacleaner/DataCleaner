@@ -22,6 +22,7 @@ package org.datacleaner.spark;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -67,12 +69,13 @@ public class SparkJobContext implements Serializable {
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
+    private transient Map<String, String> _customProperties;
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
         this(sparkContext, dataCleanerConfigurationPath, analysisJobXmlPath, null);
     }
-    
+
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath, final String propertiesPath) {
         _accumulators = new HashMap<>();
@@ -91,13 +94,8 @@ public class SparkJobContext implements Serializable {
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
             _accumulators.get(ACCUMULATOR_CONFIGURATION_READS).add(1);
-            final Resource propertiesResource;
-            if (_propertiesPath != null) {
-                propertiesResource = createResource(_propertiesPath);
-            } else {
-                propertiesResource = null;
-            }
-            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor(propertiesResource));
+            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
+                    new DefaultConfigurationReaderInterceptor(getCustomProperties()));
 
             final Resource configurationResource = createResource(_configurationPath);
             _dataCleanerConfiguration = configurationResource.read(new Func<InputStream, DataCleanerConfiguration>() {
@@ -108,6 +106,22 @@ public class SparkJobContext implements Serializable {
             });
         }
         return _dataCleanerConfiguration;
+    }
+
+    private Map<String, String> getCustomProperties() {
+        if (_customProperties == null) {
+            if (_propertiesPath != null) {
+                final Resource propertiesResource = createResource(_propertiesPath);
+                if (propertiesResource.isExists()) {
+                    _customProperties = propertiesResource.read(new InputStreamToPropertiesMapFunc());
+                } else {
+                    _customProperties = Collections.emptyMap();
+                }
+            } else {
+                _customProperties = Collections.emptyMap();
+            }
+        }
+        return _customProperties;
     }
 
     private static Resource createResource(String path) {
@@ -126,11 +140,12 @@ public class SparkJobContext implements Serializable {
             _accumulators.get(ACCUMULATOR_JOB_READS).add(1);
             final Resource analysisJobResource = createResource(_analysisJobPath);
             final DataCleanerConfiguration configuration = getConfiguration();
+            final Map<String, String> variableOverrides = getCustomProperties();
             final AnalysisJobBuilder jobBuilder = analysisJobResource.read(new Func<InputStream, AnalysisJobBuilder>() {
                 @Override
                 public AnalysisJobBuilder eval(InputStream in) {
                     final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                    final AnalysisJobBuilder jobBuilder = jobReader.create(in);
+                    final AnalysisJobBuilder jobBuilder = jobReader.create(in, variableOverrides);
                     return jobBuilder;
                 }
             });

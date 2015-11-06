@@ -34,7 +34,6 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -127,7 +126,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                         } catch (ClassNotFoundException e) {
                             Class type;
                             if (isOutputColumnEnumeration(colSpec.schema)) {
-                                type = EnumerationValue.class;
+                                type = String.class;
                             } else {
                                 type = JsonNode.class;
                             }

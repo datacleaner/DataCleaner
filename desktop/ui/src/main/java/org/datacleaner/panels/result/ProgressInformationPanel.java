@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JTextArea;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.RestrictedFunctionalityCallToAction;
+import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
@@ -106,10 +108,26 @@ public class ProgressInformationPanel extends DCPanel {
         appendMessage("\n" + getTimestamp() + " INFO: " + string);
     }
 
-    public void addUserLog(String string, Throwable throwable, boolean jobFinished) {
-        StringWriter stringWriter = new StringWriter();
-        stringWriter.append("\n").append(getTimestamp()).append("ERROR: ");
-        stringWriter.append(string);
+    public void addUserLog(String message, Throwable throwable, boolean jobFinished) {
+        final StringWriter stringWriter = new StringWriter();
+        stringWriter.append("\n").append(getTimestamp());
+
+        if (throwable instanceof RestrictedFunctionalityException) {
+            stringWriter.append("RESTRICTED: ");
+            stringWriter.append(message);
+            appendMessage(stringWriter.toString());
+
+            final RestrictedFunctionalityException restrictedFunctionalityException = (RestrictedFunctionalityException) throwable;
+            final String exceptionMessage = restrictedFunctionalityException.getMessage();
+            final RestrictedFunctionalityCallToAction[] callToActions = restrictedFunctionalityException
+                    .getCallToActions();
+            addRestrictedFunctionalityMessage(exceptionMessage, callToActions);
+            return;
+        }
+
+        stringWriter.append("ERROR: ");
+        stringWriter.append(message);
+
         if (throwable == null) {
             stringWriter.append('\n');
             stringWriter.append("(No stack trace provided)");
@@ -125,7 +143,7 @@ public class ProgressInformationPanel extends DCPanel {
 
             stringWriter.append('\n');
             stringWriter.append('\n');
-            PrintWriter printWriter = new PrintWriter(stringWriter);
+            final PrintWriter printWriter = new PrintWriter(stringWriter);
             printStackTrace(printWriter, throwable);
             stringWriter.append('\n');
         }
@@ -282,5 +300,19 @@ public class ProgressInformationPanel extends DCPanel {
     public void onBegin() {
         addUserLog("Job begin");
         _stopWatch.start();
+    }
+
+    public void addRestrictedFunctionalityMessage(final String messageString,
+            final RestrictedFunctionalityCallToAction[] callToActions) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append('\n');
+        sb.append('\n');
+        sb.append(messageString);
+        for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+            sb.append('\n');
+            sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
+        }
+        sb.append('\n');
+        addUserLog(sb.toString());
     }
 }

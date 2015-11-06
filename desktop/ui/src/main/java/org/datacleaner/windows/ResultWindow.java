@@ -60,17 +60,15 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.ExecutionLogMessage;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.RestrictedFunctionalityMessage;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.ImmutableAnalyzerJob;
-import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.job.runner.AnalysisJobCancellation;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
@@ -86,6 +84,7 @@ import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.AnalysisRunnerSwingWorker;
+import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
@@ -109,8 +108,7 @@ import org.slf4j.LoggerFactory;
 public final class ResultWindow extends AbstractWindow implements WindowListener {
     private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
 
-    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(
-            0);
+    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(0);
     private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
 
@@ -179,8 +177,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _saveResultsPopupButton.getMenu().add(saveAsFileItem);
 
         JMenuItem exportToHtmlItem = WidgetFactory.createMenuItem("Export to HTML", IconUtils.WEBSITE);
-        exportToHtmlItem.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
-                _userPreferences));
+        exportToHtmlItem
+                .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
         exportToHtmlItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
 
@@ -218,18 +216,18 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 _progressInformationPanel);
 
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
-            JComponent component = pluggableComponent.eval(this);
+            final JComponent component = pluggableComponent.eval(this);
             if (component != null) {
-                if (component instanceof AbstractButton) {
-                    AbstractButton button = (AbstractButton) component;
-                    JMenuItem menuItem = WidgetFactory.createMenuItem(button.getText(), button.getIcon());
+                if (component instanceof JMenuItem) {
+                    final JMenuItem menuItem = (JMenuItem) component;
+                    menuItem.setBorder(buttonBorder);
+                    _saveResultsPopupButton.getMenu().add(menuItem);
+                } else if (component instanceof AbstractButton) {
+                    final AbstractButton button = (AbstractButton) component;
+                    final JMenuItem menuItem = WidgetFactory.createMenuItem(button.getText(), button.getIcon());
                     for (ActionListener listener : button.getActionListeners()) {
                         menuItem.addActionListener(listener);
                     }
-                    menuItem.setBorder(buttonBorder);
-                    _saveResultsPopupButton.getMenu().add(menuItem);
-                } else if (component instanceof JMenuItem) { // TODO: Not possible. JMenuItem is a subclass of AbstractButton. Reorder or remove?
-                    JMenuItem menuItem = (JMenuItem) component;
                     menuItem.setBorder(buttonBorder);
                     _saveResultsPopupButton.getMenu().add(menuItem);
                 }
@@ -314,8 +312,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
-            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
-                    _progressInformationPanel, componentJob);
+            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel,
+                    componentJob);
             final Tab<AnalyzerResultPanel> tab = _tabbedPane.addTab(title, icon, resultPanel);
             tab.setTooltip(LabelUtils.getLabel(componentJob, false, true, true));
 
@@ -458,6 +456,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     }
 
     public void onUnexpectedError(AnalysisJob job, Throwable throwable) {
+        throwable = ErrorUtils.unwrapForPresentation(throwable);
         if (throwable instanceof AnalysisJobCancellation) {
             _progressInformationPanel.onCancelled();
             _cancelButton.setEnabled(false);
@@ -493,15 +492,19 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
-
+            public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+                    final ComponentMessage message) {
                 if (message instanceof ExecutionLogMessage) {
                     final String messageString = ((ExecutionLogMessage) message).getMessage();
                     final String componentLabel = LabelUtils.getLabel(componentJob);
 
                     _progressInformationPanel.addUserLog(messageString + " (" + componentLabel + ")");
+                } else if (message instanceof RestrictedFunctionalityMessage) {
+                    final RestrictedFunctionalityMessage restrictedFunctionalityMessage = (RestrictedFunctionalityMessage) message;
+                    final String messageString = restrictedFunctionalityMessage.getMessage();
+                    _progressInformationPanel.addRestrictedFunctionalityMessage(messageString,
+                            restrictedFunctionalityMessage.getCallToActions());
                 }
-
             }
 
             @Override
@@ -538,8 +541,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         final String startingProcessingString = "Starting processing of " + table.getName();
 
                         if (expectedRows != -1) {
-                            _progressInformationPanel.addUserLog(startingProcessingString
-                                    + " (approx. " + expectedRows + " rows)");
+                            _progressInformationPanel
+                                    .addUserLog(startingProcessingString + " (approx. " + expectedRows + " rows)");
                         } else {
                             _progressInformationPanel.addUserLog(startingProcessingString);
                         }
@@ -559,8 +562,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
                 logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
-                _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
-                        + " finished. Generating results...");
+                _progressInformationPanel.addUserLog(
+                        "Processing of " + metrics.getTable().getName() + " finished. Generating results...");
             }
 
             @Override
@@ -591,29 +594,14 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row,
-                    final Throwable throwable) {
+            public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row,
+                    Throwable throwable) {
                 _progressInformationPanel.addUserLog(
-                        "An error occurred in the filter: " + LabelUtils.getLabel(filterJob), throwable, true);
+                        "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable, true);
             }
 
             @Override
-            public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row,
-                    final Throwable throwable) {
-                _progressInformationPanel
-                        .addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
-                                throwable, true);
-            }
-
-            @Override
-            public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row,
-                    final Throwable throwable) {
-                _progressInformationPanel.addUserLog(
-                        "An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob), throwable, true);
-            }
-
-            @Override
-            public void errorUknown(AnalysisJob job, final Throwable throwable) {
+            public void errorUnknown(AnalysisJob job, Throwable throwable) {
                 onUnexpectedError(job, throwable);
             }
         };

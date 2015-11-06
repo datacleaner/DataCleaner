@@ -380,9 +380,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
             for (Entry<String, String> entry : entrySet) {
                 final String key = entry.getKey();
                 final String value = entry.getValue();
-                String originalValue = variables.put(key, value);
-                logger.info("Overriding variable: {}={} (original value was {})", new Object[] { key, value,
-                        originalValue });
+                final String originalValue = variables.put(key, value);
+                if (originalValue == null) {
+                    logger.debug("Setting variable: {}={}", key, value);
+                } else {
+                    logger.info("Overriding variable: {}={} (original value was {})", key, value, originalValue);
+                }
             }
         }
 
@@ -450,7 +453,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 if (variables.size() > 0) {
                     final MutableAnalysisJobMetadata mutableAnalysisJobMetadata = new MutableAnalysisJobMetadata();
                     mutableAnalysisJobMetadata.getVariables().putAll(variables);
-                    analysisJobBuilder.setAnalysisJobMetadata(mutableAnalysisJobMetadata);    
+                    analysisJobBuilder.setAnalysisJobMetadata(mutableAnalysisJobMetadata);
                 }
             }
 
@@ -860,7 +863,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             ComponentBuilder componentBuilder) {
         // build a map of inputs first so that we can set the
         // input in one go
-        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = ArrayListMultimap.create(); 
+        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = ArrayListMultimap.create();
 
         for (InputType inputType : input) {
             String name = inputType.getName();
@@ -942,8 +945,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (stringValue == null) {
                         throw new ComponentConfigurationException("No such variable: " + variableRef);
                     }
-                    
-                    builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
+
+                    builder.getMetadataProperties().put(
+                            DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                 }
 
                 final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();

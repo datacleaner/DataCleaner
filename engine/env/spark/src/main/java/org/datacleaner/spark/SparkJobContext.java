@@ -21,11 +21,14 @@ package org.datacleaner.spark;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
@@ -33,14 +36,15 @@ import org.apache.metamodel.util.Resource;
 import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
-import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -52,26 +56,35 @@ public class SparkJobContext implements Serializable {
     public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
     public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
 
+    private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
+
     private static final long serialVersionUID = 1L;
 
     private final String _configurationPath;
     private final String _analysisJobPath;
+    private final String _propertiesPath;
 
     private final Map<String, Accumulator<Integer>> _accumulators;
 
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
-    private transient AnalysisJob _analysisJob;
-    private transient List<ComponentJob> _componentList;
+    private transient AnalysisJobBuilder _analysisJobBuilder;
+    private transient Map<String, String> _customProperties;
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
+        this(sparkContext, dataCleanerConfigurationPath, analysisJobXmlPath, null);
+    }
+
+    public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
+            final String analysisJobXmlPath, final String propertiesPath) {
         _accumulators = new HashMap<>();
         _accumulators.put(ACCUMULATOR_JOB_READS, sparkContext.accumulator(0));
         _accumulators.put(ACCUMULATOR_CONFIGURATION_READS, sparkContext.accumulator(0));
 
         _configurationPath = dataCleanerConfigurationPath;
         _analysisJobPath = analysisJobXmlPath;
+        _propertiesPath = propertiesPath;
     }
 
     public String getConfigurationPath() {
@@ -81,16 +94,34 @@ public class SparkJobContext implements Serializable {
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
             _accumulators.get(ACCUMULATOR_CONFIGURATION_READS).add(1);
+            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
+                    new DefaultConfigurationReaderInterceptor(getCustomProperties()));
+
             final Resource configurationResource = createResource(_configurationPath);
             _dataCleanerConfiguration = configurationResource.read(new Func<InputStream, DataCleanerConfiguration>() {
                 @Override
                 public DataCleanerConfiguration eval(InputStream in) {
-                    final JaxbConfigurationReader confReader = new JaxbConfigurationReader();
                     return confReader.read(in);
                 }
             });
         }
         return _dataCleanerConfiguration;
+    }
+
+    private Map<String, String> getCustomProperties() {
+        if (_customProperties == null) {
+            if (_propertiesPath != null) {
+                final Resource propertiesResource = createResource(_propertiesPath);
+                if (propertiesResource.isExists()) {
+                    _customProperties = propertiesResource.read(new InputStreamToPropertiesMapFunc());
+                } else {
+                    _customProperties = Collections.emptyMap();
+                }
+            } else {
+                _customProperties = Collections.emptyMap();
+            }
+        }
+        return _customProperties;
     }
 
     private static Resource createResource(String path) {
@@ -101,20 +132,49 @@ public class SparkJobContext implements Serializable {
     }
 
     public AnalysisJob getAnalysisJob() {
-        if (_analysisJob == null) {
+        return getAnalysisJobBuilder().toAnalysisJob();
+    }
+
+    public AnalysisJobBuilder getAnalysisJobBuilder() {
+        if (_analysisJobBuilder == null) {
             _accumulators.get(ACCUMULATOR_JOB_READS).add(1);
             final Resource analysisJobResource = createResource(_analysisJobPath);
             final DataCleanerConfiguration configuration = getConfiguration();
-            _analysisJob = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
+            final Map<String, String> variableOverrides = getCustomProperties();
+            final AnalysisJobBuilder jobBuilder = analysisJobResource.read(new Func<InputStream, AnalysisJobBuilder>() {
                 @Override
-                public AnalysisJob eval(InputStream in) {
+                public AnalysisJobBuilder eval(InputStream in) {
                     final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                    final AnalysisJob analysisJob = jobReader.read(in);
-                    return analysisJob;
+                    final AnalysisJobBuilder jobBuilder = jobReader.create(in, variableOverrides);
+                    return jobBuilder;
                 }
             });
+            _analysisJobBuilder = jobBuilder;
         }
-        return _analysisJob;
+        applyComponentIndexForKeyLookups(_analysisJobBuilder, new AtomicInteger(0));
+        return _analysisJobBuilder;
+    }
+
+    /**
+     * Appliesc compopnent indices via the component metadata to enable proper
+     * functioning of the {@link #getComponentByKey(String)} and
+     * {@link #getComponentKey(ComponentJob)} methods.
+     * 
+     * @param analysisJobBuilder
+     * @param currentComponentIndex
+     */
+    private void applyComponentIndexForKeyLookups(AnalysisJobBuilder analysisJobBuilder,
+            AtomicInteger currentComponentIndex) {
+        final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
+        for (ComponentBuilder componentBuilder : componentBuilders) {
+            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
+                    Integer.toString(currentComponentIndex.getAndIncrement()));
+        }
+
+        final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
+        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+            applyComponentIndexForKeyLookups(childJobBuilder, currentComponentIndex);
+        }
     }
 
     public String getAnalysisJobPath() {
@@ -126,73 +186,46 @@ public class SparkJobContext implements Serializable {
     }
 
     public String getComponentKey(ComponentJob componentJob) {
-        List<ComponentJob> componentJobList = getComponentList();
-        for (int i = 0; i < componentJobList.size(); i++) {
-            if (componentJob.equals(componentJobList.get(i))) {
-                return String.valueOf(i);
-            }
+        final String key = componentJob.getMetadataProperties().get(METADATA_PROPERTY_COMPONENT_INDEX);
+        if (key == null) {
+            throw new IllegalArgumentException("Cannot find component in job: " + componentJob);
         }
-        return null;
+        return key;
     }
-    
-    public ComponentJob getComponentByKey(String key) {
-        List<ComponentJob> componentJobList = getComponentList();
-        for (int i = 0; i < componentJobList.size(); i++) {
-            final ComponentJob componentJob = componentJobList.get(i);
-            if (key.equals(getComponentKey(componentJob))) {
+
+    public ComponentJob getComponentByKey(final String key) {
+        final AnalysisJob job = getAnalysisJob();
+        final ComponentJob result = getComponentByKey(job, key);
+        if (result == null) {
+            throw new IllegalArgumentException("Cannot resolve component with key: " + key);
+        }
+        return result;
+    }
+
+    private ComponentJob getComponentByKey(final AnalysisJob job, final String queriedKey) {
+        final List<ComponentJob> componentJobs = CollectionUtils.<ComponentJob> concat(false, job.getTransformerJobs(),
+                job.getTransformerJobs(), job.getAnalyzerJobs());
+        for (ComponentJob componentJob : componentJobs) {
+            final String componentKey = componentJob.getMetadataProperties().get(METADATA_PROPERTY_COMPONENT_INDEX);
+            if (componentKey == null) {
+                throw new IllegalStateException("No key registered for component: " + componentJob);
+            }
+            if (queriedKey.equals(componentKey)) {
                 return componentJob;
             }
+
+            final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
+            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                final AnalysisJob childJob = outputDataStreamJob.getJob();
+                if (childJob != null) {
+                    final ComponentJob result = getComponentByKey(childJob, queriedKey);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
         }
+
         return null;
     }
-    
-    public List<ComponentJob> getComponentList() {
-        if (_componentList == null) {
-            _componentList = buildComponentList(getAnalysisJob());
-        }
-        return _componentList;
-    }
-    
-    private List<ComponentJob> buildComponentList(AnalysisJob analysisJob) {
-        List<ComponentJob> componentJobList = new ArrayList<>();
-        List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
-        List<FilterJob> filterJobs = analysisJob.getFilterJobs();
-        List<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
-
-        for (TransformerJob transformerJob : transformerJobs) {
-            componentJobList.add(transformerJob);
-        }
-
-        for (FilterJob filterJob : filterJobs) {
-            componentJobList.add(filterJob);
-        }
-
-        for (AnalyzerJob analyzerJob : analyzerJobs) {
-            componentJobList.add(analyzerJob);
-        }
-        
-        for (TransformerJob transformerJob : analysisJob.getTransformerJobs()) {
-            for (OutputDataStreamJob outputDataStreamJob : transformerJob.getOutputDataStreamJobs()) {
-                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
-                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
-            }
-        }
-        
-        for (FilterJob filterJob : analysisJob.getFilterJobs()) {
-            for (OutputDataStreamJob outputDataStreamJob : filterJob.getOutputDataStreamJobs()) {
-                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
-                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
-            }
-        }
-        
-        for (AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
-            for (OutputDataStreamJob outputDataStreamJob : analyzerJob.getOutputDataStreamJobs()) {
-                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
-                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
-            }
-        }
-        
-        return componentJobList;
-    }
-
 }

@@ -17,30 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.metamodel.datahub.utils;
+package org.datacleaner.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+/**
+ * Interface for components whose distribution property (normally set via
+ * {@link Distributed}) is dynamically adjusted depending on its configuration.
+ */
+public interface HasDistributionAdvice {
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-public class JsonUpdateDataBuilder {
-
-    public static <T> String buildJsonArray(T objectData) {
-
-        final OutputStream os = new ByteArrayOutputStream();
-        final ObjectMapper mapper = new ObjectMapper();
-        final String json;
-        try {
-            mapper.writeValue(os, objectData);
-            final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
-            json = new String(data, "UTF-8");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return json;
-
-    }
-
+    /**
+     * Determines if the component is distributable with its current
+     * configuration.
+     * 
+     * @return
+     */
+    public boolean isDistributable();
 }

@@ -17,30 +17,26 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.metamodel.datahub.utils;
+package org.datacleaner.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import static org.junit.Assert.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-public class JsonUpdateDataBuilder {
+import org.junit.Test;
 
-    public static <T> String buildJsonArray(T objectData) {
+public class RestrictedFunctionalityExceptionTest {
 
-        final OutputStream os = new ByteArrayOutputStream();
-        final ObjectMapper mapper = new ObjectMapper();
-        final String json;
-        try {
-            mapper.writeValue(os, objectData);
-            final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
-            json = new String(data, "UTF-8");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return json;
+    @Test
+    public void testNoStackTrace() throws Exception {
+        final RestrictedFunctionalityException ex = new RestrictedFunctionalityException("foo bar");
+        
+        assertEquals(0, ex.getStackTrace().length);
+        
+        final StringWriter out = new StringWriter();
+        ex.printStackTrace(new PrintWriter(out));
 
+        assertEquals("org.datacleaner.api.RestrictedFunctionalityException: foo bar", out.toString().trim());
     }
-
 }

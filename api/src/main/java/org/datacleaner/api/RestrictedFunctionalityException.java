@@ -52,7 +52,7 @@ public class RestrictedFunctionalityException extends RuntimeException {
      *            an array of call to actions for the user to pick from.
      */
     public RestrictedFunctionalityException(String message, RestrictedFunctionalityCallToAction... callToActions) {
-        super(message);
+        super(message, null, true, false);
         _callToActions = callToActions;
     }
 
@@ -69,7 +69,7 @@ public class RestrictedFunctionalityException extends RuntimeException {
      */
     public RestrictedFunctionalityException(String message, Throwable cause,
             RestrictedFunctionalityCallToAction... callToActions) {
-        super(message, cause);
+        super(message, cause, true, false);
         _callToActions = callToActions;
     }
 

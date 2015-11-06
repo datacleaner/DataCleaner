@@ -29,17 +29,24 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
-                    + " <path_to_configuration_xml_file> <path_to_analysis_job_xml_file>\n" + "Got: "
+                    + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n" + "Got: "
                     + Arrays.toString(args));
         }
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
-        
+
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath);
+        final String propertiesPath; 
+        if (args.length > 2) {
+            propertiesPath = args[2];
+        } else {
+            propertiesPath = null;
+        }
+
+        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath, propertiesPath);
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {

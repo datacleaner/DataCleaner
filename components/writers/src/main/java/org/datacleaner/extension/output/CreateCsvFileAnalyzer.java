@@ -44,9 +44,9 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
-import org.datacleaner.api.Distributed;
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
+import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -69,14 +69,14 @@ import com.google.common.base.Strings;
 
 @Named("Create CSV file")
 @Alias("Write to CSV file")
-@Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
+@Description("Write data to a CSV file. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(superCategory = WriteSuperCategory.class)
-@Distributed(false)
-public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
+public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice, HasDistributionAdvice {
 
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
+    public static final String PROPERTY_INCLUDE_HEADER = "Include header";
 
     @Inject
     @Configured(value = PROPERTY_FILE, order = 1)
@@ -96,7 +96,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     Character escapeChar = '\\';
 
     @Inject
-    @Configured(order = 5, required = false)
+    @Configured(order = 5, required = false, value = PROPERTY_INCLUDE_HEADER)
     boolean includeHeader = true;
 
     @Inject
@@ -153,8 +153,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
-                + categoryName + ".csv"));
+        file = new FileResource(new File(saveDatastoreDirectory, dsName + "-" + displayName + "-" + categoryName
+                + ".csv"));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv"));
+        file = new FileResource(new File(saveDatastoreDirectory, dsName + "-" + displayName + ".csv"));
     }
 
     @Override
@@ -313,5 +313,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     public void setFile(Resource resource) {
         this.file = resource;
+    }
+
+    @Override
+    public boolean isDistributable() {
+        return columnToBeSortedOn == null;
     }
 }

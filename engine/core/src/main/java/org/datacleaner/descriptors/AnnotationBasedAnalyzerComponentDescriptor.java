@@ -23,6 +23,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
+import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.components.categories.AnalyzeSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
@@ -78,6 +79,13 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
     @Override
     public boolean isDistributable() {
+        final Distributed annotation = getAnnotation(Distributed.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
+        if (ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class)) {
+            return true;
+        }
         return getResultReducerClass() != null;
     }
 }

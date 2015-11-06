@@ -34,8 +34,8 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
     /**
      * Columns that should be present in the where clause for source records 
      */
-    private static final String SOURCE_ID_COLUMN_NAME = "source_id";
-    private static final String SOURCE_NAME_COLUMN_NAME = "source_name";
+    private static final String SOURCE_ID_COLUMN_NAME = "datasource_record_id";
+    private static final String SOURCE_NAME_COLUMN_NAME = "datasource_name";
 
     private final DataHubUpdateCallback _callback;
 

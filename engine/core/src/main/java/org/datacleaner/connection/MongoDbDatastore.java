@@ -21,22 +21,15 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.mongodb.MongoDbDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.util.StringUtils;
 
-import com.mongodb.DB;
-import com.mongodb.Mongo;
-
-public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
+public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger logger = LoggerFactory.getLogger(MongoDbDatastore.class);
 
     private final String _hostname;
     private final int _port;
@@ -98,20 +91,13 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         try {
-            final Mongo mongo = new Mongo(_hostname, _port);
-            final DB mongoDb = mongo.getDB(_databaseName);
-            if (_username != null && _password != null) {
-                final boolean authenticated = mongoDb.authenticate(_username, _password);
-                if (!authenticated) {
-                    logger.warn("Autheticate returned false!");
-                }
-            }
-
             final UpdateableDataContext dataContext;
             if (_tableDefs == null || _tableDefs.length == 0) {
-                dataContext = new MongoDbDataContext(mongoDb);
+                dataContext = DataContextFactory.createMongoDbDataContext(_hostname, _port, _databaseName, _username,
+                        _password);
             } else {
-                dataContext = new MongoDbDataContext(mongoDb, _tableDefs);
+                dataContext = DataContextFactory.createMongoDbDataContext(_hostname, _port, _databaseName, _hostname,
+                        _password, _tableDefs);
             }
             return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
         } catch (Exception e) {

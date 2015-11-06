@@ -19,12 +19,18 @@
  */
 package org.datacleaner.spark;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Func;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
@@ -34,6 +40,7 @@ import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
 import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
+import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.result.ReducedSingleValueDistributionResult;
@@ -46,11 +53,13 @@ import org.junit.Test;
  */
 public class SparkAnalysisRunnerTest extends TestCase {
 
+    private static final int MIN_PARTITIONS_MULTIPLE = 4;
+
     @Test
     public void testVanillaScenario() throws Exception {
         final AnalysisResultFuture result;
 
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - testVanillaScenario");
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -82,6 +91,61 @@ public class SparkAnalysisRunnerTest extends TestCase {
 
         final int upperCaseChars = stringAnalyzerResult.getEntirelyUpperCaseCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, upperCaseChars);
+    }
+    
+    @Test
+    public void testWriteDataScenario() throws Exception {
+        final String outputPath = "target/write-job.csv";
+        final File outputFile = new File(outputPath);
+        if (outputFile.exists() && outputFile.isDirectory()) {
+            FileUtils.deleteDirectory(outputFile);
+        }
+        
+        final AnalysisResultFuture result;
+
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        try {
+
+            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+                    "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml");
+            final AnalysisJob job = sparkJobContext.getAnalysisJob();
+            assertNotNull(job);
+
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, MIN_PARTITIONS_MULTIPLE);
+
+            result = sparkAnalysisRunner.run(job);
+        } finally {
+            sparkContext.close();
+        }
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(1, results.size());
+
+        final WriteDataResult writeDataResult = result.getResults(WriteDataResult.class).get(0);
+        assertEquals(7, writeDataResult.getWrittenRowCount());
+        
+        assertTrue(outputFile.isDirectory());
+        
+        // file resource is capable of viewing the directory like it is a single file
+        final FileResource fileResource = new FileResource(outputFile);
+        final String str = fileResource.read(new Func<InputStream, String>() {
+            @Override
+            public String eval(InputStream in) {
+                return FileHelper.readInputStreamAsString(in, "UTF8");
+            }
+        });
+        
+        final String[] lines = str.replaceAll("\r", "").split("\n");
+        assertEquals("\"COUNTRY\",\"CUSTOMERNUMBER\"", lines[0]);
+        assertEquals("\"Denmark\",\"HI\"", lines[1]);
+        
+        // asserting 8 lines is important - 7 data lines and 1 header line
+        assertEquals(8, lines.length);
     }
 
     @Test
@@ -144,7 +208,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
 
-            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, 4);
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, MIN_PARTITIONS_MULTIPLE);
 
             result = sparkAnalysisRunner.run(job);
         } finally {
@@ -193,7 +257,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
 
-            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, 4);
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, MIN_PARTITIONS_MULTIPLE);
 
             result = sparkAnalysisRunner.run(job);
         } finally {
@@ -230,7 +294,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
 
-            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, 4);
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext, MIN_PARTITIONS_MULTIPLE);
 
             result = sparkAnalysisRunner.run(job);
         } finally {

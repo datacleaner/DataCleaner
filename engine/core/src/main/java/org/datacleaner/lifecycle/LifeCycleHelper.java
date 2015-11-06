@@ -48,7 +48,7 @@ public final class LifeCycleHelper {
     private static final Logger logger = LoggerFactory.getLogger(LifeCycleHelper.class);
 
     private final InjectionManager _injectionManager;
-    private boolean _includeNonDistributedTasks;
+    private final boolean _includeNonDistributedTasks;
 
     /**
      * @param injectionManager

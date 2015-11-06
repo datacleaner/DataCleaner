@@ -63,6 +63,10 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
         }
         return new DatastoreConnectionImpl<JsonDataContext>(dataContext, this);
     }
+    
+    public SchemaBuilder getSchemaBuilder() {
+        return _schemaBuilderRef.get();
+    }
 
     @Override
     public Resource getResource() {

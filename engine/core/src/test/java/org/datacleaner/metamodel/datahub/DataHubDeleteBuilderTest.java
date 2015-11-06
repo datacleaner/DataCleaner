@@ -42,6 +42,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DataHubDeleteBuilderTest {
     
+    private static final String DATASOURCE_NAME = "datasource_name";
+
+    private static final String DATASOURCE_RECORD_ID = "datasource_record_id";
+
     @Rule
     public ExpectedException thrown= ExpectedException.none();
     
@@ -73,12 +77,12 @@ public class DataHubDeleteBuilderTest {
 
     @Test
     public void shouldCallExecuteSourceRecordForPerson() {
-        Column sourceIdColumn = new MutableColumn("source_id", ColumnType.CHAR);
+        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
         final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
                 OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn("source_name", ColumnType.CHAR);
+        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
         final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
                 OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
@@ -89,12 +93,12 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldCallExecuteSourceRecordForOrganization() {
         Mockito.when(table.getName()).thenReturn("organization");
-        Column sourceIdColumn = new MutableColumn("source_id", ColumnType.CHAR);
+        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
         final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
                 OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn("source_name", ColumnType.CHAR);
+        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
         final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
                 OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
@@ -138,9 +142,9 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForInvalidColumnsInSourceRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using source_id and source_name as condition values.");        
+        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using datasource_record_id and datasource_name as condition values.");        
         
-        Column sourceIdColumn = new MutableColumn("source_id", ColumnType.CHAR);
+        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
         final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
                 OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
@@ -155,14 +159,14 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForTooManyColumnsInSourceRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using source_id and source_name as condition values.");        
+        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using datasource_record_id and datasource_name as condition values.");        
         
-        Column sourceIdColumn = new MutableColumn("source_id", ColumnType.CHAR);
+        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
         final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
                 OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn("source_name", ColumnType.CHAR);
+        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
         final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
                 OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);

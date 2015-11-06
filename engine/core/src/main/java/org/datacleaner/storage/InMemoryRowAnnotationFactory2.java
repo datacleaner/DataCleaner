@@ -56,7 +56,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     public InMemoryRowAnnotationFactory2(int maxSampleRecords) {
         this(Math.min(10, DEFAULT_SAMPLE_LIMIT / maxSampleRecords), 500);
     }
-
+    
     /**
      * 
      * @param maxSampleSets
@@ -68,6 +68,10 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
         _storage = new ConcurrentHashMap<>();
         _maxSampleSets = Math.max(0, maxSampleSets);
         _maxSampleRecords = Math.max(0, maxSampleRecords);
+    }
+    
+    public Collection<RowAnnotation> getSampledRowAnnotations() {
+        return _storage.keySet();
     }
 
     private void addInputRowsToCollection(Collection<InputRow> rowCollection, Collection<InputRow> rows) {

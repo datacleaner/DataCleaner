@@ -19,11 +19,22 @@
  */
 package org.datacleaner.storage;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.data.MockInputRow;
-
 import junit.framework.TestCase;
+
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.data.DataSetHeader;
+import org.apache.metamodel.data.DefaultRow;
+import org.apache.metamodel.data.SimpleDataSetHeader;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.data.MetaModelInputRow;
+import org.datacleaner.data.MockInputColumn;
+import org.datacleaner.data.MockInputRow;
+import org.datacleaner.data.TransformedInputRow;
 
 public class InMemoryRowAnnotationFactory2Test extends TestCase {
 
@@ -82,5 +93,41 @@ public class InMemoryRowAnnotationFactory2Test extends TestCase {
             assertFalse(f.hasSampleRows(a3));
             assertEquals(0, f.getSampleRows(a3).size());
         }
+    }
+
+    public static class MyNonSerializableClass {
+        // used to demonstrate a non-serializable value in a row
+    }
+
+    public void testRecoverFromBadSerializationAttempt() throws Exception {
+        final InMemoryRowAnnotationFactory2 rowAnnotationFactory = new InMemoryRowAnnotationFactory2();
+        final RowAnnotation annotation = rowAnnotationFactory.createAnnotation();
+
+        final DataSetHeader header = new SimpleDataSetHeader(new Column[] { new MutableColumn("foo") });
+
+        rowAnnotationFactory.annotate(new MetaModelInputRow(1, new DefaultRow(header,
+                new Object[] { "serializable string" })), annotation);
+        rowAnnotationFactory.annotate(new MetaModelInputRow(2, new DefaultRow(header,
+                new Object[] { new MyNonSerializableClass() })), annotation);
+        rowAnnotationFactory.annotate(new TransformedInputRow(new MetaModelInputRow(3, new DefaultRow(header,
+                new Object[] { "another serializable string" }))), annotation);
+
+        final TransformedInputRow transformedInputRow = new TransformedInputRow(new MetaModelInputRow(2,
+                new DefaultRow(header, new Object[] { new MyNonSerializableClass() })));
+        transformedInputRow.addValue(new MockInputColumn<>("bar"), new MyNonSerializableClass());
+        rowAnnotationFactory.annotate(transformedInputRow, annotation);
+
+        final byte[] bytes = SerializationUtils.serialize(rowAnnotationFactory);
+        final InMemoryRowAnnotationFactory2 deserializedRowAnnotationFactory = (InMemoryRowAnnotationFactory2) SerializationUtils
+                .deserialize(bytes);
+
+        final RowAnnotation deserializedAnnotation = deserializedRowAnnotationFactory.getSampledRowAnnotations()
+                .iterator().next();
+        final List<InputRow> sampleRows = deserializedRowAnnotationFactory.getSampleRows(deserializedAnnotation);
+        assertEquals(4, sampleRows.size());
+        assertEquals("MetaModelInputRow[Row[values=[serializable string]]]", sampleRows.get(0).toString());
+        assertEquals("MetaModelInputRow[Row[values=[NON-SERIALIZABLE-VALUE]]]", sampleRows.get(1).toString());
+        assertEquals("TransformedInputRow[values={},delegate=MetaModelInputRow[Row[values=[another serializable string]]]]", sampleRows.get(2).toString());
+        assertEquals("TransformedInputRow[values={MockInputColumn[name=bar]=NON-SERIALIZABLE-VALUE},delegate=MetaModelInputRow[Row[values=[NON-SERIALIZABLE-VALUE]]]]", sampleRows.get(3).toString());
     }
 }

@@ -37,13 +37,13 @@ public class UsageMeteringMessageTest {
     public void testDetailsSimple() {
         UsageMeteringMessage msg = new UsageMeteringMessage("myType", "abcd", "efg");
         Assert.assertEquals("myType", msg.getType());
-        Assert.assertEquals("abcd,efg", msg.getDetails());
+        Assert.assertEquals("\"abcd\",\"efg\"", msg.getDetails());
     }
 
     @Test
     public void testDetailsSpecialChars() {
-        UsageMeteringMessage msg = new UsageMeteringMessage("myType", "ab,cd", "ef\"g");
+        UsageMeteringMessage msg = new UsageMeteringMessage("myType", "ab,cd", "ef\"g", "h\\i");
         Assert.assertEquals("myType", msg.getType());
-        Assert.assertEquals("\"ab,cd\",\"ef\"\"g\"", msg.getDetails());
+        Assert.assertEquals("\"ab,cd\",\"ef\\\"g\",\"h\\\\i\"", msg.getDetails());
     }
 }

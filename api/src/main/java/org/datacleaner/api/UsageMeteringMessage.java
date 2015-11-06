@@ -31,9 +31,7 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
 
     public static final char DETAILS_SEPARATOR_CHAR = ',';
     public static final char DETAILS_QUOTE_CHAR = '"';
-
-    private static final String DETAILS_QUOTE_STR = String.valueOf(DETAILS_QUOTE_CHAR);
-    private static final String DETAILS_TWO_QUOTES_STR = DETAILS_QUOTE_STR + DETAILS_QUOTE_STR;
+    public static final char DETAILS_ESCAPE_CHAR = '\\';
 
     private final String type;
     private final String details;
@@ -55,7 +53,7 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
         StringBuilder detailsBldr = new StringBuilder();
         for(int i = 0; i < details.length; i++) {
             if(i > 0) { detailsBldr.append(DETAILS_SEPARATOR_CHAR); }
-            detailsBldr.append(escapeValue(details[i]));
+            escapeValueTo(details[i], detailsBldr);
         }
         this.details = detailsBldr.toString();
     }
@@ -81,12 +79,25 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
         return "UsageMeteringMessage[" + type + " " + details+ "]";
     }
 
-    /** Escapes value for a CSV line */
-    private String escapeValue(String field) {
-        if(field.indexOf(DETAILS_SEPARATOR_CHAR) == -1 && field.indexOf(DETAILS_QUOTE_CHAR) == -1) {
-            return field;
+    /** Escapes value for a CSV line and appends it to the 'target'. */
+    private void escapeValueTo(String field, StringBuilder target) {
+        if(field == null) {
+            return;
         }
-        return DETAILS_QUOTE_CHAR + field.replace(DETAILS_QUOTE_STR, DETAILS_TWO_QUOTES_STR) + DETAILS_QUOTE_CHAR;
+        target.append(DETAILS_QUOTE_CHAR);
+        if(field.indexOf(DETAILS_ESCAPE_CHAR) == -1 && field.indexOf(DETAILS_QUOTE_CHAR) == -1) {
+            target.append(field);
+        } else {
+            int len = field.length();
+            for (int i = 0; i < len; i++) {
+                char c = field.charAt(i);
+                if (c == DETAILS_ESCAPE_CHAR || c == DETAILS_QUOTE_CHAR) {
+                    target.append(DETAILS_ESCAPE_CHAR);
+                }
+                target.append(c);
+            }
+        }
+        target.append(DETAILS_QUOTE_CHAR);
     }
 
 }

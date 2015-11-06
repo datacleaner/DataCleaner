@@ -27,7 +27,7 @@ import java.io.Serializable;
  */
 public class UsageMeteringMessage implements Serializable, ComponentMessage {
 
-    private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = 1L;
 
     public static final char DETAILS_SEPARATOR_CHAR = ',';
     public static final char DETAILS_QUOTE_CHAR = '"';

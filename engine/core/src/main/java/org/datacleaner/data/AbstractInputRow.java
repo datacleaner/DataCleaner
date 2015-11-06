@@ -33,6 +33,8 @@ import org.datacleaner.api.InputRow;
 public abstract class AbstractInputRow implements InputRow {
 
 	private static final long serialVersionUID = 1L;
+	
+	protected static final String NON_SERIALIZABLE_REPLACEMENT_VALUE = "NON-SERIALIZABLE-VALUE";
 
 	@Override
 	public final <E> E getValue(InputColumn<E> column) {

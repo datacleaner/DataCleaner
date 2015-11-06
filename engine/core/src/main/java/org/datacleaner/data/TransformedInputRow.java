@@ -19,11 +19,19 @@
  */
 package org.datacleaner.data;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.ObjectOutputStream.PutField;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.slf4j.Logger;
@@ -40,8 +48,8 @@ public final class TransformedInputRow extends AbstractInputRow {
     private static final Logger logger = LoggerFactory.getLogger(TransformedInputRow.class);
 
     private final InputRow _delegate;
-    private final Map<InputColumn<?>, Object> _values;
     private final int _rowId;
+    private final Map<InputColumn<?>, Object> _values;
 
     public TransformedInputRow(InputRow delegate) {
         this(delegate, null);
@@ -57,7 +65,34 @@ public final class TransformedInputRow extends AbstractInputRow {
         } else {
             _rowId = rowId;
         }
-        _values = new LinkedHashMap<InputColumn<?>, Object>();
+        _values = new LinkedHashMap<>();
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        try {
+            // try to serialize first to ensure that row is not carrying
+            // non-serializable things
+            SerializationUtils.serialize((Serializable) _values, new NullOutputStream());
+            stream.defaultWriteObject();
+        } catch (SerializationException e) {
+            // "recover" by returning a copy of the row with only serializable
+            // values
+            final PutField putFields = stream.putFields();
+            putFields.put("_delegate", _delegate);
+            putFields.put("_rowId", _rowId);
+            final Map<InputColumn<?>, Object> values = new LinkedHashMap<>();
+            for (Entry<InputColumn<?>, Object> entry : _values.entrySet()) {
+                final InputColumn<?> key = entry.getKey();
+                final Object value = entry.getValue();
+                if (value instanceof Serializable) {
+                    values.put(key, value);
+                } else {
+                    values.put(key, NON_SERIALIZABLE_REPLACEMENT_VALUE);
+                }
+            }
+            putFields.put("_values", values);
+            stream.writeFields();
+        }
     }
 
     @Override

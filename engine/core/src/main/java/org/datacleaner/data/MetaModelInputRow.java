@@ -19,15 +19,25 @@
  */
 package org.datacleaner.data;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectOutputStream.PutField;
 import java.io.Reader;
+import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.data.DataSetHeader;
+import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.data.SimpleDataSetHeader;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.FileHelper;
@@ -60,6 +70,33 @@ public final class MetaModelInputRow extends AbstractInputRow {
 
     public Row getRow() {
         return _row;
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        try {
+            // try to serialize first to ensure that row is not carrying
+            // non-serializable things
+            SerializationUtils.serialize(_row, new NullOutputStream());
+            stream.defaultWriteObject();
+        } catch (SerializationException e) {
+            // "recover" by returning a copy of the row with only serializable
+            // values
+            final PutField putFields = stream.putFields();
+            putFields.put("_rowNumber", _rowNumber);
+            final DataSetHeader header = new SimpleDataSetHeader(_row.getSelectItems());
+            final Object[] originalValues = _row.getValues();
+            final Object[] values = new Object[originalValues.length];
+            for (int i = 0; i < originalValues.length; i++) {
+                final Object value = originalValues[i];
+                if (value instanceof Serializable) {
+                    values[i] = value;
+                } else {
+                    values[i] = NON_SERIALIZABLE_REPLACEMENT_VALUE;
+                }
+            }
+            putFields.put("_row", new DefaultRow(header, values));
+            stream.writeFields();
+        }
     }
 
     @Override

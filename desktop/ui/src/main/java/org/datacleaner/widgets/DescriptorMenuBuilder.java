@@ -31,7 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ComponentCategory;

@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.VFS;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
@@ -337,12 +336,11 @@ public final class CliRunner implements Closeable {
         final JaxbJobReader jobReader = new JaxbJobReader(configuration);
 
         final String jobFilePath = _arguments.getJobFile();
-        final FileObject jobFile = VFS.getManager().resolveFile(jobFilePath);
+        final Resource jobResource = resolveResource(jobFilePath);
         final Map<String, String> variableOverrides = _arguments.getVariableOverrides();
 
-        final InputStream inputStream = jobFile.getContent().getInputStream();
-
         final AnalysisJobBuilder analysisJobBuilder;
+        final InputStream inputStream = jobResource.read();
         try {
             analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
         } finally {

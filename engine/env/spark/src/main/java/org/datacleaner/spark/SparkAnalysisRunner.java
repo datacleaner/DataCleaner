@@ -33,12 +33,14 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
 import org.datacleaner.spark.functions.CsvParserFunction;
 import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
+import org.datacleaner.spark.functions.ExtractJsonInputRows;
 import org.datacleaner.spark.functions.RowProcessingFunction;
 import org.datacleaner.spark.functions.TuplesToTuplesFunction;
 import org.datacleaner.spark.functions.ValuesToInputRowFunction;
@@ -157,8 +159,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
 
             return inputRowsRDD;
+        } else if (datastore instanceof JsonDatastore) {
+            final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
+            final ExtractJsonInputRows extractInputRows = new ExtractJsonInputRows(_sparkJobContext, jsonDatastore); 
+            final JavaRDD<InputRow> inputRowsRDD = _sparkContext.parallelize(extractInputRows.getInputRows()); 
+            return inputRowsRDD;
         }
-
         throw new UnsupportedOperationException("Unsupported datastore type or configuration: " + datastore);
     }
 }

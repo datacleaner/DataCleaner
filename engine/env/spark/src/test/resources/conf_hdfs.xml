@@ -2,10 +2,10 @@
 <configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<csv-datastore name="person_names">
-			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_names.txt</filename>
+		<json-datastore name="person_names">
+			<filename>hdfs://bigdatavm:9000/datacleaner/test/json_online.jsont</filename>
 			<multiline-values>false</multiline-values>
-		</csv-datastore>
+		</json-datastore>
 	</datastore-catalog>
 
 	<classpath-scanner>

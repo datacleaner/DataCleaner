@@ -84,15 +84,22 @@ public final class RowProcessingFunction implements
 
     @Override
     public Iterable<Tuple2<String, NamedAnalyzerResult>> call(Iterator<InputRow> inputRowIterator) throws Exception {
+        logger.info("call(Iterator) invoked");
+
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
                 analysisJob);
+
+        logger.info("call(Iterator) finished, returning {} results", analyzerResults.size());
+
         return analyzerResults;
     }
 
     @Override
     public Iterator<Tuple2<String, NamedAnalyzerResult>> call(Integer partitionNumber,
             Iterator<InputRow> inputRowIterator) throws Exception {
+        logger.info("call({}, Iterator) invoked", partitionNumber);
+
         final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
 
         configureComponentsBeforeBuilding(jobBuilder, partitionNumber.intValue());
@@ -101,6 +108,8 @@ public final class RowProcessingFunction implements
 
         final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
                 analysisJob);
+
+        logger.info("call({}, Iterator) finished, returning {} results", partitionNumber, analyzerResults.size());
 
         return analyzerResults.iterator();
     }
@@ -235,7 +244,10 @@ public final class RowProcessingFunction implements
         while (inputRowIterator.hasNext()) {
             final InputRow inputRow = inputRowIterator.next();
             consumeRowHandler.consumeRow(inputRow);
+            logger.debug("Consumed row no. {}", inputRow.getId());
         }
+        
+        logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
         final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler

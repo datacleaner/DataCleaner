@@ -33,11 +33,15 @@ import org.datacleaner.job.ComponentJob;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.spark.NamedAnalyzerResult;
 import org.datacleaner.spark.SparkJobContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AnalyzerResultReduceFunction implements
         Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(AnalyzerResultReduceFunction.class);
 
     private final SparkJobContext _sparkJobContext;
 
@@ -58,7 +62,10 @@ public final class AnalyzerResultReduceFunction implements
         final AnalyzerResult analyzerResult1 = namedAnalyzerResult1.getAnalyzerResult();
         final AnalyzerResult analyzerResult2 = namedAnalyzerResult2.getAnalyzerResult();
 
-        ResultDescriptor rd = getResultDescriptor(componentJob, analyzerResult1);
+        logger.info("Reducing results with key '{}' of types: {} and {}", key, analyzerResult1.getClass(),
+                analyzerResult2.getClass());
+
+        final ResultDescriptor rd = getResultDescriptor(componentJob, analyzerResult1);
         final Class<? extends AnalyzerResultReducer<?>> resultReducerClass = rd.getResultReducerClass();
 
         if (resultReducerClass == null) {

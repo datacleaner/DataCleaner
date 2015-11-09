@@ -27,6 +27,7 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
@@ -126,6 +127,9 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
         final Distributed annotation = getAnnotation(Distributed.class);
         if (annotation != null) {
             return annotation.value();
+        }
+        if (ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class)) {
+            return true;
         }
         if (isQueryOptimizable()) {
             // The general rule for query optimized filters is that they are NOT

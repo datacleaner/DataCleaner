@@ -19,7 +19,6 @@
  */
 package org.datacleaner.spark;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,8 +34,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
@@ -80,26 +77,30 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
     }
 
-    public void run() {
-        run(_sparkJobContext.getAnalysisJob());
-    }
-
     @Override
     public AnalysisResultFuture run(AnalysisJob job) {
+        return run();
+    }
+
+    public AnalysisResultFuture run() {
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 
         final JavaRDD<InputRow> inputRowsRDD = openSourceDatastore(datastore);
 
         final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD;
-        if (isDistributable()) {
+        if (_sparkJobContext.getAnalysisJobBuilder().isDistributable()) {
             logger.info("Running the job in distributed mode");
 
+            // TODO: We have yet to get more experience with this setting - do a
+            // benchmark of what works best, true or false.
+            final boolean preservePartitions = true;
+
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
-                    .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), false);
+                    .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
 
             final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>());
+                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
 
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                     _sparkJobContext));
@@ -132,29 +133,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
 
         return new SparkAnalysisResultFuture(results);
-    }
-
-    private boolean isDistributable() {
-        final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
-        return isDistributable(jobBuilder);
-    }
-
-    private boolean isDistributable(AnalysisJobBuilder jobBuilder) {
-        final Collection<ComponentBuilder> componentBuilders = jobBuilder.getComponentBuilders();
-        for (ComponentBuilder componentBuilder : componentBuilders) {
-            if (!componentBuilder.getDescriptor().isDistributable()) {
-                return false;
-            }
-        }
-
-        final List<AnalysisJobBuilder> childJobBuilders = jobBuilder.getConsumedOutputDataStreamsJobBuilders();
-        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
-            if (!isDistributable(childJobBuilder)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {

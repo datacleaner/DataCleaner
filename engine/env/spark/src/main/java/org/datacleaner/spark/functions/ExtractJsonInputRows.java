@@ -26,55 +26,34 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.json.JsonDataContext;
 import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.data.MockInputRow;
-import org.datacleaner.spark.SparkJobContext;
 
-public class ExtractJsonInputRows  {
-    
-    final SparkJobContext _sparkJobContext; 
-    final JsonDatastore   _jsonDatastore; 
-    
-    
-    public ExtractJsonInputRows(SparkJobContext sparkContext, JsonDatastore jsonDatastore) {
-        _sparkJobContext = sparkContext; 
-        _jsonDatastore = jsonDatastore; 
+/**
+ * Reads and extracts data from a Json datastore
+ *
+ */
+public class ExtractJsonInputRows {
+
+    final JsonDatastore _jsonDatastore;
+
+    public ExtractJsonInputRows(JsonDatastore jsonDatastore) {
+        _jsonDatastore = jsonDatastore;
     }
-    
-    
-    public List<InputRow> getInputRows(){
-    
-        final List<InputRow> list = new ArrayList<>();
-        final JsonDataContext jsonContext = new JsonDataContext(_jsonDatastore.getResource()); 
-        final List<InputColumn<?>> sourceColumns = _sparkJobContext.getAnalysisJob().getSourceColumns();
-        final String[] columnNames = new String[sourceColumns.size()];
-        for (int i=0;i<sourceColumns.size();i++){
-            columnNames[i]= sourceColumns.get(i).getName(); 
-        }
+
+    public List<Object[]> getInputRows() {
+        final List<Object[]> list = new ArrayList<>();
+        final JsonDataContext jsonContext = new JsonDataContext(_jsonDatastore.getResource());
         final Table table = jsonContext.getDefaultSchema().getTable(0);
-        final Query query = new Query().from(table).where(columnNames);
-        final DataSet executeQuery = jsonContext.executeQuery(query); 
-        
-        while (executeQuery.next()){
+        final Column[] columns = table.getColumns();
+        final Query query = new Query().select(columns).from(table);
+        final DataSet executeQuery = jsonContext.executeQuery(query);
+        while (executeQuery.next()) {
             final Row row = executeQuery.getRow();
             final Object[] values = row.getValues();
-            list.add(getInputRow(sourceColumns, values)); 
+            list.add(values);
         }
         return list;
     }
-    
-    private MockInputRow getInputRow(final List<InputColumn<?>> sourceColumns, Object[] values){
-    
-    final MockInputRow inputRow = new MockInputRow();
-    for (InputColumn<?> sourceColumn : sourceColumns) {
-        assert sourceColumn.isPhysicalColumn();
-        final int columnIndex = sourceColumn.getPhysicalColumn().getColumnNumber();
-        final Object value = values[columnIndex];
-        inputRow.put(sourceColumn, value);
-    }
-    return inputRow;
-}
 }

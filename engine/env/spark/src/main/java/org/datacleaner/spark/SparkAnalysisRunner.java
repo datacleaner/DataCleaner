@@ -161,10 +161,14 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             return inputRowsRDD;
         } else if (datastore instanceof JsonDatastore) {
             final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
-            final ExtractJsonInputRows extractInputRows = new ExtractJsonInputRows(_sparkJobContext, jsonDatastore); 
-            final JavaRDD<InputRow> inputRowsRDD = _sparkContext.parallelize(extractInputRows.getInputRows()); 
+            final ExtractJsonInputRows extractInputRows = new ExtractJsonInputRows(jsonDatastore);
+            final List<Object[]> rawInputRows = extractInputRows.getInputRows();
+            final JavaRDD<Object[]> rawInputRowsRDD = _sparkContext.parallelize(rawInputRows);
+            final JavaPairRDD<Object[], Long> zipWithIndex = rawInputRowsRDD.zipWithIndex();
+            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
             return inputRowsRDD;
         }
+        
         throw new UnsupportedOperationException("Unsupported datastore type or configuration: " + datastore);
     }
 }

@@ -3,12 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<json-datastore name="person_names">
+		<csv-datastore name="person_names">
 			<filename>src/test/resources/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
+		</csv-datastore>
+		<json-datastore name="persons_data">
+			<filename>src/test/resources/persons_data.json</filename>
 		</json-datastore>
 	</datastore-catalog>
-	
+
 	<classpath-scanner>
 		<package recursive="true">org.datacleaner</package>
 	</classpath-scanner>

@@ -10,6 +10,10 @@
 		<json-datastore name="persons_data">
 			<filename>src/test/resources/persons_data.json</filename>
 		</json-datastore>
+		<json-datastore name="generated_data">
+			<filename>src/test/resources/generated_data.json</filename>
+		</json-datastore>
+		
 	</datastore-catalog>
 
 	<classpath-scanner>

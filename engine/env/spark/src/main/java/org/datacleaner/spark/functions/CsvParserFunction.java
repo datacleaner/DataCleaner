@@ -34,7 +34,8 @@ public final class CsvParserFunction implements Function<String, Object[]> {
         if (csvConfiguration.isMultilineValues()) {
             throw new IllegalStateException("Multiline CSV files are not supported");
         }
-        if (!csvConfiguration.getEncoding().equalsIgnoreCase("UTF-8")) {
+        final String encoding = csvConfiguration.getEncoding();
+        if (!(encoding.equalsIgnoreCase("UTF-8") || encoding.equalsIgnoreCase("UTF8"))) {
             throw new IllegalStateException("CSV files must be UTF-8 encoded");
         }
 

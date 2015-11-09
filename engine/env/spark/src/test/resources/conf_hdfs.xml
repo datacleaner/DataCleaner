@@ -2,8 +2,8 @@
 <configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<json-datastore name="persons_data">
-			<filename>hdfs://bigdatavm:9000/datacleaner/test/persons_data.json</filename>
+		<json-datastore name="person_names">
+			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_names.txt</filename>
 		</json-datastore>
 	</datastore-catalog>
 

@@ -57,8 +57,8 @@ public class ExampleLaunch {
     private static final String HDFS_JAR_LOCATION = "/datacleaner/lib";
     private static final String CONFIGURATION_LOCATION = "/datacleaner/test/conf.xml";
     private static final String SPARK_HOME = "C:\\dev\\spark-1.4.1-bin-hadoop2.6";
-    private static final String JOB_LOCATION = "/datacleaner/test/json-job.analysis.xml";
-    private static final String DATA_LOCATION = "/datacleaner/test/persons_data.json";
+    private static final String JOB_LOCATION = "/datacleaner/test/vanilla-job.analysis.xml";
+    private static final String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
     public static void main(String[] args) throws Exception {
         if (System.getenv("SPARK_HOME") == null) {
@@ -68,9 +68,9 @@ public class ExampleLaunch {
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location
-        launcher.copyFileToHdfs(new File("src/test/resources/persons_data.json"), DATA_LOCATION, false);
+        launcher.copyFileToHdfs(new File("src/test/resources/person_names.txt"), DATA_LOCATION, false);
         launcher.copyFileToHdfs(new File("src/test/resources/conf_hdfs.xml"), CONFIGURATION_LOCATION, false);
-        launcher.copyFileToHdfs(new File("src/test/resources/json-job.analysis.xml"), JOB_LOCATION, false);
+        launcher.copyFileToHdfs(new File("src/test/resources/vanilla-job.analysis.xml"), JOB_LOCATION, false);
 
         final File hadoopConfDir = launcher.createTemporaryHadoopConfDir();
         final SparkLauncher sparkLauncher = launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION,

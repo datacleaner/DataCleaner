@@ -4,7 +4,7 @@
 
 	<datastore-catalog>
 		<json-datastore name="person_names">
-			<filename>src/test/resources/json_online.json</filename>
+			<filename>src/test/resources/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
 		</json-datastore>
 	</datastore-catalog>

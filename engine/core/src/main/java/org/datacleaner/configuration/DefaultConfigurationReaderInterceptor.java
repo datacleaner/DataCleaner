@@ -21,11 +21,14 @@ package org.datacleaner.configuration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
+import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.HdfsResourceTypeHandler;
@@ -40,6 +43,28 @@ import org.datacleaner.util.convert.VfsResourceTypeHandler;
  * not intercept or perform any special treatment when invoked.
  */
 public class DefaultConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
+
+    private final Map<String, String> _propertyOverrides;
+
+    public DefaultConfigurationReaderInterceptor() {
+        this((Resource) null);
+    }
+
+    public DefaultConfigurationReaderInterceptor(Map<String, String> propertyOverrides) {
+        if (propertyOverrides == null) {
+            _propertyOverrides = Collections.emptyMap();
+        } else {
+            _propertyOverrides = propertyOverrides;
+        }
+    }
+
+    public DefaultConfigurationReaderInterceptor(Resource propertiesResource) {
+        if (propertiesResource == null || !propertiesResource.isExists()) {
+            _propertyOverrides = Collections.emptyMap();
+        } else {
+            _propertyOverrides = propertiesResource.read(new InputStreamToPropertiesMapFunc());
+        }
+    }
 
     @Override
     public final String createFilename(String filename) {
@@ -104,7 +129,10 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
 
     @Override
     public String getPropertyOverride(String variablePath) {
-        String result = System.getProperty(variablePath);
+        String result = _propertyOverrides.get(variablePath);
+        if (result == null) {
+            result = System.getProperty(variablePath);
+        }
         return result;
     }
 

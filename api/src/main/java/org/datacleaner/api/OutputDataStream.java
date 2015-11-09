@@ -43,7 +43,7 @@ public interface OutputDataStream extends HasName, Serializable {
 
     /**
      * Gets the logical (or physical) {@link Table} objects that represent the
-     * format of the data that will be made available by the {@link DataStream}
+     * format of the data that will be made available by the data stream.
      * 
      * @return
      */

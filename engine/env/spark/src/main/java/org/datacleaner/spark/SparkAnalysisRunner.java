@@ -79,12 +79,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
     }
 
-    public void run() {
-        run(_sparkJobContext.getAnalysisJob());
-    }
-
     @Override
     public AnalysisResultFuture run(AnalysisJob job) {
+        return run();
+    }
+
+    public AnalysisResultFuture run() {
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 
@@ -94,11 +94,15 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         if (_sparkJobContext.getAnalysisJobBuilder().isDistributable()) {
             logger.info("Running the job in distributed mode");
 
+            // TODO: We have yet to get more experience with this setting - do a
+            // benchmark of what works best, true or false.
+            final boolean preservePartitions = true;
+
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
-                    .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), false);
+                    .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
 
             final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>());
+                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
 
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                     _sparkJobContext));

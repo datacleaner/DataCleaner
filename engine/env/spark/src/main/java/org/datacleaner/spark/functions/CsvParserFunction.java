@@ -34,8 +34,16 @@ public final class CsvParserFunction implements Function<String, Object[]> {
         if (csvConfiguration.isMultilineValues()) {
             throw new IllegalStateException("Multiline CSV files are not supported");
         }
-        if (!csvConfiguration.getEncoding().equalsIgnoreCase("UTF-8")) {
-            throw new IllegalStateException("CSV files must be UTF-8 encoded");
+
+        final String encoding = csvConfiguration.getEncoding();
+        switch (encoding.toUpperCase()) {
+        case "UTF-8":
+        case "UTF8":
+            // supported
+            break;
+        default:
+            throw new IllegalStateException("Unsupported encoding: '" + encoding
+                    + "'. CSV files on Hadoop must be UTF-8 encoded.");
         }
 
         _csvConfiguration = csvConfiguration;

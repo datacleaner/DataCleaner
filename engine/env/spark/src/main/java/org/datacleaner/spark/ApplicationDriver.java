@@ -53,7 +53,7 @@ public class ApplicationDriver {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDriver.class);
 
-    private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-spark";
+    private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-env-spark";
 
     private final String _hostname;
     private final int _port;
@@ -143,6 +143,7 @@ public class ApplicationDriver {
             throws Exception {
         // mimic env. variables
         final Map<String, String> env = new HashMap<>();
+        env.put("HADOOP_CONF_DIR", hadoopConfDir.getAbsolutePath());
         env.put("YARN_CONF_DIR", hadoopConfDir.getAbsolutePath());
 
         final SparkLauncher sparkLauncher = new SparkLauncher(env);
@@ -213,8 +214,18 @@ public class ApplicationDriver {
                 + UUID.randomUUID().toString());
         hadoopConfDir.mkdirs();
 
-        final File coreSiteFile = new File(hadoopConfDir, "core-site.xml");
-        try (final InputStream inputStream = getClass().getResourceAsStream("core-site-template.xml")) {
+        createTemporaryHadoopConfFile(hadoopConfDir, "core-site.xml", "core-site-template.xml");
+        createTemporaryHadoopConfFile(hadoopConfDir, "yarn-site.xml", "yarn-site-template.xml");
+
+        logger.debug("Created temporary Hadoop conf dir: {}", hadoopConfDir);
+
+        return hadoopConfDir;
+    }
+
+    private void createTemporaryHadoopConfFile(File hadoopConfDir, String filename, String templateName)
+            throws IOException {
+        final File coreSiteFile = new File(hadoopConfDir, filename);
+        try (final InputStream inputStream = getClass().getResourceAsStream(templateName)) {
             final BufferedReader reader = FileHelper.getBufferedReader(inputStream, FileHelper.UTF_8_ENCODING);
             try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
@@ -225,9 +236,9 @@ public class ApplicationDriver {
 
                     line = reader.readLine();
                 }
+                writer.flush();
             }
         }
-        return hadoopConfDir;
     }
 
     public void copyFileToHdfs(File file, String hdfsPath) {
@@ -236,10 +247,19 @@ public class ApplicationDriver {
 
     public void copyFileToHdfs(final File file, final String hdfsPath, final boolean overwrite) {
         final HdfsResource hdfsResource = createResource(hdfsPath);
-        if (!overwrite && hdfsResource.isExists()) {
+        final boolean exists = hdfsResource.isExists();
+        if (!overwrite && exists) {
             // no need to copy
+            logger.debug("Skipping file-copy to {} because file already exists", hdfsPath);
             return;
         }
+        
+        if (exists) {
+            logger.info("Overwriting file on HDFS: {}", hdfsPath);
+        } else {
+            logger.debug("Copying file to HDFS: {}", hdfsPath);
+        }
+        
         hdfsResource.write(new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {

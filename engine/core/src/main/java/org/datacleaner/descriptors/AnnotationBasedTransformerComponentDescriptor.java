@@ -62,6 +62,7 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
         if (annotation != null) {
             return annotation.value();
         }
+        
         return true;
     }
 }

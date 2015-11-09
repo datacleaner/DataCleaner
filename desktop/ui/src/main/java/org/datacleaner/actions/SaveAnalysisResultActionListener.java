@@ -23,30 +23,28 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.OutputStream;
+import java.util.Map;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Ref;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.result.save.AnalysisResultSaveHandler;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCFileChooser;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Ref;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action listener used to fire saving a result to an .analysis.result.dat
  * (serialized) file.
  */
 public class SaveAnalysisResultActionListener implements ActionListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(SaveAnalysisResultActionListener.class);
 
     private final Ref<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
@@ -83,8 +81,9 @@ public class SaveAnalysisResultActionListener implements ActionListener {
             }
 
             if (file.exists()) {
-                int overwrite = JOptionPane.showConfirmDialog(parent, "Are you sure you want to overwrite the file '"
-                        + file.getName() + "'?", "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
+                int overwrite = JOptionPane.showConfirmDialog(parent,
+                        "Are you sure you want to overwrite the file '" + file.getName() + "'?",
+                        "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
                 if (overwrite != JOptionPane.YES_OPTION) {
                     return;
                 }
@@ -92,21 +91,37 @@ public class SaveAnalysisResultActionListener implements ActionListener {
 
             _userPreferences.setAnalysisJobDirectory(file.getParentFile());
 
-            final SimpleAnalysisResult analysisResult;
-            if (_result instanceof SimpleAnalysisResult) {
-                analysisResult = (SimpleAnalysisResult) _result;
-            } else {
-                analysisResult = new SimpleAnalysisResult(_result.get().getResultMap());
-            }
+            final AnalysisResultSaveHandler saveHandler = new AnalysisResultSaveHandler(_result.get(),
+                    new FileResource(file));
+            final boolean success = saveHandler.saveAttempt();
+            if (!success) {
+                final AnalysisResult safeAnalysisResult = saveHandler.createSafeAnalysisResult();
+                if (safeAnalysisResult == null) {
+                    WidgetUtils.showErrorMessage("Error writing result to file!", "See the log for error details.");
+                } else {
+                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements = saveHandler
+                            .getUnsafeResultElements();
 
-            final OutputStream out = FileHelper.getOutputStream(file);
-            try {
-                SerializationUtils.serialize(analysisResult, out);
-            } catch (Exception e) {
-                logger.error("Error serializing analysis result: " + analysisResult, e);
-                WidgetUtils.showErrorMessage("Error writing result to file", e);
-            } finally {
-                FileHelper.safeClose(out);
+                    final StringBuilder details = new StringBuilder();
+                    details.append(unsafeResultElements.size()
+                            + " of the result elements encountered an error while saving.\n");
+
+                    for (ComponentJob componentJob : unsafeResultElements.keySet()) {
+                        final String componentJobLabel = LabelUtils.getLabel(componentJob);
+                        details.append('\n');
+                        details.append(" - ");
+                        details.append(componentJobLabel);
+                    }
+                    details.append("\n\nSee the log for error details.");
+                    details.append("\n\nDo you want to save the result without these elements?");
+
+                    final int confirmation = JOptionPane.showConfirmDialog(null, details.toString(),
+                            "Error writing result to file!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+                    if (confirmation == JOptionPane.OK_OPTION) {
+
+                        saveHandler.saveWithoutUnsafeResultElements();
+                    }
+                }
             }
         }
     }

@@ -187,11 +187,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         this(null);
     }
 
-    public JaxbConfigurationReader(ConfigurationReaderInterceptor configurationReaderCallback) {
-        if (configurationReaderCallback == null) {
-            configurationReaderCallback = new DefaultConfigurationReaderInterceptor();
+    public JaxbConfigurationReader(ConfigurationReaderInterceptor interceptor) {
+        if (interceptor == null) {
+            interceptor = new DefaultConfigurationReaderInterceptor();
         }
-        _interceptor = configurationReaderCallback;
+        _interceptor = interceptor;
         _variablePathBuilder = new ArrayDeque<String>(4);
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),

@@ -40,7 +40,7 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
 import org.datacleaner.spark.functions.CsvParserFunction;
 import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
-import org.datacleaner.spark.functions.ExtractJsonInputRows;
+import org.datacleaner.spark.functions.JsonParserFunction;
 import org.datacleaner.spark.functions.RowProcessingFunction;
 import org.datacleaner.spark.functions.TuplesToTuplesFunction;
 import org.datacleaner.spark.functions.ValuesToInputRowFunction;
@@ -165,14 +165,20 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             return inputRowsRDD;
         } else if (datastore instanceof JsonDatastore) {
             final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
-            final ExtractJsonInputRows extractInputRows = new ExtractJsonInputRows(jsonDatastore);
-            final List<Object[]> rawInputRows = extractInputRows.getInputRows();
-            final JavaRDD<Object[]> rawInputRowsRDD = _sparkContext.parallelize(rawInputRows);
-            final JavaPairRDD<Object[], Long> zipWithIndex = rawInputRowsRDD.zipWithIndex();
+            final String datastorePath = jsonDatastore.getResource().getQualifiedPath();
+            final JavaRDD<String> rawInput;
+            if (_minPartitions != null) {
+                rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
+            } else {
+                rawInput = _sparkContext.textFile(datastorePath);
+            }
+
+            final JavaRDD<Object[]> parsedInput = rawInput.map(new JsonParserFunction(jsonDatastore));
+            final JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
             final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
             return inputRowsRDD;
         }
-        
+
         throw new UnsupportedOperationException("Unsupported datastore type or configuration: " + datastore);
     }
 }

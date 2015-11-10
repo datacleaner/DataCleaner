@@ -7,13 +7,9 @@
 			<filename>src/test/resources/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
 		</csv-datastore>
-		<json-datastore name="persons_data">
-			<filename>src/test/resources/persons_data.json</filename>
+		<json-datastore name="person_data">
+			<filename>src/test/resources/person_data.json</filename>
 		</json-datastore>
-		<json-datastore name="generated_data">
-			<filename>src/test/resources/generated_data.json</filename>
-		</json-datastore>
-		
 	</datastore-catalog>
 
 	<classpath-scanner>

@@ -2,7 +2,7 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<source>
-		<data-context ref="persons_data" />
+		<data-context ref="person_data" />
 		<columns>
 			<column id="col__id" path="_id" type="VARCHAR" />
 			<column id="col_about" path="about" type="VARCHAR" />

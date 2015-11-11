@@ -3,10 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<json-datastore name="person_data">
-			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_data.txt
+		<csv-datastore name="person_names">
+			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_names.txt
 			</filename>
-		</json-datastore>
+			<multiline-values>false</multiline-values>
+		</csv-datastore>
 	</datastore-catalog>
 
 	<classpath-scanner>

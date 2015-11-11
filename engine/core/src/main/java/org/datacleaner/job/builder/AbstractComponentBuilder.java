@@ -41,6 +41,7 @@ import org.apache.metamodel.util.EqualsBuilder;
 import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
+import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
@@ -214,8 +215,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
-    public final boolean isConfigured(boolean throwException) throws ComponentValidationException,
-            UnconfiguredConfiguredPropertyException {
+    public final boolean isConfigured(boolean throwException)
+            throws ComponentValidationException, UnconfiguredConfiguredPropertyException {
         for (ConfiguredPropertyDescriptor configuredProperty : _descriptor.getConfiguredProperties()) {
             if (!isConfigured(configuredProperty, throwException)) {
                 if (throwException) {
@@ -253,6 +254,18 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public boolean isConfigured() {
         return isConfigured(false);
+    }
+
+    @Override
+    public boolean isDistributable() {
+        if (getDescriptor().isDistributable()) {
+            final Component component = getComponentInstanceForQuestioning();
+            if (component instanceof HasDistributionAdvice) {
+                return ((HasDistributionAdvice) component).isDistributable();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -328,8 +341,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                     for (int i = 0; i < length; i++) {
                         Object valuePart = Array.get(value, i);
                         if (valuePart == null) {
-                            logger.warn("Element no. {} in array (size {}) is null! Value passed to {}", new Object[] {
-                                    i, length, configuredProperty });
+                            logger.warn("Element no. {} in array (size {}) is null! Value passed to {}",
+                                    new Object[] { i, length, configuredProperty });
                         } else {
                             if (!ReflectionUtils.is(valuePart.getClass(), configuredProperty.getBaseType())) {
                                 correctType = false;
@@ -418,8 +431,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     @Override
     public ConfiguredPropertyDescriptor getDefaultConfiguredPropertyForInput() throws UnsupportedOperationException {
-        Collection<ConfiguredPropertyDescriptor> inputProperties = getDescriptor().getConfiguredPropertiesForInput(
-                false);
+        Collection<ConfiguredPropertyDescriptor> inputProperties = getDescriptor()
+                .getConfiguredPropertiesForInput(false);
 
         if (inputProperties.isEmpty()) {
             // if there are no required input columns, try optional input
@@ -431,9 +444,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             ConfiguredPropertyDescriptor propertyDescriptor = inputProperties.iterator().next();
             return propertyDescriptor;
         } else {
-            throw new UnsupportedOperationException("There are " + inputProperties.size()
-                    + " named input columns in \"" + getDescriptor().getDisplayName()
-                    + "\", please specify which one to configure");
+            throw new UnsupportedOperationException("There are " + inputProperties.size() + " named input columns in \""
+                    + getDescriptor().getDisplayName() + "\", please specify which one to configure");
         }
     }
 
@@ -451,8 +463,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             // check input column type parameter compatibility
             final Class<?> actualDataType = inputColumn.getDataType();
             if (!ReflectionUtils.is(actualDataType, expectedDataType, false)) {
-                throw new IllegalArgumentException("Unsupported InputColumn type: " + actualDataType + ", expected: "
-                        + expectedDataType);
+                throw new IllegalArgumentException(
+                        "Unsupported InputColumn type: " + actualDataType + ", expected: " + expectedDataType);
             }
         }
 
@@ -485,8 +497,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             for (InputColumn<?> inputColumn : inputColumns) {
                 final Class<?> actualDataType = inputColumn.getDataType();
                 if (!ReflectionUtils.is(actualDataType, expectedDataType, false)) {
-                    throw new IllegalArgumentException("Unsupported InputColumn type: " + actualDataType
-                            + ", expected: " + expectedDataType);
+                    throw new IllegalArgumentException(
+                            "Unsupported InputColumn type: " + actualDataType + ", expected: " + expectedDataType);
                 }
             }
         }
@@ -584,8 +596,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         } else if (outcome instanceof FilterOutcome) {
             setComponentRequirement(new SimpleComponentRequirement((FilterOutcome) outcome));
         } else {
-            throw new IllegalArgumentException("Unsupported outcome type (use ComponentRequirement instead): "
-                    + outcome);
+            throw new IllegalArgumentException(
+                    "Unsupported outcome type (use ComponentRequirement instead): " + outcome);
         }
     }
 
@@ -656,8 +668,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                     for (int i = 0; i < length; i++) {
                         InputColumn<?> column = (InputColumn<?>) Array.get(inputColumns, i);
                         if (column == null) {
-                            logger.warn("Element no. {} in array (size {}) is null! Value read from {}", new Object[] {
-                                    i, length, configuredProperty });
+                            logger.warn("Element no. {} in array (size {}) is null! Value read from {}",
+                                    new Object[] { i, length, configuredProperty });
                         } else {
                             result.add(column);
                         }
@@ -814,7 +826,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                         if (table instanceof MutableTable) {
                             final MutableTable mutableTable = (MutableTable) table;
                             if (isOutputDataStreamConsumed(existingStream)) {
-                                final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(existingStream);
+                                final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(
+                                        existingStream);
                                 // update the table
                                 updateStream(mutableTable, existingJobBuilder, newStream);
                             } else {
@@ -900,8 +913,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final List<OutputDataStreamJob> result = new ArrayList<>();
         for (OutputDataStream outputDataStream : outputDataStreams) {
             if (isOutputDataStreamConsumed(outputDataStream)) {
-                result.add(new LazyOutputDataStreamJob(outputDataStream,
-                        getOutputDataStreamJobBuilder(outputDataStream)));
+                result.add(
+                        new LazyOutputDataStreamJob(outputDataStream, getOutputDataStreamJobBuilder(outputDataStream)));
             }
         }
         return result.toArray(new OutputDataStreamJob[result.size()]);

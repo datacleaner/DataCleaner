@@ -132,8 +132,8 @@ public final class AnalysisJobBuilder implements Closeable {
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
             List<TransformerComponentBuilder<?>> transformerJobBuilders,
-            List<FilterComponentBuilder<?, ?>> filterJobBuilders,
-            List<AnalyzerComponentBuilder<?>> analyzerJobBuilders, AnalysisJobBuilder parentBuilder) {
+            List<FilterComponentBuilder<?, ?>> filterJobBuilders, List<AnalyzerComponentBuilder<?>> analyzerJobBuilders,
+            AnalysisJobBuilder parentBuilder) {
         _configuration = configuration;
         _datastore = datastore;
         _analysisJobMetadata = metadata;
@@ -151,7 +151,8 @@ public final class AnalysisJobBuilder implements Closeable {
         this(configuration, job, null);
     }
 
-    public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job, AnalysisJobBuilder parentBuilder) {
+    public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job,
+            AnalysisJobBuilder parentBuilder) {
         this(configuration, parentBuilder);
         importJob(job);
     }
@@ -749,8 +750,9 @@ public final class AnalysisJobBuilder implements Closeable {
         return checkConfiguration(throwException) && isConsumedOutDataStreamsJobBuilderConfigured(throwException);
     }
 
-    private boolean checkConfiguration(final boolean throwException) throws IllegalStateException,
-            NoResultProducingComponentsException, ComponentValidationException, UnconfiguredConfiguredPropertyException {
+    private boolean checkConfiguration(final boolean throwException)
+            throws IllegalStateException, NoResultProducingComponentsException, ComponentValidationException,
+            UnconfiguredConfiguredPropertyException {
         if (_datastoreConnection == null) {
             if (throwException) {
                 throw new IllegalStateException("No Datastore or DatastoreConnection set");
@@ -828,8 +830,8 @@ public final class AnalysisJobBuilder implements Closeable {
                 final FilterJob filterJob = fjb.toFilterJob(validate, immutabilizer);
                 filterJobs.add(filterJob);
             } catch (IllegalStateException e) {
-                throw new IllegalStateException("Could not create filter job from builder: " + fjb + ", ("
-                        + e.getMessage() + ")", e);
+                throw new IllegalStateException(
+                        "Could not create filter job from builder: " + fjb + ", (" + e.getMessage() + ")", e);
             }
         }
 
@@ -845,8 +847,8 @@ public final class AnalysisJobBuilder implements Closeable {
                 final AnalyzerJob[] analyzerJob = ajb.toAnalyzerJobs(validate, immutabilizer);
                 Collections.addAll(analyzerJobs, analyzerJob);
             } catch (IllegalArgumentException e) {
-                throw new IllegalStateException("Could not create analyzer job from builder: " + ajb + ", ("
-                        + e.getMessage() + ")", e);
+                throw new IllegalStateException(
+                        "Could not create analyzer job from builder: " + ajb + ", (" + e.getMessage() + ")", e);
             }
         }
 
@@ -1028,11 +1030,13 @@ public final class AnalysisJobBuilder implements Closeable {
                 if (outcome instanceof LazyFilterOutcome) {
                     sourceFilterJobBuilder = ((LazyFilterOutcome) outcome).getFilterJobBuilder();
                 } else {
-                    logger.warn("Default requirement is not a LazyFilterOutcome. This might cause self-referring requirements.");
+                    logger.warn(
+                            "Default requirement is not a LazyFilterOutcome. This might cause self-referring requirements.");
                     sourceFilterJobBuilder = null;
                 }
             } else {
-                logger.warn("Default requirement is not a LazyFilterOutcome. This might cause self-referring requirements.");
+                logger.warn(
+                        "Default requirement is not a LazyFilterOutcome. This might cause self-referring requirements.");
                 sourceFilterJobBuilder = null;
             }
 
@@ -1079,7 +1083,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addSourceColumnChangeListener(SourceColumnChangeListener sourceColumnChangeListener) {
-        if(!_sourceColumnListeners.contains(sourceColumnChangeListener)) {
+        if (!_sourceColumnListeners.contains(sourceColumnChangeListener)) {
             _sourceColumnListeners.add(sourceColumnChangeListener);
         }
     }
@@ -1089,7 +1093,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addTransformerChangeListener(TransformerChangeListener transformerChangeListener) {
-        if(!_transformerChangeListeners.contains(transformerChangeListener)) {
+        if (!_transformerChangeListeners.contains(transformerChangeListener)) {
             _transformerChangeListeners.add(transformerChangeListener);
         }
     }
@@ -1099,7 +1103,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalyzerChangeListener(AnalyzerChangeListener analyzerChangeListener) {
-        if(!_analyzerChangeListeners.contains(analyzerChangeListener)) {
+        if (!_analyzerChangeListeners.contains(analyzerChangeListener)) {
             _analyzerChangeListeners.add(analyzerChangeListener);
         }
     }
@@ -1117,7 +1121,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void addAnalysisJobChangeListener(AnalysisJobChangeListener analysisJobChangeListener) {
-        if(!_analysisJobChangeListeners.contains(analysisJobChangeListener)){
+        if (!_analysisJobChangeListeners.contains(analysisJobChangeListener)) {
             _analysisJobChangeListeners.add(analysisJobChangeListener);
         }
     }
@@ -1392,6 +1396,30 @@ public final class AnalysisJobBuilder implements Closeable {
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Determines if the job being built is going to be distributable in a
+     * cluster execution environment.
+     * 
+     * @return
+     */
+    public boolean isDistributable() {
+        final Collection<ComponentBuilder> componentBuilders = getComponentBuilders();
+        for (ComponentBuilder componentBuilder : componentBuilders) {
+            if (!componentBuilder.isDistributable()) {
+                return false;
+            }
+        }
+
+        final List<AnalysisJobBuilder> childJobBuilders = getConsumedOutputDataStreamsJobBuilders();
+        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+            if (!childJobBuilder.isDistributable()) {
+                return false;
+            }
+        }
+
         return true;
     }
 }

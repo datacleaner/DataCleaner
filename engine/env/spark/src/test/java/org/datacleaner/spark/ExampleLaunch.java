@@ -23,16 +23,48 @@ import java.io.File;
 
 import org.apache.spark.launcher.SparkLauncher;
 
+/**
+ * Prerequisites:
+ * 
+ * <ul>
+ * <li>Make sure to set SPARK_HOME as either an environment variable or system
+ * property.</li>
+ * <li>Create a /datacleaner/lib directory on HDFS and upload the following JAR
+ * files to it:
+ * <ul>
+ * <li>DataCleaner-env-spark-[version].jar</li>
+ * <li>DataCleaner-basic-analyzers-[version].jar</li>
+ * <li>DataCleaner-value-distribution-[version].jar</li>
+ * </ul>
+ * or simply:
+ * <ul>
+ * <li>DataCleaner-env-spark-[version]-jar-with-dependencies.jar</li>
+ * </ul>
+ * this can be done with a command a la:
+ * 
+ * <pre>
+ * hadoop fs -mkdir /datacleaner/lib
+ * hadoop fs -put /path/to/DataCleaner-env-spark-4.5.1-SNAPSHOT-jar-with-dependencies.jar /datacleaner/lib
+ * </pre>
+ * 
+ * </li>
+ * </ul>
+ */
 public class ExampleLaunch {
 
     private static final String HDFS_HOSTNAME = "bigdatavm";
     private static final int HDFS_PORT = 9000;
     private static final String HDFS_JAR_LOCATION = "/datacleaner/lib";
     private static final String CONFIGURATION_LOCATION = "/datacleaner/test/conf.xml";
-    private static String JOB_LOCATION = "/datacleaner/test/vanilla-job.analysis.xml";
-    private static String DATA_LOCATION = "/datacleaner/test/person_names.txt";
+    private static final String SPARK_HOME = "C:\\dev\\spark-1.5.1-bin-hadoop2.6";
+    private static final String JOB_LOCATION = "/datacleaner/test/vanilla-job.analysis.xml";
+    private static final String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
     public static void main(String[] args) throws Exception {
+        if (System.getenv("SPARK_HOME") == null) {
+            System.setProperty("SPARK_HOME", SPARK_HOME);
+        }
+        
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location

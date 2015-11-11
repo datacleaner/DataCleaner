@@ -20,12 +20,9 @@
 package org.datacleaner.spark;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.Resource;
-import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -121,15 +118,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;
-            logger.info("AnalyzerResult: " + key + "->" + result);
-        }
-
-        // log accumulators
-        final Map<String, Accumulator<Integer>> accumulators = _sparkJobContext.getAccumulators();
-        for (Entry<String, Accumulator<Integer>> entry : accumulators.entrySet()) {
-            final String name = entry.getKey();
-            final Accumulator<Integer> accumulator = entry.getValue();
-            logger.info("Accumulator: {} -> {}", name, accumulator.value());
+            logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
         }
 
         return new SparkAnalysisResultFuture(results);

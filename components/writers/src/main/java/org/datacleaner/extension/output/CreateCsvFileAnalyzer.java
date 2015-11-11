@@ -142,7 +142,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Validate
     public void validate() {
-        if (file.isExists() && !overwriteFileIfExists) {
+        if (!overwriteFileIfExists && file.isExists()) {
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
         }

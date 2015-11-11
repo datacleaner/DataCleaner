@@ -19,21 +19,22 @@
  */
 package org.datacleaner.spark;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
-import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
@@ -45,6 +46,8 @@ import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
+
+import com.google.common.base.Strings;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -60,16 +63,13 @@ public class SparkJobContext implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final String _configurationPath;
-    private final String _analysisJobPath;
-    private final String _propertiesPath;
-
-    private final Map<String, Accumulator<Integer>> _accumulators;
+    private final String _configurationXml;
+    private final String _analysisJobXml;
+    private final Map<String, String> _customProperties;
 
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
-    private transient Map<String, String> _customProperties;
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
@@ -78,53 +78,51 @@ public class SparkJobContext implements Serializable {
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath, final String propertiesPath) {
-        _accumulators = new HashMap<>();
-        _accumulators.put(ACCUMULATOR_JOB_READS, sparkContext.accumulator(0));
-        _accumulators.put(ACCUMULATOR_CONFIGURATION_READS, sparkContext.accumulator(0));
-
-        _configurationPath = dataCleanerConfigurationPath;
-        _analysisJobPath = analysisJobXmlPath;
-        _propertiesPath = propertiesPath;
+        _customProperties = readCustomProperties(propertiesPath);
+        _configurationXml = readFile(dataCleanerConfigurationPath);
+        _analysisJobXml = readFile(analysisJobXmlPath);
     }
 
-    public String getConfigurationPath() {
-        return _configurationPath;
+    private String readFile(String path) {
+        final Resource resource = createResource(path);
+        return resource.read(new Func<InputStream, String>() {
+            @Override
+            public String eval(InputStream in) {
+                return FileHelper.readInputStreamAsString(in, "UTF-8");
+            }
+        });
     }
 
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
-            _accumulators.get(ACCUMULATOR_CONFIGURATION_READS).add(1);
             final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
-                    new DefaultConfigurationReaderInterceptor(getCustomProperties()));
-
-            final Resource configurationResource = createResource(_configurationPath);
-            _dataCleanerConfiguration = configurationResource.read(new Func<InputStream, DataCleanerConfiguration>() {
-                @Override
-                public DataCleanerConfiguration eval(InputStream in) {
-                    return confReader.read(in);
-                }
-            });
+                    new DefaultConfigurationReaderInterceptor(_customProperties));
+            _dataCleanerConfiguration = confReader.read(createInputStream(_configurationXml));
         }
         return _dataCleanerConfiguration;
     }
 
-    private Map<String, String> getCustomProperties() {
-        if (_customProperties == null) {
-            if (_propertiesPath != null) {
-                final Resource propertiesResource = createResource(_propertiesPath);
-                if (propertiesResource.isExists()) {
-                    _customProperties = propertiesResource.read(new InputStreamToPropertiesMapFunc());
-                } else {
-                    _customProperties = Collections.emptyMap();
-                }
-            } else {
-                _customProperties = Collections.emptyMap();
-            }
+    private InputStream createInputStream(String fileContents) {
+        try {
+            final byte[] bytes = fileContents.getBytes("UTF-8");
+            return new ByteArrayInputStream(bytes);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
         }
-        return _customProperties;
+    }
+
+    private Map<String, String> readCustomProperties(String propertiesPath) {
+        final Resource propertiesResource = createResource(propertiesPath);
+        if (propertiesResource != null && propertiesResource.isExists()) {
+            return propertiesResource.read(new InputStreamToPropertiesMapFunc());
+        }
+        return Collections.emptyMap();
     }
 
     private static Resource createResource(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            return null;
+        }
         if (path.toLowerCase().startsWith("hdfs:")) {
             return new HdfsResource(path);
         }
@@ -137,19 +135,9 @@ public class SparkJobContext implements Serializable {
 
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         if (_analysisJobBuilder == null) {
-            _accumulators.get(ACCUMULATOR_JOB_READS).add(1);
-            final Resource analysisJobResource = createResource(_analysisJobPath);
             final DataCleanerConfiguration configuration = getConfiguration();
-            final Map<String, String> variableOverrides = getCustomProperties();
-            final AnalysisJobBuilder jobBuilder = analysisJobResource.read(new Func<InputStream, AnalysisJobBuilder>() {
-                @Override
-                public AnalysisJobBuilder eval(InputStream in) {
-                    final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                    final AnalysisJobBuilder jobBuilder = jobReader.create(in, variableOverrides);
-                    return jobBuilder;
-                }
-            });
-            _analysisJobBuilder = jobBuilder;
+            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+            _analysisJobBuilder = jobReader.create(createInputStream(_analysisJobXml), _customProperties);
         }
         applyComponentIndexForKeyLookups(_analysisJobBuilder, new AtomicInteger(0));
         return _analysisJobBuilder;
@@ -175,14 +163,6 @@ public class SparkJobContext implements Serializable {
         for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
             applyComponentIndexForKeyLookups(childJobBuilder, currentComponentIndex);
         }
-    }
-
-    public String getAnalysisJobPath() {
-        return _analysisJobPath;
-    }
-
-    public Map<String, Accumulator<Integer>> getAccumulators() {
-        return _accumulators;
     }
 
     public String getComponentKey(ComponentJob componentJob) {

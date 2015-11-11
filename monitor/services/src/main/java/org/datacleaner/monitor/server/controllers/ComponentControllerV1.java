@@ -99,7 +99,7 @@ import org.springframework.web.util.UriUtils;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
-    private static final String REMOTE_MARK = "remote_mark.png";
+    private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
     private ComponentCache _componentCache = null;

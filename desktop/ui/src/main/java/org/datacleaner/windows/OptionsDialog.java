@@ -104,7 +104,7 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
-        _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/network.png",
+        _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/remote-components.png",
                 IconUtils.ICON_SIZE_TAB), new RemoteComponentsTab());
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());

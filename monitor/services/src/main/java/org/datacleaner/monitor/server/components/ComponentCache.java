@@ -21,6 +21,7 @@ package org.datacleaner.monitor.server.components;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,7 +46,7 @@ public class ComponentCache {
     private static final long CHECK_INTERVAL = 5 * 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
-    private final ConcurrentHashMap<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
+    private final Map<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
     private final Thread checkerThread;
     private final TimeoutChecker checker;
     private final ComponentHandlerFactory componentHandlerFactory;

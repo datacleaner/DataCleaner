@@ -165,8 +165,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
-    public CredentialsProvider getCredentialsProvider() {
-        return _environment.getCredentialsProvider();
+    public RemoteServerConfiguration getRemoteServerConfiguration() {
+        return _environment.getRemoteServerConfiguration();
     }
 
     @Override

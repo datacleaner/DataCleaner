@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -81,6 +79,8 @@ import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.StorageProvider;
 import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 public class JaxbConfigurationReaderTest extends TestCase {
 
@@ -533,5 +533,41 @@ public class JaxbConfigurationReaderTest extends TestCase {
         DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-all-reference-data-types.xml"));
         return configuration;
+    }
+
+    public void testRemoteServerConfiguration() throws Exception {
+        DataCleanerConfiguration configuration = reader.create(new File(
+                "src/test/resources/example-configuration-remote-servers.xml"));
+        RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
+        Assert.assertEquals(false, remoteConf.isEmpty());
+        Assert.assertEquals(true, remoteConf.showAllServers());
+        Assert.assertEquals(3, remoteConf.getServerList().size());
+
+        RemoteServerData server0 = remoteConf.getServerList().get(0);
+        Assert.assertEquals("server0", server0.getServerName());
+        Assert.assertEquals("http://host1:8888", server0.getHost());
+        Assert.assertEquals("totoro", server0.getUsername());
+        Assert.assertEquals("admin", server0.getPassword());
+
+        RemoteServerData server1 = remoteConf.getServerList().get(1);
+        Assert.assertEquals("serverHost2", server1.getServerName());
+        Assert.assertEquals("http://host2:8888", server1.getHost());
+        Assert.assertEquals("momo", server1.getUsername());
+        Assert.assertEquals("admin", server1.getPassword());
+
+        RemoteServerData server2 = remoteConf.getServerList().get(2);
+        Assert.assertEquals("serverHost3", server2.getServerName());
+        Assert.assertEquals("http://host3:8888", server2.getHost());
+        Assert.assertEquals("momo", server2.getUsername());
+        Assert.assertEquals("admin", server2.getPassword());
+    }
+
+    public void testRemoteServerConfigurationDefault() throws Exception {
+        DataCleanerConfiguration configuration = reader.create(new File(
+                "src/test/resources/example-configuration-remote-servers-empty.xml"));
+        RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
+        Assert.assertEquals(true, remoteConf.isEmpty());
+        Assert.assertEquals(false, remoteConf.showAllServers());
+        Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 }

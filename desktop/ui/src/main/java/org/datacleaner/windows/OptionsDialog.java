@@ -38,10 +38,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.CredentialsProvider;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
 import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.configuration.RemoteServerConfiguration;
+import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
 import org.datacleaner.configuration.jaxb.RemoteComponentsType;
@@ -103,7 +104,7 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
-        _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/network.png",
+        _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/remote-components.png",
                 IconUtils.ICON_SIZE_TAB), new RemoteComponentsTab());
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
@@ -561,10 +562,16 @@ public class OptionsDialog extends AbstractWindow {
         }
 
         private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-            final CredentialsProvider credentialsProvider = _configuration.getEnvironment().getCredentialsProvider();
-            String finalInputValue = (textField instanceof JPasswordField) ?
-                    SecurityUtils.decodePasswordWithPrefix(value) :
-                    value;
+            RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
+                    .getRemoteServerConfiguration();
+            final RemoteServerData remoteServerData;
+
+            if (remoteServerConfiguration == null || remoteServerConfiguration.isEmpty()) {
+                return;
+            }
+
+            remoteServerData = remoteServerConfiguration.getServerList().get(0);
+            String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePasswordWithPrefix(value) : value;
             textField.setText(finalInputValue);
             textField.getDocument().addDocumentListener(new DCDocumentListener() {
                 @Override
@@ -573,15 +580,16 @@ public class OptionsDialog extends AbstractWindow {
                     String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
 
                     if (textField instanceof JPasswordField) {
-                        credentialsProvider.setPassword(textField.getText());
+                        remoteServerData.setPassword(textField.getText());
                         _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePasswordWithPrefix(textField.getText()));
                     }
                     else {
-                        credentialsProvider.setUsername(textField.getText());
-                        _dcConfigurationUpdates.put(nodePath, credentialsProvider.getUsername());
+                        remoteServerData.setUsername(textField.getText());
+                        _dcConfigurationUpdates.put(nodePath, remoteServerData.getUsername());
                     }
                 }
             });
+
         }
 
         private RemoteComponentServerType getRemoteComponentsServer() {
@@ -594,7 +602,10 @@ public class OptionsDialog extends AbstractWindow {
 
                 for (Object provider : allProviders) {
                     if (provider instanceof RemoteComponentsType) {
-                        return ((RemoteComponentsType) provider).getServer();
+                        List<RemoteComponentServerType> servers = ((RemoteComponentsType) provider).getServer();
+
+                        // Only for the first server
+                        return servers == null || servers.isEmpty() ? null : servers.get(0);
                     }
                 }
             }

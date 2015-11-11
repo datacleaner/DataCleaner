@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -35,15 +38,19 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.monitor.configuration.ComponentCache;
 import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
@@ -53,10 +60,10 @@ import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentController;
-import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
+import org.datacleaner.restclient.ComponentController;
+import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.OutputColumns;
@@ -82,11 +89,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
-
 /**
  * Controller for DataCleaner components (transformers and analyzers). It
  * enables to use a particular component and provide the input data separately
@@ -97,7 +99,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 implements ComponentController {
-
+    private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
     private ComponentCache _componentCache = null;
@@ -106,6 +108,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
+    private static BufferedImage remoteMark = null;
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -318,13 +321,37 @@ public class ComponentControllerV1 implements ComponentController {
 
     private static byte[] getComponentIconData(ComponentDescriptor<?> descriptor) {
         try {
-            String imagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
-            InputStream imageStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(imagePath);
+            String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
+            InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
+            BufferedImage icon = ImageIO.read(iconStream);
+            BufferedImage mark = getRemoteMark();
 
-            return IOUtils.toByteArray(imageStream);
+            Graphics graphics = icon.getGraphics();
+            graphics.drawImage(icon, 0, 0, null);
+            graphics.drawImage(mark, icon.getWidth() - mark.getWidth(), 0, null);
+            graphics.dispose();
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(icon, "png", outputStream);
+            outputStream.flush();
+            byte[] iconBytes = outputStream.toByteArray();
+            outputStream.close();
+
+            return iconBytes;
         } catch (NullPointerException | IOException e) {
+            logger.warn("Component icon data can not be provided. " + e.getMessage());
+
             return new byte[0];
         }
+    }
+
+    private static BufferedImage getRemoteMark() throws IOException {
+        if (remoteMark == null) {
+            InputStream markStream = ComponentControllerV1.class.getClassLoader().getResourceAsStream(REMOTE_MARK);
+            remoteMark = ImageIO.read(markStream);
+        }
+
+        return remoteMark;
     }
 
     private static Set<String> getCategoryNames(ComponentDescriptor<?> componentDescriptor) {

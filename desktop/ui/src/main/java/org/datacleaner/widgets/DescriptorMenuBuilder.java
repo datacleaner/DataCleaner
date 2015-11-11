@@ -83,22 +83,10 @@ public final class DescriptorMenuBuilder {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final UsageLogger _usageLogger;
     private final Collection<? extends ComponentDescriptor<?>> _componentDescriptors;
-    private final boolean _buildSubmenus;
     private final Point2D _coordinate;
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
             final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate) {
-        this(analysisJobBuilder, usageLogger, descriptors, coordinate, true);
-    }
-
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final ComponentSuperCategory superCategory, final Point2D coordinate) {
-        this(analysisJobBuilder, usageLogger, superCategory, coordinate, true);
-    }
-
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate,
-            final boolean buildSubmenus) {
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
                 new DeprecatedComponentPredicate());
         final List<ComponentDescriptor<?>> componentDescriptors = new ArrayList<>(filteredDescriptors);
@@ -107,18 +95,17 @@ public final class DescriptorMenuBuilder {
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
         _coordinate = coordinate;
-        _buildSubmenus = buildSubmenus;
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
-            final ComponentSuperCategory superCategory, final Point2D coordinate, final boolean buildSubmenus) {
+            final ComponentSuperCategory superCategory, final Point2D coordinate) {
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
         _coordinate = coordinate;
-        _buildSubmenus = buildSubmenus;
 
-        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment()
+                .getDescriptorProvider();
         final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                 .getComponentDescriptorsOfSuperCategory(superCategory);
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
@@ -133,55 +120,81 @@ public final class DescriptorMenuBuilder {
     }
 
     public static void createMenuStructure(final MenuCallback callback,
-            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean buildSubmenus) {
-        final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
-                .sorted(componentDescriptors);
-        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(sortedComponentDescriptors,
-                new DeprecatedComponentPredicate());
-
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean showAllRemoteComponents) {
+        final Collection<? extends ComponentDescriptor<?>> finalComponentDescriptors = getFinalComponentDescriptors(
+                componentDescriptors, showAllRemoteComponents);
         final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
+        buildSubMenus(categories, finalComponentDescriptors);
+        placeSubMenus(categories, callback);
 
-
-        // build sub menus
-        {
-            for (ComponentDescriptor<?> descriptor : filteredDescriptors) {
-                final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
-                for (ComponentCategory componentCategory : componentCategories) {
-                    List<Class<?>> categoryList = categories.get(componentCategory);
-                    if (categoryList == null) {
-                        categoryList = new ArrayList<Class<?>>();
-                        categories.put(componentCategory, categoryList);
-                    }
-                    categoryList.add(descriptor.getComponentClass());
-                }
-            }
-        }
-
-        {
-            // place sub menus
-            final List<ComponentCategory> sortedCategories = CollectionUtils2.sorted(categories.keySet(),
-                    new Comparator<ComponentCategory>() {
-                        public int compare(ComponentCategory o1, ComponentCategory o2) {
-                            return o1.getName().compareTo(o2.getName());
-                        }
-                    });
-
-            for (ComponentCategory category : sortedCategories) {
-                final int count = categories.get(category).size();
-                if (count == 0) {
-                    logger.info("Disregarding menu for category '{}' because of no components", category);
-                    categories.remove(category);
-                } else {
-                    // add menu
-                    callback.addCategory(category);
-                }
-            }
-        }
-
-        for (ComponentDescriptor<?> descriptor : filteredDescriptors) {
+        for (ComponentDescriptor<?> descriptor : finalComponentDescriptors) {
             callback.addComponentDescriptor(descriptor);
         }
+    }
 
+    private static void buildSubMenus(Map<ComponentCategory, List<Class<?>>> categories,
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors) {
+        for (ComponentDescriptor<?> descriptor : componentDescriptors) {
+            final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
+
+            for (ComponentCategory componentCategory : componentCategories) {
+                List<Class<?>> categoryList = categories.get(componentCategory);
+
+                if (categoryList == null) {
+                    categoryList = new ArrayList<>();
+                    categories.put(componentCategory, categoryList);
+                }
+
+                categoryList.add(descriptor.getComponentClass());
+            }
+        }
+    }
+
+    private static void placeSubMenus(Map<ComponentCategory, List<Class<?>>> categories, final MenuCallback callback) {
+        final List<ComponentCategory> sortedCategories = CollectionUtils2.sorted(categories.keySet(),
+                new Comparator<ComponentCategory>() {
+                    public int compare(ComponentCategory o1, ComponentCategory o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+
+        for (ComponentCategory category : sortedCategories) {
+            final int count = categories.get(category).size();
+
+            if (count == 0) {
+                logger.info("Disregarding menu for category '{}' because of no components", category);
+                categories.remove(category);
+            } else {
+                callback.addCategory(category);
+            }
+        }
+    }
+
+    private static Collection<? extends ComponentDescriptor<?>> getFinalComponentDescriptors(
+            Collection<? extends ComponentDescriptor<?>> allComponentDescriptors, boolean showAllRemoteComponents) {
+        final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
+                .sorted(allComponentDescriptors);
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
+                sortedComponentDescriptors, new DeprecatedComponentPredicate());
+
+        if (showAllRemoteComponents) {
+            return filteredDescriptors;
+        }
+
+        String lastName = "";
+        Collection<ComponentDescriptor<?>> componentDescriptorsWithoutDuplicates = new ArrayList<>();
+
+        for (ComponentDescriptor<?> componentDescriptor : filteredDescriptors) {
+            String displayName = componentDescriptor.getDisplayName();
+
+            if (!lastName.equals(displayName)) {
+                componentDescriptorsWithoutDuplicates.add(componentDescriptor);
+            }
+
+            lastName = displayName;
+        }
+
+        return componentDescriptorsWithoutDuplicates;
     }
 
     private void initialize(final JComponent outerMenu) {
@@ -212,7 +225,9 @@ public final class DescriptorMenuBuilder {
             }
         };
 
-        createMenuStructure(callback, _componentDescriptors, _buildSubmenus);
+        boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
+                .getRemoteServerConfiguration().showAllServers();
+        createMenuStructure(callback, _componentDescriptors, showAllRemoteComponents);
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
@@ -225,5 +240,4 @@ public final class DescriptorMenuBuilder {
         });
         return menuItem;
     }
-
 }

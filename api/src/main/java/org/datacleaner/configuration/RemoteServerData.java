@@ -20,14 +20,16 @@
 package org.datacleaner.configuration;
 
 /**
- * Box for credentials.
+ * Box for data about remote server
  * @since 15. 10. 2015
  */
-public interface CredentialsProvider {
-    public CredentialsProvider setHost(String host);
+public interface RemoteServerData {
+    public RemoteServerData setServerName(String serverName);
+    public String getServerName();
+    public RemoteServerData setHost(String host);
     public String getHost();
-    public CredentialsProvider setUsername(String username);
+    public RemoteServerData setUsername(String username);
     public String getUsername();
-    public CredentialsProvider setPassword(String password);
+    public RemoteServerData setPassword(String password);
     public String getPassword();
 }

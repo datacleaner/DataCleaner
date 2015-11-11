@@ -19,44 +19,39 @@
  */
 package org.datacleaner.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * @since 15. 10. 2015
+ * Class RemoteServerConfigurationImpl
+ *
  */
-public class RemoteComponentsCredentialsProvider implements CredentialsProvider {
-    private String host;
-    private String username;
-    private String password;
+public class RemoteServerConfigurationImpl implements RemoteServerConfiguration {
+    private boolean showAll = false;
+    private List<RemoteServerData> remoteServerDataList = new ArrayList<>();
 
     @Override
-    public CredentialsProvider setHost(String host) {
-        this.host = host.replaceAll("/+$", "");
-        return this;
+    public void setShowAllServers(boolean showAll) {
+        this.showAll = showAll;
     }
 
     @Override
-    public String getHost() {
-        return host;
+    public boolean showAllServers() {
+        return showAll;
     }
 
     @Override
-    public CredentialsProvider setUsername(String username) {
-        this.username = username.trim();
-        return this;
+    public List<RemoteServerData> getServerList() {
+        return remoteServerDataList;
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public void addServer(RemoteServerData remoteServerData) {
+        remoteServerDataList.add(remoteServerData);
     }
 
     @Override
-    public CredentialsProvider setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public boolean isEmpty() {
+        return remoteServerDataList == null || remoteServerDataList.isEmpty();
     }
 }

@@ -19,12 +19,9 @@
  */
 package org.datacleaner.spark.functions;
 
-import java.util.Iterator;
-
-import org.apache.metamodel.json.JsonDataContext;
 import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 import org.apache.spark.api.java.function.Function;
+import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.JsonDatastore;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,29 +41,26 @@ public class JsonParserFunction implements Function<String, Object[]> {
     public Object[] call(String line) throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode readTree = mapper.readTree(line);
-        final Object[] inputRows = getInputRows(readTree);
-        return inputRows;
+        final Object[] values = getValues(readTree);
+        return values;
     }
 
-    private Object[] getInputRows(JsonNode readTree) {
+    private Object[] getValues(JsonNode readTree) {
         final Column[] columns = getColumns();
         final Object[] list = new Object[columns.length];
-        final Iterator<JsonNode> mainIterator = readTree.iterator();
-        int i = 0;
-        while (mainIterator.hasNext()) {
-            final JsonNode node = mainIterator.next();
+        for (int i = 0; i < columns.length; i++) {
+            final JsonNode node = readTree.findValue(columns[i].getName());
             final String value = node.asText();
             list[i] = value;
-            i++;
         }
         return list;
     }
 
     public Column[] getColumns() {
         if (_columns == null) {
-            final JsonDataContext jsonContext = new JsonDataContext(_jsonDatastore.getResource());
-            final Table table = jsonContext.getDefaultSchema().getTable(0);
-            _columns = table.getColumns();
+            try (final DatastoreConnection openConnection = _jsonDatastore.openConnection()) {
+                _columns = openConnection.getDataContext().getDefaultSchema().getTable(0).getColumns();
+            }
         }
         return _columns;
     }

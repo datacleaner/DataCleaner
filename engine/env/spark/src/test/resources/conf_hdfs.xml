@@ -8,6 +8,10 @@
 			</filename>
 			<multiline-values>false</multiline-values>
 		</csv-datastore>
+		<json-datastore name="person_data">
+			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_data.json
+			</filename>
+		</json-datastore>
 	</datastore-catalog>
 
 	<classpath-scanner>

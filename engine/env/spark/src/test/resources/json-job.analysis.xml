@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="person_data" />
+		<columns>
+			<column id="col__id" path="_id" type="VARCHAR" />
+			<column id="col_about" path="about" type="VARCHAR" />
+			<column id="col_address" path="address" type="VARCHAR" />
+			<column id="col_age" path="age" type="INTEGER" />
+			<column id="col_balance" path="balance" type="VARCHAR" />
+			<column id="col_company" path="company" type="VARCHAR" />
+			<column id="col_email" path="email" type="VARCHAR" />
+			<column id="col_eyecolor" path="eyeColor" type="VARCHAR" />
+			<column id="col_favoritefruit" path="favoriteFruit" type="VARCHAR" />
+			<column id="col_friends" path="friends" type="LIST" />
+			<column id="col_gender" path="gender" type="VARCHAR" />
+			<column id="col_greeting" path="greeting" type="VARCHAR" />
+			<column id="col_guid" path="guid" type="VARCHAR" />
+			<column id="col_index" path="index" type="INTEGER" />
+			<column id="col_isactive" path="isActive" type="BOOLEAN" />
+			<column id="col_latitude" path="latitude" type="DOUBLE" />
+			<column id="col_longitude" path="longitude" type="DOUBLE" />
+			<column id="col_name" path="name" type="VARCHAR" />
+			<column id="col_phone" path="phone" type="VARCHAR" />
+			<column id="col_picture" path="picture" type="VARCHAR" />
+			<column id="col_registered" path="registered" type="VARCHAR" />
+			<column id="col_tags" path="tags" type="LIST" />
+		</columns>
+	</source>
+	<analysis>
+		<analyzer>
+			<descriptor ref="Value distribution" />
+			<properties>
+				<property name="Record unique values" value="true" />
+				<property name="Record drill-down information" value="true" />
+				<property name="Top n most frequent values" value="&lt;null&gt;" />
+				<property name="Bottom n most frequent values" value="&lt;null&gt;" />
+			</properties>
+			<input ref="col_eyecolor" name="Column" />
+		</analyzer>
+	</analysis>
+</job>

@@ -123,7 +123,7 @@ public class ComponentDocumentationWrapper {
     }
 
     public String getIconSrc() throws IOException {
-        return this.getIconSrc(IconUtils.ICON_SIZE_LARGE);
+        return getIconSrc(IconUtils.ICON_SIZE_LARGE);
     }
 
     public String getIconSrc(int width) throws IOException {

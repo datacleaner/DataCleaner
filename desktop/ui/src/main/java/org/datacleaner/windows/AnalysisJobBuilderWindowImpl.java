@@ -1063,6 +1063,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
+        final JMenuItem refreshComponentTreeMenuItem = WidgetFactory.createMenuItem("Refreh component tree",
+                IconUtils.MENU_REFRESH);
+        refreshComponentTreeMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _configuration.getEnvironment().getDescriptorProvider().refresh();
+            }
+        });
+
         final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries",
                 IconUtils.DICTIONARY_IMAGEPATH);
         dictionariesMenuItem.addActionListener(new ActionListener() {
@@ -1151,6 +1160,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.getMenu().add(windowsMenuItem);
         popupButton.getMenu().add(new JSeparator());
         popupButton.getMenu().add(monitorMenuItem);
+        popupButton.getMenu().add(refreshComponentTreeMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
 
         return popupButton;

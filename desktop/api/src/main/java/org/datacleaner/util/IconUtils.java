@@ -103,6 +103,7 @@ public final class IconUtils {
     public static final String MENU_OPEN = "images/menu/open.png";
     public static final String MENU_NEW = "images/menu/new.png";
     public static final String MENU_EXECUTE = "images/menu/execute.png";
+    public static final String MENU_REFRESH = "images/menu/refresh.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
     public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";

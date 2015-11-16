@@ -1,4 +1,5 @@
 /**
+
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
  *
@@ -122,8 +123,12 @@ public class ComponentDocumentationWrapper {
     }
 
     public String getIconSrc() throws IOException {
+        return this.getIconSrc(IconUtils.ICON_SIZE_LARGE);
+    }
+
+    public String getIconSrc(int width) throws IOException {
         // Attach the image
-        final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor).getImage();
+        final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor, width).getImage();
 
         /* We need a buffered image type in order to obtain the */
         final BufferedImage bufferedImage = ComponentDocumentationBuilder.toBufferedImage(descriptorIcon);

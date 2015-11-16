@@ -20,12 +20,9 @@
 package org.datacleaner.spark;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.Resource;
-import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -33,12 +30,14 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
 import org.datacleaner.spark.functions.CsvParserFunction;
 import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
+import org.datacleaner.spark.functions.JsonParserFunction;
 import org.datacleaner.spark.functions.RowProcessingFunction;
 import org.datacleaner.spark.functions.TuplesToTuplesFunction;
 import org.datacleaner.spark.functions.ValuesToInputRowFunction;
@@ -121,15 +120,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;
-            logger.info("AnalyzerResult: " + key + "->" + result);
-        }
-
-        // log accumulators
-        final Map<String, Accumulator<Integer>> accumulators = _sparkJobContext.getAccumulators();
-        for (Entry<String, Accumulator<Integer>> entry : accumulators.entrySet()) {
-            final String name = entry.getKey();
-            final Accumulator<Integer> accumulator = entry.getValue();
-            logger.info("Accumulator: {} -> {}", name, accumulator.value());
+            logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
         }
 
         return new SparkAnalysisResultFuture(results);
@@ -160,6 +151,20 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
 
+            return inputRowsRDD;
+        } else if (datastore instanceof JsonDatastore) {
+            final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
+            final String datastorePath = jsonDatastore.getResource().getQualifiedPath();
+            final JavaRDD<String> rawInput;
+            if (_minPartitions != null) {
+                rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
+            } else {
+                rawInput = _sparkContext.textFile(datastorePath);
+            }
+
+            final JavaRDD<Object[]> parsedInput = rawInput.map(new JsonParserFunction(jsonDatastore));
+            final JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
+            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
             return inputRowsRDD;
         }
 

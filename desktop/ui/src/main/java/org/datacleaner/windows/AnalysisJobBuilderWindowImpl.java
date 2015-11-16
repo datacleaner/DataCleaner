@@ -114,6 +114,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.Spinner;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -1063,12 +1064,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JMenuItem refreshComponentTreeMenuItem = WidgetFactory.createMenuItem("Refreh component tree",
-                IconUtils.MENU_REFRESH);
+        final JMenuItem refreshComponentTreeMenuItem = WidgetFactory
+                .createMenuItem("Refreh component tree", IconUtils.MENU_REFRESH);
         refreshComponentTreeMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                _configuration.getEnvironment().getDescriptorProvider().refresh();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Spinner.showSpinner();
+                        _configuration.getEnvironment().getDescriptorProvider().refresh();
+                        Spinner.hideSpinner();
+                    }
+                }).start();
             }
         });
 

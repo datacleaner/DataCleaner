@@ -19,6 +19,7 @@
  */
 package org.datacleaner.output.csv;
 
+import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -49,8 +50,11 @@ final class CsvOutputWriter implements OutputWriter {
                     final String headerLine = csvWriter.buildLine(columnNames);
                     final byte[] bytes = headerLine.getBytes(csvConfiguration.getEncoding());
                     outputStream.write(bytes);
+                    outputStream.flush();
                 }
-                return outputStream;
+                // 512 kb buffer
+                final int bufferSize = 1024 * 512;
+                return new BufferedOutputStream(outputStream, bufferSize);
             }
         };
     }

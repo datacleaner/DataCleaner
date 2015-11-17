@@ -19,18 +19,29 @@
  */
 package org.datacleaner.spark;
 
+import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
 
+import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.result.SimpleAnalysisResult;
 
 public class Main {
 
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
-                    + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n" + "Got: "
-                    + Arrays.toString(args));
+                    + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
+                    + "Got: " + Arrays.toString(args));
         }
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
@@ -39,18 +50,44 @@ public class Main {
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 
-        final String propertiesPath; 
+        final String propertiesPath;
         if (args.length > 2) {
             propertiesPath = args[2];
         } else {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath, propertiesPath);
+        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
+                propertiesPath);
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
-            sparkAnalysisRunner.run();
+            final AnalysisResultFuture result = sparkAnalysisRunner.run();
+            if (result.isDone()) {
+
+                final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
+                SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
+                        result.getCreationDate());
+                String resultPath = sparkJobContext.getResultPath();
+                if (!resultPath.endsWith("/")) {
+                    resultPath = resultPath + "/";
+                }
+                final String analysisJobXmlName = sparkJobContext.getAnalysisJobXmlName();
+                final Date date = new Date();
+                if (resultPath != null) {
+                    final HdfsResource hdfsResource = new HdfsResource(resultPath + analysisJobXmlName + "_"
+                            + date.getTime() + ".analysis.result.dat");
+                    final OutputStream out = hdfsResource.write();
+
+                    try {
+                        SerializationUtils.serialize(simpleAnalysisResult, out);
+                    } catch (SerializationException e) {
+                        throw e;
+                    } finally {
+                        FileHelper.safeClose(out);
+                    }
+                }
+            }
         } finally {
             sparkContext.stop();
         }

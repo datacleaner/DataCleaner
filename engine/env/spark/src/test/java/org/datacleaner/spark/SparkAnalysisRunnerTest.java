@@ -71,6 +71,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
 
             result = sparkAnalysisRunner.run(job);
+            
         } finally {
             sparkContext.close();
         }
@@ -79,6 +80,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             throw (Exception) result.getErrors().get(0);
         }
 
+        assertEquals(2, result.getResultMap().size());
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(2, results.size());
 

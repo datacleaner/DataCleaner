@@ -122,12 +122,8 @@ public class ComponentDocumentationWrapper {
         return true;
     }
 
-    public String getIconSrc() throws IOException {
-        return getIconSrc(IconUtils.ICON_SIZE_LARGE);
-    }
-
     public String getIconSrc(int width) throws IOException {
-        // Attach the image
+        // Attach the image  
         final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor, width).getImage();
 
         /* We need a buffered image type in order to obtain the */
@@ -153,6 +149,9 @@ public class ComponentDocumentationWrapper {
         return iconHtmlRepresentation;
     }
 
+    public int getIconSrcLarge(){
+        return IconUtils.ICON_SIZE_LARGE;
+    }
     public boolean isAnalyzer() {
         return _componentDescriptor instanceof AnalyzerDescriptor;
     }

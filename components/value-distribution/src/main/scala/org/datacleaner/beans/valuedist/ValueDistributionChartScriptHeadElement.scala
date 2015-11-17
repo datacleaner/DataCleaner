@@ -27,7 +27,11 @@ class ValueDistributionChartScriptHeadElement(result: ValueCountingAnalyzerResul
           "}" + "";
       }).mkString(",") + """
     ];
-    draw_value_distribution_bar('""" + chartElementId + """', data, 2);
+      wait_for_script_load('jQuery', function() {
+        $(function(){
+          draw_value_distribution_bar('""" + chartElementId + """', data, 2);
+        });
+      });
     //]]>
 </script>
 """

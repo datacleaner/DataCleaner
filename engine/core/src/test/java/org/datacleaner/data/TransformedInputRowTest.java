@@ -33,7 +33,7 @@ public class TransformedInputRowTest extends TestCase {
 
 	public void testConstaints() throws Exception {
 		try {
-			new TransformedInputRow(null);
+			new TransformedInputRow(null, 1);
 			fail("Exception expected");
 		} catch (IllegalArgumentException e) {
 			assertEquals("Delegate cannot be null", e.getMessage());
@@ -42,7 +42,7 @@ public class TransformedInputRowTest extends TestCase {
 		Column col1 = new MutableColumn("foo");
 		InputColumn<?> inputColumn1 = new MetaModelInputColumn(col1);
 
-		TransformedInputRow row = new TransformedInputRow(new MockInputRow());
+		TransformedInputRow row = new TransformedInputRow(new MockInputRow(), 1);
 
 		try {
 			row.addValue(inputColumn1, "bar");
@@ -62,7 +62,7 @@ public class TransformedInputRowTest extends TestCase {
 		SelectItem[] selectItems = new SelectItem[] { new SelectItem(col1), new SelectItem(col2) };
 		Object[] values = new Object[] { 1234, 4567 };
 		DataSetHeader header = new SimpleDataSetHeader(selectItems);
-		TransformedInputRow row = new TransformedInputRow(new MetaModelInputRow(0, new DefaultRow(header, values)));
+		TransformedInputRow row = new TransformedInputRow(new MetaModelInputRow(0, new DefaultRow(header, values)), 1);
 
 		assertEquals(1234, row.getValue(inputColumn1));
 		assertEquals(4567, row.getValue(inputColumn2));
@@ -73,7 +73,7 @@ public class TransformedInputRowTest extends TestCase {
 		InputColumn<String> inputColumn2 = new MockInputColumn<String>("bar", String.class);
 		InputColumn<String> inputColumn3 = new MockInputColumn<String>("bar", String.class);
 
-		TransformedInputRow row1 = new TransformedInputRow(new MockInputRow());
+		TransformedInputRow row1 = new TransformedInputRow(new MockInputRow(), 1);
 		row1.addValue(inputColumn1, "f");
 		row1.addValue(inputColumn2, "b");
 		assertEquals("f", row1.getValue(inputColumn1));
@@ -81,7 +81,7 @@ public class TransformedInputRowTest extends TestCase {
 		assertNull(row1.getValue(inputColumn3));
 		assertNull(row1.getValue(null));
 
-		TransformedInputRow row2 = new TransformedInputRow(row1);
+		TransformedInputRow row2 = new TransformedInputRow(row1, 1);
 		assertEquals("f", row2.getValue(inputColumn1));
 		assertEquals("b", row2.getValue(inputColumn2));
 

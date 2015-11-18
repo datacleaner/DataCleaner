@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
@@ -45,15 +46,26 @@ import org.datacleaner.components.categories.TextCategory;
 @Categorized(TextCategory.class)
 public class RegexParserTransformer implements Transformer {
 
-    public static enum Mode {
+    public static enum Mode implements HasName {
         @Description("Find the first match within the value.")
-        FIND_FIRST,
+        FIND_FIRST("Find first match"),
 
         @Description("Find all matches of the expression within the value. Each match yields a new row in the data stream.")
-        FIND_ALL,
+        FIND_ALL("Find all matches"),
 
         @Description("Match the complete value using the expression.")
-        FULL_MATCH;
+        FULL_MATCH("Match the complete value");
+        
+        private final String _name;
+        
+        private Mode(String name) {
+            _name = name;
+        }
+
+        @Override
+        public String getName() {
+            return _name;
+        }
     }
 
     @Configured("Value")

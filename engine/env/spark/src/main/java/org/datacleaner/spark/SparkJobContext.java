@@ -57,7 +57,6 @@ import com.google.common.base.Strings;
 public class SparkJobContext implements Serializable {
 
     private static String DATA_CLEANER_RESULT_PATH_PROPERTY = "datacleaner.result.hdfs.path";
-    private static String DATA_CLEANER_RESULT_NAME_PROPERTY = "datacleaner.result.hdfs.name";
     public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
     public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
 
@@ -67,6 +66,7 @@ public class SparkJobContext implements Serializable {
 
     private final String _configurationXml;
     private final String _analysisJobXml;
+    private final String _analysisJobXmlPath;
     private final Map<String, String> _customProperties;
 
     // cached/transient state
@@ -83,6 +83,7 @@ public class SparkJobContext implements Serializable {
         _customProperties = readCustomProperties(propertiesPath);
         _configurationXml = readFile(dataCleanerConfigurationPath);
         _analysisJobXml = readFile(analysisJobXmlPath);
+        _analysisJobXmlPath= analysisJobXmlPath;
     }
 
     private String readFile(String path) {
@@ -220,16 +221,10 @@ public class SparkJobContext implements Serializable {
         return null;
     }
     
-    public String getResultName() {
-        if (_customProperties != null) {
-            if (_customProperties.containsKey(DATA_CLEANER_RESULT_NAME_PROPERTY)) {
-                return _customProperties.get(DATA_CLEANER_RESULT_NAME_PROPERTY);
-            }
-        }
-        return null;
-    }
-    public String getAnalysisJobXmlName() {
-        final int lastIndexOf = _analysisJobXml.lastIndexOf("/");
-        return  _analysisJobXml.substring(lastIndexOf);
+    public String getAnalysisJobName() {
+        final int lastIndexOfSlash = _analysisJobXmlPath.lastIndexOf("/");
+        final int lastIndexOfFileExtension = _analysisJobXmlPath.lastIndexOf(".analysis.xml");
+        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash+1, lastIndexOfFileExtension);
+        return  jobName;
     }
 }

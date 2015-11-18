@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.log4j.Logger;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
@@ -36,6 +38,10 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.result.SimpleAnalysisResult;
 
 public class Main {
+
+    static Logger logger = Logger.getLogger(Main.class);
+
+    private static String DEFAULT_RESULT_PATH = "/datacleaner/results/";
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -59,26 +65,17 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
                 propertiesPath);
-
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
             if (result.isDone()) {
-
                 final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
-                SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
+                final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
                         result.getCreationDate());
-                String resultPath = sparkJobContext.getResultPath();
-                if (!resultPath.endsWith("/")) {
-                    resultPath = resultPath + "/";
-                }
-                final String analysisJobXmlName = sparkJobContext.getAnalysisJobXmlName();
-                final Date date = new Date();
-                if (resultPath != null) {
-                    final HdfsResource hdfsResource = new HdfsResource(resultPath + analysisJobXmlName + "_"
-                            + date.getTime() + ".analysis.result.dat");
+                final String resultJobFilePath = getResultJobFilePath(sparkContext, sparkJobContext);
+                if (resultJobFilePath != null) {
+                    final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
                     final OutputStream out = hdfsResource.write();
-
                     try {
                         SerializationUtils.serialize(simpleAnalysisResult, out);
                     } catch (SerializationException e) {
@@ -91,5 +88,21 @@ public class Main {
         } finally {
             sparkContext.stop();
         }
+    }
+
+    private static String getResultJobFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
+        String resultPath = sparkJobContext.getResultPath();
+        if (resultPath == null) {
+            final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
+            final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
+            resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
+        }
+        final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
+        final Date date = new Date();
+        if (!resultPath.endsWith("/")) {
+            resultPath = resultPath + "/";
+        }
+        final String filePath = resultPath + analysisJobXmlName + "-" + date.getTime() + ".analysis.result.dat";
+        return filePath;
     }
 }

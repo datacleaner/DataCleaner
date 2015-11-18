@@ -114,7 +114,6 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.Spinner;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -1064,22 +1063,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JMenuItem refreshComponentTreeMenuItem = WidgetFactory
-                .createMenuItem("Refreh component tree", IconUtils.MENU_REFRESH);
-        refreshComponentTreeMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Spinner.showSpinner();
-                        _configuration.getEnvironment().getDescriptorProvider().refresh();
-                        Spinner.hideSpinner();
-                    }
-                }).start();
-            }
-        });
-
         final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries",
                 IconUtils.DICTIONARY_IMAGEPATH);
         dictionariesMenuItem.addActionListener(new ActionListener() {
@@ -1168,7 +1151,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.getMenu().add(windowsMenuItem);
         popupButton.getMenu().add(new JSeparator());
         popupButton.getMenu().add(monitorMenuItem);
-        popupButton.getMenu().add(refreshComponentTreeMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
 
         return popupButton;

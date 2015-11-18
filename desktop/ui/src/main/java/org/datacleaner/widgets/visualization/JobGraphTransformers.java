@@ -28,6 +28,7 @@ import java.awt.Shape;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -38,6 +39,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
@@ -235,7 +237,14 @@ public class JobGraphTransformers {
                 } else {
                     configured = componentBuilder.isConfigured(false);
                 }
-                return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                if (! ((RemoteTransformerDescriptorImpl)descriptor).isServerUp()) {
+                    descriptorIcon = IconUtils.addErrorOverlay((ImageIcon)descriptorIcon);
+                }
+
+                return descriptorIcon;
             }
             if (obj instanceof FilterOutcome) {
                 return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);

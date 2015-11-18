@@ -19,6 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,6 +58,23 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
+    }
+
+    public boolean isServerUp() {
+        try {
+            URL siteURL = new URL(baseUrl);
+            HttpURLConnection connection = (HttpURLConnection) siteURL.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            if (connection.getResponseCode() == 200) {
+                return true;
+            }
+        } catch (Exception e) {
+            logger.warn("Server at '" + baseUrl + "' is down: " + e.getMessage());
+        }
+
+        return false;
     }
 
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {

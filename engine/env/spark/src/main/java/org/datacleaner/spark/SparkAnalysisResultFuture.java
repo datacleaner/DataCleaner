@@ -103,8 +103,8 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException {
         final Map<ComponentJob, AnalyzerResult> resultMap = new HashMap<>();
         for (Tuple2<String, AnalyzerResult> tuple : _results) {
-            final AnalyzerResult analyzerResult = tuple._2;
             final ComponentJob component = _sparkJobContext.getComponentByKey(tuple._1);
+            final AnalyzerResult analyzerResult = tuple._2;
             resultMap.put(component, analyzerResult);
         }
         return resultMap;

@@ -7,7 +7,7 @@ object FlotChartLocator {
 
   val SYSTEM_PROPERTY_FLOT_HOME = "org.datacleaner.flot.home"
   val SYSTEM_PROPERTY_FLOT_HOME_DEPRECATED = "org.datacleaner.valuedist.flotLibraryLocation"
-  val DEFAULT_FLOT_HOME = "http://cdnjs.cloudflare.com/ajax/libs/flot/0.7"
+  val DEFAULT_FLOT_HOME = "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3"
 
   /**
    * Gets the URL for the base flot library, typically named as "jquery.flot.min.js"

@@ -168,7 +168,7 @@ public class SystemProperties {
      * @param valueIfNullOrNotParseable
      * @return
      */
-    public static long getInt(String key, int valueIfNullOrNotParseable) {
+    public static int getInt(String key, int valueIfNullOrNotParseable) {
         String value = System.getProperty(key);
         if (Strings.isNullOrEmpty(value)) {
             return valueIfNullOrNotParseable;

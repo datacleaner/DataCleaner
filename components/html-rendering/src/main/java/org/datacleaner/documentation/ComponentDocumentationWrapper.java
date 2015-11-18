@@ -149,7 +149,7 @@ public class ComponentDocumentationWrapper {
         return iconHtmlRepresentation;
     }
 
-    public int getIconSrcLarge(){
+    public int getIconSizeLarge(){
         return IconUtils.ICON_SIZE_LARGE;
     }
     public boolean isAnalyzer() {

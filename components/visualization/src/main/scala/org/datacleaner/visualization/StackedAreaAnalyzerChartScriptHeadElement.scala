@@ -71,7 +71,11 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
     html.append("];");
 
     html.append("""
-  draw_stacked_area_analyzer_chart('reselem_1', data, 2);
+      wait_for_script_load('jQuery', function() {
+        $(function(){
+          draw_stacked_area_analyzer_chart('reselem_1', data, 2);
+        });
+      });
   //]]>
   </script>""");
 

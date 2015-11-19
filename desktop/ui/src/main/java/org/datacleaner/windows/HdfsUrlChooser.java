@@ -26,6 +26,8 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -49,6 +51,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.ws.rs.core.UriBuilder;
@@ -67,10 +71,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HdfsUrlChooser extends JComponent {
-
-    private static final long serialVersionUID = 1L;
-
-    protected static final Logger logger = LoggerFactory.getLogger(HdfsUrlChooser.class);
 
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
@@ -305,9 +305,7 @@ public class HdfsUrlChooser extends JComponent {
                     levelUp.setSymlink(_currentDirectory.getParent());
                     newFileStatuses[0] = levelUp;
 
-                    for (int i = 0; i < fileStatuses.length; i++) {
-                        newFileStatuses[i + 1] = fileStatuses[i];
-                    }
+                    System.arraycopy(fileStatuses, 0, newFileStatuses, 1, fileStatuses.length);
                     fileStatuses = newFileStatuses;
                 }
             } catch (IOException e) {
@@ -339,17 +337,15 @@ public class HdfsUrlChooser extends JComponent {
             updateFileList();
         }
     }
-
     public static final Icon DIRECTORY_ICON = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon FILE_ICON = UIManager.getIcon("FileView.fileIcon");
     public static final Icon COMPUTER_ICON = UIManager.getIcon("FileView.computerIcon");
     public static final Icon LEVEL_UP_ICON = UIManager.getLookAndFeelDefaults().getIcon("FileChooser.upFolderIcon");
-
+    protected static final Logger logger = LoggerFactory.getLogger(HdfsUrlChooser.class);
+    private static final long serialVersionUID = 1L;
     private static final int DEFAULT_WIDTH = 600;
-
-    public static String HDFS_SCHEME = "hdfs";
-
     private static final int SPACE = 10;
+    public static String HDFS_SCHEME = "hdfs";
     private final OpenType _openType;
     private final JList<FileStatus> _fileList;
 
@@ -359,7 +355,6 @@ public class HdfsUrlChooser extends JComponent {
     private Path _selectedFile;
 
     private HdfsComboBoxModel _directoryComboBoxModel = new HdfsComboBoxModel();
-    private DCComboBox<Path> _pathsComboBox;
 
     HdfsUrlChooser(URI uri, OpenType openType) {
         if (uri != null) {
@@ -374,10 +369,10 @@ public class HdfsUrlChooser extends JComponent {
 
         _openType = openType;
         final DCLabel lookInLabel = DCLabel.dark("Look in:");
-        _pathsComboBox = new DCComboBox<>(_directoryComboBoxModel);
-        _pathsComboBox.setRenderer(new ServerComboBoxRenderer());
-        _pathsComboBox.setMinimumSize(new Dimension(DEFAULT_WIDTH, 40));
-        _pathsComboBox.addListener(new DCComboBox.Listener<Path>() {
+        final DCComboBox<Path> pathsComboBox = new DCComboBox<>(_directoryComboBoxModel);
+        pathsComboBox.setRenderer(new ServerComboBoxRenderer());
+        pathsComboBox.setMinimumSize(new Dimension(DEFAULT_WIDTH, 40));
+        pathsComboBox.addListener(new DCComboBox.Listener<Path>() {
             @Override
             public void onItemSelected(final Path directory) {
                 _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
@@ -393,22 +388,44 @@ public class HdfsUrlChooser extends JComponent {
         _fileList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    // Double-click detected
-                    final FileStatus element = _fileList.getModel().getElementAt(_fileList.getSelectedIndex());
-                    if (element.isSymlink()) {
-                        try {
-                            _currentDirectory = element.getSymlink();
-                        } catch (IOException e) {
-                            logger.warn("Could not get the symlink value for element {}", element, e);
-                        }
-                    } else if (element.isDirectory()) {
-                        _currentDirectory = element.getPath();
-                    } else if (element.isFile()) {
-                        _selectedFile = element.getPath();
-                        logger.info("Selected: " + _selectedFile);
-                        _dialog.dispose();
+                    selectOrBrowsePath(false);
+                }
+            }
+
+            @Override
+            public void mousePressed(final MouseEvent e) {
+                tryPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+                tryPopup(e);
+            }
+
+            private void tryPopup(final MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    _fileList.setSelectedIndex(_fileList.locationToIndex(e.getPoint()));
+                    final JPopupMenu popupMenu = new JPopupMenu();
+                    if (_fileList.getModel().getElementAt(_fileList.getSelectedIndex()).isDirectory()) {
+                        final JMenuItem browseMenuItem = new JMenuItem("Browse");
+                        browseMenuItem.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(final ActionEvent e) {
+                                selectOrBrowsePath(false);
+                            }
+                        });
+                        popupMenu.add(browseMenuItem);
                     }
-                    ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
+
+                    final JMenuItem selectMenuItem = new JMenuItem("Select");
+                    selectMenuItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(final ActionEvent e) {
+                            selectOrBrowsePath(true);
+                        }
+                    });
+                    popupMenu.add(selectMenuItem);
+                    popupMenu.show(_fileList, e.getX(), e.getY());
                 }
             }
         });
@@ -417,7 +434,7 @@ public class HdfsUrlChooser extends JComponent {
         topPanel.setLayout(new GridBagLayout());
         topPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH, 40));
         WidgetUtils.addToGridBag(lookInLabel, topPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 5);
-        WidgetUtils.addToGridBag(_pathsComboBox, topPanel, 1, 0, 100, 40, GridBagConstraints.WEST, 5, 1, 1,
+        WidgetUtils.addToGridBag(pathsComboBox, topPanel, 1, 0, 100, 40, GridBagConstraints.WEST, 5, 1, 1,
                 GridBagConstraints.HORIZONTAL);
 
         add(topPanel, BorderLayout.NORTH);
@@ -464,6 +481,25 @@ public class HdfsUrlChooser extends JComponent {
             }
         }
         return null;
+    }
+
+    private void selectOrBrowsePath(boolean selectDirectory) {
+        // Double-click detected
+        final FileStatus element = _fileList.getModel().getElementAt(_fileList.getSelectedIndex());
+        if (element.isSymlink()) {
+            try {
+                _currentDirectory = element.getSymlink();
+            } catch (IOException e) {
+                logger.warn("Could not get the symlink value for element {}", element, e);
+            }
+        } else if (element.isFile() || (element.isDirectory() && selectDirectory)) {
+            _selectedFile = element.getPath();
+            logger.info("Selected: " + _selectedFile);
+            _dialog.dispose();
+        } else if (element.isDirectory()) {
+            _currentDirectory = element.getPath();
+        }
+        ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
     }
 
     private void updateCurrentDirectory(final Path directory) {

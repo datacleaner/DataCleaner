@@ -38,12 +38,14 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.documentation.ComponentDocumentationWrapper;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.AnalysisResultWriter;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.ComponentJobComparator;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
@@ -233,8 +235,10 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                     final ComponentJob componentJob = entry.getKey();
                     final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
                     if (!descriptor.equals(lastDescriptor)) {
+                        final  ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor); 
+                        final String iconSrc = wrapper.getIconSrc(IconUtils.ICON_SIZE_MEDIUM);
                         final String styleName = toStyleName(descriptor.getDisplayName());
-                        writer.write("<li class=\"" + styleName + "\"><a href=\"#analysisResultDescriptorGroup_"
+                        writer.write("<li style=\"background-image: url(" + iconSrc + ")\"><a href=\"#analysisResultDescriptorGroup_"
                                 + styleName + "\">");
                         writer.write(context.escapeHtml(descriptor.getDisplayName()));
                         writer.write("</a></li>");

@@ -281,6 +281,9 @@ public class JobGraphLinkPainter {
                 logger.debug("createLink(...) returning false - popup with choices presented to user");
                 return false;
             }
+
+            // When we can't do anything, at least show the dialog.
+            _actions.showConfigurationDialog(componentBuilder);
         }
         logger.debug("createLink(...) returning false - no applicable action");
         return false;

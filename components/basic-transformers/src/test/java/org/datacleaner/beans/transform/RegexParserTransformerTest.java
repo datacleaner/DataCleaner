@@ -21,6 +21,7 @@ package org.datacleaner.beans.transform;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -48,5 +49,17 @@ public class RegexParserTransformerTest extends TestCase {
         assertArrayEquals(new String[] { "aabb", "aa", "bb", null }, t.transform(new MockInputRow().put(col, "aabb")));
         assertArrayEquals(new String[] { "cccc", null, null, "cccc" }, t.transform(new MockInputRow().put(col, "cccc")));
         assertArrayEquals(new String[] { null, null, null, null }, t.transform(new MockInputRow().put(col, "dddd")));
+    }
+    
+    public void testExpressionForDimensions() throws Exception {
+        MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+
+        RegexParserTransformer t = new RegexParserTransformer();
+        t.column = col;
+        t.pattern = Pattern.compile(".*?(\\d+\\,?\\d+?)(x|X)([0-9]+\\,?\\d+?).*?");
+
+        assertEquals("[foo 12x34 bar, 12, x, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12x34 bar"))));
+        assertEquals("[foo 12X34 bar, 12, X, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12X34 bar"))));
+        assertEquals("[foo 1,2x3,4 bar, 1,2, x, 3,4]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 1,2x3,4 bar"))));
     }
 }

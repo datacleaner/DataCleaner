@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation;
+package org.datacleaner.documentation.builder;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,6 +33,7 @@ import org.datacleaner.beans.transform.SynonymLookupTransformer;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.documentation.ComponentDocumentationBuilder;
 import org.datacleaner.util.StringUtils;
 import org.junit.Test;
 

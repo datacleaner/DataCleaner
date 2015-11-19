@@ -21,16 +21,18 @@ package org.datacleaner.restclient;
 
 import java.io.IOException;
 
+import org.datacleaner.api.RestrictedFunctionalityException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @since 02. 09. 2015
  */
 public class ComponentRESTClient {
-    
     private final RESTClient restClient;
     private String tenantName;
     private String url;
+    private String componentName;
 
     public ComponentRESTClient(String url, String username, String password) {
         this.url = url;
@@ -38,7 +40,10 @@ public class ComponentRESTClient {
         getUserTenantName();
     }
 
-    /** Mainly for tests, tenant can be recognized automatically when other constructor is used */
+    /**
+     * Mainly for tests, tenant can be recognized automatically when other
+     * constructor is used
+     */
     public ComponentRESTClient(String url, String username, String password, String tenantName) {
         this.url = url;
         restClient = new RESTClientImpl(username, password);
@@ -51,7 +56,8 @@ public class ComponentRESTClient {
         return Serializator.componentList(response);
     }
 
-    public ComponentList.ComponentInfo getComponentInfo( String componentName, boolean iconData) {
+    public ComponentList.ComponentInfo getComponentInfo(String componentName, boolean iconData) {
+        this.componentName = componentName;
         componentName = urlify(componentName);
         String response = call(RESTClient.HttpMethod.GET, getURL(componentName + "&iconData=" + iconData), "");
 
@@ -59,6 +65,7 @@ public class ComponentRESTClient {
     }
 
     public OutputColumns getOutputColumns(String componentName, CreateInput config) {
+        this.componentName = componentName;
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
         String response = call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
@@ -67,6 +74,7 @@ public class ComponentRESTClient {
     }
 
     public ProcessStatelessOutput processStateless(String componentName, ProcessStatelessInput processStatelessInput) {
+        this.componentName = componentName;
         componentName = urlify(componentName);
         String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL(componentName), configurationAndData);
@@ -75,6 +83,7 @@ public class ComponentRESTClient {
     }
 
     public String createComponent(String componentName, final String timeout, final CreateInput config) {
+        this.componentName = componentName;
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
 
@@ -105,7 +114,7 @@ public class ComponentRESTClient {
         try {
             userInfo = Serializator.getJacksonObjectMapper().readTree(response);
             JsonNode tenantN = userInfo.get("tenant");
-            if(tenantN == null) {
+            if (tenantN == null) {
                 return tenantName = "unknown";
             } else {
                 return tenantName = tenantN.asText();
@@ -120,16 +129,22 @@ public class ComponentRESTClient {
     }
 
     private String getURL(String suffix) {
-        if (suffix != null && ! suffix.isEmpty()) {
+        if (suffix != null && !suffix.isEmpty()) {
             suffix = "/" + suffix;
         }
 
         return String.format("%s/repository/%s/components%s", url, urlify(tenantName), suffix);
     }
 
-    private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody) {
-        String response = restClient.getResponse(httpMethod, url, requestBody);
+    private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody)
+            throws RestrictedFunctionalityException {
+        try {
+            String response = restClient.getResponse(httpMethod, url, requestBody);
 
-        return response;
+            return response;
+        } catch (Exception e) {
+            throw new RestrictedFunctionalityException(
+                    "Remote component '" + componentName + "' is temporarily unavailable. \n" + e.getMessage());
+        }
     }
 }

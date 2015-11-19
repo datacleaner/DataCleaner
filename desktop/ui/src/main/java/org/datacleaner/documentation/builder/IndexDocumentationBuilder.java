@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation;
+package org.datacleaner.documentation.builder;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,6 +32,8 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.documentation.ComponentDocumentationWrapper;
+import org.datacleaner.documentation.SuperCategoryDocumentationWrapper;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.DescriptorMenuBuilder.MenuCallback;
 

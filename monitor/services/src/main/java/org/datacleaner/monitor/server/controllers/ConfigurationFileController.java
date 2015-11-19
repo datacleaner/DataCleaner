@@ -26,16 +26,17 @@ import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.WriteUpdatedConfigurationFileAction;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/{tenant}/conf.xml")
+@RequestMapping({"/{tenant}/conf.xml","/{tenant}/configuration"})
 public class ConfigurationFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFileController.class);
@@ -54,7 +55,7 @@ public class ConfigurationFileController {
     TenantContextFactory _contextFactory;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadConfigurationFile(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws Exception {
@@ -71,8 +72,8 @@ public class ConfigurationFileController {
             final RepositoryFile configurationFile = context.getConfigurationFile();
 
             final InputStream inputStream = file.getInputStream();
-            final WriteUpdatedConfigurationFileAction writeAction = new WriteUpdatedConfigurationFileAction(
-                    inputStream, configurationFile);
+            final WriteUpdatedConfigurationFileAction writeAction = new WriteUpdatedConfigurationFileAction(inputStream,
+                    configurationFile);
 
             try {
                 configurationFile.writeFile(writeAction);
@@ -91,23 +92,25 @@ public class ConfigurationFileController {
             logger.warn("An error occurred while uploading new configuration file for tenant " + tenant, e);
             throw e;
         }
+
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
-    public void downloadConfigurationFile(@PathVariable("tenant") final String tenant, final OutputStream out) {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public String downloadConfigurationFile(@PathVariable("tenant") final String tenant, final OutputStream out) {
 
         final TenantContext context = _contextFactory.getContext(tenant);
         final RepositoryFile configurationFile = context.getConfigurationFile();
 
         if (configurationFile == null) {
-            return;
+            throw new IllegalStateException("Configuration file not found!");
         }
 
-        configurationFile.readFile(new Action<InputStream>() {
+        return configurationFile.readFile(new Func<InputStream, String>() {
             @Override
-            public void run(InputStream in) throws Exception {
-                FileHelper.copy(in, out);
+            public String eval(InputStream in) {
+                return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
             }
         });
     }

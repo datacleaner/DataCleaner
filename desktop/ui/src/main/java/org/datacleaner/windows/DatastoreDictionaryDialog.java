@@ -118,12 +118,14 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
                                 .with(AnalyzerComponentBuilder.class, null).createInjector();
 
                         final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
+                        schemaTree.setIncludeLibraryNode(false);
                         schemaTree.addMouseListener(new MouseAdapter() {
                             public void mouseClicked(MouseEvent e) {
                                 TreePath path = schemaTree.getSelectionPath();
                                 if (path == null) {
                                     return;
                                 }
+
                                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                                 if (node.getUserObject() instanceof Column) {
                                     Column column = (Column) node.getUserObject();

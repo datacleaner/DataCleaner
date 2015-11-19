@@ -88,8 +88,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree
-        implements TreeWillExpandListener, TreeCellRenderer, ComponentDescriptorsUpdatedListener {
+public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
+        ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
 
@@ -108,13 +108,14 @@ public class SchemaTree extends JXTree
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
+    private boolean _includeLibraryNode = true;
 
     private DatastoreConnection _datastoreConnection;
     private String _searchTerm = "";
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            WindowContext windowContext, InjectorBuilder injectorBuilder) throws Exception {
         super();
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
@@ -261,9 +262,12 @@ public class SchemaTree extends JXTree
             datastoreNode.add(schemaNode);
         }
 
-        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
-        createLibrary(libraryRoot);
-        rootNode.add(libraryRoot);
+        if (_includeLibraryNode) {
+            DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
+            createLibrary(libraryRoot);
+            rootNode.add(libraryRoot);
+
+        }
 
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
@@ -332,12 +336,12 @@ public class SchemaTree extends JXTree
         if (searchTerm.isEmpty()) {
             return true;
         }
-        
+
         final String displayName = normalizeStringForMatching(componentDescriptor.getDisplayName());
         if (displayName.contains(searchTerm)) {
             return true;
         }
-        
+
         final String[] aliases = componentDescriptor.getAliases();
         for (String alias : aliases) {
             alias = normalizeStringForMatching(alias);
@@ -345,7 +349,7 @@ public class SchemaTree extends JXTree
                 return true;
             }
         }
-        
+
         final Set<ComponentCategory> categories = componentDescriptor.getComponentCategories();
         for (ComponentCategory category : categories) {
             final String categoryString = normalizeStringForMatching(category.getName());
@@ -353,12 +357,12 @@ public class SchemaTree extends JXTree
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     private static String normalizeStringForMatching(String str) {
-     return   StringUtils.replaceWhitespaces(str, "").toLowerCase();
+        return StringUtils.replaceWhitespaces(str, "").toLowerCase();
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
@@ -520,8 +524,8 @@ public class SchemaTree extends JXTree
         } else if (value instanceof Column) {
             Column column = (Column) value;
             String columnLabel = column.getName();
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf, row,
-                    hasFocus);
+            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf,
+                    row, hasFocus);
             icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentSuperCategory) {
             ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
@@ -670,4 +674,9 @@ public class SchemaTree extends JXTree
             }
         }
     }
+
+    public void setIncludeLibraryNode(boolean includeLibraryNode) {
+        _includeLibraryNode = includeLibraryNode;
+    }
+
 }

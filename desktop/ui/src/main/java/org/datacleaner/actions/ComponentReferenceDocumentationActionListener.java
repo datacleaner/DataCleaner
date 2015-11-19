@@ -27,7 +27,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.documentation.ComponentDocumentationWrapper;
-import org.datacleaner.documentation.ComponentReferenceDocumentationBuilder;
+import org.datacleaner.documentation.builder.ComponentReferenceDocumentationBuilder;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**

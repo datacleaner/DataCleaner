@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation;
+package org.datacleaner.documentation.builder;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -26,6 +26,8 @@ import java.util.Collection;
 import org.apache.metamodel.util.Action;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.documentation.ComponentDocumentationBuilder;
+import org.datacleaner.documentation.ComponentDocumentationWrapper;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;

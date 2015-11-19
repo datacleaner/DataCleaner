@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation;
+package org.datacleaner.documentation.builder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

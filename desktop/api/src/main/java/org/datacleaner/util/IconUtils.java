@@ -152,7 +152,6 @@ public final class IconUtils {
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";
-    public static final String STATUS_LOADING_BAR = "images/status/loading-bar.gif";
 
     public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
 

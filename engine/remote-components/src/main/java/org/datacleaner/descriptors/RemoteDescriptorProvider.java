@@ -20,6 +20,9 @@
 package org.datacleaner.descriptors;
 
 import java.lang.annotation.Annotation;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,15 +44,42 @@ import org.slf4j.LoggerFactory;
  * @Since 9/8/15
  */
 public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
+
+    private static final int TEST_CONNECTION_TIMEOUT = 1000; // [ms]
+    private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
+    /* for all remote transformer descriptors together */
+    private long lastConnectionCheckTime = 0L;
+    private boolean lastConnectionCheckResult = false;
 
     public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
         super(false);
         this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
+    }
+
+    public boolean isServerUp() {
+        long now = System.currentTimeMillis();
+
+        try {
+            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now) {
+                URL siteURL = new URL(remoteServerData.getHost());
+                Socket socket = new Socket();
+                InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
+                socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
+                lastConnectionCheckResult = socket.isConnected();
+                lastConnectionCheckTime = now;
+            }
+        } catch (Exception e) {
+            lastConnectionCheckResult = false;
+            lastConnectionCheckTime = now;
+            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
+                    + ")' is down: " + e.getMessage());
+        }
+
+        return lastConnectionCheckResult;
     }
 
     public void refresh() {
@@ -96,42 +126,46 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         private void downloadDescriptors() {
             try {
                 logger.info("Loading remote components list from " + remoteServerData.getHost());
-                final ComponentRESTClient client = new ComponentRESTClient(
-                        remoteServerData.getHost(), remoteServerData.getUsername(), remoteServerData.getPassword());
+                final ComponentRESTClient client = new ComponentRESTClient(remoteServerData.getHost(),
+                        remoteServerData.getUsername(), remoteServerData.getPassword());
                 final ComponentList components = client.getAllComponents(true);
-                
+
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
-                        final RemoteTransformerDescriptorImpl transformer = new RemoteTransformerDescriptorImpl(
-                                remoteServerData.getHost(), component.getName(),
-                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData(),
-                                remoteServerData.getUsername(), remoteServerData.getPassword());
-                        transformer.setServerName(remoteServerData.getServerName());
+                        final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
+                                remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
+                                component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
+                                remoteServerData.getPassword());
+                        transformerDescriptor.setServerName(remoteServerData.getServerName());
+                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
 
-                        for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
-                                .entrySet()) {
+                        for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();
                             final ComponentList.PropertyInfo propInfo = propE.getValue();
                             final String className = propInfo.getClassName();
                             try {
                                 Class<?> cl = findClass(className);
-                                transformer.addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
-                                        propertyName, propInfo.getDescription(), cl, propInfo.isRequired(), transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()),
-                                        propInfo.getDefaultValue()));
+                                transformerDescriptor
+                                        .addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
+                                                propertyName, propInfo.getDescription(), cl, propInfo.isRequired(),
+                                                transformerDescriptor, initAnnotations(component.getName(),
+                                                        propertyName, propInfo.getAnnotations()), propInfo
+                                                        .getDefaultValue()));
                             } catch (ClassNotFoundException e) {
                                 logger.debug("Cannot initialize typed property descriptor '{}'.'{}' because of {}",
                                         component.getName(), propertyName, e.toString());
                                 // class not available on this server.
-                                transformer.addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                                        propertyName, propInfo.getSchema(), propInfo.isInputColumn(),
-                                        propInfo.getDescription(), propInfo.isRequired(), transformer,
-                                        initAnnotations(component.getName(), propertyName, propInfo.getAnnotations()),
-                                        propInfo.getDefaultValue()));
+                                transformerDescriptor
+                                        .addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
+                                                propertyName, propInfo.getSchema(), propInfo.isInputColumn(), propInfo
+                                                        .getDescription(), propInfo.isRequired(),
+                                                transformerDescriptor, initAnnotations(component.getName(),
+                                                        propertyName, propInfo.getAnnotations()), propInfo
+                                                        .getDefaultValue()));
                             }
                         }
-                        _transformerBeanDescriptors.put(transformer.getDisplayName(), transformer);
-                        logger.info("Registered remote component {}", transformer.getDisplayName());
+                        _transformerBeanDescriptors.put(transformerDescriptor.getDisplayName(), transformerDescriptor);
+                        logger.info("Registered remote component {}", transformerDescriptor.getDisplayName());
                     } catch (Exception e) {
                         logger.error("Cannot create remote component representation for: " + component.getName(), e);
                     }
@@ -157,8 +191,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         for (Map.Entry<String, Map<String, Object>> annInfoE : annotationsInfo.entrySet()) {
             try {
                 @SuppressWarnings("unchecked")
-                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class
-                        .forName(annInfoE.getKey());
+                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class.forName(annInfoE
+                        .getKey());
                 final Map<String, Object> anProperties = annInfoE.getValue();
                 final Annotation anProxy = AnnotationProxy.newAnnotation(anClass, anProperties);
                 annotations.put(anClass, anProxy);

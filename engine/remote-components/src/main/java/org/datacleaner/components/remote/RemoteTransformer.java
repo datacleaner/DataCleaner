@@ -273,9 +273,11 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
         logger.debug("Processing remotely {} rows", size);
 
-        if (client != null) {
-            ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
-            convertOutputRows(out.rows, sink, size);
+        if (client == null) {
+            throw new RuntimeException("Remote transformer's connection has already been closed. ");
         }
+
+        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
+        convertOutputRows(out.rows, sink, size);
     }
 }

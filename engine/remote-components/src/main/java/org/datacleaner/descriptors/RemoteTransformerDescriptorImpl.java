@@ -19,8 +19,6 @@
  */
 package org.datacleaner.descriptors;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,11 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transformer descriptor that represents a remote transformer sitting on a DataCleaner Monitor server. This descriptor
- * is created by {@link RemoteDescriptorProvider} when it downloads a transformers list from the server.
- @Since 9/1/15
+ * Transformer descriptor that represents a remote transformer sitting on a
+ * DataCleaner Monitor server. This descriptor is created by
+ * {@link RemoteDescriptorProvider} when it downloads a transformers list from
+ * the server.
+ * 
+ * @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor, HasIcon {
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor,
+        HasIcon {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
     private String baseUrl;
@@ -46,10 +48,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private String password;
     private byte[] iconData;
     private String serverName;
+    private RemoteDescriptorProvider remoteDescriptorProvider;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName,
-                                           String superCategoryName, Set<String> categoryNames, byte[] iconData,
-                                           String username, String password) {
+    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String superCategoryName,
+            Set<String> categoryNames, byte[] iconData, String username, String password) {
         super(RemoteTransformer.class, true);
         this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
@@ -60,21 +62,12 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this.baseUrl = baseUrl;
     }
 
-    public boolean isServerUp() {
-        try {
-            URL siteURL = new URL(baseUrl);
-            HttpURLConnection connection = (HttpURLConnection) siteURL.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
+    public void setRemoteDescriptorProvider(RemoteDescriptorProvider remoteDescriptorProvider) {
+        this.remoteDescriptorProvider = remoteDescriptorProvider;
+    }
 
-            if (connection.getResponseCode() == 200) {
-                return true;
-            }
-        } catch (Exception e) {
-            logger.warn("Server at '" + baseUrl + "' is down: " + e.getMessage());
-        }
-
-        return false;
+    public RemoteDescriptorProvider getRemoteDescriptorProvider() {
+        return remoteDescriptorProvider;
     }
 
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -101,11 +94,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     private Class classFromName(String className, Class defaultClass) {
         Class clazz = defaultClass;
-        
+
         try {
             clazz = Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             logger.warn("Class '" + className + "' was not found. \n" + e.getMessage());
         }
 
@@ -127,8 +119,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
                 ComponentCategory category = (ComponentCategory) categoryClass.newInstance();
                 componentCategories.add(category);
             }
-        }
-        catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             logger.warn("New instance of a component category could not have been created. \n" + e.getMessage());
         }
 
@@ -138,9 +129,9 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     @Override
     public Object newInstance() {
         RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
-        for(ConfiguredPropertyDescriptor prop: (Set<ConfiguredPropertyDescriptor>)_configuredProperties) {
-            if(prop instanceof RemoteConfiguredPropertyDescriptor) {
-                ((RemoteConfiguredPropertyDescriptor)prop).setDefaultValue(t);
+        for (ConfiguredPropertyDescriptor prop : (Set<ConfiguredPropertyDescriptor>) _configuredProperties) {
+            if (prop instanceof RemoteConfiguredPropertyDescriptor) {
+                ((RemoteConfiguredPropertyDescriptor) prop).setDefaultValue(t);
             }
         }
         return t;

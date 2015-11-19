@@ -73,29 +73,37 @@ public class Main {
                 final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
                         result.getCreationDate());
                 final String resultJobFilePath = getResultJobFilePath(sparkContext, sparkJobContext);
+                logger.info("The result of the job was written to " + resultJobFilePath);
                 if (resultJobFilePath != null) {
                     final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
                     final OutputStream out = hdfsResource.write();
                     try {
                         SerializationUtils.serialize(simpleAnalysisResult, out);
                     } catch (SerializationException e) {
+                        logger.error("Error while trying to serialize the job");
                         throw e;
                     } finally {
                         FileHelper.safeClose(out);
                     }
                 }
             }
+        } catch (Exception e) {
+            logger.error("Exception " + e.getStackTrace());
+            throw e;
         } finally {
             sparkContext.stop();
         }
     }
 
-    private static String getResultJobFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
+    private static String getResultJobFilePath(final JavaSparkContext sparkContext,
+            final SparkJobContext sparkJobContext) {
         String resultPath = sparkJobContext.getResultPath();
+        final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
+        final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
         if (resultPath == null) {
-            final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
-            final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
             resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
+        } else {
+            resultPath = fileSystemPrefix + resultPath;
         }
         final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
         final Date date = new Date();

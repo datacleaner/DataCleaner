@@ -48,6 +48,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.slf4j.Logger;
@@ -306,13 +307,9 @@ public class JobGraphLinkPainter {
         if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
             if (componentBuilder.getInput().length > 0 || componentBuilder.getComponentRequirement() != null) {
                 final String scopeText;
-                if(sourceAnalysisJobBuilder.isRootJobBuilder()){
-                    scopeText = " into the default scope";
-                } else {
-                    scopeText = " into the scope " + sourceAnalysisJobBuilder.getDatastore().getName();
-                }
+                scopeText = LabelUtils.getScopeLabel(sourceAnalysisJobBuilder);
                 final int response = JOptionPane.showConfirmDialog(_graphContext.getVisualizationViewer(),
-                        "This will move " + componentBuilder.getDescriptor().getDisplayName() + scopeText
+                        "This will move " + LabelUtils.getLabel(componentBuilder) + " into the " + scopeText
                                 + ", thereby losing its configured columns and/or requirements", "Change scope?",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 

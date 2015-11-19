@@ -43,10 +43,41 @@ public final class TransformedInputRow extends AbstractInputRow {
     private final Map<InputColumn<?>, Object> _values;
     private final int _rowId;
 
+    /**
+     * Constructs a {@link TransformedInputRow} based on another row, or returns
+     * the row if it is already a {@link TransformedInputRow}.
+     * 
+     * @param row
+     * @return
+     */
+    public static TransformedInputRow of(InputRow row) {
+        if (row instanceof TransformedInputRow) {
+            // re-use existing transformed input row.
+            return (TransformedInputRow) row;
+        } else {
+            return new TransformedInputRow(row, row.getId());
+        }
+    }
+
+    /**
+     * Constructs a {@link TransformedInputRow} based on another row.
+     * 
+     * @param delegate
+     * 
+     * @deprecated use {@link TransformedInputRow#of(InputRow)} instead
+     */
+    @Deprecated
     public TransformedInputRow(InputRow delegate) {
         this(delegate, null);
     }
 
+    /**
+     * Constructs a {@link TransformedInputRow} based on another row and a row
+     * ID.
+     * 
+     * @param delegate
+     * @param rowId
+     */
     public TransformedInputRow(InputRow delegate, Integer rowId) {
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");

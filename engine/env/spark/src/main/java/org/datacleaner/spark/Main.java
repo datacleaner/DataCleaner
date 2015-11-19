@@ -20,6 +20,7 @@
 package org.datacleaner.spark;
 
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -96,14 +97,17 @@ public class Main {
     }
 
     private static String getResultJobFilePath(final JavaSparkContext sparkContext,
-            final SparkJobContext sparkJobContext) {
+            final SparkJobContext sparkJobContext)  {
         String resultPath = sparkJobContext.getResultPath();
         final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
         final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
         if (resultPath == null) {
             resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
-        } else {
-            resultPath = fileSystemPrefix + resultPath;
+        } else { 
+            final URI uri = URI.create(resultPath);
+            if (!uri.isAbsolute()){
+                resultPath = fileSystemPrefix + resultPath;
+            }
         }
         final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
         final Date date = new Date();

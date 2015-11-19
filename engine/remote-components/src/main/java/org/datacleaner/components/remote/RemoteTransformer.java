@@ -33,6 +33,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -81,9 +82,14 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     }
 
     @Initialize
-    public void initClient() {
-        logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
-        client = new ComponentRESTClient(baseUrl, username, password);
+    public void initClient() throws RestrictedFunctionalityException {
+        try {
+            logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
+            client = new ComponentRESTClient(baseUrl, username, password);
+        } catch (Exception e) {
+            throw new RestrictedFunctionalityException(
+                    "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());
+        }
     }
 
     @Close
@@ -266,9 +272,12 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         input.data = mapper.valueToTree(rows);
 
         logger.debug("Processing remotely {} rows", size);
-        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
 
+        if (client == null) {
+            throw new RuntimeException("Remote transformer's connection has already been closed. ");
+        }
+
+        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
         convertOutputRows(out.rows, sink, size);
     }
-
 }

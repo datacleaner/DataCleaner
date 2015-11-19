@@ -22,6 +22,7 @@ package org.datacleaner.beans.transform;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -29,6 +30,7 @@ import junit.framework.TestCase;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.test.MockOutputRowCollector;
 
 public class RegexParserTransformerTest extends TestCase {
 
@@ -56,10 +58,48 @@ public class RegexParserTransformerTest extends TestCase {
 
         RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
-        t.pattern = Pattern.compile(".*?(\\d+\\,?\\d+?)(x|X)([0-9]+\\,?\\d+?).*?");
+        t.pattern = Pattern.compile("(\\d+\\,?\\d+?)(x|X)([0-9]+\\,?\\d+?)");
+        t.mode = RegexParserTransformer.Mode.FIND_FIRST;
 
-        assertEquals("[foo 12x34 bar, 12, x, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12x34 bar"))));
-        assertEquals("[foo 12X34 bar, 12, X, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12X34 bar"))));
-        assertEquals("[foo 1,2x3,4 bar, 1,2, x, 3,4]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 1,2x3,4 bar"))));
+        assertEquals("[12x34, 12, x, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12x34 bar"))));
+        assertEquals("[12X34, 12, X, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12X34 bar"))));
+        assertEquals("[1,2x3,4, 1,2, x, 3,4]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 1,2x3,4 bar"))));
+    }
+    
+    public void testFindAllMultiMatch() throws Exception {
+        final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
+        final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+
+        final RegexParserTransformer t = new RegexParserTransformer();
+        t.column = col;
+        t.pattern = Pattern.compile("(\\d+\\,?\\d*)(x|X)(\\d+\\,?\\d*)");
+        t.mode = RegexParserTransformer.Mode.FIND_ALL;
+        t.outputRowCollector = outputRowCollector;
+
+        final String[] transformResult1 = t.transform(new MockInputRow().put(col, "foo 12x34 bar 56x78 baz 9x10 "));
+        assertEquals("[12x34, 12, x, 34]", Arrays.toString(transformResult1));
+        
+        final List<Object[]> output1 = outputRowCollector.getOutput();
+        assertEquals(2, output1.size());
+        
+        assertEquals("[56x78, 56, x, 78]", Arrays.toString(output1.get(0)));
+        assertEquals("[9x10, 9, x, 10]", Arrays.toString(output1.get(1)));
+    }
+    
+    public void testFindAllNoMatch() throws Exception {
+        final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
+        final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+
+        final RegexParserTransformer t = new RegexParserTransformer();
+        t.column = col;
+        t.pattern = Pattern.compile("(\\d+\\,?\\d*)(x|X)(\\d+\\,?\\d*)");
+        t.mode = RegexParserTransformer.Mode.FIND_ALL;
+        t.outputRowCollector = outputRowCollector;
+
+        final String[] transformResult1 = t.transform(new MockInputRow().put(col, "foo"));
+        assertEquals("[null, null, null, null]", Arrays.toString(transformResult1));
+        
+        final List<Object[]> output1 = outputRowCollector.getOutput();
+        assertEquals(0, output1.size());
     }
 }

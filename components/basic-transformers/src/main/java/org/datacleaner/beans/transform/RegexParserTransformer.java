@@ -24,15 +24,19 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
 
@@ -42,12 +46,42 @@ import org.datacleaner.components.categories.TextCategory;
 @Categorized(TextCategory.class)
 public class RegexParserTransformer implements Transformer {
 
-    @Configured
+    public static enum Mode implements HasName {
+        @Description("Find the first match within the value.")
+        FIND_FIRST("Find first match"),
+
+        @Description("Find all matches of the expression within the value. Each match yields a new row in the data stream.")
+        FIND_ALL("Find all matches"),
+
+        @Description("Match the complete value using the expression.")
+        FULL_MATCH("Match the complete value");
+        
+        private final String _name;
+        
+        private Mode(String name) {
+            _name = name;
+        }
+
+        @Override
+        public String getName() {
+            return _name;
+        }
+    }
+
+    @Configured("Value")
+    @Alias("Column")
     InputColumn<String> column;
 
     @Configured
     @Description("A regular expression containing\ngroup tokens, marked by parantheses.\n\nFor example:\n([a-z]+)_(\\d*)")
     Pattern pattern;
+
+    @Configured
+    @Description("The expression-and-value matching mode employed")
+    Mode mode = Mode.FULL_MATCH;
+    
+    @Provided
+    OutputRowCollector outputRowCollector;
 
     @Override
     public OutputColumns getOutputColumns() {
@@ -60,14 +94,42 @@ public class RegexParserTransformer implements Transformer {
 
     @Override
     public String[] transform(InputRow inputRow) {
-        final Matcher matcher = pattern.matcher("");
         final String value = inputRow.getValue(column);
-        final boolean match = value != null && matcher.reset(value).matches();
-
-        String[] result = new String[matcher.groupCount() + 1];
+        final Matcher matcher;
+        final boolean match;
+        if (value == null) {
+            matcher = pattern.matcher("");
+            match = false;
+        } else {
+            matcher = pattern.matcher(value);
+            switch (mode) {
+            case FULL_MATCH:
+                match = matcher.matches();
+                break;
+            case FIND_FIRST:
+            case FIND_ALL:
+                match = matcher.find();
+                break;
+            default:
+                throw new UnsupportedOperationException();
+            }
+        }
+        
+        final String[] result = new String[matcher.groupCount() + 1];
         for (int i = 0; i < result.length; i++) {
             result[i] = match ? matcher.group(i) : null;
         }
+        
+        if (mode == Mode.FIND_ALL) {
+            while (matcher.find()) {
+                final Object[] nextResult = new Object[matcher.groupCount() + 1];
+                for (int i = 0; i < nextResult.length; i++) {
+                    nextResult[i] = matcher.group(i);
+                }
+                outputRowCollector.putValues(nextResult);
+            }
+        }
+        
         return result;
     }
 }

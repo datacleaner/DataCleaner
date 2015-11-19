@@ -94,7 +94,7 @@ h3 {
 							<#list category.components as component>
 								<li class="list-group-item componentItem">
 									<a href="${component.href}">
-										<img src="${component.iconSrc}" width="16" height="16" alt="" />
+										<img src="${component.iconSrc(component.iconSizeLarge)}" width="16" height="16" alt="" />
 										<span>${component.name}</span>
 									</a>
 								</li>
@@ -107,7 +107,7 @@ h3 {
 					<#list superCategory.components as component>
 						<li class="list-group-item componentItem">
 							<a href="${component.href}">
-								<img src="${component.iconSrc}" width="16" height="16" alt="" />
+								<img src="${component.iconSrc(component.iconSizeLarge)}" width="16" height="16" alt="" />
 								<span>${component.name}</span>
 							</a>
 						</li>

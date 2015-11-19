@@ -427,17 +427,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public ComponentBuilder addComponent(ComponentDescriptor<?> descriptor) {
-        final ComponentBuilder builder;
-        if (descriptor instanceof FilterDescriptor) {
-            builder = addFilter((FilterDescriptor<?, ?>) descriptor);
-        } else if (descriptor instanceof TransformerDescriptor) {
-            builder = addTransformer((TransformerDescriptor<?>) descriptor);
-        } else if (descriptor instanceof AnalyzerDescriptor) {
-            builder = addAnalyzer((AnalyzerDescriptor<?>) descriptor);
-        } else {
-            throw new UnsupportedOperationException("Unknown component type: " + descriptor);
-        }
-        return builder;
+        return addComponent(descriptor, null, null, null);
     }
 
     public ComponentBuilder addComponent(ComponentBuilder builder) {
@@ -493,14 +483,17 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return The same builder
      */
     public ComponentBuilder moveComponent(ComponentBuilder builder) {
-        builder.getAnalysisJobBuilder().removeComponent(builder);
+        if(builder.getAnalysisJobBuilder() != this) {
+            builder.getAnalysisJobBuilder().removeComponent(builder);
 
-        // when moving the component to a different scope we need to first reset
-        // the prior input
-        builder.clearInputColumns();
+            // when moving the component to a different scope we need to first reset
+            // the prior input
+            builder.clearInputColumns();
 
-        addComponent(builder);
-        builder.setAnalysisJobBuilder(this);
+            addComponent(builder);
+            builder.setAnalysisJobBuilder(this);
+        }
+
         return builder;
     }
 

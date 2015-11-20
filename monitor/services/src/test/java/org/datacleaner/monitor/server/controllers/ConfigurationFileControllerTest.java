@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class ConfigurationFileControllerTest extends EasyMockSupport {
 
         EasyMock.expect(tenantContextFactory.getContext("tenant1")).andReturn(tenantContext);
         File file = new File("target/ConfigurationFileControllerTest.testGetFileContents.conf.xml");
-        FileHelper.writeStringAsFile(file, "<configuration></configuration>");
+        FileHelper.writeString(new FileOutputStream(file), "<configuration></configuration>",
+                FileHelper.DEFAULT_ENCODING);
 
         FileRepositoryFile configurationFile = new FileRepositoryFile(new FileRepository("target"), file);
         EasyMock.expect(tenantContext.getConfigurationFile()).andReturn(configurationFile);

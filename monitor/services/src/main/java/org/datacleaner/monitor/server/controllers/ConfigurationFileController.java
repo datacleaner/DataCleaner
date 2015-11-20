@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +35,8 @@ import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping({"/{tenant}/conf.xml","/{tenant}/configuration"})
+@RequestMapping({ "/{tenant}/conf.xml", "/{tenant}/configuration" })
 public class ConfigurationFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFileController.class);
@@ -98,7 +99,7 @@ public class ConfigurationFileController {
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
-    public String downloadConfigurationFile(@PathVariable("tenant") final String tenant, final OutputStream out) {
+    public HttpEntity<byte[]> downloadConfigurationFile(@PathVariable("tenant") final String tenant) {
 
         final TenantContext context = _contextFactory.getContext(tenant);
         final RepositoryFile configurationFile = context.getConfigurationFile();
@@ -107,11 +108,17 @@ public class ConfigurationFileController {
             throw new IllegalStateException("Configuration file not found!");
         }
 
-        return configurationFile.readFile(new Func<InputStream, String>() {
+        final byte[] documentBody = configurationFile.readFile(new Func<InputStream, byte[]>() {
             @Override
-            public String eval(InputStream in) {
-                return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
+            public byte[] eval(InputStream in) {
+                return FileHelper.readAsBytes(in);
             }
         });
+
+        final HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_XML);
+        header.setContentLength(documentBody.length);
+        return new HttpEntity<byte[]>(documentBody, header);
+
     }
 }

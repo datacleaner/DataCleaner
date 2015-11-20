@@ -64,7 +64,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
         }
     }
 
-    public void cancelIfRunning() throws Exception {
+    public void cancelIfRunning(){
         final AnalysisResultFuture resultFuture = getResultFuture();
         if (resultFuture != null) {
             if (!resultFuture.isDone()) {

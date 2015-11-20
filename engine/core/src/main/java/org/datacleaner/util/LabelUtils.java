@@ -33,6 +33,7 @@ import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
@@ -224,5 +225,15 @@ public final class LabelUtils {
         }
 
         return getLabel(value.toString());
+    }
+
+    public static String getScopeLabel(final AnalysisJobBuilder sourceAnalysisJobBuilder) {
+        final String scopeText;
+        if(sourceAnalysisJobBuilder.isRootJobBuilder()){
+            scopeText = "default scope";
+        } else {
+            scopeText = "scope " + sourceAnalysisJobBuilder.getDatastore().getName();
+        }
+        return scopeText;
     }
 }

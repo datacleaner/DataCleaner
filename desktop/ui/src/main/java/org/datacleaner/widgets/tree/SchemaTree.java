@@ -59,6 +59,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
@@ -88,11 +89,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree
-        implements TreeWillExpandListener, TreeCellRenderer, ComponentDescriptorsUpdatedListener {
+public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
+        ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
-
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
 
     public static final String LOADING_TABLES_STRING = "Loading tables...";
@@ -108,13 +108,14 @@ public class SchemaTree extends JXTree
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
-
+    private boolean _includeLibraryNode = true;
+    private final DataCleanerConfiguration _configuration;
     private DatastoreConnection _datastoreConnection;
     private String _searchTerm = "";
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            DataCleanerConfiguration configuration, WindowContext windowContext, InjectorBuilder injectorBuilder) {
         super();
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
@@ -122,11 +123,10 @@ public class SchemaTree extends JXTree
         _datastore = datastore;
         _windowContext = windowContext;
         _analysisJobBuilder = analysisJobBuilder;
+        _configuration = configuration;
         _injectorBuilder = injectorBuilder;
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
-        _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider()
-                .addComponentDescriptorsUpdatedListener(this);
 
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -142,6 +142,8 @@ public class SchemaTree extends JXTree
     @Override
     public void addNotify() {
         super.addNotify();
+
+        _configuration.getEnvironment().getDescriptorProvider().addComponentDescriptorsUpdatedListener(this);
 
         final Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
 
@@ -165,6 +167,9 @@ public class SchemaTree extends JXTree
     @Override
     public void removeNotify() {
         super.removeNotify();
+
+        _configuration.getEnvironment().getDescriptorProvider().removeComponentDescriptorsUpdatedListener(this);
+
         final MouseListener[] mouseListeners = getMouseListeners();
         for (MouseListener mouseListener : mouseListeners) {
             removeMouseListener(mouseListener);
@@ -173,6 +178,10 @@ public class SchemaTree extends JXTree
     }
 
     public void expandSelectedData() {
+        if (_analysisJobBuilder == null) {
+            // do nothing
+            return;
+        }
         final List<Table> tables = _analysisJobBuilder.getSourceTables();
         for (Table table : tables) {
             expandTable(table);
@@ -261,17 +270,18 @@ public class SchemaTree extends JXTree
             datastoreNode.add(schemaNode);
         }
 
-        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
-        createLibrary(libraryRoot);
-        rootNode.add(libraryRoot);
+        if (_includeLibraryNode) {
+            DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
+            createLibrary(libraryRoot);
+            rootNode.add(libraryRoot);
+        }
 
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
 
     private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getEnvironment()
-                .getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
 
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
@@ -334,12 +344,12 @@ public class SchemaTree extends JXTree
         if (searchTerm.isEmpty()) {
             return true;
         }
-        
+
         final String displayName = normalizeStringForMatching(componentDescriptor.getDisplayName());
         if (displayName.contains(searchTerm)) {
             return true;
         }
-        
+
         final String[] aliases = componentDescriptor.getAliases();
         for (String alias : aliases) {
             alias = normalizeStringForMatching(alias);
@@ -347,7 +357,7 @@ public class SchemaTree extends JXTree
                 return true;
             }
         }
-        
+
         final Set<ComponentCategory> categories = componentDescriptor.getComponentCategories();
         for (ComponentCategory category : categories) {
             final String categoryString = normalizeStringForMatching(category.getName());
@@ -355,12 +365,12 @@ public class SchemaTree extends JXTree
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     private static String normalizeStringForMatching(String str) {
-     return   StringUtils.replaceWhitespaces(str, "").toLowerCase();
+        return StringUtils.replaceWhitespaces(str, "").toLowerCase();
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
@@ -522,8 +532,8 @@ public class SchemaTree extends JXTree
         } else if (value instanceof Column) {
             Column column = (Column) value;
             String columnLabel = column.getName();
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf, row,
-                    hasFocus);
+            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf,
+                    row, hasFocus);
             icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentSuperCategory) {
             ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
@@ -672,4 +682,9 @@ public class SchemaTree extends JXTree
             }
         }
     }
+
+    public void setIncludeLibraryNode(boolean includeLibraryNode) {
+        _includeLibraryNode = includeLibraryNode;
+    }
+
 }

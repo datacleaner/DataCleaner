@@ -48,6 +48,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.slf4j.Logger;
@@ -106,7 +107,7 @@ public class JobGraphLinkPainter {
 
     /**
      * Called when the drawing of a new link/edge is started
-     * 
+     *
      * @param startVertex
      */
     public void startLink(VertexContext startVertex) {
@@ -140,7 +141,7 @@ public class JobGraphLinkPainter {
     /**
      * If startVertex is non-null this method will attempt to end the
      * link-painting at the given endVertex
-     * 
+     *
      * @return true if a link drawing was ended or false if it wasn't started
      */
     public boolean endLink(Object endVertex, MouseEvent mouseEvent) {
@@ -224,8 +225,8 @@ public class JobGraphLinkPainter {
 
         if (toVertex instanceof ComponentBuilder) {
             final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
-            if (sourceColumns != null && !sourceColumns.isEmpty()) {
 
+            if (sourceColumns != null && !sourceColumns.isEmpty()) {
                 if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
                     if (!fromVertex.getAnalysisJobBuilder().isRootJobBuilder()) {
                         // we don't yet support MultiStreamComponents on output
@@ -234,10 +235,13 @@ public class JobGraphLinkPainter {
                     }
                 }
 
+                if (!scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                    return false;
+                }
+
+                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+
                 try {
-                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
-                        sourceAnalysisJobBuilder.moveComponent(componentBuilder);
-                    }
 
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
@@ -270,7 +274,10 @@ public class JobGraphLinkPainter {
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
+                            if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                                addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
+                            }
                         }
                     });
                     popup.add(menuItem);
@@ -287,6 +294,32 @@ public class JobGraphLinkPainter {
         }
         logger.debug("createLink(...) returning false - no applicable action");
         return false;
+    }
+
+    /**
+     * This will check if components are in a different scope, and ask the user for
+     * permission to change the scope of the target component
+     *
+     * @return true if permitted or irrelevant, false if user refused a necessary scope change.
+     */
+    private boolean scopeUpdatePermitted(final AnalysisJobBuilder sourceAnalysisJobBuilder,
+            final ComponentBuilder componentBuilder) {
+        if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
+            if (componentBuilder.getInput().length > 0 || componentBuilder.getComponentRequirement() != null) {
+                final String scopeText;
+                scopeText = LabelUtils.getScopeLabel(sourceAnalysisJobBuilder);
+                final int response = JOptionPane.showConfirmDialog(_graphContext.getVisualizationViewer(),
+                        "This will move " + LabelUtils.getLabel(componentBuilder) + " into the " + scopeText
+                                + ", thereby losing its configured columns and/or requirements", "Change scope?",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                if(response == JOptionPane.CANCEL_OPTION){
+                    _graphContext.getJobGraph().refresh();
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     protected void addOrSetFilterOutcomeAsRequirement(ComponentBuilder componentBuilder, FilterOutcome filterOutcome) {

@@ -123,7 +123,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
         }
 
-        return new SparkAnalysisResultFuture(results);
+        return new SparkAnalysisResultFuture(results, _sparkJobContext);
     }
 
     private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {

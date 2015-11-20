@@ -93,7 +93,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
-
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
 
     public static final String LOADING_TABLES_STRING = "Loading tables...";
@@ -109,8 +108,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
+    private boolean _includeLibraryNode = true;
     private final DataCleanerConfiguration _configuration;
-
     private DatastoreConnection _datastoreConnection;
     private String _searchTerm = "";
 
@@ -271,9 +270,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             datastoreNode.add(schemaNode);
         }
 
-        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
-        createLibrary(libraryRoot);
-        rootNode.add(libraryRoot);
+        if (_includeLibraryNode) {
+            DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
+            createLibrary(libraryRoot);
+            rootNode.add(libraryRoot);
+        }
 
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
@@ -679,4 +680,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             }
         }
     }
+
+    public void setIncludeLibraryNode(boolean includeLibraryNode) {
+        _includeLibraryNode = includeLibraryNode;
+    }
+
 }

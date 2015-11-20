@@ -94,7 +94,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
 
 		jobCompletionListener.onError(null, new AnalysisJobCancellation());
 		EasyMock.expect(errorAware.isCancelled()).andReturn(true);
-
+        EasyMock.expect(jobCompletionListener.isDone()).andReturn(false);
 		EasyMock.replay(jobCompletionListener, errorAware);
 
 		AnalysisResultFutureImpl resultFuture = new AnalysisResultFutureImpl(resultQueue, jobCompletionListener, errorAware);
@@ -104,4 +104,20 @@ public class AnalysisResultFutureImplTest extends TestCase {
 
 		EasyMock.verify(jobCompletionListener, errorAware);
 	}
+	public void testCancelJobfinished() throws Exception {
+        Queue<JobAndResult> resultQueue = new LinkedList<JobAndResult>();
+        StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
+        ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
+
+        EasyMock.expect(errorAware.isCancelled()).andReturn(false);
+        EasyMock.expect(jobCompletionListener.isDone()).andReturn(true);
+        EasyMock.replay(jobCompletionListener, errorAware);
+
+        AnalysisResultFutureImpl resultFuture = new AnalysisResultFutureImpl(resultQueue, jobCompletionListener, errorAware);
+        resultFuture.cancel();
+
+        assertFalse(resultFuture.isCancelled());
+
+        EasyMock.verify(jobCompletionListener, errorAware);
+    }
 }

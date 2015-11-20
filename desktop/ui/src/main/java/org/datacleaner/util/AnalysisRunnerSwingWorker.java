@@ -19,6 +19,8 @@
  */
 package org.datacleaner.util;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.swing.SwingWorker;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -63,11 +65,25 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
         }
     }
 
-    public void cancelIfRunning() {
-        if (_resultFuture != null) {
-            if (!_resultFuture.isDone()) {
-                _resultFuture.cancel();
+    public void cancelIfRunning() throws Exception {
+        final AnalysisResultFuture resultFuture = getResultFuture();
+        if (resultFuture != null) {
+            if (!resultFuture.isDone()) {
+                resultFuture.cancel();
             }
         }
+    }
+    
+    public AnalysisResultFuture getResultFuture() {
+        if (_resultFuture == null){
+           try {
+            _resultFuture = this.get();
+        } catch (InterruptedException e) {
+          logger.error("Unable to fetch result" + e.getStackTrace());
+        } catch (ExecutionException e) {
+            logger.error("Unable to fetch result" + e.getStackTrace());  
+        } 
+        }
+        return _resultFuture;
     }
 }

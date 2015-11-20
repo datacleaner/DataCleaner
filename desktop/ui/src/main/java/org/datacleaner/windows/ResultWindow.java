@@ -242,7 +242,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             _cancelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    _worker.cancelIfRunning();
+                    try {
+                        logger.info("Procedding to cancel the job");
+                        _worker.cancelIfRunning();
+                    } catch (Exception exception) {
+                       WidgetUtils.showErrorMessage("Error while cancelling the job", exception);
+                    }
                 }
             });
         } else {
@@ -376,7 +381,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         boolean closing = super.onWindowClosing();
         if (closing) {
             if (_worker != null) {
-                _worker.cancelIfRunning();
+                try {
+                    _worker.cancelIfRunning();
+                } catch (Exception e) {
+                    WidgetUtils.showErrorMessage("Error while cancelling the job", e);
+                }
             }
         }
         return closing;

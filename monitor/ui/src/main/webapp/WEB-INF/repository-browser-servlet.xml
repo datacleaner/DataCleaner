@@ -54,7 +54,6 @@
 
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<!-- deprecated: class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"> -->
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonMessageConverter" />

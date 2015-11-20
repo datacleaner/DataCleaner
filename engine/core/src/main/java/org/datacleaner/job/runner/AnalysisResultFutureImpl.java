@@ -66,7 +66,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
 
 	@Override
 	public void cancel() {
-		if (!_done) {
+		if (!isDone()) {
 			_jobTaskListener.onError(null, new AnalysisJobCancellation());
 		}
 	}

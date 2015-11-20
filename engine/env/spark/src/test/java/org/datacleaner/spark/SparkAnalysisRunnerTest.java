@@ -67,10 +67,10 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-
+            assertEquals("vanilla-job",sparkJobContext.getAnalysisJobName());
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
-
             result = sparkAnalysisRunner.run(job);
+            
         } finally {
             sparkContext.close();
         }
@@ -79,6 +79,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
             throw (Exception) result.getErrors().get(0);
         }
 
+        assertEquals(2, result.getResultMap().size());
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(2, results.size());
 
@@ -92,7 +93,6 @@ public class SparkAnalysisRunnerTest extends TestCase {
         final int upperCaseChars = stringAnalyzerResult.getEntirelyUpperCaseCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, upperCaseChars);
     }
-
     @Test
     public void testWriteDataScenario() throws Exception {
         final String outputPath = "target/write-job.csv";
@@ -111,7 +111,8 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-
+            assertEquals("write-job",sparkJobContext.getAnalysisJobName());
+            
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     MIN_PARTITIONS_MULTIPLE);
 
@@ -163,6 +164,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/melon-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("melon-job",sparkJobContext.getAnalysisJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
 
@@ -209,6 +211,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/non-dist-melon-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("non-dist-melon-job",sparkJobContext.getAnalysisJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     MIN_PARTITIONS_MULTIPLE);
@@ -259,6 +262,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/distributable-value-dist.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("distributable-value-dist",sparkJobContext.getAnalysisJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     MIN_PARTITIONS_MULTIPLE);
@@ -297,6 +301,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/distributable-grouped-value-dist.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("distributable-grouped-value-dist",sparkJobContext.getAnalysisJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     MIN_PARTITIONS_MULTIPLE);
@@ -360,6 +365,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/json-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("json-job",sparkJobContext.getAnalysisJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
 

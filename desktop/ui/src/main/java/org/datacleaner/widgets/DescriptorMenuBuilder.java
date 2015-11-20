@@ -44,6 +44,7 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.CollectionUtils2;
+import org.datacleaner.util.ComponentDescriptorComparator;
 import org.datacleaner.util.DeprecatedComponentPredicate;
 import org.datacleaner.util.DisplayNameComparator;
 import org.slf4j.Logger;
@@ -172,10 +173,10 @@ public final class DescriptorMenuBuilder {
 
     private static Collection<? extends ComponentDescriptor<?>> getFinalComponentDescriptors(
             Collection<? extends ComponentDescriptor<?>> allComponentDescriptors, boolean showAllRemoteComponents) {
-        final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
-                .sorted(allComponentDescriptors);
+        Collections.sort((List<? extends ComponentDescriptor<?>>) allComponentDescriptors,
+                new ComponentDescriptorComparator());
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
-                sortedComponentDescriptors, new DeprecatedComponentPredicate());
+                allComponentDescriptors, new DeprecatedComponentPredicate());
 
         if (showAllRemoteComponents) {
             return filteredDescriptors;

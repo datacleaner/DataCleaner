@@ -56,9 +56,17 @@ public class ConfigurationFileController {
     TenantContextFactory _contextFactory;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadConfigurationFileHtml(@PathVariable("tenant") final String tenant,
+            @RequestParam("file") final MultipartFile file) throws Exception {
+        Map<String, String> outcome = uploadConfigurationFileJson(tenant, file);
+        return "redirect:/repository.jsf?configuration_upload=" + outcome.get("status");
+    }
+
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public Map<String, String> uploadConfigurationFile(@PathVariable("tenant") final String tenant,
+    public Map<String, String> uploadConfigurationFileJson(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws Exception {
         if (file == null) {
             logger.warn("No upload file provided, throwing IllegalArgumentException");

@@ -59,6 +59,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
@@ -108,13 +109,13 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
     private boolean _includeLibraryNode = true;
-
+    private final DataCleanerConfiguration _configuration;
     private DatastoreConnection _datastoreConnection;
     private String _searchTerm = "";
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            DataCleanerConfiguration configuration, WindowContext windowContext, InjectorBuilder injectorBuilder) {
         super();
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
@@ -122,11 +123,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _datastore = datastore;
         _windowContext = windowContext;
         _analysisJobBuilder = analysisJobBuilder;
+        _configuration = configuration;
         _injectorBuilder = injectorBuilder;
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
-        _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider()
-                .addComponentDescriptorsUpdatedListener(this);
 
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -142,6 +142,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     @Override
     public void addNotify() {
         super.addNotify();
+
+        _configuration.getEnvironment().getDescriptorProvider().addComponentDescriptorsUpdatedListener(this);
 
         final Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
 
@@ -165,6 +167,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     @Override
     public void removeNotify() {
         super.removeNotify();
+
+        _configuration.getEnvironment().getDescriptorProvider().removeComponentDescriptorsUpdatedListener(this);
+
         final MouseListener[] mouseListeners = getMouseListeners();
         for (MouseListener mouseListener : mouseListeners) {
             removeMouseListener(mouseListener);
@@ -173,6 +178,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     public void expandSelectedData() {
+        if (_analysisJobBuilder == null) {
+            // do nothing
+            return;
+        }
         final List<Table> tables = _analysisJobBuilder.getSourceTables();
         for (Table table : tables) {
             expandTable(table);
@@ -272,8 +281,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getEnvironment()
-                .getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
 
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {

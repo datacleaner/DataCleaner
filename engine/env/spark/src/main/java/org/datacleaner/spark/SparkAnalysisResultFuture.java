@@ -22,6 +22,7 @@ package org.datacleaner.spark;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,10 +40,12 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
 
     private final Date _creationDate;
     private final List<Tuple2<String, AnalyzerResult>> _results;
+    private final SparkJobContext _sparkJobContext;
 
-    public SparkAnalysisResultFuture(List<Tuple2<String, AnalyzerResult>> results) {
+    public SparkAnalysisResultFuture(List<Tuple2<String, AnalyzerResult>> results, SparkJobContext sparkJobContext) {
         _creationDate = new Date();
         _results = results;
+        _sparkJobContext = sparkJobContext;
     }
 
     @Override
@@ -98,8 +101,13 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
 
     @Override
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException {
-        // TODO: Needs to be implemented, but probably "results" will change anyway
-        throw new UnsupportedOperationException();
+        final Map<ComponentJob, AnalyzerResult> resultMap = new HashMap<>();
+        for (Tuple2<String, AnalyzerResult> tuple : _results) {
+            final ComponentJob component = _sparkJobContext.getComponentByKey(tuple._1);
+            final AnalyzerResult analyzerResult = tuple._2;
+            resultMap.put(component, analyzerResult);
+        }
+        return resultMap;
     }
 
     @Override

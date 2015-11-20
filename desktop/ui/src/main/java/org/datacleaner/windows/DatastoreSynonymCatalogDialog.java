@@ -22,8 +22,6 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -31,8 +29,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -42,9 +38,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -58,10 +52,7 @@ import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
-import org.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
-
-import com.google.inject.Injector;
 
 public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
@@ -74,20 +65,16 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
     private final JXTextField _nameTextField;
     private final DatastoreCatalog _datastoreCatalog;
     private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
-    private final InjectorBuilder _injectorBuilder;
     private Datastore _datastore;
-    private final DCPanel _treePanel;
-    private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
     protected DatastoreSynonymCatalogDialog(@Nullable DatastoreSynonymCatalog synonymCatalog,
             MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH));
         _originalsynonymCatalog = synonymCatalog;
         _datastoreCatalog = datastoreCatalog;
         _mutableReferenceCatalog = mutableReferenceCatalog;
-        _injectorBuilder = injectorBuilder;
         _nameTextField = WidgetFactory.createTextField("Synonym catalog name");
         String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
@@ -95,8 +82,6 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
-        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        _treePanel.setLayout(new BorderLayout());
 
         _datastoreComboBox.addActionListener(new ActionListener() {
 
@@ -122,32 +107,6 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                     });
 
                     _synonymColumnsPanel.setModel(_datastore);
-                    if (_datastore != null) {
-                        _treePanel.removeAll();
-                        Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, _datastore)
-                                .with(AnalysisJobBuilder.class, null).createInjector();
-
-                        final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
-                        schemaTree.addMouseListener(new MouseAdapter() {
-                            @Override
-                            public void mouseClicked(MouseEvent e) {
-                                TreePath path = schemaTree.getSelectionPath();
-                                if (path == null) {
-                                    return;
-                                }
-                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                                if (node.getUserObject() instanceof Column) {
-                                    Column column = (Column) node.getUserObject();
-
-                                    if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
-                                        _nameTextField.setText(column.getName());
-                                        _nameAutomaticallySet = true;
-                                    }
-
-                                }
-                            };
-                        });
-                    }
                 }
             }
         });
@@ -182,7 +141,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 465;
+        return 565;
     }
 
     @Override
@@ -248,7 +207,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.setPreferredSize(getDialogWidth(), 230);
+        mainPanel.setPreferredSize(getDialogWidth(), 350);
 
         return mainPanel;
     }

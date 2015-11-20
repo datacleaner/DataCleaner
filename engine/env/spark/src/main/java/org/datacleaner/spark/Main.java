@@ -19,18 +19,36 @@
  */
 package org.datacleaner.spark;
 
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
 
+import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.log4j.Logger;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.result.SimpleAnalysisResult;
 
 public class Main {
+
+    static Logger logger = Logger.getLogger(Main.class);
+
+    private static String DEFAULT_RESULT_PATH = "/datacleaner/results/";
 
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
-                    + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n" + "Got: "
-                    + Arrays.toString(args));
+                    + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
+                    + "Got: " + Arrays.toString(args));
         }
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
@@ -39,20 +57,64 @@ public class Main {
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 
-        final String propertiesPath; 
+        final String propertiesPath;
         if (args.length > 2) {
             propertiesPath = args[2];
         } else {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath, propertiesPath);
-
+        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
+                propertiesPath);
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
-            sparkAnalysisRunner.run();
+            final AnalysisResultFuture result = sparkAnalysisRunner.run();
+            if (result.isDone()) {
+                final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
+                final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
+                        result.getCreationDate());
+                final String resultJobFilePath = getResultJobFilePath(sparkContext, sparkJobContext);
+                logger.info("The result of the job was written to " + resultJobFilePath);
+                if (resultJobFilePath != null) {
+                    final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
+                    final OutputStream out = hdfsResource.write();
+                    try {
+                        SerializationUtils.serialize(simpleAnalysisResult, out);
+                    } catch (SerializationException e) {
+                        logger.error("Error while trying to serialize the job");
+                        throw e;
+                    } finally {
+                        FileHelper.safeClose(out);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Exception " + e.getStackTrace());
+            throw e;
         } finally {
             sparkContext.stop();
         }
+    }
+
+    private static String getResultJobFilePath(final JavaSparkContext sparkContext,
+            final SparkJobContext sparkJobContext)  {
+        String resultPath = sparkJobContext.getResultPath();
+        final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
+        final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
+        if (resultPath == null) {
+            resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
+        } else { 
+            final URI uri = URI.create(resultPath);
+            if (!uri.isAbsolute()){
+                resultPath = fileSystemPrefix + resultPath;
+            }
+        }
+        final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
+        final Date date = new Date();
+        if (!resultPath.endsWith("/")) {
+            resultPath = resultPath + "/";
+        }
+        final String filePath = resultPath + analysisJobXmlName + "-" + date.getTime() + ".analysis.result.dat";
+        return filePath;
     }
 }

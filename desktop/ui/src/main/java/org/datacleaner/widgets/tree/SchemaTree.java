@@ -92,7 +92,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
-
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
 
     public static final String LOADING_TABLES_STRING = "Loading tables...";
@@ -115,7 +114,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) throws Exception {
+            WindowContext windowContext, InjectorBuilder injectorBuilder) {
         super();
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
@@ -266,7 +265,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
             createLibrary(libraryRoot);
             rootNode.add(libraryRoot);
-
         }
 
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);

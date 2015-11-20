@@ -177,8 +177,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _saveResultsPopupButton.getMenu().add(saveAsFileItem);
 
         JMenuItem exportToHtmlItem = WidgetFactory.createMenuItem("Export to HTML", IconUtils.WEBSITE);
-        exportToHtmlItem
-                .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
+        exportToHtmlItem.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
+                _userPreferences));
         exportToHtmlItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
 
@@ -246,7 +246,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         logger.info("Procedding to cancel the job");
                         _worker.cancelIfRunning();
                     } catch (Exception exception) {
-                       WidgetUtils.showErrorMessage("Error while cancelling the job", exception);
+                        WidgetUtils.showErrorMessage("Error while cancelling the job", exception);
                     }
                 }
             });
@@ -317,8 +317,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
-            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel,
-                    componentJob);
+            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
+                    _progressInformationPanel, componentJob);
             final Tab<AnalyzerResultPanel> tab = _tabbedPane.addTab(title, icon, resultPanel);
             tab.setTooltip(LabelUtils.getLabel(componentJob, false, true, true));
 
@@ -550,8 +550,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         final String startingProcessingString = "Starting processing of " + table.getName();
 
                         if (expectedRows != -1) {
-                            _progressInformationPanel
-                                    .addUserLog(startingProcessingString + " (approx. " + expectedRows + " rows)");
+                            _progressInformationPanel.addUserLog(startingProcessingString + " (approx. " + expectedRows
+                                    + " rows)");
                         } else {
                             _progressInformationPanel.addUserLog(startingProcessingString);
                         }
@@ -571,8 +571,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
                 logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
-                _progressInformationPanel.addUserLog(
-                        "Processing of " + metrics.getTable().getName() + " finished. Generating results...");
+                _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
+                        + " finished. Generating results...");
             }
 
             @Override
@@ -581,8 +581,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob,
-                    final AnalyzerResult result) {
+            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Component ");
                 sb.append(LabelUtils.getLabel(componentJob));
@@ -603,8 +602,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row,
-                    Throwable throwable) {
+            public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable) {
                 _progressInformationPanel.addUserLog(
                         "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable, true);
             }

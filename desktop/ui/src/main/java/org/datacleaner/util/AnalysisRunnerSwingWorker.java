@@ -45,8 +45,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     private final ResultWindow _resultWindow;
     private AnalysisResultFuture _resultFuture;
 
-    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job,
-            ResultWindow resultWindow) {
+    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job, ResultWindow resultWindow) {
         final AnalysisListener analysisListener = resultWindow.createAnalysisListener();
         _analysisRunner = new AnalysisRunnerImpl(configuration, analysisListener);
         _job = job;
@@ -73,16 +72,18 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
             }
         }
     }
-    
+
     public AnalysisResultFuture getResultFuture() {
-        if (_resultFuture == null){
-           try {
-            _resultFuture = this.get();
-        } catch (InterruptedException e) {
-          logger.error("Unable to fetch result" + e.getStackTrace());
-        } catch (ExecutionException e) {
-            logger.error("Unable to fetch result" + e.getStackTrace());  
-        } 
+        if (_resultFuture == null) {
+            try {
+                _resultFuture = this.get();
+            } catch (InterruptedException e) {
+                logger.error("Unable to fetch result" + e.getStackTrace());
+                return null;
+            } catch (ExecutionException e) {
+                logger.error("Unable to fetch result" + e.getStackTrace());
+                return null;
+            }
         }
         return _resultFuture;
     }

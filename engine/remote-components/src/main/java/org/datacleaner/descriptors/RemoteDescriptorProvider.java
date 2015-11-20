@@ -19,6 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -61,25 +62,39 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     }
 
     public boolean isServerUp() {
-        long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
 
-        try {
-            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now) {
-                URL siteURL = new URL(remoteServerData.getHost());
-                Socket socket = new Socket();
-                InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
-                socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
-                lastConnectionCheckResult = socket.isConnected();
-                lastConnectionCheckTime = now;
-            }
-        } catch (Exception e) {
-            lastConnectionCheckResult = false;
-            lastConnectionCheckTime = now;
-            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
-                    + ")' is down: " + e.getMessage());
+        if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now) {
+            (new Thread() {
+                @Override
+                public void run() {
+                    checkServerAvailability(now);
+                }
+            }).start();
         }
 
         return lastConnectionCheckResult;
+    }
+
+    private void checkServerAvailability(long now) {
+        try {
+            URL siteURL = new URL(remoteServerData.getHost());
+            Socket socket = new Socket();
+            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
+            socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
+
+            synchronized (this) {
+                lastConnectionCheckResult = socket.isConnected();
+                lastConnectionCheckTime = now;
+            }
+        } catch(IOException e) {
+            synchronized (this) {
+                lastConnectionCheckResult = false;
+                lastConnectionCheckTime = now;
+            }
+            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
+                    + ")' is down: " + e.getMessage());
+        }
     }
 
     public void refresh() {

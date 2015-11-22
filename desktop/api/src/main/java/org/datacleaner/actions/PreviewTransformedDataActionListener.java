@@ -151,9 +151,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             return new DefaultTableModel(0, 0);
         }
 
-        // remove all analyzers, except the dummy
-        ajb.removeAllAnalyzers();
-
         // add the result collector (a dummy analyzer)
         final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
                 .addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))

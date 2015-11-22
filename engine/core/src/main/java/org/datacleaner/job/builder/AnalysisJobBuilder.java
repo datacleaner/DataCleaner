@@ -483,10 +483,11 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return The same builder
      */
     public ComponentBuilder moveComponent(ComponentBuilder builder) {
-        if(builder.getAnalysisJobBuilder() != this) {
+        if (builder.getAnalysisJobBuilder() != this) {
             builder.getAnalysisJobBuilder().removeComponent(builder);
 
-            // when moving the component to a different scope we need to first reset
+            // when moving the component to a different scope we need to first
+            // reset
             // the prior input
             builder.clearInputColumns();
 
@@ -498,16 +499,16 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     /**
-     * Creates a filter job builder like the incoming filter job. Note that
-     * input (columns and requirements) will not be mapped since these depend on
-     * the context of the {@link FilterJob} and may not be matched in the
-     * {@link AnalysisJobBuilder}.
+     * Creates a component builder similar to the incoming {@link ComponentJob}.
+     * Note that input (columns and requirements) will not be mapped since these
+     * depend on the context of the {@link FilterJob} and may not be matched in
+     * the {@link AnalysisJobBuilder}.
      *
      * @param componentJob
      *
      * @return the builder object for the specific component
      */
-    protected Object addComponent(ComponentJob componentJob) {
+    protected ComponentBuilder addComponent(ComponentJob componentJob) {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         final ComponentBuilder builder = addComponent(descriptor);
 

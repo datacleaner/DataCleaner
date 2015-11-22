@@ -40,8 +40,11 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.MockTransformer;
 
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest extends TestCase {
@@ -62,14 +65,33 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
-        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(
-                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("orderdb");
         analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.EMAIL");
         emailTransformerBuilder = analysisJobBuilder.addTransformer(EmailStandardizerTransformer.class);
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
+    }
+
+    public void testPreviewTransformationInOutputDataStream() throws Exception {
+        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> streamProducer = analysisJobBuilder
+                .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+        streamProducer.addInputColumn(emailTransformerBuilder.getOutputColumns().get(0));
+
+        final AnalysisJobBuilder streamJobBuilder = streamProducer
+                .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+        final TransformerComponentBuilder<MockTransformer> transformer = streamJobBuilder
+                .addTransformer(MockTransformer.class);
+        transformer.addInputColumn(streamJobBuilder.getSourceColumns().get(0));
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, transformer);
+        final TableModel tableModel = action.call();
+        assertEquals(17, tableModel.getRowCount());
+        
+        assertEquals("bar", tableModel.getValueAt(0, 0));
+        assertEquals("mocked: bar", tableModel.getValueAt(0, 1));
     }
 
     public void testJobWithMaxRowsFilter() throws Exception {

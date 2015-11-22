@@ -22,6 +22,7 @@ package org.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.swing.table.DefaultTableModel;
@@ -52,6 +53,8 @@ import org.slf4j.LoggerFactory;
  * {@link DataSetWindow}.
  */
 public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
+
+    private static final String METADATA_PROPERTY_MARKER = "org.datacleaner.preview.targetcomponent";
 
     private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
 
@@ -102,7 +105,26 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             _transformerJobBuilderPresenter.applyPropertyValues();
         }
 
-        final AnalysisJobBuilder ajb = copy(_transformerJobBuilder.getAnalysisJobBuilder());
+        final String jobBuilderIdentifier = UUID.randomUUID().toString();
+
+        final AnalysisJobBuilder originalAnalysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
+        // put a marker metadata property on the AnalysisJobBuilder to make
+        // it easy to identify it's equivalent object from the copy later.
+        originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties().put(METADATA_PROPERTY_MARKER,
+                jobBuilderIdentifier);
+        final AnalysisJobBuilder ajb;
+        try {
+            final AnalysisJobBuilder copyAnalysisJobBuilder = copy(originalAnalysisJobBuilder.getRootJobBuilder());
+            ajb = findAnalysisJobBuilder(copyAnalysisJobBuilder, jobBuilderIdentifier);
+        } finally {
+            // remove the marker metadata
+            originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties().remove(METADATA_PROPERTY_MARKER);
+        }
+
+        if (ajb == null) {
+            throw new IllegalStateException(
+                    "Could not find AnalysisJobBuilder copy which is equivalent to the original");
+        }
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(ajb);
@@ -149,7 +171,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         }
 
         final AnalysisRunner runner = new AnalysisRunnerImpl(ajb.getConfiguration());
-        final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
+        final AnalysisResultFuture resultFuture = runner.run(ajb.getRootJobBuilder().toAnalysisJob());
 
         resultFuture.await();
 
@@ -187,6 +209,27 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         return tableModel;
     }
 
+    private AnalysisJobBuilder findAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder,
+            String jobBuilderIdentifier) {
+        if (jobBuilderIdentifier
+                .equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties().get(METADATA_PROPERTY_MARKER))) {
+            return analysisJobBuilder;
+        }
+
+        final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
+        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+            final AnalysisJobBuilder result = findAnalysisJobBuilder(childJobBuilder, jobBuilderIdentifier);
+            if (result != null) {
+                return result;
+            } else {
+                // TODO: The output data stream should actually be removed
+                // then...
+            }
+        }
+
+        return null;
+    }
+
     private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb,
             TransformerComponentBuilder<?> transformerJobBuilder) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
@@ -196,8 +239,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     }
 
     private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
-        final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
-        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
-        return ajb;
+        final AnalysisJob analysisJob = original.getRootJobBuilder().withoutListeners().toAnalysisJob(false);
+        final AnalysisJobBuilder copy = new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
+        return copy;
     }
 }

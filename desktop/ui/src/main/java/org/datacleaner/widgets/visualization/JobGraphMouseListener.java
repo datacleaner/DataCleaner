@@ -84,8 +84,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private Point _pressedPoint;
 
-    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
-            JobGraphActions actions, WindowContext windowContext, UsageLogger usageLogger) {
+    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter, JobGraphActions actions,
+            WindowContext windowContext, UsageLogger usageLogger) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _actions = actions;
@@ -124,8 +124,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         popup.add(createLinkMenuItem(table));
 
-        final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
-                IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
+        final JMenuItem previewMenuItem = new JMenuItem("Preview data",
+                ImageManager.get().getImageIcon(IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
         final Datastore datastore = analysisJobBuilder.getDatastore();
         final List<MetaModelInputColumn> inputColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
@@ -147,8 +147,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final JPopupMenu popup = new JPopupMenu();
 
-        final JMenuItem configureComponentMenuItem = new JMenuItem("Configure ...", ImageManager.get().getImageIcon(
-                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
+        final JMenuItem configureComponentMenuItem = new JMenuItem("Configure ...",
+                ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
         configureComponentMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -179,16 +179,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         });
         popup.add(renameMenuItem);
 
-        if (componentBuilder instanceof TransformerComponentBuilder) {
+        if (!isMultiStream && componentBuilder instanceof TransformerComponentBuilder) {
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
-
-            if (!isMultiStream && tjb.getAnalysisJobBuilder().isRootJobBuilder()) {
-                final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
-                        IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-                previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
-                previewMenuItem.setEnabled(componentBuilder.isConfigured());
-                popup.add(previewMenuItem);
-            }
+            final JMenuItem previewMenuItem = new JMenuItem("Preview data",
+                    ImageManager.get().getImageIcon(IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
+            previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
+            previewMenuItem.setEnabled(componentBuilder.isConfigured());
+            popup.add(previewMenuItem);
         }
 
         if (ChangeRequirementMenu.isRelevant(componentBuilder)) {
@@ -200,8 +197,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     private JMenuItem createLinkMenuItem(final Object from) {
-        return createLinkMenuItem(new JobGraphLinkPainter.VertexContext(from,
-                _graphContext.getAnalysisJobBuilder(from), null));
+        return createLinkMenuItem(
+                new JobGraphLinkPainter.VertexContext(from, _graphContext.getAnalysisJobBuilder(from), null));
     }
 
     private JMenuItem createLinkMenuItem(final JobGraphLinkPainter.VertexContext from) {
@@ -213,8 +210,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             menuItemText = "Link \"" + from.getOutputDataStream().getName() + "\" to ...";
         }
 
-        final JMenuItem menuItem = new JMenuItem(menuItemText, imageManager.getImageIcon(IconUtils.ACTION_ADD,
-                IconUtils.ICON_SIZE_SMALL));
+        final JMenuItem menuItem = new JMenuItem(menuItemText,
+                imageManager.getImageIcon(IconUtils.ACTION_ADD, IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -1216,6 +1216,12 @@ public final class AnalysisJobBuilder implements Closeable {
         }
         assert _transformerComponentBuilders.isEmpty();
     }
+    
+    public void removeAllComponents() {
+        removeAllAnalyzers();
+        removeAllFilters();
+        removeAllTransformers();
+    }
 
     public void removeAllFilters() {
         final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<>(_filterComponentBuilders);

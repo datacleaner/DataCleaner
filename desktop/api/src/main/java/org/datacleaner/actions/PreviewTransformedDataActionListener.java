@@ -21,6 +21,8 @@ package org.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -29,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.data.MetaModelInputColumn;
@@ -36,6 +39,7 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -126,10 +130,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                     "Could not find AnalysisJobBuilder copy which is equivalent to the original");
         }
 
+        final TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
+        sanitizeIrrelevantComponents(ajb, tjb);
+
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(ajb);
-
-        final TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
         final List<Table> tables = ajb.getSourceTables();
         if (tables.size() > 1) {
             final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
@@ -209,6 +214,57 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         return tableModel;
     }
 
+    private void sanitizeIrrelevantComponents(AnalysisJobBuilder ajb, TransformerComponentBuilder<?> tjb) {
+        final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = createRelevantAnalysisJobBuildersList(ajb);
+
+        for (AnalysisJobBuilder relevantAnalysisJobBuilder : relevantAnalysisJobBuilders) {
+            final Collection<ComponentBuilder> componentBuilders = relevantAnalysisJobBuilder.getComponentBuilders();
+            for (ComponentBuilder componentBuilder : componentBuilders) {
+
+                // flag to indicate if this component is directly involved in
+                // populating data for the preview'ed component
+                boolean importantComponent = componentBuilder == tjb;
+
+                final List<OutputDataStream> streams = componentBuilder.getOutputDataStreams();
+                for (OutputDataStream stream : streams) {
+                    if (componentBuilder.isOutputDataStreamConsumed(stream)) {
+                        final AnalysisJobBuilder childJobBuilder = componentBuilder
+                                .getOutputDataStreamJobBuilder(stream);
+                        if (relevantAnalysisJobBuilders.contains(childJobBuilder)) {
+                            importantComponent = true;
+                        } else {
+                            // remove irrelevant output data stream job builder
+                            childJobBuilder.removeAllComponents();
+                        }
+                    }
+                }
+
+                if (!importantComponent && componentBuilder instanceof AnalyzerComponentBuilder) {
+                    // remove analyzers because they are generally more
+                    // heavy-weight and they produce no dependencies for other
+                    // components
+                    relevantAnalysisJobBuilder.removeComponent(componentBuilder);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a list with _just_ the relevant {@link AnalysisJobBuilder}s to
+     * include in the preview job
+     * 
+     * @param ajb
+     * @return
+     */
+    private List<AnalysisJobBuilder> createRelevantAnalysisJobBuildersList(AnalysisJobBuilder ajb) {
+        final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = new LinkedList<>();
+        relevantAnalysisJobBuilders.add(ajb);
+        while (!ajb.isRootJobBuilder()) {
+            ajb = ajb.getParentJobBuilder();
+        }
+        return relevantAnalysisJobBuilders;
+    }
+
     private AnalysisJobBuilder findAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder,
             String jobBuilderIdentifier) {
         if (jobBuilderIdentifier
@@ -221,9 +277,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             final AnalysisJobBuilder result = findAnalysisJobBuilder(childJobBuilder, jobBuilderIdentifier);
             if (result != null) {
                 return result;
-            } else {
-                // TODO: The output data stream should actually be removed
-                // then...
             }
         }
 

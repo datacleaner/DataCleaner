@@ -49,7 +49,7 @@ public class JobGraphKeyListener extends KeyAdapter {
     @Override
     public void keyTyped(KeyEvent e) {
         // react to DEL key strokes and delete components that are selected.
-        if (e.getKeyChar() == KeyEvent.VK_DELETE) {
+        if (e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
             final Set<Object> vertices = _graphContext.getSelectedVertices();
             logger.debug("Registered typed DEL. Vertices: {}", vertices);
             if ((vertices != null) && (!vertices.isEmpty())) {

@@ -51,14 +51,13 @@ public class JobGraphKeyListener extends KeyAdapter {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        // react to DEL key strokes and delete components that are selected.
+    public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
         case KeyEvent.VK_DELETE:
         case KeyEvent.VK_BACK_SPACE:
             onRemoveKey();
             break;
-        case KeyEvent.VK_F4:
+        case KeyEvent.VK_F2:
             onRenameKey();
             break;
         case KeyEvent.VK_F5:

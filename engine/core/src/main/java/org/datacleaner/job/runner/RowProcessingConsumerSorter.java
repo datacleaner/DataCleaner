@@ -39,100 +39,100 @@ import org.datacleaner.job.InputColumnSourceJob;
 /**
  * Helping class for the row processing publisher, that will help sort the
  * consumers correctly
- * 
- * 
  */
 class RowProcessingConsumerSorter {
 
-	private final Collection<? extends RowProcessingConsumer> _consumers;
+    private final Collection<? extends RowProcessingConsumer> _consumers;
 
-	public RowProcessingConsumerSorter(Collection<? extends RowProcessingConsumer> consumers) {
-		_consumers = consumers;
-	}
+    public RowProcessingConsumerSorter(Collection<? extends RowProcessingConsumer> consumers) {
+        _consumers = consumers;
+    }
 
-	public List<RowProcessingConsumer> createProcessOrderedConsumerList() {
-	    final List<RowProcessingConsumer> orderedConsumers = new ArrayList<RowProcessingConsumer>();
-		final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<RowProcessingConsumer>(_consumers);
-		final Set<InputColumn<?>> availableVirtualColumns = new HashSet<InputColumn<?>>();
-		final FilterOutcomes availableOutcomes = new FilterOutcomesImpl();
+    public List<RowProcessingConsumer> createProcessOrderedConsumerList() {
+        final List<RowProcessingConsumer> orderedConsumers = new ArrayList<RowProcessingConsumer>();
+        final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<RowProcessingConsumer>(_consumers);
+        final Set<InputColumn<?>> availableVirtualColumns = new HashSet<InputColumn<?>>();
+        final FilterOutcomes availableOutcomes = new FilterOutcomesImpl();
 
-		while (!remainingConsumers.isEmpty()) {
-			boolean changed = false;
-			for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
-			    final RowProcessingConsumer consumer = it.next();
+        while (!remainingConsumers.isEmpty()) {
+            boolean changed = false;
+            for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
+                final RowProcessingConsumer consumer = it.next();
 
-				boolean accepted = true;
+                boolean accepted = true;
 
-				// make sure that any dependent filter outcome is evaluated
-				// before this component
-				accepted = consumer.satisfiedForFlowOrdering(availableOutcomes);
+                // make sure that any dependent filter outcome is evaluated
+                // before this component
+                accepted = consumer.satisfiedForFlowOrdering(availableOutcomes);
 
-				// make sure that all the required colums are present
-				if (accepted) {
-					InputColumn<?>[] requiredInput = consumer.getRequiredInput();
-					if (requiredInput != null) {
-						for (InputColumn<?> inputColumn : requiredInput) {
-							if (!inputColumn.isPhysicalColumn()) {
-								if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
-									if (!availableVirtualColumns.contains(inputColumn)) {
-										accepted = false;
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
+                // make sure that all the required colums are present
+                if (accepted) {
+                    InputColumn<?>[] requiredInput = consumer.getRequiredInput();
+                    if (requiredInput != null) {
+                        for (InputColumn<?> inputColumn : requiredInput) {
+                            if (!inputColumn.isPhysicalColumn()) {
+                                if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
+                                    if (!availableVirtualColumns.contains(inputColumn)) {
+                                        accepted = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
-				if (accepted) {
-					orderedConsumers.add(consumer);
-					it.remove();
-					changed = true;
+                if (accepted) {
+                    orderedConsumers.add(consumer);
+                    it.remove();
+                    changed = true;
 
-					final ComponentJob componentJob = consumer.getComponentJob();
+                    final ComponentJob componentJob = consumer.getComponentJob();
 
-					final InputColumn<?>[] requiredInput = consumer.getRequiredInput();
-					for (InputColumn<?> inputColumn : requiredInput) {
-						if (inputColumn instanceof ExpressionBasedInputColumn) {
-							availableVirtualColumns.add(inputColumn);
-						}
-					}
+                    final InputColumn<?>[] requiredInput = consumer.getRequiredInput();
+                    for (InputColumn<?> inputColumn : requiredInput) {
+                        if (inputColumn instanceof ExpressionBasedInputColumn) {
+                            availableVirtualColumns.add(inputColumn);
+                        }
+                    }
 
-					if (componentJob instanceof InputColumnSourceJob) {
-					    final InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
-						for (InputColumn<?> col : output) {
-							availableVirtualColumns.add(col);
-						}
-					}
+                    if (componentJob instanceof InputColumnSourceJob) {
+                        final InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
+                        for (InputColumn<?> col : output) {
+                            availableVirtualColumns.add(col);
+                        }
+                    }
 
-					if (componentJob instanceof HasFilterOutcomes) {
-					    final Collection<FilterOutcome> outcomes = ((HasFilterOutcomes) componentJob).getFilterOutcomes();
-						for (FilterOutcome outcome : outcomes) {
-							availableOutcomes.add(outcome);
-						}
-					}
-				}
-			}
-			
-			if (!changed) {
-			    // handle special case where a multistream component has a requirement from another stream
-			    for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
-	                final RowProcessingConsumer consumer = it.next();
-	                if  (consumer.getComponent() instanceof MultiStreamComponent) {
-	                    orderedConsumers.add(consumer);
-	                    it.remove();
-	                    changed = true;
-	                }
-			    }
-			}
+                    if (componentJob instanceof HasFilterOutcomes) {
+                        final Collection<FilterOutcome> outcomes = ((HasFilterOutcomes) componentJob)
+                                .getFilterOutcomes();
+                        for (FilterOutcome outcome : outcomes) {
+                            availableOutcomes.add(outcome);
+                        }
+                    }
+                }
+            }
 
-			if (!changed) {
-				// should never happen, but if a bug enters the
-				// algorithm this exception will quickly expose it
-				throw new IllegalStateException("Could not detect next consumer in processing order");
-			}
-		}
-		return orderedConsumers;
-	}
+            if (!changed) {
+                // handle special case where a multistream component has a
+                // requirement from another stream
+                for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
+                    final RowProcessingConsumer consumer = it.next();
+                    if (consumer.getComponent() instanceof MultiStreamComponent) {
+                        orderedConsumers.add(consumer);
+                        it.remove();
+                        changed = true;
+                    }
+                }
+            }
+
+            if (!changed) {
+                // should never happen, but if a bug enters the
+                // algorithm this exception will quickly expose it
+                throw new IllegalStateException("Could not detect next consumer in processing order");
+            }
+        }
+        return orderedConsumers;
+    }
 
 }

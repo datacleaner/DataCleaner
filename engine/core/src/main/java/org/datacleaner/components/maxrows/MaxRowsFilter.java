@@ -30,6 +30,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.NumberProperty;
@@ -42,6 +43,8 @@ import org.datacleaner.components.categories.FilterCategory;
 @Categorized(value = FilterCategory.class)
 @Distributed(false)
 public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Category>, HasLabelAdvice {
+
+    public static final String PROPERTY_APPLY_ORDERING = "Apply ordering";
 
     public static enum Category {
         VALID, INVALID
@@ -57,7 +60,13 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
     @Description("The first row (aka 'offset') to process.")
     int firstRow = 1;
 
-    @Configured(required = false)
+    // this property is hidden because normally it is driven by the selection of
+    // "orderColumn" below
+    @Configured(value = PROPERTY_APPLY_ORDERING, order = 1000, required = false)
+    @HiddenProperty
+    boolean applyOrdering = true;
+
+    @Configured(order = 1001, required = false)
     @Description("Optional column to use for specifying dataset ordering. Use if consistent pagination is needed.")
     InputColumn<?> orderColumn;
 
@@ -99,6 +108,14 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
 
     public void setOrderColumn(InputColumn<?> orderColumn) {
         this.orderColumn = orderColumn;
+    }
+    
+    public void setApplyOrdering(boolean applyOrdering) {
+        this.applyOrdering = applyOrdering;
+    }
+    
+    public boolean isApplyOrdering() {
+        return applyOrdering;
     }
 
     @Validate
@@ -158,7 +175,7 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
                 q.setMaxRows(newMaxRows);
             }
 
-            if (orderColumn != null) {
+            if (applyOrdering && orderColumn != null) {
                 final Column physicalColumn = orderColumn.getPhysicalColumn();
                 q.orderBy(physicalColumn);
             }

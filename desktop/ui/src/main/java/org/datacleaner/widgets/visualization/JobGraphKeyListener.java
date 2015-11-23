@@ -26,8 +26,10 @@ import java.util.Set;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.actions.DefaultRenameComponentActionListener;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.slf4j.Logger;
@@ -41,47 +43,87 @@ public class JobGraphKeyListener extends KeyAdapter {
     private static final Logger logger = LoggerFactory.getLogger(JobGraphKeyListener.class);
 
     private final JobGraphContext _graphContext;
+    private final JobGraphActions _actions;
 
-    public JobGraphKeyListener(JobGraphContext graphContext) {
+    public JobGraphKeyListener(JobGraphContext graphContext, JobGraphActions actions) {
         _graphContext = graphContext;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // react to DEL key strokes and delete components that are selected.
-        if (e.getKeyChar() == KeyEvent.VK_DELETE || e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
-            final Set<Object> vertices = _graphContext.getSelectedVertices();
-            logger.debug("Registered typed DEL. Vertices: {}", vertices);
-            if ((vertices != null) && (!vertices.isEmpty())) {
-                for (Object vertex : vertices) {
-                    final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(vertex);
-                    if (vertex instanceof TransformerComponentBuilder) {
-                        final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
-                        analysisJobBuilder.removeTransformer(tjb);
-                    } else if (vertex instanceof AnalyzerComponentBuilder) {
-                        final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) vertex;
-                        analysisJobBuilder.removeAnalyzer(ajb);
-                    } else if (vertex instanceof FilterComponentBuilder) {
-                        final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) vertex;
-                        analysisJobBuilder.removeFilter(fjb);
-                    } else if (vertex instanceof Table) {
-                        final Table table = (Table) vertex;
-                        analysisJobBuilder.removeSourceTable(table);
-                    } else if (vertex instanceof Column) {
-                        final Column column = (Column) vertex;
-                        analysisJobBuilder.removeSourceColumn(column);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
+        _actions = actions;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        // react to DEL key strokes and delete components that are selected.
+        switch (e.getKeyCode()) {
+        case KeyEvent.VK_DELETE:
+        case KeyEvent.VK_BACK_SPACE:
+            onRemoveKey();
+            break;
+        case KeyEvent.VK_F4:
+            onRenameKey();
+            break;
+        case KeyEvent.VK_F5:
+            onRefreshKey();
+            break;
+        case KeyEvent.VK_ENTER:
+            onEnterConfiguration();
+            break;
+        }
     }
 
+    private void onRefreshKey() {
+        _graphContext.getJobGraph().refresh();
+    }
+
+    private void onEnterConfiguration() {
+        final Set<Object> vertices = _graphContext.getSelectedVertices();
+        if (vertices.size() == 1) {
+            final Object vertex = vertices.iterator().next();
+            if (vertex instanceof ComponentBuilder) {
+                final ComponentBuilder componentBuilder = (ComponentBuilder) vertex;
+                _actions.showConfigurationDialog(componentBuilder);
+            } else if (vertex instanceof Table) {
+                final Table table = (Table) vertex;
+                _actions.showTableConfigurationDialog(table);
+            }
+        }
+    }
+
+    private void onRenameKey() {
+        final Set<Object> vertices = _graphContext.getSelectedVertices();
+        if (vertices.size() == 1) {
+            final Object vertex = vertices.iterator().next();
+            if (vertex instanceof ComponentBuilder) {
+                final ComponentBuilder componentBuilder = (ComponentBuilder) vertex;
+                final DefaultRenameComponentActionListener actionListener = new DefaultRenameComponentActionListener(
+                        componentBuilder, _graphContext);
+                actionListener.actionPerformed();
+            }
+        }
+    }
+
+    private void onRemoveKey() {
+        final Set<Object> vertices = _graphContext.getSelectedVertices();
+        logger.debug("Registered typed DEL. Vertices: {}", vertices);
+        if ((vertices != null) && (!vertices.isEmpty())) {
+            for (Object vertex : vertices) {
+                final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(vertex);
+                if (vertex instanceof TransformerComponentBuilder) {
+                    final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
+                    analysisJobBuilder.removeTransformer(tjb);
+                } else if (vertex instanceof AnalyzerComponentBuilder) {
+                    final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) vertex;
+                    analysisJobBuilder.removeAnalyzer(ajb);
+                } else if (vertex instanceof FilterComponentBuilder) {
+                    final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) vertex;
+                    analysisJobBuilder.removeFilter(fjb);
+                } else if (vertex instanceof Table) {
+                    final Table table = (Table) vertex;
+                    analysisJobBuilder.removeSourceTable(table);
+                } else if (vertex instanceof Column) {
+                    final Column column = (Column) vertex;
+                    analysisJobBuilder.removeSourceColumn(column);
+                }
+            }
+        }
+    }
 }

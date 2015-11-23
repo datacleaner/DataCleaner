@@ -21,7 +21,7 @@ package org.datacleaner.util;
 
 import java.util.concurrent.ExecutionException;
 
-import org.datacleaner.util.StringUtils;
+import com.google.common.base.Strings;
 
 /**
  * Utility/convenience methods for handling errors
@@ -39,13 +39,19 @@ public class ErrorUtils {
         if (throwable == null) {
             return null;
         }
-        if (throwable instanceof ExecutionException || throwable instanceof IllegalStateException
-                || throwable instanceof RuntimeException) {
-            // unwrap causes from concurrent execution exceptions
+        while (throwable instanceof ExecutionException || throwable instanceof IllegalStateException
+                || throwable.getClass() == RuntimeException.class) {
+            // unwrap causes from wrapping exceptions
             final Throwable cause = throwable.getCause();
+            if (cause == null) {
+                break;
+            }
             final String message = throwable.getMessage();
-            if (cause != null && (StringUtils.isNullOrEmpty(message) || cause.toString().equals(message))) {
+            if (Strings.isNullOrEmpty(message) || cause.toString().equals(message)) {
+                // run another iteration
                 throwable = cause;
+            } else {
+                break;
             }
         }
         return throwable;

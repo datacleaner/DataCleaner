@@ -242,7 +242,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             _cancelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    logger.info("Procedding to cancel the job");
+                    _progressInformationPanel.addUserLog("Proceeding to cancel the job.");
                     _worker.cancelIfRunning();
                 }
             });

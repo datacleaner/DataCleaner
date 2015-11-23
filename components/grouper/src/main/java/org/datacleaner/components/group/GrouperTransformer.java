@@ -40,6 +40,7 @@ import org.apache.metamodel.util.ObjectComparator;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -52,6 +53,7 @@ import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
 
 @Named("Grouper")
+@Description("A component that allows grouping and aggregating values with the same key.")
 @Categorized(value = CompositionCategory.class)
 public class GrouperTransformer extends MultiStreamComponent {
 

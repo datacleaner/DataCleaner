@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implements ErrorAware {
+public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implements ErrorAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorAwareAnalysisListener.class);
 

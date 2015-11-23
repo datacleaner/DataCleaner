@@ -101,7 +101,7 @@ final class AnalysisRunnerJobDelegate {
                     _includeNonDistributedTasks);
 
             final RowProcessingPublishers publishers = new RowProcessingPublishers(_job, _analysisListener,
-                    _taskRunner, rowProcessingLifeCycleHelper);
+                    _errorAware, _taskRunner, rowProcessingLifeCycleHelper);
 
             final AnalysisJobMetrics analysisJobMetrics = publishers.getAnalysisJobMetrics();
 

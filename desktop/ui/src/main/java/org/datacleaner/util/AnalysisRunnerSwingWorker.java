@@ -23,6 +23,7 @@ import javax.swing.SwingWorker;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.runner.AnalysisJobCancellation;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
@@ -43,8 +44,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     private final ResultWindow _resultWindow;
     private AnalysisResultFuture _resultFuture;
 
-    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job,
-            ResultWindow resultWindow) {
+    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job, ResultWindow resultWindow) {
         final AnalysisListener analysisListener = resultWindow.createAnalysisListener();
         _analysisRunner = new AnalysisRunnerImpl(configuration, analysisListener);
         _job = job;
@@ -63,11 +63,14 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
         }
     }
 
-    public void cancelIfRunning() {
+    public void cancelIfRunning(){
         if (_resultFuture != null) {
             if (!_resultFuture.isDone()) {
                 _resultFuture.cancel();
             }
+        }else{ 
+            this.cancel(true);
+            _resultWindow.onUnexpectedError(_job, new AnalysisJobCancellation());
         }
     }
 }

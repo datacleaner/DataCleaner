@@ -614,31 +614,17 @@ public final class AnalysisJobBuilder implements Closeable {
                     setDefaultRequirement((ComponentRequirement) null);
                 }
 
-                for (final AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
-                    final ComponentRequirement requirement = ajb.getComponentRequirement();
+                for (final ComponentBuilder cb : getComponentBuilders()) {
+                    final ComponentRequirement requirement = cb.getComponentRequirement();
                     if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
-                        ajb.setComponentRequirement(previousRequirement);
-                    }
-                }
-
-                for (final TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
-                    final ComponentRequirement requirement = tjb.getComponentRequirement();
-                    if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
-                        tjb.setComponentRequirement(previousRequirement);
-                    }
-                }
-
-                for (final FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
-                    final ComponentRequirement requirement = fjb.getComponentRequirement();
-                    if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
-                        fjb.setComponentRequirement(previousRequirement);
+                        cb.setComponentRequirement(previousRequirement);
                     }
                 }
             }
 
             filterJobBuilder.onRemoved();
 
-            // Ajb removal last, so listeners gets triggered
+            // removal last, so listeners gets triggered
             onComponentRemoved();
         }
         return this;

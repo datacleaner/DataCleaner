@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
@@ -111,6 +112,18 @@ class RowProcessingConsumerSorter {
 						}
 					}
 				}
+			}
+			
+			if (!changed) {
+			    // handle special case where a multistream component has a requirement from another stream
+			    for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
+	                final RowProcessingConsumer consumer = it.next();
+	                if  (consumer.getComponent() instanceof MultiStreamComponent) {
+	                    orderedConsumers.add(consumer);
+	                    it.remove();
+	                    changed = true;
+	                }
+			    }
 			}
 
 			if (!changed) {

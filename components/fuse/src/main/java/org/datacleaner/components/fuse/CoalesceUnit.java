@@ -39,7 +39,7 @@ public class CoalesceUnit {
     // transient cached view of columns
     private transient InputColumn<?>[] _inputColumns;
 
-    public CoalesceUnit(List<InputColumn<?>> inputColumns) {
+    public CoalesceUnit(List<? extends InputColumn<?>> inputColumns) {
         this(inputColumns.toArray(new InputColumn[inputColumns.size()]));
     }
 

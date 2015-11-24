@@ -19,7 +19,7 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -29,14 +29,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.actions.DefaultRenameComponentActionListener;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
-import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
@@ -170,13 +173,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
         final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
-        renameMenuItem.addActionListener(new RenameComponentActionListener(componentBuilder) {
-
-            @Override
-            protected void onNameChanged() {
-                _graphContext.getJobGraph().refresh();
-            }
-        });
+        renameMenuItem.addActionListener(new DefaultRenameComponentActionListener(componentBuilder, _graphContext));
         popup.add(renameMenuItem);
 
         if (!isMultiStream && componentBuilder instanceof TransformerComponentBuilder) {

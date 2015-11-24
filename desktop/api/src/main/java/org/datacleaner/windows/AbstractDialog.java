@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -63,6 +65,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         setResizable(isWindowResizable());
         _windowContext = windowContext;
         _bannerImage = bannerImage;
+
+        // make dialog itself focusable and add a listener for closing it when
+        // ESC is typed.
+        setFocusable(true);
+        addKeyListener(createDialogKeyListener());
     }
 
     public void setBannerImage(Image bannerImage) {
@@ -122,7 +129,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
         pack();
 
-        if(!initialized) {
+        if (!initialized) {
             WidgetUtils.centerOnScreen(this);
         }
 
@@ -164,11 +171,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
             panel.add(banner, BorderLayout.NORTH);
             bannerHeight = banner.getPreferredSize().height;
         }
-        JComponent dialogContent = getDialogContent();
+        final JComponent dialogContent = getDialogContent();
         panel.add(dialogContent, BorderLayout.CENTER);
 
-        panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height
-                + getDialogHeightBuffer());
+        panel.setPreferredSize(getDialogWidth(),
+                bannerHeight + dialogContent.getPreferredSize().height + getDialogHeightBuffer());
 
         return panel;
     }
@@ -189,8 +196,24 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
             return null;
         } else {
             final DCBannerPanel bannerPanel = new DCBannerPanel(bannerImage, getBannerTitle());
+            // we also apply the key listener of the dialog to the banner since
+            // it is the only visible item on the dialog to gain focus after the
+            // initial focus has been lost.
+            bannerPanel.setFocusable(true);
+            bannerPanel.addKeyListener(createDialogKeyListener());
             return bannerPanel;
         }
+    }
+
+    private KeyAdapter createDialogKeyListener() {
+        return new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    AbstractDialog.this.close();
+                }
+            }
+        };
     }
 
     protected abstract String getBannerTitle();

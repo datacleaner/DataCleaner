@@ -30,6 +30,7 @@ import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 
 /**
  * The type of {@link OutputRowCollector} used for {@link OutputDataStreamJob}
@@ -60,9 +61,14 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
 
     @Override
     public void putRow(Row row) {
+        final ErrorAware errorAware = _publisher.getErrorAware();
+        if (errorAware.isCancelled() || errorAware.isErrornous()) {
+            throw new PreviousErrorsExistException();
+        }
         final int rowNumber = _rowCounter.incrementAndGet();
         final MetaModelInputRow inputRow = new MetaModelInputRow(rowNumber, row);
         _consumeRowHandler.consumeRow(inputRow);
-        _publisher.getAnalysisListener().rowProcessingProgress(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics(), inputRow, rowNumber);
+        _publisher.getAnalysisListener().rowProcessingProgress(_publisher.getAnalysisJob(),
+                _publisher.getRowProcessingMetrics(), inputRow, rowNumber);
     }
 }

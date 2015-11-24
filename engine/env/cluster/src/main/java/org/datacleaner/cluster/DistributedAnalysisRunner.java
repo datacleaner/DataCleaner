@@ -43,6 +43,7 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
+import org.datacleaner.job.runner.ErrorAwareAnalysisListener;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.job.runner.RowProcessingPublishers;
@@ -328,7 +329,9 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     private RowProcessingPublishers getRowProcessingPublishers(AnalysisJob job, LifeCycleHelper lifeCycleHelper) {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, null, taskRunner, lifeCycleHelper);
+        final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, errorAwareAnalysisListener,
+                errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
 
         return publishers;
     }

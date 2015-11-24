@@ -115,11 +115,11 @@ public class RowProcessingMetricsImplTest extends TestCase {
     private int getExpectedRowCount() {
         final AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
         final TaskRunner taskRunner = configuration.getEnvironment().getTaskRunner();
-
+        final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, job, true);
 
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, analysisListener, taskRunner,
-                lifeCycleHelper);
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, analysisListener, errorListener,
+                taskRunner, lifeCycleHelper);
         final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStreams()[0]);
         publisher.initializeConsumers(new TaskListener() {
             @Override

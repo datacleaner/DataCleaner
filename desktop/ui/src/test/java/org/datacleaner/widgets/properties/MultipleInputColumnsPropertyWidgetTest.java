@@ -59,6 +59,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
                     .iterator().next();
 
             MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+            widget.onPanelAdd();
 
             // initialize with null
             widget.initialize(null);
@@ -79,6 +80,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             value = widget.getValue();
             assertEquals("[MetaModelInputColumn[foo]]", Arrays.toString(value));
             assertEquals("foo,foobar", getAvailableCheckBoxValues(widget));
+            
+            widget.onPanelRemove();
         }
     }
 

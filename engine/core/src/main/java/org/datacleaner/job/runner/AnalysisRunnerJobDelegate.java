@@ -168,7 +168,13 @@ final class AnalysisRunnerJobDelegate {
             }
 
             if (!progressThisIteration) {
-                _taskRunner.assistExecution();
+                try {
+                    // Give way for the data processing to happen in other
+                    // threads. Better to sleep() than to yield().
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // do nothing
+                }
             }
         }
     }

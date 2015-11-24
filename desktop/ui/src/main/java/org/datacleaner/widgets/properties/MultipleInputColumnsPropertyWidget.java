@@ -74,8 +74,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Property widget for multiple input columns. Displays these as checkboxes.
  */
-public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]>
-        implements SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener,
+public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
+        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener,
         ReorderColumnsActionListener.ReorderColumnsCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(MultipleInputColumnsPropertyWidget.class);
@@ -126,8 +126,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         setLayout(new VerticalLayout(2));
 
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
-        _searchDatastoreTextField
-                .setBorder(new CompoundBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION, WidgetUtils.BORDER_THIN));
+        _searchDatastoreTextField.setBorder(new CompoundBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION,
+                WidgetUtils.BORDER_THIN));
         _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -177,8 +177,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 final JButton expressionColumnButton = WidgetFactory
                         .createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
                 expressionColumnButton.setToolTipText("Create expression/value based column");
-                expressionColumnButton
-                        .addActionListener(AddExpressionBasedColumnActionListener.forMultipleColumns(this));
+                expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener
+                        .forMultipleColumns(this));
                 _buttonPanel.add(expressionColumnButton);
             }
 
@@ -228,8 +228,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     private void updateComponents(final InputColumn<?>[] value) {
         // fetch available input columns
-        final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder()
-                .getAvailableInputColumns(getComponentBuilder(), _dataType);
+        final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(
+                getComponentBuilder(), _dataType);
 
         final Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<>();
         inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());

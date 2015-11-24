@@ -97,8 +97,8 @@ final class AnalysisJobBuilderImportHelper {
             for (ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
                 final Object originalInputColumnValue = componentJob.getConfiguration()
                         .getProperty(inputColumnProperty);
-                final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue, componentBuilders,
-                        sourceColumnFinder);
+                final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue,
+                        componentBuilders, sourceColumnFinder);
                 builder.setConfiguredProperty(inputColumnProperty, newInputColumnValue);
             }
         }
@@ -158,6 +158,11 @@ final class AnalysisJobBuilderImportHelper {
         }
 
         final InputColumnSourceJob originalSourceJob = sourceColumnFinder.findInputColumnSource(originalInputColumn);
+        if (originalSourceJob == null) {
+            throw new IllegalStateException("Could not find source for input column  " + originalInputColumn
+                    + " in original job");
+        }
+
         final InputColumnSourceJob newSourceJob = (InputColumnSourceJob) componentBuilders.get(originalSourceJob);
 
         if (newSourceJob == null) {
@@ -213,8 +218,8 @@ final class AnalysisJobBuilderImportHelper {
         final HasFilterOutcomes source = originalFilterOutcome.getSource();
         final ComponentBuilder builder = componentBuilders.get(source);
         if (builder == null) {
-            throw new IllegalStateException(
-                    "Could not find builder corresponding to " + source + " in builder map: " + componentBuilders);
+            throw new IllegalStateException("Could not find builder corresponding to " + source + " in builder map: "
+                    + componentBuilders);
         }
         final Enum<?> category = originalFilterOutcome.getCategory();
 

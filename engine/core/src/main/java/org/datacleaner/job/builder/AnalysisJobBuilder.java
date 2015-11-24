@@ -294,7 +294,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public AnalysisJobBuilder removeSourceColumn(Column column) {
-        MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
+        final MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
         return removeSourceColumn(inputColumn);
     }
 
@@ -310,11 +310,23 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public AnalysisJobBuilder removeSourceColumn(MetaModelInputColumn inputColumn) {
-        final boolean removed = _sourceColumns.remove(inputColumn);
-        if (removed) {
+        final int index = _sourceColumns.indexOf(inputColumn);
+        if (index != -1) {
+            final MetaModelInputColumn removedColumn = _sourceColumns.remove(index);
+            // remove any references in components
+            final Collection<ComponentBuilder> componentBuilders = getComponentBuilders();
+            for (ComponentBuilder componentBuilder : componentBuilders) {
+                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentBuilder.getDescriptor()
+                        .getConfiguredPropertiesByType(InputColumn.class, true);
+                for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : configuredProperties) {
+                    componentBuilder.removeInputColumn(removedColumn, configuredPropertyDescriptor);
+                }
+            }
+
+            // notify listeners
             final List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
             for (SourceColumnChangeListener listener : listeners) {
-                listener.onRemove(inputColumn);
+                listener.onRemove(removedColumn);
             }
         }
         return this;
@@ -1202,7 +1214,7 @@ public final class AnalysisJobBuilder implements Closeable {
         }
         assert _transformerComponentBuilders.isEmpty();
     }
-    
+
     public void removeAllComponents() {
         removeAllAnalyzers();
         removeAllFilters();

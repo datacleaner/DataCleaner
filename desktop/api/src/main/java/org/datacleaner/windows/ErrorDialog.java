@@ -78,7 +78,14 @@ public class ErrorDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final JXEditorPane detailedMessagePane = new JXEditorPane("text/html", _detailedMessage);
+        final String detailedMessage;
+        if (_detailedMessage.contains("<br>") || _detailedMessage.contains("<br/>")) {
+            detailedMessage = _detailedMessage;
+        } else {
+            detailedMessage = _detailedMessage.replace("\n", "<br/>");
+        }
+
+        final JXEditorPane detailedMessagePane = new JXEditorPane("text/html", detailedMessage);
         detailedMessagePane.setEditable(false);
         detailedMessagePane.setOpaque(false);
         detailedMessagePane.addHyperlinkListener(new HyperlinkListener() {

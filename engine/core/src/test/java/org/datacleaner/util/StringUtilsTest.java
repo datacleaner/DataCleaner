@@ -31,6 +31,11 @@ public class StringUtilsTest extends TestCase {
         assertEquals("", StringUtils.rightTrim(" "));
         assertEquals("", StringUtils.rightTrim(""));
     }
+    
+    public void testReplaceAll() throws Exception {
+        assertNull(StringUtils.replaceAll(null, "foo", "bar"));
+        assertEquals("foo foo baz foo baz", StringUtils.replaceAll("foo bar baz bar baz", "bar", "foo"));
+    }
 
     public void testReplaceWhiteSpace() throws Exception {
         assertEquals("_hel_lo", StringUtils.replaceWhitespaces("  hel lo", "_"));

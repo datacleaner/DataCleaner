@@ -10,6 +10,7 @@
 	<modules>
 		<module>html-rendering</module>
 		<module>fuse</module>
+		<module>grouper</module>
 		<module>basic-transformers</module>
 		<module>basic-filters</module>
 		<module>basic-analyzers</module>

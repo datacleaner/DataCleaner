@@ -29,23 +29,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Object capable of building a menu for changing a component's
- * {@link ComponentRequirement}.
+ * Object capable of building a menu for changing a component's scope - aka
+ * which {@link AnalysisJobBuilder} it belongs to (defined by whether it is
+ * applied to a source data stream or an {@link OutputDataStream}).
  */
 public class ComponentScopeMenuBuilder {
 
     public static final String DEFAULT_SCOPE_TEXT = "Default scope";
-    private static final Logger logger = LoggerFactory.getLogger(ComponentScopeMenuBuilder.class);
     private static final ImageManager imageManager = ImageManager.get();
 
     private static final Icon selectedScopeIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
@@ -65,7 +62,8 @@ public class ComponentScopeMenuBuilder {
             if (child != _componentBuilder && child.getOutputDataStreams().size() > 0) {
                 descendants.add(child);
                 for (OutputDataStream outputDataStream : child.getOutputDataStreams()) {
-                    descendants.addAll(getComponentBuildersWithOutputDataStreams(child.getOutputDataStreamJobBuilder(outputDataStream)));
+                    descendants.addAll(getComponentBuildersWithOutputDataStreams(child
+                            .getOutputDataStreamJobBuilder(outputDataStream)));
                 }
             }
         }
@@ -74,9 +72,11 @@ public class ComponentScopeMenuBuilder {
     }
 
     /**
-     * Will find the {@link ComponentBuilder} that has a certain {@link AnalysisJobBuilder}. Since this method.
+     * Will find the {@link ComponentBuilder} that publishes records (via an
+     * {@link OutputDataStream}) to a certain {@link AnalysisJobBuilder}.
      *
-     * @param analysisJobBuilder The job builder in
+     * @param analysisJobBuilder
+     *            the {@link AnalysisJobBuilder} to find the publisher for.
      * @return
      */
     public ComponentBuilder findComponentBuilder(AnalysisJobBuilder analysisJobBuilder) {
@@ -92,13 +92,10 @@ public class ComponentScopeMenuBuilder {
             }
         }
 
-        throw new IllegalArgumentException("No builder holding that osJobBuilder");
+        throw new IllegalArgumentException("No component publishing to " + LabelUtils.getScopeLabel(analysisJobBuilder));
     }
 
     public List<JMenuItem> createMenuItems() {
-        final ComponentRequirement currentComponentRequirement = _componentBuilder.getComponentRequirement();
-        logger.info("Current requirement: {}", currentComponentRequirement);
-
         final List<JMenuItem> popup = new ArrayList<>();
         final JMenuItem rootMenuItem = new JMenuItem(DEFAULT_SCOPE_TEXT);
         rootMenuItem.setToolTipText("Use the default scope for this component");
@@ -124,8 +121,8 @@ public class ComponentScopeMenuBuilder {
             final JMenu componentMenu = new JMenu(LabelUtils.getLabel(osComponentBuilder));
 
             for (final OutputDataStream outputDataStream : osComponentBuilder.getOutputDataStreams()) {
-                final AnalysisJobBuilder osJobBuilder =
-                        osComponentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+                final AnalysisJobBuilder osJobBuilder = osComponentBuilder
+                        .getOutputDataStreamJobBuilder(outputDataStream);
 
                 final JMenuItem scopeMenuItem = new JMenuItem(osJobBuilder.getDatastore().getName());
 

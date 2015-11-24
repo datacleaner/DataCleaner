@@ -28,6 +28,8 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
+import org.datacleaner.components.fuse.CoalesceUnit;
+import org.datacleaner.components.fuse.FuseStreamsComponent;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -40,8 +42,11 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.MockTransformer;
 
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest extends TestCase {
@@ -72,6 +77,54 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
     }
 
+    public void testPreviewTransformationInOutputDataStream() throws Exception {
+        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> streamProducer = analysisJobBuilder
+                .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+        streamProducer.addInputColumn(emailTransformerBuilder.getOutputColumns().get(0));
+
+        final AnalysisJobBuilder streamJobBuilder = streamProducer
+                .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+        final TransformerComponentBuilder<MockTransformer> transformer = streamJobBuilder
+                .addTransformer(MockTransformer.class);
+        transformer.addInputColumn(streamJobBuilder.getSourceColumns().get(0));
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, transformer);
+        final TableModel tableModel = action.call();
+        assertEquals(17, tableModel.getRowCount());
+
+        assertEquals("bar", tableModel.getValueAt(0, 0));
+        assertEquals("mocked: bar", tableModel.getValueAt(0, 1));
+    }
+
+    public void testPreviewTransformationInMultiStreamGeneratedOutputDataStream() throws Exception {
+        analysisJobBuilder.addSourceColumns("PUBLIC.CUSTOMERS.PHONE");
+
+        final TransformerComponentBuilder<FuseStreamsComponent> union = analysisJobBuilder
+                .addTransformer(FuseStreamsComponent.class);
+        union.addInputColumns(analysisJobBuilder.getSourceColumns());
+        union.setConfiguredProperty("Units",
+                new CoalesceUnit[] { new CoalesceUnit(analysisJobBuilder.getSourceColumns()) });
+
+        final AnalysisJobBuilder streamJobBuilder = union
+                .getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
+
+        final TransformerComponentBuilder<MockTransformer> transformer = streamJobBuilder
+                .addTransformer(MockTransformer.class);
+        transformer.addInputColumn(streamJobBuilder.getSourceColumns().get(0));
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                transformer, 10);
+        final TableModel tableModel = action.call();
+        assertEquals(10, tableModel.getRowCount());
+
+        // part of it is emails
+        assertEquals("dmurphy@classicmodelcars.com", tableModel.getValueAt(0, 0).toString());
+        assertEquals("mpatterso@classicmodelcars.com", tableModel.getValueAt(1, 0).toString());
+
+        // another part is phone numbers
+        assertEquals("7025551838", tableModel.getValueAt(6, 0).toString());
+    }
+
     public void testJobWithMaxRowsFilter() throws Exception {
         final FilterComponentBuilder<MaxRowsFilter, Category> filter = analysisJobBuilder
                 .addFilter(MaxRowsFilter.class);
@@ -80,10 +133,10 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 
         emailTransformerBuilder.setRequirement(filter, Category.VALID);
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null,
-                emailTransformerBuilder);
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                emailTransformerBuilder, 10);
         final TableModel tableModel = action.call();
-        assertEquals(5, tableModel.getRowCount());
+        assertEquals(10, tableModel.getRowCount());
     }
 
     public void testSingleTransformer() throws Exception {

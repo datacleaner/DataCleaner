@@ -21,20 +21,30 @@ package org.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.CompoundComponentRequirement;
+import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -52,6 +62,8 @@ import org.slf4j.LoggerFactory;
  * {@link DataSetWindow}.
  */
 public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
+
+    private static final String METADATA_PROPERTY_MARKER = "org.datacleaner.preview.targetcomponent";
 
     private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
 
@@ -102,18 +114,41 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             _transformerJobBuilderPresenter.applyPropertyValues();
         }
 
-        final AnalysisJobBuilder ajb = copy(_transformerJobBuilder.getAnalysisJobBuilder());
+        final String jobBuilderIdentifier = UUID.randomUUID().toString();
 
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(ajb);
+        final AnalysisJobBuilder originalAnalysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
+        // put a marker metadata property on the AnalysisJobBuilder to make
+        // it easy to identify it's equivalent object from the copy later.
+        originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties()
+                .put(METADATA_PROPERTY_MARKER, jobBuilderIdentifier);
+        final AnalysisJobBuilder ajb;
+        try {
+            final AnalysisJobBuilder copyAnalysisJobBuilder = copy(originalAnalysisJobBuilder.getRootJobBuilder());
+            ajb = findAnalysisJobBuilder(copyAnalysisJobBuilder, jobBuilderIdentifier);
+        } finally {
+            // remove the marker metadata
+            originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties().remove(METADATA_PROPERTY_MARKER);
+        }
+
+        if (ajb == null) {
+            throw new IllegalStateException(
+                    "Could not find AnalysisJobBuilder copy which is equivalent to the original");
+        }
 
         final TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
-        final List<Table> tables = ajb.getSourceTables();
-        if (tables.size() > 1) {
-            final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
-            tables.remove(originatingTable);
-            for (Table otherTable : tables) {
-                ajb.removeSourceTable(otherTable);
+        sanitizeIrrelevantComponents(ajb, tjb);
+
+        // remove irrelevant source tables
+        {
+            final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+            sourceColumnFinder.addSources(ajb);
+            final List<Table> tables = ajb.getSourceTables();
+            if (tables.size() > 1) {
+                final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
+                tables.remove(originatingTable);
+                for (Table otherTable : tables) {
+                    ajb.removeSourceTable(otherTable);
+                }
             }
         }
 
@@ -124,9 +159,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             return new DefaultTableModel(0, 0);
         }
 
-        // remove all analyzers, except the dummy
-        ajb.removeAllAnalyzers();
-
         // add the result collector (a dummy analyzer)
         final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
                 .addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
@@ -136,12 +168,52 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             rowCollector.setComponentRequirement(tjb.getComponentRequirement());
         }
 
-        // add a max rows filter
-        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb
-                .addFilter(MaxRowsFilter.class);
-        maxRowFilter.setName(getClass().getName() + "-MaxRows");
-        maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
-        ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
+        // add a max rows filter to the source of the job
+        final AnalysisJobBuilder rootJobBuilder = ajb.getRootJobBuilder();
+        {
+            // remove any existing max rows filters
+            final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<>(
+                    rootJobBuilder.getFilterComponentBuilders());
+            for (FilterComponentBuilder<?, ?> filter : filters) {
+                if (filter.getComponentInstance() instanceof MaxRowsFilter) {
+                    rootJobBuilder.removeFilter(filter);
+                }
+            }
+
+            final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+            sourceColumnFinder.addSources(rootJobBuilder);
+            final List<Table> sourceTables = rootJobBuilder.getSourceTables();
+            final int maxRows = Double.valueOf(Math.ceil(((double) _previewRows) / sourceTables.size())).intValue();
+            for (Table table : sourceTables) {
+                final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = rootJobBuilder
+                        .addFilter(MaxRowsFilter.class);
+                maxRowFilter.setName(getClass().getName() + "-" + table.getName() + "-MaxRows");
+                maxRowFilter.getComponentInstance().setMaxRows(maxRows);
+                maxRowFilter.getComponentInstance().setApplyOrdering(false);
+                maxRowFilter.getComponentInstance()
+                        .setOrderColumn(rootJobBuilder.getSourceColumnsOfTable(table).get(0));
+                for (ComponentBuilder componentBuilder : rootJobBuilder.getComponentBuilders()) {
+                    if (componentBuilder != maxRowFilter) {
+                        final InputColumn<?>[] input = componentBuilder.getInput();
+                        if (input.length > 0) {
+                            if (componentBuilder.getDescriptor().isMultiStreamComponent()
+                                    || sourceColumnFinder.findOriginatingTable(input[0]) == table) {
+                                final ComponentRequirement existingRequirement = componentBuilder
+                                        .getComponentRequirement();
+                                if (existingRequirement != null) {
+                                    componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
+                                            existingRequirement, maxRowFilter
+                                                    .getFilterOutcome(MaxRowsFilter.Category.VALID)));
+                                } else {
+                                    componentBuilder.setComponentRequirement(new SimpleComponentRequirement(
+                                            maxRowFilter.getFilterOutcome(MaxRowsFilter.Category.VALID)));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         final String[] columnNames = new String[rowCollector.getInputColumns().size()];
         for (int i = 0; i < columnNames.length; i++) {
@@ -149,7 +221,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         }
 
         final AnalysisRunner runner = new AnalysisRunnerImpl(ajb.getConfiguration());
-        final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
+        final AnalysisResultFuture resultFuture = runner.run(rootJobBuilder.toAnalysisJob());
 
         resultFuture.await();
 
@@ -187,17 +259,85 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         return tableModel;
     }
 
+    private void sanitizeIrrelevantComponents(AnalysisJobBuilder ajb, TransformerComponentBuilder<?> tjb) {
+        final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = createRelevantAnalysisJobBuildersList(ajb);
+
+        for (AnalysisJobBuilder relevantAnalysisJobBuilder : relevantAnalysisJobBuilders) {
+            final Collection<ComponentBuilder> componentBuilders = relevantAnalysisJobBuilder.getComponentBuilders();
+            for (ComponentBuilder componentBuilder : componentBuilders) {
+
+                // flag to indicate if this component is directly involved in
+                // populating data for the preview'ed component
+                boolean importantComponent = componentBuilder == tjb;
+
+                final List<OutputDataStream> streams = componentBuilder.getOutputDataStreams();
+                for (OutputDataStream stream : streams) {
+                    if (componentBuilder.isOutputDataStreamConsumed(stream)) {
+                        final AnalysisJobBuilder childJobBuilder = componentBuilder
+                                .getOutputDataStreamJobBuilder(stream);
+                        if (relevantAnalysisJobBuilders.contains(childJobBuilder)) {
+                            importantComponent = true;
+                        } else {
+                            // remove irrelevant output data stream job builder
+                            childJobBuilder.removeAllComponents();
+                        }
+                    }
+                }
+
+                if (!importantComponent && componentBuilder instanceof AnalyzerComponentBuilder) {
+                    // remove analyzers because they are generally more
+                    // heavy-weight and they produce no dependencies for other
+                    // components
+                    relevantAnalysisJobBuilder.removeComponent(componentBuilder);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a list with _just_ the relevant {@link AnalysisJobBuilder}s to
+     * include in the preview job
+     * 
+     * @param ajb
+     * @return
+     */
+    private List<AnalysisJobBuilder> createRelevantAnalysisJobBuildersList(AnalysisJobBuilder ajb) {
+        final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = new LinkedList<>();
+        relevantAnalysisJobBuilders.add(ajb);
+        while (!ajb.isRootJobBuilder()) {
+            ajb = ajb.getParentJobBuilder();
+        }
+        return relevantAnalysisJobBuilders;
+    }
+
+    private AnalysisJobBuilder findAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder, String jobBuilderIdentifier) {
+        if (jobBuilderIdentifier.equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties()
+                .get(METADATA_PROPERTY_MARKER))) {
+            return analysisJobBuilder;
+        }
+
+        final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
+        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+            final AnalysisJobBuilder result = findAnalysisJobBuilder(childJobBuilder, jobBuilderIdentifier);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
     private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb,
             TransformerComponentBuilder<?> transformerJobBuilder) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
-        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders()
-                .indexOf(_transformerJobBuilder);
+        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(
+                _transformerJobBuilder);
         return ajb.getTransformerComponentBuilders().get(transformerIndex);
     }
 
     private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
-        final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
-        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
-        return ajb;
+        final AnalysisJob analysisJob = original.getRootJobBuilder().withoutListeners().toAnalysisJob(false);
+        final AnalysisJobBuilder copy = new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
+        return copy;
     }
 }

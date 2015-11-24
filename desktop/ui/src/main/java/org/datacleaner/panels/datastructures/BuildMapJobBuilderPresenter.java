@@ -37,7 +37,7 @@ import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Spectialized {@link TransformerComponentBuilderPresenter} for the
+ * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link BuildMapTransformer}.
  */
 final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel {
@@ -57,7 +57,7 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
         final ConfiguredPropertyDescriptor valuesProperty = descriptor.getConfiguredProperty("Values");
         final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
 
-        MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb,
+        final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb,
                 valuesProperty, keysProperty) {
             @Override
             protected String getDefaultMappedString(InputColumn<?> inputColumn) {

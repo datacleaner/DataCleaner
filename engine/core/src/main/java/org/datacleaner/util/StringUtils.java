@@ -156,9 +156,7 @@ public final class StringUtils {
         if (v == null) {
             return v;
         }
-        while (v.indexOf(searchToken) != -1) {
-            v = v.replace(searchToken, replacement);
-        }
+        v = v.replace(searchToken, replacement);
         return v;
     }
 }

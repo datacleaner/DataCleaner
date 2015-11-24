@@ -56,8 +56,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * output columns, a "write data" button, a preview button and a context
  * visualization.
  */
-public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPanel implements
-        TransformerComponentBuilderPresenter, TransformerChangeListener {
+public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPanel
+        implements TransformerComponentBuilderPresenter, TransformerChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -99,54 +99,43 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
         _previewAlternativesButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
-        if (isPreviewAvailable()) {
-            final int defaultPreviewRows = getPreviewRows();
-            final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
-                    _windowContext, this, _componentBuilder, defaultPreviewRows);
-            final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
-            _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
-            _previewAlternativesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final JMenuItem defaultPreviewMenutItem = WidgetFactory.createMenuItem("Preview "
-                            + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
-                    defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+        final int defaultPreviewRows = getPreviewRows();
+        final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
+                _windowContext, this, _componentBuilder, defaultPreviewRows);
+        final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
+        _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
+        _previewAlternativesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JMenuItem defaultPreviewMenutItem = WidgetFactory
+                        .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
+                defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                    final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
-                            IconUtils.ACTION_PREVIEW);
-                    maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
+                final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
+                        IconUtils.ACTION_PREVIEW);
+                maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
 
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
 
-                            if (maxRows != null) {
-                                final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
-                                        _windowContext, transformerComponentBuilderPanel, _componentBuilder, maxRows);
-                                maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
-                            }
+                        if (maxRows != null) {
+                            final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
+                                    _windowContext, transformerComponentBuilderPanel, _componentBuilder, maxRows);
+                            maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
                         }
-                    });
+                    }
+                });
 
-                    final JPopupMenu menu = new JPopupMenu();
-                    menu.add(defaultPreviewMenutItem);
-                    menu.add(maxRowsPreviewMenuItem);
+                final JPopupMenu menu = new JPopupMenu();
+                menu.add(defaultPreviewMenutItem);
+                menu.add(maxRowsPreviewMenuItem);
 
-                    final int horizontalPosition = -1 * menu.getPreferredSize().width
-                            + _previewAlternativesButton.getWidth();
-                    menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
-                }
-            });
-        } else {
-            // we cannot provide a preview-function for transformers in non-root
-            // AnalysisJobBuilders
-            _previewButton.setVisible(false);
-            _previewAlternativesButton.setVisible(false);
-        }
-    }
-
-    private boolean isPreviewAvailable() {
-        return _componentBuilder.getAnalysisJobBuilder().isRootJobBuilder();
+                final int horizontalPosition = -1 * menu.getPreferredSize().width
+                        + _previewAlternativesButton.getWidth();
+                menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
+            }
+        });
     }
 
     @Override
@@ -178,14 +167,12 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bottomButtonPanel.add(_writeDataButton);
 
-        if (isPreviewAvailable()) {
-            final ComboButton previewButtonPanel = new ComboButton();
-            previewButtonPanel.addButton(_previewButton);
-            previewButtonPanel.add(new JLabel("|"));
-            previewButtonPanel.addButton(_previewAlternativesButton);
-            
-            bottomButtonPanel.add(previewButtonPanel);
-        }
+        final ComboButton previewButtonPanel = new ComboButton();
+        previewButtonPanel.addButton(_previewButton);
+        previewButtonPanel.add(new JLabel("|"));
+        previewButtonPanel.addButton(_previewAlternativesButton);
+
+        bottomButtonPanel.add(previewButtonPanel);
 
         if (!_componentBuilder.getDescriptor().isMultiStreamComponent()) {
             final DCPanel outputColumnsPanel = new DCPanel();

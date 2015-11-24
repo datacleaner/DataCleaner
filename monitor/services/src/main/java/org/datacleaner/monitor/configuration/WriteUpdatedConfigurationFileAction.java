@@ -24,19 +24,23 @@ import java.io.OutputStream;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Writes an updated conf.xml file to the repository. This is used by taking the
  * <datastore-catalog> and <reference-data-catalog> elements of the updated
  * conf.xml file, and replacing them in the existing conf.xml file.
  */
-public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Configuration> implements
-        Action<OutputStream> {
+public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Configuration>
+        implements Action<OutputStream> {
+
+    private static final Logger logger = LoggerFactory.getLogger(WriteUpdatedConfigurationFileAction.class);
 
     private final InputStream _updatedConfigurationInputStream;
     private final Configuration _existingConfiguration;
@@ -46,21 +50,35 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
         super(Configuration.class);
         _updatedConfigurationInputStream = updatedConfigurationInputStream;
 
-        _existingConfiguration = existingConfigurationFile.readFile(new Func<InputStream, Configuration>() {
-            @Override
-            public Configuration eval(InputStream in) {
-                return unmarshal(in);
+        Configuration existingConfiguration;
+        try {
+            if (existingConfigurationFile == null) {
+                existingConfiguration = null;
+            } else {
+                existingConfiguration = existingConfigurationFile.readFile(new Func<InputStream, Configuration>() {
+                    @Override
+                    public Configuration eval(InputStream in) {
+                        return unmarshal(in);
+                    }
+                });
             }
-        });
+        } catch (Exception e) {
+            logger.warn("Failed to parse configuration file - treating it as invalid and will override.", e);
+            existingConfiguration = null;
+        }
+        _existingConfiguration = existingConfiguration;
     }
 
     @Override
     public void run(OutputStream out) throws Exception {
         final Configuration updatedConfiguration = unmarshal(_updatedConfigurationInputStream);
 
-        _existingConfiguration.setDatastoreCatalog(updatedConfiguration.getDatastoreCatalog());
-        _existingConfiguration.setReferenceDataCatalog(_existingConfiguration.getReferenceDataCatalog());
-
-        marshal(_existingConfiguration, out);
+        if (_existingConfiguration == null) {
+            marshal(updatedConfiguration, out);
+        } else {
+            _existingConfiguration.setDatastoreCatalog(updatedConfiguration.getDatastoreCatalog());
+            _existingConfiguration.setReferenceDataCatalog(_existingConfiguration.getReferenceDataCatalog());
+            marshal(_existingConfiguration, out);
+        }
     }
 }

@@ -259,6 +259,9 @@ public class SparkJobContext implements Serializable {
         } else {
             final URI uri = URI.create(resultPath);
             if (!uri.isAbsolute()) {
+                if (!resultPath.startsWith("/")) {
+                    resultPath = "/" + resultPath;
+                }
                 resultPath = fileSystemPrefix + resultPath;
             }
         }

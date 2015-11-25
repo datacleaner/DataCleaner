@@ -87,14 +87,14 @@ public class JobResultPathTest extends TestCase {
                     "src/test/resources/jobProperties/job2.properties");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("target/results/", sparkJobContext.getResultPathUsercustomized());
+            assertEquals("/target/results/", sparkJobContext.getResultPathUsercustomized());
             final String analysisJobName = sparkJobContext.getAnalysisJobName();
             assertEquals("vanilla-job", analysisJobName);
 
             final String resultJobFilePath = sparkJobContext.getResultJobFilePath();
             final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
             assertTrue(resultJobFilePath.contains(analysisJobName));
-            assertEquals("file:///target/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
+            assertEquals("file:////target/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
 
         } finally {
             sparkContext.close();
@@ -119,7 +119,7 @@ public class JobResultPathTest extends TestCase {
             final String resultJobFilePath = sparkJobContext.getResultJobFilePath();
             final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
             assertTrue(resultJobFilePath.contains(analysisJobName));
-            assertEquals("file:///myresult/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
+            assertEquals("file:////myresult/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
 
         } finally {
             sparkContext.close();

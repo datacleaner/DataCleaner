@@ -23,12 +23,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
@@ -59,6 +62,8 @@ public class SparkJobContext implements Serializable {
     private static String DATA_CLEANER_RESULT_PATH_PROPERTY = "datacleaner.result.hdfs.path";
     public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
     public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
+    private static String DEFAULT_RESULT_PATH = "/datacleaner/results/";
+    private static String RESULT_FILE_EXTENSION = ".analysis.result.dat";
 
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
 
@@ -68,6 +73,7 @@ public class SparkJobContext implements Serializable {
     private final String _analysisJobXml;
     private final String _analysisJobXmlPath;
     private final Map<String, String> _customProperties;
+    private final JavaSparkContext _sparkContext;
 
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
@@ -83,7 +89,8 @@ public class SparkJobContext implements Serializable {
         _customProperties = readCustomProperties(propertiesPath);
         _configurationXml = readFile(dataCleanerConfigurationPath);
         _analysisJobXml = readFile(analysisJobXmlPath);
-        _analysisJobXmlPath= analysisJobXmlPath;
+        _analysisJobXmlPath = analysisJobXmlPath;
+        _sparkContext = sparkContext;
     }
 
     private String readFile(String path) {
@@ -212,7 +219,12 @@ public class SparkJobContext implements Serializable {
         return null;
     }
 
-    public String getResultPath() {
+    /**
+     * Gets the path defined in the job properties file
+     * 
+     * @return
+     */
+    public String getResultPathUsercustomized() {
         if (_customProperties != null) {
             if (_customProperties.containsKey(DATA_CLEANER_RESULT_PATH_PROPERTY)) {
                 return _customProperties.get(DATA_CLEANER_RESULT_PATH_PROPERTY);
@@ -220,11 +232,46 @@ public class SparkJobContext implements Serializable {
         }
         return null;
     }
-    
+
+    /**
+     * Gets the job name (removing the extension '.analysis.xml')
+     * 
+     * @return
+     */
     public String getAnalysisJobName() {
         final int lastIndexOfSlash = _analysisJobXmlPath.lastIndexOf("/");
         final int lastIndexOfFileExtension = _analysisJobXmlPath.lastIndexOf(".analysis.xml");
-        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash+1, lastIndexOfFileExtension);
-        return  jobName;
+        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
+        return jobName;
+    }
+
+    /**
+     * Gets the hdfs path of job's result
+     * 
+     * @return
+     */
+    public String getResultJobFilePath() {
+        String resultPath = getResultPathUsercustomized();
+        final Configuration hadoopConfiguration = _sparkContext.hadoopConfiguration();
+        final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
+        if (resultPath == null || resultPath.isEmpty()) {
+            resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
+        } else {
+            final URI uri = URI.create(resultPath);
+            if (!uri.isAbsolute()) {
+                resultPath = fileSystemPrefix + resultPath;
+            }
+        }
+
+        if (!resultPath.endsWith(RESULT_FILE_EXTENSION)) {
+            if (!resultPath.endsWith("/")) {
+                resultPath = resultPath + "/";
+            }
+            final String analysisJobXmlName = getAnalysisJobName();
+            final Date date = new Date();
+            final String filePath = resultPath + analysisJobXmlName + "-" + date.getTime() + RESULT_FILE_EXTENSION;
+            return filePath;
+        }
+        return resultPath;
     }
 }

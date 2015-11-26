@@ -20,11 +20,15 @@
 package org.datacleaner.spark;
 
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
@@ -37,7 +41,9 @@ import org.datacleaner.result.SimpleAnalysisResult;
 
 public class Main {
 
-    static Logger logger = Logger.getLogger(Main.class);
+    private static final Logger logger = Logger.getLogger(Main.class);
+    private static final String DEFAULT_RESULT_PATH = "/datacleaner/results";
+    private static final String RESULT_FILE_EXTENSION = ".analysis.result.dat";
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -68,7 +74,7 @@ public class Main {
                 final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
                 final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
                         result.getCreationDate());
-                final String resultJobFilePath = sparkJobContext.getResultJobFilePath();
+                final String resultJobFilePath = getResultFilePath(sparkContext, sparkJobContext);
                 logger.info("The result of the job was written to " + resultJobFilePath);
                 if (resultJobFilePath != null) {
                     final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
@@ -91,4 +97,50 @@ public class Main {
         }
     }
 
+    /**
+     * Gets the hdfs path of job's result
+     * 
+     * @return
+     */
+    protected static String getResultFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
+        String resultPath = sparkJobContext.getResultPath();
+        final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
+        final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
+        if (resultPath == null || resultPath.isEmpty()) {
+            resultPath = createPath(fileSystemPrefix, DEFAULT_RESULT_PATH);
+        } else {
+            final URI uri = URI.create(resultPath);
+            if (!uri.isAbsolute()) {
+                resultPath = createPath(fileSystemPrefix, resultPath);
+            }
+        }
+
+        if (!resultPath.endsWith(RESULT_FILE_EXTENSION)) {
+            final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
+            final Date date = new Date();
+            final String filename = analysisJobXmlName + "-" + date.getTime() + ".analysis.result.dat";
+            final String filePath = createPath(resultPath, filename);
+            return filePath;
+        }
+        return resultPath;
+    }
+
+    protected static String createPath(final String fileSystemPrefix, String resultPath) {
+
+        final URI uri;
+        try {
+            URI systemPrefix = new URI(fileSystemPrefix);
+            if (!resultPath.startsWith("/")) {
+                resultPath = "/" + resultPath;
+            }
+            uri = new URI("hdfs", null, systemPrefix.getHost(), systemPrefix.getPort(), systemPrefix.getPath()
+                    + resultPath, null, null);
+            return uri.toString();
+        } catch (URISyntaxException e) {
+            logger.error("Error while trying to create url for saving the job", e);
+        }
+
+        return null;
+
+    }
 }

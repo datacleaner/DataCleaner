@@ -50,6 +50,7 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -102,13 +103,13 @@ public final class JobGraph {
     private int _scrollHorizontal;
     private int _scrollVertical;
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
-            UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         this(windowContext, userPreferences, analysisJobBuilder, null, usageLogger);
     }
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
-            RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -229,11 +230,20 @@ public final class JobGraph {
                     final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) data;
 
                     final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(dropPoint);
+                    metadata.put("variant", getComponentVariant(descriptor));
 
                     _analysisJobBuilder.addComponent(descriptor, null, null, metadata);
                 }
                 return true;
             };
+
+            private String getComponentVariant(ComponentDescriptor componentDescriptor) {
+                if (componentDescriptor instanceof RemoteTransformerDescriptorImpl) {
+                    return ((RemoteTransformerDescriptorImpl)componentDescriptor).getServerName();
+                } else {
+                    return "local";
+                }
+            }
         });
 
         GraphUtils.applyStyles(visualizationViewer);
@@ -262,8 +272,8 @@ public final class JobGraph {
                     return;
                 }
 
-                final String showCanvasHints = _userPreferences.getAdditionalProperties()
-                        .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                final String showCanvasHints = _userPreferences.getAdditionalProperties().get(
+                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
                 if ("false".equals(showCanvasHints)) {
                     // don't show the background hints - the user has decided
                     // not to have them.
@@ -433,8 +443,8 @@ public final class JobGraph {
     }
 
     private JButton createGraphPreferencesButton() {
-        final JButton uiPreferencesButton = WidgetFactory
-                .createSmallButton(ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
+        final JButton uiPreferencesButton = WidgetFactory.createSmallButton(ImageManager.get().getImageIcon(
+                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
         uiPreferencesButton.setOpaque(false);
         uiPreferencesButton.setBorder(null);
         uiPreferencesButton.addActionListener(new ActionListener() {

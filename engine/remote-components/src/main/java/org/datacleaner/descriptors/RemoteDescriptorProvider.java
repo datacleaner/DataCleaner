@@ -49,11 +49,12 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
-    private static final int TEST_CONNECTION_TIMEOUT = 1000; // [ms]
+    private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
     private boolean lastConnectionCheckResult = false;
+    private boolean checkInProgress = false;
 
     public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
         super(false);
@@ -64,7 +65,12 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
 
-        if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now) {
+        if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
+            synchronized (this) { // not to start multiple threads/checks at the same time
+                lastConnectionCheckTime = now;
+                checkInProgress = true;
+            }
+
             (new Thread() {
                 @Override
                 public void run() {
@@ -85,15 +91,18 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
             synchronized (this) {
                 lastConnectionCheckResult = socket.isConnected();
-                lastConnectionCheckTime = now;
             }
         } catch(IOException e) {
             synchronized (this) {
                 lastConnectionCheckResult = false;
-                lastConnectionCheckTime = now;
             }
+
             logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
                     + ")' is down: " + e.getMessage());
+        } finally {
+            synchronized (this) {
+                checkInProgress = false;
+            }
         }
     }
 

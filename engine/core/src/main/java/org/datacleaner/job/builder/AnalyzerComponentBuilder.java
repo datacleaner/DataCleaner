@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
  * @param <A>
  *            the type of {@link Analyzer} being built.
  */
-public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
-        AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
+public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
+        extends AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
@@ -96,8 +96,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     private List<AnalyzerChangeListener> getAllListeners() {
         @SuppressWarnings("deprecation")
         List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size()
-                + _localChangeListeners.size());
+        List<AnalyzerChangeListener> list = new ArrayList<>(
+                globalChangeListeners.size() + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
@@ -119,8 +119,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
 
         if (validate && analyzerJobs.length > 1) {
-            throw new IllegalStateException("This builder generates " + analyzerJobs.length
-                    + " jobs, but a single job was requested");
+            throw new IllegalStateException(
+                    "This builder generates " + analyzerJobs.length + " jobs, but a single job was requested");
         }
 
         return analyzerJobs[0];
@@ -177,7 +177,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (validate && originatingTables.isEmpty()) {
             final List<Table> sourceTables = getAnalysisJobBuilder().getSourceTables();
             if (sourceTables.size() == 1) {
-                logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred", this);
+                logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred",
+                        this);
                 Table table = sourceTables.get(0);
                 originatingTables.put(table, new ArrayList<InputColumn<?>>());
             } else {
@@ -235,6 +236,21 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
+    public AnalyzerComponentBuilder<A> removeInputColumn(InputColumn<?> inputColumn,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        assert propertyDescriptor.isInputColumn();
+        if (inputColumn == null) {
+            throw new IllegalArgumentException("InputColumn cannot be null");
+        }
+        if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
+            _inputColumns.remove(inputColumn);
+            return this;
+        } else {
+            return super.removeInputColumn(inputColumn, propertyDescriptor);
+        }
+    }
+
+    @Override
     public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
         if (isMultipleJobsSupported() && configuredProperty == _inputProperty) {
             if (_inputColumns.isEmpty()) {
@@ -246,8 +262,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                     }
                 }
                 if (throwException) {
-                    throw new ComponentConfigurationException("No input columns configured for "
-                            + LabelUtils.getLabel(this));
+                    throw new ComponentConfigurationException(
+                            "No input columns configured for " + LabelUtils.getLabel(this));
                 } else {
                     return false;
                 }

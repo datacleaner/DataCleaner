@@ -21,6 +21,8 @@ package org.datacleaner.util;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import org.datacleaner.api.RestrictedFunctionalityCallToAction;
+import org.datacleaner.api.RestrictedFunctionalityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,28 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
     public void uncaughtException(Thread t, final Throwable e) {
         if (isIgnoreIssue(e)) {
             logger.debug("Ignoring uncaught exception", e);
+            return;
+        }
+
+        if (e instanceof RestrictedFunctionalityException) {
+            logger.debug("Handling restricted functionality exception", e);
+
+            final StringBuilder sb = new StringBuilder(e.getMessage());
+            final RestrictedFunctionalityCallToAction[] callToActions = ((RestrictedFunctionalityException) e)
+                    .getCallToActions();
+            for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+                sb.append('\n');
+                sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
+            }
+
+            final String detailedMessage = sb.toString();
+
+            WidgetUtils.invokeSwingAction(new Runnable() {
+                @Override
+                public void run() {
+                    WidgetUtils.showErrorMessage("Restricted functionality", detailedMessage);
+                }
+            });
             return;
         }
 

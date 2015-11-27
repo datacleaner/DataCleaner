@@ -112,4 +112,6 @@ public interface RowProcessingPublisher {
     public AnalysisListener getAnalysisListener();
 
     public ConsumeRowHandler createConsumeRowHandler();
+
+    public ErrorAware getErrorAware();
 }

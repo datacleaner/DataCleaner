@@ -163,9 +163,12 @@ public class ConsumeRowHandler {
          */
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final AnalysisListener analysisListener = rowConsumeConfiguration.analysisListener;
+        final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
+        final AnalysisListener analysisListener = new CompositeAnalysisListener(
+                rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
+
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
-                analysisListener, taskRunner, lifeCycleHelper);
+                analysisListener, errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {

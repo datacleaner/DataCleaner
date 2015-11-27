@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implements ErrorAware {
+public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implements ErrorAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorAwareAnalysisListener.class);
 
@@ -47,11 +47,12 @@ final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implement
     private final AtomicBoolean _cancelled = new AtomicBoolean(false);
 
     protected void handleError(AnalysisJob job, Throwable throwable) {
-        if (throwable instanceof AnalysisJobCancellation) {
+        final boolean cancellation = throwable instanceof AnalysisJobCancellation;
+        if (cancellation) {
             _cancelled.set(true);
         }
 
-        if (!(throwable instanceof PreviousErrorsExistException)) {
+        if (!cancellation && !(throwable instanceof PreviousErrorsExistException)) {
             logger.warn("Exception stack trace:", throwable);
         }
 
@@ -109,9 +110,9 @@ final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implement
         logger.warn("errorInAnalyzer({},{},{},{})", new Object[] { job, analyzerJob, row, throwable });
         handleError(job, throwable);
     }
-
+    
     @Override
-    public void errorUknown(AnalysisJob job, Throwable throwable) {
+    public void errorUnknown(AnalysisJob job, Throwable throwable) {
         logger.warn("errorUnknown({},{})", new Object[] { job, throwable });
         handleError(job, throwable);
     }

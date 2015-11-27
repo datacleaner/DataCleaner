@@ -50,6 +50,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
@@ -121,14 +122,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         _checkBoxDecorations = new IdentityHashMap<>();
         _firstUpdate = true;
         _dataType = propertyDescriptor.getTypeArgument(0);
-        getAnalysisJobBuilder().addSourceColumnChangeListener(this);
-        getAnalysisJobBuilder().addTransformerChangeListener(this);
 
         setLayout(new VerticalLayout(2));
 
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
-        _searchDatastoreTextField.setBorder(
-                new CompoundBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION, WidgetUtils.BORDER_THIN));
+        _searchDatastoreTextField.setBorder(new CompoundBorder(WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION,
+                WidgetUtils.BORDER_THIN));
         _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -215,6 +214,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 }
             });
         }
+        updateUI();
     }
 
     protected boolean isAllInputColumnsSelectedIfNoValueExist() {
@@ -344,6 +344,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         if (_dataType == Object.class || ReflectionUtils.is(sourceColumn.getDataType(), _dataType)) {
             addAvailableInputColumn(sourceColumn);
             updateVisibility();
+            updateUI();
         }
     }
 
@@ -351,6 +352,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public void onRemove(InputColumn<?> sourceColumn) {
         removeAvailableInputColumn(sourceColumn);
         updateVisibility();
+        updateUI();
     }
 
     @Override
@@ -362,10 +364,20 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
+    protected void onPanelAdd() {
+        super.onPanelAdd();
+        final AnalysisJobBuilder analysisJobBuilder = getAnalysisJobBuilder();
+        analysisJobBuilder.addSourceColumnChangeListener(this);
+        analysisJobBuilder.addTransformerChangeListener(this);
+    }
+
+    @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
-        getAnalysisJobBuilder().removeTransformerChangeListener(this);
+        final AnalysisJobBuilder analysisJobBuilder = getAnalysisJobBuilder();
+        logger.info("Removing listeners from {}", LabelUtils.getScopeLabel(analysisJobBuilder));
+        analysisJobBuilder.removeSourceColumnChangeListener(this);
+        analysisJobBuilder.removeTransformerChangeListener(this);
     }
 
     @Override
@@ -373,7 +385,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             List<MutableInputColumn<?>> outputColumns) {
 
         // Makes sure it makes sense to do this (rather destructive) update
-        if (transformerJobBuilder == getComponentBuilder() || transformerJobBuilder.getAnalysisJobBuilder() != getAnalysisJobBuilder()) {
+        if (transformerJobBuilder == getComponentBuilder()
+                || transformerJobBuilder.getAnalysisJobBuilder() != getAnalysisJobBuilder()) {
             return;
         }
 
@@ -383,6 +396,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         getComponentBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
 
         updateComponents(value);
+        updateUI();
     }
 
     @Override

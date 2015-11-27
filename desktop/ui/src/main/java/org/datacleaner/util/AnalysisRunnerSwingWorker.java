@@ -19,6 +19,8 @@
  */
 package org.datacleaner.util;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.swing.SwingWorker;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -41,10 +43,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     private final AnalysisRunner _analysisRunner;
     private final AnalysisJob _job;
     private final ResultWindow _resultWindow;
-    private AnalysisResultFuture _resultFuture;
 
-    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job,
-            ResultWindow resultWindow) {
+    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job, ResultWindow resultWindow) {
         final AnalysisListener analysisListener = resultWindow.createAnalysisListener();
         _analysisRunner = new AnalysisRunnerImpl(configuration, analysisListener);
         _job = job;
@@ -54,8 +54,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     @Override
     protected AnalysisResultFuture doInBackground() throws Exception {
         try {
-            _resultFuture = _analysisRunner.run(_job);
-            return _resultFuture;
+            return _analysisRunner.run(_job);
         } catch (final Exception e) {
             logger.error("Unexpected error occurred when invoking run(...) on AnalysisRunner", e);
             _resultWindow.onUnexpectedError(_job, e);
@@ -64,10 +63,21 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     }
 
     public void cancelIfRunning() {
-        if (_resultFuture != null) {
-            if (!_resultFuture.isDone()) {
-                _resultFuture.cancel();
+        javax.swing.SwingWorker.StateValue state = getState();
+        switch (state) {
+        case STARTED:
+        case DONE:
+            try {
+                final AnalysisResultFuture resultFuture = get(2, TimeUnit.SECONDS);
+                if (!resultFuture.isDone()) {
+                    resultFuture.cancel();
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to cancel job", e);
             }
+            break;
+        case PENDING:
+            logger.info("SwingWorker hasn't started yet - cancelIfRunning() invocation disregarded");
         }
     }
 }

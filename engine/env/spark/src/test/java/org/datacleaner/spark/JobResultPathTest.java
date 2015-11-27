@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.spark.utils.ResultFilePathUtils;
 import org.junit.Test;
 
 /**
@@ -47,7 +48,7 @@ public class JobResultPathTest extends TestCase {
                     sparkJobContext.getResultPath());
             assertEquals("vanilla-job", sparkJobContext.getAnalysisJobName());
             assertEquals("hdfs://bigdatavm:9000/target/results/myresult.analysis.result.dat",
-                    Main.getResultFilePath(sparkContext, sparkJobContext));
+                    ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext));
         } finally {
             sparkContext.close();
         }
@@ -68,7 +69,7 @@ public class JobResultPathTest extends TestCase {
             final String analysisJobName = sparkJobContext.getAnalysisJobName();
             assertEquals("vanilla-job", analysisJobName);
 
-            final String resultJobFilePath = Main.getResultFilePath(sparkContext, sparkJobContext);
+            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
             assertTrue(resultJobFilePath.contains(analysisJobName));
 
         } finally {
@@ -91,7 +92,7 @@ public class JobResultPathTest extends TestCase {
             final String analysisJobName = sparkJobContext.getAnalysisJobName();
             assertEquals("vanilla-job", analysisJobName);
 
-            final String resultJobFilePath = Main.getResultFilePath(sparkContext, sparkJobContext);
+            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
             final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
             assertTrue(resultJobFilePath.contains(analysisJobName));
             assertEquals("hdfs://target/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
@@ -116,7 +117,7 @@ public class JobResultPathTest extends TestCase {
             final String analysisJobName = sparkJobContext.getAnalysisJobName();
             assertEquals("vanilla-job", analysisJobName);
 
-            final String resultJobFilePath = Main.getResultFilePath(sparkContext, sparkJobContext);
+            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
             final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
             assertTrue(resultJobFilePath.contains(analysisJobName));
             assertEquals("hdfs://myresult/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
@@ -139,7 +140,7 @@ public class JobResultPathTest extends TestCase {
             assertNull(sparkJobContext.getResultPath());
             final String analysisJobName = sparkJobContext.getAnalysisJobName();
             assertEquals("vanilla-job", analysisJobName);
-            final String resultJobFilePath = Main.getResultFilePath(sparkContext, sparkJobContext);
+            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
             final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
             assertTrue(resultJobFilePath.contains(analysisJobName));
             assertEquals("hdfs://datacleaner/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
@@ -151,10 +152,10 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testCreatePath() {
-        final String newPath1 = Main.createPath("hdfs://bigdatavm:9000", "mypath/myfile.analysis.result.dat");
+        final String newPath1 = ResultFilePathUtils.createPath("hdfs://bigdatavm:9000", "mypath/myfile.analysis.result.dat");
         assertEquals("hdfs://bigdatavm:9000/mypath/myfile.analysis.result.dat", newPath1);
         
-        final String newPath2 = Main.createPath("hdfs://bigdatavm:9000", "/mypath/myfile.analysis.result.dat");
+        final String newPath2 = ResultFilePathUtils.createPath("hdfs://bigdatavm:9000", "/mypath/myfile.analysis.result.dat");
         assertEquals("hdfs://bigdatavm:9000/mypath/myfile.analysis.result.dat", newPath2);
     }
 

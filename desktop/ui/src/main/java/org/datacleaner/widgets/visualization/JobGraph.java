@@ -230,7 +230,7 @@ public final class JobGraph {
                     final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) data;
 
                     final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(dropPoint);
-                    metadata.put("variant", getComponentVariant(descriptor));
+                    metadata.put("source", getComponentVariant(descriptor));
 
                     _analysisJobBuilder.addComponent(descriptor, null, null, metadata);
                 }

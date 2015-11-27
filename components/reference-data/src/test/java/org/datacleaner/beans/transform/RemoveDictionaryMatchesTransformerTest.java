@@ -100,7 +100,7 @@ public class RemoveDictionaryMatchesTransformerTest extends TestCase {
         assertEquals("[Principal, Senior, Lead, Junior]", transformer.transform("Principal Senior Lead Guru of Junior employees")[1].toString());
         
         assertEquals("", transformer.transform("")[0]);
-        assertEquals("[]", transformer.transform("")[1]); 
+        assertEquals("[]", transformer.transform("")[1].toString()); 
     }
 
     @Test

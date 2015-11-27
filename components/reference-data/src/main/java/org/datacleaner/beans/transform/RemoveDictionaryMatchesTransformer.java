@@ -19,6 +19,11 @@
  */
 package org.datacleaner.beans.transform;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
@@ -52,6 +57,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     public static final String PROPERTY_DICTIONARY = "Dictionary";
     public static final String PROPERTY_COLUMN = "Column";
+    public static final String OUTPUT_COLUMN_REMOVED_MATCHES = "Removed matches";
 
     @Configured(value = PROPERTY_DICTIONARY)
     Dictionary _dictionary;
@@ -59,9 +65,14 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Configured(value = PROPERTY_COLUMN)
     InputColumn<String> _column;
 
+    @Inject
+    @Configured(required = false)
+    @Description("Get removed strings as List")
+    boolean _removedMatchesAsList = false;
+
     @Provided
     DataCleanerConfiguration _configuration;
-    
+
     private DictionaryConnection dictionaryConnection;
 
     private final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
@@ -69,7 +80,8 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public RemoveDictionaryMatchesTransformer() {
     }
 
-    public RemoveDictionaryMatchesTransformer(InputColumn<String> column, Dictionary dictionary, DataCleanerConfiguration configuration) {
+    public RemoveDictionaryMatchesTransformer(InputColumn<String> column, Dictionary dictionary,
+            DataCleanerConfiguration configuration) {
         this();
         _column = column;
         _dictionary = dictionary;
@@ -79,14 +91,18 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Override
     public OutputColumns getOutputColumns() {
         final String name = _column.getName() + " (" + _dictionary.getName() + " removed)";
-        return new OutputColumns(String.class, new String[] { name });
+        if (!_removedMatchesAsList) {
+            return new OutputColumns(String.class, new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES });
+        }
+        return new OutputColumns(new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES }, new Class[] { String.class,
+                List.class });
     }
-    
+
     @Initialize
     public void init() {
         dictionaryConnection = _dictionary.openConnection(_configuration);
     }
-    
+
     @Close
     public void close() {
         if (dictionaryConnection != null) {
@@ -98,27 +114,61 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Override
     public Object[] transform(InputRow inputRow) {
         final String value = inputRow.getValue(_column);
-        final String result = transform(value);
-        return new Object[] { result };
+        final Object[] result = transform(value);
+        return result;
     }
 
-    public String transform(final String value) {
-        if (Strings.isNullOrEmpty(value)) {
-            return value;
+    public Object[] transform(final String value) {
+        if (!_removedMatchesAsList) {
+            return getRemovedMatchesAsString(value);
+        } else {
+            return getRemovedMatchesAsList(value);
         }
+    }
 
-        final StringBuilder sb = new StringBuilder();
+    public String[] getRemovedMatchesAsString(final String value) {
+
+        if (Strings.isNullOrEmpty(value)) {
+            return new String[] { value, "" };
+        }
+        final StringBuilder survivorString = new StringBuilder();
+        final StringBuilder removedString = new StringBuilder();
         final Iterable<String> tokens = SPLITTER.split(value);
         for (String token : tokens) {
             if (!dictionaryConnection.containsValue(token)) {
-                if (sb.length() != 0) {
-                    sb.append(' ');
+                if (survivorString.length() != 0) {
+                    survivorString.append(' ');
                 }
-                sb.append(token);
+                survivorString.append(token);
+            } else {
+                if (removedString.length() != 0) {
+                    removedString.append(' ');
+                }
+                removedString.append(token);
             }
         }
+        return new String[] { survivorString.toString(), removedString.toString() };
+    }
 
-        return sb.toString();
+    public Object[] getRemovedMatchesAsList(final String value) {
+
+        if (Strings.isNullOrEmpty(value)) {
+            return new Object[] { value, Collections.EMPTY_LIST };
+        }
+        final StringBuilder survivorString = new StringBuilder();
+        final List<String> removedMatches = new ArrayList<String>();
+        final Iterable<String> tokens = SPLITTER.split(value);
+        for (String token : tokens) {
+            if (!dictionaryConnection.containsValue(token)) {
+                if (survivorString.length() != 0) {
+                    survivorString.append(' ');
+                }
+                survivorString.append(token);
+            } else {
+                removedMatches.add(token);
+            }
+        }
+        return new Object[] { survivorString.toString(), removedMatches };
     }
 
 }

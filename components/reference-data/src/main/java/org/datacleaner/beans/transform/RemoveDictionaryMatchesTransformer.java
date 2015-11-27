@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
@@ -55,6 +56,22 @@ import com.google.common.base.Strings;
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class RemoveDictionaryMatchesTransformer implements Transformer {
 
+    public static enum RemovedMatches implements HasName {
+
+        STRING, LIST;
+
+        @Override
+        public String getName() {
+            if (this == STRING) {
+                return "String";
+            } else {
+                return "List";
+            }
+
+        }
+
+    };
+
     public static final String PROPERTY_DICTIONARY = "Dictionary";
     public static final String PROPERTY_COLUMN = "Column";
     public static final String OUTPUT_COLUMN_REMOVED_MATCHES = "Removed matches";
@@ -66,9 +83,9 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     InputColumn<String> _column;
 
     @Inject
-    @Configured(required = false)
-    @Description("Get removed strings as List")
-    boolean _removedMatchesAsList = false;
+    @Configured
+    @Description("Get the removed matches as String or as a List")
+    RemovedMatches _removedMatches = RemovedMatches.STRING;
 
     @Provided
     DataCleanerConfiguration _configuration;
@@ -91,11 +108,14 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Override
     public OutputColumns getOutputColumns() {
         final String name = _column.getName() + " (" + _dictionary.getName() + " removed)";
-        if (!_removedMatchesAsList) {
+        switch (_removedMatches) {
+        case LIST:
+            return new OutputColumns(new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES }, new Class[] { String.class,
+                    List.class });
+        default:
             return new OutputColumns(String.class, new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES });
         }
-        return new OutputColumns(new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES }, new Class[] { String.class,
-                List.class });
+
     }
 
     @Initialize
@@ -119,14 +139,15 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     }
 
     public Object[] transform(final String value) {
-        if (!_removedMatchesAsList) {
-            return getRemovedMatchesAsString(value);
-        } else {
-            return getRemovedMatchesAsList(value);
+        switch (_removedMatches) {
+        case LIST:
+            return transform2(value);
+        default:
+            return transformDefault(value);
         }
     }
 
-    public String[] getRemovedMatchesAsString(final String value) {
+    private String[] transformDefault(final String value) {
 
         if (Strings.isNullOrEmpty(value)) {
             return new String[] { value, "" };
@@ -150,7 +171,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
         return new String[] { survivorString.toString(), removedString.toString() };
     }
 
-    public Object[] getRemovedMatchesAsList(final String value) {
+    private Object[] transform2(final String value) {
 
         if (Strings.isNullOrEmpty(value)) {
             return new Object[] { value, Collections.EMPTY_LIST };

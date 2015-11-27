@@ -152,6 +152,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
                                 remoteServerData.getPassword());
                         transformerDescriptor.setServerName(remoteServerData.getServerName());
+                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
                         transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {

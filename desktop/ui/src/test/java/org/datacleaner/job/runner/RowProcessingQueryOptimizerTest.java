@@ -109,9 +109,10 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     private RowProcessingPublisher createPublisher() {
         final AnalysisJob analysisJob = ajb.toAnalysisJob(false);
         final AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
+        final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
         final TaskRunner taskRunner = new SingleThreadedTaskRunner();
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, analysisListener, taskRunner,
-                lifeCycleHelper);
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, analysisListener,
+                errorListener, taskRunner, lifeCycleHelper);
         final Table table = ajb.getSourceColumns().get(0).getPhysicalColumn().getTable();
         return publishers.getRowProcessingPublisher(publishers.getStream(table));
     }

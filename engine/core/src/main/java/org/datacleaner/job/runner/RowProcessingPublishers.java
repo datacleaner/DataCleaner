@@ -77,6 +77,7 @@ public final class RowProcessingPublishers {
     private final LifeCycleHelper _lifeCycleHelper;
     private final Map<RowProcessingStream, RowProcessingPublisher> _rowProcessingPublishers;
     private final Map<ComponentJob, RowProcessingConsumer> _consumers;
+    private final ErrorAware _errorAware;
 
     /**
      * Constructs a {@link RowProcessingPublishers}s instance.
@@ -94,7 +95,7 @@ public final class RowProcessingPublishers {
     @Deprecated
     public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
             LifeCycleHelper lifeCycleHelper, SourceColumnFinder sourceColumnFinder) {
-        this(analysisJob, analysisListener, taskRunner, lifeCycleHelper);
+        this(analysisJob, analysisListener, (ErrorAware) analysisListener, taskRunner, lifeCycleHelper);
     }
 
     /**
@@ -102,13 +103,15 @@ public final class RowProcessingPublishers {
      * 
      * @param analysisJob
      * @param analysisListener
+     * @param errorAware
      * @param taskRunner
      * @param lifeCycleHelper
      */
-    public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner,
-            LifeCycleHelper lifeCycleHelper) {
+    public RowProcessingPublishers(AnalysisJob analysisJob, AnalysisListener analysisListener, ErrorAware errorAware,
+            TaskRunner taskRunner, LifeCycleHelper lifeCycleHelper) {
         _analysisJob = analysisJob;
         _analysisListener = analysisListener;
+        _errorAware = errorAware;
         _taskRunner = taskRunner;
         _lifeCycleHelper = lifeCycleHelper;
 
@@ -306,9 +309,9 @@ public final class RowProcessingPublishers {
 
             _consumers.put(componentJob, consumer);
         }
-        
+
         consumer.registerPublisher(publisher);
-        
+
         return new ConsumerCreation(consumer, create);
     }
 
@@ -421,5 +424,9 @@ public final class RowProcessingPublishers {
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, includeNonDistributedTasks);
         return lifeCycleHelper;
+    }
+
+    public ErrorAware getErrorAware() {
+        return _errorAware;
     }
 }

@@ -49,7 +49,7 @@ final class DCClassVisitor extends ClassVisitor {
 
     private static final int API_VERSION = Opcodes.ASM4;
 
-    private final static Logger _logger = LoggerFactory.getLogger(DCClassVisitor.class);
+    private final static Logger logger = LoggerFactory.getLogger(DCClassVisitor.class);
     private final ClassLoader _classLoader;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private Class<?> _beanClazz;
@@ -86,8 +86,8 @@ final class DCClassVisitor extends ClassVisitor {
                                 .forName(renderingFormatClassName, false, _classLoader);
                         renderingFormatClass = cls;
                     } catch (Exception e) {
-                        if (_logger.isWarnEnabled()) {
-                            _logger.warn("Failed to read rendering format of renderer class '"
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("Failed to read rendering format of renderer class '"
                                     + renderingFormatClassName + "', ignoring: " + _name, e);
                         }
                         return;
@@ -95,7 +95,7 @@ final class DCClassVisitor extends ClassVisitor {
 
                     final Boolean proceed = _renderingFormatPredicate.eval(renderingFormatClass);
                     if (proceed == null || !proceed.booleanValue()) {
-                        _logger.info("Skipping renderer because it's format was not accepted by predicate: {}", _name);
+                        logger.info("Skipping renderer because it's format was not accepted by predicate: {}", _name);
                         return;
                     }
                     initializeClass();
@@ -106,7 +106,7 @@ final class DCClassVisitor extends ClassVisitor {
         if (isAnnotation(desc, Named.class)) {
             initializeClass();
         } else if (isLegacyAnnotation(desc)) {
-            _logger.info("Initializing class with legacy annotation: {}", desc);
+            logger.info("Initializing class with legacy annotation: {}", desc);
             initializeClass();
         }
         return null;
@@ -130,17 +130,23 @@ final class DCClassVisitor extends ClassVisitor {
                 _beanClazz = Class.forName(javaName, true, _classLoader);
             } catch (ClassNotFoundException e) {
                 // This happens when the class itself does not exist
-                _logger.error("Could not find class to be loaded: " + javaName, e);
+                logger.error("Could not find class to be loaded: " + javaName, e);
             } catch (NoClassDefFoundError e) {
                 // This happens if the class depends on a unsatisfied
                 // dependency. For instance when it is a renderer bean that
                 // depends on a particular rendering format. We will gracefully
                 // recover from this scenario with just a warning.
 
-                _logger.error("Failed to load class {} because of unsatisfied class dependency: {}", javaName,
+                logger.error("Failed to load class {} because of unsatisfied class dependency: {}", javaName,
                         e.getMessage());
-                if (_logger.isDebugEnabled()) {
-                    _logger.debug("Failed to load class: " + javaName, e);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed to load class: " + javaName, e);
+                }
+            } catch (UnsupportedClassVersionError e) {
+                logger.error("Failed to load class {} because of unsupported class version: {}", javaName,
+                        e.getMessage());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed to load class: " + javaName, e);
                 }
             }
         }

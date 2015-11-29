@@ -8,14 +8,4 @@
 	<reference-data-catalog>
 	</reference-data-catalog>
 
-	<custom-taskrunner
-		class-name="org.datacleaner.monitor.configuration.SharedTaskRunner" />
-		
-	<storage-provider>
-		<in-memory max-rows-threshold="500" />
-	</storage-provider>
-	
-	<custom-descriptor-provider
-		class-name="org.datacleaner.monitor.configuration.SharedDescriptorProvider" />
-
 </configuration>

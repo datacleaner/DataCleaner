@@ -31,8 +31,6 @@
 		</composite-datastore>
 	</datastore-catalog>
 
-	<singlethreaded-taskrunner />
-
 	<storage-provider>
 		<berkeley-db>
 			<clean-directory-on-startup>true</clean-directory-on-startup>

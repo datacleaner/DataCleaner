@@ -12,8 +12,4 @@
 		</json-datastore>
 	</datastore-catalog>
 
-	<classpath-scanner>
-		<package recursive="true">org.datacleaner</package>
-	</classpath-scanner>
-
 </configuration>

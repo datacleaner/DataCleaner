@@ -99,7 +99,7 @@ public class SparkJobContext implements Serializable {
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
             final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
-                    new DefaultConfigurationReaderInterceptor(_customProperties));
+                    new SparkConfigurationReaderInterceptor(_customProperties));
             _dataCleanerConfiguration = confReader.read(createInputStream(_configurationXml));
         }
         return _dataCleanerConfiguration;

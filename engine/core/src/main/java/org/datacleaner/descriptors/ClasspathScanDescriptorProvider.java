@@ -89,7 +89,6 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private final AtomicInteger _tasksPending;
 
-   
     /**
      * Default constructor. Will perform classpath scanning in the calling
      * thread(s).

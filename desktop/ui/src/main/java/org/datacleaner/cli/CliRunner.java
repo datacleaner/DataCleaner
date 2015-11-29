@@ -45,7 +45,6 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -60,6 +59,8 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResultWriter;
+import org.datacleaner.user.DataCleanerHome;
+import org.datacleaner.user.DesktopConfigurationReaderInterceptor;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.slf4j.Logger;
@@ -153,7 +154,9 @@ public final class CliRunner implements Closeable {
         } else {
             propertiesResource = null;
         }
-        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DefaultConfigurationReaderInterceptor(
+        
+        final FileObject dataCleanerHome = DataCleanerHome.get();
+        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DesktopConfigurationReaderInterceptor(dataCleanerHome, 
                 propertiesResource);
 
         final InputStream inputStream = configurationFile.read();

@@ -22,11 +22,18 @@ package org.datacleaner.user;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.extensions.ExtensionPackage;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.vfs.VfsRepository;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
@@ -39,9 +46,21 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
+    private static final TaskRunner TASK_RUNNER = new MultiThreadedTaskRunner();
+    private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER)
+            .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
+    private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
+            .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
+
     private final FileObject _dataCleanerHome;
 
     public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome) {
+        super(BASE_ENVIRONMENT);
+        _dataCleanerHome = dataCleanerHome;
+    }
+
+    public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome, Resource propertiesResource) {
+        super(propertiesResource, BASE_ENVIRONMENT);
         _dataCleanerHome = dataCleanerHome;
     }
 

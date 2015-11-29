@@ -20,6 +20,7 @@
 package org.datacleaner.cli;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -154,10 +155,9 @@ public final class CliRunner implements Closeable {
         } else {
             propertiesResource = null;
         }
-        
-        final FileObject dataCleanerHome = DataCleanerHome.get();
-        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DesktopConfigurationReaderInterceptor(dataCleanerHome, 
-                propertiesResource);
+
+        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DesktopConfigurationReaderInterceptor(
+                new File("."), propertiesResource);
 
         final InputStream inputStream = configurationFile.read();
         try {
@@ -446,8 +446,8 @@ public final class CliRunner implements Closeable {
             final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
             for (ConfiguredPropertyDescriptor property : properties) {
                 if (!property.isInputColumn()) {
-                    write(" - Property: name=" + property.getName() + ", type="
-                            + property.getBaseType().getSimpleName() + ", required=" + property.isRequired());
+                    write(" - Property: name=" + property.getName() + ", type=" + property.getBaseType().getSimpleName()
+                            + ", required=" + property.isRequired());
                 }
             }
 

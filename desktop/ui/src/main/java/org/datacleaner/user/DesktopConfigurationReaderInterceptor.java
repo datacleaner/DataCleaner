@@ -19,6 +19,7 @@
  */
 package org.datacleaner.user;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -35,6 +36,7 @@ import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.vfs.VfsRepository;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
@@ -52,16 +54,31 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
             .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
 
-    private final FileObject _dataCleanerHome;
+    private final Repository _homeRepository;
 
     public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome) {
-        super(BASE_ENVIRONMENT);
-        _dataCleanerHome = dataCleanerHome;
+        this(new VfsRepository(dataCleanerHome));
     }
 
     public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome, Resource propertiesResource) {
+        this(new VfsRepository(dataCleanerHome), propertiesResource);
+    }
+
+    public DesktopConfigurationReaderInterceptor(File dataCleanerHome) {
+        this(new FileRepository(dataCleanerHome));
+    }
+
+    public DesktopConfigurationReaderInterceptor(File dataCleanerHome, Resource propertiesResource) {
+        this(new FileRepository(dataCleanerHome), propertiesResource);
+    }
+
+    public DesktopConfigurationReaderInterceptor(Repository homeRepository) {
+        this(homeRepository, null);
+    }
+
+    public DesktopConfigurationReaderInterceptor(Repository homeRepository, Resource propertiesResource) {
         super(propertiesResource, BASE_ENVIRONMENT);
-        _dataCleanerHome = dataCleanerHome;
+        _homeRepository = homeRepository;
     }
 
     @Override
@@ -70,7 +87,7 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     private Repository getHomeRepository() {
-        return new VfsRepository(_dataCleanerHome);
+        return _homeRepository;
     }
 
     @Override

@@ -56,7 +56,7 @@ import com.google.common.base.Strings;
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class RemoveDictionaryMatchesTransformer implements Transformer {
 
-    public static enum RemovedMatches implements HasName {
+    public static enum RemovedMatchesType implements HasName {
 
         STRING, LIST;
 
@@ -85,7 +85,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Inject
     @Configured
     @Description("Get the removed matches as String or as a List")
-    RemovedMatches _removedMatches = RemovedMatches.STRING;
+    RemovedMatchesType _removedMatchesType = RemovedMatchesType.STRING;
 
     @Provided
     DataCleanerConfiguration _configuration;
@@ -108,14 +108,15 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Override
     public OutputColumns getOutputColumns() {
         final String name = _column.getName() + " (" + _dictionary.getName() + " removed)";
-        switch (_removedMatches) {
+        switch (_removedMatchesType) {
+        case STRING:
+            return new OutputColumns(String.class, new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES });
         case LIST:
             return new OutputColumns(new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES }, new Class[] { String.class,
                     List.class });
         default:
-            return new OutputColumns(String.class, new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES });
+            return null;
         }
-
     }
 
     @Initialize
@@ -139,21 +140,26 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     }
 
     public Object[] transform(final String value) {
-        switch (_removedMatches) {
+
+        if (Strings.isNullOrEmpty(value)) {
+            switch (_removedMatchesType) {
+            case STRING:
+                return new String[] { value, "" };
+            case LIST:
+                return new Object[] { value, Collections.EMPTY_LIST };
+            }
+        }
+        Object removedStringMatches = null;
+        switch (_removedMatchesType) {
+        case STRING:
+            removedStringMatches = new StringBuilder();
+            break;
         case LIST:
-            return transform2(value);
-        default:
-            return transformDefault(value);
+            removedStringMatches = new ArrayList<String>();
+            break;
         }
-    }
 
-    private String[] transformDefault(final String value) {
-
-        if (Strings.isNullOrEmpty(value)) {
-            return new String[] { value, "" };
-        }
         final StringBuilder survivorString = new StringBuilder();
-        final StringBuilder removedString = new StringBuilder();
         final Iterable<String> tokens = SPLITTER.split(value);
         for (String token : tokens) {
             if (!dictionaryConnection.containsValue(token)) {
@@ -162,34 +168,29 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                 }
                 survivorString.append(token);
             } else {
-                if (removedString.length() != 0) {
-                    removedString.append(' ');
-                }
-                removedString.append(token);
+                addRemovedMatches(removedStringMatches, token);
             }
         }
-        return new String[] { survivorString.toString(), removedString.toString() };
+
+        switch (_removedMatchesType) {
+        case STRING:
+            return new String[] { survivorString.toString(), removedStringMatches.toString() };
+        case LIST:
+            return new Object[] { survivorString.toString(), removedStringMatches };
+        }
+        return null;
     }
 
-    private Object[] transform2(final String value) {
-
-        if (Strings.isNullOrEmpty(value)) {
-            return new Object[] { value, Collections.EMPTY_LIST };
-        }
-        final StringBuilder survivorString = new StringBuilder();
-        final List<String> removedMatches = new ArrayList<String>();
-        final Iterable<String> tokens = SPLITTER.split(value);
-        for (String token : tokens) {
-            if (!dictionaryConnection.containsValue(token)) {
-                if (survivorString.length() != 0) {
-                    survivorString.append(' ');
-                }
-                survivorString.append(token);
-            } else {
-                removedMatches.add(token);
+    @SuppressWarnings("unchecked")
+    public void addRemovedMatches(Object removedObjects, final String token) {
+        if (removedObjects instanceof StringBuilder) {
+            StringBuilder removedString = (StringBuilder) removedObjects;
+            if (removedString.length() != 0) {
+                removedString.append(' ');
             }
+            removedString.append(token);
+        } else if (removedObjects instanceof ArrayList) {
+            ((ArrayList<String>) removedObjects).add(token);
         }
-        return new Object[] { survivorString.toString(), removedMatches };
     }
-
 }

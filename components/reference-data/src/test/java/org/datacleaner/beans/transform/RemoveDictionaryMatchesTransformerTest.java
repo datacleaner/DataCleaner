@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.beans.transform.RemoveDictionaryMatchesTransformer.RemovedMatches;
+import org.datacleaner.beans.transform.RemoveDictionaryMatchesTransformer.RemovedMatchesType;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.reference.Dictionary;
@@ -54,19 +54,19 @@ public class RemoveDictionaryMatchesTransformerTest extends TestCase {
 
     @Test
     public void testGetOutputColumns() throws Exception {
-        transformer._removedMatches= RemovedMatches.STRING;
+        transformer._removedMatchesType= RemovedMatchesType.STRING;
         final OutputColumns outputColumns = transformer.getOutputColumns();
         assertEquals("OutputColumns[Job title (Title adjectives removed), Removed matches]", outputColumns.toString());
         assertEquals(String.class, outputColumns.getColumnType(1));
         
-        transformer._removedMatches= RemovedMatches.LIST;
+        transformer._removedMatchesType= RemovedMatchesType.LIST;
         assertEquals("OutputColumns[Job title (Title adjectives removed), Removed matches]", transformer.getOutputColumns().toString());
         assertEquals(List.class,transformer.getOutputColumns().getColumnType(1));
     }
 
     public void testJobTitleScenarioRemovedMatchesAsString() throws Throwable {
         
-        transformer._removedMatches= RemovedMatches.STRING;
+        transformer._removedMatchesType= RemovedMatchesType.STRING;
         
         assertEquals("", transformer.transform("")[0]);
         assertEquals("", transformer.transform("")[1]);
@@ -86,7 +86,7 @@ public class RemoveDictionaryMatchesTransformerTest extends TestCase {
     }
     public void testJobTitleScenarioRemovedMatchesAsList() throws Throwable {
     
-        transformer._removedMatches= RemovedMatches.LIST;
+        transformer._removedMatchesType= RemovedMatchesType.LIST;
         
         assertEquals("Software Engineer", transformer.transform("Senior Software Engineer")[0]);
         assertEquals("[Senior]", transformer.transform("Senior Software Engineer")[1].toString());

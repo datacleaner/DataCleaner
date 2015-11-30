@@ -52,25 +52,4 @@
 		</synonym-catalogs>
 	</reference-data-catalog>
 
-	<multithreaded-taskrunner max-threads="30" />
-
-	<storage-provider>
-		<combined>
-			<collections-storage>
-				<berkeley-db>
-					<clean-directory-on-startup>true</clean-directory-on-startup>
-				</berkeley-db>
-			</collections-storage>
-			<row-annotation-storage>
-				<in-memory max-rows-threshold="500" max-sets-threshold="500" />
-			</row-annotation-storage>
-		</combined>
-	</storage-provider>
-
-	<classpath-scanner>
-		<package recursive="true">org.datacleaner</package>
-		<package recursive="true">com.hi</package>
-		<package recursive="true">com.neopost</package>
-	</classpath-scanner>
-
 </configuration>

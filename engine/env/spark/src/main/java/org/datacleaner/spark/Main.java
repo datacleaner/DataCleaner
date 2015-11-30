@@ -63,11 +63,10 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
                 propertiesPath);
-       
+        
         // get the path of the result file here so that it can fail fast(not after the job has run). 
         final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
         logger.info("The result of the job will be written to " + resultJobFilePath);
-        
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
@@ -75,8 +74,6 @@ public class Main {
                 final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
                 final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
                         result.getCreationDate());
-              
-                logger.info("The result of the job was written to " + resultJobFilePath);
                 if (resultJobFilePath != null) {
                     final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
                     final OutputStream out = hdfsResource.write();
@@ -86,6 +83,7 @@ public class Main {
                         logger.error("Error while trying to serialize the job");
                         throw e;
                     } finally {
+                        logger.info("The result of the job was written to " + resultJobFilePath);
                         FileHelper.safeClose(out);
                     }
                 }

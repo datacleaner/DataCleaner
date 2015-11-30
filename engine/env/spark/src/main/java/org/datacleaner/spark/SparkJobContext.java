@@ -37,7 +37,6 @@ import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;

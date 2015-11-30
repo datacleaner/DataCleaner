@@ -60,7 +60,6 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResultWriter;
-import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.DesktopConfigurationReaderInterceptor;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.convert.ResourceConverter;

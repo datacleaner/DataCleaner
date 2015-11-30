@@ -30,16 +30,20 @@ import org.datacleaner.spark.SparkJobContext;
 import org.datacleaner.util.FileFilters;
 
 public class ResultFilePathUtils {
-    
+
     private static final Logger logger = Logger.getLogger(ResultFilePathUtils.class);
-    
+
     private static final String DEFAULT_RESULT_PATH = "/datacleaner/results";
     private static final String RESULT_FILE_EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
-    
+
     /**
-     * Gets the hdfs path of job's result
+     * Gets the hdfs path of job's result. The path can be configured in the job
+     * properties file with property 'datacleaner.result.hdfs.path'. The path
+     * can be absolute('hdfs://[hostname]:[port]/myresults/myjob.analysis.result.dat') or relative('/myresults/myjob.analysis.result.dat'). If no path is set in the properties file and
+     * the system is configured to save the results, the default path will be
+     * saved to '/datacleaner/results/[jobname]-[timestamp].analysis.result.dat
      * 
-     * @return
+     * @retur
      */
     public static String getResultFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
         String resultPath = sparkJobContext.getResultPath();
@@ -77,10 +81,8 @@ public class ResultFilePathUtils {
             return uri.toString();
         } catch (URISyntaxException e) {
             logger.error("Error while trying to create url for saving the job", e);
+            return null;
         }
-
-        return null;
-
     }
 
 }

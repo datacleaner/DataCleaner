@@ -67,6 +67,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
+            assertEquals("vanilla-job", sparkJobContext.getAnalysisJobName());
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
             result = sparkAnalysisRunner.run(job);
 

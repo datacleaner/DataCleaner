@@ -48,6 +48,7 @@ public class ResultFilePathUtils {
     public static String getResultFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
         String resultPath = sparkJobContext.getResultPath();
         final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
+        /** The default value would be read from hadoop configuration at runtime from core-site.xml. It represents the machine's hostname and port. Example: hdfs://bigdatavm:9000 **/
         final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
         if (resultPath == null || resultPath.isEmpty()) {
             resultPath = createPath(fileSystemPrefix, DEFAULT_RESULT_PATH);

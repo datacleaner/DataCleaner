@@ -68,11 +68,11 @@ public class ResultFilePathUtils {
                 resultPath = createPath(fileSystemPrefix, resultPath);
             }
         }
-        resultPath = attachFilenameExtension(sparkJobContext, resultPath);
+        resultPath = attachResultJobFilename(sparkJobContext, resultPath);
         return resultPath;
     }
 
-    private static String attachFilenameExtension(final SparkJobContext sparkJobContext, String resultPath)
+    private static String attachResultJobFilename(final SparkJobContext sparkJobContext, String resultPath)
             throws URISyntaxException {
 
         if (resultPath != null && !resultPath.endsWith(RESULT_FILE_EXTENSION)) {

@@ -41,7 +41,7 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);
   
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
                     + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"

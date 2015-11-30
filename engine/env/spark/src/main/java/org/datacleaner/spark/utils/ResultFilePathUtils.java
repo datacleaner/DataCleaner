@@ -39,16 +39,26 @@ public class ResultFilePathUtils {
     /**
      * Gets the hdfs path of job's result. The path can be configured in the job
      * properties file with property 'datacleaner.result.hdfs.path'. The path
-     * can be absolute('hdfs://[hostname]:[port]/myresults/myjob.analysis.result.dat') or relative('/myresults/myjob.analysis.result.dat'). If no path is set in the properties file and
-     * the system is configured to save the results, the default path will be
-     * saved to '/datacleaner/results/[jobname]-[timestamp].analysis.result.dat
+     * can be absolute(
+     * 'hdfs://[hostname]:[port]/myresults/myjob.analysis.result.dat') or
+     * relative('/myresults/myjob.analysis.result.dat'). If no path is set in
+     * the properties file and the system is configured to save the results, the
+     * default path will be saved to
+     * '/datacleaner/results/[jobname]-[timestamp].analysis.result.dat
+     * 
+     * @throws URISyntaxException
      * 
      * @retur
      */
-    public static String getResultFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
+    public static String getResultFilePath(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext)
+            throws URISyntaxException {
         String resultPath = sparkJobContext.getResultPath();
         final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
-        /** The default value would be read from hadoop configuration at runtime from core-site.xml. It represents the machine's hostname and port. Example: hdfs://bigdatavm:9000 **/
+        /**
+         * The default value would be read from hadoop configuration at runtime
+         * from core-site.xml. It represents the machine's hostname and port.
+         * Example: hdfs://bigdatavm:9000
+         **/
         final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
         if (resultPath == null || resultPath.isEmpty()) {
             resultPath = createPath(fileSystemPrefix, DEFAULT_RESULT_PATH);
@@ -58,18 +68,23 @@ public class ResultFilePathUtils {
                 resultPath = createPath(fileSystemPrefix, resultPath);
             }
         }
+        resultPath = attachFilenameExtension(sparkJobContext, resultPath);
+        return resultPath;
+    }
 
-        if (!resultPath.endsWith(RESULT_FILE_EXTENSION)) {
+    private static String attachFilenameExtension(final SparkJobContext sparkJobContext, String resultPath)
+            throws URISyntaxException {
+
+        if (resultPath != null && !resultPath.endsWith(RESULT_FILE_EXTENSION)) {
             final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
             final Date date = new Date();
             final String filename = analysisJobXmlName + "-" + date.getTime() + RESULT_FILE_EXTENSION;
-            final String filePath = createPath(resultPath, filename);
-            return filePath;
+            resultPath = createPath(resultPath, filename);
         }
         return resultPath;
     }
 
-    public static String createPath(final String fileSystemPrefix, String resultPath) {
+    public static String createPath(final String fileSystemPrefix, String resultPath) throws URISyntaxException {
 
         final URI uri;
         try {
@@ -82,7 +97,7 @@ public class ResultFilePathUtils {
             return uri.toString();
         } catch (URISyntaxException e) {
             logger.error("Error while trying to create url for saving the job", e);
-            return null;
+            throw e;
         }
     }
 

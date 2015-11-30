@@ -19,6 +19,8 @@ package org.datacleaner.spark;
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+import java.net.URISyntaxException;
+
 import junit.framework.TestCase;
 
 import org.apache.spark.SparkConf;
@@ -151,7 +153,7 @@ public class JobResultPathTest extends TestCase {
     }
 
     @Test
-    public void testCreatePath() {
+    public void testCreatePath() throws URISyntaxException {
         final String newPath1 = ResultFilePathUtils.createPath("hdfs://bigdatavm:9000", "mypath/myfile.analysis.result.dat");
         assertEquals("hdfs://bigdatavm:9000/mypath/myfile.analysis.result.dat", newPath1);
         

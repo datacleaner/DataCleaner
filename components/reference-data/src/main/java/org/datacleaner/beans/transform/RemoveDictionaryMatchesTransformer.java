@@ -149,7 +149,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                 return new Object[] { value, Collections.EMPTY_LIST };
             }
         }
-        Object removedStringMatches = null;
+        final Object removedStringMatches;
         switch (_removedMatchesType) {
         case STRING:
             removedStringMatches = new StringBuilder();
@@ -157,6 +157,8 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
         case LIST:
             removedStringMatches = new ArrayList<String>();
             break;
+        default:
+            removedStringMatches = null;
         }
 
         final StringBuilder survivorString = new StringBuilder();

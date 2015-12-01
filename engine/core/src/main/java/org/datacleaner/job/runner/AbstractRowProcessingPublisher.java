@@ -64,6 +64,11 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         _consumers = new ArrayList<RowProcessingConsumer>();
         _success = new AtomicBoolean(true);
     }
+    
+    @Override
+    public ErrorAware getErrorAware() {
+        return _publishers.getErrorAware();
+    }
 
     /**
      * Gets a {@link RowProcessingQueryOptimizer} instance from the subclass,

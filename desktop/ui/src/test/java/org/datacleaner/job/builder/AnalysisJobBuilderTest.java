@@ -369,6 +369,9 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             EasyMock.reportMatcher(tjbMatcher);
             listener2.onRemove(null);
+            
+            EasyMock.reportMatcher(tjbMatcher);
+            listener2.onConfigurationChanged(null);
 
             listener1.onRemove(inputColumn);
 

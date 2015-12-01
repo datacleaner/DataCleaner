@@ -27,7 +27,9 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
@@ -152,6 +154,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                                 component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
                                 remoteServerData.getPassword());
                         transformerDescriptor.setServerName(remoteServerData.getServerName());
+                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
                         transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
@@ -217,5 +220,18 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
         return annotations;
+    }
+
+    @Override
+    public Set<DescriptorProviderState> getStatus() {
+        Set<DescriptorProviderState> statusSet = new HashSet<>();
+
+        if (! isServerUp()) {
+            DescriptorProviderState serverDownState = new DescriptorProviderState(
+                    DescriptorProviderState.Level.ERROR, "Remote server is not available at the moment. ");
+            statusSet.add(serverDownState);
+        }
+
+        return statusSet;
     }
 }

@@ -41,6 +41,7 @@ import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -55,6 +56,7 @@ import org.datacleaner.job.output.OutputDataStreams;
 @Named("Grouper")
 @Description("A component that allows grouping and aggregating values with the same key.")
 @Categorized(value = CompositionCategory.class)
+@Distributed(false)
 public class GrouperTransformer extends MultiStreamComponent {
 
     public static final String PROPERTY_GROUP_KEY = "Group key";
@@ -132,7 +134,8 @@ public class GrouperTransformer extends MultiStreamComponent {
         outputDataStreamBuilder.withColumn("row_count", ColumnType.INTEGER);
         for (int i = 0; i < aggregatedValues.length; i++) {
             final InputColumn<?> inputColumn = aggregatedValues[i];
-            final AggregationType aggregationType = aggregationTypes[i];
+            final AggregationType aggregationType = (aggregationTypes.length <= i ? AggregationType.CREATE_LIST
+                    : aggregationTypes[i]);
             switch (aggregationType) {
             case FIRST_VALUE:
                 outputDataStreamBuilder.withColumnLike(inputColumn);
@@ -181,8 +184,8 @@ public class GrouperTransformer extends MultiStreamComponent {
         }
 
         ConcurrentLinkedDeque<List<Object>> newCollectionOfValues = new ConcurrentLinkedDeque<>();
-        ConcurrentLinkedDeque<List<Object>> previousCollectionOfValues = _values
-                .putIfAbsent(key, newCollectionOfValues);
+        ConcurrentLinkedDeque<List<Object>> previousCollectionOfValues = _values.putIfAbsent(key,
+                newCollectionOfValues);
         if (previousCollectionOfValues == null) {
             newCollectionOfValues.add(values);
         } else {

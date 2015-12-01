@@ -40,16 +40,27 @@ import org.apache.metamodel.data.DataSetTableModel;
 import org.apache.metamodel.query.Query;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * A window that presents a tabular dataset to the end user. The dataset may be
+ * based on queried data, transformed data, a record sample or other such
+ * source.
+ */
 public class DataSetWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(DataSetWindow.class);
+
     private final Query _query;
     private final int _pageSize;
     private final String _title;
@@ -158,12 +169,12 @@ public class DataSetWindow extends AbstractWindow {
                     _loadingIcon.setVisible(false);
                     _table.setVisible(true);
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    e = ErrorUtils.unwrapForPresentation(e);
+                    logger.error("Unexpected error occurred while building DataSetWindow contents", e);
                     DataSetWindow.this.dispose();
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
-                    throw new IllegalStateException(e);
+                    WidgetUtils.showErrorMessage("Unexpected error",
+                            "An unexpected error occurred while building data set. See logs for details.");
                 }
             };
         }.execute();

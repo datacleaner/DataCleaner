@@ -64,17 +64,21 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
+        boolean runCheck = false;
 
-        if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
-            synchronized (this) { // not to start multiple threads/checks at the same time
+        synchronized (this) { // not to start multiple threads/checks at the same time
+            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
+                runCheck = true;
                 lastConnectionCheckTime = now;
                 checkInProgress = true;
             }
+        }
 
+        if (runCheck) {
             (new Thread() {
                 @Override
                 public void run() {
-                    checkServerAvailability(now);
+                    checkServerAvailability();
                 }
             }).start();
         }
@@ -82,21 +86,15 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         return lastConnectionCheckResult;
     }
 
-    private void checkServerAvailability(long now) {
+    private void checkServerAvailability() {
         try {
             URL siteURL = new URL(remoteServerData.getHost());
             Socket socket = new Socket();
             InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
-
-            synchronized (this) {
-                lastConnectionCheckResult = socket.isConnected();
-            }
-        } catch(IOException e) {
-            synchronized (this) {
-                lastConnectionCheckResult = false;
-            }
-
+            lastConnectionCheckResult = socket.isConnected();
+        } catch (IOException e) {
+            lastConnectionCheckResult = false;
             logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
                     + ")' is down: " + e.getMessage());
         } finally {

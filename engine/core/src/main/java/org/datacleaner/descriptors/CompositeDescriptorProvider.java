@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -58,8 +59,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
-        return new CompositeCollection(
-                new Collection[] { delegate1.getAnalyzerDescriptors(), delegate2.getAnalyzerDescriptors() });
+        return new CompositeCollection(new Collection[] { delegate1.getAnalyzerDescriptors(),
+                delegate2.getAnalyzerDescriptors() });
     }
 
     @Override
@@ -83,13 +84,12 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
-        return new CompositeCollection(
-                new Collection[] { delegate1.getTransformerDescriptors(), delegate2.getTransformerDescriptors() });
+        return new CompositeCollection(new Collection[] { delegate1.getTransformerDescriptors(),
+                delegate2.getTransformerDescriptors() });
     }
 
     @Override
-    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(
-            Class<T> transformerClass) {
+    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(Class<T> transformerClass) {
         TransformerDescriptor<T> result = delegate1.getTransformerDescriptorForClass(transformerClass);
         if (result != null) {
             return result;
@@ -109,8 +109,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
-        return new CompositeCollection(
-                new Collection[] { delegate1.getFilterDescriptors(), delegate2.getFilterDescriptors() });
+        return new CompositeCollection(new Collection[] { delegate1.getFilterDescriptors(),
+                delegate2.getFilterDescriptors() });
     }
 
     @Override
@@ -146,8 +146,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
-        return new CompositeCollection(
-                new Collection[] { delegate1.getComponentDescriptors(), delegate2.getComponentDescriptors() });
+        return new CompositeCollection(new Collection[] { delegate1.getComponentDescriptors(),
+                delegate2.getComponentDescriptors() });
     }
 
     @SuppressWarnings("unchecked")
@@ -161,8 +161,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
-        return new CompositeCollection(
-                new Collection[] { delegate1.getRendererBeanDescriptors(), delegate2.getRendererBeanDescriptors() });
+        return new CompositeCollection(new Collection[] { delegate1.getRendererBeanDescriptors(),
+                delegate2.getRendererBeanDescriptors() });
     }
 
     @Override
@@ -213,5 +213,19 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
             return ((CompositeDescriptorProvider) delegate).findClasspathScanProvider();
         }
         return null;
+    }
+
+    public Set<DescriptorProviderState> getStatus() {
+        Set<DescriptorProviderState> statusSet = new HashSet<>();
+
+        if (delegate1 != null) {
+            statusSet.addAll(delegate1.getStatus());
+        }
+
+        if (delegate2 != null) {
+            statusSet.addAll(delegate2.getStatus());
+        }
+
+        return statusSet;
     }
 }

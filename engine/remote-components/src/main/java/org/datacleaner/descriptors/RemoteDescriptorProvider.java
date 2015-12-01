@@ -51,11 +51,12 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
-    private static final int TEST_CONNECTION_TIMEOUT = 1000; // [ms]
+    private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
     private boolean lastConnectionCheckResult = false;
+    private boolean checkInProgress = false;
 
     public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
         super(false);
@@ -65,12 +66,21 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
+        boolean runCheck = false;
 
-        if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now) {
+        synchronized (this) { // not to start multiple threads/checks at the same time
+            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
+                runCheck = true;
+                lastConnectionCheckTime = now;
+                checkInProgress = true;
+            }
+        }
+
+        if (runCheck) {
             (new Thread() {
                 @Override
                 public void run() {
-                    checkServerAvailability(now);
+                    checkServerAvailability();
                 }
             }).start();
         }
@@ -78,24 +88,21 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         return lastConnectionCheckResult;
     }
 
-    private void checkServerAvailability(long now) {
+    private void checkServerAvailability() {
         try {
             URL siteURL = new URL(remoteServerData.getHost());
             Socket socket = new Socket();
             InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
-
-            synchronized (this) {
-                lastConnectionCheckResult = socket.isConnected();
-                lastConnectionCheckTime = now;
-            }
-        } catch(IOException e) {
-            synchronized (this) {
-                lastConnectionCheckResult = false;
-                lastConnectionCheckTime = now;
-            }
+            lastConnectionCheckResult = socket.isConnected();
+        } catch (IOException e) {
+            lastConnectionCheckResult = false;
             logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
                     + ")' is down: " + e.getMessage());
+        } finally {
+            synchronized (this) {
+                checkInProgress = false;
+            }
         }
     }
 

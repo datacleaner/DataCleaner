@@ -37,7 +37,6 @@ import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
@@ -99,7 +98,7 @@ public class SparkJobContext implements Serializable {
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
             final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
-                    new DefaultConfigurationReaderInterceptor(_customProperties));
+                    new SparkConfigurationReaderInterceptor(_customProperties));
             _dataCleanerConfiguration = confReader.read(createInputStream(_configurationXml));
         }
         return _dataCleanerConfiguration;

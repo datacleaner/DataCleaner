@@ -24,6 +24,7 @@ package org.datacleaner.configuration;
  */
 public class RemoteServerDataImpl implements RemoteServerData {
     private String serverName;
+    private Integer serverPriority;
     private String host;
     private String username;
     private String password;
@@ -31,6 +32,17 @@ public class RemoteServerDataImpl implements RemoteServerData {
     @Override
     public RemoteServerDataImpl setServerName(String serverName) {
         this.serverName = serverName;
+        return this;
+    }
+
+    @Override
+    public Integer getServerPriority() {
+        return serverPriority;
+    }
+
+    @Override
+    public RemoteServerData setServerPriority(Integer serverPriority) {
+        this.serverPriority = serverPriority;
         return this;
     }
 

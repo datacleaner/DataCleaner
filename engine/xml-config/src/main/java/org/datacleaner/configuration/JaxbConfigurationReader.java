@@ -420,10 +420,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         ArrayList<DescriptorProvider> descriptorProviders = new ArrayList<>();
         RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
         remoteServerConfiguration.setShowAllServers(providerElement.isShowAll());
+        Integer serverPriority = providerElement.getServer().size();
+
         for (RemoteComponentServerType server : providerElement.getServer()) {
             RemoteServerData remoteServerData = new RemoteServerDataImpl();
             String serverName = server.getName();
             remoteServerData.setServerName(serverName == null ? "server" + remoteServerConfiguration.getServerList().size() : serverName);
+            remoteServerData.setServerPriority(serverPriority);
+            serverPriority--;
             remoteServerData.setHost(server.getUrl());
             remoteServerData.setUsername(server.getUsername());
             remoteServerData.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));

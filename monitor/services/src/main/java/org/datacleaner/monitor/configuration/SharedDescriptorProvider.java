@@ -167,6 +167,6 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     public Set<DescriptorProviderState> getStatus() {
-        return _delegate.getStatus();
+        return getDelegate().getStatus();
     }
 }

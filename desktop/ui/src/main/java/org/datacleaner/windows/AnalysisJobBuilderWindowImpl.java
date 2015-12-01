@@ -19,41 +19,18 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -79,50 +56,23 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderState;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentValidationException;
-import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.JaxbJobWriter;
-import org.datacleaner.job.SimpleComponentRequirement;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalysisJobChangeListener;
-import org.datacleaner.job.builder.AnalyzerChangeListener;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.job.builder.FilterChangeListener;
-import org.datacleaner.job.builder.FilterComponentBuilder;
-import org.datacleaner.job.builder.SourceColumnChangeListener;
-import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
+import org.datacleaner.job.*;
+import org.datacleaner.job.builder.*;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.panels.DCGlassPane;
-import org.datacleaner.panels.DCPanel;
-import org.datacleaner.panels.DatastoreManagementPanel;
-import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
-import org.datacleaner.panels.SchemaTreePanel;
-import org.datacleaner.panels.SelectDatastoreContainerPanel;
-import org.datacleaner.panels.WelcomePanel;
+import org.datacleaner.panels.*;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.WindowSizePreferences;
-import org.datacleaner.widgets.CollapsibleTreePanel;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.DCPersistentSizedPanel;
-import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
-import org.datacleaner.widgets.PopupButton;
+import org.datacleaner.util.*;
+import org.datacleaner.widgets.*;
 import org.datacleaner.widgets.tabs.JobClassicView;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -293,6 +243,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
+    private static final int SERVER_CHECK_INTERVAL = 2000; // [ms]
+    private DescriptorProviderState _descriptorErrorState;
+    private Thread serverCheckingThread;
+    private ServerChecker serverChecker;
+
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final DataCleanerConfiguration _configuration;
@@ -457,6 +412,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+
+        serverChecker = new ServerChecker();
+        serverCheckingThread = new Thread(serverChecker);
+        serverCheckingThread.start();
     }
 
     @Override
@@ -648,6 +607,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getDistributionVersion());
             _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
+        } else if(_descriptorErrorState != null) {
+            setStatusLabelText(_descriptorErrorState.getMessage());
+            setStatusLabelError();
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
                 executeable = true;
@@ -772,6 +734,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _datastoreConnection.close();
         }
         getContentPane().removeAll();
+        serverChecker.stop();
     }
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
@@ -1232,5 +1195,49 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     protected boolean maximizeWindow() {
         return _windowSizePreference.isWindowMaximized();
+    }
+
+    private class ServerChecker implements Runnable {
+
+        private boolean running = true;
+
+        public void stop () {
+            running = false;
+        }
+
+        @Override
+        public void run() {
+
+            while (running) {
+
+                DescriptorProvider descriptor = _configuration.getEnvironment().getDescriptorProvider();
+                if (descriptor instanceof CompositeDescriptorProvider) {
+
+                    Set<DescriptorProviderState> providerStateSet = descriptor.getStatus();
+
+                    if (providerStateSet.isEmpty()) {
+                        _descriptorErrorState = null;
+
+                    } else {
+                        for (DescriptorProviderState state : providerStateSet) {
+                            if (state.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
+                                _descriptorErrorState = state;
+                                break;
+                            }
+                        }
+                    }
+
+                    updateStatusLabel();
+                    _graph.getPanel().updateUI();
+
+                    try {
+                        Thread.sleep(SERVER_CHECK_INTERVAL);
+                    } catch (InterruptedException e) {
+                        running = false;
+                        logger.error("Waiting on checking thread was interrupted : " + e.getMessage());
+                    }
+                }
+            }
+        }
     }
 }

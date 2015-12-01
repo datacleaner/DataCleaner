@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -408,5 +409,8 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
             }
         }
         return descriptors;
+    }
+
+    public void updateMetadata(Map metadata) {
     }
 }

@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.ComponentCategory;
@@ -148,5 +149,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     public byte[] getIconData() {
         return iconData;
+    }
+
+    @Override
+    public void updateMetadata(Map metadata) {
+        metadata.put("source", getServerName());
     }
 }

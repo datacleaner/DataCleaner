@@ -19,6 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
+import java.util.Map;
+
 import javax.inject.Named;
 
 import org.datacleaner.api.Component;
@@ -74,7 +76,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
         }
         return _displayName;
     };
-    
+
     @Override
     protected abstract Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass();
 
@@ -100,5 +102,8 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
                         + " does not define a @Configured InputColumn or InputColumn-array");
             }
         }
+    }
+
+    public void updateMetadata(Map metadata) {
     }
 }

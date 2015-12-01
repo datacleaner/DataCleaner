@@ -115,6 +115,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
+        _descriptor.updateMetadata(_metadataProperties);
         _removalListeners = new ArrayList<>(1);
     }
 
@@ -153,6 +154,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public void setMetadataProperties(Map<String, String> metadataProperties) {
         _metadataProperties.clear();
+        _descriptor.updateMetadata(metadataProperties);
+
         if (metadataProperties != null) {
             _metadataProperties.putAll(metadataProperties);
         }

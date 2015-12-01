@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.lang.reflect.Modifier;
+import java.util.Map;
 
 import org.datacleaner.api.Renderable;
 import org.datacleaner.api.Renderer;
@@ -105,5 +106,8 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
     @Override
     public Class<? extends Renderable> getRenderableType() {
         return _rendererInputType;
+    }
+
+    public void updateMetadata(Map metadata) {
     }
 }

@@ -56,7 +56,7 @@ public class JettyRunner {
         Server server = new Server();
 
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort(9999);
+        connector.setPort(8888);
         server.addConnector(connector);
 
         WebAppContext webApp = new WebAppContext();

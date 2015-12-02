@@ -1197,6 +1197,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return _windowSizePreference.isWindowMaximized();
     }
 
+    /**
+     *  Loop checker - indication of offline server
+     *  - updating component icon
+     *  - updating status label
+     */
     private class ServerChecker implements Runnable {
 
         private boolean running = true;

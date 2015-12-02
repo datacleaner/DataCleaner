@@ -34,7 +34,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 
-@Named("TextSubtractor")
+@Named("Text subtractor")
 @Description("Subtracts one or more values from a base text")
 @Categorized(TextCategory.class)
 public class TextSubtractTransformer implements Transformer {

@@ -81,7 +81,11 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
      */
     @Override
     public void updateMetadata(Map metadata) {
-        metadata.put("source", "local");
+        String key = "source";
+
+        if (!metadata.containsKey(key)) {
+            metadata.put(key, "local");
+        }
     }
 
     @Override
@@ -238,7 +242,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     public OutputDataStreamJob[] getOutputDataStreamJobs() {
         return new OutputDataStreamJob[0];
     }
-    
+
     @Override
     public boolean isMultiStreamComponent() {
         return false;

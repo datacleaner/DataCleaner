@@ -15,6 +15,9 @@
     <analysis>
         <analyzer>
             <descriptor ref="Completeness analyzer"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties>
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -31,6 +34,9 @@
                     <analysis>
                         <analyzer>
                             <descriptor ref="Value distribution"/>
+                            <metadata-properties>
+<property name="source">local</property>
+                            </metadata-properties>
                             <properties>
 <property name="Record unique values" value="true"/>
 <property name="Record drill-down information" value="true"/>

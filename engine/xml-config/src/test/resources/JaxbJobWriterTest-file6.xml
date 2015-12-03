@@ -16,6 +16,9 @@
     <transformation>
         <transformer name="trans1">
             <descriptor ref="Email standardizer"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties/>
             <input ref="col_email"/>
             <output id="col_username" name="Username"/>
@@ -23,6 +26,9 @@
         </transformer>
         <filter name="fjb1">
             <descriptor ref="Null check"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties>
                 <property name="Consider empty string as null" value="false"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -32,6 +38,9 @@
         </filter>
         <filter name="fjb2">
             <descriptor ref="Single word"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties/>
             <input ref="col_username"/>
             <outcome id="outcome_1" category="INVALID"/>
@@ -40,6 +49,9 @@
     <analysis>
         <analyzer requires="outcome_0">
             <descriptor ref="String analyzer"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties/>
             <input ref="col_firstname"/>
             <input ref="col_lastname"/>
@@ -48,6 +60,9 @@
         </analyzer>
         <analyzer name="pf 1">
             <descriptor ref="Pattern finder"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties>
                 <property name="Discriminate text case" value="true"/>
                 <property name="Discriminate negative numbers" value="false"/>
@@ -66,6 +81,9 @@
         </analyzer>
         <analyzer name="pf 1">
             <descriptor ref="Pattern finder"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties>
                 <property name="Discriminate text case" value="true"/>
                 <property name="Discriminate negative numbers" value="false"/>
@@ -84,6 +102,9 @@
         </analyzer>
         <analyzer requires="outcome_1" name="pf 2">
             <descriptor ref="Pattern finder"/>
+            <metadata-properties>
+                <property name="source">local</property>
+            </metadata-properties>
             <properties>
                 <property name="Discriminate text case" value="true"/>
                 <property name="Discriminate negative numbers" value="false"/>

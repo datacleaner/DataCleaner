@@ -209,7 +209,7 @@ public class JaxbJobWriterTest extends TestCase {
             str = str.replaceAll("\"", "_");
 
             String[] lines = str.split("\n");
-            assertEquals(27, lines.length);
+            assertEquals(30, lines.length);
 
             assertEquals("<?xml version=_1.0_ encoding=_UTF-8_ standalone=_yes_?>", lines[0]);
             assertEquals("<job xmlns=_http://eobjects.org/analyzerbeans/job/1.0_>", lines[1]);
@@ -230,18 +230,21 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("    <analysis>", lines[15]);
             assertEquals("        <analyzer>", lines[16]);
             assertEquals("            <descriptor ref=_Date gap analyzer_/>", lines[17]);
-            assertEquals("            <properties>", lines[18]);
+            assertEquals("            <metadata-properties>", lines[18]);
+            assertEquals("                <property name=_source_>local</property>", lines[19]);
+            assertEquals("            </metadata-properties>", lines[20]);
+            assertEquals("            <properties>", lines[21]);
             assertEquals(
                     "                <property name=_Count intersecting from and to dates as overlaps_ value=_true_/>",
-                    lines[19]);
+                    lines[22]);
             assertEquals("                <property name=_Fault tolerant switch from/to dates_ value=_true_/>",
-                    lines[20]);
-            assertEquals("            </properties>", lines[21]);
-            assertEquals("            <input ref=_col_orderdate_ name=_From column_/>", lines[22]);
-            assertEquals("            <input ref=_col_shippeddate_ name=_To column_/>", lines[23]);
-            assertEquals("        </analyzer>", lines[24]);
-            assertEquals("    </analysis>", lines[25]);
-            assertEquals("</job>", lines[26]);
+                    lines[23]);
+            assertEquals("            </properties>", lines[24]);
+            assertEquals("            <input ref=_col_orderdate_ name=_From column_/>", lines[25]);
+            assertEquals("            <input ref=_col_shippeddate_ name=_To column_/>", lines[26]);
+            assertEquals("        </analyzer>", lines[27]);
+            assertEquals("    </analysis>", lines[28]);
+            assertEquals("</job>", lines[29]);
         }
     }
 
@@ -451,6 +454,12 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("No benchmark file '" + filename + "' exists!", output);
         }
         String benchmark = FileHelper.readFileAsString(benchmarkFile);
+
+        if (benchmark.length() != output.length()) {
+            System.out.println("benchmark " + benchmark.length() + "\n" + benchmark);
+            System.out.println("output " + filename + " " + output.length() + "\n" + output);
+        }
+
         assertEquals(benchmark, output);
     }
 }

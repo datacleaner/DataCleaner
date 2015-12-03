@@ -153,6 +153,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public void updateMetadata(Map metadata) {
-        metadata.put("source", getServerName());
+        String key = "source";
+
+        if (!metadata.containsKey(key)) {
+            metadata.put(key, getServerName());
+        }
     }
 }

@@ -109,5 +109,6 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
     }
 
     public void updateMetadata(Map metadata) {
+        super.updateMetadata(metadata);
     }
 }

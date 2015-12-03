@@ -81,6 +81,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
      */
     @Override
     public void updateMetadata(Map metadata) {
+        metadata.put("source", "local");
     }
 
     @Override

@@ -412,5 +412,6 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     public void updateMetadata(Map metadata) {
+        metadata.put("source", "local");
     }
 }

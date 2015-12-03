@@ -105,5 +105,6 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
     }
 
     public void updateMetadata(Map metadata) {
+        super.updateMetadata(metadata);
     }
 }

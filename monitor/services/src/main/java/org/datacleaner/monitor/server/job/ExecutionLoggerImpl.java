@@ -216,7 +216,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
                 } else {
                     final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler.getUnsafeResultElements();
                     logger.error("Serialization of result failed with the following unsafe elements: {}", unsafeResultElements);
-                    logger.info("Partial AnalysisResult will be persisted to filename '{}'", resultFilename);
+                    logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultFilename);
                     
                     analysisResultSaveHandler.saveWithoutUnsafeResultElements();
                 }

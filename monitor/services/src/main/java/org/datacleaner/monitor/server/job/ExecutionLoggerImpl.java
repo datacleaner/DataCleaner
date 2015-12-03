@@ -24,10 +24,15 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
+import org.datacleaner.util.NoopAction;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.monitor.events.JobExecutedEvent;
 import org.datacleaner.monitor.events.JobFailedEvent;
@@ -36,9 +41,13 @@ import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.save.AnalysisResultSaveHandler;
 import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Resource;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -54,7 +63,7 @@ import org.springframework.context.ApplicationEventPublisher;
 public class ExecutionLoggerImpl implements ExecutionLogger {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecutionLoggerImpl.class);
-    
+
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
     private final ApplicationEventPublisher _eventPublisher;
@@ -193,12 +202,36 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     private void serializeResult(final Serializable result) {
         final String resultFilename = _execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
-        _resultFolder.createFile(resultFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                SerializationUtils.serialize(result, out);
+        if (result instanceof AnalysisResult) {
+            final RepositoryFile file = _resultFolder.createFile(resultFilename, new NoopAction<OutputStream>());
+            final Resource resource = new RepositoryFileResource(file);
+            final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler((AnalysisResult) result, resource);
+            try {
+                analysisResultSaveHandler.saveOrThrow();
+            } catch (SerializationException e) {
+                // attempt to save what we can - and then rethrow
+                final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+                if (safeAnalysisResult == null) {
+                    logger.error("Serialization of result failed without any safe result elements to persist");
+                } else {
+                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler.getUnsafeResultElements();
+                    logger.error("Serialization of result failed with the following unsafe elements: {}", unsafeResultElements);
+                    logger.info("Partial AnalysisResult will be persisted to filename '{}'", resultFilename);
+                    
+                    analysisResultSaveHandler.saveWithoutUnsafeResultElements();
+                }
+                
+                // rethrow the exception regardless
+                throw e;
             }
-        });
+        } else {
+            _resultFolder.createFile(resultFilename, new Action<OutputStream>() {
+                @Override
+                public void run(OutputStream out) throws Exception {
+                    SerializationUtils.serialize(result, out);
+                }
+            });
+        }
     }
 
     @Override

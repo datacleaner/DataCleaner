@@ -350,7 +350,8 @@ public final class WidgetFactory {
 
                         @Override
                         public Object stringToValue(final String text) throws ParseException {
-                            return format.parseObject(text);
+                            final Object value = format.parseObject(text);
+                            return value;
                         }
 
                         @Override
@@ -359,7 +360,8 @@ public final class WidgetFactory {
                                 return "";
                             }
 
-                            return format.format(value);
+                            final String string = format.format(value);
+                            return string;
                         }
                     };
                 }

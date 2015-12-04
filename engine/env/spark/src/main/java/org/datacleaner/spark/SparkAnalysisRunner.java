@@ -82,6 +82,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     public AnalysisResultFuture run() {
+        _sparkJobContext.triggerOnJobStart();
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 
@@ -123,6 +124,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
         }
 
+        _sparkJobContext.triggerOnJobEnd();
         return new SparkAnalysisResultFuture(results, _sparkJobContext);
     }
 
@@ -130,6 +132,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
+            assert resource != null;
             final String datastorePath = resource.getQualifiedPath();
 
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();

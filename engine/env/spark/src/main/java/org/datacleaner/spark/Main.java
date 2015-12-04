@@ -59,7 +59,7 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
+        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
                 propertiesPath);
         // get the path of the result file here so that it can fail fast(not
         // after the job has run).
@@ -97,7 +97,7 @@ public class Main {
                 }
             }
         } catch (Exception e) {
-            logger.error("Exception " + e.getStackTrace());
+            logger.error("Exception ", e);
             throw e;
         } finally {
             sparkContext.stop();

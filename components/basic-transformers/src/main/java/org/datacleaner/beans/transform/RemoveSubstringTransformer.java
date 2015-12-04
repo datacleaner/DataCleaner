@@ -34,10 +34,10 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 
-@Named("Text subtractor")
-@Description("Subtracts one or more values from a base text")
+@Named("Remove substring")
+@Description("Subtracts one or more substrings from a base text, i.e. [\"Hello world\",\"World\"] would yield \"Hello\".")
 @Categorized(TextCategory.class)
-public class TextSubtractTransformer implements Transformer {
+public class RemoveSubstringTransformer implements Transformer {
     @Configured("Base text column")
     @Description("Column containing the text to subtract from")
     InputColumn<String> baseColumn;
@@ -46,8 +46,9 @@ public class TextSubtractTransformer implements Transformer {
     @Description("Columns containing the substrings to remove from the base text")
     InputColumn<?>[] substringColumns;
 
-    @Configured(value="Whole words only", required = false)
-    @Description("If set, only whole words (surrounded by whitespace or punctuation) will be removed")
+    @Configured(value = "Match whole words only", required = false)
+    @Description("If set, only whole words (surrounded by whitespace or punctuation) will be removed.\n"
+            + " This prevents removing partial words.")
     boolean wholeWordsOnly = false;
 
     @Override

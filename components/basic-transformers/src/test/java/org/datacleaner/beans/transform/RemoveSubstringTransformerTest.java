@@ -30,9 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class TextSubtractTransformerTest {
+public class RemoveSubstringTransformerTest {
 
-    private TextSubtractTransformer _t;
+    private RemoveSubstringTransformer _t;
     private MockInputRow _inputRow;
 
     @Before
@@ -51,7 +51,7 @@ public class TextSubtractTransformerTest {
                 .put(subtractColumns[0], "bye").put(subtractColumns[1], 5).put(subtractColumns[2],
                         Arrays.asList("a", 2, false)).put(subtractColumns[3], true);
 
-        _t = new TextSubtractTransformer();
+        _t = new RemoveSubstringTransformer();
         _t.baseColumn = baseColumn;
         _t.substringColumns = subtractColumns;
     }

@@ -62,7 +62,7 @@ public class RemoveSubstringTransformer implements Transformer {
         for (final InputColumn<?> inputColumn : substringColumns) {
             final Object value = inputRow.getValue(inputColumn);
             if (value instanceof List) {
-                for (final Object element : (List) value) {
+                for (final Object element : (List<?>) value) {
                     subtractedString = subtract(subtractedString, element);
                 }
             } else {

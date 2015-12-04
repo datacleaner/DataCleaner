@@ -53,20 +53,20 @@ public class RemoveSubstringTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(String.class, baseColumn.getName() + " (subtracted)");
+        return new OutputColumns(String.class, baseColumn.getName() + " (substring removed)");
     }
 
     @Override
     public String[] transform(final InputRow inputRow) {
         String subtractedString = inputRow.getValue(baseColumn);
         for (final InputColumn<?> inputColumn : substringColumns) {
-            if (inputColumn.getDataType() == List.class) {
-                final List<?> list = (List) inputRow.getValue(inputColumn);
-                for (final Object element : list) {
+            final Object value = inputRow.getValue(inputColumn);
+            if (value instanceof List) {
+                for (final Object element : (List) value) {
                     subtractedString = subtract(subtractedString, element);
                 }
             } else {
-                subtractedString = subtract(subtractedString, inputRow.getValue(inputColumn));
+                subtractedString = subtract(subtractedString, value);
             }
         }
 

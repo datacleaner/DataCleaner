@@ -60,7 +60,7 @@ public class RemoveSubstringTransformerTest {
     public void testGetOutputColumns() {
         Assert.assertEquals(1, _t.getOutputColumns().getColumnCount());
         Assert.assertEquals(String.class, _t.getOutputColumns().getColumnType(0));
-        Assert.assertEquals("baseCol (subtracted)", _t.getOutputColumns().getColumnName(0));
+        Assert.assertEquals("baseCol (substring removed)", _t.getOutputColumns().getColumnName(0));
     }
 
     @Test

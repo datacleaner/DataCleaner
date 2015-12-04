@@ -19,27 +19,25 @@
  */
 package org.datacleaner.spark;
 
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
-import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
-import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.save.AnalysisResultSaveHandler;
 import org.datacleaner.spark.utils.ResultFilePathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    private static final Logger logger = Logger.getLogger(Main.class);
-  
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -63,28 +61,38 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
                 propertiesPath);
-        // get the path of the result file here so that it can fail fast(not after the job has run). 
+        // get the path of the result file here so that it can fail fast(not
+        // after the job has run).
         final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
         logger.info("The result of the job will be written to " + resultJobFilePath);
-        
+
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
             if (result.isDone()) {
-                final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
-                final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
-                        result.getCreationDate());
                 if (resultJobFilePath != null) {
                     final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
-                    final OutputStream out = hdfsResource.write();
+                    final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
+                            hdfsResource);
                     try {
-                        SerializationUtils.serialize(simpleAnalysisResult, out);
+                        analysisResultSaveHandler.saveOrThrow();
                     } catch (SerializationException e) {
-                        logger.error("Error while trying to serialize the job");
+                        // attempt to save what we can - and then rethrow
+                        final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+                        if (safeAnalysisResult == null) {
+                            logger.error("Serialization of result failed without any safe result elements to persist");
+                        } else {
+                            final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
+                                    .getUnsafeResultElements();
+                            logger.error("Serialization of result failed with the following unsafe elements: {}",
+                                    unsafeResultElements);
+                            logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultJobFilePath);
+
+                            analysisResultSaveHandler.saveWithoutUnsafeResultElements();
+                        }
+
+                        // rethrow the exception regardless
                         throw e;
-                    } finally {
-                        logger.info("The result of the job was written to " + resultJobFilePath);
-                        FileHelper.safeClose(out);
                     }
                 }
             }
@@ -95,6 +103,4 @@ public class Main {
             sparkContext.stop();
         }
     }
-
-   
 }

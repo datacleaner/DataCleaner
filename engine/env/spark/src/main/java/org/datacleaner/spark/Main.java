@@ -61,39 +61,43 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
                 propertiesPath);
-        // get the path of the result file here so that it can fail fast(not
-        // after the job has run).
-        final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-        logger.info("The result of the job will be written to " + resultJobFilePath);
+
+        final String resultJobFilePath;
+        if (sparkJobContext.isResultEnabled()) {
+            // get the path of the result file here so that it can fail fast(not
+            // after the job has run).
+            resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
+            logger.info("DataCleaner result will be written to {}", resultJobFilePath);
+        } else {
+            resultJobFilePath = null;
+        }
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
-            if (result.isDone()) {
-                if (resultJobFilePath != null) {
-                    final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
-                    final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
-                            hdfsResource);
-                    try {
-                        analysisResultSaveHandler.saveOrThrow();
-                    } catch (SerializationException e) {
-                        // attempt to save what we can - and then rethrow
-                        final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
-                        if (safeAnalysisResult == null) {
-                            logger.error("Serialization of result failed without any safe result elements to persist");
-                        } else {
-                            final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
-                                    .getUnsafeResultElements();
-                            logger.error("Serialization of result failed with the following unsafe elements: {}",
-                                    unsafeResultElements);
-                            logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultJobFilePath);
+            if (resultJobFilePath != null) {
+                final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
+                final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
+                        hdfsResource);
+                try {
+                    analysisResultSaveHandler.saveOrThrow();
+                } catch (SerializationException e) {
+                    // attempt to save what we can - and then rethrow
+                    final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+                    if (safeAnalysisResult == null) {
+                        logger.error("Serialization of result failed without any safe result elements to persist");
+                    } else {
+                        final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
+                                .getUnsafeResultElements();
+                        logger.error("Serialization of result failed with the following unsafe elements: {}",
+                                unsafeResultElements);
+                        logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultJobFilePath);
 
-                            analysisResultSaveHandler.saveWithoutUnsafeResultElements();
-                        }
-
-                        // rethrow the exception regardless
-                        throw e;
+                        analysisResultSaveHandler.saveWithoutUnsafeResultElements();
                     }
+
+                    // rethrow the exception regardless
+                    throw e;
                 }
             }
         } catch (Exception e) {

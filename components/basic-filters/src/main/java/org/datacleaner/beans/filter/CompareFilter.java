@@ -62,23 +62,25 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
     }
 
     public static enum Operator implements HasName {
-        LESS_THAN(OperatorType.LESS_THAN),
+        LESS_THAN("Less than", OperatorType.LESS_THAN),
 
-        LESS_THAN_OR_EQUAL(OperatorType.LESS_THAN),
+        LESS_THAN_OR_EQUAL("Less than or equal", OperatorType.LESS_THAN_OR_EQUAL),
 
-        EQUALS_TO(OperatorType.EQUALS_TO),
+        EQUALS_TO("Equal", OperatorType.EQUALS_TO),
 
-        LIKE(OperatorType.LIKE),
+        LIKE("Like", OperatorType.LIKE),
 
-        DIFFERENT_FROM(OperatorType.DIFFERENT_FROM),
+        DIFFERENT_FROM("Not equal", OperatorType.DIFFERENT_FROM),
 
-        GREATER_THAN_OR_EQUAL(OperatorType.GREATER_THAN_OR_EQUAL),
+        GREATER_THAN_OR_EQUAL("Greater than or equal", OperatorType.GREATER_THAN_OR_EQUAL),
 
-        GREATER_THAN(OperatorType.GREATER_THAN);
+        GREATER_THAN("Greater than", OperatorType.GREATER_THAN);
 
         private final OperatorType _operatorType;
+        private final String _name;
 
-        private Operator(OperatorType operatorType) {
+        private Operator(String name, OperatorType operatorType) {
+            _name = name;
             _operatorType = operatorType;
         }
 
@@ -88,7 +90,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
 
         @Override
         public String getName() {
-            return _operatorType.toSql();
+            return _name;
         }
     }
 
@@ -143,7 +145,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
 
     @Validate
     public void validate() {
-        if (compareColumn == null || compareValue == null) {
+        if (compareColumn == null && compareValue == null) {
             throw new IllegalStateException("Either 'Compare value' or 'Compare column' needs to be specified.");
         }
     }
@@ -168,13 +170,12 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         final StringBuilder sb = new StringBuilder();
         sb.append(inputColumn.getName());
         sb.append(' ');
-        sb.append(operator.getName());
+        sb.append(operator.getOperatorType().toSql());
         sb.append(' ');
 
         if (compareColumn != null) {
-            sb.append(compareColumn);
-        }
-        if (compareValue != null) {
+            sb.append(compareColumn.getName());
+        } else if (compareValue != null) {
             final Object operand = toOperand(compareValue);
             if (operand instanceof String) {
                 sb.append('\'');
@@ -212,11 +213,11 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         final Object inputValue = inputRow.getValue(inputColumn);
 
         final Object operand;
-        if (compareColumn == null) {
-            operand = compareValueAsOperand;
-        } else {
+        if (compareColumn != null) {
             final Object compareColumnValue = inputRow.getValue(compareColumn);
             operand = toOperand(compareColumnValue);
+        } else {
+            operand = compareValueAsOperand;
         }
 
         return filter(inputValue, operator, operand);

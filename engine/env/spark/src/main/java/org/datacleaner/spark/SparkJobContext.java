@@ -235,10 +235,18 @@ public class SparkJobContext implements Serializable {
         return jobName;
     }
 
+    /**
+     * Adds a listener for the job life cycle.
+     * @param sparkJobLifeCycleListener The listener to add. Must be serializable.
+     */
     public void addSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.add(sparkJobLifeCycleListener);
     }
 
+    /**
+     * Removes a life cycle listener. Please note that this will _not_ work
+     * globally after job start. If you remove it on a node, it will only be removed on that node.
+     */
     public void removeSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);
     }

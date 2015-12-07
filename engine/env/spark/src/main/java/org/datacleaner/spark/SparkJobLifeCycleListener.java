@@ -21,9 +21,36 @@ package org.datacleaner.spark;
 
 import java.io.Serializable;
 
+/**
+ * Implement this interface for following the lifecycle of a Spark job.
+ *
+ * It is important that the implementation is serializable and with as few
+ * and small fields as possible, as the listener will be serialized and sent to
+ * nodes.
+ *
+ * Also note that the serialization is one-way. You cannot retrieve anything that
+ * happened on the nodes through this listener.
+ */
 public interface SparkJobLifeCycleListener extends Serializable{
+    /**
+     * Triggered when a node starts processing a task. This will be executed
+     * on the nodes themselves.
+     */
     void onNodeStart();
+
+    /**
+     * Triggered when a node completes processing a task. This will be executed
+     * on the nodes themselves.
+     */
     void onNodeEnd();
+
+    /**
+     * Triggered as the job starts running.
+     */
     void onJobStart();
+
+    /**
+     * Triggered on job completion.
+     */
     void onJobEnd();
 }

@@ -230,6 +230,7 @@ public final class RowProcessingFunction implements
 
     private List<Tuple2<String, NamedAnalyzerResult>> executePartition(Iterator<InputRow> inputRowIterator,
             final AnalysisJob analysisJob) {
+        _sparkJobContext.triggerOnPartitionProcessingStart();
         final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
         // set up processing stream (this also initializes the components)
         final ConsumeRowHandler consumeRowHandler;
@@ -271,6 +272,7 @@ public final class RowProcessingFunction implements
         for (RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
             lifeCycleHelper.close(consumer.getComponentJob().getDescriptor(), consumer.getComponent(), true);
         }
+        _sparkJobContext.triggerOnPartitionProcessingEnd();
         return analyzerResults;
     }
 

@@ -56,10 +56,6 @@ import com.google.common.base.Strings;
  * {@link Serializable} properties.
  */
 public class SparkJobContext implements Serializable {
-
-    public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
-    public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
-
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
     private static final Logger logger = LoggerFactory.getLogger(SparkJobContext.class);
     private static final String PROPERTY_RESULT_PATH = "datacleaner.result.hdfs.path";
@@ -228,10 +224,7 @@ public class SparkJobContext implements Serializable {
 
     public boolean isResultEnabled() {
         final String enabledString = _customProperties.get(PROPERTY_RESULT_ENABLED);
-        if ("false".equalsIgnoreCase(enabledString)) {
-            return false;
-        }
-        return true;
+        return !"false".equalsIgnoreCase(enabledString);
     }
 
     /**
@@ -262,22 +255,22 @@ public class SparkJobContext implements Serializable {
         _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);
     }
 
-    public void triggerOnNodeEnd() {
+    public void triggerOnPartitionProcessingEnd() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onNodeEnd();
+                listener.onPartitionProcessingEnd();
             } catch (Throwable e) {
-                logger.warn("onNodeEnd: Listener {} threw exception", listener, e);
+                logger.warn("onPartitionProcessingEnd: Listener {} threw exception", listener, e);
             }
         }
     }
 
-    public void triggerOnNodeStart() {
+    public void triggerOnPartitionProcessingStart() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onNodeStart();
+                listener.onPartitionProcessingStart();
             } catch (Throwable e) {
-                logger.warn("onNodeStart: Listener {} threw exception", listener, e);
+                logger.warn("onPartitionProcessingStart: Listener {} threw exception", listener, e);
             }
         }
     }
@@ -287,7 +280,7 @@ public class SparkJobContext implements Serializable {
             try {
                 listener.onJobStart();
             } catch (Throwable e) {
-                logger.warn("onNodeStart: Listener {} threw exception", listener, e);
+                logger.warn("onJobStart: Listener {} threw exception", listener, e);
             }
         }
     }
@@ -297,7 +290,7 @@ public class SparkJobContext implements Serializable {
             try {
                 listener.onJobEnd();
             } catch (Throwable e) {
-                logger.warn("onNodeStart: Listener {} threw exception", listener, e);
+                logger.warn("onJobEnd: Listener {} threw exception", listener, e);
             }
         }
     }

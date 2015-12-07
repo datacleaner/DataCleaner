@@ -58,13 +58,13 @@ public class SparkAnalysisRunnerTest {
         final AtomicBoolean _jobEndCalled = new AtomicBoolean();
 
         @Override
-        public void onNodeStart() {
+        public void onPartitionProcessingStart() {
             // Unfortunately, serialization only goes one way, so we can't assert on this.
             System.out.println("Node start");
         }
 
         @Override
-        public void onNodeEnd() {
+        public void onPartitionProcessingEnd() {
             // Unfortunately, serialization only goes one way, so we can't assert on this.
             System.out.println("Node end");
         }
@@ -138,16 +138,16 @@ public class SparkAnalysisRunnerTest {
         final AnalysisResultFuture result;
 
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
+        try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
 
             final SparkJobContext sparkJobContext;
             if (saveResult) {
-                sparkJobContext = new SparkJobContext(sparkContext,
+                sparkJobContext = new SparkJobContext(
                         "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml");
             } else {
-                sparkJobContext = new SparkJobContext(sparkContext,
-                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", "src/test/resources/jobProperties/noResult.properties");
+                sparkJobContext = new SparkJobContext(
+                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml",
+                        "src/test/resources/jobProperties/noResult.properties");
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
@@ -157,8 +157,6 @@ public class SparkAnalysisRunnerTest {
                     MIN_PARTITIONS_MULTIPLE);
 
             result = sparkAnalysisRunner.run(job);
-        } finally {
-            sparkContext.close();
         }
 
         if (result.isErrornous()) {

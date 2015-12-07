@@ -100,9 +100,6 @@ public class Main {
                     throw e;
                 }
             }
-        } catch (Exception e) {
-            logger.error("Exception ", e);
-            throw e;
         } finally {
             sparkContext.stop();
         }

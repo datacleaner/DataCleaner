@@ -36,13 +36,13 @@ public interface SparkJobLifeCycleListener extends Serializable{
      * Triggered when a node starts processing a task. This will be executed
      * on the nodes themselves.
      */
-    void onNodeStart();
+    void onPartitionProcessingStart();
 
     /**
      * Triggered when a node completes processing a task. This will be executed
      * on the nodes themselves.
      */
-    void onNodeEnd();
+    void onPartitionProcessingEnd();
 
     /**
      * Triggered as the job starts running.

@@ -20,7 +20,6 @@
 package org.datacleaner.beans.transform;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +46,7 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -58,41 +58,44 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     public static enum RemovedMatchesType implements HasName {
 
-        STRING, LIST;
+        STRING("String"), LIST("List");
+
+        private final String _name;
+
+        private RemovedMatchesType(String name) {
+            _name = name;
+        }
 
         @Override
         public String getName() {
-            if (this == STRING) {
-                return "String";
-            } else {
-                return "List";
-            }
-
+            return _name;
         }
-
     };
+
+    private static final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
 
     public static final String PROPERTY_DICTIONARY = "Dictionary";
     public static final String PROPERTY_COLUMN = "Column";
     public static final String OUTPUT_COLUMN_REMOVED_MATCHES = "Removed matches";
 
+    @Inject
     @Configured(value = PROPERTY_DICTIONARY)
     Dictionary _dictionary;
 
+    @Inject
     @Configured(value = PROPERTY_COLUMN)
     InputColumn<String> _column;
 
     @Inject
     @Configured
-    @Description("Get the removed matches as String or as a List")
+    @Description("How should the 'Removed matches' be returned? Get the removed matches as a concatenated String or as a List.")
     RemovedMatchesType _removedMatchesType = RemovedMatchesType.STRING;
 
+    @Inject
     @Provided
     DataCleanerConfiguration _configuration;
 
     private DictionaryConnection dictionaryConnection;
-
-    private final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
 
     public RemoveDictionaryMatchesTransformer() {
     }
@@ -107,16 +110,26 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        final String name = _column.getName() + " (" + _dictionary.getName() + " removed)";
+        final String[] columnNames = new String[2];
+        final Class<?>[] columnTypes = new Class[2];
+
+        columnNames[0] = _column.getName() + " (" + _dictionary.getName() + " removed)";
+        columnTypes[0] = String.class;
+
+        columnNames[1] = OUTPUT_COLUMN_REMOVED_MATCHES;
+
         switch (_removedMatchesType) {
         case STRING:
-            return new OutputColumns(String.class, new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES });
+            columnTypes[1] = String.class;
+            break;
         case LIST:
-            return new OutputColumns(new String[] { name, OUTPUT_COLUMN_REMOVED_MATCHES }, new Class[] { String.class,
-                    List.class });
+            columnTypes[1] = List.class;
+            break;
         default:
-            return null;
+            throw new UnsupportedOperationException("Unsupported output type: " + _removedMatchesType);
         }
+
+        return new OutputColumns(columnNames, columnTypes);
     }
 
     @Initialize
@@ -140,59 +153,31 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     }
 
     public Object[] transform(final String value) {
-
-        if (Strings.isNullOrEmpty(value)) {
-            switch (_removedMatchesType) {
-            case STRING:
-                return new String[] { value, "" };
-            case LIST:
-                return new Object[] { value, Collections.EMPTY_LIST };
-            }
-        }
-        final Object removedStringMatches;
-        switch (_removedMatchesType) {
-        case STRING:
-            removedStringMatches = new StringBuilder();
-            break;
-        case LIST:
-            removedStringMatches = new ArrayList<String>();
-            break;
-        default:
-            removedStringMatches = null;
-        }
-
+        final List<String> removedParts = new ArrayList<>(2);
         final StringBuilder survivorString = new StringBuilder();
-        final Iterable<String> tokens = SPLITTER.split(value);
-        for (String token : tokens) {
-            if (!dictionaryConnection.containsValue(token)) {
-                if (survivorString.length() != 0) {
-                    survivorString.append(' ');
+
+        if (!Strings.isNullOrEmpty(value)) {
+            final Iterable<String> tokens = SPLITTER.split(value);
+            for (String token : tokens) {
+                if (!dictionaryConnection.containsValue(token)) {
+                    if (survivorString.length() != 0) {
+                        survivorString.append(' ');
+                    }
+                    survivorString.append(token);
+                } else {
+                    removedParts.add(token);
                 }
-                survivorString.append(token);
-            } else {
-                addRemovedMatches(removedStringMatches, token);
             }
         }
 
         switch (_removedMatchesType) {
         case STRING:
-            return new String[] { survivorString.toString(), removedStringMatches.toString() };
+            final String removedPartsString = Joiner.on(' ').join(removedParts);
+            return new String[] { survivorString.toString(), removedPartsString };
         case LIST:
-            return new Object[] { survivorString.toString(), removedStringMatches };
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void addRemovedMatches(Object removedObjects, final String token) {
-        if (removedObjects instanceof StringBuilder) {
-            StringBuilder removedString = (StringBuilder) removedObjects;
-            if (removedString.length() != 0) {
-                removedString.append(' ');
-            }
-            removedString.append(token);
-        } else if (removedObjects instanceof ArrayList) {
-            ((ArrayList<String>) removedObjects).add(token);
+            return new Object[] { survivorString.toString(), removedParts };
+        default:
+            throw new UnsupportedOperationException("Unsupported output type: " + _removedMatchesType);
         }
     }
 }

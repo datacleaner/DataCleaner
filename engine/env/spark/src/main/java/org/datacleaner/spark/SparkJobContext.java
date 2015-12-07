@@ -55,10 +55,12 @@ import com.google.common.base.Strings;
  */
 public class SparkJobContext implements Serializable {
 
-    private static String DATA_CLEANER_RESULT_PATH_PROPERTY = "datacleaner.result.hdfs.path";
     public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
     public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
+    
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
+    private static final String PROPERTY_RESULT_PATH = "datacleaner.result.hdfs.path";
+    private static final String PROPERTY_RESULT_ENABLED = "datacleaner.result.hdfs.enabled";
 
     private static final long serialVersionUID = 1L;
 
@@ -216,7 +218,15 @@ public class SparkJobContext implements Serializable {
      * @return
      */
     public String getResultPath() {
-        return _customProperties.get(DATA_CLEANER_RESULT_PATH_PROPERTY);
+        return _customProperties.get(PROPERTY_RESULT_PATH);
+    }
+    
+    public boolean isResultEnabled() {
+        final String enabledString = _customProperties.get(PROPERTY_RESULT_ENABLED);
+        if ("false".equalsIgnoreCase(enabledString)) {
+            return false;
+        }
+        return true;
     }
 
     /**

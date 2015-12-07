@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.repository.Repository;
@@ -37,12 +38,19 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
+    // defines the basis of the configuration for all tenants - shared task
+    // runner (thread pool) and shared descriptor provider (classpath scanning
+    // only done once)
+    private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
+            .withTaskRunner(new SharedTaskRunner()).withDescriptorProvider(new SharedDescriptorProvider());
+
     private final TenantContext _tenantContext;
     private final DataCleanerEnvironment _environment;
     private final Repository _repository;
 
     public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
             DataCleanerEnvironment environment) {
+        super(BASE_ENVIRONMENT);
         _repository = repository;
         _tenantContext = tenantContext;
         _environment = environment;

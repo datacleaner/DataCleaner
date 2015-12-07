@@ -481,7 +481,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 scanInputStreamOfClassFile(inputStream, classLoader, strictClassLoader);
             } catch (RuntimeException e) {
                 logger.error("Failed to scan JAR class file entry: " + entryName, e);
+            } catch (NoClassDefFoundError e) {
+                logger.error("Failed to scan JAR class file entry: " + entryName, e);
             }
+           
         } else {
 
             if (logger.isInfoEnabled()) {

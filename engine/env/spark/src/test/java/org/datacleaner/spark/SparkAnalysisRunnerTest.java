@@ -110,26 +110,60 @@ public class SparkAnalysisRunnerTest {
     }
 
     @Test
-    public void testWriteDataScenario() throws Exception {
-        final String outputPath = "target/write-job.csv";
-        final File outputFile = new File(outputPath);
-        if (outputFile.exists() && outputFile.isDirectory()) {
-            FileUtils.deleteDirectory(outputFile);
-        }
+    public void testWriteDataScenarioNoResult() throws Exception {
+        final AnalysisResultFuture result = runWriteDataScenario(false);
 
-        final String appName = "DCTest - " + getName();
-        final AnalysisResultFuture result =
-                runAnalysisJob(appName, "src/test/resources/write-job.analysis.xml", "write-job", true);
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(0, results.size());
+    }
 
-        if (result.isErrornous()) {
-            throw (Exception) result.getErrors().get(0);
-        }
+    @Test
+    public void testWriteDataScenarioSaveResult() throws Exception {
+        final AnalysisResultFuture result = runWriteDataScenario(true);
 
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(1, results.size());
 
         final WriteDataResult writeDataResult = result.getResults(WriteDataResult.class).get(0);
         assertEquals(7, writeDataResult.getWrittenRowCount());
+    }
+
+    private AnalysisResultFuture runWriteDataScenario(boolean saveResult) throws Exception {
+        final String outputPath = "target/write-job.csv";
+        final File outputFile = new File(outputPath);
+        if (outputFile.exists() && outputFile.isDirectory()) {
+            FileUtils.deleteDirectory(outputFile);
+        }
+
+        final AnalysisResultFuture result;
+
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        try {
+
+            final SparkJobContext sparkJobContext;
+            if (saveResult) {
+                sparkJobContext = new SparkJobContext(sparkContext,
+                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml");
+            } else {
+                sparkJobContext = new SparkJobContext(sparkContext,
+                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", "src/test/resources/jobProperties/noResult.properties");
+            }
+            final AnalysisJob job = sparkJobContext.getAnalysisJob();
+            assertNotNull(job);
+            assertEquals("write-job", sparkJobContext.getAnalysisJobName());
+
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
+                    MIN_PARTITIONS_MULTIPLE);
+
+            result = sparkAnalysisRunner.run(job);
+        } finally {
+            sparkContext.close();
+        }
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
 
         assertTrue(outputFile.isDirectory());
 
@@ -149,6 +183,8 @@ public class SparkAnalysisRunnerTest {
 
         // asserting 8 lines is important - 7 data lines and 1 header line
         assertEquals(8, lines.length);
+
+        return result;
     }
 
     @Test

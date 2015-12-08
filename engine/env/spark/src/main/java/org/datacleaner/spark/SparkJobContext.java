@@ -55,11 +55,12 @@ import com.google.common.base.Strings;
  */
 public class SparkJobContext implements Serializable {
 
-    private static String DATA_CLEANER_RESULT_PATH_PROPERTY = "datacleaner.result.hdfs.path";
     public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
     public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
-
+    
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
+    private static final String PROPERTY_RESULT_PATH = "datacleaner.result.hdfs.path";
+    private static final String PROPERTY_RESULT_ENABLED = "datacleaner.result.hdfs.enabled";
 
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +83,7 @@ public class SparkJobContext implements Serializable {
         _customProperties = readCustomProperties(propertiesPath);
         _configurationXml = readFile(dataCleanerConfigurationPath);
         _analysisJobXml = readFile(analysisJobXmlPath);
-        _analysisJobXmlPath= analysisJobXmlPath;
+        _analysisJobXmlPath = analysisJobXmlPath;
     }
 
     private String readFile(String path) {
@@ -211,19 +212,32 @@ public class SparkJobContext implements Serializable {
         return null;
     }
 
+    /**
+     * Gets the path defined in the job properties file
+     * 
+     * @return
+     */
     public String getResultPath() {
-        if (_customProperties != null) {
-            if (_customProperties.containsKey(DATA_CLEANER_RESULT_PATH_PROPERTY)) {
-                return _customProperties.get(DATA_CLEANER_RESULT_PATH_PROPERTY);
-            }
-        }
-        return null;
+        return _customProperties.get(PROPERTY_RESULT_PATH);
     }
     
+    public boolean isResultEnabled() {
+        final String enabledString = _customProperties.get(PROPERTY_RESULT_ENABLED);
+        if ("false".equalsIgnoreCase(enabledString)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the job name (removing the extension '.analysis.xml')
+     * 
+     * @return
+     */
     public String getAnalysisJobName() {
         final int lastIndexOfSlash = _analysisJobXmlPath.lastIndexOf("/");
         final int lastIndexOfFileExtension = _analysisJobXmlPath.lastIndexOf(".analysis.xml");
-        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash+1, lastIndexOfFileExtension);
-        return  jobName;
+        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
+        return jobName;
     }
 }

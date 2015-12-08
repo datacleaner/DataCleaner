@@ -27,12 +27,8 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.util.ProgressCounter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class CliProgressAnalysisListener extends AnalysisListenerAdaptor {
-
-    private static final Logger logger = LoggerFactory.getLogger(CliProgressAnalysisListener.class);
 
     private final Map<Table, ProgressCounter> rowCounts = new HashMap<Table, ProgressCounter>();
 
@@ -52,10 +48,5 @@ final class CliProgressAnalysisListener extends AnalysisListenerAdaptor {
                 System.out.println(currentRow + " rows processed from table: " + table.getName());
             }
         }
-    }
-
-    @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
-        logger.info("Done processing rows from table: {}", metrics.getTable().getName());
     }
 }

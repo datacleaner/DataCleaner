@@ -21,7 +21,6 @@ package org.datacleaner.descriptors;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.Alias;
@@ -43,14 +42,6 @@ import org.datacleaner.api.Validate;
  * for a general description.
  */
 public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable {
-
-    /**
-     * It updates component's metadata.
-     * 
-     * @param metadata
-     */
-    public void updateMetadata(Map<String, String> metadata);
-
     /**
      * @return a humanly readable display name for this bean.
      */

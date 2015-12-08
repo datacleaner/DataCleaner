@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
  *
  * @Since 9/8/15
  */
-public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
@@ -54,7 +54,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private long lastConnectionCheckTime = 0L;
     private boolean lastConnectionCheckResult = false;
 
-    public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
+    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
         super(false);
         this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
@@ -132,13 +132,13 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
 
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
-                        final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
+                        final RemoteTransformerDescriptor transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
                                 component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
                                 remoteServerData.getPassword());
                         transformerDescriptor.setServerName(remoteServerData.getServerName());
                         transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
-                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
+                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProviderImpl.this);
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();

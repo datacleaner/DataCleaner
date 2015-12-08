@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.ComponentCategory;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor,
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements RemoteTransformerDescriptor,
         HasIcon {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
@@ -149,14 +148,5 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     public byte[] getIconData() {
         return iconData;
-    }
-
-    @Override
-    public void updateMetadata(Map metadata) {
-        String key = "source";
-
-        if (!metadata.containsKey(key)) {
-            metadata.put(key, getServerName());
-        }
     }
 }

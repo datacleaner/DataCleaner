@@ -74,20 +74,6 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
         return -1;
     }
 
-    /**
-     * It updates component's metadata.
-     *
-     * @param metadata
-     */
-    @Override
-    public void updateMetadata(Map metadata) {
-        String key = "source";
-
-        if (!metadata.containsKey(key)) {
-            metadata.put(key, "local");
-        }
-    }
-
     @Override
     public String getDisplayName() {
         // this is the 'descriptor' name, e.g. will be used for CSS styling

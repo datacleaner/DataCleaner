@@ -138,7 +138,7 @@ import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
@@ -432,7 +432,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             remoteServerData.setUsername(server.getUsername());
             remoteServerData.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
             remoteServerConfiguration.addServer(remoteServerData);
-            descriptorProviders.add(new RemoteDescriptorProvider(remoteServerData));
+            descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData));
         }
         return descriptorProviders;
     }

@@ -41,7 +41,7 @@ public class JobResultPathTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+            final SparkJobContext sparkJobContext = new SparkJobContext(
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml",
                     "src/test/resources/jobProperties/jobAbsolutePath.properties");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
@@ -62,7 +62,7 @@ public class JobResultPathTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+            final SparkJobContext sparkJobContext = new SparkJobContext(
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml",
                     "src/test/resources/jobProperties/jobEmptyPath.properties");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
@@ -85,7 +85,7 @@ public class JobResultPathTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+            final SparkJobContext sparkJobContext = new SparkJobContext(
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml",
                     "src/test/resources/jobProperties/jobRelativePath.properties");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
@@ -110,7 +110,7 @@ public class JobResultPathTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+            final SparkJobContext sparkJobContext = new SparkJobContext(
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml",
                     "src/test/resources/jobProperties/jobSimpleNamePath.properties");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
@@ -135,7 +135,7 @@ public class JobResultPathTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
   
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+            final SparkJobContext sparkJobContext = new SparkJobContext(
                     "src/test/resources/conf_local.xml", "src/test/resources/vanilla-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);

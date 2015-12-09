@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,6 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
@@ -45,6 +45,8 @@ import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -54,11 +56,8 @@ import com.google.common.base.Strings;
  * {@link Serializable} properties.
  */
 public class SparkJobContext implements Serializable {
-
-    public static final String ACCUMULATOR_CONFIGURATION_READS = "DataCleanerConfiguration reads";
-    public static final String ACCUMULATOR_JOB_READS = "AnalysisJob reads";
-    
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
+    private static final Logger logger = LoggerFactory.getLogger(SparkJobContext.class);
     private static final String PROPERTY_RESULT_PATH = "datacleaner.result.hdfs.path";
     private static final String PROPERTY_RESULT_ENABLED = "datacleaner.result.hdfs.enabled";
 
@@ -68,17 +67,18 @@ public class SparkJobContext implements Serializable {
     private final String _analysisJobXml;
     private final String _analysisJobXmlPath;
     private final Map<String, String> _customProperties;
+    private final List<SparkJobLifeCycleListener> _sparkJobLifeCycleListeners = new ArrayList<>();
 
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
 
-    public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
+    public SparkJobContext(final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
-        this(sparkContext, dataCleanerConfigurationPath, analysisJobXmlPath, null);
+        this(dataCleanerConfigurationPath, analysisJobXmlPath, null);
     }
 
-    public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
+    public SparkJobContext(final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath, final String propertiesPath) {
         _customProperties = readCustomProperties(propertiesPath);
         _configurationXml = readFile(dataCleanerConfigurationPath);
@@ -86,8 +86,19 @@ public class SparkJobContext implements Serializable {
         _analysisJobXmlPath = analysisJobXmlPath;
     }
 
+    private static Resource createResource(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            return null;
+        }
+        if (path.toLowerCase().startsWith("hdfs:")) {
+            return new HdfsResource(path);
+        }
+        return new FileResource(path);
+    }
+
     private String readFile(String path) {
         final Resource resource = createResource(path);
+        assert resource != null;
         return resource.read(new Func<InputStream, String>() {
             @Override
             public String eval(InputStream in) {
@@ -122,16 +133,6 @@ public class SparkJobContext implements Serializable {
         return Collections.emptyMap();
     }
 
-    private static Resource createResource(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            return null;
-        }
-        if (path.toLowerCase().startsWith("hdfs:")) {
-            return new HdfsResource(path);
-        }
-        return new FileResource(path);
-    }
-
     public AnalysisJob getAnalysisJob() {
         return getAnalysisJobBuilder().toAnalysisJob();
     }
@@ -150,7 +151,7 @@ public class SparkJobContext implements Serializable {
      * Appliesc compopnent indices via the component metadata to enable proper
      * functioning of the {@link #getComponentByKey(String)} and
      * {@link #getComponentKey(ComponentJob)} methods.
-     * 
+     *
      * @param analysisJobBuilder
      * @param currentComponentIndex
      */
@@ -214,24 +215,21 @@ public class SparkJobContext implements Serializable {
 
     /**
      * Gets the path defined in the job properties file
-     * 
+     *
      * @return
      */
     public String getResultPath() {
         return _customProperties.get(PROPERTY_RESULT_PATH);
     }
-    
+
     public boolean isResultEnabled() {
         final String enabledString = _customProperties.get(PROPERTY_RESULT_ENABLED);
-        if ("false".equalsIgnoreCase(enabledString)) {
-            return false;
-        }
-        return true;
+        return !"false".equalsIgnoreCase(enabledString);
     }
 
     /**
      * Gets the job name (removing the extension '.analysis.xml')
-     * 
+     *
      * @return
      */
     public String getAnalysisJobName() {
@@ -239,5 +237,61 @@ public class SparkJobContext implements Serializable {
         final int lastIndexOfFileExtension = _analysisJobXmlPath.lastIndexOf(".analysis.xml");
         final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
         return jobName;
+    }
+
+    /**
+     * Adds a listener for the job life cycle.
+     * @param sparkJobLifeCycleListener The listener to add. Must be serializable.
+     */
+    public void addSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
+        _sparkJobLifeCycleListeners.add(sparkJobLifeCycleListener);
+    }
+
+    /**
+     * Removes a life cycle listener. Please note that this will _not_ work
+     * globally after job start. If you remove it on a node, it will only be removed on that node.
+     */
+    public void removeSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
+        _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);
+    }
+
+    public void triggerOnPartitionProcessingEnd() {
+        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+            try {
+                listener.onPartitionProcessingEnd();
+            } catch (Throwable e) {
+                logger.warn("onPartitionProcessingEnd: Listener {} threw exception", listener, e);
+            }
+        }
+    }
+
+    public void triggerOnPartitionProcessingStart() {
+        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+            try {
+                listener.onPartitionProcessingStart();
+            } catch (Throwable e) {
+                logger.warn("onPartitionProcessingStart: Listener {} threw exception", listener, e);
+            }
+        }
+    }
+
+    public void triggerOnJobStart() {
+        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+            try {
+                listener.onJobStart();
+            } catch (Throwable e) {
+                logger.warn("onJobStart: Listener {} threw exception", listener, e);
+            }
+        }
+    }
+
+    public void triggerOnJobEnd() {
+        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+            try {
+                listener.onJobEnd();
+            } catch (Throwable e) {
+                logger.warn("onJobEnd: Listener {} threw exception", listener, e);
+            }
+        }
     }
 }

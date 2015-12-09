@@ -37,7 +37,6 @@ import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
-import org.datacleaner.reference.ReferenceData;
 
 @Named("Dictionary matcher")
 @Description("Matches string values against a set of dictionaries, producing a corresponding set of output columns specifying whether or not the values exist in those dictionaries")

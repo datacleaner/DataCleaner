@@ -233,9 +233,10 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     public Set<DescriptorProviderState> getStatus() {
         Set<DescriptorProviderState> statusSet = new HashSet<>();
 
-        if (! isServerUp()) {
+        if (!isServerUp()) {
             DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server is not available at the moment. ");
+                    DescriptorProviderState.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
+                    + "' is not available at the moment. ");
             statusSet.add(serverDownState);
         }
 

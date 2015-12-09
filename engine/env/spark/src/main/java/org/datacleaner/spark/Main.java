@@ -59,7 +59,7 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
+        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
                 propertiesPath);
 
         final String resultJobFilePath;
@@ -100,9 +100,6 @@ public class Main {
                     throw e;
                 }
             }
-        } catch (Exception e) {
-            logger.error("Exception " + e.getStackTrace());
-            throw e;
         } finally {
             sparkContext.stop();
         }

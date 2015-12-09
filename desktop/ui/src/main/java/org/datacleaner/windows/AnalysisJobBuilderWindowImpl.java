@@ -240,10 +240,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
-    private static final int SERVER_CHECK_INTERVAL = 2000; // [ms]
+    private static final int SERVER_CHECK_INTERVAL = 2 * 60 * 1000; // [ms] - 2 min
     private DescriptorProviderState _remoteDescriptorErrorState;
     private Boolean _remoteExecuteEnable = true;
-    private Thread serverCheckingThread;
     private ServerChecker serverChecker;
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
@@ -412,7 +411,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _schemaTreePanel.setUpdatePanel(_leftPanel);
 
         serverChecker = new ServerChecker();
-        serverCheckingThread = new Thread(serverChecker);
+        Thread serverCheckingThread = new Thread(serverChecker);
         serverCheckingThread.start();
     }
 

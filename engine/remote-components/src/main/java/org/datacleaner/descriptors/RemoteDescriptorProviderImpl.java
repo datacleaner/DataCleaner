@@ -64,6 +64,16 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         dataLazyReference.requestLoad();
     }
 
+    @Override
+    public Integer getServerPriority() {
+        return remoteServerData.getServerPriority();
+    }
+
+    @Override
+    public String getServerName() {
+        return remoteServerData.getServerName();
+    }
+
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
         boolean runCheck = false;
@@ -160,8 +170,6 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                                 remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
                                 component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
                                 remoteServerData.getPassword());
-                        transformerDescriptor.setServerName(remoteServerData.getServerName());
-                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
                         transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProviderImpl.this);
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {

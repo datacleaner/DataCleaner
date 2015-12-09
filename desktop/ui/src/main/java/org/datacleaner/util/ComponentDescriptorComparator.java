@@ -44,8 +44,8 @@ public class ComponentDescriptorComparator implements Comparator<ComponentDescri
             boolean bothRemote = (firstDescriptor instanceof RemoteTransformerDescriptor && secondDescriptor instanceof RemoteTransformerDescriptor);
 
             if (bothRemote) {
-                return ((RemoteTransformerDescriptor) secondDescriptor).getServerPriority().compareTo(
-                        ((RemoteTransformerDescriptor) firstDescriptor).getServerPriority());
+                return ((RemoteTransformerDescriptor) secondDescriptor).getRemoteDescriptorProvider().getServerPriority().compareTo(
+                        ((RemoteTransformerDescriptor) firstDescriptor).getRemoteDescriptorProvider().getServerPriority());
             }
             else {
                 return (secondDescriptor instanceof RemoteTransformerDescriptor) ? -1 : 1;

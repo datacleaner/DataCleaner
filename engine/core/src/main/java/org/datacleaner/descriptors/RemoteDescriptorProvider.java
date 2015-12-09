@@ -22,6 +22,10 @@ package org.datacleaner.descriptors;
 /**
  * Descriptor provider for remote components.
  */
-public interface RemoteDescriptorProvider {
+public interface RemoteDescriptorProvider extends DescriptorProvider {
+    public Integer getServerPriority();
+
+    public String getServerName();
+
     public boolean isServerUp();
 }

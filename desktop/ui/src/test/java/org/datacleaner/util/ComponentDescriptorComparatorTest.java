@@ -27,11 +27,15 @@ import java.util.Set;
 
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.configuration.RemoteServerData;
+import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.InitializeMethodDescriptor;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
@@ -43,11 +47,11 @@ public class ComponentDescriptorComparatorTest {
     public void testRemoteAndLocal() {
         RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
                 null, null, null);
-        descriptor1.setServerPriority(1);
+        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(1));
 
         RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(null, "abc", null, null,
                 null, null, null);
-        descriptor2.setServerPriority(2);
+        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
 
         TestLocalComponentDescriptor descriptor3 = new TestLocalComponentDescriptor("xyz");
         TestLocalComponentDescriptor descriptor4 = new TestLocalComponentDescriptor("abc");
@@ -71,19 +75,27 @@ public class ComponentDescriptorComparatorTest {
         Assert.assertEquals("xyz", fourth.getDisplayName());
     }
 
+    private RemoteDescriptorProvider getRemoteDescriptorProvider(Integer serverPriority) {
+        RemoteServerData remoteServerData = new RemoteServerDataImpl();
+        remoteServerData.setServerPriority(serverPriority);
+        RemoteDescriptorProvider remoteDescriptorProvider = new RemoteDescriptorProviderImpl(remoteServerData);
+
+        return remoteDescriptorProvider;
+    }
+
     @Test
     public void testCompareAllRemote() throws Exception {
         RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
                 null, null, null);
-        descriptor1.setServerPriority(1);
+        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(1));
 
         RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
                 null, null, null);
-        descriptor2.setServerPriority(2);
+        descriptor2.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
 
         RemoteTransformerDescriptor descriptor3 = new RemoteTransformerDescriptorImpl(null, "abc", null, null,
                 null, null, null);
-        descriptor3.setServerPriority(2);
+        descriptor3.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
 
         List<RemoteTransformerDescriptor> list = new ArrayList<>();
         list.add(descriptor1);
@@ -97,11 +109,11 @@ public class ComponentDescriptorComparatorTest {
         RemoteTransformerDescriptor third = list.get(2);
 
         Assert.assertEquals("abc", first.getDisplayName());
-        Assert.assertEquals(2, first.getServerPriority().intValue());
+        Assert.assertEquals(2, first.getRemoteDescriptorProvider().getServerPriority().intValue());
         Assert.assertEquals("xyz", second.getDisplayName());
-        Assert.assertEquals(2, second.getServerPriority().intValue());
+        Assert.assertEquals(2, second.getRemoteDescriptorProvider().getServerPriority().intValue());
         Assert.assertEquals("xyz", third.getDisplayName());
-        Assert.assertEquals(1, third.getServerPriority().intValue());
+        Assert.assertEquals(1, third.getRemoteDescriptorProvider().getServerPriority().intValue());
     }
 
     @Test

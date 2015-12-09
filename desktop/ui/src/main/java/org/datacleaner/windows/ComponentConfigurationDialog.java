@@ -122,8 +122,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         String remoteServerName = "";
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            remoteServerName = " (" +
-                    ((RemoteTransformerDescriptor)(_componentBuilder.getDescriptor())).getServerName() + ")";
+            remoteServerName = " (" + ((RemoteTransformerDescriptor)(_componentBuilder.getDescriptor()))
+                    .getRemoteDescriptorProvider().getServerName() + ")";
         }
 
         final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle() + remoteServerName);

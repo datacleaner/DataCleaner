@@ -23,22 +23,13 @@ package org.datacleaner.descriptors;
  * A {@link TransformerDescriptor} for remote transformers.
  */
 public interface RemoteTransformerDescriptor extends TransformerDescriptor {
-
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor);
 
     public void setRemoteDescriptorProvider(RemoteDescriptorProvider remoteDescriptorProvider);
 
     public RemoteDescriptorProvider getRemoteDescriptorProvider();
 
-    public void setServerPriority(Integer serverPriority);
-
-    public Integer getServerPriority();
-
     public String getDisplayName();
-
-    public void setServerName(String serverName);
-
-    public String getServerName();
 
     public byte[] getIconData();
 }

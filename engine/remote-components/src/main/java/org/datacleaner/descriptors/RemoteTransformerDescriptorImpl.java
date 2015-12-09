@@ -47,9 +47,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     private String username;
     private String password;
     private byte[] iconData;
-    private String serverName;
     private RemoteDescriptorProvider remoteDescriptorProvider;
-    private Integer serverPriority = 0;
 
     public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String superCategoryName,
             Set<String> categoryNames, byte[] iconData, String username, String password) {
@@ -75,26 +73,11 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         this._configuredProperties.add(propertyDescriptor);
     }
 
-    public void setServerPriority(Integer serverPriority) {
-        this.serverPriority = serverPriority;
-    }
-
-    public Integer getServerPriority() {
-        return serverPriority;
-    }
-
     @Override
     public String getDisplayName() {
         return remoteDisplayName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getServerName() {
-        return serverName;
-    }
 
     @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {

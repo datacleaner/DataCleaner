@@ -124,7 +124,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         String source = "local";
 
         if (_descriptor instanceof RemoteTransformerDescriptor) {
-            source = ((RemoteTransformerDescriptor) _descriptor).getServerName();
+            source = ((RemoteTransformerDescriptor) _descriptor).getRemoteDescriptorProvider().getServerName();
         }
 
         _metadataProperties.put("source", source);

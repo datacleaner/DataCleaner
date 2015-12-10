@@ -240,6 +240,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 if (col instanceof ExpressionBasedInputColumn) {
                     inputColumnsToBeRemoved.remove(col);
                     availableColumns.add(col);
+                } else {
+                    if (!availableColumns.contains(col)) {
+                        logger.warn(
+                                "The value contains a column which is not found in the 'available' set of input columns: {}",
+                                col);
+                    }
                 }
             }
         }

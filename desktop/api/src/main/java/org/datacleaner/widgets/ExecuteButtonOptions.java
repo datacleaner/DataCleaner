@@ -66,7 +66,10 @@ public class ExecuteButtonOptions {
          * apply to the given job.
          * 
          * @param analysisJobBuilder
+         *            the current job builder object
          * @param executeAction
+         *            an {@link Action} that can be invoked with any job builder
+         *            to execute it.
          * @return
          */
         public ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,

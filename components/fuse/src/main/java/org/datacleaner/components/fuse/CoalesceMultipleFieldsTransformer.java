@@ -71,6 +71,9 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     @Initialize
     public void init() {
         _coalesceFunction = new CoalesceFunction(considerEmptyStringAsNull);
+        for (CoalesceUnit unit : _units) {
+            unit.refreshInputColumns(_input);
+        }
     }
 
     /**

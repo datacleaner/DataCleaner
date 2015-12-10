@@ -22,6 +22,7 @@ package org.datacleaner.connection;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.util.List;
+
 import org.apache.metamodel.elasticsearch.ElasticSearchDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.StringUtils;
@@ -78,8 +79,10 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     }
 
     public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
-            String clusterName, String indexName, String username, String password, boolean ssl, String keystorePath, String keystorePassword) {
-        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath, keystorePassword);
+            String clusterName, String indexName, String username, String password, boolean ssl, String keystorePath,
+            String keystorePassword) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath,
+                keystorePassword);
     }
 
     public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
@@ -107,7 +110,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     @Override
     protected UsageAwareDatastoreConnection<ElasticSearchDataContext> createDatastoreConnection() {
 
-        Client client;
+        final Client client;
         if (ClientType.TRANSPORT.equals(_clientType)) {
             final Builder settingsBuilder = ImmutableSettings.builder();
             settingsBuilder.put("name", "DataCleaner");
@@ -115,7 +118,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
                 if (_ssl) {
-                    if(!Strings.isNullOrEmpty(_keystorePath)) {
+                    if (!Strings.isNullOrEmpty(_keystorePath)) {
                         settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
                         settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
                     }
@@ -143,7 +146,8 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         } else {
             dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
         }
-        return new UpdateableDatastoreConnectionImpl<ElasticSearchDataContext>(dataContext, this);
+
+        return new UpdateableDatastoreConnectionImpl<ElasticSearchDataContext>(dataContext, this, client);
     }
 
     @Override
@@ -187,11 +191,11 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public boolean getSsl() {
         return _ssl;
     }
-    
+
     public String getKeystorePath() {
         return _keystorePath;
     }
-    
+
     public String getKeystorePassword() {
         return _keystorePassword;
     }

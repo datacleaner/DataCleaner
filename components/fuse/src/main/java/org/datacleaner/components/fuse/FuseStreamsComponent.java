@@ -76,6 +76,9 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     @Initialize
     public void init() {
         _coalesceFunction = new CoalesceFunction(false);
+        for (CoalesceUnit unit : _units) {
+            unit.refreshInputColumns(_inputs);
+        }
     }
 
     /**

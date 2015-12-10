@@ -100,8 +100,8 @@ public class SchemaTreePanel extends DCPanel {
         new SwingWorker<SchemaTree, Void>() {
             @Override
             protected SchemaTree doInBackground() throws Exception {
-                Injector injector = _injectorBuilder.with(Datastore.class, datastore).createInjector();
-                SchemaTree tree = injector.getInstance(SchemaTree.class);
+                final Injector injector = _injectorBuilder.with(Datastore.class, datastore).createInjector();
+                final SchemaTree tree = injector.getInstance(SchemaTree.class);
                 return tree;
             }
 
@@ -184,16 +184,20 @@ public class SchemaTreePanel extends DCPanel {
         resetSearchFieldIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                final String currentText = _searchTextField.getText();
-                if (Strings.isNullOrEmpty(currentText)) {
-                    // do nothing
-                    return;
-                }
-                _searchTextField.setText("");
-                _schemaTree.filter("");
+                resetSearch();
             }
         });
         return resetSearchFieldIcon;
+    }
+
+    public void resetSearch() {
+        final String currentText = _searchTextField.getText();
+        if (Strings.isNullOrEmpty(currentText)) {
+            // do nothing
+            return;
+        }
+        _searchTextField.setText("");
+        _schemaTree.filter("");        
     }
 
     protected JXTextField createSearchTextField() {

@@ -21,31 +21,22 @@ package org.datacleaner.widgets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
+import org.apache.metamodel.util.Action;
 import org.datacleaner.actions.RunAnalysisActionListener;
-import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.job.builder.FilterComponentBuilder;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.ExecuteButtonOptions.ExecutionMenuItem;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 /**
@@ -53,8 +44,8 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow;
  */
 public class ExecuteButtonBuilder {
 
-    private final JButton _executeButton;
-    private final JButton _executionAlternativesButton;
+    private final JButton _mainButton;
+    private final JButton _alternativesButton;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalysisJobBuilderWindow _window;
 
@@ -62,117 +53,77 @@ public class ExecuteButtonBuilder {
         _window = window;
         _analysisJobBuilder = window.getAnalysisJobBuilder();
 
-        _executeButton = WidgetFactory.createToolbarButton("Execute", IconUtils.MENU_EXECUTE);
-        _executionAlternativesButton = WidgetFactory.createToolbarButton(WidgetUtils.CHAR_CARET_DOWN, null);
-        _executionAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
+        _mainButton = WidgetFactory.createToolbarButton("Execute", IconUtils.MENU_EXECUTE);
+        _alternativesButton = WidgetFactory.createToolbarButton(WidgetUtils.CHAR_CARET_DOWN, null);
+        _alternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
-        _executeButton.addActionListener(execute(_analysisJobBuilder));
-
-        _executionAlternativesButton.addActionListener(new ActionListener() {
+        _mainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JMenuItem executeNormallyMenutItem = WidgetFactory.createMenuItem("Run normally",
-                        IconUtils.ACTION_EXECUTE);
-                executeNormallyMenutItem.addActionListener(execute(_analysisJobBuilder));
+                execute(_analysisJobBuilder);
+            }
+        });
 
-                final JMenuItem executePreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
-                        IconUtils.ACTION_PREVIEW);
-                executePreviewMenuItem.addActionListener(executePreview());
-
-                final JMenuItem executeSingleThreadedMenuItem = WidgetFactory.createMenuItem("Run single-threaded",
-                        IconUtils.MODEL_ROW);
-                executeSingleThreadedMenuItem.addActionListener(executeSingleThreaded());
-
+        _alternativesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
                 final JPopupMenu menu = new JPopupMenu();
-                menu.add(executeNormallyMenutItem);
-                menu.addSeparator();
-                menu.add(executePreviewMenuItem);
-                menu.add(executeSingleThreadedMenuItem);
 
-                final int horizontalPosition = -1 * menu.getPreferredSize().width
-                        + _executionAlternativesButton.getWidth();
-                menu.show(_executionAlternativesButton, horizontalPosition, _executionAlternativesButton.getHeight());
+                final Action<AnalysisJobBuilder> executeAction = new Action<AnalysisJobBuilder>() {
+                    @Override
+                    public void run(AnalysisJobBuilder jobBuilder) throws Exception {
+                        execute(jobBuilder);
+                    }
+                };
+                final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
+                for (ExecutionMenuItem item : menuItems) {
+                    if (item instanceof ExecuteButtonOptions.Separator) {
+                        menu.addSeparator();
+                    } else {
+                        final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
+                        final ActionListener actionListener = item.createActionListener(_analysisJobBuilder,
+                                executeAction);
+                        if (actionListener == null) {
+                            menuItem.setEnabled(false);
+                        } else {
+                            menuItem.addActionListener(actionListener);
+                        }
+                        menu.add(menuItem);
+                    }
+                }
+
+                final int horizontalPosition = -1 * menu.getPreferredSize().width + _alternativesButton.getWidth();
+                menu.show(_alternativesButton, horizontalPosition, _alternativesButton.getHeight());
             }
         });
     }
 
     public void setEnabled(boolean enabled) {
-        _executeButton.setEnabled(enabled);
-        _executionAlternativesButton.setEnabled(enabled);
+        _mainButton.setEnabled(enabled);
+        _alternativesButton.setEnabled(enabled);
     }
 
     public void addComponentsToToolbar(JToolBar toolBar) {
-        toolBar.add(_executeButton);
+        toolBar.add(_mainButton);
         toolBar.add(DCLabel.bright("|"));
-        toolBar.add(_executionAlternativesButton);
+        toolBar.add(_alternativesButton);
     }
 
-    private ActionListener executeSingleThreaded() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DataCleanerConfiguration baseConfiguration = _window.getConfiguration();
-                final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(baseConfiguration)
-                        .withEnvironment(new DataCleanerEnvironmentImpl(baseConfiguration.getEnvironment())
-                                .withTaskRunner(new SingleThreadedTaskRunner()));
-
-                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(configuration, jobCopy);
-
-                execute(jobBuilderCopy).actionPerformed(e);
+    private void execute(final AnalysisJobBuilder analysisJobBuilder) {
+        final DCModule dcModule = _window.getDCModule();
+        if (analysisJobBuilder.getResultProducingComponentBuilders().isEmpty()) {
+            if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
+                // Present choices to user to write file somewhere,
+                // and then run a copy of the job based on that.
+                ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                        dcModule, _window.getWindowContext(), analysisJobBuilder, _window.getUserPreferences());
+                executeJobWithoutAnalyzersPanel.open();
+                return;
             }
-        };
-    }
+        }
 
-    private ActionListener executePreview() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
-
-                if (maxRows != null) {
-                    final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                    final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_window.getConfiguration(),
-                            jobCopy);
-                    final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
-                            .addFilter(MaxRowsFilter.class);
-                    maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
-                    maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
-                    final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
-                    final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
-                    for (ComponentBuilder componentBuilder : componentBuilders) {
-                        if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
-                            componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
-                        }
-                    }
-
-                    execute(jobBuilderCopy).actionPerformed(e);
-                }
-            }
-        };
-    }
-
-    private ActionListener execute(final AnalysisJobBuilder analysisJobBuilder) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DCModule dcModule = _window.getDCModule();
-                if (analysisJobBuilder.getResultProducingComponentBuilders().isEmpty()) {
-                    if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
-                        // Present choices to user to write file somewhere,
-                        // and then run a copy of the job based on that.
-                        ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                                dcModule, _window.getWindowContext(), analysisJobBuilder, _window.getUserPreferences());
-                        executeJobWithoutAnalyzersPanel.open();
-                        return;
-                    }
-                }
-
-                final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(dcModule,
-                        analysisJobBuilder);
-                runAnalysis.run();
-            }
-        };
+        final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(dcModule, analysisJobBuilder);
+        runAnalysis.run();
     }
 
 }

@@ -181,7 +181,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
-                        final RemoteTransformerDescriptor transformerDescriptor = new RemoteTransformerDescriptorImpl(
+                        final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 RemoteDescriptorProviderImpl.this, component.getName(),
                                 component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
 

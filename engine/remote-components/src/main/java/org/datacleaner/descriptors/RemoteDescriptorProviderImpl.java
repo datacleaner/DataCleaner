@@ -74,11 +74,26 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return remoteServerData.getServerName();
     }
 
+    @Override
+    public String getServerHost() {
+        return remoteServerData.getHost();
+    }
+
+    @Override
+    public String getUsername() {
+        return remoteServerData.getUsername();
+    }
+
+    @Override
+    public String getPassword() {
+        return remoteServerData.getPassword();
+    }
+
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
         boolean runCheck = false;
 
-        synchronized (this) { // not to start multiple threads/checks at the same time
+        synchronized (this) { // not to start multiple checks at once
             if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
                 runCheck = true;
                 lastConnectionCheckTime = now;
@@ -167,10 +182,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptor transformerDescriptor = new RemoteTransformerDescriptorImpl(
-                                remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
-                                component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
-                                remoteServerData.getPassword());
-                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProviderImpl.this);
+                                RemoteDescriptorProviderImpl.this, component.getName(),
+                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();
@@ -241,9 +254,9 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     public Set<DescriptorProviderState> getStatus() {
         Set<DescriptorProviderState> statusSet = new HashSet<>();
 
-        if (! isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server is not available at the moment. ");
+        if (!isServerUp()) {
+            DescriptorProviderState serverDownState = new DescriptorProviderState(DescriptorProviderState.Level.ERROR,
+                    "Remote server is not available at the moment. ");
             statusSet.add(serverDownState);
         }
 

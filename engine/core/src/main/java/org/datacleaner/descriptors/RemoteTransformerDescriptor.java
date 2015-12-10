@@ -25,11 +25,5 @@ package org.datacleaner.descriptors;
 public interface RemoteTransformerDescriptor extends TransformerDescriptor {
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor);
 
-    public void setRemoteDescriptorProvider(RemoteDescriptorProvider remoteDescriptorProvider);
-
     public RemoteDescriptorProvider getRemoteDescriptorProvider();
-
-    public String getDisplayName();
-
-    public byte[] getIconData();
 }

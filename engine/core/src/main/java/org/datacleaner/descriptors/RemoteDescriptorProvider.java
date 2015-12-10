@@ -27,5 +27,11 @@ public interface RemoteDescriptorProvider extends DescriptorProvider {
 
     public String getServerName();
 
+    public String getServerHost();
+
+    public String getUsername();
+
+    public String getPassword();
+
     public boolean isServerUp();
 }

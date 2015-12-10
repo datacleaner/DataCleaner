@@ -45,13 +45,10 @@ import org.junit.Test;
 public class ComponentDescriptorComparatorTest {
     @Test
     public void testRemoteAndLocal() {
-        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
-                null, null, null);
-        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(1));
-
-        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(null, "abc", null, null,
-                null, null, null);
-        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
+        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "abc", null, null, null);
 
         TestLocalComponentDescriptor descriptor3 = new TestLocalComponentDescriptor("xyz");
         TestLocalComponentDescriptor descriptor4 = new TestLocalComponentDescriptor("abc");
@@ -85,17 +82,12 @@ public class ComponentDescriptorComparatorTest {
 
     @Test
     public void testCompareAllRemote() throws Exception {
-        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
-                null, null, null);
-        descriptor1.setRemoteDescriptorProvider(getRemoteDescriptorProvider(1));
-
-        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(null, "xyz", null, null,
-                null, null, null);
-        descriptor2.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
-
-        RemoteTransformerDescriptor descriptor3 = new RemoteTransformerDescriptorImpl(null, "abc", null, null,
-                null, null, null);
-        descriptor3.setRemoteDescriptorProvider(getRemoteDescriptorProvider(2));
+        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor3 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "abc", null, null, null);
 
         List<RemoteTransformerDescriptor> list = new ArrayList<>();
         list.add(descriptor1);

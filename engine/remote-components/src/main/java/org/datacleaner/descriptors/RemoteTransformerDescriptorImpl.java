@@ -41,28 +41,19 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         HasIcon {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
-    private String baseUrl;
     private String superCategoryName;
     private Set<String> categoryNames;
-    private String username;
-    private String password;
     private byte[] iconData;
     private RemoteDescriptorProvider remoteDescriptorProvider;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String superCategoryName,
-            Set<String> categoryNames, byte[] iconData, String username, String password) {
+    public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
+            String superCategoryName, Set<String> categoryNames, byte[] iconData) {
         super(RemoteTransformer.class, true);
+        this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
         this.iconData = iconData;
-        this.username = username;
-        this.password = password;
-        this.baseUrl = baseUrl;
-    }
-
-    public void setRemoteDescriptorProvider(RemoteDescriptorProvider remoteDescriptorProvider) {
-        this.remoteDescriptorProvider = remoteDescriptorProvider;
     }
 
     public RemoteDescriptorProvider getRemoteDescriptorProvider() {
@@ -77,7 +68,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     public String getDisplayName() {
         return remoteDisplayName;
     }
-
 
     @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
@@ -120,13 +110,18 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
-        for (ConfiguredPropertyDescriptor prop : (Set<ConfiguredPropertyDescriptor>) _configuredProperties) {
-            if (prop instanceof RemoteConfiguredPropertyDescriptor) {
-                ((RemoteConfiguredPropertyDescriptor) prop).setDefaultValue(t);
+        String baseUrl = getRemoteDescriptorProvider().getServerHost();
+        String username = getRemoteDescriptorProvider().getUsername();
+        String password = getRemoteDescriptorProvider().getPassword();
+        RemoteTransformer remoteTransformer = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
+
+        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) _configuredProperties) {
+            if (propertyDescriptor instanceof RemoteConfiguredPropertyDescriptor) {
+                ((RemoteConfiguredPropertyDescriptor) propertyDescriptor).setDefaultValue(remoteTransformer);
             }
         }
-        return t;
+
+        return remoteTransformer;
     }
 
     public byte[] getIconData() {

@@ -463,6 +463,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public void changePanel(AnalysisWindowPanelType panel) {
         if (_datastore == null) {
             _currentPanelType = panel;
+            _schemaTreePanel.resetSearch();
         } else {
             _currentPanelType = AnalysisWindowPanelType.EDITING_CONTEXT;
         }

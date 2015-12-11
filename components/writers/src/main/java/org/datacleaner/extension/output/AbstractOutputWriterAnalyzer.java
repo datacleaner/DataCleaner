@@ -53,14 +53,16 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteData
 	
 	@Validate
 	public final void validateFieldNames() {
-	    final Set<String> uniqueFieldNames = new HashSet<>();
-	    for (String fieldName : fields) {
-	        final String normalizedFieldName = fieldName.trim().toLowerCase();
-            final boolean added = uniqueFieldNames.add(normalizedFieldName);
-            if (!added) {
-                throw new IllegalStateException("Field names must be unique. Field name '" + normalizedFieldName + "' occurs multiple times.");
-            }
-        }
+	    if (fields != null) {
+	        final Set<String> uniqueFieldNames = new HashSet<>();
+	        for (String fieldName : fields) {
+	            final String normalizedFieldName = fieldName.trim().toLowerCase();
+	            final boolean added = uniqueFieldNames.add(normalizedFieldName);
+	            if (!added) {
+	                throw new IllegalStateException("Field names must be unique. Field name '" + normalizedFieldName + "' occurs multiple times.");
+	            }
+	        }
+	    }
 	}
 
 	@Initialize

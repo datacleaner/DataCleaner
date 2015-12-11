@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  *
  * @Since 9/8/15
  */
-public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
@@ -58,17 +58,42 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private boolean lastConnectionCheckResult = false;
     private boolean checkInProgress = false;
 
-    public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
+    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
         super(false);
         this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
+    }
+
+    @Override
+    public Integer getServerPriority() {
+        return remoteServerData.getServerPriority();
+    }
+
+    @Override
+    public String getServerName() {
+        return remoteServerData.getServerName();
+    }
+
+    @Override
+    public String getServerHost() {
+        return remoteServerData.getHost();
+    }
+
+    @Override
+    public String getUsername() {
+        return remoteServerData.getUsername();
+    }
+
+    @Override
+    public String getPassword() {
+        return remoteServerData.getPassword();
     }
 
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
         boolean runCheck = false;
 
-        synchronized (this) { // not to start multiple threads/checks at the same time
+        synchronized (this) { // not to start multiple checks at once
             if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
                 runCheck = true;
                 lastConnectionCheckTime = now;
@@ -157,12 +182,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
-                                remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
-                                component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
-                                remoteServerData.getPassword());
-                        transformerDescriptor.setServerName(remoteServerData.getServerName());
-                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
-                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
+                                RemoteDescriptorProviderImpl.this, component.getName(),
+                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();
@@ -233,9 +254,9 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     public Set<DescriptorProviderState> getStatus() {
         Set<DescriptorProviderState> statusSet = new HashSet<>();
 
-        if (! isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server is not available at the moment. ");
+        if (!isServerUp()) {
+            DescriptorProviderState serverDownState = new DescriptorProviderState(DescriptorProviderState.Level.ERROR,
+                    "Remote server is not available at the moment. ");
             statusSet.add(serverDownState);
         }
 

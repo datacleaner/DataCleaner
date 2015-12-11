@@ -27,11 +27,16 @@ import java.util.Set;
 
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.configuration.RemoteServerData;
+import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.InitializeMethodDescriptor;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
 import org.junit.Assert;
@@ -40,13 +45,10 @@ import org.junit.Test;
 public class ComponentDescriptorComparatorTest {
     @Test
     public void testRemoteAndLocal() {
-        RemoteTransformerDescriptorImpl descriptor1 =
-                new RemoteTransformerDescriptorImpl(null, "xyz", null, null, null, null, null);
-        descriptor1.setServerPriority(1);
-
-        RemoteTransformerDescriptorImpl descriptor2 =
-                new RemoteTransformerDescriptorImpl(null, "abc", null, null, null, null, null);
-        descriptor2.setServerPriority(2);
+        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "abc", null, null, null);
 
         TestLocalComponentDescriptor descriptor3 = new TestLocalComponentDescriptor("xyz");
         TestLocalComponentDescriptor descriptor4 = new TestLocalComponentDescriptor("abc");
@@ -70,37 +72,40 @@ public class ComponentDescriptorComparatorTest {
         Assert.assertEquals("xyz", fourth.getDisplayName());
     }
 
+    private RemoteDescriptorProvider getRemoteDescriptorProvider(Integer serverPriority) {
+        RemoteServerData remoteServerData = new RemoteServerDataImpl();
+        remoteServerData.setServerPriority(serverPriority);
+        RemoteDescriptorProvider remoteDescriptorProvider = new RemoteDescriptorProviderImpl(remoteServerData);
+
+        return remoteDescriptorProvider;
+    }
+
     @Test
     public void testCompareAllRemote() throws Exception {
-        RemoteTransformerDescriptorImpl descriptor1 =
-                new RemoteTransformerDescriptorImpl(null, "xyz", null, null, null, null, null);
-        descriptor1.setServerPriority(1);
+        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "xyz", null, null, null);
+        RemoteTransformerDescriptor descriptor3 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+                "abc", null, null, null);
 
-        RemoteTransformerDescriptorImpl descriptor2 =
-                new RemoteTransformerDescriptorImpl(null, "xyz", null, null, null, null, null);
-        descriptor2.setServerPriority(2);
-
-        RemoteTransformerDescriptorImpl descriptor3 =
-                new RemoteTransformerDescriptorImpl(null, "abc", null, null, null, null, null);
-        descriptor3.setServerPriority(2);
-
-        List<RemoteTransformerDescriptorImpl> list = new ArrayList<>();
+        List<RemoteTransformerDescriptor> list = new ArrayList<>();
         list.add(descriptor1);
         list.add(descriptor2);
         list.add(descriptor3);
 
         Collections.sort(list, new ComponentDescriptorComparator());
 
-        RemoteTransformerDescriptorImpl first = list.get(0);
-        RemoteTransformerDescriptorImpl second = list.get(1);
-        RemoteTransformerDescriptorImpl third = list.get(2);
+        RemoteTransformerDescriptor first = list.get(0);
+        RemoteTransformerDescriptor second = list.get(1);
+        RemoteTransformerDescriptor third = list.get(2);
 
         Assert.assertEquals("abc", first.getDisplayName());
-        Assert.assertEquals(2, first.getServerPriority().intValue());
+        Assert.assertEquals(2, first.getRemoteDescriptorProvider().getServerPriority().intValue());
         Assert.assertEquals("xyz", second.getDisplayName());
-        Assert.assertEquals(2, second.getServerPriority().intValue());
+        Assert.assertEquals(2, second.getRemoteDescriptorProvider().getServerPriority().intValue());
         Assert.assertEquals("xyz", third.getDisplayName());
-        Assert.assertEquals(1, third.getServerPriority().intValue());
+        Assert.assertEquals(1, third.getRemoteDescriptorProvider().getServerPriority().intValue());
     }
 
     @Test
@@ -125,7 +130,7 @@ public class ComponentDescriptorComparatorTest {
         Assert.assertEquals("xyz", third.getDisplayName());
     }
 
-    private static class TestLocalComponentDescriptor implements ComponentDescriptor {
+    private class TestLocalComponentDescriptor implements ComponentDescriptor {
         private String displayName;
 
         public TestLocalComponentDescriptor(String displayName) {

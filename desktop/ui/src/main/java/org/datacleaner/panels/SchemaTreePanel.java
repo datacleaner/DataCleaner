@@ -86,6 +86,20 @@ public class SchemaTreePanel extends DCPanel {
         setFocusable(true);
     }
 
+    /**
+     * Method invoked when this panel is not longer shown to the user (typically
+     * because there is no longer any open datastore / job).
+     * 
+     * Note: This method is here because the {@link #removeNotify()} method is
+     * not invoked by the layout manager of the parent window.
+     */
+    public void onPanelHiding() {
+        resetSearch();
+        // remove children to notify them
+        removeAll();
+        updateParentPanel();
+    }
+
     public void setDatastore(final Datastore datastore, final boolean expandTree) {
         removeAll();
         if (datastore == null) {
@@ -197,7 +211,7 @@ public class SchemaTreePanel extends DCPanel {
             return;
         }
         _searchTextField.setText("");
-        _schemaTree.filter("");        
+        _schemaTree.filter("");
     }
 
     protected JXTextField createSearchTextField() {

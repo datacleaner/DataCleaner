@@ -46,7 +46,7 @@ public abstract class UsageAwareCloseable implements Closeable {
         }
     }
 
-    private static final int STACK_TRACE_ELEMENTS_TO_LOG = 7;
+    private static final int STACK_TRACE_ELEMENTS_TO_LOG = 20;
 
     private final Logger _logger;
 
@@ -74,7 +74,7 @@ public abstract class UsageAwareCloseable implements Closeable {
 
     private void logNearestStack() {
         StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-        for (int i = 1; i < stackTrace.length && i < 7; i++) {
+        for (int i = 1; i < stackTrace.length && i < STACK_TRACE_ELEMENTS_TO_LOG; i++) {
             StackTraceElement ste = stackTrace[i];
             _logger.debug(" - {} @ line {}", ste.getClassName(), ste.getLineNumber());
         }

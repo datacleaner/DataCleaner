@@ -16,9 +16,6 @@
     <transformation>
         <transformer>
             <descriptor ref="Email standardizer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_email"/>
             <output id="col_username" name="Username"/>
@@ -28,9 +25,6 @@
     <analysis>
         <analyzer>
             <descriptor ref="String analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_firstname"/>
             <input ref="col_lastname"/>

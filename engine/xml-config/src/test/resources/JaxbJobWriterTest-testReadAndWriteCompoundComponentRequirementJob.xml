@@ -16,9 +16,6 @@
     <transformation>
         <transformer requires="outcome_0">
             <descriptor ref="Concatenator"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Separator" value=" "/>
             </properties>
@@ -28,9 +25,6 @@
         </transformer>
         <filter>
             <descriptor ref="Null check"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Consider empty string as null" value="false"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -43,9 +37,6 @@
     <analysis>
         <analyzer requires="outcome_0 OR outcome_1">
             <descriptor ref="String analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_concatoffirstnamelastname"/>
         </analyzer>

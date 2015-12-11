@@ -17,9 +17,6 @@
     <analysis>
         <analyzer>
             <descriptor ref="String analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_firstname"/>
             <input ref="col_lastname"/>

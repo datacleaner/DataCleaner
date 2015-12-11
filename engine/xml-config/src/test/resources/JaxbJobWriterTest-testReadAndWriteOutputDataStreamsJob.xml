@@ -16,9 +16,6 @@
     <transformation>
         <transformer>
             <descriptor ref="Concatenator"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Separator" value=" "/>
             </properties>
@@ -30,9 +27,6 @@
     <analysis>
         <analyzer requires="_any_">
             <descriptor ref="Completeness analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ALL_FIELDS"/>
@@ -51,17 +45,11 @@
                     <analysis>
                         <analyzer>
                             <descriptor ref="String analyzer"/>
-                            <metadata-properties>
-<property name="source">local</property>
-                            </metadata-properties>
                             <properties/>
                             <input ref="col_concatoffirstnamelastname"/>
                         </analyzer>
                         <analyzer>
                             <descriptor ref="Number analyzer"/>
-                            <metadata-properties>
-<property name="source">local</property>
-                            </metadata-properties>
                             <properties>
 <property name="Descriptive statistics" value="false"/>
                             </properties>
@@ -82,17 +70,11 @@
                     <analysis>
                         <analyzer>
                             <descriptor ref="String analyzer"/>
-                            <metadata-properties>
-<property name="source">local</property>
-                            </metadata-properties>
                             <properties/>
                             <input ref="col_concatoffirstnamelastname2"/>
                         </analyzer>
                         <analyzer>
                             <descriptor ref="Number analyzer"/>
-                            <metadata-properties>
-<property name="source">local</property>
-                            </metadata-properties>
                             <properties>
 <property name="Descriptive statistics" value="false"/>
                             </properties>

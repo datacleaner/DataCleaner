@@ -16,9 +16,6 @@
     <transformation>
         <transformer>
             <descriptor ref="Email standardizer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_email"/>
             <output id="col_username" name="Username"/>
@@ -26,9 +23,6 @@
         </transformer>
         <filter>
             <descriptor ref="Null check"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Consider empty string as null" value="false"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -40,9 +34,6 @@
     <analysis>
         <analyzer requires="outcome_0">
             <descriptor ref="String analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_firstname"/>
             <input ref="col_lastname"/>

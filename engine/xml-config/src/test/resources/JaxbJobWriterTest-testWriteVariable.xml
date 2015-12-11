@@ -17,9 +17,6 @@
     <transformation>
         <transformer>
             <descriptor ref="Date mask matcher"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Date masks" ref="var_datemask"/>
                 <property name="Output type" value="TRUE_FALSE"/>
@@ -29,9 +26,6 @@
         </transformer>
         <transformer>
             <descriptor ref="Date mask matcher"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Date masks" value="[yy-dd-MM]"/>
                 <property name="Output type" value="TRUE_FALSE"/>
@@ -41,9 +35,6 @@
         </transformer>
         <transformer>
             <descriptor ref="Convert to date"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Null replacement" value="2000-01-01T00:00:00 0"/>
                 <property name="Time zone" value="Europe/Copenhagen"/>
@@ -56,17 +47,11 @@
     <analysis>
         <analyzer>
             <descriptor ref="Boolean analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties/>
             <input ref="col_matchesdatemask"/>
         </analyzer>
         <analyzer>
             <descriptor ref="Date/time analyzer"/>
-            <metadata-properties>
-                <property name="source">local</property>
-            </metadata-properties>
             <properties>
                 <property name="Descriptive statistics" value="false"/>
             </properties>

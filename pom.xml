@@ -442,6 +442,9 @@
 
 										<!-- standard is overlapping with jstl -->
 										<exclude>taglibs:standard:*</exclude>
+
+										<!-- org.apache.geronimo.bundles:json is overlapping with org.json:json -->
+										<exclude>org.apache.geronimo.bundles:json:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -697,6 +700,17 @@
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-json</artifactId>
 				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-neo4j</artifactId>
+				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.bundles</groupId>
+						<artifactId>json</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>

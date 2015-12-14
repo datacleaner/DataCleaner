@@ -62,4 +62,9 @@ public interface DataCleanerEnvironment {
      */
     public InjectionManagerFactory getInjectionManagerFactory();
 
+    /**
+     * @see DescriptorProviderStateNotifier
+     * @return instance of notifier
+     */
+    public DescriptorProviderStateNotifier getDescriptorProviderStateNotifier();
 }

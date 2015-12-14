@@ -131,6 +131,19 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         return Collections.unmodifiableCollection(dataLazyReference.get()._rendererBeanDescriptors.values());
     }
 
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
+        Map<DescriptorProvider, DescriptorProviderState> stateMap = new HashMap<>();
+        if (!isServerUp()) {
+            DescriptorProviderState serverDownState = new DescriptorProviderState(
+                    DescriptorProviderState.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
+                    + "' is not available at the moment. ");
+            stateMap.put(this, serverDownState);
+        }
+
+        return stateMap;
+    }
+
     private final class RemoteLazyRef<E> extends LazyRef<E> {
         @Override
         public E fetch() throws Throwable {
@@ -227,19 +240,5 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
         return annotations;
-    }
-
-    @Override
-    public Set<DescriptorProviderState> getStatus() {
-        Set<DescriptorProviderState> statusSet = new HashSet<>();
-
-        if (!isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
-                    + "' is not available at the moment. ");
-            statusSet.add(serverDownState);
-        }
-
-        return statusSet;
     }
 }

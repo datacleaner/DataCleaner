@@ -52,6 +52,7 @@ import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.configuration.DescriptorProviderStateListener;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
@@ -230,6 +231,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
+    private class DescriptorProviderStateListenerImpl implements DescriptorProviderStateListener{
+
+        @Override
+        public void notify(Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap) {
+            _descriptorProviderStateMap = descriptorProviderStateMap;
+            updateStatusLabel();
+            _graph.getPanel().updateUI();
+        }
+    }
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
@@ -240,10 +250,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
-    private static final int SERVER_CHECK_INTERVAL = 2 * 60 * 1000; // [ms] - 2 min
-    private DescriptorProviderState _remoteDescriptorErrorState;
-    private Boolean _remoteExecuteEnable = true;
-    private ServerChecker serverChecker;
+    private Map<DescriptorProvider, DescriptorProviderState> _descriptorProviderStateMap = new HashMap<>();
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -279,6 +286,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final DescriptorProviderStateListener _descriptorProviderStateListener = new DescriptorProviderStateListenerImpl();
     private JobClassicView _classicView;
     private FileObject _jobFilename;
     private Datastore _datastore;
@@ -410,9 +418,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
 
-        serverChecker = new ServerChecker();
-        Thread serverCheckingThread = new Thread(serverChecker);
-        serverCheckingThread.start();
+        _configuration.getEnvironment().getDescriptorProviderStateNotifier().addListener(_descriptorProviderStateListener);
     }
 
     @Override
@@ -599,26 +605,52 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     public void updateStatusLabel() {
+        DescriptorProviderState remoteErrorState = null;
+        boolean remoteExecuteEnable = true;
+
+        for (ComponentBuilder componentBuilder : _analysisJobBuilder.getComponentBuilders()) {
+            ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+            if (descriptor instanceof RemoteTransformerDescriptorImpl) {
+                RemoteDescriptorProvider remoteDescriptorProvider = ((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider();
+                DescriptorProviderState descriptorProviderState = _descriptorProviderStateMap.get(remoteDescriptorProvider);
+                if (descriptorProviderState != null && descriptorProviderState.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
+                    remoteErrorState = descriptorProviderState;
+                    break;
+                }
+            }
+        }
+
+        if (remoteErrorState == null) {
+            for (DescriptorProviderState descriptorProviderState : _descriptorProviderStateMap.values()) {
+                if (descriptorProviderState.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
+                    remoteErrorState = descriptorProviderState;
+                    break;
+                }
+            }
+        } else {
+            remoteExecuteEnable = false;
+        }
+
         boolean executeable = false;
 
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getDistributionVersion());
             _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
-        } else if (!_remoteExecuteEnable) {
-            setStatusLabelText(_remoteDescriptorErrorState.getMessage());
+        } else if (!remoteExecuteEnable) {
+            setStatusLabelText(remoteErrorState.getMessage());
             setStatusLabelError();
-            executeable = _remoteExecuteEnable;
+            executeable = remoteExecuteEnable;
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
                 executeable = true;
             }
             try {
                 if (_analysisJobBuilder.isConfigured(true)) {
-                    if (_remoteDescriptorErrorState == null) {
+                    if (remoteErrorState == null) {
                         setStatusLabelText("Job is correctly configured");
                         setStatusLabelValid();
                     } else {
-                        setStatusLabelText(_remoteDescriptorErrorState.getMessage());
+                        setStatusLabelText(remoteErrorState.getMessage());
                         setStatusLabelWarning();
                     }
                 } else {
@@ -732,15 +764,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private void cleanupForWindowClose() {
         _analysisJobChangeListener.onDeactivation(_analysisJobBuilder);
+        _configuration.getEnvironment().getDescriptorProviderStateNotifier().removeListener(_descriptorProviderStateListener);
         _analysisJobBuilder.close();
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
 
-        synchronized (serverChecker) {
-            serverChecker.stop();
-            serverChecker.notifyAll();
-        }
         getContentPane().removeAll();
     }
 
@@ -1202,76 +1231,5 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     protected boolean maximizeWindow() {
         return _windowSizePreference.isWindowMaximized();
-    }
-
-    /**
-     *  Loop checker - indication of offline server
-     *  - updating component icon
-     *  - updating status label
-     */
-    private class ServerChecker implements Runnable {
-
-        private boolean running = true;
-
-        public void stop () {
-            running = false;
-        }
-
-        @Override
-        public void run() {
-
-            while (running) {
-                DescriptorProviderState errorState = null;
-                boolean executeEnable = true;
-                for (ComponentBuilder componentBuilder : _analysisJobBuilder.getComponentBuilders()) {
-                    ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-                    if (descriptor instanceof RemoteTransformerDescriptorImpl) {
-                        RemoteTransformerDescriptorImpl remoteTransformerDescriptor = (RemoteTransformerDescriptorImpl) descriptor;
-                        Set<DescriptorProviderState> states = remoteTransformerDescriptor.getRemoteDescriptorProvider().getStatus();
-                        for (DescriptorProviderState descriptorProviderState : states) {
-                            if (descriptorProviderState.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
-                                errorState = descriptorProviderState;
-                                break;
-                            }
-                        }
-                    }
-                    if (errorState != null) {
-                        break;
-                    }
-                }
-
-                if (errorState == null) {
-                    DescriptorProvider descriptor = _configuration.getEnvironment().getDescriptorProvider();
-                    Set<DescriptorProviderState> providerStateSet = descriptor.getStatus();
-                    if (!providerStateSet.isEmpty()) {
-                        for (DescriptorProviderState state : providerStateSet) {
-                            if (state.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
-                                errorState = state;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    executeEnable = false;
-                }
-                _remoteDescriptorErrorState = errorState;
-                _remoteExecuteEnable = executeEnable;
-
-                updateStatusLabel();
-                _graph.getPanel().updateUI();
-
-                synchronized (this) {
-                    if (running) {
-                        try {
-                            wait(SERVER_CHECK_INTERVAL);
-                        } catch (InterruptedException e) {
-                            running = false;
-                            logger.error("Waiting on checking thread was interrupted : " + e.getMessage());
-                        }
-                    }
-                }
-
-            }
-        }
     }
 }

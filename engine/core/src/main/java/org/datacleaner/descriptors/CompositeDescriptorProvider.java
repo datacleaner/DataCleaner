@@ -19,10 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.datacleaner.api.Analyzer;
@@ -215,17 +212,17 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         return null;
     }
 
-    public Set<DescriptorProviderState> getStatus() {
-        Set<DescriptorProviderState> statusSet = new HashSet<>();
+    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
+        Map<DescriptorProvider, DescriptorProviderState> statusMap = new HashMap<>();
 
         if (delegate1 != null) {
-            statusSet.addAll(delegate1.getStatus());
+            statusMap.putAll(delegate1.getProviderStatesMap());
         }
 
         if (delegate2 != null) {
-            statusSet.addAll(delegate2.getStatus());
+            statusMap.putAll(delegate2.getProviderStatesMap());
         }
 
-        return statusSet;
+        return statusMap;
     }
 }

@@ -36,6 +36,7 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     private final StorageProvider _storageProvider;
     private final InjectionManagerFactory _injectionManagerFactory;
     private final RemoteServerConfiguration _remoteServerConfiguration;
+    private final DescriptorProviderStateNotifier _descriptorProviderStateNotifier;
 
     /**
      * Creates a {@link DataCleanerEnvironment}
@@ -92,6 +93,8 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
         else {
             _remoteServerConfiguration = remoteServerConfiguration;
         }
+
+        _descriptorProviderStateNotifier = new DescriptorProviderStateNotifierImpl(_descriptorProvider);
     }
 
     /**
@@ -155,6 +158,11 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     @Override
     public InjectionManagerFactory getInjectionManagerFactory() {
         return _injectionManagerFactory;
+    }
+
+    @Override
+    public DescriptorProviderStateNotifier getDescriptorProviderStateNotifier() {
+        return _descriptorProviderStateNotifier;
     }
 
     public static InjectionManagerFactory defaultInjectionManagerFactory() {

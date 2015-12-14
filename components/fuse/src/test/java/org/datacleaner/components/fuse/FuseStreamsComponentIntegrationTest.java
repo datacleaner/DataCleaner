@@ -111,7 +111,7 @@ public class FuseStreamsComponentIntegrationTest {
             final AnalysisJobBuilder fusedStreamJobBuilder = fuse
                     .getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
             final List<MetaModelInputColumn> fusedColumns = fusedStreamJobBuilder.getSourceColumns();
-            Assert.assertEquals("[MetaModelInputColumn[output.firstname], MetaModelInputColumn[output.lastname]]",
+            Assert.assertEquals("[MetaModelInputColumn[output.FIRSTNAME], MetaModelInputColumn[output.LASTNAME]]",
                     fusedColumns.toString());
 
             final AnalyzerComponentBuilder<MockAnalyzer> analyzer = fusedStreamJobBuilder

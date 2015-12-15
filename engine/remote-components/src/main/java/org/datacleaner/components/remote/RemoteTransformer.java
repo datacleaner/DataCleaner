@@ -146,13 +146,13 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
     }
 
-    private ComponentConfiguration getConfiguration(List<InputColumn> inputColumns) {
+    private ComponentConfiguration getConfiguration(List<InputColumn<?>> inputColumns) {
         ComponentConfiguration configuration = new ComponentConfiguration();
         for(Map.Entry<String, Object> propertyE: configuredProperties.entrySet()) {
             configuration.getProperties().put(propertyE.getKey(), mapper.valueToTree(propertyE.getValue()));
         }
 
-        for(InputColumn col: inputColumns) {
+        for(InputColumn<?> col: inputColumns) {
             configuration.getColumns().add(ComponentsRestClientUtils.createInputColumnSpecification(
                     col.getName(),
                     col.getDataType(),
@@ -162,19 +162,19 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         return configuration;
     }
 
-    private List<InputColumn> getUsedInputColumns() {
-        ArrayList<InputColumn> columns = new ArrayList<>();
+    private List<InputColumn<?>> getUsedInputColumns() {
+        ArrayList<InputColumn<?>> columns = new ArrayList<>();
         for(Object propValue: configuredProperties.values()) {
             if(propValue instanceof InputColumn) {
-                columns.add((InputColumn) propValue);
+                columns.add((InputColumn<?>) propValue);
             } else if(propValue instanceof InputColumn[]) {
-                for(InputColumn col: ((InputColumn[])propValue)) {
+                for(InputColumn<?> col: ((InputColumn[])propValue)) {
                     columns.add(col);
                 }
             } else if(propValue instanceof Collection) {
-                for(Object value: ((Collection)propValue)) {
+                for(Object value: ((Collection<?>)propValue)) {
                     if(value instanceof InputColumn) {
-                        columns.add((InputColumn)value);
+                        columns.add((InputColumn<?>)value);
                     } else {
                         // don't iterate the rest if the first item is not an input column.
                         break;
@@ -199,11 +199,11 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             List<Object[]> outRowSet = new ArrayList<>();
 
             for(JsonNode row: rowSet) {
-                List values = new ArrayList();
+                final List<Object> values = new ArrayList<>();
                 int i = 0;
                 for (JsonNode value : row) {
                     // TODO: should JsonNode be the default?
-                    Class cl = String.class;
+                    Class<?> cl = String.class;
                     if (i < outCols.getColumnCount()) {
                         cl = outCols.getColumnType(i);
                     }
@@ -220,7 +220,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
     }
 
-    private Object convertOutputValue(JsonNode value, Class cl) {
+    private Object convertOutputValue(JsonNode value, Class<?> cl) {
         try {
             if(cl == JsonNode.class) {
                 return value;
@@ -253,14 +253,14 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     @Override
     public void map(BatchSource<InputRow> source, BatchSink<Collection<Object[]>> sink) {
-        List<InputColumn> cols = getUsedInputColumns();
+        List<InputColumn<?>> cols = getUsedInputColumns();
         int size = source.size();
         Object[] rows = new Object[size];
         for(int i = 0; i < size; i++) {
             InputRow inputRow = source.getInput(i);
             Object[] values = new Object[cols.size()];
             int j = 0;
-            for(InputColumn col: cols) {
+            for(InputColumn<?> col: cols) {
                 values[j] = inputRow.getValue(col);
                 j++;
             }

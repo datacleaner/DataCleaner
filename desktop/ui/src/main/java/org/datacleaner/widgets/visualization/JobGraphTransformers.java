@@ -240,7 +240,7 @@ public class JobGraphTransformers {
                 Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
 
                 if (descriptor instanceof RemoteTransformerDescriptor) {
-                    if (!((RemoteTransformerDescriptor) descriptor).getRemoteDescriptorProvider().isServerUp()) {
+                    if (!((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().isServerUp()) {
                         descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
                     }
                 }

@@ -44,7 +44,7 @@ public class DCHtmlBox extends JEditorPane {
     public DCHtmlBox(String text) {
         super();
 
-        setEditorKit(JEditorPane.createEditorKitForContentType(this.CONTENT_TYPE_HTML));
+        setEditorKit(JEditorPane.createEditorKitForContentType(CONTENT_TYPE_HTML));
         setEditable(false);
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         setFont(WidgetUtils.FONT_NORMAL);
@@ -62,11 +62,11 @@ public class DCHtmlBox extends JEditorPane {
     }
 
     public void setText(String text) {
-        if (text.startsWith(this.HTML_START_TAG) && text.endsWith(this.HTML_END_TAG)) {
-            text = text.substring(this.HTML_START_TAG.length(), text.length() - this.HTML_END_TAG.length());
+        if (text.startsWith(HTML_START_TAG) && text.endsWith(HTML_END_TAG)) {
+            text = text.substring(HTML_START_TAG.length(), text.length() - HTML_END_TAG.length());
         }
 
-        super.setText(this.HTML_START_TAG + getTableHtml(text) + this.HTML_END_TAG);
+        super.setText(HTML_START_TAG + getTableHtml(text) + HTML_END_TAG);
     }
 
     private String getTableHtml(String content) {

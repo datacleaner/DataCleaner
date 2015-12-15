@@ -27,7 +27,7 @@ public class RESTClientImplTest {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
     private static final String URL = "http://localhost:1234";
-    private RESTClient restClient = new RESTClientImpl(this.USERNAME, this.PASSWORD);
+    private RESTClient restClient = new RESTClientImpl(USERNAME, PASSWORD);
 
     @Test
     public void testSetEndpoint() throws Exception {
@@ -41,7 +41,7 @@ public class RESTClientImplTest {
         }
 
         try {
-            restClient.getResponse(RESTClient.HttpMethod.GET, this.URL, requestBody);
+            restClient.getResponse(RESTClient.HttpMethod.GET, URL, requestBody);
         }
         catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
@@ -51,7 +51,7 @@ public class RESTClientImplTest {
     @Test
     public void testGetResponse() throws Exception {
         try {
-            restClient.getResponse(RESTClient.HttpMethod.GET, this.URL, "");
+            restClient.getResponse(RESTClient.HttpMethod.GET, URL, "");
         }
         catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));

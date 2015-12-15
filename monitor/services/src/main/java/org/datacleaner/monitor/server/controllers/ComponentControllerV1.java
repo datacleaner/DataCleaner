@@ -36,10 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -47,20 +45,14 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.api.HiddenProperty;
-import org.datacleaner.monitor.configuration.ComponentCache;
-import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
-import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
-import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentCache;
+import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentController;
-import org.datacleaner.restclient.ComponentList;
+import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentController;
@@ -89,6 +81,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.metamodel.schema.ColumnTypeImpl;
@@ -50,6 +51,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -126,9 +130,13 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                         try {
                             outCols.setColumnType(i, Class.forName(colSpec.type));
                         } catch (ClassNotFoundException e) {
-                            // TODO: what to do with data types - classes that are not on our classpath?
-                            // Provide it as pure JsonNode?
-                            outCols.setColumnType(i, JsonNode.class);
+                            Class type;
+                            if (isOutputColumnEnumeration(colSpec.schema)) {
+                                type = String.class;
+                            } else {
+                                type = JsonNode.class;
+                            }
+                            outCols.setColumnType(i, type);
                         }
                         i++;
                     }
@@ -144,6 +152,27 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         } catch(Exception e) {
             return new OutputColumns(String.class, "Unknown");
         }
+    }
+
+    private boolean isOutputColumnEnumeration(JsonSchema schema) {
+        if(schema == null){
+            return false;
+        }
+        boolean isArray = schema.isArraySchema();
+        JsonSchema baseSchema;
+        if (isArray) {
+            baseSchema = ((ArraySchema) schema).getItems().asSingleItems().getSchema();
+        } else {
+            baseSchema = schema;
+        }
+
+        if (baseSchema instanceof ValueTypeSchema) {
+            Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ComponentConfiguration getConfiguration(List<InputColumn> inputColumns) {

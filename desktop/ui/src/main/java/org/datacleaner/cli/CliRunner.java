@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
@@ -60,6 +62,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResultWriter;
+import org.datacleaner.spark.SparkRunner;
 import org.datacleaner.user.DesktopConfigurationReaderInterceptor;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -70,7 +73,6 @@ import org.slf4j.LoggerFactory;
  * Contains the execution logic to run a job from the command line.
  */
 public final class CliRunner implements Closeable {
-
     private final static Logger logger = LoggerFactory.getLogger(CliRunner.class);
 
     private final CliArguments _arguments;
@@ -100,43 +102,55 @@ public final class CliRunner implements Closeable {
                     }
                 };
             } else {
+                if(_arguments.getRunType() == CliRunType.SPARK){
+                    final Resource resource = new HdfsResource(outputFilePath);
+                    _writerRef = new LazyRef<Writer>() {
+                        @Override
+                        protected Writer fetch() throws Throwable {
+                            return new OutputStreamWriter(resource.write());
+                        }
+                    };
+                    _outputStreamRef = new LazyRef<OutputStream>() {
+                        @Override
+                        protected OutputStream fetch() throws Throwable {
+                            return resource.write();
+                        }
+                    };
+                } else {
+                    final FileObject outputFile;
+                    try {
+                        outputFile = VFSUtils.getFileSystemManager().resolveFile(outputFilePath);
+                    } catch (FileSystemException e) {
+                        throw new IllegalStateException(e);
+                    }
 
-                final FileObject outputFile;
-                try {
-                    outputFile = VFSUtils.getFileSystemManager().resolveFile(outputFilePath);
-                } catch (FileSystemException e) {
-                    throw new IllegalStateException(e);
-                }
-
-                _writerRef = new LazyRef<Writer>() {
-                    @Override
-                    protected Writer fetch() {
-                        try {
-                            OutputStream out = outputFile.getContent().getOutputStream();
-                            return new OutputStreamWriter(out, FileHelper.DEFAULT_ENCODING);
-                        } catch (Exception e) {
-                            if (e instanceof RuntimeException) {
-                                throw (RuntimeException) e;
+                    _writerRef = new LazyRef<Writer>() {
+                        @Override
+                        protected Writer fetch() {
+                            try {
+                                OutputStream out = outputFile.getContent().getOutputStream();
+                                return new OutputStreamWriter(out, FileHelper.DEFAULT_ENCODING);
+                            } catch (UnsupportedEncodingException | FileSystemException e) {
+                                throw new IllegalStateException(e);
                             }
-                            throw new IllegalStateException(e);
                         }
-                    }
-                };
-                _outputStreamRef = new LazyRef<OutputStream>() {
-                    @Override
-                    protected OutputStream fetch() {
-                        try {
-                            return outputFile.getContent().getOutputStream();
-                        } catch (FileSystemException e) {
-                            throw new IllegalStateException(e);
+                    };
+                    _outputStreamRef = new LazyRef<OutputStream>() {
+                        @Override
+                        protected OutputStream fetch() {
+                            try {
+                                return outputFile.getContent().getOutputStream();
+                            } catch (FileSystemException e) {
+                                throw new IllegalStateException(e);
+                            }
                         }
-                    }
-                };
+                    };
+                }
             }
             _closeOut = true;
         } else {
-            _writerRef = new ImmutableRef<Writer>(writer);
-            _outputStreamRef = new ImmutableRef<OutputStream>(outputStream);
+            _writerRef = new ImmutableRef<>(writer);
+            _outputStreamRef = new ImmutableRef<>(outputStream);
             _closeOut = false;
         }
     }
@@ -335,44 +349,50 @@ public final class CliRunner implements Closeable {
     }
 
     protected void runJob(DataCleanerConfiguration configuration) throws Throwable {
-        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-
-        final String jobFilePath = _arguments.getJobFile();
-        final Resource jobResource = resolveResource(jobFilePath);
-        final Map<String, String> variableOverrides = _arguments.getVariableOverrides();
-
-        final AnalysisJobBuilder analysisJobBuilder;
-        final InputStream inputStream = jobResource.read();
-        try {
-            analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
-        } finally {
-            FileHelper.safeClose(inputStream);
-        }
-
-        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
-        final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
-
-        resultFuture.await();
-
-        if (resultFuture.isSuccessful()) {
-            final CliOutputType outputType = _arguments.getOutputType();
-            AnalysisResultWriter writer = outputType.createWriter();
-            writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
+        if (_arguments.getRunType() == CliRunType.SPARK) {
+            SparkRunner sparkRunner = new SparkRunner(_arguments.getConfigurationFile(), _arguments.getJobFile(),
+                    _arguments.getOutputFile());
+            sparkRunner.runJob();
         } else {
-            write("ERROR!");
-            write("------");
+            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
 
-            List<Throwable> errors = resultFuture.getErrors();
-            write(errors.size() + " error(s) occurred while executing the job:");
+            final String jobFilePath = _arguments.getJobFile();
+            final Resource jobResource = resolveResource(jobFilePath);
+            final Map<String, String> variableOverrides = _arguments.getVariableOverrides();
 
-            for (Throwable throwable : errors) {
-                write("------");
-                StringWriter stringWriter = new StringWriter();
-                throwable.printStackTrace(new PrintWriter(stringWriter));
-                write(stringWriter.toString());
+            final AnalysisJobBuilder analysisJobBuilder;
+            final InputStream inputStream = jobResource.read();
+            try {
+                analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
+            } finally {
+                FileHelper.safeClose(inputStream);
             }
 
-            throw errors.get(0);
+            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
+            final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
+
+            resultFuture.await();
+
+            if (resultFuture.isSuccessful()) {
+                final CliOutputType outputType = _arguments.getOutputType();
+                AnalysisResultWriter writer = outputType.createWriter();
+                writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
+            } else {
+                write("ERROR!");
+                write("------");
+
+                List<Throwable> errors = resultFuture.getErrors();
+                write(errors.size() + " error(s) occurred while executing the job:");
+
+                for (Throwable throwable : errors) {
+                    write("------");
+                    StringWriter stringWriter = new StringWriter();
+                    throwable.printStackTrace(new PrintWriter(stringWriter));
+                    write(stringWriter.toString());
+                }
+
+                throw errors.get(0);
+            }
         }
     }
 

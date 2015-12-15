@@ -127,7 +127,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final List<Tuple2<String, AnalyzerResult>> results = Collections.emptyList();
             return new SparkAnalysisResultFuture(results, _sparkJobContext);
         }
-        
+
+        assert namedAnalyzerResultsRDD != null;
         final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFunction());
 

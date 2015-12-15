@@ -134,6 +134,9 @@ public class CliArguments {
     @Option(name = "-ot", aliases = { "--output-type" }, usage = "How to represent the result of the job")
     private CliOutputType outputType;
 
+    @Option(name = "-runtype", aliases = { "--runtype" }, usage = "How/where to run the job")
+    private CliRunType runType;
+
     @Option(name = "-of", aliases = { "--output-file" }, metaVar = "PATH", usage = "Path to file in which to save the result of the job", required = false)
     private String outputFile;
 
@@ -196,6 +199,13 @@ public class CliArguments {
             return CliOutputType.TEXT;
         }
         return outputType;
+    }
+
+    public CliRunType getRunType() {
+        if (runType == null){
+            return CliRunType.DESKTOP;
+        }
+        return runType;
     }
 
     /**

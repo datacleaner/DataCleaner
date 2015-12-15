@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.Close;
@@ -33,7 +35,6 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -47,9 +48,6 @@ import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -82,12 +80,12 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     }
 
     @Initialize
-    public void initClient() throws RestrictedFunctionalityException {
+    public void initClient() throws RemoteComponentException {
         try {
             logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
             client = new ComponentRESTClient(baseUrl, username, password);
         } catch (Exception e) {
-            throw new RestrictedFunctionalityException(
+            throw new RemoteComponentException(
                     "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());
         }
     }
@@ -106,13 +104,13 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         try {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
-            if(lastOutputColumns != null && createInput.equals(lastCreateInput)) {
+            if (lastOutputColumns != null && createInput.equals(lastCreateInput)) {
                 logger.debug("Reusing cached output columns, nothing changed");
                 outCols = lastOutputColumns;
             } else {
                 logger.debug("Getting output columns from server");
                 boolean wasInit = false;
-                if(client == null) {
+                if (client == null) {
                     wasInit = true;
                     initClient();
                 }
@@ -135,7 +133,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                     lastOutputColumns = outCols;
                     lastCreateInput = createInput;
                 } finally {
-                    if(wasInit) {
+                    if (wasInit) {
                         closeClient();
                     }
                 }

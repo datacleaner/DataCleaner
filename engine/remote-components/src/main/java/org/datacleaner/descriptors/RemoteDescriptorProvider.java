@@ -55,8 +55,7 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
-    private boolean lastConnectionCheckResult = false;
-    private boolean checkInProgress = false;
+    private boolean lastConnectionCheckResult = true;
 
     public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
         super(false);
@@ -64,27 +63,13 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         dataLazyReference.requestLoad();
     }
 
-    public boolean isServerUp() {
+    private synchronized boolean isServerUp() {
         final long now = System.currentTimeMillis();
-        boolean runCheck = false;
-
-        synchronized (this) { // not to start multiple threads/checks at the same time
-            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
-                runCheck = true;
-                lastConnectionCheckTime = now;
-                checkInProgress = true;
-            }
-        }
-
-        if (runCheck) {
-            (new Thread() {
-                @Override
-                public void run() {
-                    checkServerAvailability();
-                }
-            }).start();
-        }
-
+         if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
+                return lastConnectionCheckResult;
+         }
+        checkServerAvailability();
+        lastConnectionCheckTime = now;
         return lastConnectionCheckResult;
     }
 
@@ -99,10 +84,6 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             lastConnectionCheckResult = false;
             logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
                     + ")' is down: " + e.getMessage());
-        } finally {
-            synchronized (this) {
-                checkInProgress = false;
-            }
         }
     }
 

@@ -391,7 +391,8 @@ public final class JobGraph {
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
-        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes);
+        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes,
+                _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProviderStateNotifier());
 
         // instrument the render context with all our transformers and stuff
         renderContext.setVertexFontTransformer(transformers.getVertexFontTransformer());

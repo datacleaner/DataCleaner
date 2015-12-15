@@ -1,16 +1,16 @@
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
- * <p/>
+ *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
  * Lesser General Public License, as published by the Free Software Foundation.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
  * for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to:
  * Free Software Foundation, Inc.
@@ -19,10 +19,8 @@
  */
 package org.datacleaner.configuration;
 
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProviderState;
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +29,17 @@ import java.util.*;
 public class DescriptorProviderStateNotifierImpl implements DescriptorProviderStateNotifier {
     private static final long SERVER_CHECK_INTERVAL = 2 * 60 * 1000; //[ms] - 2min
     private static final Logger logger = LoggerFactory.getLogger(DescriptorProviderStateNotifierImpl.class);
-    private final DescriptorProvider _descriptorProvider;
+    private DescriptorProvider _descriptorProvider;
     private Set<DescriptorProviderStateListener> _listenerSet = Collections.synchronizedSet(new HashSet<DescriptorProviderStateListener>());
 
     private Map<DescriptorProvider, DescriptorProviderState> _stateMap = new HashMap<>();
     private ServerChecker _serverChecker;
 
     public DescriptorProviderStateNotifierImpl(DescriptorProvider descriptorProvider) {
+        this._descriptorProvider = descriptorProvider;
+    }
+
+    public void injectDescriptorProvider(DescriptorProvider descriptorProvider){
         this._descriptorProvider = descriptorProvider;
     }
 
@@ -72,7 +74,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
 
     private void notifyAllListeners() {
         for (DescriptorProviderStateListener descriptorProviderStateListener : _listenerSet) {
-            descriptorProviderStateListener.notify(_stateMap);
+            descriptorProviderStateListener.notify(new HashMap<>(_stateMap));
         }
     }
 
@@ -105,7 +107,6 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
                         }
                     }
                 }
-
                 Map<DescriptorProvider, DescriptorProviderState> providerStatesMap = _descriptorProvider.getProviderStatesMap();
                 boolean equals = equals(providerStatesMap, _stateMap);
                 if (!equals) {

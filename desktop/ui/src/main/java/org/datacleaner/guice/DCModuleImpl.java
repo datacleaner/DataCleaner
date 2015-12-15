@@ -42,14 +42,7 @@ import org.apache.metamodel.util.MutableRef;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerEnvironment;
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
-import org.datacleaner.configuration.DataCleanerHomeFolder;
-import org.datacleaner.configuration.DatastoreXmlExternalizer;
-import org.datacleaner.configuration.InjectionManager;
-import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.*;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -310,7 +303,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory,
-                            c.getEnvironment().getRemoteServerConfiguration());
+                            c.getEnvironment().getRemoteServerConfiguration(),
+                            c.getEnvironment().getDescriptorProviderStateNotifier());
 
                     _configuration = new DataCleanerConfigurationImpl(environment,
                             DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);

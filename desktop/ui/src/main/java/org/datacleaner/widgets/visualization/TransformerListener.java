@@ -17,17 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.widgets.visualization;
 
-import org.datacleaner.descriptors.DescriptorProvider;
+import org.apache.commons.collections15.Transformer;
+import org.datacleaner.configuration.DescriptorProviderStateListener;
 
 /**
- * Class notifies the listeners about problems with providers
+ * Combination of {@link Transformer} and {@link DescriptorProviderStateListener}
+ *
+ * @param <I>
+ * @param <O>
  */
-public interface DescriptorProviderStateNotifier {
-
-    public void addListener(DescriptorProviderStateListener listener);
-    public void removeListener(DescriptorProviderStateListener listener);
-
-    public void injectDescriptorProvider(DescriptorProvider descriptorProvider);
+public interface TransformerListener<I, O> extends Transformer<I, O>, DescriptorProviderStateListener {
 }

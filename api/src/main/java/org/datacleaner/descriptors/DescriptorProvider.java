@@ -197,6 +197,7 @@ public interface DescriptorProvider {
     /**
      * Get information about providers. It is used in {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
      *
+     * Don't use that. If you want to be notified, please add the listener to {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
      * @return
      */
     public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap();

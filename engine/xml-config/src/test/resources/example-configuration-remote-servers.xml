@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Default integrationtest configuration</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog/>
+	<singlethreaded-taskrunner />
+
+    <descriptor-providers>
+        <remote-components showAll="true">
+            <server>
+                <url>http://host1:8888</url>
+                <username>totoro</username>
+                <password>enc:oFm53KJ9K+w=</password>
+            </server>
+            <server>
+                <name>serverHost2</name>
+                <url>http://host2:8888</url>
+                <username>momo</username>
+                <password>enc:oFm53KJ9K+w=</password>
+            </server>
+            <server>
+                <name>serverHost3</name>
+                <url>http://host3:8888</url>
+                <username>momo</username>
+                <password>enc:oFm53KJ9K+w=</password>
+            </server>
+        </remote-components>
+    </descriptor-providers>
+</configuration>

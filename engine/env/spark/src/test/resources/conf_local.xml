@@ -7,10 +7,9 @@
 			<filename>src/test/resources/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
 		</csv-datastore>
+		<json-datastore name="person_data">
+			<filename>src/test/resources/person_data.json</filename>
+		</json-datastore>
 	</datastore-catalog>
-	
-	<classpath-scanner>
-		<package recursive="true">org.datacleaner</package>
-	</classpath-scanner>
 
 </configuration>

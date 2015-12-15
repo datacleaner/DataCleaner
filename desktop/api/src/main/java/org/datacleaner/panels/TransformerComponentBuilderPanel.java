@@ -56,8 +56,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * output columns, a "write data" button, a preview button and a context
  * visualization.
  */
-public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPanel implements
-        TransformerComponentBuilderPresenter, TransformerChangeListener {
+public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPanel
+        implements TransformerComponentBuilderPresenter, TransformerChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -96,53 +96,46 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
         _previewButton.setBorder(WidgetUtils.BORDER_EMPTY);
-        _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
+        _previewAlternativesButton = WidgetFactory.createDefaultButton(WidgetUtils.CHAR_CARET_DOWN);
         _previewAlternativesButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
-        if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
-            final int defaultPreviewRows = getPreviewRows();
-            final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(_windowContext, this,
-                    _componentBuilder, defaultPreviewRows);
-            final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
-            _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
-            _previewAlternativesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final JMenuItem defaultPreviewMenutItem = WidgetFactory.createMenuItem("Preview " + defaultPreviewRows + " records",
-                            IconUtils.ACTION_PREVIEW);
-                    defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+        final int defaultPreviewRows = getPreviewRows();
+        final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
+                _windowContext, this, _componentBuilder, defaultPreviewRows);
+        final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
+        _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
+        _previewAlternativesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JMenuItem defaultPreviewMenutItem = WidgetFactory
+                        .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
+                defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                    final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
-                            IconUtils.ACTION_PREVIEW);
-                    maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
-                        
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
-                            
-                            if (maxRows != null) {
-                                final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(_windowContext, transformerComponentBuilderPanel,
-                                        _componentBuilder, maxRows);
-                                maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
-                            }
+                final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
+                        IconUtils.ACTION_PREVIEW);
+                maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
+
+                        if (maxRows != null) {
+                            final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
+                                    _windowContext, transformerComponentBuilderPanel, _componentBuilder, maxRows);
+                            maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
                         }
-                    });
+                    }
+                });
 
-                    final JPopupMenu menu = new JPopupMenu();
-                    menu.add(defaultPreviewMenutItem);
-                    menu.add(maxRowsPreviewMenuItem);
+                final JPopupMenu menu = new JPopupMenu();
+                menu.add(defaultPreviewMenutItem);
+                menu.add(maxRowsPreviewMenuItem);
 
-                    final int horizontalPosition = -1 * menu.getPreferredSize().width
-                            + _previewAlternativesButton.getWidth();
-                    menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
-                }
-            });
-        } else {
-            // we cannot provide a preview-function for transformers in non-root
-            // AnalysisJobBuilders
-            _previewButton.setVisible(false);
-            _previewAlternativesButton.setVisible(false);
-        }
+                final int horizontalPosition = -1 * menu.getPreferredSize().width
+                        + _previewAlternativesButton.getWidth();
+                menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
+            }
+        });
     }
 
     @Override
@@ -173,12 +166,12 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         bottomButtonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bottomButtonPanel.add(_writeDataButton);
-        
+
         final ComboButton previewButtonPanel = new ComboButton();
         previewButtonPanel.addButton(_previewButton);
         previewButtonPanel.add(new JLabel("|"));
         previewButtonPanel.addButton(_previewAlternativesButton);
-        
+
         bottomButtonPanel.add(previewButtonPanel);
 
         if (!_componentBuilder.getDescriptor().isMultiStreamComponent()) {
@@ -186,7 +179,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             outputColumnsPanel.setLayout(new BorderLayout());
             outputColumnsPanel.add(WidgetUtils.decorateWithShadow(_outputColumnsTable), BorderLayout.CENTER);
             outputColumnsPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
-            
+
             addTaskPane(IconUtils.MODEL_SOURCE, "Output columns", outputColumnsPanel);
         }
         return result;

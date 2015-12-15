@@ -103,6 +103,7 @@ public final class IconUtils {
     public static final String MENU_OPEN = "images/menu/open.png";
     public static final String MENU_NEW = "images/menu/new.png";
     public static final String MENU_EXECUTE = "images/menu/execute.png";
+    public static final String MENU_REFRESH = "images/menu/refresh.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
     public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";
@@ -210,6 +211,10 @@ public final class IconUtils {
         // prevent instantiation
     }
 
+    public static ImageIcon getIcon(String relativePath) {
+        return new ImageIcon(IconUtils.class.getClassLoader().getResource(relativePath));
+    }
+
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
         if (descriptor instanceof HasIcon) {
             ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
@@ -220,18 +225,24 @@ public final class IconUtils {
         }
 
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
+
         if (configured) {
             return descriptorIcon;
         }
 
-        // add a small error symbol to unconfigured components
+        return addErrorOverlay(descriptorIcon);
+    }
+
+    public static ImageIcon addErrorOverlay(ImageIcon imageIcon) {
         final int offset = 4;
+        final int iconWidth = imageIcon.getIconWidth();
         final int decorationSize = iconWidth / 2;
         final Image errorImage = _imageManager.getImage(STATUS_ERROR, decorationSize);
         final BufferedImage bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset,
                 BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(descriptorIcon.getImage(), offset, 0, null);
+        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), offset, 0, null);
         bufferedImage.getGraphics().drawImage(errorImage, 0, iconWidth + offset - decorationSize, null);
+
         return new ImageIcon(bufferedImage);
     }
 
@@ -284,7 +295,7 @@ public final class IconUtils {
         if (image == null) {
             HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
 
-            if (descriptorWithIcon.getIconData() == null || descriptorWithIcon .getIconData().length == 0) {
+            if (descriptorWithIcon.getIconData() == null || descriptorWithIcon.getIconData().length == 0) {
                 return null;
             }
 
@@ -293,8 +304,7 @@ public final class IconUtils {
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
             _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
-        }
-        else {
+        } else {
             imageIcon = new ImageIcon(image);
         }
 
@@ -524,4 +534,3 @@ public final class IconUtils {
         return imagePath;
     }
 }
-

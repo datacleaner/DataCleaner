@@ -160,7 +160,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper", data:[[4,-1]]},{label:"kasper.sorensen", data:[[2,-2]]},{label:"&lt;null&gt;", data:[[1,-3]], color:"#111"},{label:"info", data:[[1,-4]]}
     ];
-    draw_value_distribution_bar('reselem_1', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_1', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))
@@ -170,7 +174,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper.sorensen", data:[[1,-1]]},{label:"kaspers", data:[[1,-2]]},{label:"winfried.vanholland", data:[[1,-3]]}
     ];
-    draw_value_distribution_bar('reselem_6', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_6', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(2).toHtml(context).replaceAll("\r\n", "\n"))
@@ -236,7 +244,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper", data:[[9,-1]]},{label:"kasper.sorensen", data:[[3,-2]]},{label:"&lt;blank&gt;", data:[[2,-3]], color:"#eee"},{label:"info", data:[[1,-4]]}
     ];
-    draw_value_distribution_bar('reselem_1', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_1', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))

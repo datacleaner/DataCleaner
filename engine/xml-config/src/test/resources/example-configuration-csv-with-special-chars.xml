@@ -19,6 +19,4 @@
 		</csv-datastore>
 	</datastore-catalog>
 
-	<singlethreaded-taskrunner />
-
 </configuration>

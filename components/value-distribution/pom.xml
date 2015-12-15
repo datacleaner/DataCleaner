@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-components</artifactId>
-		<version>4.5.1-SNAPSHOT</version>
+		<version>4.5.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-value-distribution</artifactId>
 
@@ -56,6 +56,12 @@
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-html-rendering</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-desktop-api</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

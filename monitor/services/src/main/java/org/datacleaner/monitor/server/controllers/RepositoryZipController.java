@@ -43,6 +43,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +78,7 @@ public class RepositoryZipController {
         FileHelper.safeClose(zipOutput);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.ADMIN)
     public Map<String, String> uploadRepository(@PathVariable("tenant") final String tenant,
@@ -102,7 +103,7 @@ public class RepositoryZipController {
     protected void decompress(final ZipInputStream zipInputStream, final RepositoryFolder rootFolder)
             throws IOException {
         deleteChildren(rootFolder);
-        
+
         for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
             final String entryName = entry.getName();
             int lastSlash = entryName.lastIndexOf('/');
@@ -110,8 +111,7 @@ public class RepositoryZipController {
             if (entry.isDirectory()) {
                 if (entry.getSize() > 0L) {
                     logger.debug("Omitting directory entry: {}", entryName);
-                }
-                else {
+                } else {
                     getFolder(rootFolder, entryName.substring(0, lastSlash));
                 }
             } else {
@@ -146,7 +146,7 @@ public class RepositoryZipController {
         for (RepositoryFile file : files) {
             file.delete();
         }
-        
+
         List<RepositoryFolder> folders = folder.getFolders();
         for (RepositoryFolder subFolder : folders) {
             deleteChildren(subFolder);
@@ -197,7 +197,7 @@ public class RepositoryZipController {
             itemsCount++;
         }
 
-        if (itemsCount == 0 && ! path.equals("")) {
+        if (itemsCount == 0 && !path.equals("")) {
             String relativePath = path;
             logger.info("Empty: " + relativePath);
             ZipEntry entry = new ZipEntry(relativePath);

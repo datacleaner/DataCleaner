@@ -271,10 +271,4 @@
 		</custom-datastore>
 	</datastore-catalog>
 
-	<multithreaded-taskrunner />
-
-	<storage-provider>
-		<in-memory max-rows-threshold="500" />
-	</storage-provider>
-
 </configuration>

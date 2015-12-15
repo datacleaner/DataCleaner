@@ -39,7 +39,7 @@ public class CoalesceUnit {
     // transient cached view of columns
     private transient InputColumn<?>[] _inputColumns;
 
-    public CoalesceUnit(List<InputColumn<?>> inputColumns) {
+    public CoalesceUnit(List<? extends InputColumn<?>> inputColumns) {
         this(inputColumns.toArray(new InputColumn[inputColumns.size()]));
     }
 
@@ -52,49 +52,73 @@ public class CoalesceUnit {
             throw new IllegalArgumentException("InputColumns cannot be null or empty");
         }
         _inputColumns = inputColumns;
-        _inputColumnNames = new String[inputColumns.length];
-        for (int i = 0; i < _inputColumnNames.length; i++) {
-            _inputColumnNames[i] = inputColumns[i].getName();
+        _inputColumnNames = getInputColumnNames(inputColumns);
+    }
+
+    private String[] getInputColumnNames(InputColumn<?>[] inputColumns) {
+        final String[] result = new String[inputColumns.length];
+        for (int i = 0; i < inputColumns.length; i++) {
+            result[i] = inputColumns[i].getName();
         }
+        return result;
     }
 
     public String[] getInputColumnNames() {
+        if (_inputColumns != null) {
+            // use updated column names if possible - they may have changed
+            return getInputColumnNames(_inputColumns);
+        }
         return _inputColumnNames;
     }
 
-    public InputColumn<?>[] getInputColumns(InputColumn<?>[] allInputColumns) {
-        if (_inputColumns == null) {
-            _inputColumns = new InputColumn[_inputColumnNames.length];
-            for (int i = 0; i < _inputColumnNames.length; i++) {
-                boolean found = false;
+    /**
+     * Refreshes the current transient setup of {@link InputColumn}s in the
+     * {@link CoalesceUnit}. This is necesary to do before any job execution to
+     * ensure that the {@link InputColumn} references are intact and don't point
+     * to e.g. a copy of the input columns from a cloned job.
+     * 
+     * Not doing this will result in issues such as
+     * https://github.com/datacleaner/DataCleaner/issues/923
+     * 
+     * @param allInputColumns
+     */
+    public void refreshInputColumns(InputColumn<?>[] allInputColumns) {
+        _inputColumns = new InputColumn[_inputColumnNames.length];
+        for (int i = 0; i < _inputColumnNames.length; i++) {
+            boolean found = false;
 
-                final String name = _inputColumnNames[i];
+            final String name = _inputColumnNames[i];
 
-                // first do an exact match round
+            // first do an exact match round
+            for (int j = 0; j < allInputColumns.length; j++) {
+                final InputColumn<?> inputColumn = allInputColumns[j];
+                if (name.equals(inputColumn.getName())) {
+                    _inputColumns[i] = inputColumn;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                // try with trimming and case-insensitive matching
                 for (int j = 0; j < allInputColumns.length; j++) {
                     final InputColumn<?> inputColumn = allInputColumns[j];
-                    if (name.equals(inputColumn.getName())) {
+                    if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
                         _inputColumns[i] = inputColumn;
                         found = true;
                     }
                 }
-                
-                if (!found) {
-                    // try with trimming and case-insensitive matching
-                    for (int j = 0; j < allInputColumns.length; j++) {
-                        final InputColumn<?> inputColumn = allInputColumns[j];
-                        if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
-                            _inputColumns[i] = inputColumn;
-                            found = true;
-                        }
-                    }
-                }
-
-                if (!found) {
-                    final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
-                    throw new IllegalStateException("Column '" + name + "' not found. Available columns: " + names);
-                }
             }
+
+            if (!found) {
+                final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
+                throw new IllegalStateException("Column '" + name + "' not found. Available columns: " + names);
+            }
+        }
+    }
+
+    public InputColumn<?>[] getInputColumns(InputColumn<?>[] allInputColumns) {
+        if (_inputColumns == null) {
+            refreshInputColumns(allInputColumns);
         }
         return _inputColumns;
     }
@@ -131,7 +155,7 @@ public class CoalesceUnit {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(_inputColumnNames);
+        result = prime * result + Arrays.hashCode(getInputColumnNames());
         return result;
     }
 
@@ -144,17 +168,17 @@ public class CoalesceUnit {
         if (getClass() != obj.getClass())
             return false;
         CoalesceUnit other = (CoalesceUnit) obj;
-        if (!Arrays.equals(_inputColumnNames, other._inputColumnNames))
+        if (!Arrays.equals(getInputColumnNames(), other.getInputColumnNames()))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CoalesceUnit[inputColumnNames=" + Arrays.toString(_inputColumnNames) + "]";
+        return "CoalesceUnit[inputColumnNames=" + Arrays.toString(getInputColumnNames()) + "]";
     }
 
     public String getSuggestedOutputColumnName() {
-        return _inputColumnNames[0];
+        return getInputColumnNames()[0];
     }
 }

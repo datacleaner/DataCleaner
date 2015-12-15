@@ -42,11 +42,15 @@ public abstract class RenameComponentActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        actionPerformed();
+    }
+
+    public void actionPerformed() {
         final String originalValue = LabelUtils.getLabel(_componentBuilder);
         final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
         if (!originalValue.equals(newValue)) {
             if (_componentBuilder instanceof AbstractComponentBuilder) {
-                ((AbstractComponentBuilder<?,?,?>)_componentBuilder).setName(newValue);
+                ((AbstractComponentBuilder<?, ?, ?>) _componentBuilder).setName(newValue);
                 onNameChanged();
             }
         }

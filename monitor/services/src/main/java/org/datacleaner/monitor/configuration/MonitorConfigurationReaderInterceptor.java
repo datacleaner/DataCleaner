@@ -24,8 +24,10 @@ import java.util.List;
 
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
@@ -37,15 +39,40 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
+    // defines the basis of the configuration for all tenants - shared task
+    // runner (thread pool) and shared descriptor provider (classpath scanning
+    // only done once)
+    private static final DataCleanerEnvironmentImpl BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl().withTaskRunner(
+            new SharedTaskRunner()).withDescriptorProvider(new SharedDescriptorProvider());
+
     private final TenantContext _tenantContext;
-    private final DataCleanerEnvironment _environment;
     private final Repository _repository;
+    
+    public static DataCleanerEnvironmentImpl createBaseEnvironment(InjectionManagerFactory injectionManagerFactory) {
+        return BASE_ENVIRONMENT.withInjectionManagerFactory(injectionManagerFactory);
+    }
 
     public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
-            DataCleanerEnvironment environment) {
+            InjectionManagerFactory injectionManagerFactory) {
+        super(createBaseEnvironment(injectionManagerFactory));
         _repository = repository;
         _tenantContext = tenantContext;
-        _environment = environment;
+    }
+
+    /**
+     * 
+     * @param repository
+     * @param tenantContext
+     * @param environment
+     * 
+     * @deprecated use
+     *             {@link #MonitorConfigurationReaderInterceptor(Repository, TenantContext)}
+     *             instead
+     */
+    @Deprecated
+    public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
+            DataCleanerEnvironment environment) {
+        this(repository, tenantContext, environment.getInjectionManagerFactory());
     }
 
     @Override
@@ -66,11 +93,6 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
         List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
         handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
         return handlers;
-    }
-
-    @Override
-    public DataCleanerEnvironment createBaseEnvironment() {
-        return _environment;
     }
 
     @Override

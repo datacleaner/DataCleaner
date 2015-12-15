@@ -28,9 +28,14 @@ import java.awt.Shape;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
@@ -38,6 +43,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
@@ -51,11 +57,6 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.elasticsearch.common.base.Strings;
-
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
  * Collection of {@link Transformer} (and {@link Predicate} and so on) instances
@@ -235,7 +236,16 @@ public class JobGraphTransformers {
                 } else {
                     configured = componentBuilder.isConfigured(false);
                 }
-                return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                if (descriptor instanceof RemoteTransformerDescriptor) {
+                    if (!((RemoteTransformerDescriptor) descriptor).getRemoteDescriptorProvider().isServerUp()) {
+                        descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
+                    }
+                }
+
+                return descriptorIcon;
             }
             if (obj instanceof FilterOutcome) {
                 return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);

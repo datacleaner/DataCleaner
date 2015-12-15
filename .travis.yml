@@ -5,4 +5,4 @@ jdk:
   - oraclejdk8
 
 after_success:
-  - mvn test
+  - mvn test javadoc:javadoc

@@ -28,7 +28,7 @@
 		<jackson.version>2.4.6</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<javax.jsp.version>2.0</javax.jsp.version>
-		<javax.el.version>2.2.4</javax.el.version>
+		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
 		<commons.collection.version>3.2.1</commons.collection.version>
@@ -43,7 +43,7 @@
 	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>4.5.1-SNAPSHOT</version>
+	<version>4.5.4-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with

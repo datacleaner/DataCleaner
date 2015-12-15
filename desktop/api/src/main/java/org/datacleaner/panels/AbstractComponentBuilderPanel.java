@@ -33,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -91,7 +92,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
 
         final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
         add(scrolleable, BorderLayout.CENTER);
-        
+
         _buttonPanel = createTopButtonPanel();
         add(_buttonPanel, BorderLayout.NORTH);
     }
@@ -137,7 +138,6 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         final ComponentBuilder componentBuilder = getComponentBuilder();
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
-        
 
         final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
         unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
@@ -150,7 +150,6 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
         }
 
-
         if (!unconfiguredPropertyDescriptors.isEmpty()) {
             for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
                 logger.warn("No property widget was found in task panes for property: {}", property);
@@ -160,25 +159,29 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
                 getPropertyWidgetCollection().registerWidget(property, propertyWidget);
             }
         }
-        
+
         onOutputDataStreamsChanged();
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
                 _descriptor.getConfiguredProperties());
 
-        List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+
         for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
-            boolean required = propertyDescriptor.isRequired();
-            if (required && propertyDescriptor.isInputColumn()) {
-                inputProperties.add(propertyDescriptor);
-            } else if (required) {
-                requiredProperties.add(propertyDescriptor);
-            } else {
-                optionalProperties.add(propertyDescriptor);
+            final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+            if (hiddenProperty == null || !hiddenProperty.hiddenForLocalAccess()) {
+                final boolean required = propertyDescriptor.isRequired();
+                if (required && propertyDescriptor.isInputColumn()) {
+                    inputProperties.add(propertyDescriptor);
+                } else if (required) {
+                    requiredProperties.add(propertyDescriptor);
+                } else {
+                    optionalProperties.add(propertyDescriptor);
+                }
             }
         }
 
@@ -290,7 +293,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      */
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
-        
+
         onOutputDataStreamsChanged();
     }
 

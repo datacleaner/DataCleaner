@@ -663,6 +663,7 @@ button.LaunchButton {
  * Repository page
  */
 .uploadConfigurationPanel {
+	width: 30%;
 	background-color: #f4f4d3;
 	float: right;
 	clear: right;

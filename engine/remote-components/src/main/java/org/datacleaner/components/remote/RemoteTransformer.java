@@ -29,6 +29,9 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.Close;
@@ -49,12 +52,6 @@ import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.

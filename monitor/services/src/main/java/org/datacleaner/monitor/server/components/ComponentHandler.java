@@ -49,8 +49,6 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.InjectionManager;
-import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;

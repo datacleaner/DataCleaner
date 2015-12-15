@@ -211,10 +211,6 @@ public final class IconUtils {
         // prevent instantiation
     }
 
-    public static ImageIcon getIcon(String relativePath) {
-        return new ImageIcon(IconUtils.class.getClassLoader().getResource(relativePath));
-    }
-
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
         if (descriptor instanceof HasIcon) {
             ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);

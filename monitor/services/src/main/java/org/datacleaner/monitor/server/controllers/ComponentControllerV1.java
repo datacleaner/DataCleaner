@@ -193,8 +193,15 @@ public class ComponentControllerV1 implements ComponentController {
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
+
             for (int i = 0; i < outCols.getColumnCount(); i++) {
-                result.add(outCols.getColumnName(i), outCols.getColumnType(i));
+                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+                try {
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+                } catch (JsonMappingException e) {
+                    throw new RuntimeException(e);
+                }
+                result.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
             }
             return result;
         } finally {

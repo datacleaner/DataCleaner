@@ -213,31 +213,26 @@ public final class IconUtils {
     }
 
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
-        Icon descriptorIcon = getDescriptorIconWithoutServerCheck(descriptor, configured, iconWidth);
+        boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
             if (!((RemoteTransformerDescriptor) descriptor).getRemoteDescriptorProvider().isServerUp()) {
-                descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
+                serverDown = true;
             }
         }
 
-        return descriptorIcon;
-    }
-
-    private static Icon getDescriptorIconWithoutServerCheck(ComponentDescriptor<?> descriptor, boolean configured,
-            int iconWidth) {
         if (descriptor instanceof HasIcon) {
             ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
 
             if (imageIcon != null) {
-                return imageIcon;
+                return serverDown ? addErrorOverlay(imageIcon) : imageIcon;
             }
         }
 
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
 
         if (configured) {
-            return descriptorIcon;
+            return serverDown ? addErrorOverlay(descriptorIcon) : descriptorIcon;
         }
 
         return addErrorOverlay(descriptorIcon);

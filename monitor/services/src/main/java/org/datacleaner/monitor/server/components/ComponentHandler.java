@@ -131,7 +131,7 @@ public class ComponentHandler {
 
         // TODO: differentiate between transformer/analyzer for ComponentJob parameter of ComponentContextImpl
         AnalysisJob analysisJob = new ComponentHandlerAnalysisJob();
-        componentContext = new ComponentContextImpl(new ComponentHandlerAnalysisJob(), new ComponentHandlerTransformerJob(), analysisListener);
+        componentContext = new ComponentContextImpl(analysisJob, new ComponentHandlerTransformerJob(), analysisListener);
 
         // create "table" according to the columns specification (for now only a
         // list of names)

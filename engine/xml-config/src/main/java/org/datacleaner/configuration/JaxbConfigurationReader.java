@@ -374,7 +374,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                     DescriptorProvider.class,
                     temporaryConfiguration, true)
             );
-
         } else if (providerElement instanceof ClasspathScannerType) {
             DescriptorProvider classPathProvider = createClasspathScanDescriptorProvider((ClasspathScannerType) providerElement, environment);
             providerList.add(classPathProvider);
@@ -419,7 +418,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             DataCleanerEnvironment dataCleanerEnvironment) {
         ArrayList<DescriptorProvider> descriptorProviders = new ArrayList<>();
         RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
-        remoteServerConfiguration.setShowAllServers(providerElement.isShowAll());
+        remoteServerConfiguration.setShowComponentsFromAllServers(providerElement.isShowAll());
         Integer serverPriority = providerElement.getServer().size();
 
         for (RemoteComponentServerType server : providerElement.getServer()) {
@@ -431,7 +430,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             remoteServerData.setHost(server.getUrl());
             remoteServerData.setUsername(server.getUsername());
             remoteServerData.setPassword(SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-            remoteServerConfiguration.addServer(remoteServerData);
+            remoteServerConfiguration.getServerList().add(remoteServerData);
             descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData));
         }
         return descriptorProviders;

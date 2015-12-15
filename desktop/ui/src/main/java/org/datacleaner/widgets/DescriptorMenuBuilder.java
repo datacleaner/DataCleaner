@@ -226,7 +226,7 @@ public final class DescriptorMenuBuilder {
         };
 
         boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
-                .getRemoteServerConfiguration().showAllServers();
+                .getRemoteServerConfiguration().isShowComponentsFromAllServers();
         createMenuStructure(callback, _componentDescriptors, showAllRemoteComponents);
     }
 

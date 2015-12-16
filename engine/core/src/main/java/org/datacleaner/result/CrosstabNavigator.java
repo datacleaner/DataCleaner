@@ -111,7 +111,13 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
      * @param explorationResult
      */
     public void attach(AnalyzerResult explorationResult) {
-        attach(new DefaultResultProducer(explorationResult));
+        final ResultProducer resultProducer;
+        if (explorationResult == null) {
+            resultProducer = null;
+        } else {
+            resultProducer = new DefaultResultProducer(explorationResult);
+        }
+        attach(resultProducer);
     }
 
     /**

@@ -34,6 +34,7 @@ import org.apache.metamodel.csv.CsvWriter;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Concurrent;
@@ -54,7 +55,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
 
     @Configured
     InputColumn<?> column;
-    
+
     @Configured
     @Description("How many values to buffer before loading them to disk. For high volume data, consider increasing the buffer to minimize the amount of open disk handles.")
     int _bufferSize = 20000;
@@ -94,8 +95,8 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
             }
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
         };
         _writeBuffer = new WriteBuffer(_bufferSize, new Action<Iterable<Object[]>>() {

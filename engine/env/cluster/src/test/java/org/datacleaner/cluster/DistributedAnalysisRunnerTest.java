@@ -140,8 +140,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
             runner.run(job);
             fail("Exception expected");
         } catch (UnsupportedOperationException e) {
-            assertEquals("Component is not distributable: "
-                    + "ImmutableAnalyzerJob[name=null,analyzer=Analyzer without reducer]", e.getMessage());
+            assertEquals("Job is not distributable!", e.getMessage());
         } finally {
             jobBuilder.close();
         }

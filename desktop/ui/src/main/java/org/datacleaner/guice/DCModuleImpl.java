@@ -34,7 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
@@ -60,7 +60,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.result.AnalysisResult;
@@ -79,6 +78,7 @@ import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
@@ -238,9 +238,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager,
-            @Nullable ReferenceDataActivationManager referenceDataActivationManager) {
-        return new LifeCycleHelper(injectionManager, referenceDataActivationManager, true);
+    public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager) {
+        return new LifeCycleHelper(injectionManager, true);
     }
 
     @Provides
@@ -292,7 +291,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                             c.getDatastoreCatalog(), createDatastoreXmlExternalizer(), userPreferences);
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
-                                    injectionManagerFactory.getInjectionManager(c, null), null, true));
+                                    injectionManagerFactory.getInjectionManager(c, null), true));
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
@@ -404,7 +403,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public HttpClient getHttpClient(UserPreferences userPreferences) {
+    public CloseableHttpClient getHttpClient(UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
     }
 
@@ -418,11 +417,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());
+        handlers.add(new HdfsResourceTypeHandler());
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
 
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
+    }
+
+    @Override
+    public InjectorBuilder createInjectorBuilder() {
+        return new InjectorBuilder(this, Guice.createInjector(this));
     }
 
     @Override

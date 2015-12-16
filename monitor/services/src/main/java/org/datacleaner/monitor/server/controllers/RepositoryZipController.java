@@ -43,6 +43,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +78,7 @@ public class RepositoryZipController {
         FileHelper.safeClose(zipOutput);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.ADMIN)
     public Map<String, String> uploadRepository(@PathVariable("tenant") final String tenant,
@@ -102,13 +103,18 @@ public class RepositoryZipController {
     protected void decompress(final ZipInputStream zipInputStream, final RepositoryFolder rootFolder)
             throws IOException {
         deleteChildren(rootFolder);
-        
+
         for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
             final String entryName = entry.getName();
+            int lastSlash = entryName.lastIndexOf('/');
+
             if (entry.isDirectory()) {
-                logger.debug("Omitting directory entry: {}", entryName);
+                if (entry.getSize() > 0L) {
+                    logger.debug("Omitting directory entry: {}", entryName);
+                } else {
+                    getFolder(rootFolder, entryName.substring(0, lastSlash));
+                }
             } else {
-                int lastSlash = entryName.lastIndexOf('/');
                 final String filename;
                 final RepositoryFolder folder;
                 if (lastSlash != -1) {
@@ -140,7 +146,7 @@ public class RepositoryZipController {
         for (RepositoryFile file : files) {
             file.delete();
         }
-        
+
         List<RepositoryFolder> folders = folder.getFolders();
         for (RepositoryFolder subFolder : folders) {
             deleteChildren(subFolder);
@@ -167,8 +173,11 @@ public class RepositoryZipController {
 
     private void addToZipOutput(final String path, final RepositoryFolder folder, final ZipOutputStream zipOutput)
             throws IOException {
+        int itemsCount = 0;
+
         final List<RepositoryFile> files = folder.getFiles();
         for (RepositoryFile file : files) {
+            logger.info("File: " + path + file.getName());
             zipOutput.putNextEntry(new ZipEntry(path + file.getName()));
             file.readFile(new Action<InputStream>() {
                 @Override
@@ -177,12 +186,22 @@ public class RepositoryZipController {
                 }
             });
             zipOutput.closeEntry();
+            itemsCount++;
         }
 
         final List<RepositoryFolder> folders = folder.getFolders();
         for (RepositoryFolder subFolder : folders) {
             String name = subFolder.getName();
+            logger.info("Directory: " + path + name + "/");
             addToZipOutput(path + name + "/", subFolder, zipOutput);
+            itemsCount++;
+        }
+
+        if (itemsCount == 0 && !path.equals("")) {
+            String relativePath = path;
+            logger.info("Empty: " + relativePath);
+            ZipEntry entry = new ZipEntry(relativePath);
+            zipOutput.putNextEntry(entry);
         }
     }
 }

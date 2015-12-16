@@ -27,16 +27,24 @@
 			<h:panelGroup rendered="#{user.configurationEditor}"
 				styleClass="uploadConfigurationPanel">
 				<h3>Configuration file</h3>
-				<p>
-					Upload new <a href="repository/#{user.tenant}/conf.xml"
-						target="_blank">conf.xml</a> file:
-				</p>
-				<form action="repository/#{user.tenant}/conf.xml" method="post"
-					enctype="multipart/form-data">
-					<input type="file" name="file" /> <input type="submit" class="orangeButton"
-						value="Upload"
-						onclick="return confirmUpload('configuration')" />
-				</form>
+				<h:panelGroup rendered="#{param['configuration_upload'] == 'Success'}">
+					<p>
+						Configuration file <a href="repository/#{user.tenant}/conf.xml"
+							target="_blank">conf.xml</a> uploaded successfully.
+					</p>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{param['configuration_upload'] != 'Success'}">
+					<p>
+						Upload new <a href="repository/#{user.tenant}/conf.xml"
+							target="_blank">conf.xml</a> file:
+					</p>
+					<form action="repository/#{user.tenant}/configuration" method="post"
+						enctype="multipart/form-data">
+						<input type="file" name="file" /> <input type="submit" class="orangeButton"
+							value="Upload"
+							onclick="return confirmUpload('configuration')" />
+					</form>
+				</h:panelGroup>
 			</h:panelGroup>
 			
 			<h:panelGroup rendered="#{user.admin}"

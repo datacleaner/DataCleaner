@@ -38,7 +38,6 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,12 +153,8 @@ public class ConsumeRowHandler {
                 .getInjectionManagerFactory();
         final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
                 analysisJob);
-        final ReferenceDataActivationManager referenceDataActivationManager = new ReferenceDataActivationManager();
-
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
                 rowConsumeConfiguration.includeNonDistributedTasks);
-        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(analysisJob);
 
         /**
          * Use a single threaded task runner since this handler is invoked in a
@@ -168,25 +163,34 @@ public class ConsumeRowHandler {
          */
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final AnalysisListener analysisListener = rowConsumeConfiguration.analysisListener;
+        final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
+        final AnalysisListener analysisListener = new CompositeAnalysisListener(
+                rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
+
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
-                analysisListener, taskRunner, lifeCycleHelper, sourceColumnFinder);
+                analysisListener, errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
-            publisher = rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
-            if (publisher == null) {
+            @SuppressWarnings("deprecation")
+            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
+                    .getRowProcessingPublisher(rowConsumeConfiguration.table);
+            if (tablePublisher == null) {
                 throw new IllegalArgumentException("Job does not consume records from table: "
                         + rowConsumeConfiguration.table);
             }
+            publisher = tablePublisher;
         } else {
-            final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
-                    .getRowProcessingPublishers();
-            if (publisherCollection.size() > 1) {
-                throw new IllegalArgumentException(
-                        "Job consumes multiple tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+            Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            publisher = publishers.iterator().next();
+            for (RowProcessingPublisher aPublisher : publishers) {
+                if (aPublisher != publisher) {
+                    if (aPublisher.getStream().isSourceTable()) {
+                        throw new IllegalArgumentException(
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                    }
+                }
             }
-            publisher = publisherCollection.iterator().next();
         }
 
         final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();
@@ -216,12 +220,13 @@ public class ConsumeRowHandler {
             }
         }
 
-        List<RowProcessingConsumer> consumers = publisher.getConfigurableConsumers();
+        List<RowProcessingConsumer> consumers = publisher.getConsumers();
         if (!rowConsumeConfiguration.includeAnalyzers) {
             consumers = removeAnalyzers(consumers);
         }
 
-        consumers = RowProcessingPublisher.sortConsumers(consumers);
+        final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(consumers);
+        consumers = sorter.createProcessOrderedConsumerList();
         return consumers;
     }
 

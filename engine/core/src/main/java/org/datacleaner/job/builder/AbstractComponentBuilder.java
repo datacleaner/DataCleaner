@@ -32,12 +32,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
+import org.datacleaner.api.HasDistributionAdvice;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Renderable;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -49,6 +60,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.CollectionUtils2;
@@ -75,10 +87,13 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private static final Logger logger = LoggerFactory.getLogger(AbstractComponentBuilder.class);
 
     private final List<ComponentRemovalListener<ComponentBuilder>> _removalListeners;
+    private final List<OutputDataStream> _outputDataStreams = new ArrayList<OutputDataStream>();
+    private final Map<OutputDataStream, AnalysisJobBuilder> _outputDataStreamJobs = new HashMap<>();
     private final D _descriptor;
     private final E _configurableBean;
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final Map<String, String> _metadataProperties;
+
+    private AnalysisJobBuilder _analysisJobBuilder;
     private ComponentRequirement _componentRequirement;
     private String _name;
 
@@ -98,7 +113,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             throw new IllegalArgumentException("Builder class does not correspond to actual class of builder");
         }
 
-        _configurableBean = ReflectionUtils.newInstance(_descriptor.getComponentClass());
+        _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
         _removalListeners = new ArrayList<>(1);
     }
@@ -239,6 +254,18 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public boolean isConfigured() {
         return isConfigured(false);
+    }
+
+    @Override
+    public boolean isDistributable() {
+        if (getDescriptor().isDistributable()) {
+            final Component component = getComponentInstanceForQuestioning();
+            if (component instanceof HasDistributionAdvice) {
+                return ((HasDistributionAdvice) component).isDistributable();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -545,6 +572,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     public void setRequirement(FilterComponentBuilder<?, ?> filterComponentBuilder, String category) {
+        if (filterComponentBuilder == this) {
+            throw new IllegalArgumentException("Requirement source and sink cannot be the same");
+        }
         final FilterOutcome filterOutcome = filterComponentBuilder.getFilterOutcome(category);
         if (filterOutcome == null) {
             throw new IllegalArgumentException("No such category found in available outcomes: " + category);
@@ -552,12 +582,15 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         setRequirement(filterOutcome);
     }
 
-    public void setRequirement(FilterComponentBuilder<?, ?> filterJobBuilder, Enum<?> category) {
-        EnumSet<?> categories = filterJobBuilder.getDescriptor().getOutcomeCategories();
+    public void setRequirement(FilterComponentBuilder<?, ?> filterComponentBuilder, Enum<?> category) {
+        if (filterComponentBuilder == this) {
+            throw new IllegalArgumentException("Requirement source and sink cannot be the same");
+        }
+        final EnumSet<?> categories = filterComponentBuilder.getDescriptor().getOutcomeCategories();
         if (!categories.contains(category)) {
             throw new IllegalArgumentException("No such category found in available outcomes: " + category);
         }
-        setRequirement(filterJobBuilder.getFilterOutcome(category));
+        setRequirement(filterComponentBuilder.getFilterOutcome(category));
     }
 
     public void setRequirement(FilterOutcome outcome) throws IllegalArgumentException {
@@ -688,5 +721,213 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public boolean removeRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener) {
         return _removalListeners.remove(componentRemovalListener);
+    }
+
+    protected Component getComponentInstanceForQuestioning() {
+        if (!isConfigured()) {
+            // as long as the component is not configured we cannot proceed
+            return null;
+        }
+
+        final Component component = getComponentInstance();
+        final D descriptor = getDescriptor();
+
+        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
+
+        // mimic the configuration of a real component instance
+        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+
+        // only validate, don't initialize
+        lifeCycleHelper.validate(descriptor, component);
+
+        return component;
+    }
+
+    @Override
+    public AnalysisJobBuilder getOutputDataStreamJobBuilder(String outputDataStreamName) {
+        final OutputDataStream outputDataStream = getOutputDataStream(outputDataStreamName);
+        if (outputDataStream == null) {
+            throw new IllegalArgumentException("No such OutputDataStream: " + outputDataStreamName);
+        }
+        return getOutputDataStreamJobBuilder(outputDataStream);
+    }
+
+    @Override
+    public AnalysisJobBuilder getOutputDataStreamJobBuilder(OutputDataStream outputDataStream) {
+        AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
+        if (analysisJobBuilder == null) {
+            assert _outputDataStreams.contains(outputDataStream);
+
+            final Table table = outputDataStream.getTable();
+
+            analysisJobBuilder = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration(), _analysisJobBuilder);
+            analysisJobBuilder.setDatastore(new OutputDataStreamDatastore(outputDataStream));
+            analysisJobBuilder.addSourceColumns(table.getColumns());
+
+            _outputDataStreamJobs.put(outputDataStream, analysisJobBuilder);
+        }
+        return analysisJobBuilder;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream(Table dataStreamTable) {
+        if (dataStreamTable == null) {
+            return null;
+        }
+        final List<OutputDataStream> streams = getOutputDataStreams();
+        for (final OutputDataStream outputDataStream : streams) {
+            if (dataStreamTable.equals(outputDataStream.getTable())) {
+                return outputDataStream;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream(final String name) {
+        if (name == null) {
+            return null;
+        }
+        final List<OutputDataStream> streams = getOutputDataStreams();
+        for (final OutputDataStream outputDataStream : streams) {
+            if (name.equals(outputDataStream.getName())) {
+                return outputDataStream;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<OutputDataStream> getOutputDataStreams() {
+        final Component component = getComponentInstanceForQuestioning();
+        if (component == null) {
+            // as long as the component is not configured, just return an
+            // empty list
+            return Collections.emptyList();
+        }
+
+        if (component instanceof HasOutputDataStreams) {
+            final OutputDataStream[] outputDataStreams = ((HasOutputDataStreams) component).getOutputDataStreams();
+            final List<OutputDataStream> newStreams = Arrays.asList(outputDataStreams);
+            if (!_outputDataStreams.equals(newStreams)) {
+                final List<String> newNames = CollectionUtils.map(newStreams, new HasNameMapper());
+                final List<String> existingNames = CollectionUtils.map(_outputDataStreams, new HasNameMapper());
+                if (!newNames.equals(existingNames)) {
+                    _outputDataStreams.clear();
+                    _outputDataStreamJobs.clear();
+                    _outputDataStreams.addAll(newStreams);
+                } else {
+                    // if the stream names are the same then it's better to see
+                    // if we can incrementally update the existing streams
+                    // instead of replacing it all
+                    for (int i = 0; i < outputDataStreams.length; i++) {
+                        final OutputDataStream existingStream = _outputDataStreams.get(i);
+                        final Table table = existingStream.getTable();
+                        final OutputDataStream newStream = newStreams.get(i);
+                        if (table instanceof MutableTable) {
+                            final MutableTable mutableTable = (MutableTable) table;
+                            if (isOutputDataStreamConsumed(existingStream)) {
+                                final AnalysisJobBuilder existingJobBuilder = getOutputDataStreamJobBuilder(existingStream);
+                                // update the table
+                                updateStream(mutableTable, existingJobBuilder, newStream);
+                            } else {
+                                updateStream(mutableTable, null, newStream);
+                            }
+                        } else {
+                            _outputDataStreams.set(i, newStream);
+                        }
+                    }
+                }
+            }
+            return new ArrayList<>(_outputDataStreams);
+        }
+
+        // component isn't capable of having output data streams
+        return Collections.emptyList();
+    }
+
+    private void updateStream(final MutableTable existingTable, final AnalysisJobBuilder jobBuilder,
+            final OutputDataStream newStream) {
+        final List<Column> newColumnList = new ArrayList<Column>();
+        final List<Column> addedColumns = new ArrayList<Column>();
+
+        final Table newTable = newStream.getTable();
+
+        int columnNumber = 0;
+        for (Column newColumn : newTable.getColumns()) {
+            final Column existingColumn = existingTable.getColumnByName(newColumn.getName());
+            final MutableColumn mutableColumn;
+
+            if (existingColumn == null) {
+                mutableColumn = (MutableColumn) newColumn;
+
+                addedColumns.add(newColumn);
+            } else {
+                mutableColumn = (MutableColumn) existingColumn;
+
+                // remove this so that it cannot be matched against in next
+                // iterations
+                existingTable.removeColumn(existingColumn);
+            }
+
+            // update the column to make sure everything is 100% matching
+            mutableColumn.setTable(existingTable);
+            mutableColumn.setColumnNumber(columnNumber);
+            mutableColumn.setType(newColumn.getType());
+
+            newColumnList.add(mutableColumn);
+
+            columnNumber++;
+        }
+
+        if (jobBuilder != null) {
+            // notify job builder of removed source columns
+            for (Column column : existingTable.getColumns()) {
+                jobBuilder.removeSourceColumn(column);
+            }
+            // notify the job builder of added source columns
+            for (Column column : addedColumns) {
+                jobBuilder.addSourceColumn(column);
+            }
+        }
+
+        // update the table with the new set of columns
+        existingTable.setColumns(newColumnList);
+    }
+
+    @Override
+    public boolean isOutputDataStreamConsumed(OutputDataStream outputDataStream) {
+        final AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
+        if (analysisJobBuilder == null) {
+            return false;
+        }
+        return analysisJobBuilder.getComponentCount() > 0;
+    }
+
+    @Override
+    public OutputDataStreamJob[] getOutputDataStreamJobs() {
+        final List<OutputDataStream> outputDataStreams = getOutputDataStreams();
+        if (outputDataStreams == null || outputDataStreams.isEmpty()) {
+            return new OutputDataStreamJob[0];
+        }
+        final List<OutputDataStreamJob> result = new ArrayList<>();
+        for (OutputDataStream outputDataStream : outputDataStreams) {
+            if (isOutputDataStreamConsumed(outputDataStream)) {
+                result.add(new LazyOutputDataStreamJob(outputDataStream,
+                        getOutputDataStreamJobBuilder(outputDataStream)));
+            }
+        }
+        return result.toArray(new OutputDataStreamJob[result.size()]);
+    }
+
+    @Override
+    public void setAnalysisJobBuilder(final AnalysisJobBuilder analysisJobBuilder) {
+        _analysisJobBuilder = analysisJobBuilder;
     }
 }

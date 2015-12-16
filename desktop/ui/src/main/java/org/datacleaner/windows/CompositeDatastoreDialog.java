@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Set;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
@@ -48,6 +50,8 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Inject;
+
 public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeDatastore> {
 
     private static final long serialVersionUID = 1L;
@@ -64,6 +68,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         return "Composite datastore";
     }
 
+    @Inject
     public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
             UserPreferences userPreferences) {
         this(null, mutableDatastoreCatalog, windowContext, userPreferences);
@@ -170,16 +175,20 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
             checkBoxPanel.add(checkBox);
         }
 
-        WidgetUtils.addToGridBag(checkBoxPanel, formPanel, 0, 1, 2, 1);
+        final JScrollPane checkBoxScrollPane = WidgetUtils.scrolleable(checkBoxPanel);
+        checkBoxScrollPane.setPreferredSize(new Dimension(checkBoxPanel.getWidth(), 300));
+        checkBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        checkBoxScrollPane.setBackground(_outerPanel.getBackground());
+        WidgetUtils.addToGridBag(checkBoxScrollPane, formPanel, 0, 1, 2, 1);
 
-        DCPanel buttonPanel = getButtonPanel();
+        final DCPanel buttonPanel = getButtonPanel();
 
-        DCPanel centerPanel = new DCPanel();
+        final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new VerticalLayout(4));
         centerPanel.add(formPanel);
         centerPanel.add(buttonPanel);
 
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

@@ -21,8 +21,11 @@ package org.datacleaner.windows;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.user.UserPreferences;
 
 /**
  * This interface represents the main window in the DataCleaner GUI. An
@@ -36,7 +39,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 public interface AnalysisJobBuilderWindow extends DCWindow {
 
     public enum AnalysisWindowPanelType implements HasName {
-        
+
         WELCOME("Welcome"),
 
         SELECT_DS("Select datastore"),
@@ -168,4 +171,25 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
      * @param panel
      */
     public void changePanel(AnalysisWindowPanelType panel);
+
+    /**
+     * Gets the {@link DataCleanerConfiguration} that the window is based on.
+     * 
+     * @return
+     */
+    public DataCleanerConfiguration getConfiguration();
+
+    /**
+     * Gets the {@link UserPreferences} of the current session
+     * 
+     * @return
+     */
+    public UserPreferences getUserPreferences();
+
+    /**
+     * Gets the {@link DCModule} that this window is scoped within
+     * 
+     * @return
+     */
+    public DCModule getDCModule();
 }

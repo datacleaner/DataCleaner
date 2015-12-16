@@ -1,6 +1,6 @@
-DataCleaner
-===========
+# DataCleaner
 
+[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
 <div>
 <img src="http://datacleaner.org/resources/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
@@ -29,6 +29,10 @@ The main application modules are:
   * widgets - reusable widgets and UI work, based on GWT
   * ui - the actual web user interface, based primarily on GWT and JSF
  * documentation - end-user reference documentation, published on http://datacleaner.org/docs
+
+## Code style and formatting
+
+In the root of the project you can find 'Formatter-[IDE].xml' files which enable you to import the code formatting rules of the project into your IDE.
 
 ## Continuous Integration
 

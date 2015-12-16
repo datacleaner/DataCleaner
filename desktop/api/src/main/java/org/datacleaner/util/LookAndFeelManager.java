@@ -179,6 +179,7 @@ public final class LookAndFeelManager {
 
         UIManager.put("PasswordField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("PasswordField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("PasswordField.disabledBackground", WidgetUtils.BG_COLOR_BRIGHT);
 
         UIManager.put("FormattedTextField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("FormattedTextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);

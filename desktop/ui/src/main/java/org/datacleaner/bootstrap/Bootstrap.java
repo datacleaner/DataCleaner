@@ -39,7 +39,6 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.apache.commons.vfs2.provider.url.UrlFileName;
-import org.apache.http.client.HttpClient;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.DownloadFilesActionListener;
@@ -255,10 +254,8 @@ public final class Bootstrap {
 
             final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
-            final HttpClient httpClient = injector.getInstance(HttpClient.class);
-
             // set up HTTP service for ExtensionSwap installation
-            loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);
+            loadExtensionSwapService(userPreferences, windowContext, configuration, usageLogger);
 
             final ExitActionListener exitActionListener = _options.getExitActionListener();
             if (exitActionListener != null) {
@@ -429,7 +426,7 @@ public final class Bootstrap {
     }
 
     private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
-            DataCleanerConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
+            DataCleanerConfiguration configuration, UsageLogger usageLogger) {
         String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
         if (StringUtils.isNullOrEmpty(websiteHostname)) {
             websiteHostname = System.getProperty("extensionswap.hostname");
@@ -438,10 +435,10 @@ public final class Bootstrap {
         final ExtensionSwapClient extensionSwapClient;
         if (StringUtils.isNullOrEmpty(websiteHostname)) {
             logger.info("Using default ExtensionSwap website hostname");
-            extensionSwapClient = new ExtensionSwapClient(httpClient, windowContext, userPreferences, configuration);
+            extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences, configuration);
         } else {
             logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-            extensionSwapClient = new ExtensionSwapClient(httpClient, websiteHostname, windowContext, userPreferences,
+            extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext, userPreferences,
                     configuration);
         }
         ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(

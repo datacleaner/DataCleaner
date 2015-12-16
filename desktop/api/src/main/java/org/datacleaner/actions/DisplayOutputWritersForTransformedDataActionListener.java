@@ -53,7 +53,7 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
     protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
         Component component = componentBuilder.getComponentInstance();
         if (component instanceof PrecedingComponentConsumer) {
-            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, null, true);
+            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, true);
             helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
             ((PrecedingComponentConsumer) component).configureForTransformedData(analysisJobBuilder,
                     _transformerJobBuilder.getDescriptor());

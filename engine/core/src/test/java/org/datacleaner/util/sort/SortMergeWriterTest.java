@@ -28,6 +28,7 @@ import java.util.Comparator;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
 
 public class SortMergeWriterTest extends TestCase {
@@ -59,8 +60,8 @@ public class SortMergeWriterTest extends TestCase {
         SortMergeWriter<String[], Writer> sorter = new SortMergeWriter<String[], Writer>(2, comparator) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
@@ -110,8 +111,8 @@ public class SortMergeWriterTest extends TestCase {
                 ToStringComparator.getComparator()) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
@@ -155,8 +156,8 @@ public class SortMergeWriterTest extends TestCase {
                 ToStringComparator.getComparator()) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
@@ -202,8 +203,8 @@ public class SortMergeWriterTest extends TestCase {
                 ToStringComparator.getComparator()) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
@@ -245,8 +246,8 @@ public class SortMergeWriterTest extends TestCase {
                 ToStringComparator.getComparator()) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
@@ -302,8 +303,8 @@ public class SortMergeWriterTest extends TestCase {
                 ToStringComparator.getComparator()) {
 
             @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getBufferedWriter(file);
+            protected Writer createWriter(Resource file) {
+                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override

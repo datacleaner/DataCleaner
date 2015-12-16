@@ -86,7 +86,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
         analyzer.configureForFilterOutcome(ajb, filterDescriptor, "OUT.COME");
 
-        assertEquals("output-data-store-my fil-ter-OUT-COME", analyzer.sheetName);
+        assertEquals("data-store-my fil-ter-OUT-COME", analyzer.sheetName);
 
         EasyMock.verify(datastore, filterDescriptor);
     }

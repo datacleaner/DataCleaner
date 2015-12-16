@@ -102,13 +102,13 @@ public final class JobGraph {
     private int _scrollHorizontal;
     private int _scrollVertical;
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
-            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
+            UsageLogger usageLogger) {
         this(windowContext, userPreferences, analysisJobBuilder, null, usageLogger);
     }
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
-            AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
+            RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -262,8 +262,8 @@ public final class JobGraph {
                     return;
                 }
 
-                final String showCanvasHints = _userPreferences.getAdditionalProperties().get(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                final String showCanvasHints = _userPreferences.getAdditionalProperties()
+                        .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
                 if ("false".equals(showCanvasHints)) {
                     // don't show the background hints - the user has decided
                     // not to have them.
@@ -290,7 +290,8 @@ public final class JobGraph {
                     subTitle = "Right-click the source table and select 'Link to ...'.\n"
                             + "This directs the flow of data to the component.";
                     imagePath = "images/window/canvas-bg-connect.png";
-                } else if (_analysisJobBuilder.getAnalyzerComponentBuilders().size() == 0
+                } else if (_analysisJobBuilder.getResultProducingComponentBuilders().size() == 0
+                        && _analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Your job is almost ready.";
                     subTitle = "Jobs need to either 'Analyze' or 'Write' something.\n"
@@ -386,7 +387,7 @@ public final class JobGraph {
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
-        visualizationViewer.addKeyListener(new JobGraphKeyListener(graphContext));
+        visualizationViewer.addKeyListener(new JobGraphKeyListener(graphContext, actions));
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
@@ -432,8 +433,8 @@ public final class JobGraph {
     }
 
     private JButton createGraphPreferencesButton() {
-        final JButton uiPreferencesButton = WidgetFactory.createSmallButton(ImageManager.get().getImageIcon(
-                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
+        final JButton uiPreferencesButton = WidgetFactory
+                .createSmallButton(ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
         uiPreferencesButton.setOpaque(false);
         uiPreferencesButton.setBorder(null);
         uiPreferencesButton.addActionListener(new ActionListener() {

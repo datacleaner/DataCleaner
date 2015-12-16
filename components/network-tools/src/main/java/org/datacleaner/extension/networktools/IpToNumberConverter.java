@@ -36,9 +36,7 @@ import org.slf4j.LoggerFactory;
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
 public class IpToNumberConverter implements Transformer {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(IpToNumberConverter.class);
+	private static final Logger logger = LoggerFactory.getLogger(IpToNumberConverter.class);
 
 	@Configured("IP string column")
 	InputColumn<String> ipColumn;

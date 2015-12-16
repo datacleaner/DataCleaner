@@ -36,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
-import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -57,11 +56,11 @@ import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
@@ -124,12 +123,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         // add listeners after setting initial values.
         setFileFilters(_filenameField);
-        _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
-                validateAndUpdate();
-            }
-        });
         _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
@@ -179,7 +172,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract D createDatastore(String name, String filename);
 
-    protected abstract void setFileFilters(FilenameTextField filenameField);
+    protected abstract void setFileFilters(AbstractResourceTextField<?> filenameField);
 
     @Override
     protected final void validateAndUpdate() {

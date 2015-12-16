@@ -19,14 +19,12 @@
  */
 package org.datacleaner.connection;
 
-import java.io.Closeable;
-
 import org.apache.metamodel.UpdateableDataContext;
 
 public class UpdateableDatastoreConnectionImpl<E extends UpdateableDataContext> extends DatastoreConnectionImpl<E> implements
 		UpdateableDatastoreConnection {
 
-	public UpdateableDatastoreConnectionImpl(E dataContext, Datastore datastore, Closeable... closeables) {
+	public UpdateableDatastoreConnectionImpl(E dataContext, Datastore datastore, AutoCloseable... closeables) {
 		super(dataContext, datastore, closeables);
 	}
 

@@ -22,19 +22,20 @@ package org.datacleaner.reference;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-import org.datacleaner.util.CollectionUtils2;
-import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.filemonitor.FileMonitor;
-import org.datacleaner.util.filemonitor.FileMonitorFactory;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.convert.ResourceConverter;
 
-import com.google.common.cache.Cache;
+import au.com.bytecode.opencsv.CSVParser;
 
 /**
  * Synonym catalog based on a text file.
@@ -49,20 +50,18 @@ import com.google.common.cache.Cache;
  * NL,Holland,The Netherlands
  * FR,France
  * </pre>
- * 
- * 
  */
 public final class TextFileSynonymCatalog extends AbstractReferenceData implements SynonymCatalog {
 
     private static final long serialVersionUID = 1L;
 
-    private transient volatile Cache<String, String> _masterTermCache;
-    private transient File _file;
-    private transient FileMonitor _fileMonitor;
-
     private final String _filename;
     private final boolean _caseSensitive;
     private final String _encoding;
+
+    public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
+        this(name, file.getPath(), caseSensitive, encoding);
+    }
 
     public TextFileSynonymCatalog(String name, String filename, boolean caseSensitive, String encoding) {
         super(name);
@@ -71,29 +70,67 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
         _encoding = encoding;
     }
 
-    public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
-        super(name);
-        _filename = file.getPath();
-        _caseSensitive = caseSensitive;
-        _encoding = encoding;
+    @Override
+    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
+        final ResourceConverter rc = new ResourceConverter(configuration);
+        final Resource resource = rc.fromString(Resource.class, _filename);
+
+        final Map<String, String> synonyms = resource.read(new Func<InputStream, Map<String, String>>() {
+            @Override
+            public Map<String, String> eval(InputStream in) {
+                final Map<String, String> synonyms = new HashMap<>();
+
+                final CSVParser parser = new CSVParser(',', '"', '\\');
+                final BufferedReader reader = FileHelper.getBufferedReader(in, _encoding);
+                try {
+                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                        line = line.trim();
+                        final String[] values;
+                        try {
+                            values = parser.parseLine(line);
+                        } catch (Exception e) {
+                            throw new IllegalStateException("Failed to parse line: " + line, e);
+                        }
+                        if (values.length > 0) {
+                            synonyms.put(values[0], values[0]);
+                        }
+                        if (values.length > 1) {
+                            for (int i = 1; i < values.length; i++) {
+                                synonyms.put(values[i], values[0]);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                } finally {
+                    FileHelper.safeClose(reader);
+                }
+
+                return synonyms;
+            }
+        });
+
+        return new SimpleSynonymCatalog(getName(), synonyms, _caseSensitive).openConnection(configuration);
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, TextFileSynonymCatalog.class).readObject(stream);
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
-        super.decorateIdentity(identifiers);
-        identifiers.add(_filename);
-        identifiers.add(_caseSensitive);
-        identifiers.add(_encoding);
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final TextFileSynonymCatalog other = (TextFileSynonymCatalog) obj;
+            return Objects.equals(_filename, other._filename) && Objects.equals(_caseSensitive, other._caseSensitive)
+                    && Objects.equals(_encoding, other._encoding);
+        }
+        return false;
     }
 
     @Override
     public String toString() {
         return "TextFileSynonymCatalog[name=" + getName() + ", filename=" + _filename + ", caseSensitive="
                 + _caseSensitive + ", encoding=" + _encoding + "]";
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        ReadObjectBuilder.create(this, TextFileSynonymCatalog.class).readObject(stream);
     }
 
     public String getEncoding() {
@@ -106,89 +143,5 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
 
     public boolean isCaseSensitive() {
         return _caseSensitive;
-    }
-
-    private File getFile() {
-        if (_file == null) {
-            synchronized (this) {
-                if (_file == null) {
-                    _file = new File(_filename);
-                }
-            }
-        }
-        return _file;
-    }
-
-    private FileMonitor getFileMonitor() {
-        if (_fileMonitor == null) {
-            synchronized (this) {
-                if (_fileMonitor == null) {
-                    _fileMonitor = FileMonitorFactory.getFileMonitor(getFile());
-                }
-            }
-        }
-        return _fileMonitor;
-    }
-
-    @Override
-    public Collection<Synonym> getSynonyms() {
-        BufferedReader reader = FileHelper.getBufferedReader(getFile(), _encoding);
-        try {
-            List<Synonym> synonyms = new ArrayList<Synonym>();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                line = line.trim();
-                synonyms.add(new TextFileSynonym(line, _caseSensitive));
-            }
-            return synonyms;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            FileHelper.safeClose(reader);
-        }
-    }
-
-    private Cache<String, String> getMasterTermCache() {
-        if (_masterTermCache == null) {
-            synchronized (this) {
-                if (_masterTermCache == null) {
-                    _masterTermCache = CollectionUtils2.createCache(10000, 5 * 60);
-                }
-            }
-        } else {
-            if (getFileMonitor().hasChanged()) {
-                // reset the cache
-                _masterTermCache.invalidateAll();
-            }
-        }
-        return _masterTermCache;
-    }
-
-    @Override
-    public String getMasterTerm(String term) {
-        if (StringUtils.isNullOrEmpty(term)) {
-            return null;
-        }
-        String masterTerm = getMasterTermCache().getIfPresent(term);
-        if (masterTerm != null) {
-            return masterTerm;
-        }
-
-        BufferedReader reader = FileHelper.getBufferedReader(getFile(), _encoding);
-        try {
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                line = line.trim();
-                TextFileSynonym synonym = new TextFileSynonym(line, _caseSensitive);
-                masterTerm = synonym.getMasterTerm();
-                if (term.equals(masterTerm) || synonym.getSynonyms().containsValue(term)) {
-                    getMasterTermCache().put(term, masterTerm);
-                    return masterTerm;
-                }
-            }
-            return null;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            FileHelper.safeClose(reader);
-        }
     }
 }

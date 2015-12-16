@@ -51,14 +51,21 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unregistered renderer for crosstab results that are programmatically created
  * in {@link PatternFinderResultSwingRenderer}.
- * 
- * @author Kasper Sørensen
  */
 class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(PatternFinderResultSwingRendererCrosstabDelegate.class);
+
+    // don't show the pattern decoration buttons if there's a way too high
+    // amount of patterns.
+    private static final int PATTERN_COUNT_DECORATE_THRESHOLD = ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD;
 
     private final MutableReferenceDataCatalog _catalog;
 
@@ -78,7 +85,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
     public JComponent render(CrosstabResult result) {
         final CrosstabPanel crosstabPanel = super.renderInternal(result);
         final DCTable table = crosstabPanel.getTable();
-        if (isInitiallyCharted(table) || isTooLimitedToChart(table)) {
+        if (isInitiallyCharted(table) || isTooLimitedToChart(table) || isTooBigToChart(table)) {
             return crosstabPanel;
         }
 
@@ -107,6 +114,9 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
     protected void displayChart(DCTable table, DisplayChartCallback displayChartCallback) {
         final int rowCount = table.getRowCount();
+
+        logger.info("Rendering chart with {} patterns", rowCount);
+
         final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (int i = 0; i < rowCount; i++) {
             final Object expressionObject = table.getValueAt(i, 0);
@@ -120,13 +130,13 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
         // only show legend if there are not too many patterns
         final boolean showLegend = dataset.getRowCount() < 25;
-        
-        JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, showLegend,
-                true, false);
+
+        final JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL,
+                showLegend, true, false);
         ChartUtils.applyStyles(chart);
-        
+
         final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
-        
+
         displayChartCallback.displayChart(chartPanel);
     }
 
@@ -137,38 +147,39 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         table.setAlignment(1, Alignment.RIGHT);
 
         final int rowCount = table.getRowCount();
+        if (rowCount < PATTERN_COUNT_DECORATE_THRESHOLD) {
+            for (int i = 0; i < rowCount; i++) {
+                final Object expressionObject = table.getValueAt(i, 0);
+                final String label = extractString(expressionObject);
+                final String expression = extractExpression(label);
 
-        for (int i = 0; i < rowCount; i++) {
-            final Object expressionObject = table.getValueAt(i, 0);
-            final String label = extractString(expressionObject);
-            final String expression = extractExpression(label);
+                final String stringPatternName = "PF: " + label;
 
-            final String stringPatternName = "PF: " + label;
+                if (!_catalog.containsStringPattern(stringPatternName)) {
+                    DCPanel panel = new DCPanel();
+                    panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-            if (!_catalog.containsStringPattern(stringPatternName)) {
-                DCPanel panel = new DCPanel();
-                panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+                    panel.add(Box.createHorizontalStrut(4));
+                    panel.add(new JLabel(label));
 
-                panel.add(Box.createHorizontalStrut(4));
-                panel.add(new JLabel(label));
+                    final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE_DARK);
+                    button.setToolTipText("Save as string pattern");
+                    button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
+                            button.setEnabled(false);
+                        }
+                    });
+                    panel.add(Box.createHorizontalStrut(4));
+                    panel.add(button);
 
-                final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE_DARK);
-                button.setToolTipText("Save as string pattern");
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
-                        button.setEnabled(false);
-                    }
-                });
-                panel.add(Box.createHorizontalStrut(4));
-                panel.add(button);
-
-                table.setValueAt(panel, i, 0);
+                    table.setValueAt(panel, i, 0);
+                }
             }
         }
 
-        if (isInitiallyCharted(table)) {
+        if (isInitiallyCharted(table) && !isTooBigToChart(table)) {
             displayChart(table, displayChartCallback);
         }
     }
@@ -186,6 +197,16 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
     private boolean isTooLimitedToChart(DCTable table) {
         return table.getRowCount() <= 1;
+    }
+
+    private boolean isTooBigToChart(DCTable table) {
+        final int rowCount = table.getRowCount();
+        if (rowCount > ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD) {
+            logger.info("Display threshold of {} in chart surpassed (got {}). Skipping chart.",
+                    ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD, rowCount);
+            return true;
+        }
+        return false;
     }
 
     private String extractString(Object obj) {

@@ -21,6 +21,7 @@ package org.datacleaner.util.convert;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -70,6 +71,7 @@ public final class StringConverter {
 
     private final InjectionManager _injectionManager;
     private final DataCleanerConfiguration _configuration;
+    private final DelegatingConverter _baseConverter;
 
     /**
      * Gets a simple instance of {@link StringConverter}. This instance will not
@@ -97,6 +99,7 @@ public final class StringConverter {
         _configuration = configuration;
         _injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
+        _baseConverter = createBaseConverter();
     }
 
     public StringConverter(InjectionManager injectionManager) {
@@ -107,6 +110,16 @@ public final class StringConverter {
                 .of(DataCleanerConfiguration.class);
         _configuration = injectionManager.getInstance(injectionPoint);
         _injectionManager = injectionManager;
+        _baseConverter = createBaseConverter();
+    }
+
+    private DelegatingConverter createBaseConverter() {
+        DelegatingConverter baseConverter = new DelegatingConverter();
+        baseConverter.addConverter(new ConfigurationItemConverter());
+        baseConverter.addConverter(getResourceConverter());
+        baseConverter.addConverter(new StandardTypeConverter(_configuration, baseConverter));
+        baseConverter.initializeAll(_injectionManager);
+        return baseConverter;
     }
 
     private static InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
@@ -226,22 +239,30 @@ public final class StringConverter {
     public final <E> E deserialize(String str, Class<E> type, Collection<Class<? extends Converter<?>>> converterClasses) {
         logger.debug("deserialize(\"{}\", {})", str, type);
 
+        if (converterClasses == null || converterClasses.isEmpty()) {
+            // when possible, just reuse the base converter
+            @SuppressWarnings("unchecked")
+            final E result = (E) _baseConverter.fromString(type, str);
+            return result;
+        }
+
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
         if (converterClasses != null) {
             for (Class<? extends Converter<?>> converterClass : converterClasses) {
-                delegatingConverter.addConverter(createConverter(converterClass));
+                final Converter<?> converter = createConverter(converterClass);
+                delegatingConverter.addConverter(converter);
+                delegatingConverter.initialize(converter, _injectionManager);
             }
         }
 
-        delegatingConverter.addConverter(new ConfigurationItemConverter());
-        delegatingConverter.addConverter(getResourceConverter());
-        delegatingConverter.addConverter(new StandardTypeConverter(_configuration, delegatingConverter));
-
-        delegatingConverter.initializeAll(_injectionManager);
+        final List<Converter<?>> converters = _baseConverter.getConverters();
+        for (Converter<?> converter : converters) {
+            delegatingConverter.addConverter(converter);
+        }
 
         @SuppressWarnings("unchecked")
-        E result = (E) delegatingConverter.fromString(type, str);
+        final E result = (E) delegatingConverter.fromString(type, str);
         return result;
     }
 }

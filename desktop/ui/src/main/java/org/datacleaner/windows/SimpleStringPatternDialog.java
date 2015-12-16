@@ -35,14 +35,13 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.datacleaner.reference.SimpleStringPattern;
-import org.datacleaner.reference.StringPattern;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -67,7 +66,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
     private JButton _resetButton;
     final JButton _saveButton;
     private static final ImageManager imageManager = ImageManager.get();
-    private StringPattern _simpleStringPattern;
+    private SimpleStringPattern _simpleStringPattern;
 
     private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
 
@@ -101,7 +100,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
             _resetButton.setEnabled(false);
             _saveButton.setEnabled(false);
         }
-        _simpleStringPattern = _catalog.getStringPattern(_expressionNameString);
+        _simpleStringPattern = (SimpleStringPattern) _catalog.getStringPattern(_expressionNameString);
     }
 
     @Override

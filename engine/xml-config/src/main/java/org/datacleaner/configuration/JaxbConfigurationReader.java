@@ -66,19 +66,20 @@ import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
 import org.datacleaner.configuration.jaxb.CsvDatastoreType;
 import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatahubDatastoreType;
+import org.datacleaner.configuration.jaxb.DatahubsecuritymodeEnum;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
+import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
 import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
-import org.datacleaner.configuration.jaxb.H2StorageProviderType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
-import org.datacleaner.configuration.jaxb.HsqldbStorageProviderType;
 import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
@@ -93,6 +94,8 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
+import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
 import org.datacleaner.configuration.jaxb.SasDatastoreType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
@@ -110,11 +113,13 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore.ClientType;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -129,13 +134,16 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -151,8 +159,6 @@ import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
-import org.datacleaner.storage.H2StorageProvider;
-import org.datacleaner.storage.HsqldbStorageProvider;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.util.CollectionUtils2;
@@ -184,11 +190,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         this(null);
     }
 
-    public JaxbConfigurationReader(ConfigurationReaderInterceptor configurationReaderCallback) {
-        if (configurationReaderCallback == null) {
-            configurationReaderCallback = new DefaultConfigurationReaderInterceptor();
+    public JaxbConfigurationReader(ConfigurationReaderInterceptor interceptor) {
+        if (interceptor == null) {
+            interceptor = new DefaultConfigurationReaderInterceptor();
         }
-        _interceptor = configurationReaderCallback;
+        _interceptor = interceptor;
         _variablePathBuilder = new ArrayDeque<String>(4);
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
@@ -333,48 +339,79 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DescriptorProvider createDescriptorProvider(Configuration configuration,
             DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
-        final DescriptorProvider descriptorProvider;
-        final CustomElementType customDescriptorProviderElement = configuration.getCustomDescriptorProvider();
-        final ClasspathScannerType classpathScannerElement = configuration.getClasspathScanner();
-        if (customDescriptorProviderElement != null) {
-            descriptorProvider = createCustomElement(customDescriptorProviderElement, DescriptorProvider.class,
-                    temporaryConfiguration, true);
-        } else {
-            final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
-            if (classpathScannerElement != null) {
-                final List<String> excludedRenderingFormatList = classpathScannerElement.getExcludedRenderingFormat();
-                for (String excludedRenderingFormat : excludedRenderingFormatList) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor
-                                .loadClass(excludedRenderingFormat);
-                        excludedRenderingFormats.add(cls);
-                    } catch (ClassNotFoundException e) {
-                        logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
-                    }
-                }
-            }
-
-            final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(
-                    environment.getTaskRunner(), excludedRenderingFormats);
-            if (classpathScannerElement != null) {
-                final List<Package> packages = classpathScannerElement.getPackage();
-                for (Package pkg : packages) {
-                    String packageName = pkg.getValue();
-                    if (packageName != null) {
-                        packageName = packageName.trim();
-                        Boolean recursive = pkg.isRecursive();
-                        if (recursive == null) {
-                            recursive = true;
-                        }
-                        classpathScanner.scanPackage(packageName, recursive);
-                    }
-                }
-            }
-            descriptorProvider = classpathScanner;
+        DescriptorProvider result = null;
+        DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
+        if(providersElement == null) {
+            providersElement = new DescriptorProvidersType();
         }
 
-        return descriptorProvider;
+        // for backward compatibility
+        if(configuration.getClasspathScanner() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getClasspathScanner());
+        }
+        if(configuration.getCustomDescriptorProvider() != null) {
+            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration.getCustomDescriptorProvider());
+        }
+
+        // now go through providers specification and create them
+        for(Object provider: providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
+            DescriptorProvider prov = createDescriptorProvider(provider, environment, temporaryConfiguration);
+            if(result != null) {
+                result = new CompositeDescriptorProvider(result, prov);
+            } else {
+                result = prov;
+            }
+        }
+
+        return result;
+    }
+
+    private DescriptorProvider createDescriptorProvider(Object providerElement, DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        if(providerElement instanceof CustomElementType) {
+            return createCustomElement(
+                    ((CustomElementType) providerElement),
+                    DescriptorProvider.class,
+                    temporaryConfiguration, true);
+        } else if(providerElement instanceof ClasspathScannerType) {
+            return createClasspathScanDescriptorProvider((ClasspathScannerType)providerElement, environment);
+        } else if(providerElement instanceof RemoteComponentsType) {
+            return createRemoteDescriptorProvider((RemoteComponentsType)providerElement);
+        } else {
+            throw new IllegalStateException("Unsupported descritpro provider type: " + providerElement.getClass());
+        }
+    }
+
+    private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(final ClasspathScannerType classpathScannerElement, DataCleanerEnvironment environment) {
+        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
+        for (String excludedRenderingFormat : classpathScannerElement.getExcludedRenderingFormat()) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor
+                        .loadClass(excludedRenderingFormat);
+                excludedRenderingFormats.add(cls);
+            } catch (ClassNotFoundException e) {
+                logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
+            }
+        }
+        final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(
+                environment.getTaskRunner(), excludedRenderingFormats);
+        for (Package pkg : classpathScannerElement.getPackage()) {
+            String packageName = pkg.getValue();
+            if (packageName != null) {
+                packageName = packageName.trim();
+                Boolean recursive = pkg.isRecursive();
+                if (recursive == null) {
+                    recursive = true;
+                }
+                classpathScanner.scanPackage(packageName, recursive);
+            }
+        }
+        return classpathScanner;
+    }
+
+    private DescriptorProvider createRemoteDescriptorProvider(RemoteComponentsType providerElement) {
+        RemoteComponentServerType server = providerElement.getServer();
+        return new RemoteDescriptorProvider(server.getUrl(), server.getUsername(), server.getPassword());
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,
@@ -408,8 +445,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final InMemoryStorageProviderType inMemoryStorageProvider = storageProviderType.getInMemory();
         if (inMemoryStorageProvider != null) {
-            int maxRowsThreshold = inMemoryStorageProvider.getMaxRowsThreshold();
-            return new InMemoryStorageProvider(maxRowsThreshold);
+            final int maxRowsThreshold = inMemoryStorageProvider.getMaxRowsThreshold();
+            final int maxSetsThreshold = inMemoryStorageProvider.getMaxSetsThreshold();
+            return new InMemoryStorageProvider(maxSetsThreshold, maxRowsThreshold);
         }
 
         final CustomElementType customStorageProvider = storageProviderType.getCustomStorageProvider();
@@ -428,39 +466,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             return storageProvider;
         }
 
-        final HsqldbStorageProviderType hsqldbStorageProvider = storageProviderType.getHsqldb();
-        if (hsqldbStorageProvider != null) {
-            String directoryPath = hsqldbStorageProvider.getTempDirectory();
-            if (directoryPath == null) {
-                directoryPath = _interceptor.getTemporaryStorageDirectory();
-            }
-
-            directoryPath = createFilename(directoryPath);
-
-            if (directoryPath == null) {
-                return new HsqldbStorageProvider();
-            } else {
-                return new HsqldbStorageProvider(directoryPath);
-            }
-        }
-
-        final H2StorageProviderType h2StorageProvider = storageProviderType.getH2Database();
-        if (h2StorageProvider != null) {
-            String directoryPath = h2StorageProvider.getTempDirectory();
-            if (directoryPath == null) {
-                directoryPath = _interceptor.getTemporaryStorageDirectory();
-            }
-
-            directoryPath = createFilename(directoryPath);
-
-            if (directoryPath == null) {
-                return new H2StorageProvider();
-            } else {
-                return new H2StorageProvider(directoryPath);
-            }
-        }
-
-        throw new IllegalStateException("Unknown storage provider type: " + storageProviderType);
+        return environment.getStorageProvider();
     }
 
     @SuppressWarnings("deprecation")
@@ -691,6 +697,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (SalesforceDatastoreType) datastoreType);
             } else if (datastoreType instanceof SugarCrmDatastoreType) {
                 ds = createDatastore(name, (SugarCrmDatastoreType) datastoreType);
+            } else if (datastoreType instanceof DatahubDatastoreType) {
+                ds = createDatastore(name, (DatahubDatastoreType) datastoreType);
             } else if (datastoreType instanceof CompositeDatastoreType) {
                 // skip composite datastores at this point
                 continue;
@@ -792,6 +800,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private Datastore createDatastore(String name, ElasticSearchDatastoreType datastoreType) {
         final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
+        final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
+        final String keystorePath = getStringVariable("keystorePath", datastoreType.getKeystorePath());
+        final String keystorePassword = getPasswordVariable("keystorePassword", datastoreType.getKeystorePassword());
 
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         if (port == null) {
@@ -834,7 +847,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, tableDefs);
+        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName,
+                tableDefs, username, password, ssl, keystorePath, keystorePassword);
     }
 
     private Datastore createDatastore(String name, JsonDatastoreType datastoreType) {
@@ -891,7 +905,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String username = getStringVariable("username", datastoreType.getUsername());
         String password = getPasswordVariable("password", datastoreType.getPassword());
         String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
-        return new SalesforceDatastore(name, username, password, securityToken);
+        String endpointUrl = getStringVariable("endpointUrl", datastoreType.getEndpointUrl());
+        return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
     }
 
     private Datastore createDatastore(String name, SugarCrmDatastoreType datastoreType) {
@@ -900,6 +915,19 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
     }
+
+    private Datastore createDatastore(String name, DatahubDatastoreType datastoreType) {
+        String host = getStringVariable("host", datastoreType.getHost());
+        Integer port = getIntegerVariable("port", datastoreType.getPort());
+        String username = getStringVariable("username", datastoreType.getUsername());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
+        boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
+        boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
+        DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
+        DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
+        return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers, dataHubSecurityMode);
+    }
+
 
     private Datastore createDatastore(String name, MongodbDatastoreType mongodbDatastoreType) {
         String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());
@@ -1358,7 +1386,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         @SuppressWarnings("unchecked")
-        E result = (E) ReflectionUtils.newInstance(foundClass);
+        E result = ReflectionUtils.newInstance((Class<E>)foundClass);
 
         ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
 
@@ -1390,7 +1418,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, true);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
         lifeCycleHelper.assignProvidedProperties(descriptor, result);
 
         if (initialize) {

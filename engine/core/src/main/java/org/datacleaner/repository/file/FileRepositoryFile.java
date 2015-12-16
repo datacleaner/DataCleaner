@@ -158,6 +158,16 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             readLock.unlock();
         }
     }
+    
+
+    @Override
+    public OutputStream writeFile(boolean append) {
+        try {
+            return new FileOutputStream(_file, append);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     @Override
     public void writeFile(Action<OutputStream> writeCallback) {

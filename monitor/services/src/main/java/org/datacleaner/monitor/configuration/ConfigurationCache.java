@@ -26,8 +26,10 @@ import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
@@ -45,24 +47,37 @@ final class ConfigurationCache {
 
     private final RepositoryFile _file;
     private final TenantContext _tenantContext;
-    private final DataCleanerEnvironment _environment;
+    private final InjectionManagerFactory _injectionManagerFactory;
     private final Repository _repository;
 
     private volatile DataCleanerConfiguration _configuration;
     private volatile long _lastModifiedCache;
-
-    public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext, Repository repository) {
-        _environment = environment;
+    
+    public ConfigurationCache(InjectionManagerFactory injectionManagerFactory, TenantContext tenantContext, Repository repository) {
+        _injectionManagerFactory = injectionManagerFactory;
         _tenantContext = tenantContext;
         _repository = repository;
-
+        
         final RepositoryFolder tenantFolder = _tenantContext.getTenantRootFolder();
-
+        
         RepositoryFile file = tenantFolder.getFile("conf.xml");
         if (file == null) {
             file = tenantFolder.createFile("conf.xml", new WriteDefaultTenantConfigurationAction());
         }
         _file = file;
+    }
+
+    /**
+     * 
+     * @param environment
+     * @param tenantContext
+     * @param repository
+     * 
+     * @deprecated use {@link #ConfigurationCache(InjectionManagerFactory, TenantContext, Repository)} instead
+     */
+    @Deprecated
+    public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext, Repository repository) {
+        this(environment.getInjectionManagerFactory(), tenantContext, repository);
     }
 
     public RepositoryFile getConfigurationFile() {
@@ -91,18 +106,19 @@ final class ConfigurationCache {
 
     protected DataCleanerConfiguration readConfiguration() {
         final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository,
-                _tenantContext, _environment);
+                _tenantContext, _injectionManagerFactory);
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
         if (_lastModifiedCache < 0) {
             logger.warn(
-                    "Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.",
+                    "Last modified timestamp was negative ({})! Returning plain DataCleanerConfiguration since this indicates that the file has been deleted.",
                     _lastModifiedCache);
             final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
             final DataCleanerHomeFolder homeFolder = new DataCleanerHomeFolderImpl(tenantRootFolder);
-            return new DataCleanerConfigurationImpl(_environment, homeFolder);
+            final DataCleanerEnvironmentImpl baseEnvironment = MonitorConfigurationReaderInterceptor.createBaseEnvironment(_injectionManagerFactory);
+            return new DataCleanerConfigurationImpl(baseEnvironment, homeFolder);
         }
 
         logger.info("Reading configuration from file: {}", configurationFile);

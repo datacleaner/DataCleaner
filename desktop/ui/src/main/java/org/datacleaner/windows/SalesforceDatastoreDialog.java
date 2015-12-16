@@ -19,15 +19,15 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
+import com.google.common.base.Strings;
+import com.google.inject.Inject;
+import java.awt.*;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
-import javax.swing.JComponent;
-import javax.swing.JPasswordField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.guice.Nullable;
@@ -40,21 +40,25 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.HelpIcon;
 import org.jdesktop.swingx.JXTextField;
-
-import com.google.inject.Inject;
 
 /**
  * Datastore dialog for Salesforce.com datastores
  */
 public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<SalesforceDatastore> {
+    private static final String DEFAULT_SALESFORCE_LABEL = "Default Salesforce.com endpoint";
+    private static final String DEFAULT_SALESFORCE_URL = "";
+    private static final String TEST_SALESFORCE_LABEL = "Test Salesforce.com endpoint";
+    private static final String TEST_SALESFORCE_URL = "https://test.salesforce.com/services/Soap/u/28.0";
 
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
     private final JXTextField _securityTokenTextField;
+    private final DCComboBox<String> _endpointUrlComboBox;
 
     @Inject
     public SalesforceDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
@@ -64,25 +68,24 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
         _securityTokenTextField = WidgetFactory.createTextField("Security token");
-        
-        _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+        _endpointUrlComboBox = new DCComboBox<>(Arrays.asList(DEFAULT_SALESFORCE_LABEL, TEST_SALESFORCE_LABEL));
+        final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
             }
-        });
-        _passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+        };
+
+        _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _securityTokenTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _endpointUrlComboBox.addListener(new DCComboBox.Listener<String>() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            public void onItemSelected(final String item) {
                 validateAndUpdate();
             }
         });
-        _securityTokenTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
+
 
         if (originalDatastore != null) {
             _datastoreNameTextField.setText(originalDatastore.getName());
@@ -91,9 +94,11 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
             _securityTokenTextField.setText(originalDatastore.getSecurityToken());
+            final String originalDatastoreEndpointUrl = originalDatastore.getEndpointUrl();
+            setComboBoxLabelFromUrl(originalDatastoreEndpointUrl);
         }
     }
-    
+
     @Override
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
@@ -101,21 +106,62 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String username = _usernameTextField.getText();
         if (StringUtils.isNullOrEmpty(username)) {
             setStatusError("Please enter username");
             return false;
         }
-        
+
         final String securityToken = _securityTokenTextField.getText();
         if (StringUtils.isNullOrEmpty(securityToken)) {
             setStatusError("Please enter Salesforce security token");
             return false;
         }
 
+        final String endpointUrl = getUrlFromComboBox();
+
+        if (!StringUtils.isNullOrEmpty(endpointUrl)) {
+            if (!endpointUrl.startsWith("http") || !endpointUrl.contains("://")) {
+                setStatusError("Not a valid endpoint URL");
+                return false;
+            }
+
+            try {
+                URI.create(endpointUrl);
+            } catch (Exception e) {
+                setStatusError("Not a valid endpoint URL: " + e.getMessage());
+                return false;
+            }
+        }
+
         setStatusValid();
         return true;
+    }
+
+    private void setComboBoxLabelFromUrl(final String originalDatastoreEndpointUrl) {
+        if (DEFAULT_SALESFORCE_URL.equals(originalDatastoreEndpointUrl)) {
+            _endpointUrlComboBox.setSelectedItem(DEFAULT_SALESFORCE_LABEL);
+        } else if (TEST_SALESFORCE_URL.equals(originalDatastoreEndpointUrl)) {
+            _endpointUrlComboBox.setSelectedItem(TEST_SALESFORCE_LABEL);
+        } else {
+            _endpointUrlComboBox.addItem(originalDatastoreEndpointUrl);
+            _endpointUrlComboBox.setSelectedItem(originalDatastoreEndpointUrl);
+        }
+    }
+
+    private String getUrlFromComboBox() {
+        final String selectedItem = _endpointUrlComboBox.getSelectedItem();
+
+        final String endpointUrl;
+        if (DEFAULT_SALESFORCE_LABEL.equals(selectedItem)) {
+          endpointUrl = DEFAULT_SALESFORCE_URL;
+        } else if (TEST_SALESFORCE_LABEL.equals(selectedItem)) {
+            endpointUrl = TEST_SALESFORCE_URL;
+        } else {
+            endpointUrl = selectedItem;
+        }
+        return endpointUrl;
     }
 
     @Override
@@ -125,8 +171,9 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
         final String securityToken = _securityTokenTextField.getText();
+        final String endpointUrl = Strings.emptyToNull(getUrlFromComboBox());
 
-        return new SalesforceDatastore(name, username, password, securityToken);
+        return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
     }
 
     @Override
@@ -143,13 +190,13 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
     protected String getDatastoreIconPath() {
         return IconUtils.SALESFORCE_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Salesforce username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Salesforce password", _passwordTextField));
-        
+
         DCPanel securityTokenPanel = new DCPanel(Color.WHITE);
         FlowLayout layout = (FlowLayout) securityTokenPanel.getLayout();
         layout.setVgap(0);
@@ -160,8 +207,10 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _securityTokenTextField.setBorder(WidgetUtils.BORDER_EMPTY);
         securityTokenPanel.add(_securityTokenTextField);
         securityTokenPanel.add(securityTokenHelpIcon);
-        
+
         result.add(new ImmutableEntry<String, JComponent>("Salesforce security token", securityTokenPanel));
+
+        result.add(new ImmutableEntry<String, JComponent>("Endpoint", _endpointUrlComboBox));
         return result;
     }
 

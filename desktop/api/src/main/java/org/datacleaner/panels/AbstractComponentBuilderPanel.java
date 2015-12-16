@@ -33,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -67,6 +68,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final ComponentBuilder _componentBuilder;
     private final ComponentDescriptor<?> _descriptor;
     private final JComponent _buttonPanel;
+    private final OutputDataStreamsViewer _outputDataStreamsViewer;
+    private JXTaskPane _outputDataStreamsTaskPane;
 
     protected AbstractComponentBuilderPanel(String watermarkImagePath, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
@@ -83,6 +86,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _descriptor = componentBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
         _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
+        _outputDataStreamsViewer = new OutputDataStreamsViewer(_componentBuilder);
 
         setLayout(new BorderLayout());
 
@@ -155,23 +159,29 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
                 getPropertyWidgetCollection().registerWidget(property, propertyWidget);
             }
         }
+
+        onOutputDataStreamsChanged();
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
                 _descriptor.getConfiguredProperties());
 
-        List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+
         for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
-            boolean required = propertyDescriptor.isRequired();
-            if (required && propertyDescriptor.isInputColumn()) {
-                inputProperties.add(propertyDescriptor);
-            } else if (required) {
-                requiredProperties.add(propertyDescriptor);
-            } else {
-                optionalProperties.add(propertyDescriptor);
+            final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
+            if (hiddenProperty == null || !hiddenProperty.hiddenForLocalAccess()) {
+                final boolean required = propertyDescriptor.isRequired();
+                if (required && propertyDescriptor.isInputColumn()) {
+                    inputProperties.add(propertyDescriptor);
+                } else if (required) {
+                    requiredProperties.add(propertyDescriptor);
+                } else {
+                    optionalProperties.add(propertyDescriptor);
+                }
             }
         }
 
@@ -283,6 +293,18 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      */
     protected void onConfigurationChanged() {
         getPropertyWidgetCollection().onConfigurationChanged();
+
+        onOutputDataStreamsChanged();
+    }
+
+    private void onOutputDataStreamsChanged() {
+        _taskPaneContainer.remove(_outputDataStreamsTaskPane);
+        _outputDataStreamsViewer.refresh();
+        if (_outputDataStreamsViewer.isEnabled()) {
+            _outputDataStreamsTaskPane = addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams",
+                    _outputDataStreamsViewer);
+            _taskPaneContainer.updateUI();
+        }
     }
 
     /**

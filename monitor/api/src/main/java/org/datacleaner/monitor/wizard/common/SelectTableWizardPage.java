@@ -23,15 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.datacleaner.util.SchemaComparator;
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.monitor.wizard.WizardPageController;
+import org.datacleaner.monitor.wizard.job.JobWizardContext;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the
@@ -90,7 +90,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
             final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
                 @Override
                 public Boolean eval(Schema schema) {
-                    final boolean isInformationSchema = SchemaComparator.isInformationSchema(schema);
+                    final boolean isInformationSchema = MetaModelHelper.isInformationSchema(schema);
                     return !isInformationSchema;
                 }
             });

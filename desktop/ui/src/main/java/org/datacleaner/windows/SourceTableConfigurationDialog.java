@@ -65,13 +65,13 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     @Override
     public void addNotify() {
         super.addNotify();
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        _analysisJobBuilder.addSourceColumnChangeListener(this);
     }
 
     @Override
     public void removeNotify() {
         super.removeNotify();
-        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        _analysisJobBuilder.removeSourceColumnChangeListener(this);
     }
 
     @Override

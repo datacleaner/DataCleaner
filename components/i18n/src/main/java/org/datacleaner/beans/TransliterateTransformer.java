@@ -31,14 +31,14 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.EncodingCategory;
 
 import com.ibm.icu.text.Transliterator;
 
 @Named("Transliterate")
 @Description("Converts non-latin characters to latin (or even ASCII) characters.")
 @ExternalDocumentation({ @DocumentationLink(title = "Internationalization in DataCleaner", url = "https://www.youtube.com/watch?v=ApA-nhtLbhI", type = DocumentationType.VIDEO, version = "3.0") })
-@Categorized(StringManipulationCategory.class)
+@Categorized(EncodingCategory.class)
 public class TransliterateTransformer implements Transformer {
 
     @Configured

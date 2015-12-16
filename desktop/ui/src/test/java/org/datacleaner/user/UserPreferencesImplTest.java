@@ -19,6 +19,7 @@
  */
 package org.datacleaner.user;
 
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -27,7 +28,8 @@ import junit.framework.TestCase;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.reference.Dictionary;
@@ -70,7 +72,7 @@ public class UserPreferencesImplTest extends TestCase {
         up.setProxyEnabled(true);
         up.setProxyAuthenticationEnabled(true);
 
-        DefaultHttpClient httpClient = (DefaultHttpClient) up.createHttpClient();
+        CloseableHttpClient httpClient = up.createHttpClient();
 
         String computername = InetAddress.getLocalHost().getHostName();
         assertNotNull(computername);
@@ -80,15 +82,15 @@ public class UserPreferencesImplTest extends TestCase {
         Credentials credentials;
 
         authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
         assertEquals("[principal: bar][workstation: " + computername.toUpperCase() + "]", credentials.toString());
 
         authScope = new AuthScope("host", 1234);
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
         assertEquals("[principal: bar]", credentials.toString());
 
         authScope = new AuthScope("anotherhost", AuthScope.ANY_PORT);
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
         assertNull(credentials);
     }
 
@@ -101,7 +103,7 @@ public class UserPreferencesImplTest extends TestCase {
         up.setProxyEnabled(true);
         up.setProxyAuthenticationEnabled(true);
 
-        DefaultHttpClient httpClient = (DefaultHttpClient) up.createHttpClient();
+        CloseableHttpClient httpClient = up.createHttpClient();
 
         String computername = InetAddress.getLocalHost().getHostName();
         assertNotNull(computername);
@@ -111,15 +113,26 @@ public class UserPreferencesImplTest extends TestCase {
         Credentials credentials;
 
         authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
-        assertEquals("[principal: FOO/bar][workstation: " + computername.toUpperCase() + "]", credentials.toString());
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
+        assertEquals("[principal: FOO/bar][workstation: " + computername.toUpperCase() + "]", credentials.toString()
+                .replaceAll("\\\\", "/"));
 
         authScope = new AuthScope("host", 1234);
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
         assertEquals("[principal: FOO\\bar]", credentials.toString());
-        
+
         authScope = new AuthScope("anotherhost", AuthScope.ANY_PORT);
-        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
         assertNull(credentials);
+    }
+
+    private CredentialsProvider getCredentialsProvider(CloseableHttpClient httpClient) {
+        try {
+            Field field = httpClient.getClass().getDeclaredField("credentialsProvider");
+            field.setAccessible(true);
+            return (CredentialsProvider) field.get(httpClient);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

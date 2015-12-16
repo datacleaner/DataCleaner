@@ -29,4 +29,6 @@ public interface TenantContextFactory {
     public TenantContext getContext(TenantIdentifier tenant);
     
     public TenantContext getContext(String tenantId);
+
+    public Iterable<TenantContext> getActiveTenantContexts();
 }

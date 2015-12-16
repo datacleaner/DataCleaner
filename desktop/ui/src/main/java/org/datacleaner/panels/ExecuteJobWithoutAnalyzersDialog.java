@@ -29,6 +29,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.FileResource;
+import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
@@ -36,8 +38,8 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -50,11 +52,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AbstractDialog;
-import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * A panel that presents options for the user to execute a job that has no
@@ -65,14 +63,14 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final InjectorBuilder _injectorBuilder;
     private final UserPreferences _userPreferences;
+    private final DCModule _dcModule;
 
-    public ExecuteJobWithoutAnalyzersDialog(InjectorBuilder injectorBuilder, WindowContext windowContext,
+    public ExecuteJobWithoutAnalyzersDialog(DCModule dcModule, WindowContext windowContext,
             AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-execute.png"));
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        _injectorBuilder = injectorBuilder;
+        _dcModule = dcModule;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
     }
@@ -146,12 +144,19 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
                 final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
                         .addAnalyzer(analyzerClass);
+
                 analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
 
                 final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                analyzer.setConfiguredProperty("File",
-                        createFile("datacleaner-" + formattedDate + "-output", filenameExtension));
+                final FileResource resource = createResource("datacleaner-" + formattedDate + "-output",
+                        filenameExtension);
+                if (analyzerClass == CreateExcelSpreadsheetAnalyzer.class) {
+                    final File file = resource.getFile();
+                    analyzer.setConfiguredProperty("File", file);
+                } else {
+                    analyzer.setConfiguredProperty("File", resource);
+                }
 
                 final ConfiguredPropertyDescriptor sheetNameProperty = analyzer.getDescriptor().getConfiguredProperty(
                         "Sheet name");
@@ -159,12 +164,10 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
                     analyzer.setConfiguredProperty(sheetNameProperty, "data");
                 }
 
-                final Injector injector = _injectorBuilder.with(AnalysisJobBuilder.class, copyAnalysisJobBuilder)
-                        .createInjector();
-                final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-                resultWindow.open();
+                final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
+                        copyAnalysisJobBuilder);
                 ExecuteJobWithoutAnalyzersDialog.this.close();
-                resultWindow.startAnalysis();
+                runAnalysis.run();
             }
         };
     }
@@ -174,7 +177,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         return button;
     }
 
-    private File createFile(String filenamePrefix, String extension) {
+    private FileResource createResource(String filenamePrefix, String extension) {
         final File directory = _userPreferences.getSaveDatastoreDirectory();
         int attempt = 0;
         while (true) {
@@ -185,11 +188,11 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
                 filename = filenamePrefix + "_" + attempt + extension;
             }
 
-            File candidate = new File(directory, filename);
-            if (!candidate.exists()) {
-                return candidate;
+            final File file = new File(directory, filename);
+            final FileResource resourceCandidate = new FileResource(file);
+            if (!resourceCandidate.isExists()) {
+                return resourceCandidate;
             }
-
             attempt++;
         }
     }
@@ -199,11 +202,10 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
         DCWindowContext windowContext = new DCWindowContext(new DataCleanerConfigurationImpl(),
                 new UserPreferencesImpl(null), null);
-        InjectorBuilder injectorBuilder = Guice.createInjector(new DCModuleImpl()).getInstance(InjectorBuilder.class);
 
         UserPreferences userPreferences = new UserPreferencesImpl(null);
-        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(injectorBuilder, windowContext,
-                null, userPreferences);
+        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(new DCModuleImpl(),
+                windowContext, null, userPreferences);
         dialog.open();
     }
 }

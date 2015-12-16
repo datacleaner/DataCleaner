@@ -31,7 +31,6 @@ import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.database.DatabaseDriverCatalog;
@@ -40,13 +39,13 @@ import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatabaseDriversPanel;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -80,7 +79,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		_databaseDriverCatalog = databaseDriverCatalog;
 		_databaseDriversPanel = databaseDriversPanel;
 		_userPreferences = userPreferences;
-		_filenameTextFields = new ArrayList<FilenameTextField>();
+		_filenameTextFields = new ArrayList<>();
 		_filesPanel = new DCPanel();
 		_filesPanel.setLayout(new VerticalLayout(4));
 
@@ -123,7 +122,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 	private File[] getDriverFiles() {
 		List<File> files = new ArrayList<File>();
-		for (FilenameTextField filenameTextField : _filenameTextFields) {
+		for (AbstractResourceTextField<?> filenameTextField : _filenameTextFields) {
 			final String filename = filenameTextField.getFilename();
 			if (!StringUtils.isNullOrEmpty(filename)) {
 				files.add(new File(filename));
@@ -146,13 +145,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
 		filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
-			public void onSelected(FilenameTextField filenameTextField, File file) {
-				updateStatus();
-			}
-		});
-		filenameTextField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
+			public void onSelected(final FilenameTextField filenameTextField, final File file) {
 				updateStatus();
 			}
 		});

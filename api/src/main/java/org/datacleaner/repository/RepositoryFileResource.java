@@ -23,8 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.AbstractResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ResourceException;
 import org.apache.metamodel.util.SerializableRef;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Resource} wrapping of a {@link RepositoryFile}.
  */
-public class RepositoryFileResource implements Resource, Serializable {
+public class RepositoryFileResource extends AbstractResource implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -150,24 +149,16 @@ public class RepositoryFileResource implements Resource, Serializable {
         return getRepositoryFile().readFile();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void append(final Action<OutputStream> appendAction) throws ResourceException {
-        getRepositoryFile().writeFile(appendAction, true);
+    public OutputStream append() throws ResourceException {
+        return getRepositoryFile().writeFile(true);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void read(Action<InputStream> callback) throws ResourceException {
-        getRepositoryFile().readFile(callback);
-    }
-
-    @Override
-    public <E> E read(Func<InputStream, E> callback) throws ResourceException {
-        return getRepositoryFile().readFile(callback);
-    }
-
-    @Override
-    public void write(Action<OutputStream> callback) throws ResourceException {
-        getRepositoryFile().writeFile(callback);
+    public OutputStream write() throws ResourceException {
+        return getRepositoryFile().writeFile(false);
     }
 
 }

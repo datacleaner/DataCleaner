@@ -19,9 +19,15 @@
  */
 package org.datacleaner.reference;
 
+import java.util.Collection;
+
+/**
+ * Represents a single set of synonymuous terms. Each will have a master term
+ * (e.g. "William") and a set of synonyms (e.g. "Bill", "Will")
+ */
 public interface Synonym {
 
-	public String getMasterTerm();
+    public String getMasterTerm();
 
-	public ReferenceValues<String> getSynonyms();
+    public Collection<String> getSynonyms();
 }

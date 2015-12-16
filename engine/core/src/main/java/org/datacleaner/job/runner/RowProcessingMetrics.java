@@ -69,6 +69,13 @@ public interface RowProcessingMetrics {
     public Table getTable();
 
     /**
+     * Gets the {@link RowProcessingStream} that is being processed
+     * 
+     * @return
+     */
+    public RowProcessingStream getStream();
+
+    /**
      * Gets the expected amount of rows to process. Use this method only if
      * nescesary, since it may query the database to find the record count.
      * 

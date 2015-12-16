@@ -22,6 +22,7 @@ package org.datacleaner.util;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.metadata.ColumnMeaning;
 
 public class DefaultEnumMatcherTest extends TestCase {
@@ -46,36 +47,36 @@ public class DefaultEnumMatcherTest extends TestCase {
         }
     }
 
-    private final EnumMatcher<TestEnum> matcher = new DefaultEnumMatcher<TestEnum>(TestEnum.class);
+    private final DefaultEnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
 
     public void testSuggestByAlias() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("fu"));
-        assertEquals(TestEnum.FOO, matcher.suggestMatch(" FU*"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("fu").asJavaEnum());
+        assertEquals(TestEnum.FOO, matcher.suggestMatch(" FU*").asJavaEnum());
 
-        assertEquals(TestEnum.BAR, matcher.suggestMatch("Barbara"));
+        assertEquals(TestEnum.BAR, matcher.suggestMatch("Barbara").asJavaEnum());
     }
 
     public void testSuggestByName() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("nameFoo"));
-        assertEquals(TestEnum.BAR, matcher.suggestMatch("nameBAR"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("nameFoo").asJavaEnum());
+        assertEquals(TestEnum.BAR, matcher.suggestMatch("nameBAR").asJavaEnum());
     }
 
     public void testSuggestByConstantName() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("foo"));
-        assertEquals(TestEnum.BAR, matcher.suggestMatch("BAR"));
-        assertEquals(TestEnum.BAZ, matcher.suggestMatch("Baz"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("foo").asJavaEnum());
+        assertEquals(TestEnum.BAR, matcher.suggestMatch("BAR").asJavaEnum());
+        assertEquals(TestEnum.BAZ, matcher.suggestMatch("Baz").asJavaEnum());
     }
 
     public void testSuggestIgnoringNumbers() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("fee"));
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber"));
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber3"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("fee").asJavaEnum());
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber").asJavaEnum());
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber3").asJavaEnum());
         assertEquals(null, matcher.suggestMatch("bor"));
     }
 
     public void testSuggestBasedOnSecondaryMatch() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("data_cleaner"));
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("data1234cleaner"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("data_cleaner").asJavaEnum());
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("data1234cleaner").asJavaEnum());
     }
 
     public void testDontSuggest() throws Exception {
@@ -83,16 +84,16 @@ public class DefaultEnumMatcherTest extends TestCase {
     }
 
     public void testDontMatchTooEager() throws Exception {
-        final EnumMatcher<ColumnMeaning> matcher = new DefaultEnumMatcher<>(ColumnMeaning.class);
+        final DefaultEnumMatcher matcher = new DefaultEnumMatcher(ColumnMeaning.class);
 
-        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone no"));
-        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone ID"));
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone no").asJavaEnum());
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone ID").asJavaEnum());
 
         assertEquals(null, matcher.suggestMatch("Customer"));
 
-        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Order ID"));
-        assertEquals(ColumnMeaning.PRODUCT_CODE, matcher.suggestMatch("Product ID"));
-        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Person ID"));
-        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Customer ID"));
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Order ID").asJavaEnum());
+        assertEquals(ColumnMeaning.PRODUCT_CODE, matcher.suggestMatch("Product ID").asJavaEnum());
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Person ID").asJavaEnum());
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Customer ID").asJavaEnum());
     }
 }

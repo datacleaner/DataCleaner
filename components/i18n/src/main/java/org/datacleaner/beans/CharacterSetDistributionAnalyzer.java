@@ -27,17 +27,24 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
+import org.datacleaner.job.output.OutputDataStreamBuilder;
+import org.datacleaner.job.output.OutputDataStreams;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CharacterSetDistributionResult;
 import org.datacleaner.result.Crosstab;
@@ -162,6 +169,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
                 }
             }
         }
+
         return new CharacterSetDistributionResult(_columns, unicodeSetNames, crosstab);
     }
 }

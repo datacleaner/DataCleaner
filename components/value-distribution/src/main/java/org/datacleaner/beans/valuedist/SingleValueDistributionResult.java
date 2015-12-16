@@ -75,6 +75,22 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         _nullCount = 0;
     }
 
+    public SingleValueDistributionResult(String groupName, ValueCountList topValues, int uniqueValueCount,
+            int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+            InputColumn<?>[] highlightedColumns) {
+        this(groupName, topValues, null, null, uniqueValueCount, distinctCount, totalCount, annotations,
+                nullValueAnnotation, annotationFactory, highlightedColumns);
+    }
+
+    public SingleValueDistributionResult(String groupName, ValueCountList topValues, Collection<String> uniqueValues,
+            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+            InputColumn<?>[] highlightedColumns) {
+        this(groupName, topValues, null, uniqueValues, uniqueValueCount, distinctCount, totalCount, annotations,
+                nullValueAnnotation, annotationFactory, highlightedColumns);
+    }
+
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
             int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
             RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
@@ -94,9 +110,18 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         }
 
         if (value == null) {
-            return _nullValueAnnotation != null;
+            if (_nullValueAnnotation != null) {
+                return annotationFactory.hasSampleRows(_nullValueAnnotation);
+            } else {
+                return false;
+            }
         }
-        return _annotations.containsKey(value);
+        final RowAnnotation annotation = _annotations.get(value);
+        if (annotation == null) {
+            return false;
+        }
+
+        return annotationFactory.hasSampleRows(annotation);
     }
 
     @Override
@@ -149,6 +174,10 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
             return ValueCountListImpl.emptyList();
         }
         return _bottomValues;
+    }
+
+    public InputColumn<?>[] getHighlightedColumns() {
+        return _highlightedColumns;
     }
 
     @Override

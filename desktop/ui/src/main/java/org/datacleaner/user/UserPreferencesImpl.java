@@ -36,11 +36,13 @@ import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
@@ -520,10 +522,12 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public HttpClient createHttpClient() {
-        final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
-        final DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
-
+    public CloseableHttpClient createHttpClient() {
+        final HttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        
+        
         if (isProxyEnabled()) {
             // set up HTTP proxy
             final String proxyHostname = getProxyHostname();
@@ -531,14 +535,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
             try {
                 final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
-                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                requestConfigBuilder.setProxy(proxy);
 
                 if (isProxyAuthenticationEnabled()) {
                     final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
                     final String proxyUsername = getProxyUsername();
                     final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxyUsername,
                             getProxyPassword());
-                    httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+                    credentialsProvider.setCredentials(authScope, credentials);
 
                     final int backslashIndex = proxyUsername.lastIndexOf('\\');
                     final String ntUsername;
@@ -560,14 +564,16 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                     NTCredentials ntCredentials = new NTCredentials(ntUsername, getProxyPassword(), workstation,
                             ntDomain);
                     AuthScope ntAuthScope = new AuthScope(proxyHostname, proxyPort, AuthScope.ANY_REALM, "ntlm");
-                    httpClient.getCredentialsProvider().setCredentials(ntAuthScope, ntCredentials);
+                    credentialsProvider.setCredentials(ntAuthScope, ntCredentials);
                 }
             } catch (Exception e) {
                 // ignore proxy creation and return http client without it
                 logger.error("Unexpected error occurred while initializing HTTP proxy", e);
             }
         }
-
+        
+        final RequestConfig requestConfig = requestConfigBuilder.build();
+        final CloseableHttpClient httpClient = HttpClients.custom().useSystemProperties().setConnectionManager(connectionManager).setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig).build();
         return httpClient;
     }
 }

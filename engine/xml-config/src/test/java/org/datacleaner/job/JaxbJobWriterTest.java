@@ -37,6 +37,10 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.beans.CompletenessAnalyzer.Condition;
+import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.beans.filter.NullCheckFilter;
@@ -45,6 +49,7 @@ import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -52,6 +57,8 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -63,6 +70,7 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 
+@SuppressWarnings("deprecation")
 public class JaxbJobWriterTest extends TestCase {
 
     // mock metadata factory used in this test case because we will otherwise
@@ -214,7 +222,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("        <data-context ref=_db_/>", lines[8]);
             assertEquals("        <columns>", lines[9]);
             assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
-            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>", lines[11]);
+            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>",
+                    lines[11]);
             assertEquals("        </columns>", lines[12]);
             assertEquals("    </source>", lines[13]);
             assertEquals("    <transformation/>", lines[14]);
@@ -241,7 +250,7 @@ public class JaxbJobWriterTest extends TestCase {
         EasyMock.expect(job.getMetadata()).andReturn(AnalysisJobMetadata.EMPTY_METADATA).anyTimes();
         Datastore ds = EasyMock.createMock(Datastore.class);
 
-        EasyMock.expect(job.getDatastore()).andReturn(ds);
+        EasyMock.expect(job.getDatastore()).andReturn(ds).atLeastOnce();
 
         EasyMock.expect(ds.getName()).andReturn("myds");
 
@@ -339,6 +348,71 @@ public class JaxbJobWriterTest extends TestCase {
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file6.xml");
 
+        }
+    }
+
+    public void testReadAndWriteOutputDataStreamsJob() throws Exception {
+        Datastore ds = TestHelper.createSampleDatabaseDatastore("my database");
+        SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(NumberAnalyzer.class));
+
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJob job;
+        try (AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-output-dataset.analysis.xml"))) {
+            job = jobBuilder.toAnalysisJob();
+        }
+
+        assertMatchesBenchmark(job, "JaxbJobWriterTest-testReadAndWriteOutputDataStreamsJob.xml");
+    }
+
+    public void testWriteVariable() throws Exception {
+        final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner", true);
+        CsvDatastore datastore = new CsvDatastore("date-datastore", "src/test/resources/example-dates.csv");
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        JaxbJobReader reader = new JaxbJobReader(configuration);
+        File file = new File("src/test/resources/example-job-variables.xml");
+        AnalysisJobBuilder ajb = reader.create(file);
+
+        assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testWriteVariable.xml");
+    }
+
+    public void testNameClashInMelonAndDefaultScope() throws RuntimeException, Exception {
+        Datastore ds = TestHelper.createSampleDatabaseDatastore("db");
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
+            ajb.setDatastore(ds);
+            ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME");
+            InputColumn<?> inputFirstNameColumn = ajb.getSourceColumnByName("FIRSTNAME");
+
+            AnalyzerComponentBuilder<CompletenessAnalyzer> completenessAnalyzerBuilder = ajb
+                    .addAnalyzer(CompletenessAnalyzer.class);
+            completenessAnalyzerBuilder.addInputColumn(inputFirstNameColumn);
+            Condition[] conditions = new CompletenessAnalyzer.Condition[1];
+            conditions[0] = Condition.NOT_BLANK_OR_NULL;
+            completenessAnalyzerBuilder.setConfiguredProperty("Conditions", conditions);
+
+            OutputDataStream completeRecordsOutputDataStream = completenessAnalyzerBuilder
+                    .getOutputDataStream("Complete rows");
+            AnalysisJobBuilder completeRecordsJobBuilder = completenessAnalyzerBuilder
+                    .getOutputDataStreamJobBuilder(completeRecordsOutputDataStream);
+
+            AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistBuilder = completeRecordsJobBuilder
+                    .addAnalyzer(ValueDistributionAnalyzer.class);
+            valueDistBuilder.addInputColumn(completeRecordsJobBuilder.getSourceColumnByName("Complete rows.FIRSTNAME"));
+
+            // The benchmark expects the id of the source column in the melon to
+            // be different than "col_lastname" which is the ID in the default
+            // scope
+            assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testNameClashInMelonAndDefaultScope.xml");
         }
     }
 

@@ -35,6 +35,16 @@
 		<filter-name>tenantCheckFilter</filter-name>
 		<servlet-name>repository-browser</servlet-name>
 	</filter-mapping>
+
+    <!-- REST API Documentation, allow CORS -->
+    <filter>
+        <filter-name>cors</filter-name>
+        <filter-class>org.datacleaner.documentation.SimpleCORSFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>cors</filter-name>
+        <url-pattern>/repository/swagger.json</url-pattern>
+    </filter-mapping>
 	
 	<!-- JSF listeners -->
 	<listener>

@@ -19,55 +19,66 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Initialize;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.AbstractReferenceData;
 import org.datacleaner.reference.Dictionary;
-import org.datacleaner.reference.ReferenceValues;
+import org.datacleaner.reference.DictionaryConnection;
 import org.junit.Ignore;
 
 @Ignore
 public class MockMonitoredDictionary extends AbstractReferenceData implements Dictionary {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static int id = 0;
+    private static int id = 0;
 
-	private final AtomicInteger _initCount = new AtomicInteger(0);
-	private final AtomicInteger _closeCount = new AtomicInteger(0);
+    private final AtomicInteger _initCount = new AtomicInteger(0);
+    private final AtomicInteger _closeCount = new AtomicInteger(0);
 
-	public MockMonitoredDictionary() {
-		super("mock_dict_" + ++id);
-	}
+    public MockMonitoredDictionary() {
+        super("mock_dict_" + ++id);
+    }
 
-	@Initialize
-	public void init() {
-		_initCount.incrementAndGet();
-	}
+    @Initialize
+    public void init() {
+        _initCount.incrementAndGet();
+    }
 
-	@Close
-	public void close() {
-		_closeCount.incrementAndGet();
-	}
+    @Close
+    public void close() {
+        _closeCount.incrementAndGet();
+    }
 
-	public int getInitCount() {
-		return _initCount.get();
-	}
+    public int getInitCount() {
+        return _initCount.get();
+    }
 
-	public int getCloseCount() {
-		return _closeCount.get();
-	}
+    public int getCloseCount() {
+        return _closeCount.get();
+    }
 
-	@Override
-	public boolean containsValue(String value) {
-		return false;
-	}
+    @Override
+    public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
+        return new DictionaryConnection() {
+            @Override
+            public Iterator<String> getAllValues() {
+                throw new UnsupportedOperationException();
+            }
 
-	@Override
-	public ReferenceValues<String> getValues() {
-		throw new UnsupportedOperationException();
-	}
+            @Override
+            public boolean containsValue(String value) {
+                return false;
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+    }
 
 }

@@ -19,10 +19,7 @@
  */
 package org.datacleaner.reference;
 
-import java.util.Collection;
-
-import org.datacleaner.api.Close;
-import org.datacleaner.api.Initialize;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * A synonym catalog represents a set of synonyms which are related.
@@ -32,38 +29,23 @@ import org.datacleaner.api.Initialize;
  * <li>Country names (with ISO code as master term)</li>
  * <li>Given name synonyms (eg. 'William' is the master term for 'Billy')</li>
  * </ul>
- * 
- * A synonym catalog can have methods annotated with @Initialize and @Close.
- * These will be called before and after a job is executed where the given
- * synonym catalog is used.
- * 
- * Note: Synonym catalogs should be thread-safe!! Make sure to make sensible use
- * of synchronized blocks if there are race conditions in the SynonymCatalog
- * implementation.
- * 
- * @see Initialize
- * @see Close
- * 
- * 
  */
 public interface SynonymCatalog extends ReferenceData {
 
-	/**
-	 * @return The name of this synonym catalog
-	 */
-	public String getName();
+    /**
+     * Gets the name of this synonym catalog
+     * 
+     * @return
+     */
+    public String getName();
 
-	/**
-	 * @return all synonyms contained within this catalog
-	 */
-	public Collection<? extends Synonym> getSynonyms();
-
-	/**
-	 * Searches the catalog for a replacement (master) term for a given term
-	 * 
-	 * @param term
-	 *            the term which is suspected to be a synonym of a master term
-	 * @return the master term found, or null if none is found
-	 */
-	public String getMasterTerm(String term);
+    /**
+     * Opens a connection to the {@link SynonymCatalog}. Keep the connection
+     * open while using the synonym catalog in a session, job or so. Close it
+     * when you don't expect more interaction.
+     * 
+     * @param configuration
+     * @return
+     */
+    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration);
 }

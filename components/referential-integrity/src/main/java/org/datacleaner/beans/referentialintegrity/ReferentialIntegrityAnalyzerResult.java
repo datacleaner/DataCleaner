@@ -20,12 +20,14 @@
 package org.datacleaner.beans.referentialintegrity;
 
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
 @Description("Records with unresolved foreign key values")
+@Distributed(reducer = ReferentialIntegrityAnalyzerReducer.class)
 public class ReferentialIntegrityAnalyzerResult extends AnnotatedRowsResult {
 
     private static final long serialVersionUID = 1L;

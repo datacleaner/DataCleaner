@@ -21,7 +21,6 @@ package org.datacleaner.cluster;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.metamodel.schema.Column;
@@ -34,9 +33,7 @@ import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
@@ -46,12 +43,13 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
+import org.datacleaner.job.runner.ErrorAwareAnalysisListener;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.job.runner.RowProcessingPublishers;
+import org.datacleaner.job.runner.RowProcessingStream;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,45 +327,36 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     }
 
     private RowProcessingPublishers getRowProcessingPublishers(AnalysisJob job, LifeCycleHelper lifeCycleHelper) {
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(job);
-
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, null, taskRunner, lifeCycleHelper,
-                sourceColumnFinder);
+        final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, errorAwareAnalysisListener,
+                errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
 
         return publishers;
     }
 
     private RowProcessingPublisher getRowProcessingPublisher(RowProcessingPublishers publishers) {
-        final Table[] tables = publishers.getTables();
+        final RowProcessingStream[] streams = publishers.getStreams();
 
-        if (tables.length != 1) {
+        if (streams.length != 1) {
             throw new UnsupportedOperationException("Jobs with multiple source tables are not distributable");
         }
 
-        final Table table = tables[0];
+        final RowProcessingStream stream = streams[0];
 
-        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(table);
+        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(stream);
         return publisher;
     }
 
     private void failIfJobIsUnsupported(AnalysisJob job) throws UnsupportedOperationException {
-        failIfComponentsAreUnsupported(job.getFilterJobs());
-        failIfComponentsAreUnsupported(job.getTransformerJobs());
-        failIfComponentsAreUnsupported(job.getAnalyzerJobs());
-    }
-
-    private void failIfComponentsAreUnsupported(Collection<? extends ComponentJob> jobs)
-            throws UnsupportedOperationException {
-        for (ComponentJob job : jobs) {
-            final ComponentDescriptor<?> descriptor = job.getDescriptor();
-            final boolean distributable = descriptor.isDistributable();
-            if (!distributable) {
-                throw new UnsupportedOperationException("Component is not distributable: " + job);
+        final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job);
+        try {
+            if (!jobBuilder.isDistributable()) {
+                throw new UnsupportedOperationException("Job is not distributable!");
             }
+        } finally {
+            jobBuilder.close();
         }
     }
-
 }

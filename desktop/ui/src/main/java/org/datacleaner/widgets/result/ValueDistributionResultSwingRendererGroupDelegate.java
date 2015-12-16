@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
@@ -78,8 +79,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
     private static final Color[] SLICE_COLORS = DCDrawingSupplier.DEFAULT_FILL_COLORS;
     private static final int DEFAULT_PREFERRED_SLICES = 32;
 
-    private final Map<String, Color> _valueColorMap;
     private final DefaultCategoryDataset _dataset = new DefaultCategoryDataset();
+    private final Map<String, Color> _valueColorMap;
     private final JButton _backButton = WidgetFactory.createDefaultButton("Back", IconUtils.ACTION_BACK);
     private final int _preferredSlices;
     private final String _groupOrColumnName;
@@ -129,25 +130,74 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _valueColorMap.put("PURPLE", WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
         _valueColorMap.put("CYAN", WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT);
         _valueColorMap.put("BLUE", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+        _valueColorMap.put("GREY", WidgetUtils.BG_COLOR_MEDIUM);
+        _valueColorMap.put("GRAY", WidgetUtils.BG_COLOR_MEDIUM);
         _valueColorMap.put("NOT_PROCESSED", WidgetUtils.BG_COLOR_LESS_DARK);
         _valueColorMap.put("FAILURE", WidgetUtils.BG_COLOR_DARKEST);
     }
 
-    public JSplitPane renderGroupResult(final ValueCountingAnalyzerResult result) {
-        final Integer distinctCount = result.getDistinctCount();
-        final Integer unexpectedValueCount = result.getUnexpectedValueCount();
-        final int totalCount = result.getTotalCount();
-
+    public JComponent renderGroupResult(final ValueCountingAnalyzerResult result) {
         _valueCounts = result.getReducedValueFrequencies(_preferredSlices);
+        _valueCounts = moveUniqueToEnd(_valueCounts);
+
         for (ValueFrequency valueCount : _valueCounts) {
             setDataSetValue(valueCount.getName(), valueCount.getCount());
         }
 
+        final ChartPanel chartPanel = createChartPanel(result);
+
         logger.info("Rendering with {} slices", getDataSetItemCount());
         drillToOverview(result);
 
+        _backButton.setMargin(new Insets(0, 0, 0, 0));
+        _backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drillToOverview(result);
+            }
+        });
+
+        _rightPanel.setLayout(new VerticalLayout());
+        _rightPanel.add(_backButton);
+        _rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
+
+        if (chartPanel == null) {
+            return _rightPanel;
+        } else {
+            final DCPanel leftPanel = new DCPanel();
+            leftPanel.setLayout(new VerticalLayout());
+            leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel));
+
+            final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            split.setOpaque(false);
+            split.add(leftPanel);
+            split.add(_rightPanel);
+            split.setDividerLocation(550);
+
+            return split;
+        }
+
+    }
+
+    /**
+     * Creates a chart panel, or null if chart display is not applicable.
+     * 
+     * @param result
+     * @return
+     */
+    private ChartPanel createChartPanel(ValueCountingAnalyzerResult result) {
+        if (_valueCounts.size() > ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD) {
+            logger.info("Display threshold of {} in chart surpassed (got {}). Skipping chart.",
+                    ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD, _valueCounts.size());
+            return null;
+        }
+
+        final Integer distinctCount = result.getDistinctCount();
+        final Integer unexpectedValueCount = result.getUnexpectedValueCount();
+        final int totalCount = result.getTotalCount();
+
         // chart for display of the dataset
-        String title = "Value distribution of " + _groupOrColumnName;
+        final String title = "Value distribution of " + _groupOrColumnName;
         final JFreeChart chart = ChartFactory.createBarChart(title, "Value", "Count", _dataset,
                 PlotOrientation.HORIZONTAL, true, true, false);
 
@@ -200,31 +250,27 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             }
         }
 
-        final ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
+        return ChartUtils.createPanel(chart, false);
+    }
 
-        final DCPanel leftPanel = new DCPanel();
-        leftPanel.setLayout(new VerticalLayout());
-        leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel));
+    private Collection<ValueFrequency> moveUniqueToEnd(Collection<ValueFrequency> valueCounts) {
 
-        _backButton.setMargin(new Insets(0, 0, 0, 0));
-        _backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drillToOverview(result);
+        ValueFrequency uniqueValueFrequency = null;
+        for (ValueFrequency valueFrequency : valueCounts) {
+            if ("<unique>".equals(valueFrequency.getName())) {
+                uniqueValueFrequency = valueFrequency;
+                break;
             }
-        });
+        }
 
-        _rightPanel.setLayout(new VerticalLayout());
-        _rightPanel.add(_backButton);
-        _rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
-
-        final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        split.setOpaque(false);
-        split.add(leftPanel);
-        split.add(_rightPanel);
-        split.setDividerLocation(550);
-
-        return split;
+        if (uniqueValueFrequency != null) {
+            final List<ValueFrequency> valueCountsList = new ArrayList<>(valueCounts);
+            valueCountsList.remove(uniqueValueFrequency);
+            valueCountsList.add(uniqueValueFrequency);
+            return valueCountsList;
+        } else {
+            return valueCounts;
+        }
     }
 
     public CategoryDataset getDataset() {

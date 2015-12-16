@@ -24,12 +24,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 public class RegexSwapClientTest extends TestCase {
 
     public void testUpdateContent() throws Exception {
-        RegexSwapClient client = new RegexSwapClient(new DefaultHttpClient());
+        RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
         client.getCategories();
         Collection<Category> categories = client.getCategories();
         assertFalse(categories.isEmpty());

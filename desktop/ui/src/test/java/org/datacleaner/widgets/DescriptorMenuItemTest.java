@@ -23,14 +23,14 @@ import javax.swing.JComponent;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
+import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.descriptors.Descriptors;
 
 public class DescriptorMenuItemTest extends TestCase {
 
     public void testToolTipSize() throws Exception {
         DescriptorMenuItem menuItem = new DescriptorMenuItem(null, null,
-                Descriptors.ofTransformer(EmailStandardizerTransformer.class));
+                Descriptors.ofTransformer(TokenizerTransformer.class));
 
         JComponent toolTipPanel = menuItem.createToolTipPanel();
         assertTrue(1000 > toolTipPanel.getPreferredSize().width);

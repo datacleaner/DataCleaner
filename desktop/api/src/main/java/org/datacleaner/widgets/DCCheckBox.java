@@ -39,117 +39,118 @@ import org.datacleaner.util.WidgetUtils;
  * A checkbox that carries a value, which is convenient for modelling the object
  * that the checkbox represents (such as a Dictionary, a Datastore etc.)
  * 
- * @param <E> the type of element that the checkbox represents
+ * @param <E>
+ *            the type of element that the checkbox represents
  */
 public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static interface Listener<E> {
-		public void onItemSelected(E item, boolean selected);
-	}
+    public static interface Listener<E> {
+        public void onItemSelected(E item, boolean selected);
+    }
 
-	private static final Border HOVER_BORDER = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
-	private static final Border REGULAR_BORDER = new EmptyBorder(1, 1, 1, 1);
+    private static final Border HOVER_BORDER = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
+    private static final Border REGULAR_BORDER = new EmptyBorder(1, 1, 1, 1);
 
-	private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
-	private E _value;
-	private volatile Border _previousBorder;
+    private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
+    private E _value;
+    private volatile Border _previousBorder;
 
-	public DCCheckBox(String text, boolean selected) {
-		super(text, selected);
-		if (!StringUtils.isNullOrEmpty(text)) {
-			setBorder(REGULAR_BORDER);
-			setBorderPainted(true);
-			addMouseListener(this);
-		}
-		super.addItemListener(this);
-	}
+    public DCCheckBox(String text, boolean selected) {
+        super(text, selected);
+        if (!StringUtils.isNullOrEmpty(text)) {
+            setBorder(REGULAR_BORDER);
+            setBorderPainted(true);
+            addMouseListener(this);
+        }
+        super.addItemListener(this);
+    }
 
-	public E getValue() {
-		return _value;
-	}
+    public E getValue() {
+        return _value;
+    }
 
-	public void setValue(E value) {
-		_value = value;
-	}
-	
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		notifyListeners();
-	}
+    public void setValue(E value) {
+        _value = value;
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        notifyListeners();
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		if (_previousBorder == null) {
-			_previousBorder = getBorder();
-		}
-		setBorder(HOVER_BORDER);
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		setBorder(_previousBorder);
-		_previousBorder = null;
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        if (_previousBorder == null) {
+            _previousBorder = getBorder();
+        }
+        setBorder(HOVER_BORDER);
+    }
 
-	/**
-	 * Adds a listener as the first in the list of listeners.
-	 * 
-	 * @param listener
-	 */
-	public void addListenerToHead(Listener<E> listener) {
-		_listeners.add(0, listener);
-	}
+    @Override
+    public void mouseExited(MouseEvent e) {
+        setBorder(_previousBorder);
+        _previousBorder = null;
+    }
 
-	public void addListener(Listener<E> listener) {
-		_listeners.add(listener);
-	}
+    /**
+     * Adds a listener as the first in the list of listeners.
+     * 
+     * @param listener
+     */
+    public void addListenerToHead(Listener<E> listener) {
+        _listeners.add(0, listener);
+    }
 
-	public void removeListener(Listener<E> listener) {
-		_listeners.remove(listener);
-	}
+    public void addListener(Listener<E> listener) {
+        _listeners.add(listener);
+    }
 
-	/**
-	 * @deprecated use {@link #addListener(Listener)} instead
-	 */
-	@Deprecated
-	@Override
-	public void addItemListener(ItemListener aListener) {
-		super.addItemListener(aListener);
-	}
+    public void removeListener(Listener<E> listener) {
+        _listeners.remove(listener);
+    }
 
-	/**
-	 * @deprecated use {@link #addListener(Listener)} instead
-	 */
-	@Deprecated
-	@Override
-	public void addActionListener(ActionListener l) {
-		super.addActionListener(l);
-	}
+    /**
+     * @deprecated use {@link #addListener(Listener)} instead
+     */
+    @Deprecated
+    @Override
+    public void addItemListener(ItemListener aListener) {
+        super.addItemListener(aListener);
+    }
 
-	public void notifyListeners() {
-		notifyListeners(getValue(), isSelected());
-	}
+    /**
+     * @deprecated use {@link #addListener(Listener)} instead
+     */
+    @Deprecated
+    @Override
+    public void addActionListener(ActionListener l) {
+        super.addActionListener(l);
+    }
 
-	private void notifyListeners(E item, boolean selected) {
-		// notify listeners
-		for (Listener<E> listener : _listeners) {
-			listener.onItemSelected(item, selected);
-		}
-	}
+    public void notifyListeners() {
+        notifyListeners(getValue(), isSelected());
+    }
+
+    private void notifyListeners(E item, boolean selected) {
+        // notify listeners
+        for (Listener<E> listener : _listeners) {
+            listener.onItemSelected(item, selected);
+        }
+    }
 
     public void setSelected(boolean selected, boolean notifyListeners) {
         final boolean previous = isSelected();
@@ -158,5 +159,10 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
         }
         setSelected(selected);
         notifyListeners();
+    }
+
+    @Override
+    public String toString() {
+        return "DCCheckBox[value=" + _value + ", selected=" + isSelected() + "]";
     }
 }

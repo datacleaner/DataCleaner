@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+<title>Equals</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,6 +53,10 @@ h3 {
 	font-weight: normal;
 	border-radius: 2px;
 }
+
+.panel-heading {
+	background-image: none !important;
+}
 </style>
 </head>
 <body>
@@ -62,8 +67,8 @@ h3 {
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-body">
-								<ol class="breadcrumb">
-					<li><a href="index.html">Library</a></li>
+				<ol class="breadcrumb">
+					<li><a href="index.html">Component library</a></li>
 
 					<!-- categorization -->
 					<li>Transform</li> 					<li>Filter</li>
@@ -74,7 +79,7 @@ h3 {
 					<h1>
 						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACkUlEQVR42mNgGCrgAAMD8xcZhvavMgwT3wgz8KDLfZNhqP8qyzD5nRIDH00c8FmGIfCbLMN/EAZatP+ZJAMnSHwVAwMTkL8YLifDUEITBwANng6zBGrRrscyDBxA9ix0cYotey7BIPJQjkEAxQGyDDeRLYKGxCMsYl9vqzCwwfS9EmXgfiPLIEm05Z+kGcyBvvgONOgvEB8Dsms/yTF4o1uEDwP1JAPTSzGQ3gPEP0FmfZFlCCcurmUZ0kixjFgMdEAncQ6QZFCnhQOAIetFSoK7R03LQVEKyzXEOUCWYQqVQ2A7Tsv+//9fD8J/nz3p+3Nw5/pfy+ec/zW59dOv3vr/VMMTm7/9Wjzjyu+9Wzb/fXBnMsxOEAY7AGwpNS0khOdOvP/v9+9GhAMmNH8nRqOxsTFBTJQD+ur//X3zqgvugD8Hd60DCdLLAb83r9qHEgXEOmJqfARBTIrlKA4AO+LQ7rW0jHt0y1Ec8O/v34ZfK+aeo2nimz/5zr9vX1swHAC2fNnsC3RJA/Mm3UV2BNgBv1fNP03XXAAKCaCnkbJh0w9iNFIjEcLw39cvulGz4fSuV3QphKa0v/+9dc0eeBQgg9dyDBLAejwSWBccoHJdcAlYISV9kGNQJLY2XElVB8gwnCGp9QvU8I6q1bEsw7+XigxixLaIbGjRIAE6Ip4oBwDTQDYWzV9ItOwLlkbJBKIcAGrBAhUfAeKjoM4GsCll9kCBgR9o6G9iHfBOhkEHhIFmlIIapkCx8x+kGPQp6xfIMhzH4qvlQPE/aAnuJU06JsCoaUGzvA4sLs0QDWp2IzuKJg4ARQW8iQ10DFq2TQKldKhcBM06qF/kGJw+yjB44Mg91sD+Y0ADAwMjw1ACAOtLcYBa7VwmAAAAAElFTkSuQmCC" alt="" /> <span>Equals</span>
 					</h1>
-					<div><p>A filter that excludes values that are not equal (=) to specific set of valid values</p></div>
+					<div><p>A filter that excludes values that are not equal (=) to specific set of valid values.</p></div>
 					
 				</div>
 
@@ -111,13 +116,13 @@ h3 {
 					<li class="list-group-item">
 						<h3>
 							<span class="glyphicon glyphicon-share" aria-hidden="true"></span>
-							<span class="text-info">VALID</span>
-						</h3> 
+							<span class="text-info">EQUALS</span>
+						</h3> <p>Outcome when the operands of the filter are equal.</p>
 					</li> 					<li class="list-group-item">
 						<h3>
 							<span class="glyphicon glyphicon-share" aria-hidden="true"></span>
-							<span class="text-info">INVALID</span>
-						</h3> 
+							<span class="text-info">NOT_EQUALS</span>
+						</h3> <p>Outcome when the operands of the filter are not equal.</p>
 					</li> 
 				</ul>
 			</div>

@@ -93,18 +93,18 @@ final class DateAndTimeAnalyzerColumnDelegate {
             } else {
                 if (localDate.isAfter(_maxDate)) {
                     _maxDate = localDate;
-                    _annotationFactory.reset(_maxDateAnnotation);
+                    _annotationFactory.resetAnnotation(_maxDateAnnotation);
                 } else if (localDate.isBefore(_minDate)) {
                     _minDate = localDate;
-                    _annotationFactory.reset(_minDateAnnotation);
+                    _annotationFactory.resetAnnotation(_minDateAnnotation);
                 }
 
                 if (localTime.isAfter(_maxTime)) {
                     _maxTime = localTime;
-                    _annotationFactory.reset(_maxTimeAnnotation);
+                    _annotationFactory.resetAnnotation(_maxTimeAnnotation);
                 } else if (localTime.isBefore(_minTime)) {
                     _minTime = localTime;
-                    _annotationFactory.reset(_minTimeAnnotation);
+                    _annotationFactory.resetAnnotation(_minTimeAnnotation);
                 }
             }
 

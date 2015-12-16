@@ -89,7 +89,6 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private final AtomicInteger _tasksPending;
 
-   
     /**
      * Default constructor. Will perform classpath scanning in the calling
      * thread(s).
@@ -269,12 +268,12 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         final TaskListener listener = new TaskListener() {
             @Override
             public void onBegin(Task task) {
-                logger.info("Scan of '{}' beginning", packageName);
+                logger.debug("Scan of '{}' beginning", packageName);
             }
 
             @Override
             public void onComplete(Task task) {
-                logger.info("Scan of '{}' complete", packageName);
+                logger.debug("Scan of '{}' complete", packageName);
                 taskDone();
             }
 
@@ -291,9 +290,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             public void execute() throws Exception {
                 final String packagePath = packageName.replace('.', '/');
                 if (recursive) {
-                    logger.info("Scanning package path '{}' (and subpackages recursively)", packagePath);
+                    logger.trace("Scanning package path '{}' (and subpackages recursively)", packagePath);
                 } else {
-                    logger.info("Scanning package path '{}'", packagePath);
+                    logger.trace("Scanning package path '{}'", packagePath);
                 }
 
                 logger.debug("Using ClassLoader: {}", classLoader);
@@ -303,7 +302,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                         if (!file.exists()) {
                             logger.debug("Omitting JAR file because it does not exist: {}", file);
                         } else if (file.isDirectory()) {
-                            logger.info("Scanning subdirectory of: {}", file);
+                            logger.trace("Scanning subdirectory of: {}", file);
                             final File packageDirectory = new File(file, packagePath);
                             if (packageDirectory.exists()) {
                                 scanDirectory(packageDirectory, recursive, classLoader, strictClassLoader);
@@ -311,7 +310,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                                 logger.debug("Omitting directory because it does not exist: {}", packageDirectory);
                             }
                         } else {
-                            logger.info("Scanning JAR file: {}", file);
+                            logger.trace("Scanning JAR file: {}", file);
 
                             try (JarFile jarFile = new JarFile(file)) {
                                 scanJar(jarFile, classLoader, packagePath, recursive, strictClassLoader);
@@ -328,7 +327,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                     while (resources.hasMoreElements()) {
                         count++;
                         final URL resource = resources.nextElement();
-                        logger.debug("Scanning resource/URL no. {}: {}", count, resource);
+                        logger.trace("Scanning resource/URL no. {}: {}", count, resource);
 
                         try {
                             scanUrl(resource, classLoader, packagePath, recursive, strictClassLoader);
@@ -355,13 +354,13 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
         final File dir = new File(file.replaceAll("\\%20", " "));
         if (dir.isDirectory()) {
-            logger.info("Resource is a directory, scanning for files: {}", dir.getAbsolutePath());
+            logger.trace("Resource is a directory, scanning for files: {}", dir.getAbsolutePath());
             scanDirectory(dir, recursive, classLoader, strictClassLoader);
         } else {
 
             URLConnection connection = resource.openConnection();
             if (connection instanceof JarURLConnection) {
-                logger.info("Getting JarFile from JarURLConnection: {}", connection);
+                logger.debug("Getting JarFile from JarURLConnection: {}", connection);
                 JarFile jarFile = ((JarURLConnection) connection).getJarFile();
                 // note: We are NOT closing this JarFile, because it is still
                 // used by the JarURLConnection
@@ -384,7 +383,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                         rootEntryPath = file.substring(separatorIndex + "!/".length());
                         jarFile = getJarFile(jarFileUrl);
                     } else {
-                        logger.info("Creating JarFile based on URI (without '!/'): {}", file);
+                        logger.debug("Creating JarFile based on URI (without '!/'): {}", file);
                         jarFile = new JarFile(file);
                         jarFileUrl = file;
                         rootEntryPath = "";
@@ -415,17 +414,17 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 final URI uri = new URI(jarFileUrl.replaceAll(" ", "\\%20"));
                 final String jarFileName = uri.getSchemeSpecificPart();
-                logger.info("Creating new JarFile based on URI-scheme filename: {}", jarFileName);
+                logger.debug("Creating new JarFile based on URI-scheme filename: {}", jarFileName);
                 return new JarFile(jarFileName);
             } catch (URISyntaxException ex) {
                 // Fallback for URLs that are not valid URIs (should hardly ever
                 // happen).
                 final String jarFileName = jarFileUrl.substring("file:".length());
-                logger.info("Creating new JarFile based on alternative filename: {}", jarFileName);
+                logger.debug("Creating new JarFile based on alternative filename: {}", jarFileName);
                 return new JarFile(jarFileName);
             }
         } else {
-            logger.info("Creating new JarFile based on URI (with '!/'): {}", jarFileUrl);
+            logger.debug("Creating new JarFile based on URI (with '!/'): {}", jarFileUrl);
             return new JarFile(jarFileUrl);
         }
     }
@@ -482,7 +481,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 scanInputStreamOfClassFile(inputStream, classLoader, strictClassLoader);
             } catch (RuntimeException e) {
                 logger.error("Failed to scan JAR class file entry: " + entryName, e);
+            } catch (NoClassDefFoundError e) {
+                logger.error("Failed to scan JAR class file entry: " + entryName, e);
             }
+           
         } else {
 
             if (logger.isInfoEnabled()) {
@@ -504,7 +506,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         if (!dir.isDirectory()) {
             throw new IllegalArgumentException("The file '" + dir + "' is not a directory");
         }
-        logger.info("Scanning directory: {}", dir);
+        logger.debug("Scanning directory: {}", dir);
 
         final File[] classFiles = dir.listFiles(new FilenameFilter() {
             @Override
@@ -533,7 +535,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             });
             if (subDirectories != null) {
                 if (logger.isInfoEnabled() && subDirectories.length > 0) {
-                    logger.info("Recursively scanning " + subDirectories.length + " subdirectories");
+                    logger.trace("Recursively scanning " + subDirectories.length + " subdirectories");
                 }
                 for (File subDir : subDirectories) {
                     scanDirectory(subDir, true, classLoader, strictClassLoader);
@@ -579,25 +581,25 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             if (visitor.isAnalyzer()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Analyzer<?>> analyzerClass = (Class<? extends Analyzer<?>>) beanClass;
-                logger.info("Adding analyzer class: {}", beanClass);
+                logger.debug("Adding analyzer class: {}", beanClass);
                 addAnalyzerClass(analyzerClass);
             }
             if (visitor.isTransformer()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Transformer> transformerClass = (Class<? extends Transformer>) beanClass;
-                logger.info("Adding transformer class: {}", beanClass);
+                logger.debug("Adding transformer class: {}", beanClass);
                 addTransformerClass(transformerClass);
             }
             if (visitor.isFilter()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Filter<? extends Enum<?>>> filterClass = (Class<? extends Filter<?>>) beanClass;
-                logger.info("Adding filter class: {}", beanClass);
+                logger.debug("Adding filter class: {}", beanClass);
                 addFilterClass(filterClass);
             }
             if (visitor.isRenderer()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Renderer<?, ?>> rendererClass = (Class<? extends Renderer<?, ?>>) beanClass;
-                logger.info("Adding renderer class: {}", beanClass);
+                logger.debug("Adding renderer class: {}", beanClass);
                 addRendererClass(rendererClass);
             }
         } finally {

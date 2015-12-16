@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JTextArea;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.RestrictedFunctionalityCallToAction;
+import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
@@ -63,14 +65,13 @@ public class ProgressInformationPanel extends DCPanel {
     private final DCPanel _progressBarPanel;
     private final ConcurrentMap<Table, TableProgressInformationPanel> _tableProgressInformationPanels;
     private final ConcurrentMap<Table, ProgressCounter> _progressTimingCounters;
-    private final DCTaskPaneContainer _taskPaneContainer;
     private final Stopwatch _stopWatch;
 
     public ProgressInformationPanel(boolean running) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setLayout(new BorderLayout());
-        _tableProgressInformationPanels = new ConcurrentHashMap<Table, TableProgressInformationPanel>();
-        _progressTimingCounters = new ConcurrentHashMap<Table, ProgressCounter>();
+        _tableProgressInformationPanels = new ConcurrentHashMap<>();
+        _progressTimingCounters = new ConcurrentHashMap<>();
         _stopWatch = Stopwatch.createUnstarted();
         _executionLogTextArea = new JTextArea();
         _executionLogTextArea.setText("--- DataCleaner progress information user-log ---");
@@ -86,13 +87,13 @@ public class ProgressInformationPanel extends DCPanel {
         final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
         executionLogTaskPane.add(_executionLogTextArea);
 
-        _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+        final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         if (running) {
-            _taskPaneContainer.add(progressTaskPane);
+            taskPaneContainer.add(progressTaskPane);
         }
-        _taskPaneContainer.add(executionLogTaskPane);
+        taskPaneContainer.add(executionLogTaskPane);
 
-        add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
+        add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
     }
 
     public String getTextAreaText() {
@@ -107,10 +108,26 @@ public class ProgressInformationPanel extends DCPanel {
         appendMessage("\n" + getTimestamp() + " INFO: " + string);
     }
 
-    public void addUserLog(String string, Throwable throwable, boolean jobFinished) {
-        StringWriter stringWriter = new StringWriter();
-        stringWriter.append("\n" + getTimestamp() + "ERROR: ");
-        stringWriter.append(string);
+    public void addUserLog(String message, Throwable throwable, boolean jobFinished) {
+        final StringWriter stringWriter = new StringWriter();
+        stringWriter.append("\n").append(getTimestamp());
+
+        if (throwable instanceof RestrictedFunctionalityException) {
+            stringWriter.append("RESTRICTED: ");
+            stringWriter.append(message);
+            appendMessage(stringWriter.toString());
+
+            final RestrictedFunctionalityException restrictedFunctionalityException = (RestrictedFunctionalityException) throwable;
+            final String exceptionMessage = restrictedFunctionalityException.getMessage();
+            final RestrictedFunctionalityCallToAction[] callToActions = restrictedFunctionalityException
+                    .getCallToActions();
+            addRestrictedFunctionalityMessage(exceptionMessage, callToActions);
+            return;
+        }
+
+        stringWriter.append("ERROR: ");
+        stringWriter.append(message);
+
         if (throwable == null) {
             stringWriter.append('\n');
             stringWriter.append("(No stack trace provided)");
@@ -126,7 +143,7 @@ public class ProgressInformationPanel extends DCPanel {
 
             stringWriter.append('\n');
             stringWriter.append('\n');
-            PrintWriter printWriter = new PrintWriter(stringWriter);
+            final PrintWriter printWriter = new PrintWriter(stringWriter);
             printStackTrace(printWriter, throwable);
             stringWriter.append('\n');
         }
@@ -145,8 +162,8 @@ public class ProgressInformationPanel extends DCPanel {
      * Prints stacktraces to the string writer, and investigates the throwable
      * hierarchy to check if there's any {@link SQLException}s which also has
      * "next" exceptions.
-     * 
-     * @param stringWriter
+     *
+     * @param printWriter
      * @param throwable
      */
     protected void printStackTrace(PrintWriter printWriter, Throwable throwable) {
@@ -173,13 +190,14 @@ public class ProgressInformationPanel extends DCPanel {
         });
     }
 
-    public void setExpectedRows(final Table table, final int expectedRows) {
+    public void addProgressBar(final Table table, final int expectedRows) {
         final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table,
                 expectedRows);
         WidgetUtils.invokeSwingAction(new Runnable() {
             @Override
             public void run() {
                 _progressBarPanel.add(tableProgressInformationPanel);
+                tableProgressInformationPanel.setProgressMaximum(expectedRows);
                 _progressBarPanel.updateUI();
             }
         });
@@ -203,7 +221,7 @@ public class ProgressInformationPanel extends DCPanel {
 
     /**
      * Informs the panel that the progress for a table is updated
-     * 
+     *
      * @param table
      * @param currentRow
      */
@@ -255,7 +273,7 @@ public class ProgressInformationPanel extends DCPanel {
 
     /**
      * Informs the panel that the progress for a table has finished.
-     * 
+     *
      * @param table
      */
     public void updateProgressFinished(Table table) {
@@ -284,4 +302,17 @@ public class ProgressInformationPanel extends DCPanel {
         _stopWatch.start();
     }
 
+    public void addRestrictedFunctionalityMessage(final String messageString,
+            final RestrictedFunctionalityCallToAction[] callToActions) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append('\n');
+        sb.append('\n');
+        sb.append(messageString);
+        for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+            sb.append('\n');
+            sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
+        }
+        sb.append('\n');
+        addUserLog(sb.toString());
+    }
 }

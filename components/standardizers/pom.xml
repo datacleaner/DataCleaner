@@ -3,7 +3,15 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-components</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-standardizers</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-html-rendering</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
 </project>

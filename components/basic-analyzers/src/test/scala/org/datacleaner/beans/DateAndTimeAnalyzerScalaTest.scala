@@ -7,7 +7,7 @@ import org.apache.metamodel.util.Month
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.result.renderer.CrosstabTextRenderer
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2
 import org.junit.Assert
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
@@ -21,7 +21,7 @@ class DateAndTimeAnalyzerScalaTest extends AssertionsForJUnit {
     val analyzer = new DateAndTimeAnalyzer()
     analyzer.descriptiveStatistics = true;
     analyzer._columns = Array(col1);
-    analyzer._annotationFactory = new InMemoryRowAnnotationFactory()
+    analyzer._annotationFactory = new InMemoryRowAnnotationFactory2()
 
     analyzer.init()
 
@@ -58,7 +58,7 @@ Kurtosis          -1.2
     val analyzer = new DateAndTimeAnalyzer()
     analyzer.descriptiveStatistics = true;
     analyzer._columns = Array(col1);
-    analyzer._annotationFactory = new InMemoryRowAnnotationFactory()
+    analyzer._annotationFactory = new InMemoryRowAnnotationFactory2()
 
     analyzer.init()
 

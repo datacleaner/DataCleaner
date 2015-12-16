@@ -106,7 +106,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
                 try {
                     inputStream = _configurationFile.getContent().getInputStream();
                     String content = FileHelper.readInputStreamAsString(inputStream, FileHelper.DEFAULT_ENCODING);
-                    logger.error("Failed to read configuration file. File contents was:");
+                    logger.error("Failed to read configuration file {}. File contents was:", _configurationFile);
                     logger.error(content);
                 } catch (Throwable t) {
                     logger.debug("Failed to re-open configuration file to determine file contents", e);

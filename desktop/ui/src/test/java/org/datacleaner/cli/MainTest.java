@@ -45,6 +45,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.base.Splitter;
+
 public class MainTest extends TestCase {
 
     private StringWriter _stringWriter;
@@ -82,7 +84,7 @@ public class MainTest extends TestCase {
 
         String[] lines = out1.split("\n");
 
-        assertEquals(11, lines.length);
+        assertEquals(12, lines.length);
 
         assertEquals(
                 "-conf (-configuration, --configuration-file) PATH          : Path to an XML file describing the configuration of",
@@ -105,12 +107,13 @@ public class MainTest extends TestCase {
         assertEquals(
                 "-ot (--output-type) [TEXT | HTML | SERIALIZED]             : How to represent the result of the job",
                 lines[8].trim());
+        assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",lines[9].trim());
         assertEquals(
                 "-s (-schema, --schema-name) VAL                            : Name of schema when printing a list of tables or columns",
-                lines[9].trim());
+                lines[10].trim());
         assertEquals(
                 "-t (-table, --table-name) VAL                              : Name of table when printing a list of columns",
-                lines[10].trim());
+                lines[11].trim());
 
         // again without the -usage flag
         _stringWriter = new StringWriter();
@@ -194,15 +197,15 @@ public class MainTest extends TestCase {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml".split(" "));
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
-        String[] lines = out.split("\n");
-
+        List<String> lines = Splitter.on('\n').splitToList(out);
+        
         assertTrue(out, out.indexOf("- Value count (company.com): 4") != -1);
         assertTrue(out, out.indexOf("- Value count (eobjects.org): 2") != -1);
 
-        assertTrue("lines length was: " + lines.length, lines.length > 60);
-        assertTrue("lines length was: " + lines.length, lines.length < 90);
+        assertTrue("lines length was: " + lines.size(), lines.size() > 60);
+        assertTrue("lines length was: " + lines.size(), lines.size() < 90);
 
-        assertEquals("SUCCESS!", lines[0]);
+        assertTrue(lines.contains("SUCCESS!"));
     }
 
     public void testWriteToFile() throws Throwable {
@@ -213,8 +216,6 @@ public class MainTest extends TestCase {
         assertTrue(file.exists());
         String result = FileHelper.readFileAsString(file);
         assertEquals("SUCCESS!", result.split("\n")[0].trim());
-
-        assertEquals("", _stringWriter.toString());
     }
 
     public void testWriteHtmlToFile() throws Throwable {

@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Task listener that will wait (join) for a set of tasks to complete before
  * invoking onComplete(...) on a nested task listener.
- * 
- * 
  */
 public final class JoinTaskListener implements TaskListener {
 
@@ -38,6 +36,10 @@ public final class JoinTaskListener implements TaskListener {
 	private final AtomicInteger _countDown;
 	private final TaskListener _nestedTaskListener;
 	private volatile Throwable _error;
+	
+	public JoinTaskListener(int tasksToWaitFor, TaskListener ... nestedTaskListeners) {
+	    this(tasksToWaitFor, new CompositeTaskListener(nestedTaskListeners));
+	}
 
 	public JoinTaskListener(int tasksToWaitFor, TaskListener nestedTaskListener) {
 		_nestedTaskListener = nestedTaskListener;
@@ -63,7 +65,7 @@ public final class JoinTaskListener implements TaskListener {
 
 	@Override
 	public void onComplete(Task task) {
-		int count = _countDown.decrementAndGet();
+		final int count = _countDown.decrementAndGet();
 		logger.debug("onComplete(), count = {}", count);
 		invokeNested(count, task);
 	}
@@ -71,7 +73,7 @@ public final class JoinTaskListener implements TaskListener {
 	@Override
 	public void onError(Task task, Throwable throwable) {
 		_error = throwable;
-		int count = _countDown.decrementAndGet();
+		final int count = _countDown.decrementAndGet();
 		logger.debug("onComplete(), count = {}", count);
 		invokeNested(count, task);
 	}

@@ -61,7 +61,7 @@
 	<complexType name="sourceType">
 		<sequence>
 			<element name="data-context" type="ab:dataContextType"
-				minOccurs="1" maxOccurs="1" />
+				minOccurs="0" maxOccurs="1" />
 			<element name="columns" type="ab:columnsType" minOccurs="0"
 				maxOccurs="1" />
 			<element name="variables" type="ab:variablesType" minOccurs="0"
@@ -171,11 +171,9 @@
 
 	<complexType name="outputDataStreamType">
 		<sequence>
-			<element name="job" type="ab:jobType" minOccurs="1"
-				maxOccurs="1" />
+			<element name="job" type="ab:jobType"/>
 		</sequence>
-		<attribute name="id" type="string" use="required" />
-		<attribute name="name" type="string" use="optional" />
+		<attribute name="name" type="string" use="required" />
 	</complexType>
 
 	<complexType name="transformerType">
@@ -230,7 +228,7 @@
 	<complexType name="outputType">
 		<attribute name="id" type="token" use="required" />
 		<attribute name="name" type="string" use="optional" />
-		<attribute name="hidden" type="boolean" use="optional"></attribute>
+		<attribute name="hidden" type="boolean" use="optional" />
 	</complexType>
 
 	<complexType name="outcomeType">

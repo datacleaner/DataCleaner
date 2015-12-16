@@ -19,33 +19,47 @@
  */
 package org.datacleaner.util;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
+import java.text.Format;
+import java.text.ParseException;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
 import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.jdesktop.swingx.JXFormattedTextField;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
@@ -113,6 +127,21 @@ public final class WidgetFactory {
         PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
         WidgetUtils.setDefaultButtonStyle(b);
+        return b;
+    }
+
+    public static PopupButton createSmallPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
+
+        b.setFont(WidgetUtils.FONT_SMALL);
+        b.setMargin(new Insets(0, 0, 0, 0));
+        b.setUI(new MetalButtonUI());
+        b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+
+        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        b.setFocusPainted(false);
+
         return b;
     }
 
@@ -231,6 +260,30 @@ public final class WidgetFactory {
     public static Component createToolBarSeparator() {
         return Box.createHorizontalGlue();
     }
+    
+    public static JButton createToolbarButton(String text, String iconPath) {
+        final ImageIcon icon;
+        if (iconPath == null) {
+            icon = null;
+        } else {
+            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+        }
+        final JButton button = new JButton(text, icon);
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+            }
+        });
+
+        WidgetUtils.setDarkButtonStyle(button);
+        return button;
+    }
 
     public static JButton createSmallButton(String imagePath) {
         return createSmallButton(null, imagePath);
@@ -308,6 +361,46 @@ public final class WidgetFactory {
         return tf;
     }
 
+    public static JXFormattedTextField createFormattedTextField(String promptText, final int columns, final Format format) {
+        JXFormattedTextField tf = new JXFormattedTextField(promptText);
+        // Stupid JXFormattedTextField will not pass along a formatter to the constructor.
+        tf.setFormatterFactory(new JFormattedTextField.AbstractFormatterFactory() {
+            private JFormattedTextField.AbstractFormatter _formatter;
+
+            @Override
+            public synchronized JFormattedTextField.AbstractFormatter getFormatter(final JFormattedTextField tf) {
+                if (_formatter == null) {
+                    _formatter = new JFormattedTextField.AbstractFormatter() {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public Object stringToValue(final String text) throws ParseException {
+                            final Object value = format.parseObject(text);
+                            return value;
+                        }
+
+                        @Override
+                        public String valueToString(final Object value) throws ParseException {
+                            if (value == null) {
+                                return "";
+                            }
+
+                            final String string = format.format(value);
+                            return string;
+                        }
+                    };
+                }
+                return _formatter;
+            }
+        });
+        tf.setColumns(columns);
+        if (promptText != null) {
+            tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
+            tf.setToolTipText(promptText);
+        }
+        return tf;
+    }
     public static JXTextArea createTextArea(String promptText) {
         JXTextArea ta = new JXTextArea(promptText);
         ta.setColumns(17);
@@ -351,4 +444,55 @@ public final class WidgetFactory {
         field.setFont(new Font("LucidaSans", Font.PLAIN, 12));
         return field;
     }
+
+    public static JDialog createModalDialog(final Component component, final Window parentWindow, final String title, boolean resizable) {
+        final JDialog dialog;
+        if (parentWindow instanceof Frame) {
+            dialog = new JDialog((Frame) parentWindow, title, true);
+        } else if (parentWindow instanceof Dialog) {
+            dialog = new JDialog((Dialog) parentWindow, title, true);
+        } else {
+            throw new UnsupportedOperationException("Cannot create dialog for a component without a frame or dialog parent");
+        }
+
+        Container contentPane = dialog.getContentPane();
+
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(component, BorderLayout.CENTER);
+        dialog.setResizable(resizable);
+        if (JDialog.isDefaultLookAndFeelDecorated()) {
+            boolean supportsWindowDecorations =
+                    UIManager.getLookAndFeel().getSupportsWindowDecorations();
+            if (supportsWindowDecorations) {
+                dialog.setUndecorated(true);
+            }
+        }
+        dialog.pack();
+        dialog.setLocationRelativeTo(parentWindow);
+        return dialog;
+    }
+
+    public static JDialog createModalDialog(final Component component, final Component parentComponent, final String title, boolean resizable) {
+        Component windowComponent = parentComponent;
+        while (!(windowComponent instanceof Window) && windowComponent != null) {
+            windowComponent = windowComponent.getParent();
+        }
+
+        return createModalDialog(component, (Window) windowComponent, title, resizable);
+    }
+    
+    public static Integer showMaxRowsDialog(int defaultValue) {
+        final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
+                defaultValue);
+        if (Strings.isNullOrEmpty(maxRowsString)) {
+            return null;
+        }
+        final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
+        if (maxRows == null || maxRows.intValue() < 1) {
+            WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
+            return null;
+        }
+        return maxRows.intValue();
+    }
+
 }

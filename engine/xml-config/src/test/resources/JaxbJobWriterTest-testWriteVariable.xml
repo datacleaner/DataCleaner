@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-version>2.0</job-version>
+        <author>John Doe</author>
+        <created-date>2010-11-12Z</created-date>
+    </job-metadata>
+    <source>
+        <data-context ref="date-datastore"/>
+        <columns>
+            <column id="col_datestring" path="datestring" type="STRING"/>
+        </columns>
+        <variables>
+            <variable id="var_datemask" value="[yyyy-MM-dd]"/>
+        </variables>
+    </source>
+    <transformation>
+        <transformer>
+            <descriptor ref="Date mask matcher"/>
+            <properties>
+                <property name="Date masks" ref="var_datemask"/>
+                <property name="Output type" value="TRUE_FALSE"/>
+            </properties>
+            <input ref="col_datestring"/>
+            <output id="col_matchesdatemask" name="Matches date mask?"/>
+        </transformer>
+        <transformer>
+            <descriptor ref="Date mask matcher"/>
+            <properties>
+                <property name="Date masks" value="[yy-dd-MM]"/>
+                <property name="Output type" value="TRUE_FALSE"/>
+            </properties>
+            <input ref="col_datestring"/>
+            <output id="col_matchesdatemask2" name="Matches date mask?"/>
+        </transformer>
+        <transformer>
+            <descriptor ref="Convert to date"/>
+            <properties>
+                <property name="Null replacement" value="2000-01-01T00:00:00 0"/>
+                <property name="Time zone" value="Europe/Copenhagen"/>
+                <property name="Date masks" ref="var_datemask"/>
+            </properties>
+            <input ref="col_datestring"/>
+            <output id="col_typeddatecolumn" name="Typed date column"/>
+        </transformer>
+    </transformation>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Boolean analyzer"/>
+            <properties/>
+            <input ref="col_matchesdatemask"/>
+        </analyzer>
+        <analyzer>
+            <descriptor ref="Date/time analyzer"/>
+            <properties>
+                <property name="Descriptive statistics" value="false"/>
+            </properties>
+            <input ref="col_typeddatecolumn"/>
+        </analyzer>
+    </analysis>
+</job>

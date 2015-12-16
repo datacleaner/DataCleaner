@@ -11,9 +11,9 @@ import scala.xml.XML
 class HtmlAnalysisResultWriterTest extends AssertionsForJUnit {
 
   @Test
-  def testEmptyRendering = {
+  def testEmptyRendering() = {
     val writer = new HtmlAnalysisResultWriter();
-    val analysisResult = new SimpleAnalysisResult(new java.util.HashMap());
+    val analysisResult = new SimpleAnalysisResult();
     val configuration = new DataCleanerConfigurationImpl();
     val stringWriter = new StringWriter();
 

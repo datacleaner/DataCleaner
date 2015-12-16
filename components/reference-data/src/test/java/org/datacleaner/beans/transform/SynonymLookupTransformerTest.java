@@ -21,7 +21,8 @@ package org.datacleaner.beans.transform;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.api.Transformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.reference.SynonymCatalog;
@@ -29,6 +30,7 @@ import org.datacleaner.reference.TextFileSynonymCatalog;
 
 public class SynonymLookupTransformerTest extends TestCase {
 
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
     private final SynonymCatalog sc = new TextFileSynonymCatalog("my synonyms",
             "src/test/resources/synonym-countries.txt", true, "UTF8");
 
@@ -36,42 +38,53 @@ public class SynonymLookupTransformerTest extends TestCase {
         MockInputColumn<String> col = new MockInputColumn<String>("my col", String.class);
 
         // with retain original value
-        Transformer transformer = new SynonymLookupTransformer(col, sc, true);
+        SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
+        
+        transformer.init();
 
         assertEquals("hello", transformer.transform(new MockInputRow().put(col, "hello"))[0]);
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
-        assertEquals("I come from Albania!", transformer.transform(new MockInputRow().put(col, "I come from Albania!"))[0]);
+        assertEquals("I come from Albania!",
+                transformer.transform(new MockInputRow().put(col, "I come from Albania!"))[0]);
+        
+        transformer.close();
 
         // without retain original value
-        transformer = new SynonymLookupTransformer(col, sc, false);
+        transformer = new SynonymLookupTransformer(col, sc, false, configuration);
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
+        transformer.init();
 
         assertNull(transformer.transform(new MockInputRow().put(col, "hello"))[0]);
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
+        transformer.close();
     }
-    
+
     public void testTransformWithEveryToken() throws Exception {
         MockInputColumn<String> col = new MockInputColumn<String>("my col", String.class);
 
         // with retain original value
-        SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true);
+        SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
         transformer.lookUpEveryToken = true;
+        transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
 
         assertEquals("hello", transformer.transform(new MockInputRow().put(col, "hello"))[0]);
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
         assertEquals("I come from ALB!", transformer.transform(new MockInputRow().put(col, "I come from ALB!"))[0]);
+        transformer.close();
 
         // without retain original value
-        transformer = new SynonymLookupTransformer(col, sc, false);
+        transformer = new SynonymLookupTransformer(col, sc, false, configuration);
+        transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
 
         assertNull(transformer.transform(new MockInputRow().put(col, "hello"))[0]);
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
+        transformer.close();
     }
 }

@@ -70,11 +70,13 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
         _pentahoJobType.setCartePassword(password);
 
         final List<PentahoTransformation> availableTransformations;
+        final PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType);
         try {
-            final PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType);
             availableTransformations = carteClient.getAvailableTransformations();
         } catch (Exception e) {
             throw new DCUserInputException(e.getMessage());
+        } finally {
+            carteClient.close();
         }
 
         return new PentahoJobSelectionPage(1, availableTransformations) {

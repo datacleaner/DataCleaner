@@ -40,6 +40,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
@@ -56,6 +57,7 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -69,6 +71,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DataHubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -101,18 +104,18 @@ public class DatastorePanel extends DCPanel {
     private final JCheckBox _checkBox;
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
-    private final InjectorBuilder _injectorBuilder;
+    private final DCModule _dcModule;
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
             DatastoreManagementPanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
-            InjectorBuilder injectorBuilder) {
+            DCModule dcModule) {
         super(WidgetUtils.BG_COLOR_BRIGHT);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;
         _windowContext = windowContext;
         _userPreferences = userPreferences;
-        _injectorBuilder = injectorBuilder;
+        _dcModule = dcModule;
 
         setOpaque(false);
 
@@ -163,8 +166,7 @@ public class DatastorePanel extends DCPanel {
         setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
 
         WidgetUtils.addToGridBag(_checkBox, this, 0, 0, GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(DCPanel.flow(datastoreNameLabel), this, 1, 0, GridBagConstraints.WEST, 1.0,
-                1.0);
+        WidgetUtils.addToGridBag(DCPanel.flow(datastoreNameLabel), this, 1, 0, GridBagConstraints.WEST, 1.0, 1.0);
         WidgetUtils.addToGridBag(editButton, this, 2, 0, GridBagConstraints.EAST);
         WidgetUtils.addToGridBag(queryButton, this, 3, 0, GridBagConstraints.EAST);
         WidgetUtils.addToGridBag(removeButton, this, 4, 0, GridBagConstraints.EAST);
@@ -227,7 +229,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, datastore)
+                    Injector injectorWithDatastore = getInjectorBuilder().with(JdbcDatastore.class, datastore)
                             .createInjector();
                     JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
                     dialog.open();
@@ -237,7 +239,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(CsvDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(CsvDatastore.class, datastore).createInjector();
                     CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
                     dialog.open();
                 }
@@ -246,7 +248,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(AccessDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(AccessDatastore.class, datastore).createInjector();
                     AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
                     dialog.open();
                 }
@@ -255,7 +257,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(ExcelDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(ExcelDatastore.class, datastore).createInjector();
                     ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
                     dialog.open();
                 }
@@ -264,7 +266,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(SasDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(SasDatastore.class, datastore).createInjector();
                     SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
                     dialog.open();
                 }
@@ -273,7 +275,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(XmlDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(XmlDatastore.class, datastore).createInjector();
                     XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
                     dialog.open();
                 }
@@ -282,7 +284,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(OdbDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(OdbDatastore.class, datastore).createInjector();
                     OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
                     dialog.open();
                 }
@@ -291,7 +293,8 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(FixedWidthDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(FixedWidthDatastore.class, datastore)
+                            .createInjector();
                     FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
                     dialog.open();
                 }
@@ -300,7 +303,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(DbaseDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(DbaseDatastore.class, datastore).createInjector();
                     DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
                     dialog.open();
                 }
@@ -309,7 +312,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(HBaseDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(HBaseDatastore.class, datastore).createInjector();
                     HBaseDatastoreDialog dialog = injector.getInstance(HBaseDatastoreDialog.class);
                     dialog.open();
                 }
@@ -318,7 +321,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(CassandraDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(CassandraDatastore.class, datastore).createInjector();
                     CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
                     dialog.open();
                 }
@@ -327,7 +330,8 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(ElasticSearchDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(ElasticSearchDatastore.class, datastore)
+                            .createInjector();
                     ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
                     dialog.open();
                 }
@@ -336,7 +340,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(CouchDbDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(CouchDbDatastore.class, datastore).createInjector();
                     CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
                     dialog.open();
                 }
@@ -345,7 +349,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(MongoDbDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(MongoDbDatastore.class, datastore).createInjector();
                     MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
                     dialog.open();
                 }
@@ -354,7 +358,8 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(SalesforceDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(SalesforceDatastore.class, datastore)
+                            .createInjector();
                     SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
                     dialog.open();
                 }
@@ -363,8 +368,17 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(SugarCrmDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
                     SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof DataHubDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = getInjectorBuilder().with(DataHubDatastore.class, datastore).createInjector();
+                    DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
                     dialog.open();
                 }
             });
@@ -426,6 +440,10 @@ public class DatastorePanel extends DCPanel {
             return sb.toString();
         }
         return "";
+    }
+
+    private InjectorBuilder getInjectorBuilder() {
+        return _dcModule.createInjectorBuilder();
     }
 
     public boolean isSelected() {

@@ -222,7 +222,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
         }
 
         private void performWrite(OutputWriter writer) {
-            for (InputRow row : _result.getRows()) {
+            for (InputRow row : _result.getSampleRows()) {
                 OutputRow outputRow = writer.createRow();
                 outputRow.setValues(row);
                 outputRow.write();

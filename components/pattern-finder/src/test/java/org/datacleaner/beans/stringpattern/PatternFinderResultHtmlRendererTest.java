@@ -37,7 +37,7 @@ import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.html.HtmlRenderingContext;
 import org.datacleaner.result.renderer.AnnotatedRowsHtmlRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 
 public class PatternFinderResultHtmlRendererTest extends TestCase {
 
@@ -59,7 +59,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
         PatternFinderResult result = analyzer.getResult();
@@ -79,7 +79,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
         analyzer.run(new MockInputRow().put(col1, "kasper"), 1);
@@ -108,7 +108,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
         analyzer.setGroupColumn(col2);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
         analyzer.run(new MockInputRow().put(col1, "kasper").put(col2, "eobjects.dk"), 1);

@@ -20,27 +20,29 @@
 package org.datacleaner.reference;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 public class SimpleSynonym implements Synonym, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String _masterTerm;
-	private ReferenceValues<String> _synonyms;
+    private final String _masterTerm;
+    private final String[] _synonyms;
 
-	public SimpleSynonym(String masterTerm, String... synonyms) {
-		_masterTerm = masterTerm;
-		_synonyms = new SimpleReferenceValues<String>(synonyms);
-	}
+    public SimpleSynonym(String masterTerm, String... synonyms) {
+        _masterTerm = masterTerm;
+        _synonyms = synonyms;
+    }
 
-	@Override
-	public String getMasterTerm() {
-		return _masterTerm;
-	}
+    @Override
+    public String getMasterTerm() {
+        return _masterTerm;
+    }
 
-	@Override
-	public ReferenceValues<String> getSynonyms() {
-		return _synonyms;
-	}
+    @Override
+    public List<String> getSynonyms() {
+        return Arrays.asList(_synonyms);
+    }
 
 }

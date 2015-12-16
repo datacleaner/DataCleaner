@@ -19,16 +19,19 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.ComponentJob;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 
 final class RowProcessingMetricsImpl implements RowProcessingMetrics {
 
@@ -53,8 +56,13 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     }
 
     @Override
+    public RowProcessingStream getStream() {
+        return _publisher.getStream();
+    }
+
+    @Override
     public Table getTable() {
-        return _publisher.getTable();
+        return _publisher.getStream().getTable();
     }
 
     @Override
@@ -62,18 +70,32 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
         final Integer expectedRows = _expectedRows.get();
         return expectedRows.intValue();
     }
-    
+
     @Override
     public ComponentJob[] getResultProducers() {
-        return _publisher.getResultProducers();
+        final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
+        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+            if (consumer.isResultProducer()) {
+                resultProducers.add(consumer.getComponentJob());
+            }
+        }
+        return resultProducers.toArray(new ComponentJob[resultProducers.size()]);
     }
 
     @Override
     public AnalyzerJob[] getAnalyzerJobs() {
-        return _publisher.getAnalyzerJobs();
+        final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>();
+        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+            if (consumer instanceof AnalyzerConsumer) {
+                AnalyzerJob analyzerJob = ((AnalyzerConsumer) consumer).getComponentJob();
+                analyzerJobs.add(analyzerJob);
+            }
+        }
+        return analyzerJobs.toArray(new AnalyzerJob[analyzerJobs.size()]);
     }
 
     private Ref<Integer> createExpectedRowsRef() {
+        // TODO: This only seems valid for source tables
         return new LazyRef<Integer>() {
 
             @Override
@@ -89,7 +111,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
                     countQuery.selectCount();
                     countQuery.getSelectClause().getItem(0).setFunctionApproximationAllowed(true);
 
-                    final Datastore datastore = _publishers.getDatastore();
+                    final Datastore datastore = _publisher.getStream().getAnalysisJob().getDatastore();
                     try (final DatastoreConnection connection = datastore.openConnection()) {
                         try (final DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
                             if (countDataSet.next()) {

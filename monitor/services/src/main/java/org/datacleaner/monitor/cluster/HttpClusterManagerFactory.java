@@ -24,11 +24,12 @@ import java.util.List;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.datacleaner.cluster.ClusterManager;
 import org.datacleaner.cluster.http.HttpClusterManager;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -44,15 +45,18 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
 
     @Override
     public ClusterManager getClusterManager(TenantIdentifier tenant) {
-        final DefaultHttpClient httpClient = new DefaultHttpClient(new PoolingClientConnectionManager());
+        final HttpClient httpClient = HttpClients.custom().useSystemProperties()
+                .setConnectionManager(new PoolingHttpClientConnectionManager()).build();
+
+        final HttpClientContext context = HttpClientContext.create();
+
         if (username != null && password != null) {
-            final CredentialsProvider credentialsProvider = httpClient.getCredentialsProvider();
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
             final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            final List<String> authpref = new ArrayList<String>();
-            authpref.add(AuthPolicy.BASIC);
-            authpref.add(AuthPolicy.DIGEST);
-            httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
-            credentialsProvider.setCredentials(new AuthScope(null, -1), credentials);
+            credentialsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), credentials);
+            
+            context.setCredentialsProvider(credentialsProvider);
         }
 
         // use the server list
@@ -65,7 +69,7 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
             finalEndpoints.add(endpoint);
         }
 
-        return new HttpClusterManager(httpClient, finalEndpoints);
+        return new HttpClusterManager(httpClient, context, finalEndpoints);
     }
 
     public void setSlaveServerUrls(List<String> slaveServerUrls) {

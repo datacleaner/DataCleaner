@@ -24,6 +24,7 @@ import java.util.Collection;
 import javax.swing.JComponent;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.util.StringUtils;
 
 /**
  * A panel which presents multiple property widgets and their labels in a
@@ -45,7 +46,8 @@ public abstract class PropertyWidgetPanel extends FormPanel {
                 // is "invisible", ie. the JComponent is not returned
                 if (component != null) {
                     final String propertyName = propertyDescriptor.getName();
-                    final String description = propertyDescriptor.getDescription();
+                    String description = propertyDescriptor.getDescription();
+                    description = StringUtils.replaceAll(description, "\n", " ");
 
                     addFormEntry(propertyName, description, component);
                 }

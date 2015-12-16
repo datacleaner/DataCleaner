@@ -39,9 +39,9 @@ import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.ValueCombination;
 
 @Named("Boolean analyzer")
@@ -57,6 +57,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
     public static final String MEASURE_ROW_COUNT = "Row count";
     public static final String DIMENSION_COLUMN = "Column";
     public static final String DIMENSION_MEASURE = "Measure";
+    public static final String DIMENSION_COMBINATION_PREFIX = "Combination ";
 
     // comparator used to sort entries, getting the most frequent value
     // combinations to the top
@@ -83,7 +84,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
     public BooleanAnalyzer(InputColumn<Boolean>[] columns) {
         _columns = columns;
-        _annotationFactory = new InMemoryRowAnnotationFactory();
+        _annotationFactory = RowAnnotations.getDefaultFactory();
     }
 
     public BooleanAnalyzer() {
@@ -184,7 +185,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
                 } else if (row + 1 == entries.size()) {
                     measureName = MEASURE_LEAST_FREQUENT;
                 } else {
-                    measureName = "Combination " + row;
+                    measureName =  DIMENSION_COMBINATION_PREFIX + row;
                 }
                 measureDimension.addCategory(measureName);
 

@@ -85,7 +85,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * Constructs a {@link TenantContextFactoryImpl}.
      * 
      * @param repository
-     * @param parentInjectionManagerFactory
+     * @param environment
+     * @param jobEngineManager
      */
     @Autowired
     public TenantContextFactoryImpl(Repository repository, DataCleanerEnvironment environment,
@@ -133,6 +134,11 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
             }
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public Iterable<TenantContext> getActiveTenantContexts() {
+        return _contexts.asMap().values();
     }
 
     private String getStandardizedTenantName(final String tenantId) {

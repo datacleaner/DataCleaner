@@ -21,6 +21,7 @@ package org.datacleaner.job.builder;
 
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.OutputDataStreamJob;
 
 /**
@@ -37,7 +38,6 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
     public LazyOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJobBuilder jobBuilder) {
         _outputDataStream = outputDataStream;
         _jobBuilder = jobBuilder;
-
     }
 
     @Override
@@ -47,11 +47,14 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
 
     @Override
     public AnalysisJob getJob() {
-        return getJob(false);
+        return getJob(false, new AnalysisJobImmutabilizer());
     }
 
-    public AnalysisJob getJob(boolean validate) {
-        return _jobBuilder.toAnalysisJob(validate);
+    public AnalysisJob getJob(boolean validate, AnalysisJobImmutabilizer immutabilizer) {
+        return _jobBuilder.toAnalysisJob(validate, immutabilizer);
     }
 
+    public AnalysisJobBuilder getJobBuilder() {
+        return _jobBuilder;
+    }
 }

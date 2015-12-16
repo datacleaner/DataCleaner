@@ -21,9 +21,12 @@ package org.datacleaner.job.output;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 
 final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
@@ -33,7 +36,10 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
 
     public OutputDataStreamBuilderImpl(String name) {
         _name = name;
-        _table = new MutableTable(name);
+        MutableSchema schema = new MutableSchema();
+        schema.setName(null);
+        _table = new MutableTable(name, schema);
+        schema.addTable(_table);
     }
 
     @Override
@@ -63,6 +69,21 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
         final MutableColumn column = new MutableColumn(name, type, _table, columnNumber, true);
         _table.addColumn(column);
         return this;
+    }
+    
+    @Override
+    public OutputDataStreamBuilder withColumnLike(Column column) {
+        return withColumn(column.getName(), column.getType());
+    }
+    
+    @Override
+    public OutputDataStreamBuilder withColumnLike(InputColumn<?> column) {
+        if(column.isPhysicalColumn()) {
+            return withColumnLike(column.getPhysicalColumn());
+        } else {
+            final ColumnType columnType = ColumnTypeImpl.convertColumnType(column.getDataType());
+            return withColumn(column.getName(), columnType);
+        }
     }
 
 }

@@ -116,6 +116,9 @@ public class CliArguments {
     @Option(name = "-job", aliases = { "--job-file" }, metaVar = "PATH", usage = "Path to an analysis job XML file to execute")
     private String jobFile;
 
+    @Option(name = "-properties", aliases = { "--properties-file" }, metaVar = "PATH", usage = "Path to a custom properties file")
+    private String propertiesFile;
+
     @Option(name = "-list", usage = "Used to print a list of various elements available in the configuration")
     private CliListType listType;
 
@@ -182,6 +185,10 @@ public class CliArguments {
 
     public boolean isVersionMode() {
         return versionMode;
+    }
+    
+    public String getPropertiesFile() {
+        return propertiesFile;
     }
 
     public CliOutputType getOutputType() {

@@ -21,12 +21,18 @@ package org.datacleaner.job;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.datacleaner.job.builder.LazyOutputDataStreamJob;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 /**
  * Class that will load mutable and lazy components into their immutable
@@ -38,10 +44,12 @@ import org.datacleaner.job.builder.LazyOutputDataStreamJob;
  */
 public final class AnalysisJobImmutabilizer {
 
-    private final HashMap<LazyFilterOutcome, ImmutableFilterOutcome> _referenceMap;
+    private final Map<LazyFilterOutcome, ImmutableFilterOutcome> _outcomes;
+    private final Map<ComponentBuilder, ComponentJob> _componentJobs;
 
     public AnalysisJobImmutabilizer() {
-        _referenceMap = new HashMap<>();
+        _outcomes = new HashMap<>();
+        _componentJobs = new IdentityHashMap<ComponentBuilder, ComponentJob>();
     }
 
     public OutputDataStreamJob[] load(OutputDataStreamJob[] outputDataStreamJobs, boolean validate) {
@@ -53,7 +61,7 @@ public final class AnalysisJobImmutabilizer {
             final OutputDataStreamJob outputDataStreamJob = outputDataStreamJobs[i];
             if (outputDataStreamJob instanceof LazyOutputDataStreamJob) {
                 final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
-                final AnalysisJob job = ((LazyOutputDataStreamJob) outputDataStreamJob).getJob(validate);
+                final AnalysisJob job = ((LazyOutputDataStreamJob) outputDataStreamJob).getJob(validate, this);
                 result[i] = new ImmutableOutputDataStreamJob(outputDataStream, job);
             } else {
                 result[i] = outputDataStreamJob;
@@ -65,10 +73,10 @@ public final class AnalysisJobImmutabilizer {
     public FilterOutcome load(FilterOutcome outcome) {
         if (outcome instanceof LazyFilterOutcome) {
             LazyFilterOutcome lfo = (LazyFilterOutcome) outcome;
-            ImmutableFilterOutcome result = _referenceMap.get(lfo);
+            ImmutableFilterOutcome result = _outcomes.get(lfo);
             if (result == null) {
                 result = new ImmutableFilterOutcome(lfo.getFilterJob(), lfo.getCategory());
-                _referenceMap.put(lfo, result);
+                _outcomes.put(lfo, result);
             }
             return result;
         }
@@ -98,5 +106,30 @@ public final class AnalysisJobImmutabilizer {
             }
         }
         return req;
+    }
+
+    /**
+     * Gets or creates a {@link TransformerJob} for a particular
+     * {@link TransformerComponentBuilder}. Since {@link MultiStreamComponent}s
+     * are subtypes of {@link Transformer} it is necesary to have this caching
+     * mechanism in place in order to allow diamond-shaped component graphs
+     * where multiple streams include the same component.
+     * 
+     * @param validate
+     * @param tjb
+     * @return
+     */
+    public TransformerJob getOrCreateTransformerJob(boolean validate, TransformerComponentBuilder<?> tjb) {
+        TransformerJob componentJob = (TransformerJob) _componentJobs.get(tjb);
+        if (componentJob == null) {
+            try {
+                componentJob = tjb.toTransformerJob(validate, this);
+                _componentJobs.put(tjb, componentJob);
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("Could not create transformer job from builder: " + tjb + ", ("
+                        + e.getMessage() + ")", e);
+            }
+        }
+        return componentJob;
     }
 }

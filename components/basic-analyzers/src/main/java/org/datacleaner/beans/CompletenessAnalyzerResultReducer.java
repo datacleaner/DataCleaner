@@ -20,6 +20,7 @@
 package org.datacleaner.beans;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -48,12 +49,14 @@ public class CompletenessAnalyzerResultReducer implements AnalyzerResultReducer<
 
         int totalRowCount = 0;
         for (CompletenessAnalyzerResult result : results) {
-            final InputRow[] rows = result.getRows();
+            final List<InputRow> sampleRows = result.getSampleRows();
             final int invalidRowCount = result.getInvalidRowCount();
-            if (invalidRowCount == rows.length) {
+            if (invalidRowCount == sampleRows.size()) {
                 // if the rows are included for preview/sampling - then
                 // re-annotate them in the master result
-                _rowAnnotationFactory.annotate(rows, annotation);
+                for (InputRow sampleRow : sampleRows) {
+                    _rowAnnotationFactory.annotate(sampleRow, annotation);
+                }
             } else {
                 // else we just transfer annotation counts
                 _rowAnnotationFactory.transferAnnotations(result.getAnnotation(), annotation);

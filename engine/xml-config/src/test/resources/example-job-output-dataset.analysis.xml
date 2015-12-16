@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_supervisor" path="PUBLIC.EMPLOYEES.REPORTSTO" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Concatenator" />
+			<properties>
+				<property name="Separator" value=" " />
+			</properties>
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+			<output id="col_fullname" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="_any_">
+			<descriptor ref="Completeness analyzer" />
+			<properties>
+				<property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]" />
+				<property name="Evaluation mode" value="ALL_FIELDS"/>
+			</properties>
+			<input ref="col_fullname" />
+			<input ref="col_supervisor" />
+			<output-data-stream name="Complete rows">
+				<job>
+					<source>
+						<columns>
+							<column id="col_supervisor" path="REPORTSTO"/>
+							<column id="col_fullname" path="Concat of FIRSTNAME,LASTNAME"/>
+						</columns>
+					</source>
+					<analysis>
+						<analyzer>
+							<descriptor ref="String analyzer"/>
+							<input ref="col_fullname" />
+						</analyzer>
+						<analyzer>
+							<descriptor ref="Number analyzer"/>
+							<input ref="col_supervisor" />
+						</analyzer>
+					</analysis>
+				</job>
+			</output-data-stream>
+			<output-data-stream name="Incomplete rows">
+				<job>
+					<source>
+						<columns>
+							<!-- Let's switch these around to make sure that there's no name clashes -->
+							<column id="col_fullname" path="REPORTSTO"/>
+							<column id="col_supervisor" path="Concat of FIRSTNAME,LASTNAME"/>
+						</columns>
+					</source>
+					<analysis>
+						<analyzer>
+							<descriptor ref="String analyzer"/>
+							<input ref="col_supervisor" />
+						</analyzer>
+						<analyzer>
+							<descriptor ref="Number analyzer"/>
+							<input ref="col_fullname" />
+						</analyzer>
+					</analysis>
+				</job>
+			</output-data-stream>
+		</analyzer>
+	</analysis>
+
+</job>

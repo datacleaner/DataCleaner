@@ -89,6 +89,8 @@ public final class WidgetUtils {
     public static final Font FONT_OPENSANS_ITALIC;
     public static final Font FONT_OPENSANS_BOLD_ITALIC;
 
+    public static final Font FONT_FONTAWESOME;
+
     static {
         fonts = new HashMap<String, Font>();
 
@@ -108,6 +110,8 @@ public final class WidgetUtils {
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
         FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
         FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
+
+        FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
         fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
@@ -213,6 +217,12 @@ public final class WidgetUtils {
 
     public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
 
+    /**
+     * Border for indented button panels where the content has to align with
+     * check boxes above or below.
+     */
+    public static final Border BORDER_CHECKBOX_LIST_INDENTATION = new EmptyBorder(1, 17, 0, 1);
+
     public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
     public static final Border BORDER_BUTTON_DARK_WITH_LINE = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1,
@@ -244,6 +254,12 @@ public final class WidgetUtils {
      * Commonly used insets - empty
      */
     public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
+
+    /**
+     * The 'carret' character used for "more options" symbol with the
+     * {@link #FONT_FONTAWESOME} font.
+     */
+    public static final String CHAR_CARET_DOWN = "\uf0d7";
 
     private WidgetUtils() {
         // prevent instantiation
@@ -651,4 +667,5 @@ public final class WidgetUtils {
             b.setUI(DefaultButtonUI.get());
         }
     }
+
 }

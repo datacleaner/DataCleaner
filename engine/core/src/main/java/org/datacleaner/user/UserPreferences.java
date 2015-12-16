@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -103,7 +103,7 @@ public interface UserPreferences {
      * 
      * @return a HTTP client
      */
-    public HttpClient createHttpClient();
+    public CloseableHttpClient createHttpClient();
 
     public MonitorConnection getMonitorConnection();
 

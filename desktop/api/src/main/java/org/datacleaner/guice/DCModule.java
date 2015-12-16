@@ -31,6 +31,8 @@ import com.google.inject.Module;
  */
 public interface DCModule extends Module {
 
+    public InjectorBuilder createInjectorBuilder();
+    
     public Injector createChildInjectorForComponent(ComponentBuilder componentBuilder);
 
     public Injector createChildInjectorForProperty(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor);

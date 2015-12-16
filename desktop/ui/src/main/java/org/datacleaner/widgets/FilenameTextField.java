@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,48 +26,38 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.IconUtils;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXTextField;
 
 /**
  * A widget for selecting a file(name). It will be represented as a textfield
  * with a browse button.
+ *
+ * It is preferred to use this widget's "big brother" implementation,
+ * {@link ResourceSelector} which will work with any type of {@link Resource},
+ * not just files (e.g. {@link FileResource} and others).
  */
-public final class FilenameTextField extends DCPanel {
+public final class FilenameTextField extends AbstractResourceTextField<FileResource> {
 
     private static final long serialVersionUID = 1L;
 
-    private final JXTextField _textField = WidgetFactory.createTextField("Filename");
-    private final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
-    private final List<FileSelectionListener> _listeners = new ArrayList<FileSelectionListener>();
-    private final List<FileFilter> _chooseableFileFilters = new ArrayList<FileFilter>();
-    private volatile FileFilter _selectedFileFilter;
     private volatile File _directory;
-    private int _fileSelectionMode = JFileChooser.FILES_ONLY;
+    protected final List<FileSelectionListener> _fileSelectionListeners = new ArrayList<>();
 
     /**
-     * 
+     *
      * @param directory
      * @param fileOpenDialog
      *            true if browse dialog should be an "open file" dialog or false
      *            if it should be a "save file" dialog.
      */
     public FilenameTextField(File directory, final boolean fileOpenDialog) {
-        super();
         _directory = directory;
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        add(_textField);
-        add(Box.createHorizontalStrut(4));
-        add(_browseButton);
 
         _browseButton.addActionListener(new ActionListener() {
             @Override
@@ -82,15 +71,15 @@ public final class FilenameTextField extends DCPanel {
 
                 WidgetUtils.centerOnScreen(fileChooser);
 
-                for (FileFilter filter : _chooseableFileFilters) {
+                for (FileFilter filter : _choosableFileFilters) {
                     fileChooser.addChoosableFileFilter(filter);
                 }
 
                 fileChooser.setFileSelectionMode(_fileSelectionMode);
 
                 if (_selectedFileFilter != null) {
-                    if (!_chooseableFileFilters.contains(_selectedFileFilter)) {
-                        _chooseableFileFilters.add(_selectedFileFilter);
+                    if (!_choosableFileFilters.contains(_selectedFileFilter)) {
+                        _choosableFileFilters.add(_selectedFileFilter);
                     }
                     fileChooser.setFileFilter(_selectedFileFilter);
                 }
@@ -116,42 +105,53 @@ public final class FilenameTextField extends DCPanel {
                         } else {
                             _directory = file.getParentFile();
                         }
-                        for (FileSelectionListener listener : _listeners) {
-                            listener.onSelected(FilenameTextField.this, file);
-                        }
+                        notifySelectionListeners(file);
                     }
                 }
             }
+
         });
+    }
+
+    public void addFileSelectionListener(FileSelectionListener listener) {
+        _fileSelectionListeners.add(listener);
+    }
+
+    public void removeSelectionListener(FileSelectionListener listener) {
+        _fileSelectionListeners.remove(listener);
+    }
+
+    @Override
+    protected void notifyListeners(final String text) {
+        final File file = getFile();
+        if (file != null) {
+            notifySelectionListeners(file);
+        }
+        super.notifyListeners(text);
+    }
+
+    private void notifySelectionListeners(final File file) {
+        for (FileSelectionListener listener : _fileSelectionListeners) {
+            listener.onSelected(this, file);
+        }
+    }
+
+    @Override
+    public FileResource getResource() {
+        final File file = getFile();
+        if (file == null) {
+            return null;
+        }
+        return new FileResource(file);
+    }
+
+    @Override
+    public void setResource(FileResource resource) {
+        setFile(resource.getFile());
     }
 
     public File getDirectory() {
         return _directory;
-    }
-
-    public JButton getBrowseButton() {
-        return _browseButton;
-    }
-
-    public JXTextField getTextField() {
-        return _textField;
-    }
-
-    public String getFilename() {
-        return _textField.getText();
-    }
-
-    public void setFilename(String filename) {
-        _textField.setText(filename);
-    }
-
-    public void setFile(File file) {
-        try {
-            setFilename(file.getCanonicalPath());
-        } catch (IOException e1) {
-            // ignore
-            setFilename(file.getAbsolutePath());
-        }
     }
 
     public File getFile() {
@@ -162,27 +162,12 @@ public final class FilenameTextField extends DCPanel {
         return new File(filename);
     }
 
-    public void addFileSelectionListener(FileSelectionListener listener) {
-        _listeners.add(listener);
-    }
-
-    public void removeFileSelectionListener(FileSelectionListener listener) {
-        _listeners.remove(listener);
-    }
-
-    public void addChoosableFileFilter(FileFilter filter) {
-        _chooseableFileFilters.add(filter);
-    }
-
-    public void setSelectedFileFilter(FileFilter filter) {
-        _selectedFileFilter = filter;
-    }
-
-    public void setFileSelectionMode(int fileSelectionMode) {
-        _fileSelectionMode = fileSelectionMode;
-    }
-
-    public int getFileSelectionMode() {
-        return _fileSelectionMode;
+    public void setFile(File file) {
+        try {
+            setFilename(file.getCanonicalPath());
+        } catch (IOException e1) {
+            // ignore
+            setFilename(file.getAbsolutePath());
+        }
     }
 }

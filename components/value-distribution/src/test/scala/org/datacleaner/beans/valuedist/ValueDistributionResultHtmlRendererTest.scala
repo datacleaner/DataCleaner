@@ -34,7 +34,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("Traffic light", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, false, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, false);
     analyzer.run(new MockInputRow().put(col1, "green"), 10);
     analyzer.run(new MockInputRow().put(col1, "BLUE"), 8);
     analyzer.run(new MockInputRow().put(col1, "orange"), 5);
@@ -53,7 +53,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[AnnotatedRowsHtmlRenderer]))
     val descriptor = conf.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
     val map = new java.util.HashMap[ComponentJob, AnalyzerResult]()
-    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null);
+    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null, null);
     map.put(componentJob, analyzerResult);
     val result = new SimpleAnalysisResult(map)
     
@@ -71,7 +71,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("email", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, false, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, false);
     analyzer.run(new MockInputRow().put(col1, "kasper@eobjects.dk"), 1);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen@humaninference.com"), 1);
     analyzer.run(new MockInputRow().put(col1, "foo@bar"), 2);
@@ -109,7 +109,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     val col1 = new MockInputColumn[String]("email username", classOf[String]);
     val col2 = new MockInputColumn[String]("email domain", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, col2, true, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, col2, true);
 
     analyzer.run(new MockInputRow().put(col1, "kasper").put(col2, "eobjects.dk"), 4);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen").put(col2, "eobjects.dk"), 2);
@@ -128,6 +128,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     Assert.assertEquals(3, htmlFragment.getHeadElements().size());
 
     val html = htmlFragment.getBodyElements().get(7).toHtml(context);
+    
     Assert.assertEquals("""<div class="valueDistributionResultContainer">
                  <div class="valueDistributionGroupPanel">
              <h3>Group: eobjects.dk</h3>
@@ -159,7 +160,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper", data:[[4,-1]]},{label:"kasper.sorensen", data:[[2,-2]]},{label:"&lt;null&gt;", data:[[1,-3]], color:"#111"},{label:"info", data:[[1,-4]]}
     ];
-    draw_value_distribution_bar('reselem_1', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_1', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))
@@ -169,7 +174,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper.sorensen", data:[[1,-1]]},{label:"kaspers", data:[[1,-2]]},{label:"winfried.vanholland", data:[[1,-3]]}
     ];
-    draw_value_distribution_bar('reselem_6', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_6', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(2).toHtml(context).replaceAll("\r\n", "\n"))
@@ -181,7 +190,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     val col1 = new MockInputColumn[String]("email username", classOf[String]);
 
-    val analyzer = new ValueDistributionAnalyzer(col1, true, null, null);
+    val analyzer = new ValueDistributionAnalyzer(col1, true);
 
     analyzer.run(new MockInputRow().put(col1, "kasper"), 6);
     analyzer.run(new MockInputRow().put(col1, "kasper.sorensen"), 3);
@@ -200,18 +209,21 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var html: String = null;
 
     html = htmlFragment.getBodyElements().get(0).toHtml(context);
+    
     Assert.assertEquals("""<div id="reselem_2" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (9)</h3>
-<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr></table>
+<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr></table>
 </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
 
     html = htmlFragment.getBodyElements().get(1).toHtml(context);
+
     Assert.assertEquals("""<div id="reselem_3" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (3)</h3>
-<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr></table>
+<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr><tr class="odd"><td class="highlighted">kasper.sorensen</td></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr></table>
 </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
 
     html = htmlFragment.getBodyElements().get(4).toHtml(context);
+    
     Assert.assertEquals("""<div class="valueDistributionResultContainer">
                  <div class="valueDistributionGroupPanel">
              
@@ -232,7 +244,11 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var data = [
         {label:"kasper", data:[[9,-1]]},{label:"kasper.sorensen", data:[[3,-2]]},{label:"&lt;blank&gt;", data:[[2,-3]], color:"#eee"},{label:"info", data:[[1,-4]]}
     ];
-    draw_value_distribution_bar('reselem_1', data, 2);
+    wait_for_script_load('jQuery', function() {
+      $(function(){
+        draw_value_distribution_bar('reselem_1', data, 2);
+      });
+    });
     //]]>
 </script>
 """.replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))

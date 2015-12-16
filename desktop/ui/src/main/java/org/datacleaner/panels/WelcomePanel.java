@@ -43,7 +43,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.Version;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -80,16 +80,16 @@ public class WelcomePanel extends DCSplashPanel {
 
     private final UserPreferences _userPreferences;
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
-    private final InjectorBuilder _injectorBuilder;
+    private final DCModule _dcModule;
     private final JComponent _buttonPanel;
     private final JComponent _titleLabel;
 
     public WelcomePanel(final AnalysisJobBuilderWindow window, final UserPreferences userPreferences,
-            final OpenAnalysisJobActionListener openAnalysisJobActionListener, final InjectorBuilder injectorBuilder) {
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener, final DCModule dcModule) {
         super(window);
         _userPreferences = userPreferences;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
-        _injectorBuilder = injectorBuilder;
+        _dcModule = dcModule;
 
         _titleLabel = createTitleLabel("Welcome to DataCleaner", false);
         _buttonPanel = createButtonPanel();
@@ -116,7 +116,7 @@ public class WelcomePanel extends DCSplashPanel {
         final String welcomePanelClassName = SystemProperties
                 .getString(SystemProperties.UI_DESKTOP_WELCOME_PANEL, null);
         if (!Strings.isNullOrEmpty(welcomePanelClassName)) {
-            final Injector injector = _injectorBuilder.with(WelcomePanel.class, this).createInjector();
+            final Injector injector = _dcModule.createInjectorBuilder().with(WelcomePanel.class, this).createInjector();
             try {
                 @SuppressWarnings("unchecked")
                 final Class<? extends JComponent> componentClass = (Class<? extends JComponent>) Class

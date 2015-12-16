@@ -20,10 +20,14 @@
 package org.datacleaner.util.filemonitor;
 
 import java.io.File;
+import java.nio.file.WatchService;
 
 /**
  * The simplest (but also worst) implementation of the file monitor interface.
+ * 
+ * @deprecated use {@link WatchService} instead
  */
+@Deprecated
 final class PollingBasedFileMonitor implements FileMonitor {
 
 	// most file systems only support file changes on a second level, so don't

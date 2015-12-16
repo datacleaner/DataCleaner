@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-engine</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.5.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-engine-core</artifactId>
 
@@ -53,7 +53,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-vfs2</artifactId>
 		</dependency>
-		
+
 		<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
 			by HTTP components (4.x) at some point. -->
 		<dependency>

@@ -22,7 +22,9 @@ package org.datacleaner.util.http;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.user.UserPreferences;
 
 /**
@@ -32,13 +34,13 @@ import org.datacleaner.user.UserPreferences;
  */
 public class SimpleWebServiceHttpClient implements WebServiceHttpClient, MonitorHttpClient {
 
-    private final HttpClient _httpClient;
+    private final CloseableHttpClient _httpClient;
 
     public SimpleWebServiceHttpClient() {
-        this(new DefaultHttpClient());
+        this(HttpClients.createSystem());
     }
 
-    public SimpleWebServiceHttpClient(HttpClient httpClient) {
+    public SimpleWebServiceHttpClient(CloseableHttpClient httpClient) {
         _httpClient = httpClient;
     }
 
@@ -49,6 +51,6 @@ public class SimpleWebServiceHttpClient implements WebServiceHttpClient, Monitor
 
     @Override
     public void close() {
-        // do nothing
+        FileHelper.safeClose(_httpClient);
     }
 }

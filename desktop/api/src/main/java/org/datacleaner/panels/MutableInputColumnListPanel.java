@@ -29,6 +29,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -50,8 +51,18 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
     private final JXTextField _textField;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final OutputColumnVisibilityButton _visibilityButton;
+    private final JComponent panelOwner;
 
-    public MutableInputColumnListPanel(AnalysisJobBuilder analysisJobBuilder, MutableInputColumn<?> inputColumn) {
+    /**
+     *
+     * @param analysisJobBuilder
+     * @param inputColumn
+     * @param panelOwner - the component that logically owns this component. Will be repainted after this component changes a content.
+     *                   Since this component is used as a cell renderer in a table, it is not really part of the physical Swing component hierarchy
+     *                   (the table doesn't have it as a Component child). So changing our content doesn't automatically
+     *                   revalidate and repaint the table. Must be called explicitly.
+     */
+    public MutableInputColumnListPanel(AnalysisJobBuilder analysisJobBuilder, MutableInputColumn<?> inputColumn, JComponent panelOwner) {
         _analysisJobBuilder = analysisJobBuilder;
         _inputColumn = inputColumn;
 
@@ -92,6 +103,8 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
         WidgetUtils.addToGridBag(_visibilityButton, this, 0, 0, GridBagConstraints.WEST, 0.0, 0.0);
         WidgetUtils.addToGridBag(_textField, this, 1, 0, GridBagConstraints.WEST, 1.0, 1.0);
         WidgetUtils.addToGridBag(resetButton, this, 2, 0, GridBagConstraints.WEST, 0.0, 0.0);
+
+        this.panelOwner = panelOwner;
     }
 
     @Override
@@ -102,6 +115,9 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
     @Override
     public void onNameChanged(MutableInputColumn<?> column, String oldName, String newName) {
         _textField.setText(newName);
+        if(panelOwner != null) {
+            panelOwner.repaint();
+        }
     }
 
     @Override

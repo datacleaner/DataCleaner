@@ -23,7 +23,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.FileDownloadListener;
 import org.datacleaner.bootstrap.WindowContext;
@@ -44,25 +45,18 @@ public final class ExtensionSwapClient {
 
     private static final String EXTENSIONSWAP_ID_PROPERTY = "extensionswap.id";
 
-    private final HttpClient _httpClient;
     private final WindowContext _windowContext;
     private final String _baseUrl;
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
 
-    public ExtensionSwapClient(HttpClient httpClient, WindowContext windowContext, UserPreferences userPreferences,
+    public ExtensionSwapClient(WindowContext windowContext, UserPreferences userPreferences,
             DataCleanerConfiguration configuration) {
-        this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration, httpClient);
+        this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration);
     }
 
     public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences,
-            DataCleanerConfiguration configuration, HttpClient httpClient) {
-        this(httpClient, websiteHostname, windowContext, userPreferences, configuration);
-    }
-
-    public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext,
-            UserPreferences userPreferences, DataCleanerConfiguration configuration) {
-        _httpClient = httpClient;
+            DataCleanerConfiguration configuration) {
         _windowContext = windowContext;
         _baseUrl = "http://" + websiteHostname + "/ws/extension/";
         _userPreferences = userPreferences;
@@ -81,11 +75,16 @@ public final class ExtensionSwapClient {
     }
 
     public ExtensionSwapPackage getExtensionSwapPackage(String id) {
-        final Element rootNode = HttpXmlUtils.getRootNode(_httpClient, _baseUrl + id);
-        final String name = HttpXmlUtils.getChildNodeText(rootNode, "name");
-        final int version = Integer.parseInt(HttpXmlUtils.getChildNodeText(rootNode, "version"));
-        final String packageName = HttpXmlUtils.getChildNodeText(rootNode, "package");
-        return new ExtensionSwapPackage(id, version, name, packageName);
+        final CloseableHttpClient httpClient = _userPreferences.createHttpClient();
+        try {
+            final Element rootNode = HttpXmlUtils.getRootNode(httpClient, _baseUrl + id);
+            final String name = HttpXmlUtils.getChildNodeText(rootNode, "name");
+            final int version = Integer.parseInt(HttpXmlUtils.getChildNodeText(rootNode, "version"));
+            final String packageName = HttpXmlUtils.getChildNodeText(rootNode, "package");
+            return new ExtensionSwapPackage(id, version, name, packageName);
+        } finally {
+            FileHelper.safeClose(httpClient);
+        }
     }
 
     public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {
@@ -107,7 +106,7 @@ public final class ExtensionSwapClient {
 
         String filename = extensionSwapPackage.getId() + ".jar";
         FileObject targetDirectory = VFSUtils.toFileObject(_userPreferences.getExtensionsDirectory());
-        WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_httpClient);
+        WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_userPreferences.createHttpClient());
         DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
                 targetDirectory, new String[] { filename }, listener, _windowContext, httpClient);
         actionListener.actionPerformed(null);

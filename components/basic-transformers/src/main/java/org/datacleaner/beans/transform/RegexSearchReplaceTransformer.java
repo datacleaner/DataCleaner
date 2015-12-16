@@ -27,26 +27,31 @@ import javax.inject.Named;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
+import org.datacleaner.components.categories.TextCategory;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
-@Categorized(StringManipulationCategory.class)
+@ExternalDocumentation({
+        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson", url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH, version = "3.0") })
+@Categorized(TextCategory.class)
 public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)
     InputColumn<String> valueColumn;
 
     @Configured(order = 2)
-    @Description("Regular expression pattern used for searching. Eg. 'Mr\\. (\\w+)'")
+    @Description("Regular expression pattern used for searching.\nExample: 'Mr\\. (\\w+)'")
     Pattern searchPattern;
 
     @Configured(order = 3)
-    @Description("Regular expression pattern used for replacement. Eg. 'Mister $1'")
+    @Description("Regular expression pattern used for replacement.\nExample: 'Mister $1'")
     Pattern replacementPattern;
 
     @Override

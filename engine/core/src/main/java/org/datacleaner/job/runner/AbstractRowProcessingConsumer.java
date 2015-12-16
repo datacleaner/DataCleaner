@@ -19,12 +19,17 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
@@ -35,6 +40,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +59,15 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final HasComponentRequirement _hasComponentRequirement;
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
+    private final List<ActiveOutputDataStream> _outputDataStreams;
+    private final AtomicInteger _publishersRegisteredCount;
+    private final AtomicInteger _publishersInitializedCount;
+    private final AtomicInteger _publishersClosedCount;
 
-    protected AbstractRowProcessingConsumer(RowProcessingPublishers publishers, HasComponentRequirement outcomeSinkJob,
+    protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
-        this(publishers.getAnalysisJob(), publishers.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
-                publishers.getSourceColumnFinder());
+        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
+                .getSourceColumnFinder());
     }
 
     protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,
@@ -73,7 +83,11 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _analysisListener = analysisListener;
         _hasComponentRequirement = outcomeSinkJob;
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
+        _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
+        _publishersRegisteredCount = new AtomicInteger(0);
+        _publishersInitializedCount = new AtomicInteger(0);
+        _publishersClosedCount = new AtomicInteger(0);
     }
 
     private boolean isAlwaysSatisfiedForConsume() {
@@ -135,7 +149,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     public InputColumn<?>[] getOutputColumns() {
         return new InputColumn[0];
     }
-    
+
     @Override
     public boolean isResultProducer() {
         return getComponent() instanceof HasAnalyzerResult;
@@ -228,5 +242,49 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         }
 
         return componentRequirement.isSatisfied(null, outcomes);
+    }
+
+    @Override
+    public List<ActiveOutputDataStream> getActiveOutputDataStreams() {
+        return Collections.unmodifiableList(_outputDataStreams);
+    }
+
+    @Override
+    public void registerOutputDataStream(OutputDataStreamJob outputDataStreamJob,
+            RowProcessingPublisher publisherForOutputDataStream) {
+        final HasOutputDataStreams component = (HasOutputDataStreams) getComponent();
+        _outputDataStreams
+                .add(new ActiveOutputDataStream(outputDataStreamJob, publisherForOutputDataStream, component));
+    }
+
+    @Override
+    public AnalysisJob getAnalysisJob() {
+        return _analysisJob;
+    }
+
+    @Override
+    public int onPublisherInitialized(RowProcessingPublisher publisher) {
+        return _publishersInitializedCount.incrementAndGet();
+    }
+
+    @Override
+    public int onPublisherClosed(RowProcessingPublisher publisher) {
+        final int closedCount = _publishersClosedCount.incrementAndGet();
+        return _publishersRegisteredCount.get() - closedCount;
+    }
+
+    @Override
+    public boolean isAllPublishersInitialized() {
+        return _publishersRegisteredCount.get() == _publishersInitializedCount.get();
+    }
+    
+    @Override
+    public boolean isAllPublishersClosed() {
+        return _publishersRegisteredCount.get() == _publishersClosedCount.get();
+    }
+
+    @Override
+    public void registerPublisher(RowProcessingPublisher publisher) {
+        _publishersRegisteredCount.incrementAndGet();
     }
 }

@@ -4,7 +4,7 @@ import javax.inject.Named
 import org.datacleaner.api.Transformer
 import org.datacleaner.api.Description
 import org.datacleaner.api.Categorized
-import org.datacleaner.components.categories.StringManipulationCategory
+import org.datacleaner.components.categories.TextCategory
 import org.datacleaner.api.InputColumn
 import org.datacleaner.api.Configured
 import org.datacleaner.api.OutputColumns
@@ -13,7 +13,7 @@ import org.datacleaner.util.CharIterator
 
 @Named("Remove unwanted characters")
 @Description("Removes characters from strings that are not wanted. Use it to cleanse codes and identifiers that may have additional dashes, punctuations, unwanted letters etc.")
-@Categorized(Array(classOf[StringManipulationCategory]))
+@Categorized(Array(classOf[TextCategory]))
 class RemoveUnwantedCharsTransformer(col: InputColumn[String]) extends Transformer {
 
   @Configured

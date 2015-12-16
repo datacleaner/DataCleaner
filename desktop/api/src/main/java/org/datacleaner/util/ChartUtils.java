@@ -50,6 +50,13 @@ public final class ChartUtils {
     private static final Stroke STROKE_NORMAL = new BasicStroke(1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     private static final Stroke STROKE_WIDE = new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
+    /**
+     * The threshold value advised to use when considering if there are too many
+     * categories/bars/slices for a chart to render or not.
+     */
+    public static final int CATEGORY_COUNT_DISPLAY_THRESHOLD = SystemProperties.getInt(
+            "datacleaner.chart.categories.threshold", 1000);
+
     public static final int WIDTH_WIDE = 900;
     public static final int WIDTH_NORMAL = 600;
     public static final int HEIGHT_WIDE = 400;

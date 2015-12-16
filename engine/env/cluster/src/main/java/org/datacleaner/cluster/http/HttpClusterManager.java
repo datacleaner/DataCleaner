@@ -32,9 +32,14 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.cluster.ClusterManager;
 import org.datacleaner.cluster.DistributedJobContext;
 import org.datacleaner.cluster.FixedDivisionsCountJobDivisionManager;
@@ -45,9 +50,6 @@ import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.LazyRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +70,7 @@ public class HttpClusterManager implements ClusterManager {
 
     private final HttpClient _httpClient;
     private final List<String> _slaveEndpoints;
+    private final HttpClientContext _httpClientContext;
 
     /**
      * Creates a new HTTP cluster manager
@@ -76,7 +79,8 @@ public class HttpClusterManager implements ClusterManager {
      *            the endpoint URLs of the slaves
      */
     public HttpClusterManager(List<String> slaveEndpoints) {
-        this(new DefaultHttpClient(new PoolingClientConnectionManager()), slaveEndpoints);
+        this(HttpClients.custom().useSystemProperties().setConnectionManager(new PoolingHttpClientConnectionManager())
+                .build(), HttpClientContext.create(), slaveEndpoints);
     }
 
     /**
@@ -86,11 +90,13 @@ public class HttpClusterManager implements ClusterManager {
      *            http client to use for invoking slave endpoints. Must be
      *            capable of executing multiple requests at the same time (see
      *            {@link PoolingClientConnectionManager}).
+     * @param context
      * @param slaveEndpoints
      *            the endpoint URLs of the slaves
      */
-    public HttpClusterManager(HttpClient httpClient, List<String> slaveEndpoints) {
+    public HttpClusterManager(HttpClient httpClient, HttpClientContext context, List<String> slaveEndpoints) {
         _httpClient = httpClient;
+        _httpClientContext = context;
         _slaveEndpoints = slaveEndpoints;
     }
 
@@ -150,7 +156,7 @@ public class HttpClusterManager implements ClusterManager {
 
                 logger.info("Firing run request to slave server '{}' for job id '{}'", slaveEndpoint, slaveJobId);
 
-                final HttpResponse response = _httpClient.execute(request);
+                final HttpResponse response = _httpClient.execute(request, _httpClientContext);
 
                 // handle the response
                 final StatusLine statusLine = response.getStatusLine();
@@ -172,12 +178,12 @@ public class HttpClusterManager implements ClusterManager {
     }
 
     private void sendCancelRequest(String slaveEndpoint, String slaveJobId) {
-        final HttpPost request = new HttpPost(slaveEndpoint);
-        request.getParams().setParameter(HTTP_PARAM_SLAVE_JOB_ID, slaveJobId);
-        request.getParams().setParameter(HTTP_PARAM_ACTION, ACTION_CANCEL);
+        RequestBuilder rb = RequestBuilder.post(slaveEndpoint);
+        rb.addParameter(HTTP_PARAM_SLAVE_JOB_ID, slaveJobId);
+        rb.addParameter(HTTP_PARAM_ACTION, ACTION_CANCEL);
 
         try {
-            final HttpResponse response = _httpClient.execute(request);
+            final HttpResponse response = _httpClient.execute(rb.build(), _httpClientContext);
 
             // handle the response
             final StatusLine statusLine = response.getStatusLine();

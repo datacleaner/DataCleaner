@@ -20,59 +20,68 @@
 package org.datacleaner.configuration;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.reference.Dictionary;
-import org.datacleaner.reference.ReferenceValues;
-import org.datacleaner.reference.SimpleStringReferenceValues;
+import org.datacleaner.reference.DictionaryConnection;
 import org.junit.Ignore;
 
 @Ignore
 public class SampleCustomDictionary implements Dictionary {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Configured
-	String name;
+    @Configured
+    String name;
 
-	@Configured
-	int values;
+    @Configured
+    int values;
 
-	@Configured
-	Datastore datastore;
-	
-	@Configured
-	String description;
+    @Configured
+    Datastore datastore;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Configured
+    String description;
 
-	@Override
-	public boolean containsValue(String value) {
-		return getValues().containsValue(value);
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public ReferenceValues<String> getValues() {
-		List<String> values = new ArrayList<String>();
-		for (int i = 0; i < this.values; i++) {
-			values.add("value" + i);
-		}
-		SimpleStringReferenceValues refValues = new SimpleStringReferenceValues(values, true);
-		return refValues;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @Override
+    public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
+        final List<String> valueList = new ArrayList<String>();
+        for (int i = 0; i < SampleCustomDictionary.this.values; i++) {
+            valueList.add("value" + i);
+        }
+        return new DictionaryConnection() {
+
+            @Override
+            public Iterator<String> getAllValues() {
+                return valueList.iterator();
+            }
+
+            @Override
+            public boolean containsValue(String str) {
+                return valueList.contains(str);
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+    }
 }

@@ -36,8 +36,8 @@ public class WindowSizePreferences {
      * @param userPreferences
      *            represents the settings provided by the user at runtime @{link
      *            UserPreferences}
-     * @param identifier
-     *            represents the name of the class that calls this class
+     * @param windowClass
+     *            the window class that calls this class
      * @param defaultWidth
      *            represents the default width
      * @param defaultHeight

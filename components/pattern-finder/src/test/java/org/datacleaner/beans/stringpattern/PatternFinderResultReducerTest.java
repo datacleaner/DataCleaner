@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.metamodel.util.Action;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
-import org.apache.metamodel.util.Action;
-
-import junit.framework.TestCase;
+import org.datacleaner.storage.RowAnnotations;
 
 public class PatternFinderResultReducerTest extends TestCase {
 
@@ -66,7 +66,7 @@ public class PatternFinderResultReducerTest extends TestCase {
     private PatternFinderResult createResult(MockInputColumn<String> col, Action<PatternFinderAnalyzer> action)
             throws Exception {
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
-        analyzer._rowAnnotationFactory = new InMemoryRowAnnotationFactory();
+        analyzer._rowAnnotationFactory = RowAnnotations.getDefaultFactory();
         analyzer.column = col;
         analyzer.init();
 

@@ -37,6 +37,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -56,6 +57,7 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
@@ -81,6 +83,7 @@ public final class IconUtils {
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
     public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
+    public static final String OUTPUT_DATA_STREAM_PATH = "images/component-types/output-data-stream.png";
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
@@ -188,10 +191,12 @@ public final class IconUtils {
     public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
+    public static final String DATAHUB_IMAGEPATH = "images/datastore-types/datahub.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
     public static final String FILE_FILE = "images/filetypes/file.png";
+    public static final String FILE_HDFS = "images/filetypes/hadoop.png";
     public static final String FILE_DESKTOP_FOLDER = "images/filetypes/desktop-folder.png";
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
@@ -206,6 +211,14 @@ public final class IconUtils {
     }
 
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
         if (configured) {
             return descriptorIcon;
@@ -246,6 +259,14 @@ public final class IconUtils {
      */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
             boolean allowTransparentForUnspecific) {
+        if (descriptor instanceof HasIcon) {
+            ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
+
+            if (imageIcon != null) {
+                return imageIcon;
+            }
+        }
+
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
         final boolean allowGeneric = !allowTransparentForUnspecific;
         final String imagePath = getDescriptorImagePath(descriptor, classLoader, allowGeneric);
@@ -253,6 +274,31 @@ public final class IconUtils {
             return getTransparentIcon(newWidth);
         }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
+    }
+
+    private static ImageIcon getIconFromData(ComponentDescriptor<?> componentDescriptor, int width) {
+        String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
+        Image image = _imageManager.getImageFromCache(cacheKey);
+        ImageIcon imageIcon = null;
+
+        if (image == null) {
+            HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
+
+            if (descriptorWithIcon.getIconData() == null || descriptorWithIcon .getIconData().length == 0) {
+                return null;
+            }
+
+            imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
+            BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+            bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
+            imageIcon = new ImageIcon(bufferedImage);
+            _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
+        }
+        else {
+            imageIcon = new ImageIcon(image);
+        }
+
+        return imageIcon;
     }
 
     public static ImageIcon getTransparentIcon(int width) {
@@ -362,11 +408,14 @@ public final class IconUtils {
     }
 
     public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
-        final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+        String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+
         final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
+
         if (url == null) {
             return null;
         }
+
         return iconPath;
     }
 
@@ -374,6 +423,7 @@ public final class IconUtils {
             boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
+
         if (bundledIconPath != null) {
             return bundledIconPath;
         }
@@ -468,7 +518,10 @@ public final class IconUtils {
             imagePath = SUGAR_CRM_IMAGEPATH;
         } else if (datastore instanceof CompositeDatastore) {
             imagePath = COMPOSITE_IMAGEPATH;
+        } else if (datastore instanceof DataHubDatastore) {
+            imagePath = DATAHUB_IMAGEPATH;
         }
         return imagePath;
     }
 }
+

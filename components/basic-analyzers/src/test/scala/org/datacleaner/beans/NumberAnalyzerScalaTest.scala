@@ -5,7 +5,7 @@ import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.result.renderer.CrosstabTextRenderer
 import org.junit.Assert
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2
 
 class NumberAnalyzerScalaTest extends AssertionsForJUnit {
 
@@ -16,7 +16,7 @@ class NumberAnalyzerScalaTest extends AssertionsForJUnit {
     val analyzer = new NumberAnalyzer()
     analyzer.descriptiveStatistics = true;
     analyzer._columns = Array(col1);
-    analyzer._annotationFactory = new InMemoryRowAnnotationFactory()
+    analyzer._annotationFactory = new InMemoryRowAnnotationFactory2()
 
     analyzer.init()
 

@@ -27,9 +27,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.datacleaner.user.UserPreferences;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;
+import org.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +48,13 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_TERADATA = "Teradata";
     public static final String DATABASE_NAME_H2 = "H2";
     public static final String DATABASE_NAME_HSQLDB_HYPER_SQL = "Hsqldb/HyperSQL";
-    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL = "Microsoft SQL Server (official)";
     public static final String DATABASE_NAME_ORACLE = "Oracle";
     public static final String DATABASE_NAME_APACHE_DERBY_EMBEDDED = "Apache Derby (embedded)";
     public static final String DATABASE_NAME_APACHE_DERBY_CLIENT = "Apache Derby (client)";
     public static final String DATABASE_NAME_SQLITE = "SQLite";
     public static final String DATABASE_NAME_SYBASE = "Sybase";
-    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS = "Microsoft SQL Server (JTDS)";
+    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS = "Microsoft SQL Server";
+    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL = "Microsoft SQL Server (official)";
     public static final String DATABASE_NAME_POSTGRESQL = "PostgreSQL";
     public static final String DATABASE_NAME_SAP_DB = "SAP DB";
     public static final String DATABASE_NAME_FIREBIRD = "Firebird";
@@ -65,6 +65,7 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_LUCIDDB = "LucidDB";
     public static final String DATABASE_NAME_PERVASIVE = "Pervasive";
     public static final String DATABASE_NAME_CUBRID = "Cubrid";
+    public static final String DATABASE_NAME_HIVE = "Apache Hive";
 
     private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
@@ -90,11 +91,11 @@ public class DatabaseDriverCatalog implements Serializable {
         add(DATABASE_NAME_SAP_DB, "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB",
                 null, "jdbc:sapdb://<hostname>/<database>");
         add(DATABASE_NAME_POSTGRESQL, "images/datastore-types/databases/postgresql.png", "org.postgresql.Driver",
-                "http://repo1.maven.org/maven2/postgresql/postgresql/9.1-901.jdbc4/postgresql-9.1-901.jdbc4.jar",
+                "http://repo1.maven.org/maven2/postgresql/postgresql/9.3-1102-jdbc4/postgresql-9.3-1102-jdbc4.jar",
                 "jdbc:postgresql://<hostname>:5432/<database>");
         add(DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, "images/datastore-types/databases/microsoft.png",
                 "net.sourceforge.jtds.jdbc.Driver",
-                "http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.2.4/jtds-1.2.4.jar",
+                "http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.3.1/jtds-1.3.1.jar",
                 "jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8",
                 "jdbc:jtds:sqlserver://<hostname>:<port>/<database>;instance=<instance>;useUnicode=true;characterEncoding=UTF-8");
         add(DATABASE_NAME_SYBASE, "images/datastore-types/databases/sybase.png", "net.sourceforge.jtds.jdbc.Driver",
@@ -112,7 +113,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar",
                 "jdbc:derby:<database>");
         add(DATABASE_NAME_ORACLE, "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
-                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>", "jdbc:oracle:thin:@<hostname>:<port>/<service>:<server>/<instance>");
+                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>",
+                "jdbc:oracle:thin:@<hostname>:<port>/<service>:<server>/<instance>");
         add(DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL, "images/datastore-types/databases/microsoft.png",
                 "com.microsoft.sqlserver.jdbc.SQLServerDriver", null,
                 "jdbc:sqlserver://<hostname>:3341;databaseName=<database>",
@@ -138,6 +140,9 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
         add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
+        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", new HiveDriverPreparer(), "org.apache.hive.jdbc.HiveDriver",
+                "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
+                "jdbc:hive2://<hostname>:10000/<database>");
 
         Collections.sort(_databaseDrivers);
     }
@@ -180,8 +185,19 @@ public class DatabaseDriverCatalog implements Serializable {
         } else {
             urls = new String[] { downloadUrl };
         }
-        _databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls,
-                urlTemplates));
+        add(databaseName, iconImagePath, driverClassName, urls, urlTemplates);
+    }
+
+    private static void add(String databaseName, String iconImagePath, DriverPreparer driverPreparer,
+            String driverClassName, String downloadUrl, String... urlTemplates) {
+        if (driverPreparer != null) {
+            try {
+                driverPreparer.prepare();
+            } catch (Exception e) {
+                logger.warn("Could not run driver preparation", e);
+            }
+        }
+        add(databaseName, iconImagePath, driverClassName, downloadUrl, urlTemplates);
     }
 
     public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {
@@ -247,4 +263,5 @@ public class DatabaseDriverCatalog implements Serializable {
         }
         return getState(databaseDriver) == DatabaseDriverState.INSTALLED_WORKING;
     }
+    
 }

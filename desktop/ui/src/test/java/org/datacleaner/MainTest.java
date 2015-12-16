@@ -21,9 +21,9 @@ package org.datacleaner;
 
 import java.util.Map;
 
-import org.h2.util.StringUtils;
-
 import junit.framework.TestCase;
+
+import org.h2.util.StringUtils;
 
 public class MainTest extends TestCase {
 

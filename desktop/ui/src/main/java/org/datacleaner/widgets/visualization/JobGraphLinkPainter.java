@@ -19,11 +19,7 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -35,11 +31,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
@@ -51,6 +48,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.slf4j.Logger;
@@ -64,6 +62,29 @@ import edu.uci.ics.jung.visualization.VisualizationServer;
  * {@link JobGraphLink}s.
  */
 public class JobGraphLinkPainter {
+    public static class VertexContext {
+        final private Object _vertex;
+        final private OutputDataStream _outputDataStream;
+        final private AnalysisJobBuilder _analysisJobBuilder;
+
+        public VertexContext(Object vertex, AnalysisJobBuilder analysisJobBuilder, OutputDataStream outputDataStream) {
+            _vertex = vertex;
+            _outputDataStream = outputDataStream;
+            _analysisJobBuilder = analysisJobBuilder;
+        }
+
+        public Object getVertex() {
+            return _vertex;
+        }
+
+        public OutputDataStream getOutputDataStream() {
+            return _outputDataStream;
+        }
+
+        public AnalysisJobBuilder getAnalysisJobBuilder() {
+            return _analysisJobBuilder;
+        }
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
@@ -74,7 +95,7 @@ public class JobGraphLinkPainter {
 
     private Shape _edgeShape;
     private Shape _arrowShape;
-    private Object _startVertex;
+    private VertexContext _startVertex;
     private Point2D _startPoint;
 
     public JobGraphLinkPainter(JobGraphContext graphContext, JobGraphActions actions) {
@@ -86,17 +107,17 @@ public class JobGraphLinkPainter {
 
     /**
      * Called when the drawing of a new link/edge is started
-     * 
+     *
      * @param startVertex
      */
-    public void startLink(Object startVertex) {
+    public void startLink(VertexContext startVertex) {
         if (startVertex == null) {
             return;
         }
 
         final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
-        int x = (int) graphLayout.getX(startVertex);
-        int y = (int) graphLayout.getY(startVertex);
+        int x = (int) graphLayout.getX(startVertex.getVertex());
+        int y = (int) graphLayout.getY(startVertex.getVertex());
 
         logger.debug("startLink({})", startVertex);
 
@@ -120,7 +141,7 @@ public class JobGraphLinkPainter {
     /**
      * If startVertex is non-null this method will attempt to end the
      * link-painting at the given endVertex
-     * 
+     *
      * @return true if a link drawing was ended or false if it wasn't started
      */
     public boolean endLink(Object endVertex, MouseEvent mouseEvent) {
@@ -169,28 +190,32 @@ public class JobGraphLinkPainter {
         }
     }
 
-    private boolean createLink(final Object fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
+    private boolean createLink(final VertexContext fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
         logger.debug("createLink({}, {}, {})", fromVertex, toVertex, mouseEvent);
 
         final List<? extends InputColumn<?>> sourceColumns;
         final Collection<FilterOutcome> filterOutcomes;
 
-        if (fromVertex instanceof Table) {
-            final Table table = (Table) fromVertex;
-            final AnalysisJobBuilder analysisJobBuilder = _graphContext.getJobGraph().getAnalysisJobBuilder();
-            sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
+        final AnalysisJobBuilder sourceAnalysisJobBuilder = fromVertex.getAnalysisJobBuilder();
+
+        if (fromVertex.getOutputDataStream() != null) {
+            sourceColumns = sourceAnalysisJobBuilder.getSourceColumns();
             filterOutcomes = null;
-        } else if (fromVertex instanceof InputColumnSourceJob) {
-            InputColumn<?>[] outputColumns = null;
+        } else if (fromVertex.getVertex() instanceof Table) {
+            final Table table = (Table) fromVertex.getVertex();
+            sourceColumns = sourceAnalysisJobBuilder.getSourceColumnsOfTable(table);
+            filterOutcomes = null;
+        } else if (fromVertex.getVertex() instanceof InputColumnSourceJob) {
+            InputColumn<?>[] outputColumns;
             try {
-                outputColumns = ((InputColumnSourceJob) fromVertex).getOutput();
+                outputColumns = ((InputColumnSourceJob) fromVertex.getVertex()).getOutput();
             } catch (Exception e) {
                 outputColumns = new InputColumn[0];
             }
-            sourceColumns = Arrays.<InputColumn<?>> asList(outputColumns);
+            sourceColumns = Arrays.asList(outputColumns);
             filterOutcomes = null;
-        } else if (fromVertex instanceof HasFilterOutcomes) {
-            final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex;
+        } else if (fromVertex.getVertex() instanceof HasFilterOutcomes) {
+            final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex.getVertex();
             filterOutcomes = hasFilterOutcomes.getFilterOutcomes();
             sourceColumns = null;
         } else {
@@ -200,15 +225,37 @@ public class JobGraphLinkPainter {
 
         if (toVertex instanceof ComponentBuilder) {
             final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
+
             if (sourceColumns != null && !sourceColumns.isEmpty()) {
+                if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
+                    if (!fromVertex.getAnalysisJobBuilder().isRootJobBuilder()) {
+                        // we don't yet support MultiStreamComponents on output
+                        // data streams. See issue #620
+                        return false;
+                    }
+                }
+
+                if (!scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                    return false;
+                }
+
+                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+
                 try {
+
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
-                    if (inputProperty.isArray()) {
-                        componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
+
+                    final ColumnProperty columnProperty = inputProperty.getAnnotation(ColumnProperty.class);
+                    if (inputProperty.isArray() || (columnProperty != null && columnProperty.escalateToMultipleJobs())) {
+                        componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
+                        final InputColumn<?> firstRelevantSourceColumn =
+                                getFirstRelevantSourceColumn(sourceColumns, inputProperty);
+                        if(firstRelevantSourceColumn != null){
+                            componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
+                        }
                     }
                     _actions.showConfigurationDialog(componentBuilder);
 
@@ -227,7 +274,10 @@ public class JobGraphLinkPainter {
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
+                            if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                                addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
+                            }
                         }
                     });
                     popup.add(menuItem);
@@ -238,9 +288,38 @@ public class JobGraphLinkPainter {
                 logger.debug("createLink(...) returning false - popup with choices presented to user");
                 return false;
             }
+
+            // When we can't do anything, at least show the dialog.
+            _actions.showConfigurationDialog(componentBuilder);
         }
         logger.debug("createLink(...) returning false - no applicable action");
         return false;
+    }
+
+    /**
+     * This will check if components are in a different scope, and ask the user for
+     * permission to change the scope of the target component
+     *
+     * @return true if permitted or irrelevant, false if user refused a necessary scope change.
+     */
+    private boolean scopeUpdatePermitted(final AnalysisJobBuilder sourceAnalysisJobBuilder,
+            final ComponentBuilder componentBuilder) {
+        if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
+            if (componentBuilder.getInput().length > 0 || componentBuilder.getComponentRequirement() != null) {
+                final String scopeText;
+                scopeText = LabelUtils.getScopeLabel(sourceAnalysisJobBuilder);
+                final int response = JOptionPane.showConfirmDialog(_graphContext.getVisualizationViewer(),
+                        "This will move " + LabelUtils.getLabel(componentBuilder) + " into the " + scopeText
+                                + ", thereby losing its configured columns and/or requirements", "Change scope?",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                if(response == JOptionPane.CANCEL_OPTION){
+                    _graphContext.getJobGraph().refresh();
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     protected void addOrSetFilterOutcomeAsRequirement(ComponentBuilder componentBuilder, FilterOutcome filterOutcome) {
@@ -267,11 +346,27 @@ public class JobGraphLinkPainter {
         componentBuilder.setComponentRequirement(requirement);
     }
 
-    private Collection<? extends InputColumn<?>> getRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+    private InputColumn<?> getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+            ConfiguredPropertyDescriptor inputProperty){
+        assert inputProperty.isInputColumn();
+
+        final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
+        for (InputColumn<?> inputColumn : sourceColumns) {
+            final Class<?> actualDataType = inputColumn.getDataType();
+            if (ReflectionUtils.is(actualDataType, expectedDataType, false)) {
+                return inputColumn;
+            }
+        }
+
+        return null;
+    }
+
+
+    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(List<? extends InputColumn<?>> sourceColumns,
             ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
-        List<InputColumn<?>> result = new ArrayList<>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
         for (InputColumn<?> inputColumn : sourceColumns) {
             final Class<?> actualDataType = inputColumn.getDataType();
@@ -284,9 +379,7 @@ public class JobGraphLinkPainter {
     }
 
     private void transformEdgeShape(Point2D down, Point2D out) {
-        Shape shape = new Line2D.Float(down, out);
-        _edgeShape = shape;
-        return;
+        _edgeShape = new Line2D.Float(down, out);
     }
 
     private void transformArrowShape(Point2D down, Point2D out) {

@@ -1,7 +1,7 @@
 package org.datacleaner.beans.valuematch
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2
 import org.datacleaner.data.MockInputColumn
 import scala.collection.JavaConversions._
 import org.datacleaner.data.MockInputRow
@@ -11,7 +11,7 @@ class ValueMatchAnalyzerTest extends AssertionsForJUnit {
 
   @Test
   def testScenario = {
-    val annotationFactory = new InMemoryRowAnnotationFactory()
+    val annotationFactory = new InMemoryRowAnnotationFactory2()
 
     val analyzer = new ValueMatchAnalyzer();
     analyzer._rowAnnotationFactory = annotationFactory;
@@ -45,10 +45,10 @@ class ValueMatchAnalyzerTest extends AssertionsForJUnit {
 
     val annotatedRowsResult = result.getAnnotatedRowsForValue("Foo");
 
-    val rows = annotatedRowsResult.getRows();
+    val rows = annotatedRowsResult.getSampleRows();
     
-    Assert.assertEquals("FOO", rows(0).getValue(col).toString());
-    Assert.assertEquals("FOO  ", rows(1).getValue(col).toString());
-    Assert.assertEquals(" foo \t ", rows(2).getValue(col).toString());
+    Assert.assertEquals("FOO", rows.get(0).getValue(col).toString());
+    Assert.assertEquals("FOO  ", rows.get(1).getValue(col).toString());
+    Assert.assertEquals(" foo \t ", rows.get(2).getValue(col).toString());
   }
 }

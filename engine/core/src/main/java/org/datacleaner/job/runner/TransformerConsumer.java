@@ -33,7 +33,6 @@ import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector.Listener;
-import org.datacleaner.util.SourceColumnFinder;
 
 /**
  * {@link RowProcessingConsumer} implementation for {@link Transformer}s.
@@ -44,24 +43,19 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     private final TransformerJob _transformerJob;
     private final InputColumn<?>[] _inputColumns;
     private final boolean _concurrent;
+    private final Set<ProvidedPropertyDescriptor> _outputRowCollectorProperties;
     private RowIdGenerator _idGenerator;
 
-    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
-            InputColumn<?>[] inputColumns, SourceColumnFinder sourceColumnFinder) {
-        super(null, null, transformerJob, transformerJob, sourceColumnFinder);
+    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob, InputColumn<?>[] inputColumns,
+            RowProcessingPublisher publisher) {
+        super(publisher, transformerJob, transformerJob);
         _transformer = transformer;
         _transformerJob = transformerJob;
         _inputColumns = inputColumns;
         _concurrent = determineConcurrent();
-    }
-    
-    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
-            InputColumn<?>[] inputColumns, RowProcessingPublishers publishers) {
-        super(publishers, transformerJob, transformerJob);
-        _transformer = transformer;
-        _transformerJob = transformerJob;
-        _inputColumns = inputColumns;
-        _concurrent = determineConcurrent();
+
+        _outputRowCollectorProperties = _transformerJob.getDescriptor().getProvidedPropertiesByType(
+                OutputRowCollector.class);
     }
 
     private boolean determineConcurrent() {
@@ -114,24 +108,16 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
             if (values == null) {
                 return;
             }
-            final TransformedInputRow resultRow;
-            if (row instanceof TransformedInputRow) {
-                // re-use existing transformed input row.
-                resultRow = (TransformedInputRow) row;
-            } else {
-                resultRow = new TransformedInputRow(row);
-            }
+            final TransformedInputRow resultRow = TransformedInputRow.of(row);
             addValuesToRow(resultRow, outputColumns, values);
             chain.processNext(resultRow, distinctCount, outcomes);
-        } finally  {
+        } finally {
             unregisterListener(_transformer);
         }
     }
 
     private void unregisterListener(Transformer transformer) {
-        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = _transformerJob.getDescriptor()
-                .getProvidedPropertiesByType(OutputRowCollector.class);
-        for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+        for (ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
             OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
             if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
                 ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
@@ -141,9 +127,8 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
 
     private void registerListener(final Transformer transformer, final InputRow row, final FilterOutcomes outcomes,
             final RowProcessingChain chain, final InputColumn<?>[] outputColumns) {
-        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = _transformerJob.getDescriptor()
-                .getProvidedPropertiesByType(OutputRowCollector.class);
-        if (outputRowCollectorProperties == null || outputRowCollectorProperties.isEmpty()) {
+
+        if (_outputRowCollectorProperties.isEmpty()) {
             return;
         }
 
@@ -152,25 +137,25 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
 
             @Override
             public void onValues(Object[] values) {
-                int recordNo = recordNumber.incrementAndGet();
-                boolean isFirst = recordNo == 1;
+                final int recordNo = recordNumber.incrementAndGet();
+                final boolean isFirst = recordNo == 1;
                 final TransformedInputRow resultRow;
                 if (isFirst) {
                     // retain the first record's id
-                    resultRow = new TransformedInputRow(row);
+                    resultRow = TransformedInputRow.of(row);
                 } else {
                     resultRow = new TransformedInputRow(row, getNextVirtualRowId(row, recordNo));
                 }
 
                 addValuesToRow(resultRow, outputColumns, values);
 
-                FilterOutcomes clonedOutcomeSink = outcomes.clone();
+                final FilterOutcomes clonedOutcomeSink = outcomes.clone();
                 chain.processNext(resultRow, 1, clonedOutcomeSink);
             }
         };
 
-        for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
-            OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
+        for (ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
+            final OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
             if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
                 ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(listener);
             } else {

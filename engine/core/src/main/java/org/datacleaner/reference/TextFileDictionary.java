@@ -20,125 +20,120 @@
 package org.datacleaner.reference;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.io.ObjectInputStream.GetField;
+import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.api.Initialize;
-import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.filemonitor.FileMonitor;
-import org.datacleaner.util.filemonitor.FileMonitorFactory;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Adaptor;
+import org.datacleaner.util.convert.ResourceConverter;
+import org.elasticsearch.common.base.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dictionary based on a simple text file containing the values of the
  * dictionary. Each line of the file will be treated as a value within the
  * dictionary.
- * 
- * 
  */
 public final class TextFileDictionary extends AbstractReferenceData implements Dictionary {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private transient File _file;
-	private transient FileMonitor _fileMonitor;
-	private transient Set<String> _entries;
+    private static final Logger logger = LoggerFactory.getLogger(TextFileDictionary.class);
 
-	private final String _filename;
-	private final String _encoding;
+    private final String _filename;
+    private final String _encoding;
+    private final boolean _caseSensitive;
 
-	public TextFileDictionary(String name, String filename, String encoding) {
-		super(name);
-		_filename = filename;
-		_encoding = encoding;
-	}
+    public TextFileDictionary(String name, String filename, String encoding) {
+        this(name, filename, encoding, true);
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, TextFileDictionary.class).readObject(stream);
-	}
+    public TextFileDictionary(String name, String filename, String encoding, boolean caseSensitive) {
+        super(name);
+        _filename = filename;
+        _encoding = encoding;
+        _caseSensitive = caseSensitive;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Adaptor adaptor = new Adaptor() {
+            @Override
+            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+                final boolean caseSensitive = getField.get("_caseSensitive", true);
+                Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
+                field.setAccessible(true);
+                field.set(serializable, caseSensitive);
+            }
+        };
+        ReadObjectBuilder.create(this, TextFileDictionary.class).readObject(stream, adaptor);
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_filename);
-		identifiers.add(_encoding);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final TextFileDictionary other = (TextFileDictionary) obj;
+            return Objects.equal(_filename, other._filename) && Objects.equal(_encoding, other._encoding)
+                    && Objects.equal(_caseSensitive, other._caseSensitive);
+        }
+        return false;
+    }
 
-	@Override
-	public String toString() {
-		return "TextFileDictionary[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding + "]";
-	}
+    @Override
+    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+        final ResourceConverter rc = new ResourceConverter(configuration);
+        final Resource resource = rc.fromString(Resource.class, _filename);
+        final Set<String> values = resource.read(new Func<InputStream, Set<String>>() {
+            @Override
+            public Set<String> eval(InputStream in) {
+                final Set<String> values = new HashSet<>();
+                final BufferedReader reader = FileHelper.getBufferedReader(in, getEncoding());
+                try {
+                    String line = reader.readLine();
+                    while (line != null) {
+                        if (!_caseSensitive) {
+                            line = line.toLowerCase();
+                        }
+                        values.add(line);
+                        line = reader.readLine();
+                    }
+                } catch (IOException e) {
+                    logger.error("Failed to read line from resource: {}", resource, e);
+                } finally {
+                    FileHelper.safeClose(reader);
+                }
+                return values;
+            }
+        });
 
-	private File getFile() {
-		if (_file == null) {
-			synchronized (this) {
-				if (_file == null) {
-					_file = new File(_filename);
-				}
-			}
-		}
-		return _file;
-	}
+        final SimpleDictionary simpleDictionary = new SimpleDictionary(getName(), values, _caseSensitive);
+        return simpleDictionary.openConnection(configuration);
+    }
 
-	private FileMonitor getFileMonitor() {
-		if (_fileMonitor == null) {
-			_fileMonitor = FileMonitorFactory.getFileMonitor(getFile());
-		}
-		return _fileMonitor;
-	}
+    @Override
+    public String toString() {
+        return "TextFileDictionary[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding + "]";
+    }
 
-	public String getFilename() {
-		return _filename;
-	}
+    public String getFilename() {
+        return _filename;
+    }
 
-	public String getEncoding() {
-		return _encoding;
-	}
+    public String getEncoding() {
+        return _encoding;
+    }
 
-	@Initialize
-	public void init() {
-		if (getFileMonitor().hasChanged()) {
-			_entries = loadEntries();
-		}
-	}
-
-	public Set<String> getEntries() {
-		if (_entries == null) {
-			_entries = loadEntries();
-		}
-		return _entries;
-	}
-
-	private Set<String> loadEntries() {
-		Set<String> entries = new HashSet<String>();
-		BufferedReader reader = null;
-		try {
-			reader = FileHelper.getBufferedReader(getFile(), _encoding);
-			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				entries.add(line);
-			}
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		} finally {
-			FileHelper.safeClose(reader);
-		}
-		return entries;
-	}
-
-	@Override
-	public boolean containsValue(String value) {
-		if (value == null) {
-			return false;
-		}
-		return getEntries().contains(value);
-	}
-
-	@Override
-	public ReferenceValues<String> getValues() {
-		return new SimpleStringReferenceValues(getEntries(), true);
-	}
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
+    }
 }

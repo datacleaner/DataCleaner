@@ -32,6 +32,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
 
@@ -78,6 +79,15 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      * @see Distributed
      */
     public boolean isDistributable();
+
+    /**
+     * Determines if the component supports multiple input data streams.
+     * 
+     * @return
+     * 
+     * @see MultiStreamComponent
+     */
+    public boolean isMultiStreamComponent();
 
     /**
      * Gets the configured properties that have {@link InputColumn} type.

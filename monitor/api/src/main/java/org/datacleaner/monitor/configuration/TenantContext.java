@@ -130,13 +130,13 @@ public interface TenantContext {
      * Gets a datastore by it's identifier, basically a shortcut for
      * {@link DatastoreCatalog#getDatastore(String)}.
      * 
-     * @param datastoreName
+     * @param datastoreIdentifier
      * @return
      */
     public Datastore getDatastore(DatastoreIdentifier datastoreIdentifier);
 
     /**
-     * Gets/loads the {@link AnalyzerBeansConfiguration} for this tenant.
+     * Gets/loads the {@link DataCleanerConfiguration} for this tenant.
      * 
      * @return
      */
@@ -155,4 +155,11 @@ public interface TenantContext {
      * the configuration changes.
      */
     public void onConfigurationChanged();
+
+
+    /**
+     * It returns the components' storage.
+     * @return
+     */
+    public ComponentStore getComponentStore();
 }

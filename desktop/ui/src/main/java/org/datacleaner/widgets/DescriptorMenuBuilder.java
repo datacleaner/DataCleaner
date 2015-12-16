@@ -73,7 +73,7 @@ public final class DescriptorMenuBuilder {
         /**
          * Will be called once for each category, in sorted order.
          * 
-         * @param descriptorMenu
+         * @param category
          */
         public void addCategory(ComponentCategory category);
     }
@@ -136,12 +136,15 @@ public final class DescriptorMenuBuilder {
             Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean buildSubmenus) {
         final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
                 .sorted(componentDescriptors);
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(sortedComponentDescriptors,
+                new DeprecatedComponentPredicate());
 
         final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
 
+
         // build sub menus
         {
-            for (ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
+            for (ComponentDescriptor<?> descriptor : filteredDescriptors) {
                 final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
                 for (ComponentCategory componentCategory : componentCategories) {
                     List<Class<?>> categoryList = categories.get(componentCategory);
@@ -165,11 +168,8 @@ public final class DescriptorMenuBuilder {
 
             for (ComponentCategory category : sortedCategories) {
                 final int count = categories.get(category).size();
-                if (count <= 1) {
-                    // disregard categories with only a single component in
-                    // them!
-                    logger.info("Disregarding menu for category '{}' because of too few components ({})", category,
-                            count);
+                if (count == 0) {
+                    logger.info("Disregarding menu for category '{}' because of no components", category);
                     categories.remove(category);
                 } else {
                     // add menu
@@ -178,7 +178,7 @@ public final class DescriptorMenuBuilder {
             }
         }
 
-        for (ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
+        for (ComponentDescriptor<?> descriptor : filteredDescriptors) {
             callback.addComponentDescriptor(descriptor);
         }
 

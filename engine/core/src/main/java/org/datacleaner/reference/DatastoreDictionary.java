@@ -21,23 +21,20 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.datacleaner.api.Close;
-import org.datacleaner.api.Initialize;
-import org.datacleaner.api.Provided;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.util.ReadObjectBuilder;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.job.NoSuchColumnException;
+import org.datacleaner.job.NoSuchDatastoreException;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.elasticsearch.common.base.Objects;
 
 /**
  * A dictionary backed by a column in a datastore.
@@ -50,116 +47,98 @@ import org.slf4j.LoggerFactory;
  */
 public final class DatastoreDictionary extends AbstractReferenceData implements Dictionary {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreDictionary.class);
-	
-	private transient ReferenceValues<String> _cachedRefValues;
-	private transient BlockingQueue<DatastoreConnection> _datastoreConnections = new LinkedBlockingQueue<DatastoreConnection>();
-	private final String _datastoreName;
-	private final String _qualifiedColumnName;
-	
-	@Inject
-	@Provided
-	transient DatastoreCatalog _datastoreCatalog;
+    private final String _datastoreName;
+    private final String _qualifiedColumnName;
+    private final boolean _loadIntoMemory;
 
-	public DatastoreDictionary(String name, String datastoreName, String qualifiedColumnName) {
-		super(name);
-		_datastoreName = datastoreName;
-		_qualifiedColumnName = qualifiedColumnName;
-	}
+    public DatastoreDictionary(String name, String datastoreName, String qualifiedColumnName) {
+        this(name, datastoreName, qualifiedColumnName, true);
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, DatastoreDictionary.class).readObject(stream);
-	}
+    public DatastoreDictionary(String name, String datastoreName, String qualifiedColumnName, boolean loadIntoMemory) {
+        super(name);
+        _datastoreName = datastoreName;
+        _qualifiedColumnName = qualifiedColumnName;
+        _loadIntoMemory = loadIntoMemory;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, DatastoreDictionary.class).readObject(stream);
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_datastoreName);
-		identifiers.add(_qualifiedColumnName);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final DatastoreDictionary other = (DatastoreDictionary) obj;
+            return Objects.equal(_datastoreName, other._datastoreName)
+                    && Objects.equal(_qualifiedColumnName, other._qualifiedColumnName)
+                    && Objects.equal(_loadIntoMemory, other._loadIntoMemory);
+        }
+        return false;
+    }
 
-	private BlockingQueue<DatastoreConnection> getDatastoreConnections() {
-		if (_datastoreConnections == null) {
-			synchronized (this) {
-				if (_datastoreConnections == null) {
-					_datastoreConnections = new LinkedBlockingQueue<DatastoreConnection>();
-				}
-			}
-		}
-		return _datastoreConnections;
-	}
+    public SimpleDictionary loadIntoMemory(DatastoreConnection datastoreConnection) {
+        final DataContext dataContext = datastoreConnection.getDataContext();
+        final Column column = getColumn(datastoreConnection);
 
-	/**
-	 * Initializes a DatastoreConnection, which will keep the connection open
-	 */
-	@Initialize
-	public void init() {
-		logger.info("Initializing dictionary: {}", this);
-		Datastore datastore = getDatastore();
-		DatastoreConnection con = datastore.openConnection();
-		getDatastoreConnections().add(con);
-	}
+        final Query query = dataContext.query().from(column.getTable()).select(column).toQuery();
+        query.getSelectClause().setDistinct(true);
 
-	/**
-	 * Closes a DatastoreConnection, potentially closing the connection (if no
-	 * other DatastoreConnections are open).
-	 */
-	@Close
-	public void close() {
-        DatastoreConnection con = getDatastoreConnections().poll();
-		if (con != null) {
-			logger.info("Closing dictionary: {}", this);
-			con.close();
-		}
-	}
+        final Set<String> values = new HashSet<>();
 
-	private Datastore getDatastore() {
-		Datastore datastore = _datastoreCatalog.getDatastore(_datastoreName);
-		if (datastore == null) {
-			throw new IllegalStateException("Could not resolve datastore " + _datastoreName);
-		}
-		return datastore;
-	}
+        try (final DataSet dataSet = dataContext.executeQuery(query)) {
+            while (dataSet.next()) {
+                final Object value = dataSet.getRow().getValue(0);
+                if (value != null) {
+                    values.add(value.toString());
+                }
+            }
+        }
 
-	public DatastoreCatalog getDatastoreCatalog() {
-		return _datastoreCatalog;
-	}
+        return new SimpleDictionary(getName(), values);
+    }
 
-	public String getDatastoreName() {
-		return _datastoreName;
-	}
+    @Override
+    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+        final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(_datastoreName);
+        if (datastore == null) {
+            throw new NoSuchDatastoreException(_datastoreName);
+        }
 
-	public String getQualifiedColumnName() {
-		return _qualifiedColumnName;
-	}
+        final DatastoreConnection datastoreConnection = datastore.openConnection();
 
-	@Override
-	public boolean containsValue(String value) {
-		// note that caching IS enabled because the ReferenceValues object
-		// returned by getValues() contains a cache!
-		return getValues().containsValue(value);
-	}
+        if (_loadIntoMemory) {
+            final SimpleDictionary simpleDictionary = loadIntoMemory(datastoreConnection);
 
-	public ReferenceValues<String> getValues() {
-		if (_cachedRefValues == null) {
-			synchronized (this) {
-				if (_cachedRefValues == null) {
-					Datastore datastore = getDatastore();
+            // no need for the connection anymore
+            datastoreConnection.close();
 
-					DatastoreConnection datastoreConnection = datastore.openConnection();
-					SchemaNavigator schemaNavigator = datastoreConnection.getSchemaNavigator();
-					Column column = schemaNavigator.convertToColumns(new String[] { _qualifiedColumnName })[0];
-					if (column == null) {
-						throw new IllegalStateException("Could not resolve column " + _qualifiedColumnName);
-					}
-					_cachedRefValues = new DatastoreReferenceValues(datastore, column);
-					datastoreConnection.close();
-				}
-			}
-		}
-		return _cachedRefValues;
-	}
+            return simpleDictionary.openConnection(configuration);
+        }
 
+        return new DatastoreDictionaryConnection(this, datastoreConnection);
+    }
+
+    public Column getColumn(DatastoreConnection datastoreConnection) {
+        try {
+            final Column column = datastoreConnection.getDataContext().getColumnByQualifiedLabel(_qualifiedColumnName);
+            if (column == null) {
+                throw new NoSuchColumnException(_qualifiedColumnName);
+            }
+            return column;
+        } catch (RuntimeException e) {
+            datastoreConnection.close();
+            throw e;
+        }
+    }
+
+    public String getDatastoreName() {
+        return _datastoreName;
+    }
+
+    public String getQualifiedColumnName() {
+        return _qualifiedColumnName;
+    }
 }

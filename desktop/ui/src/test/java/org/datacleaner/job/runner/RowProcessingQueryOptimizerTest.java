@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
@@ -45,6 +46,7 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
@@ -52,10 +54,12 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SourceColumnFinder;
 
+@SuppressWarnings("deprecation")
 public class RowProcessingQueryOptimizerTest extends TestCase {
 
     private final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, true);
@@ -70,7 +74,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     private InputColumn<?> lastNameInputColumn;
     private ArrayList<RowProcessingConsumer> consumers;
     private Query baseQuery;
-    private SourceColumnFinder sourceColumnFinder;
+    private RowProcessingPublisher publisher;
 
     @Override
     protected void setUp() throws Exception {
@@ -91,11 +95,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         lastNameInputColumn = ajb.getSourceColumnByName("lastname");
         stringAnalyzerBuilder.addInputColumn(lastNameInputColumn);
 
-        sourceColumnFinder = new SourceColumnFinder();
-
         consumers = new ArrayList<RowProcessingConsumer>();
-        consumers.add(createConsumer(maxRowsBuilder));
-        consumers.add(createConsumer(stringAnalyzerBuilder));
 
         baseQuery = con.getDataContext().query().from("EMPLOYEES").select("LASTNAME").toQuery();
     }
@@ -106,8 +106,23 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         con.close();
     }
 
+    private RowProcessingPublisher createPublisher() {
+        final AnalysisJob analysisJob = ajb.toAnalysisJob(false);
+        final AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
+        final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
+        final TaskRunner taskRunner = new SingleThreadedTaskRunner();
+        final RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, analysisListener,
+                errorListener, taskRunner, lifeCycleHelper);
+        final Table table = ajb.getSourceColumns().get(0).getPhysicalColumn().getTable();
+        return publishers.getRowProcessingPublisher(publishers.getStream(table));
+    }
+
     public void testSimpleOptimization() throws Exception {
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
+
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         assertTrue(optimizer.isOptimizable());
 
@@ -119,15 +134,20 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
 
     public void testAlwaysOptimizableFilter() throws Exception {
         Datastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         assertTrue(optimizer.isOptimizable());
 
         FilterComponentBuilder<?, ?> fjb = ajb.addFilter(NullCheckFilter.class).addInputColumn(lastNameInputColumn);
         maxRowsBuilder.setRequirement(fjb, NullCheckCategory.NOT_NULL);
-        consumers.add(0, createConsumer(fjb));
+        publisher = createPublisher();
+        consumers.add(0, createConsumer(fjb, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 
@@ -145,11 +165,12 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         stringAnalyzerBuilder.addInputColumns(outputColumns);
 
         // remove the string analyzer and add the transformer in between
-        consumers.remove(1);
-        consumers.add(createConsumer(emailStdBuilder));
-        consumers.add(createConsumer(stringAnalyzerBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(emailStdBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         // not optimizable because the transformer doesn't have the requirement
         assertFalse(optimizer.isOptimizable());
@@ -157,19 +178,21 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.remove(2);
         consumers.remove(1);
         emailStdBuilder.setRequirement(maxRowsBuilder, MaxRowsFilter.Category.VALID);
-        consumers.add(createConsumer(emailStdBuilder));
-        consumers.add(createConsumer(stringAnalyzerBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(emailStdBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
 
         // even without the requirement, the string analyzer should still be
         // optimizable, because of it's dependency to the email standardizer
         stringAnalyzerBuilder.setRequirement(null);
         consumers.remove(2);
-        consumers.add(createConsumer(stringAnalyzerBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
     }
 
@@ -177,9 +200,12 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb
                 .addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
-        consumers.add(createConsumer(patternFinderBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
+        consumers.add(createConsumer(patternFinderBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 
@@ -193,11 +219,12 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         notNullBuilder.setRequirement(maxRowsBuilder, MaxRowsFilter.Category.VALID);
         stringAnalyzerBuilder.setRequirement(notNullBuilder, NullCheckCategory.NOT_NULL);
 
-        consumers.remove(1);
-        consumers.add(createConsumer(notNullBuilder));
-        consumers.add(createConsumer(stringAnalyzerBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(notNullBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
 
         List<RowProcessingConsumer> optimizedConsumers = optimizer.getOptimizedConsumers();
@@ -215,24 +242,29 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
                 .addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
         patternFinderBuilder.setRequirement(maxRowsBuilder, MaxRowsFilter.Category.INVALID);
-        consumers.add(createConsumer(patternFinderBuilder));
+        publisher = createPublisher();
+        consumers.add(createConsumer(maxRowsBuilder, publisher));
+        consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
+        consumers.add(createConsumer(patternFinderBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 
-    private FilterConsumer createConsumer(FilterComponentBuilder<?, ?> filterJobBuilder) {
+    private FilterConsumer createConsumer(FilterComponentBuilder<?, ?> filterJobBuilder,
+            RowProcessingPublisher publisher) {
         FilterJob filterJob = filterJobBuilder.toFilterJob();
         FilterDescriptor<?, ?> descriptor = filterJob.getDescriptor();
         Filter<?> filter = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, filter, filterJob.getConfiguration());
 
-        FilterConsumer consumer = new FilterConsumer(filter, filterJob, filterJobBuilder.getInput(), sourceColumnFinder);
+        FilterConsumer consumer = new FilterConsumer(filter, filterJob, filterJobBuilder.getInput(), publisher);
         return consumer;
     }
 
-    private TransformerConsumer createConsumer(TransformerComponentBuilder<?> transformerJobBuilder) {
+    private TransformerConsumer createConsumer(TransformerComponentBuilder<?> transformerJobBuilder,
+            RowProcessingPublisher publisher) {
         TransformerJob transformerJob = transformerJobBuilder.toTransformerJob();
         TransformerDescriptor<?> descriptor = transformerJob.getDescriptor();
         Transformer transformer = descriptor.newInstance();
@@ -240,19 +272,19 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         lifeCycleHelper.assignConfiguredProperties(descriptor, transformer, transformerJob.getConfiguration());
 
         TransformerConsumer consumer = new TransformerConsumer(transformer, transformerJob,
-                transformerJobBuilder.getInput(), sourceColumnFinder);
+                transformerJobBuilder.getInput(), publisher);
         return consumer;
     }
 
-    private AnalyzerConsumer createConsumer(AnalyzerComponentBuilder<?> analyzerBuilder) {
+    private AnalyzerConsumer createConsumer(AnalyzerComponentBuilder<?> analyzerBuilder,
+            RowProcessingPublisher publisher) {
         AnalyzerJob analyzerJob = analyzerBuilder.toAnalyzerJob();
         AnalyzerDescriptor<?> descriptor = analyzerJob.getDescriptor();
         Analyzer<?> analyzer = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, analyzer, analyzerJob.getConfiguration());
 
-        AnalyzerConsumer consumer = new AnalyzerConsumer(analyzer, analyzerJob, analyzerBuilder.getInput(),
-                sourceColumnFinder);
+        AnalyzerConsumer consumer = new AnalyzerConsumer(analyzer, analyzerJob, analyzerBuilder.getInput(), publisher);
         return consumer;
     }
 }

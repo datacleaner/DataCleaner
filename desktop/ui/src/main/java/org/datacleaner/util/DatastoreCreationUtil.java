@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -53,8 +54,8 @@ public class DatastoreCreationUtil {
             _extensions = Arrays.asList(extensions);
         }
 
-        protected static FileDatastoreEnum getDatastoreTypeFromFile(File file) {
-            final String extension = FilenameUtils.getExtension(file.getName());
+        protected static FileDatastoreEnum getDatastoreTypeFromResource(Resource resource) {
+            final String extension = FilenameUtils.getExtension(resource.getName());
 
             for (FileDatastoreEnum datastoreType : EnumSet.allOf(FileDatastoreEnum.class)) {
                 if (datastoreType._extensions.contains(extension.toLowerCase())) {
@@ -66,16 +67,20 @@ public class DatastoreCreationUtil {
         }
     }
 
-    public static FileDatastoreEnum inferDatastoreTypeFromFile(File file) {
-        if (file.isDirectory()) {
-            return FileDatastoreEnum.SAS;
+    public static FileDatastoreEnum inferDatastoreTypeFromResource(Resource resource) {
+        if (resource instanceof FileResource) {
+            FileResource fileResource = (FileResource) resource;
+            final File file = fileResource.getFile();
+            if (file.isDirectory()) {
+                return FileDatastoreEnum.SAS;
+            }
         }
-
-        return FileDatastoreEnum.getDatastoreTypeFromFile(file);
+        
+        return FileDatastoreEnum.getDatastoreTypeFromResource(resource);
     }
 
-    public static Datastore createAndAddUniqueDatastoreFromFile(DatastoreCatalog catalog, File file) {
-        String name = file.getName();
+    public static Datastore createAndAddUniqueDatastoreFromResource(DatastoreCatalog catalog, Resource resource) {
+        String name = resource.getName();
         if (catalog.containsDatastore(name)) {
             final String originalName = name;
             int prefix = 1;
@@ -83,24 +88,21 @@ public class DatastoreCreationUtil {
                 name = originalName + "_" + prefix++;
             } while (catalog.containsDatastore(name));
         }
-        Datastore datastore = createDatastoreFromFile(file, name);
+        Datastore datastore = createDatastoreFromResource(resource, name);
         if (catalog instanceof MutableDatastoreCatalog) {
             ((MutableDatastoreCatalog) catalog).addDatastore(datastore);
         }
         return datastore;
     }
 
-    public static Datastore createDatastoreFromFile(File file, String datastoreName) {
-        return createDatastoreFromEnum(inferDatastoreTypeFromFile(file), file, datastoreName);
+    public static Datastore createDatastoreFromResource(Resource resource, String datastoreName) {
+        return createDatastoreFromEnum(inferDatastoreTypeFromResource(resource), resource, datastoreName);
     }
 
-    public static Datastore createDatastoreFromEnum(FileDatastoreEnum fileDatastore, File file, String datastoreName) {
-        final String filename = file.getAbsolutePath();
+    public static Datastore createDatastoreFromEnum(FileDatastoreEnum fileDatastore, Resource resource, String datastoreName) {
         if (fileDatastore == null) {
-            throw new IllegalArgumentException("Unrecognized file type for: " + filename);
+            throw new IllegalArgumentException("Unrecognized file type for: " + resource.getQualifiedPath());
         }
-        final FileResource resource = new FileResource(file);
-
         
         switch (fileDatastore) {
         case CSV:
@@ -108,19 +110,20 @@ public class DatastoreCreationUtil {
             final CsvConfiguration csvConfiguration = detection.suggestCsvConfiguration();
             return new CsvDatastore(datastoreName, resource, csvConfiguration);
         case EXCEL:
-            return new ExcelDatastore(datastoreName, new FileResource(filename), filename);
+            return new ExcelDatastore(datastoreName, resource, resource.getQualifiedPath());
         case ACCESS:
-            return new AccessDatastore(datastoreName, filename);
+            return new AccessDatastore(datastoreName, resource.getQualifiedPath());
         case SAS:
-            return new SasDatastore(datastoreName, file);
+            FileResource fileResource = (FileResource) resource;
+            return new SasDatastore(datastoreName, fileResource.getFile());
         case DBASE:
-            return new DbaseDatastore(datastoreName, filename);
+            return new DbaseDatastore(datastoreName, resource.getQualifiedPath());
         case JSON:
             return new JsonDatastore(datastoreName, resource);
         case OPENOFFICE:
-            return new OdbDatastore(datastoreName, filename);
+            return new OdbDatastore(datastoreName, resource.getQualifiedPath());
         case XML:
-            return new XmlDatastore(datastoreName, filename);
+            return new XmlDatastore(datastoreName, resource.getQualifiedPath());
         }
 
         throw new IllegalArgumentException("No such datastore type");

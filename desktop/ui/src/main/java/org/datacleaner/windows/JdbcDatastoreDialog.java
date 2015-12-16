@@ -65,6 +65,7 @@ import org.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.H2DatabaseConnectionPresenter;
+import org.datacleaner.widgets.database.HiveDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.MysqlDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.OracleDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
@@ -312,19 +313,29 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
 
         final DatabaseConnectionPresenter result;
 
-        if (DatabaseDriverCatalog.DATABASE_NAME_MYSQL.equals(databaseName)) {
+        switch (databaseName) {
+        case DatabaseDriverCatalog.DATABASE_NAME_MYSQL:
             result = new MysqlDatabaseConnectionPresenter();
-        } else if (DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL.equals(databaseName)) {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL:
             result = new PostgresqlDatabaseConnectionPresenter();
-        } else if (DatabaseDriverCatalog.DATABASE_NAME_ORACLE.equals(databaseName)) {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_ORACLE:
             result = new OracleDatabaseConnectionPresenter();
-        } else if (DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS.equals(databaseName)) {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS:
             result = new SQLServerDatabaseConnectionPresenter();
-        } else if (DatabaseDriverCatalog.DATABASE_NAME_CUBRID.equals(databaseName)) {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_CUBRID:
             result = new CubridDatabaseConnectionPresenter();
-        } else if (DatabaseDriverCatalog.DATABASE_NAME_H2.equals(databaseName)) {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_H2:
             result = new H2DatabaseConnectionPresenter();
-        } else {
+            break;
+        case DatabaseDriverCatalog.DATABASE_NAME_HIVE:
+            result = new HiveDatabaseConnectionPresenter();
+            break;
+        default:
             result = null;
         }
 

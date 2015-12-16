@@ -77,22 +77,35 @@ public final class ColumnListTable extends DCPanel {
     private final WindowContext _windowContext;
     private final boolean _addShadowBorder;
 
+    private final boolean _editable;
+
     public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
             boolean addShadowBorder, WindowContext windowContext) {
-        this(null, columns, analysisJobBuilder, addShadowBorder, windowContext);
+        this(null, columns, analysisJobBuilder, addShadowBorder, true, windowContext);
+    }
+    
+    public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
+            boolean addShadowBorder, boolean editable, WindowContext windowContext) {
+        this(null, columns, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
     public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder,
             WindowContext windowContext) {
-        this(table, null, analysisJobBuilder, addShadowBorder, windowContext);
+        this(table, null, analysisJobBuilder, addShadowBorder, true, windowContext);
+    }
+    
+    public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, boolean editable,
+            WindowContext windowContext) {
+        this(table, null, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
     private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-            AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, WindowContext windowContext) {
+            AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, boolean editable, WindowContext windowContext) {
         super();
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;
         _addShadowBorder = addShadowBorder;
+        _editable = editable;
         _windowContext = windowContext;
 
         setLayout(new BorderLayout());
@@ -124,16 +137,18 @@ public final class ColumnListTable extends DCPanel {
                 headerPanel.add(queryButton);
             }
 
-            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-            removeButton.setToolTipText("Remove table from source");
-            removeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _analysisJobBuilder.removeSourceTable(_table);
-                }
-            });
-            headerPanel.add(Box.createHorizontalStrut(4));
-            headerPanel.add(removeButton);
+            if (_editable) {
+                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+                removeButton.setToolTipText("Remove table from source");
+                removeButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        _analysisJobBuilder.removeSourceTable(_table);
+                    }
+                });
+                headerPanel.add(Box.createHorizontalStrut(4));
+                headerPanel.add(removeButton);
+            }
 
             add(headerPanel, BorderLayout.NORTH);
         }
@@ -161,7 +176,7 @@ public final class ColumnListTable extends DCPanel {
         }
 
         final String[] headers;
-        if (hasPhysicalColumns) {
+        if (hasPhysicalColumns && _editable) {
             headers = HEADERS_WITH_ACTION_COLUMN;
         } else {
             headers = HEADERS_WITHOUT_ACTIONS;
@@ -178,7 +193,7 @@ public final class ColumnListTable extends DCPanel {
             final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
             model.setValueAt(dataTypeString, i, 1);
 
-            if (column.isPhysicalColumn()) {
+            if (column.isPhysicalColumn() && _editable) {
                 final DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new GridBagLayout());
                 final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
@@ -197,7 +212,7 @@ public final class ColumnListTable extends DCPanel {
         }
         _columnTable.setModel(model);
 
-        if (hasPhysicalColumns) {
+        if (hasPhysicalColumns && _editable) {
             final TableColumnExt columnExt = _columnTable.getColumnExt(2);
             columnExt.setMinWidth(26);
             columnExt.setMaxWidth(80);
@@ -218,7 +233,7 @@ public final class ColumnListTable extends DCPanel {
             final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 
             final MutableInputColumnListPanel panel = new MutableInputColumnListPanel(_analysisJobBuilder,
-                    mutableInputColumn);
+                    mutableInputColumn, _columnTable);
 
             return panel;
         }
@@ -281,4 +296,9 @@ public final class ColumnListTable extends DCPanel {
     public int getColumnCount() {
         return _columns.size();
     }
+    
+    public boolean isEditable() {
+        return _editable;
+    }
+    
 }

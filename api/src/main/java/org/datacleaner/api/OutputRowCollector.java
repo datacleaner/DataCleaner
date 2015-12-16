@@ -25,7 +25,8 @@ import org.apache.metamodel.data.Row;
 
 /**
  * An {@link OutputRowCollector} is a consumer of output rows from
- * {@link Transformer}s.
+ * {@link Transformer}s, as well as {@link Analyzer}s implementing
+ * {@link HasOutputDataStreams}.
  * 
  * Usually {@link Transformer}s don't need to interact directly with an
  * {@link OutputRowCollector}, because the returned values of the

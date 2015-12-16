@@ -22,13 +22,13 @@ package org.datacleaner.beans;
 import junit.framework.TestCase;
 
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.joda.time.DateTime;
 
 public class DateAndTimeAnalyzerColumnDelegateTest extends TestCase {
 
 	public void testMaxAndMinValues() throws Exception {
-		DateAndTimeAnalyzerColumnDelegate d = new DateAndTimeAnalyzerColumnDelegate(false, new InMemoryRowAnnotationFactory());
+		DateAndTimeAnalyzerColumnDelegate d = new DateAndTimeAnalyzerColumnDelegate(false, RowAnnotations.getDefaultFactory());
 
 		assertNull(d.getMaxDate());
 		assertNull(d.getMinDate());

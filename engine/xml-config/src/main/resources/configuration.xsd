@@ -52,6 +52,9 @@
 				</choice>
 				<element name="storage-provider" type="ab:storageProviderType"
 					minOccurs="0" maxOccurs="1" />
+				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="0" maxOccurs="1" />
+
+				<!-- Deprecated - for backward compatibility -->
 				<choice minOccurs="0" maxOccurs="1">
 					<element name="classpath-scanner" minOccurs="1" maxOccurs="1"
 						type="ab:classpathScannerType">
@@ -66,6 +69,7 @@
 						minOccurs="1" maxOccurs="1" />
 				</choice>
 			</sequence>
+
 		</complexType>
 	</element>
 
@@ -94,23 +98,12 @@
 					<documentation>
 						Select this storage provider to store staging data
 						and intermediary results in memory. This is by far the best
-						performing storage provider but it also brings in the risk of
+						performing
+						storage provider but it also brings in the risk of
 						running out of memory for very large jobs.
 					</documentation>
 				</annotation>
 			</element>
-			<element name="h2-database" type="ab:h2StorageProviderType"
-				minOccurs="1" maxOccurs="1">
-				<annotation>
-					<documentation>
-						This storage provider uses the H2 database engine
-						as
-						a backing store for intermediary results.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="hsqldb" type="ab:hsqldbStorageProviderType"
-				minOccurs="1" maxOccurs="1" />
 			<element name="berkeley-db" type="ab:berkeleyDbStorageProviderType"
 				minOccurs="1" maxOccurs="1" />
 			<element name="custom-storage-provider" type="ab:customElementType"
@@ -135,6 +128,33 @@
 		</sequence>
 	</complexType>
 
+    <complexType name="descriptorProvidersType">
+        <choice minOccurs="1" maxOccurs="unbounded">
+            <element name="custom-class" type="ab:customElementType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines a custom component by a class name and properties values
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="classpath-scanner" type="ab:classpathScannerType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines which java packages should be scanned for
+                        components to use in DataCleaner.
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="remote-components" type="ab:remoteComponentsType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines connection to DC monitor which provides DataCleaner components remotely over network.
+                    </documentation>
+                </annotation>
+            </element>
+        </choice>
+    </complexType>
+
 	<complexType name="classpathScannerType">
 		<sequence>
 			<element name="excluded-rendering-format" minOccurs="0"
@@ -148,6 +168,27 @@
 					</simpleContent>
 				</complexType>
 			</element>
+		</sequence>
+	</complexType>
+
+    <complexType name="remoteComponentsType">
+        <sequence>
+            <element name="server" type="ab:remoteComponentServerType"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="remoteComponentServerType">
+        <sequence>
+            <element name="url" type="string" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines base URL to the DataCleaner monitor server
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="security-mode" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
 		</sequence>
 	</complexType>
 
@@ -190,6 +231,13 @@
 					<annotation>
 						<documentation>
 							Defines a datastore based on a SugarCRM system.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="datahub-datastore" type="ab:datahubDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on DataHub.
 						</documentation>
 					</annotation>
 				</element>
@@ -338,9 +386,11 @@
 									<documentation>
 										Indicates whether multiple connections (aka.
 										connection pooling) may be created or not. Connection pooling
-										is preferred for performance reasons, but can safely be
+										is
+										preferred for performance reasons, but can safely be
 										disabled if not desired. The max number of connections cannot
-										be configured, but no more connections than the number of
+										be configured,
+										but no more connections than the number of
 										threads in the task runner should be expected.
 									</documentation>
 								</annotation>
@@ -415,6 +465,8 @@
 						maxOccurs="1" />
 					<element name="security-token" type="string" minOccurs="1"
 						maxOccurs="1" />
+					<element name="endpoint-url" type="string" minOccurs="0"
+						maxOccurs="1" />
 				</all>
 			</extension>
 		</complexContent>
@@ -434,6 +486,34 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
+	<complexType name="datahubDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="host" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="port" type="int" minOccurs="1"
+						maxOccurs="1" />
+					<element name="username" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="password" type="string" minOccurs="1"
+						maxOccurs="1" />
+				    <element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
+						maxOccurs="1" />
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<simpleType name="datahubsecuritymodeEnum">
+		<restriction base="string">
+			<enumeration value="CAS" />
+			<enumeration value="DEFAULT" />
+		</restriction>
+	</simpleType>
 
 	<complexType name="pojoDatastoreType">
 		<complexContent>
@@ -580,6 +660,11 @@
 							</sequence>
 						</complexType>
 					</element>
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
+					<element name="keystore-path" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="keystore-password" minOccurs="0" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -902,7 +987,18 @@
 				<documentation>
 					Sets a threshold upon the number of annotated rows to
 					store in memory. Any additional rows will be discarded, although
-					the counter will still handle them correctly.
+					the
+					counter will still handle them correctly.
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="max-sets-threshold" type="int" use="optional"
+			default="250">
+			<annotation>
+				<documentation>
+					Sets a threshold upon the number of sample sets with
+					annotated rows to
+					store in memory.
 				</documentation>
 			</annotation>
 		</attribute>
@@ -932,7 +1028,8 @@
 						Sets the path for the directory to use for on-disk
 						storage. This is optional as H2 will otherwise
 						automatically assign
-						a temporary directory for the purpose.
+						a
+						temporary directory for the purpose.
 					</documentation>
 				</annotation>
 			</element>
@@ -978,7 +1075,8 @@
 					<documentation>
 						Adds a property to this custom type. Properties are
 						mapped to fields in the corresponding class that are annotated
-						with the @Configured annotation.
+						with
+						the @Configured annotation.
 					</documentation>
 				</annotation>
 				<complexType>

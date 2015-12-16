@@ -25,9 +25,7 @@ import java.io.OutputStream;
 import org.apache.commons.vfs2.FileContent;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.AbstractResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ResourceException;
 import org.slf4j.Logger;
@@ -36,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link Resource} implementation for Commons VFS {@link FileObject}s.
  */
-public class VfsResource implements Resource {
+public class VfsResource extends AbstractResource {
 
     private static final Logger logger = LoggerFactory.getLogger(VfsResource.class);
 
@@ -45,7 +43,7 @@ public class VfsResource implements Resource {
     public VfsResource(FileObject fileObject) {
         _fileObject = fileObject;
     }
-    
+
     @Override
     public String toString() {
         return "VfsResource[" + _fileObject + "]";
@@ -82,7 +80,7 @@ public class VfsResource implements Resource {
             throw new ResourceException(this, e);
         }
     }
-    
+
     @Override
     public String getQualifiedPath() {
         return _fileObject.getName().getURI();
@@ -112,36 +110,6 @@ public class VfsResource implements Resource {
     }
 
     @Override
-    public void write(Action<OutputStream> writeCallback) throws ResourceException {
-        try {
-            FileContent content = _fileObject.getContent();
-            OutputStream out = content.getOutputStream();
-            try {
-                writeCallback.run(out);
-            } finally {
-                FileHelper.safeClose(out);
-            }
-        } catch (Exception e) {
-            throw new ResourceException(this, e);
-        }
-    }
-
-    @Override
-    public void append(Action<OutputStream> appendCallback) throws ResourceException {
-        try {
-            FileContent content = _fileObject.getContent();
-            OutputStream out = content.getOutputStream(true);
-            try {
-                appendCallback.run(out);
-            } finally {
-                FileHelper.safeClose(out);
-            }
-        } catch (Exception e) {
-            throw new ResourceException(this, e);
-        }
-    }
-
-    @Override
     public InputStream read() throws ResourceException {
         try {
             return _fileObject.getContent().getInputStream();
@@ -151,29 +119,22 @@ public class VfsResource implements Resource {
     }
 
     @Override
-    public void read(Action<InputStream> readCallback) throws ResourceException {
+    public OutputStream append() throws ResourceException {
         try {
-            InputStream in = _fileObject.getContent().getInputStream();
-            try {
-                readCallback.run(in);
-            } finally {
-                FileHelper.safeClose(in);
-            }
+            final FileContent content = _fileObject.getContent();
+            final OutputStream out = content.getOutputStream(true);
+            return out;
         } catch (Exception e) {
             throw new ResourceException(this, e);
         }
     }
 
     @Override
-    public <E> E read(Func<InputStream, E> readCallback) throws ResourceException {
+    public OutputStream write() throws ResourceException {
         try {
-            InputStream in = _fileObject.getContent().getInputStream();
-            try {
-                E result = readCallback.eval(in);
-                return result;
-            } finally {
-                FileHelper.safeClose(in);
-            }
+            final FileContent content = _fileObject.getContent();
+            final OutputStream out = content.getOutputStream();
+            return out;
         } catch (Exception e) {
             throw new ResourceException(this, e);
         }

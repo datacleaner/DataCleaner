@@ -19,11 +19,7 @@
  */
 package org.datacleaner.storage;
 
-import java.util.Map;
-
 import org.datacleaner.api.Component;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
 
 /**
@@ -36,7 +32,7 @@ import org.datacleaner.api.Provided;
  * The RowAnnotationFactory is injectable into any {@link Component} (analyzer,
  * transformer, filter) using the {@link Provided} annotation.
  */
-public interface RowAnnotationFactory {
+public interface RowAnnotationFactory extends RowAnnotationSampleContainer, RowAnnotationHandler {
 
     /**
      * Creates a new annotation
@@ -45,57 +41,4 @@ public interface RowAnnotationFactory {
      */
     public RowAnnotation createAnnotation();
 
-    /**
-     * Annotates an array of rows (all assumed to have distinct count = 1).
-     * 
-     * @param rows
-     * @param annotation
-     */
-    public void annotate(InputRow[] rows, RowAnnotation annotation);
-
-    /**
-     * Annotates/labels a row with an annotation. The row will be retrievable
-     * using the getRows(...) method later in the process.
-     * 
-     * @param row
-     * @param distinctCount
-     * @param annotation
-     */
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation);
-
-    /**
-     * Removes/resets all annotations of a specific kind. This method can be
-     * used for situations where eg. an analyzer is annotating extreme values
-     * (highest/lowest values etc.) and the threshold is changing, cancelling
-     * all previous annotations.
-     * 
-     * @param annotation
-     */
-    public void reset(RowAnnotation annotation);
-
-    /**
-     * Gets all the available rows with a given annotation.
-     * 
-     * @param annotation
-     * @return
-     */
-    public InputRow[] getRows(RowAnnotation annotation);
-
-    /**
-     * Gets a summarized view of the distinct values and their counts for a
-     * single column and annotation.
-     * 
-     * @param annotation
-     * @param inputColumn
-     * @return
-     */
-    public Map<Object, Integer> getValueCounts(RowAnnotation annotation, InputColumn<?> inputColumn);
-
-    /**
-     * Transfers registered annotated rows from one annotation to the other.
-     * 
-     * @param from
-     * @param to
-     */
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to);
 }

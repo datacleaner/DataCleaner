@@ -19,8 +19,11 @@
  */
 package org.datacleaner.reference;
 
+import java.io.Serializable;
+
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Initialize;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * A dictionary represents a set of values grouped together with a label.
@@ -35,29 +38,20 @@ import org.datacleaner.api.Initialize;
  * Often times a dictionary will implement a caching mechanism to prevent having
  * to hold all values of the dictionary in memory.
  * 
- * A dictionary can have methods annotated with @Initialize and @Close. These
- * will be called before and after a job is executed where the given dictionary
- * is used.
- * 
- * Note: Dictionaries should be thread-safe!! Make sure to make sensible use of
- * synchronized blocks if there are race conditions in the dictionary
- * implementation.
- * 
  * @see Initialize
  * @see Close
  * 
  * 
  */
-public interface Dictionary extends ReferenceData {
+public interface Dictionary extends ReferenceData, Serializable {
 
-	public boolean containsValue(String value);
-
-	/**
-	 * Gets the dictionaries contents as a ReferenceValues object. Use with
-	 * caution because this might require the dictionary to do eager
-	 * initialization of all values.
-	 * 
-	 * @return
-	 */
-	public ReferenceValues<String> getValues();
+    /**
+     * Opens a connection to the {@link Dictionary}. Keep the connection open
+     * while using the dictionary in a session, job or so. Close it when you
+     * don't expect more interaction.
+     * 
+     * @param configuration
+     * @return
+     */
+    public DictionaryConnection openConnection(DataCleanerConfiguration configuration);
 }

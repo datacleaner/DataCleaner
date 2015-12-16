@@ -19,57 +19,53 @@
  */
 package org.datacleaner.regexswap;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.List;
+import java.util.Objects;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.AbstractReferenceData;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
-import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.reference.StringPatternConnection;
 
 /**
  * A specialized type of string pattern, based on a regex downloaded from the
  * regex swap
- * 
- * @author Kasper Sørensen
  */
 public final class RegexSwapStringPattern extends AbstractReferenceData implements StringPattern {
 
-	private static final long serialVersionUID = 1L;
-	private final Regex _regex;
-	private transient RegexStringPattern _delegate;
+    private static final long serialVersionUID = 1L;
+    private final Regex _regex;
+    private transient RegexStringPattern _delegate;
 
-	public RegexSwapStringPattern(Regex regex) {
-		super(regex.getName());
-		setDescription(regex.getDescription());
-		_regex = regex;
-	}
+    public RegexSwapStringPattern(Regex regex) {
+        super(regex.getName());
+        setDescription(regex.getDescription());
+        _regex = regex;
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, RegexSwapStringPattern.class).readObject(stream);
-	}
+    @Override
+    public String toString() {
+        return "RegexSwapStringPattern[regex=" + _regex + "]";
+    }
 
-	@Override
-	public String toString() {
-		return "RegexSwapStringPattern[regex=" + _regex + "]";
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final RegexSwapStringPattern other = (RegexSwapStringPattern) obj;
+            return Objects.equals(_regex, other._regex);
+        }
+        return false;
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_regex);
-	}
+    @Override
+    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+        if (_delegate == null) {
+            _delegate = new RegexStringPattern(getName(), _regex.getExpression(), true);
+        }
+        return _delegate.openConnection(configuration);
+    }
 
-	@Override
-	public boolean matches(String string) {
-		if (_delegate == null) {
-			_delegate = new RegexStringPattern(getName(), _regex.getExpression(), true);
-		}
-		return _delegate.matches(string);
-	}
-
-	public Regex getRegex() {
-		return _regex;
-	}
+    public Regex getRegex() {
+        return _regex;
+    }
 }

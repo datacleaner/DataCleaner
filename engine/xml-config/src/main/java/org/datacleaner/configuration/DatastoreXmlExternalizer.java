@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -29,11 +31,13 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlDomDataContext;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -113,6 +117,9 @@ public class DatastoreXmlExternalizer {
             if (resource instanceof FileResource) {
                 return true;
             }
+            if (resource instanceof HdfsResource) {
+                return true;
+            }
         }
 
         if (datastore instanceof ExcelDatastore) {
@@ -144,6 +151,10 @@ public class DatastoreXmlExternalizer {
         }
 
         if (datastore instanceof SalesforceDatastore) {
+            return true;
+        }
+
+        if (datastore instanceof DataHubDatastore) {
             return true;
         }
 
@@ -217,6 +228,8 @@ public class DatastoreXmlExternalizer {
             elem = toElement((CouchDbDatastore) datastore);
         } else if (datastore instanceof SalesforceDatastore) {
             elem = toElement((SalesforceDatastore) datastore);
+        } else if (datastore instanceof DataHubDatastore) {
+            elem = toElement((DataHubDatastore) datastore);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -248,6 +261,9 @@ public class DatastoreXmlExternalizer {
     protected String toFilename(final Resource resource) throws UnsupportedOperationException {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
+        }
+        if (resource instanceof HdfsResource) {
+            return ((HdfsResource) resource).getQualifiedPath();
         }
 
         throw new UnsupportedOperationException("Unsupported resource type: " + resource);
@@ -327,6 +343,13 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "cluster-name", datastore.getClusterName());
         appendElement(ds, "index-name", datastore.getIndexName());
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
+        appendElement(ds, "ssl", datastore.getSsl());
+        if (datastore.getSsl()) {
+            appendElement(ds, "keystore-path", datastore.getKeystorePath());
+            appendElement(ds, "keystore-password", encodePassword(datastore.getKeystorePassword()));
+        }
 
         return ds;
     }
@@ -376,7 +399,7 @@ public class DatastoreXmlExternalizer {
     }
 
     /**
-     * Externalizes a {@link CouchDa} to a XML element
+     * Externalizes a {@link CouchDa} to an XML element
      * 
      * @param datastore
      * @return
@@ -392,6 +415,35 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "security-token", datastore.getSecurityToken());
 
+        final String endpointUrl = datastore.getEndpointUrl();
+        if (!Strings.isNullOrEmpty(endpointUrl)) {
+            appendElement(ds, "endpoint-url", endpointUrl);
+        }
+
+        return ds;
+    }
+
+    /**
+     * Externalizes a {@link DataHubDatastore} to an XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    private Element toElement(DataHubDatastore datastore) {
+        final Element ds = getDocument().createElement("datahub-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "host", datastore.getHost());
+        appendElement(ds, "port", datastore.getPort());
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
+        appendElement(ds, "https", datastore.isHttps());
+        appendElement(ds, "acceptunverifiedsslpeers", datastore.isAcceptUnverifiedSslPeers());
+        appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());
+        
         return ds;
     }
 

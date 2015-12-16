@@ -21,6 +21,7 @@ package org.datacleaner.beans.transform;
 
 import java.util.Arrays;
 
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
@@ -37,13 +38,17 @@ public class StringPatternMatcherTransformerTest extends TestCase {
 		stringPatterns[1] = new RegexStringPattern("any word", "[a-zA-Z]+", true);
 		stringPatterns[2] = new SimpleStringPattern("capitalized word", "Aaaa");
 
+		t._configuration = new DataCleanerConfigurationImpl();
 		t.setStringPatterns(stringPatterns);
 		t.setColumn(new MockInputColumn<Object>("Greeting", Object.class));
+		
 
 		assertEquals(3, t.getOutputColumns().getColumnCount());
 		assertEquals("Greeting 'lowercase word'", t.getOutputColumns().getColumnName(0));
 		assertEquals("Greeting 'any word'", t.getOutputColumns().getColumnName(1));
 		assertEquals("Greeting 'capitalized word'", t.getOutputColumns().getColumnName(2));
+
+		t.init();
 
 		assertEquals("[true, true, false]", Arrays.toString(t.doMatching("hello")));
 		assertEquals("[false, true, true]", Arrays.toString(t.doMatching("Hello")));
@@ -52,5 +57,6 @@ public class StringPatternMatcherTransformerTest extends TestCase {
 		assertEquals("[false, false, false]", Arrays.toString(t.doMatching(1243)));
 		assertEquals("[true, true, false]", Arrays.toString(t.doMatching(true)));
 
+		t.close();
 	}
 }

@@ -32,12 +32,12 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AbstractOutputRowCollector;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 
 public class TableLookupTransformerTest extends TestCase {
 
-    private final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+    private final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 
     public void testScenario() throws Exception {
         TableLookupTransformer trans = createTransformer();

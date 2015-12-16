@@ -20,14 +20,24 @@
 package org.datacleaner.configuration;
 
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderState;
+
+import java.util.Map;
 
 /**
  * Class notifies the listeners about problems with providers
  */
 public interface DescriptorProviderStateNotifier {
 
-    public void addListener(DescriptorProviderStateListener listener);
-    public void removeListener(DescriptorProviderStateListener listener);
+    void addListener(DescriptorProviderStateListener listener);
+    void removeListener(DescriptorProviderStateListener listener);
 
-    public void injectDescriptorProvider(DescriptorProvider descriptorProvider);
+    /**
+     * Returns map with actual states. This map won't be actualized.
+     * @return map
+     */
+    Map<DescriptorProvider, DescriptorProviderState> getStateMap();
+
+    void setDescriptorProvider(DescriptorProvider descriptorProvider);
+
 }

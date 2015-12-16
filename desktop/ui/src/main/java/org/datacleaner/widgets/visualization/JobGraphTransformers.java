@@ -48,7 +48,6 @@ import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.GraphUtils;
@@ -86,8 +85,6 @@ public class JobGraphTransformers {
     private final Font _normalFont;
     private final Font _boldFont;
 
-    private final DescriptorProviderStateNotifier _descriptorProviderStateNotifier;
-
     public JobGraphTransformers(UserPreferences userPreferences, Set<Object> highlighedVertexes, DescriptorProviderStateNotifier descriptorProviderStateNotifier) {
         _userPreferences = userPreferences;
         _highlighedVertexes = highlighedVertexes;
@@ -103,10 +100,6 @@ public class JobGraphTransformers {
 
         _normalFont = font(WidgetUtils.FONT_SMALL, fontFactor);
         _boldFont = _normalFont.deriveFont(Font.BOLD);
-
-        _descriptorProviderStateNotifier = descriptorProviderStateNotifier;
-        _descriptorProviderStateNotifier.addListener(VERTEX_ICON_TRANSFORMER);
-
     }
 
     private Font font(Font font, float fontFactor) {
@@ -117,7 +110,7 @@ public class JobGraphTransformers {
     }
 
     public static final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> EDGE_ARROW_PREDICATE = TruePredicate
-            .getInstance();;
+            .getInstance();
 
     public static final Transformer<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = new Transformer<JobGraphLink, String>() {
         @Override
@@ -233,14 +226,7 @@ public class JobGraphTransformers {
         };
     }
 
-    public static final TransformerListener<Object, Icon> VERTEX_ICON_TRANSFORMER = new TransformerListener<Object, Icon>() {
-        private Map<DescriptorProvider, DescriptorProviderState> _descriptorProviderStateMap;
-
-        @Override
-        public void notify(Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap) {
-            _descriptorProviderStateMap = descriptorProviderStateMap;
-        }
-
+    public static final Transformer<Object, Icon> VERTEX_ICON_TRANSFORMER = new Transformer<Object, Icon>() {
         @Override
         public Icon transform(Object obj) {
             if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
@@ -259,8 +245,10 @@ public class JobGraphTransformers {
                 Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
 
                 if (descriptor instanceof RemoteTransformerDescriptorImpl) {
-                    if (_descriptorProviderStateMap != null) {
-                        DescriptorProviderState state = _descriptorProviderStateMap.get(((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider());
+                    DescriptorProviderStateNotifier notifier = componentBuilder.getAnalysisJobBuilder().getConfiguration().getEnvironment().getDescriptorProviderStateNotifier();
+                    Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap = notifier.getStateMap();
+                    if (descriptorProviderStateMap != null) {
+                        DescriptorProviderState state = descriptorProviderStateMap.get(((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider());
                         if (state != null && state.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
                             descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
                         }

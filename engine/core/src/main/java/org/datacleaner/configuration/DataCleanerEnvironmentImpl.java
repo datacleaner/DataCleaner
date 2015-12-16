@@ -48,8 +48,7 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
      */
     public DataCleanerEnvironmentImpl(TaskRunner taskRunner, DescriptorProvider descriptorProvider,
                                       StorageProvider storageProvider, InjectionManagerFactory injectionManagerFactory) {
-        this(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory, null,
-                new DescriptorProviderStateNotifierImpl(descriptorProvider));
+        this(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory, null, null);
     }
 
     /**
@@ -74,9 +73,6 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
             _descriptorProvider = defaultDescriptorProvider();
         } else {
             _descriptorProvider = descriptorProvider;
-            if (descriptorProviderStateNotifier != null) {
-                descriptorProviderStateNotifier.injectDescriptorProvider(descriptorProvider);
-            }
         }
 
         if (storageProvider == null) {
@@ -98,9 +94,10 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
         }
 
         if(descriptorProviderStateNotifier == null){
-            _descriptorProviderStateNotifier = defaultDescriptorProviderStateNotifier();
+            _descriptorProviderStateNotifier = new DescriptorProviderStateNotifierImpl(_descriptorProvider);
         }else {
             _descriptorProviderStateNotifier = descriptorProviderStateNotifier;
+            _descriptorProviderStateNotifier.setDescriptorProvider(_descriptorProvider);
         }
 
     }
@@ -110,8 +107,7 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
      */
     public DataCleanerEnvironmentImpl() {
         this(defaultTaskRunner(), defaultDescriptorProvider(), defaultStorageProvider(),
-                defaultInjectionManagerFactory(), defaultRemoteServerConfiguration(),
-                defaultDescriptorProviderStateNotifier());
+                defaultInjectionManagerFactory(), defaultRemoteServerConfiguration(), null);
     }
 
     /**
@@ -193,9 +189,4 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     public static RemoteServerConfiguration defaultRemoteServerConfiguration() {
         return new RemoteServerConfigurationImpl();
     }
-
-    public static DescriptorProviderStateNotifier defaultDescriptorProviderStateNotifier(){
-        return new DescriptorProviderStateNotifierImpl(defaultDescriptorProvider());
-    }
-
 }

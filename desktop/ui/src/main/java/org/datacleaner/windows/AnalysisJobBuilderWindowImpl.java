@@ -232,7 +232,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     private class DescriptorProviderStateListenerImpl implements DescriptorProviderStateListener{
-
         @Override
         public void notify(Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap) {
             _descriptorProviderStateMap = descriptorProviderStateMap;

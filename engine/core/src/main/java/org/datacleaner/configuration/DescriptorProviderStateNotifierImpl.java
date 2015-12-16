@@ -30,7 +30,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
     private static final long SERVER_CHECK_INTERVAL = 2 * 60 * 1000; //[ms] - 2min
     private static final Logger logger = LoggerFactory.getLogger(DescriptorProviderStateNotifierImpl.class);
     private DescriptorProvider _descriptorProvider;
-    private Set<DescriptorProviderStateListener> _listenerSet = Collections.synchronizedSet(new HashSet<DescriptorProviderStateListener>());
+    private final Set<DescriptorProviderStateListener> _listenerSet = Collections.synchronizedSet(new HashSet<DescriptorProviderStateListener>());
 
     private Map<DescriptorProvider, DescriptorProviderState> _stateMap = new HashMap<>();
     private ServerChecker _serverChecker;
@@ -39,8 +39,14 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
         this._descriptorProvider = descriptorProvider;
     }
 
-    public void injectDescriptorProvider(DescriptorProvider descriptorProvider){
-        this._descriptorProvider = descriptorProvider;
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderState> getStateMap() {
+        return new HashMap<>(_stateMap);
+    }
+
+    @Override
+    public void setDescriptorProvider(DescriptorProvider descriptorProvider) {
+        _descriptorProvider = descriptorProvider;
     }
 
     @Override
@@ -55,10 +61,10 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
 
     @Override
     public void removeListener(DescriptorProviderStateListener listener) {
-        if (!_listenerSet.contains(listener)) {
-            return;
-        }
         synchronized (_listenerSet) {
+            if (!_listenerSet.contains(listener)) {
+                return;
+            }
             _listenerSet.remove(listener);
             if (_listenerSet.isEmpty()) {
                 if (_serverChecker != null) {
@@ -103,7 +109,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
                             wait(SERVER_CHECK_INTERVAL);
                         } catch (InterruptedException e) {
                             running = false;
-                            logger.error("Waiting on checking thread was interrupted : " + e.getMessage());
+                            logger.error("Checking thread was interrupted : " + e.getMessage());
                         }
                     }
                 }
@@ -118,10 +124,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
 
         private boolean equals(Map<DescriptorProvider, DescriptorProviderState> map1, Map<DescriptorProvider, DescriptorProviderState> map2) {
             if (map1 == null || map2 == null) {
-                if (map1 == null && map2 == null) {
-                    return true;
-                }
-                return false;
+                return map1 == null && map2 == null;
             }
 
             if (map1.size() != map2.size()) {

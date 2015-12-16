@@ -44,14 +44,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.TransferHandler;
 
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
-import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
@@ -78,6 +70,15 @@ import org.datacleaner.windows.ComponentConfigurationDialog;
 import org.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
@@ -388,8 +389,7 @@ public final class JobGraph {
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
-        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes,
-                _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProviderStateNotifier());
+        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes);
 
         // instrument the render context with all our transformers and stuff
         renderContext.setVertexFontTransformer(transformers.getVertexFontTransformer());

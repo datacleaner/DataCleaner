@@ -20,6 +20,7 @@
 package org.datacleaner.components.http;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -46,15 +47,15 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.components.categories.ReferenceDataCategory;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.ws.PooledServiceSession;
 import org.datacleaner.util.ws.ServiceResult;
 
 @Named("HTTP request")
-
-// TODO: What category would make sense?
-@Categorized(value = {})
-
-@Description("Sends a HTTP request for each record.")
+@Categorized(value = ReferenceDataCategory.class, superCategory = ImproveSuperCategory.class)
+@Description("Sends a HTTP request for each record and retrieves the response as transformation output.")
 public class HttpRequestTransformer implements Transformer {
 
     public static final String PROPERTY_INPUT_COLUMNS = "Input";
@@ -111,7 +112,7 @@ public class HttpRequestTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        final String[] columnNames = { "Response status", "Response body" };
+        final String[] columnNames = { "Response status code", "Response body" };
         final Class<?>[] columnTypes = { Integer.class, String.class };
         return new OutputColumns(columnNames, columnTypes);
     }
@@ -120,7 +121,7 @@ public class HttpRequestTransformer implements Transformer {
     public Object[] transform(InputRow inputRow) {
         final Charset usedCharset = Charset.forName(charset);
 
-        // TODO: Do variable/parameter replacement in body and url. See maybe how it is done in the "Batch emailing" extension
+        final String requestBody = createRequestBody(inputRow);
 
         final HttpUriRequest request = method.createRequest(url);
         if (request instanceof HttpEntityEnclosingRequest) {
@@ -150,6 +151,29 @@ public class HttpRequestTransformer implements Transformer {
         return result.getResponse();
     }
 
+    /**
+     * Creates a request body with all variable names replaced with dynamic
+     * values coming from the {@link InputRow}'s values.
+     * 
+     * @param inputRow
+     * @return
+     */
+    protected String createRequestBody(InputRow inputRow) {
+        String result = requestBody;
+        final List<Object> values = inputRow.getValues(input);
+        for (int i = 0; i < input.length; i++) {
+            final Object value = values.get(i);
+            final String str;
+            if (value == null) {
+                str = "";
+            } else {
+                str = value.toString();
+            }
+            result = StringUtils.replaceAll(result, variableNames[i], str);
+        }
+        return result;
+    }
+
     public void setCharset(String charset) {
         this.charset = charset;
     }
@@ -172,5 +196,10 @@ public class HttpRequestTransformer implements Transformer {
 
     public void setHttpClient(HttpClient httpClient) {
         _httpClient = httpClient;
+    }
+
+    public void setInputAndVariables(InputColumn<?>[] input, String[] variableNames) {
+        this.input = input;
+        this.variableNames = variableNames;
     }
 }

@@ -53,6 +53,8 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.ws.PooledServiceSession;
 import org.datacleaner.util.ws.ServiceResult;
 
+import com.google.common.base.Strings;
+
 @Named("HTTP request")
 @Categorized(value = ReferenceDataCategory.class, superCategory = ImproveSuperCategory.class)
 @Description("Sends a HTTP request for each record and retrieves the response as transformation output.")
@@ -72,6 +74,7 @@ public class HttpRequestTransformer implements Transformer {
 
     @Inject
     @Configured
+    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
     String url;
 
     @Inject
@@ -81,6 +84,7 @@ public class HttpRequestTransformer implements Transformer {
     @Inject
     @Configured
     @StringProperty(multiline = true, emptyString = true)
+    @Description("The body of the request to invoke. The request body will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
     String requestBody;
 
     @Inject
@@ -121,10 +125,11 @@ public class HttpRequestTransformer implements Transformer {
     public Object[] transform(InputRow inputRow) {
         final Charset usedCharset = Charset.forName(charset);
 
-        final String requestBody = createRequestBody(inputRow);
+        final String requestBody = applyVariablesToString(this.requestBody, inputRow);
+        final String url = applyVariablesToString(this.url, inputRow);
 
         final HttpUriRequest request = method.createRequest(url);
-        if (request instanceof HttpEntityEnclosingRequest) {
+        if (requestBody != null && request instanceof HttpEntityEnclosingRequest) {
             HttpEntity entity = new StringEntity(requestBody, usedCharset);
             ((HttpEntityEnclosingRequest) request).setEntity(entity);
         }
@@ -140,7 +145,6 @@ public class HttpRequestTransformer implements Transformer {
         });
 
         if (!result.isSuccesfull()) {
-            // TODO: Do something
             final Throwable error = result.getError();
             if (error instanceof RuntimeException) {
                 throw (RuntimeException) error;
@@ -152,24 +156,31 @@ public class HttpRequestTransformer implements Transformer {
     }
 
     /**
-     * Creates a request body with all variable names replaced with dynamic
-     * values coming from the {@link InputRow}'s values.
+     * Creates a string with all variable names replaced with dynamic values
+     * coming from the {@link InputRow}'s values.
      * 
+     * @param str
+     *            the string to prepare with variables
      * @param inputRow
+     *            the input row containing the dynamic values to insert into the
+     *            string
      * @return
      */
-    protected String createRequestBody(InputRow inputRow) {
-        String result = requestBody;
+    protected String applyVariablesToString(String str, InputRow inputRow) {
+        if (Strings.isNullOrEmpty(str)) {
+            return null;
+        }
+        String result = str;
         final List<Object> values = inputRow.getValues(input);
         for (int i = 0; i < input.length; i++) {
             final Object value = values.get(i);
-            final String str;
+            final String valueStr;
             if (value == null) {
-                str = "";
+                valueStr = "";
             } else {
-                str = value.toString();
+                valueStr = value.toString();
             }
-            result = StringUtils.replaceAll(result, variableNames[i], str);
+            result = StringUtils.replaceAll(result, variableNames[i], valueStr);
         }
         return result;
     }

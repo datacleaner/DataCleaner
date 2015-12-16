@@ -45,7 +45,7 @@ public class HttpRequestTransformerTest {
     }
 
     @Test
-    public void testCreateRequestBody() throws Exception {
+    public void testApplyVariablesToString() throws Exception {
         HttpRequestTransformer t = new HttpRequestTransformer();
         t.setHttpClient(HttpClients.createSystem());
         t.setMethod(HttpMethod.GET);
@@ -56,14 +56,14 @@ public class HttpRequestTransformerTest {
         t.init();
 
         assertEquals("Hello world! Dear world would you like some ${product}?",
-                t.createRequestBody(new MockInputRow().put(col1, "world")));
+                t.applyVariablesToString(t.requestBody, new MockInputRow().put(col1, "world")));
         assertEquals("Hello ! Dear  would you like some ${product}?",
-                t.createRequestBody(new MockInputRow().put(col1, null)));
+                t.applyVariablesToString(t.requestBody, new MockInputRow().put(col1, null)));
 
         final InputColumn<?> col2 = new MockInputColumn<>("bar");
         t.setInputAndVariables(new InputColumn[] { col1, col2 }, new String[] { "${name}", "${product}" });
         assertEquals("Hello customer! Dear customer would you like some tea?",
-                t.createRequestBody(new MockInputRow().put(col1, "customer").put(col2, "tea")));
+                t.applyVariablesToString(t.requestBody, new MockInputRow().put(col1, "customer").put(col2, "tea")));
 
         t.close();
     }

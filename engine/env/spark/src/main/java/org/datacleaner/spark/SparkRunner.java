@@ -28,8 +28,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.launcher.SparkLauncher;
 import org.datacleaner.spark.utils.HadoopUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Prepares for Spark launching from
@@ -51,12 +49,16 @@ public class SparkRunner {
             _hadoopConfigurationDirectory = HadoopUtils.getHadoopConfigurationDirectoryToUse();
             _hadoopDefaultFS = FileSystem.newInstance(HadoopUtils.getHadoopConfiguration(_hadoopConfigurationDirectory));
         } catch (IOException e) {
-            throw new IllegalStateException("Could not create Hadoop filesystem");
+            throw new IllegalStateException("Could not create Hadoop filesystem", e);
         }
         _applicationDriver = new ApplicationDriver(_hadoopDefaultFS.getUri(), DATACLEANER_LIB_DIR);
         _configurationFile = findFile(configurationFilePath, true);
         _jobFile = findFile(jobFilePath, true);
-        _resultFile = findFile(resultFilePath, false);
+        if(resultFilePath != null) {
+            _resultFile = findFile(resultFilePath, false);
+        } else {
+            _resultFile = null;
+        }
     }
 
     /**
@@ -68,9 +70,14 @@ public class SparkRunner {
      */
     private URI findFile(final String filePath, final boolean upload){
         try {
-            final URI fileURI = _hadoopDefaultFS.getUri().resolve(filePath);
+            URI fileURI;
+            try {
+                fileURI = _hadoopDefaultFS.getUri().resolve(filePath);
+            } catch(Exception e){
+                fileURI = null;
+            }
 
-            if (!_hadoopDefaultFS.exists(new Path(fileURI)) && upload) {
+            if ((fileURI == null ||!_hadoopDefaultFS.exists(new Path(fileURI))) && upload) {
                 File file = new File(filePath);
                 if(!file.isFile()){
                     throw new IllegalArgumentException("'" + filePath + " does not exist, or is not a file");

@@ -21,6 +21,9 @@ package org.datacleaner.components.http;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -29,11 +32,13 @@ import javax.inject.Named;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
@@ -44,7 +49,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.NumberProperty;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Provided;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ImproveSuperCategory;
@@ -62,56 +66,59 @@ public class HttpRequestTransformer implements Transformer {
 
     public static final String PROPERTY_INPUT_COLUMNS = "Input";
     public static final String PROPERTY_VARIABLE_NAMES = "Variable names";
+    private static final String PROPERTY_URL = "URL";
 
     @Inject
-    @Configured(PROPERTY_INPUT_COLUMNS)
+    @Configured(value = PROPERTY_URL, order = 1)
+    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
+    String url = "http://";
+
+    @Inject
+    @Configured(order = 2)
+    HttpMethod method = HttpMethod.POST;
+
+    @Inject
+    @Configured(value = PROPERTY_INPUT_COLUMNS, order = 3)
     InputColumn<?>[] input;
 
     @Inject
-    @Configured(PROPERTY_VARIABLE_NAMES)
+    @Configured(value = PROPERTY_VARIABLE_NAMES, order = 4)
     @MappedProperty(PROPERTY_INPUT_COLUMNS)
     String[] variableNames;
 
     @Inject
-    @Configured
-    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
-    String url;
-
-    @Inject
-    @Configured
-    HttpMethod method = HttpMethod.POST;
-
-    @Inject
-    @Configured
+    @Configured(order = 5)
     @StringProperty(multiline = true, emptyString = true)
     @Description("The body of the request to invoke. The request body will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
     String requestBody;
 
     @Inject
-    @Configured
+    @Configured(required = false, order = 100)
+    Map<String, String> headers;
+
+    @Inject
+    @Configured(required = false, order = 101)
+    String charset = HTTP.DEF_CONTENT_CHARSET.name();
+
+    @Inject
+    @Configured(required = false, order = 150)
     @NumberProperty(negative = false, zero = false, positive = true)
     @Description("The maximum number of requests that may be fired at the same time.\n"
             + "Higher values may provide better throughput while it may also add load to the HTTP server.")
     int maxConcurrentRequests = 20;
 
-    @Inject
-    @Configured
-    String charset = HTTP.DEF_CONTENT_CHARSET.name();
-
-    @Inject
-    @Provided
-    HttpClient _httpClient;
-
+    private CloseableHttpClient _httpClient;
     private PooledServiceSession<Object[]> _session;
 
     @Initialize
     public void init() {
+        _httpClient = HttpClients.createSystem();
         _session = new PooledServiceSession<>(maxConcurrentRequests);
     }
 
     @Close
     public void close() {
-        _session.close();
+        FileHelper.safeClose(_httpClient, _session);
     }
 
     @Override
@@ -132,6 +139,13 @@ public class HttpRequestTransformer implements Transformer {
         if (requestBody != null && request instanceof HttpEntityEnclosingRequest) {
             HttpEntity entity = new StringEntity(requestBody, usedCharset);
             ((HttpEntityEnclosingRequest) request).setEntity(entity);
+        }
+
+        if (headers != null) {
+            final Set<Entry<String, String>> entries = headers.entrySet();
+            for (Entry<String, String> entry : entries) {
+                request.setHeader(entry.getKey(), entry.getValue());
+            }
         }
 
         final ServiceResult<Object[]> result = _session.invokeService(new Callable<Object[]>() {
@@ -205,7 +219,7 @@ public class HttpRequestTransformer implements Transformer {
         this.url = url;
     }
 
-    public void setHttpClient(HttpClient httpClient) {
+    public void setHttpClient(CloseableHttpClient httpClient) {
         _httpClient = httpClient;
     }
 

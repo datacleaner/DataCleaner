@@ -23,35 +23,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class RemoteServerConfigurationImpl
- *
+ * Implementation of {@link RemoteServerConfiguration}.
  */
 public class RemoteServerConfigurationImpl implements RemoteServerConfiguration {
-    private boolean showAll = false;
+    private boolean showComponentsFromAllServers = false;
     private List<RemoteServerData> remoteServerDataList = new ArrayList<>();
 
     @Override
-    public void setShowAllServers(boolean showAll) {
-        this.showAll = showAll;
+    public boolean isShowComponentsFromAllServers() {
+        return showComponentsFromAllServers;
     }
 
     @Override
-    public boolean showAllServers() {
-        return showAll;
+    public void setShowComponentsFromAllServers(boolean showComponentsFromAllServers) {
+        this.showComponentsFromAllServers = showComponentsFromAllServers;
     }
 
     @Override
     public List<RemoteServerData> getServerList() {
         return remoteServerDataList;
-    }
-
-    @Override
-    public void addServer(RemoteServerData remoteServerData) {
-        remoteServerDataList.add(remoteServerData);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return remoteServerDataList == null || remoteServerDataList.isEmpty();
     }
 }

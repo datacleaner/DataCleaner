@@ -22,8 +22,8 @@ package org.datacleaner.components.fuse;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.data.MockInputColumn;
+import org.junit.Assert;
 
 public class CoalesceUnitTest extends TestCase {
 
@@ -50,5 +50,25 @@ public class CoalesceUnitTest extends TestCase {
         assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, integerCol1).getOutputDataType(allColumns));
         assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, objCol1).getOutputDataType(allColumns));
         assertEquals(Object.class, new CoalesceUnit(objCol1).getOutputDataType(allColumns));
+    }
+
+    public void testRefreshInputColumns() throws Exception {
+        // original columns - col1 and col2
+        InputColumn<?> col1 = new MockInputColumn<String>("foo1", String.class);
+        InputColumn<?> col2 = new MockInputColumn<String>("foo2", String.class);
+        InputColumn<?>[] allInputColumns1 = new InputColumn[] {col1, col2};
+        
+        // cloned columns - col3 and col4
+        InputColumn<?> col3 = new MockInputColumn<String>("foo1", String.class);
+        InputColumn<?> col4 = new MockInputColumn<String>("foo2", String.class);
+        InputColumn<?>[] allInputColumns2 = new InputColumn[] {col3, col4};
+        
+        CoalesceUnit unit = new CoalesceUnit(allInputColumns1);
+        Assert.assertArrayEquals(allInputColumns1, unit.getInputColumns(allInputColumns1));
+        Assert.assertArrayEquals(allInputColumns1, unit.getInputColumns(allInputColumns2));
+        
+        unit.refreshInputColumns(allInputColumns2);
+        Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns(allInputColumns1));
+        Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns(allInputColumns2));
     }
 }

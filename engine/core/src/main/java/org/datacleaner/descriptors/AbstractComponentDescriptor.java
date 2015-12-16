@@ -74,7 +74,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
         }
         return _displayName;
     };
-    
+
     @Override
     protected abstract Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass();
 

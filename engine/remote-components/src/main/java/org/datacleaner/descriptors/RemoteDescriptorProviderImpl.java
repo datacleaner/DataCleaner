@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  *
  * @Since 9/8/15
  */
-public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
 
@@ -57,13 +57,38 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
     private long lastConnectionCheckTime = 0L;
     private boolean lastConnectionCheckResult = true;
 
-    public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
+    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
         super(false);
         this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
     }
 
-    private synchronized boolean isServerUp() {
+    @Override
+    public Integer getServerPriority() {
+        return remoteServerData.getServerPriority();
+    }
+
+    @Override
+    public String getServerName() {
+        return remoteServerData.getServerName();
+    }
+
+    @Override
+    public String getServerHost() {
+        return remoteServerData.getHost();
+    }
+
+    @Override
+    public String getUsername() {
+        return remoteServerData.getUsername();
+    }
+
+    @Override
+    public String getPassword() {
+        return remoteServerData.getPassword();
+    }
+    
+    public boolean isServerUp() {
         final long now = System.currentTimeMillis();
          if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
                 return lastConnectionCheckResult;
@@ -151,12 +176,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
-                                remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
-                                component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
-                                remoteServerData.getPassword());
-                        transformerDescriptor.setServerName(remoteServerData.getServerName());
-                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
-                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
+                                RemoteDescriptorProviderImpl.this, component.getName(),
+                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();

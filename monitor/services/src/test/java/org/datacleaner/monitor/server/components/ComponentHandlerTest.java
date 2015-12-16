@@ -56,7 +56,7 @@ public class ComponentHandlerTest {
     @Before
     public void setUp() {
         componentConfiguration = getComponentConfiguration();
-        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, componentConfiguration, new SimpleRemoteComponentsConfigurationImpl());
+        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, componentConfiguration, new SimpleRemoteComponentsConfigurationImpl(), null);
         jsonData = getJsonDataMock();
     }
 

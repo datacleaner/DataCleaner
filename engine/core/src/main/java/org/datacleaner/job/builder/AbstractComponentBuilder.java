@@ -52,6 +52,7 @@ import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
@@ -115,7 +116,15 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         _configurableBean = _descriptor.newInstance();
         _metadataProperties = new LinkedHashMap<>();
+        initMetadataProperties();
         _removalListeners = new ArrayList<>(1);
+    }
+
+    private void initMetadataProperties() {
+        if (_descriptor instanceof RemoteTransformerDescriptor) {
+            String source = ((RemoteTransformerDescriptor) _descriptor).getRemoteDescriptorProvider().getServerName();
+            _metadataProperties.put("source", source);
+        }
     }
 
     /**
@@ -153,6 +162,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public void setMetadataProperties(Map<String, String> metadataProperties) {
         _metadataProperties.clear();
+        initMetadataProperties();
+
         if (metadataProperties != null) {
             _metadataProperties.putAll(metadataProperties);
         }

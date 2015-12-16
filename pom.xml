@@ -43,7 +43,7 @@
 	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>4.5.3-SNAPSHOT</version>
+	<version>4.5.4-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with

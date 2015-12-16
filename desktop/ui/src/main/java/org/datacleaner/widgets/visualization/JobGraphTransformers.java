@@ -85,7 +85,7 @@ public class JobGraphTransformers {
     private final Font _normalFont;
     private final Font _boldFont;
 
-    public JobGraphTransformers(UserPreferences userPreferences, Set<Object> highlighedVertexes, DescriptorProviderStateNotifier descriptorProviderStateNotifier) {
+    public JobGraphTransformers(UserPreferences userPreferences, Set<Object> highlighedVertexes) {
         _userPreferences = userPreferences;
         _highlighedVertexes = highlighedVertexes;
 

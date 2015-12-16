@@ -50,7 +50,7 @@ public class NumberDocument extends PlainDocument {
         _allowDecimal = allowDecimal;
         _allowNegative = allowNegative;
     }
-
+    
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
         boolean valid = true;

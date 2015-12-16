@@ -24,11 +24,8 @@ package org.datacleaner.configuration;
  * @since 15. 10. 2015
  */
 public interface RemoteServerData {
-    public RemoteServerData setServerPriority(Integer serverPriority);
     public Integer getServerPriority();
-    public RemoteServerData setServerName(String serverName);
     public String getServerName();
-    public RemoteServerData setHost(String host);
     public String getHost();
     public RemoteServerData setUsername(String username);
     public String getUsername();

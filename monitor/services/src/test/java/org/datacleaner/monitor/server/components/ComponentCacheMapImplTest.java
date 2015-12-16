@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.server.components;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -39,10 +39,16 @@ import org.datacleaner.descriptors.InitializeMethodDescriptor;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
+import org.datacleaner.monitor.configuration.ComponentStore;
+import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.CreateInput;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,12 +58,26 @@ import org.junit.Test;
  * @since 28.7.15
  */
 public class ComponentCacheMapImplTest {
+
     private String tenantName = "tenant";
     private String componentName = "name";
 
+    TenantContextFactory mockTenantContextFactory;
+    ComponentCache cache;
+
+    private void createComponentCache() {
+        ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(new SimpleRemoteComponentsConfigurationImpl());
+        cache = new ComponentCache(compHandlerFac, mockTenantContextFactory);
+    }
+
+    @After
+    public void tearDown() throws InterruptedException {
+        cache.close();
+    }
+
     @Test
     public void testCacheStoreNewConfiguration() throws Exception {
-        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
+        mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
 
@@ -73,7 +93,8 @@ public class ComponentCacheMapImplTest {
             }
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new SimpleRemoteComponentsConfigurationImpl());
+        createComponentCache();
+
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
@@ -86,7 +107,7 @@ public class ComponentCacheMapImplTest {
     @Test
     public void testCacheRemoveConfig() throws Exception {
         String instanceId = "id";
-        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
+        mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
 
@@ -105,7 +126,7 @@ public class ComponentCacheMapImplTest {
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory, new SimpleRemoteComponentsConfigurationImpl());
+        createComponentCache();
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 

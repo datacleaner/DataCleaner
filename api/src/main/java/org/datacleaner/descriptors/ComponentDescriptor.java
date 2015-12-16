@@ -42,7 +42,6 @@ import org.datacleaner.api.Validate;
  * for a general description.
  */
 public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable {
-
     /**
      * @return a humanly readable display name for this bean.
      */

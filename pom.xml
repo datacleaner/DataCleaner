@@ -50,18 +50,6 @@
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	
-	<repositories>
-		<repository>
-			<id>apache-metamodel-staged-release</id>
-			<url>http://repository.apache.org/content/repositories/orgapachemetamodel-1015</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<modules>
 		<module>engine</module>
 	</modules>

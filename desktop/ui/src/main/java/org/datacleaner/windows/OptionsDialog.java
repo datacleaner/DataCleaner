@@ -489,6 +489,7 @@ public class OptionsDialog extends AbstractWindow {
 
 
     private class RemoteComponentsTab extends DCPanel {
+        private static final long serialVersionUID = 1L;
         private int left = 0;
         private int row = 0;
         private int wholeLineSpan = 3;

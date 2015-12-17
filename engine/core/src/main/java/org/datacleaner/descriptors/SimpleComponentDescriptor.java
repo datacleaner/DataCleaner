@@ -85,7 +85,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
      * 
      * @param beanClass
      */
-    public SimpleComponentDescriptor(Class<B> beanClass) {
+    public SimpleComponentDescriptor(final Class<B> beanClass) {
         this(beanClass, false);
     }
 

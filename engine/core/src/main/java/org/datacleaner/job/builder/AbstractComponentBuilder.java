@@ -122,7 +122,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     private void initMetadataProperties() {
         if (_descriptor instanceof RemoteTransformerDescriptor) {
-            String source = ((RemoteTransformerDescriptor) _descriptor).getRemoteDescriptorProvider().getServerName();
+            final String source = ((RemoteTransformerDescriptor<?>) _descriptor).getRemoteDescriptorProvider().getServerName();
             _metadataProperties.put("source", source);
         }
     }

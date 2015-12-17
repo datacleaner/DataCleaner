@@ -40,7 +40,6 @@ import java.util.jar.JarFile;
 
 import javax.inject.Named;
 
-import com.fasterxml.jackson.databind.annotation.NoClass;
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;

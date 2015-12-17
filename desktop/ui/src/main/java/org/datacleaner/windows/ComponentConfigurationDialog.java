@@ -122,7 +122,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         String remoteServerName = "";
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            remoteServerName = " (" + ((RemoteTransformerDescriptor)(_componentBuilder.getDescriptor()))
+            remoteServerName = " (" + ((RemoteTransformerDescriptor<?>)(_componentBuilder.getDescriptor()))
                     .getRemoteDescriptorProvider().getServerName() + ")";
         }
 

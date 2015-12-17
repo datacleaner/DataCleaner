@@ -235,7 +235,6 @@ public class JobGraphTransformers {
                 } else {
                     configured = componentBuilder.isConfigured(false);
                 }
-
                 return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
             }
             if (obj instanceof FilterOutcome) {

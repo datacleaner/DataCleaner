@@ -163,7 +163,7 @@ public class ComponentHandler {
             }
             column = new MutableColumn(columnName, columnType, table, index, true);
             columns.put(columnName, column);
-            InputColumn inputColumn = new MetaModelInputColumn(column);
+            InputColumn<?> inputColumn = new MetaModelInputColumn(column);
             inputColumns.put(columnName, inputColumn);
             inputColumnsList.add(inputColumn);
             table.addColumn(index, column);
@@ -224,7 +224,7 @@ public class ComponentHandler {
         config = new ImmutableComponentConfiguration(configuredProperties);
 
         InjectionManager origInjMan = _dcConfiguration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_dcConfiguration, analysisJob);
-        InjectionManager injMan = new ComponentHandlerInjectionManager(origInjMan, descriptor, component);
+        InjectionManager injMan = new ComponentHandlerInjectionManager(origInjMan);
         lifeCycleHelper = new LifeCycleHelper(injMan, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
@@ -522,6 +522,8 @@ public class ComponentHandler {
 
     class ComponentHandlerTransformerJob implements TransformerJob {
 
+        private static final long serialVersionUID = 1L;
+
         @Override
         public TransformerDescriptor<?> getDescriptor() {
             return (TransformerDescriptor<?>)descriptor;
@@ -566,15 +568,12 @@ public class ComponentHandler {
 
     private class ComponentHandlerInjectionManager implements InjectionManager {
         InjectionManager delegate;
-        ComponentDescriptor componentDescriptor;
-        Component component;
 
-        ComponentHandlerInjectionManager(InjectionManager delegate, ComponentDescriptor<?> componentDescriptor, Component component) {
+        ComponentHandlerInjectionManager(InjectionManager delegate) {
             this.delegate = delegate;
-            this.component = component;
-            this.componentDescriptor = componentDescriptor;
         }
 
+        @SuppressWarnings("unchecked")
         public <E> E getInstance(InjectionPoint<E> injectionPoint) {
             E obj;
             final Class<E> baseType = injectionPoint.getBaseType();

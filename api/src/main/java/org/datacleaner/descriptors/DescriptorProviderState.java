@@ -26,9 +26,7 @@ import java.util.Objects;
  */
 public class DescriptorProviderState {
     public enum Level {
-        INFO,
-        ERROR,
-        ;
+        INFO, ERROR, ;
     };
 
     private Level level;
@@ -49,7 +47,11 @@ public class DescriptorProviderState {
 
     @Override
     public boolean equals(Object o) {
-        return Objects.equals(this, o);
+        if (o instanceof DescriptorProviderState) {
+            final DescriptorProviderState other = (DescriptorProviderState) o;
+            return Objects.equals(this.level, other.level) && Objects.equals(this.message, other.message);
+        }
+        return false;
     }
 
     @Override

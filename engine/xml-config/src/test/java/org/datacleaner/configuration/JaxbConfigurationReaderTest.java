@@ -539,8 +539,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-remote-servers.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
-        Assert.assertEquals(false, remoteConf.isEmpty());
-        Assert.assertEquals(true, remoteConf.showAllServers());
+        Assert.assertEquals(false, remoteConf.getServerList().isEmpty());
+        Assert.assertEquals(true, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(3, remoteConf.getServerList().size());
 
         RemoteServerData server0 = remoteConf.getServerList().get(0);
@@ -566,8 +566,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-remote-servers-empty.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
-        Assert.assertEquals(true, remoteConf.isEmpty());
-        Assert.assertEquals(false, remoteConf.showAllServers());
+        Assert.assertEquals(true, remoteConf.getServerList().isEmpty());
+        Assert.assertEquals(false, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 }

@@ -19,15 +19,14 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.*;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
+import java.net.URISyntaxException;
 
-import javax.swing.*;
+import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +48,13 @@ public class DCHtmlBox extends JEditorPane {
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         setFont(WidgetUtils.FONT_NORMAL);
         addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    (new LinkRunner(e.getURL())).execute();
+            public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent) {
+                if (hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    try {
+                        (new OpenBrowserAction(hyperlinkEvent.getURL())).actionPerformed(null);
+                    } catch (URISyntaxException e1) {
+                        logger.warn("Link can not be opened. " + e1.getMessage());
+                    }
                 }
             }
         });
@@ -71,31 +74,5 @@ public class DCHtmlBox extends JEditorPane {
 
     private String getTableHtml(String content) {
         return "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" + content + "</td></tr></table>";
-    }
-
-    private static class LinkRunner extends SwingWorker<Void, Void> {
-        private URL url = null;
-
-        private LinkRunner(URL url) {
-            if (url != null) {
-                this.url = url;
-            }
-        }
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            Desktop.getDesktop().browse(url.toURI());
-
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            try {
-                get();
-            } catch (ExecutionException | InterruptedException e) {
-                logger.warn(e.getMessage());
-            }
-        }
     }
 }

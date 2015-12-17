@@ -17,18 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.components.remote;
 
 /**
- * Box for data about remote server
- * @since 15. 10. 2015
+ * Exception representing problems with components coming from remote servers.
  */
-public interface RemoteServerData {
-    public Integer getServerPriority();
-    public String getServerName();
-    public String getHost();
-    public RemoteServerData setUsername(String username);
-    public String getUsername();
-    public RemoteServerData setPassword(String password);
-    public String getPassword();
+public class RemoteComponentException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    public RemoteComponentException(String message) {
+        super(message);
+    }
 }

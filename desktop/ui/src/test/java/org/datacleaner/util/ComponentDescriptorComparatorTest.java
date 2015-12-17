@@ -28,7 +28,6 @@ import java.util.Set;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
-import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -74,8 +73,7 @@ public class ComponentDescriptorComparatorTest {
     }
 
     private RemoteDescriptorProvider getRemoteDescriptorProvider(Integer serverPriority) {
-        RemoteServerData remoteServerData = new RemoteServerDataImpl();
-        remoteServerData.setServerPriority(serverPriority);
+        RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl("host", "name", serverPriority);
         RemoteDescriptorProvider remoteDescriptorProvider = new RemoteDescriptorProviderImpl(remoteServerData);
 
         return remoteDescriptorProvider;

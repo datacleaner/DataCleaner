@@ -567,7 +567,7 @@ public class OptionsDialog extends AbstractWindow {
                     .getRemoteServerConfiguration();
             final RemoteServerData remoteServerData;
 
-            if (remoteServerConfiguration == null || remoteServerConfiguration.isEmpty()) {
+            if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
                 return;
             }
 

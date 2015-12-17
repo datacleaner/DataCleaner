@@ -29,10 +29,10 @@ public class RemoteServerDataImpl implements RemoteServerData {
     private String username;
     private String password;
 
-    @Override
-    public RemoteServerDataImpl setServerName(String serverName) {
+    public RemoteServerDataImpl(String host, String serverName, Integer serverPriority) {
+        this.host = host.replaceAll("/+$", "");
         this.serverName = serverName;
-        return this;
+        this.serverPriority = serverPriority;
     }
 
     @Override
@@ -41,20 +41,8 @@ public class RemoteServerDataImpl implements RemoteServerData {
     }
 
     @Override
-    public RemoteServerData setServerPriority(Integer serverPriority) {
-        this.serverPriority = serverPriority;
-        return this;
-    }
-
-    @Override
     public String getServerName() {
         return serverName;
-    }
-
-    @Override
-    public RemoteServerDataImpl setHost(String host) {
-        this.host = host.replaceAll("/+$", "");
-        return this;
     }
 
     @Override

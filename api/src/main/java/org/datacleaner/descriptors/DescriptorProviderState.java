@@ -22,15 +22,15 @@ package org.datacleaner.descriptors;
 import java.util.Objects;
 
 /**
- * @since 01. 12. 2015
+ * Represents the status/state of a {@link DescriptorProvider}.
  */
 public class DescriptorProviderState {
     public enum Level {
-        INFO, ERROR, ;
+        INFO, ERROR;
     };
 
-    private Level level;
-    private String message;
+    private final Level level;
+    private final String message;
 
     public DescriptorProviderState(Level level, String message) {
         this.level = level;
@@ -56,6 +56,6 @@ public class DescriptorProviderState {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this);
+        return Objects.hash(level, message);
     }
 }

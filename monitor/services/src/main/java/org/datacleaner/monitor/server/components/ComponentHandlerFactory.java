@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.components;
 
 import java.util.Collection;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -28,7 +27,6 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
-import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -27,7 +27,7 @@ import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 /**
  * @since 20. 11. 2015
  */
-public class ComponentDescriptorComparator implements Comparator<ComponentDescriptor> {
+public class ComponentDescriptorComparator implements Comparator<ComponentDescriptor<?>> {
     /**
      * The order of names is ascending.
      * The order of priorities is descending.
@@ -36,7 +36,7 @@ public class ComponentDescriptorComparator implements Comparator<ComponentDescri
      * @return
      */
     @Override
-    public int compare(ComponentDescriptor firstDescriptor, ComponentDescriptor secondDescriptor) {
+    public int compare(ComponentDescriptor<?> firstDescriptor, ComponentDescriptor<?> secondDescriptor) {
         boolean sameNames = (firstDescriptor.getDisplayName().equals(secondDescriptor.getDisplayName()));
         boolean atLeastOneRemote = (firstDescriptor instanceof RemoteTransformerDescriptor || secondDescriptor instanceof RemoteTransformerDescriptor);
 
@@ -44,8 +44,8 @@ public class ComponentDescriptorComparator implements Comparator<ComponentDescri
             boolean bothRemote = (firstDescriptor instanceof RemoteTransformerDescriptor && secondDescriptor instanceof RemoteTransformerDescriptor);
 
             if (bothRemote) {
-                return ((RemoteTransformerDescriptor) secondDescriptor).getRemoteDescriptorProvider().getServerPriority().compareTo(
-                        ((RemoteTransformerDescriptor) firstDescriptor).getRemoteDescriptorProvider().getServerPriority());
+                return ((RemoteTransformerDescriptor<?>) secondDescriptor).getRemoteDescriptorProvider().getServerPriority().compareTo(
+                        ((RemoteTransformerDescriptor<?>) firstDescriptor).getRemoteDescriptorProvider().getServerPriority());
             }
             else {
                 return (secondDescriptor instanceof RemoteTransformerDescriptor) ? -1 : 1;

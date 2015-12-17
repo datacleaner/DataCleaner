@@ -37,8 +37,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements RemoteTransformerDescriptor,
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer> implements RemoteTransformerDescriptor<RemoteTransformer>,
         HasIcon {
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
     private String superCategoryName;
@@ -69,13 +70,14 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
         return remoteDisplayName;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
-        return classFromName(superCategoryName, TransformSuperCategory.class);
+        return (Class<? extends ComponentSuperCategory>) classFromName(superCategoryName, TransformSuperCategory.class);
     }
 
-    private Class classFromName(String className, Class defaultClass) {
-        Class clazz = defaultClass;
+    private Class<?> classFromName(String className, Class<?> defaultClass) {
+        Class<?> clazz = defaultClass;
 
         try {
             clazz = Class.forName(className);
@@ -92,7 +94,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
         try {
             for (String name : categoryNames) {
-                Class categoryClass = classFromName(name, null);
+                Class<?> categoryClass = classFromName(name, null);
 
                 if (categoryClass == null) {
                     continue;
@@ -109,13 +111,13 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     }
 
     @Override
-    public Object newInstance() {
+    public RemoteTransformer newInstance() {
         String baseUrl = getRemoteDescriptorProvider().getServerHost();
         String username = getRemoteDescriptorProvider().getUsername();
         String password = getRemoteDescriptorProvider().getPassword();
         RemoteTransformer remoteTransformer = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
-
-        for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) _configuredProperties) {
+        
+        for (ConfiguredPropertyDescriptor propertyDescriptor : _configuredProperties) {
             if (propertyDescriptor instanceof RemoteConfiguredPropertyDescriptor) {
                 ((RemoteConfiguredPropertyDescriptor) propertyDescriptor).setDefaultValue(remoteTransformer);
             }

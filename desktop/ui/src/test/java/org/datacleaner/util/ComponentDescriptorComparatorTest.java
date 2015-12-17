@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.datacleaner.api.Component;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.configuration.RemoteServerDataImpl;
@@ -44,15 +45,15 @@ import org.junit.Test;
 public class ComponentDescriptorComparatorTest {
     @Test
     public void testRemoteAndLocal() {
-        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+        RemoteTransformerDescriptor<?> descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
                 "xyz", null, null, null);
-        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+        RemoteTransformerDescriptor<?> descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
                 "abc", null, null, null);
 
-        TestLocalComponentDescriptor descriptor3 = new TestLocalComponentDescriptor("xyz");
-        TestLocalComponentDescriptor descriptor4 = new TestLocalComponentDescriptor("abc");
+        TestLocalComponentDescriptor<?> descriptor3 = new TestLocalComponentDescriptor<Component>("xyz");
+        TestLocalComponentDescriptor<?> descriptor4 = new TestLocalComponentDescriptor<Component>("abc");
 
-        List<ComponentDescriptor> list = new ArrayList<>();
+        List<ComponentDescriptor<?>> list = new ArrayList<>();
         list.add(descriptor1);
         list.add(descriptor2);
         list.add(descriptor3);
@@ -60,10 +61,10 @@ public class ComponentDescriptorComparatorTest {
 
         Collections.sort(list, new ComponentDescriptorComparator());
 
-        ComponentDescriptor first = list.get(0);
-        ComponentDescriptor second = list.get(1);
-        ComponentDescriptor third = list.get(2);
-        ComponentDescriptor fourth = list.get(3);
+        ComponentDescriptor<?> first = list.get(0);
+        ComponentDescriptor<?> second = list.get(1);
+        ComponentDescriptor<?> third = list.get(2);
+        ComponentDescriptor<?> fourth = list.get(3);
 
         Assert.assertEquals("abc", first.getDisplayName());
         Assert.assertEquals("abc", second.getDisplayName());
@@ -80,23 +81,23 @@ public class ComponentDescriptorComparatorTest {
 
     @Test
     public void testCompareAllRemote() throws Exception {
-        RemoteTransformerDescriptor descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
+        RemoteTransformerDescriptor<?> descriptor1 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(1),
                 "xyz", null, null, null);
-        RemoteTransformerDescriptor descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+        RemoteTransformerDescriptor<?> descriptor2 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
                 "xyz", null, null, null);
-        RemoteTransformerDescriptor descriptor3 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
+        RemoteTransformerDescriptor<?> descriptor3 = new RemoteTransformerDescriptorImpl(getRemoteDescriptorProvider(2),
                 "abc", null, null, null);
 
-        List<RemoteTransformerDescriptor> list = new ArrayList<>();
+        List<RemoteTransformerDescriptor<?>> list = new ArrayList<>();
         list.add(descriptor1);
         list.add(descriptor2);
         list.add(descriptor3);
 
         Collections.sort(list, new ComponentDescriptorComparator());
 
-        RemoteTransformerDescriptor first = list.get(0);
-        RemoteTransformerDescriptor second = list.get(1);
-        RemoteTransformerDescriptor third = list.get(2);
+        RemoteTransformerDescriptor<?> first = list.get(0);
+        RemoteTransformerDescriptor<?> second = list.get(1);
+        RemoteTransformerDescriptor<?> third = list.get(2);
 
         Assert.assertEquals("abc", first.getDisplayName());
         Assert.assertEquals(2, first.getRemoteDescriptorProvider().getServerPriority().intValue());
@@ -108,27 +109,29 @@ public class ComponentDescriptorComparatorTest {
 
     @Test
     public void testCompareAllLocal() {
-        TestLocalComponentDescriptor descriptor1 = new TestLocalComponentDescriptor("xyz");
-        TestLocalComponentDescriptor descriptor2 = new TestLocalComponentDescriptor("abc");
-        TestLocalComponentDescriptor descriptor3 = new TestLocalComponentDescriptor("abc");
+        TestLocalComponentDescriptor<?> descriptor1 = new TestLocalComponentDescriptor<Component>("xyz");
+        TestLocalComponentDescriptor<?> descriptor2 = new TestLocalComponentDescriptor<Component>("abc");
+        TestLocalComponentDescriptor<?> descriptor3 = new TestLocalComponentDescriptor<Component>("abc");
 
-        List<TestLocalComponentDescriptor> list = new ArrayList<>();
+        List<TestLocalComponentDescriptor<?>> list = new ArrayList<>();
         list.add(descriptor1);
         list.add(descriptor2);
         list.add(descriptor3);
 
         Collections.sort(list, new ComponentDescriptorComparator());
 
-        TestLocalComponentDescriptor first = list.get(0);
-        TestLocalComponentDescriptor second = list.get(1);
-        TestLocalComponentDescriptor third = list.get(2);
+        TestLocalComponentDescriptor<?> first = list.get(0);
+        TestLocalComponentDescriptor<?> second = list.get(1);
+        TestLocalComponentDescriptor<?> third = list.get(2);
 
         Assert.assertEquals("abc", first.getDisplayName());
         Assert.assertEquals("abc", second.getDisplayName());
         Assert.assertEquals("xyz", third.getDisplayName());
     }
 
-    private class TestLocalComponentDescriptor implements ComponentDescriptor {
+    private class TestLocalComponentDescriptor<C extends Component> implements ComponentDescriptor<C> {
+        
+        private static final long serialVersionUID = 1L;
         private String displayName;
 
         public TestLocalComponentDescriptor(String displayName) {
@@ -141,12 +144,12 @@ public class ComponentDescriptorComparatorTest {
         }
 
         @Override
-        public Object newInstance() {
+        public C newInstance() {
             return null;
         }
 
         @Override
-        public Class getComponentClass() {
+        public Class<C> getComponentClass() {
             return null;
         }
 
@@ -174,9 +177,9 @@ public class ComponentDescriptorComparatorTest {
         public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional) {
             return null;
         }
-
+        
         @Override
-        public Annotation getAnnotation(Class annotationClass) {
+        public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
             return null;
         }
 
@@ -231,22 +234,22 @@ public class ComponentDescriptorComparatorTest {
         }
 
         @Override
-        public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class cls) {
+        public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class<?> cls) {
             return null;
         }
 
         @Override
-        public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(Class type, boolean includeArrays) {
+        public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(Class<?> type, boolean includeArrays) {
+            return null;
+        }
+        
+        @Override
+        public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(Class<? extends Annotation> annotation) {
             return null;
         }
 
         @Override
-        public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(Class annotation) {
-            return null;
-        }
-
-        @Override
-        public int compareTo(Object o) {
+        public int compareTo(ComponentDescriptor<?> o) {
             return 0;
         }
     }

@@ -21,6 +21,7 @@ package org.datacleaner.spark;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.metamodel.util.HdfsResource;
@@ -61,6 +62,13 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
                 propertiesPath);
+
+        final ServiceLoader<SparkJobLifeCycleListener> listenerLoaders =
+                ServiceLoader.load(SparkJobLifeCycleListener.class);
+
+        for(SparkJobLifeCycleListener listener : listenerLoaders){
+            sparkJobContext.addSparkJobLifeCycleListener(listener);
+        }
 
         final String resultJobFilePath;
         if (sparkJobContext.isResultEnabled()) {

@@ -133,7 +133,11 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
             }
 
             for (Map.Entry<DescriptorProvider, DescriptorProviderState> map1Entry : map1.entrySet()) {
-                if (!map2.get(map1Entry.getKey()).equals(map1Entry.getValue())) {
+                DescriptorProviderState map2State = map2.get(map1Entry.getKey());
+                if (map2State == null) {
+                    return false;
+                }
+                if (!map2State.equals(map1Entry.getValue())) {
                     return false;
                 }
             }

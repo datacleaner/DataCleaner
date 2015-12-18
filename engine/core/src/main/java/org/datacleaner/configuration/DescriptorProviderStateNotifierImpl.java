@@ -57,6 +57,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
             }
             _listenerSet.add(listener);
         }
+        listener.notify(new HashMap<>(_stateMap));
     }
 
     @Override

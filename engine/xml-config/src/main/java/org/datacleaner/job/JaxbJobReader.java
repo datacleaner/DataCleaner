@@ -51,6 +51,7 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
@@ -59,12 +60,7 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.AnalyzerDescriptor;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.FilterDescriptor;
-import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.descriptors.*;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
@@ -677,8 +673,18 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         final List<OutputType> output = transformerType.getOutput();
 
                         if (outputColumns.size() != output.size()) {
-                            final String message = "Expected " + outputColumns.size() + " output column(s), but found "
-                                    + output.size() + " (" + transformerBuilder + ")";
+                            final String message;
+                            if (transformerBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
+                                RemoteTransformerDescriptor remoteTransformerDescriptor = (RemoteTransformerDescriptor) transformerBuilder.getDescriptor();
+                                final String componentName = remoteTransformerDescriptor.getDisplayName();
+                                final String serverName = remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerName();
+                                message = "There has been error during loading the remote component '"
+                                        + componentName +
+                                        "'. This problem could be caused by connection issues to DataCleaner Server '" + serverName + "'.";
+                            } else {
+                                message = "Expected " + outputColumns.size() + " output column(s), but found "
+                                        + output.size() + " (" + transformerBuilder + ")";
+                            }
                             if (outputColumns.isEmpty()) {
                                 // typically empty output columns is due to
                                 // a component not being configured, we'll

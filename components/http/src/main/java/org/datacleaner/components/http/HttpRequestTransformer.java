@@ -61,7 +61,11 @@ import com.google.common.base.Strings;
 
 @Named("HTTP request")
 @Categorized(value = ReferenceDataCategory.class, superCategory = ImproveSuperCategory.class)
-@Description("Sends a HTTP request for each record and retrieves the response as transformation output.")
+@Description("Sends a HTTP request for each record and retrieves the response as transformation output.\n"
+        + "For each request you can have dynamic elements in the URL or in the request body that is sent. Provide variable names that are unique to the URL and request body and reference them there. For instance:\n"
+        + "<table><tr><td>URL:</td><td>http://www.google.com/?q=${term}</td></tr>"
+        + "<tr><td>Input:</td><td>column1</td></tr>"
+        + "<tr><td>Variable:</td><td>${term}</td></tr></table>")
 public class HttpRequestTransformer implements Transformer {
 
     public static final String PROPERTY_INPUT_COLUMNS = "Input";
@@ -90,7 +94,7 @@ public class HttpRequestTransformer implements Transformer {
     @Configured(order = 5)
     @StringProperty(multiline = true, emptyString = true)
     @Description("The body of the request to invoke. The request body will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
-    String requestBody;
+    String requestBody = "";
 
     @Inject
     @Configured(required = false, order = 100)
@@ -136,8 +140,8 @@ public class HttpRequestTransformer implements Transformer {
         final String url = applyVariablesToString(this.url, inputRow);
 
         final HttpUriRequest request = method.createRequest(url);
-        if (requestBody != null && request instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = new StringEntity(requestBody, usedCharset);
+        if (!Strings.isNullOrEmpty(requestBody) && request instanceof HttpEntityEnclosingRequest) {
+            final HttpEntity entity = new StringEntity(requestBody, usedCharset);
             ((HttpEntityEnclosingRequest) request).setEntity(entity);
         }
 

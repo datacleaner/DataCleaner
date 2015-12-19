@@ -17,29 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util.convert;
+package org.datacleaner.util;
 
-import static org.junit.Assert.*;
-
+import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.HdfsResource;
-import org.junit.Test;
 
-public class HdfsResourceTypeHandlerTest {
+public class HadoopResource extends HdfsResource {
 
-    @Test
-    public void testToAndFromString() throws Exception {
-        final HdfsResourceTypeHandler typeHandler = new HdfsResourceTypeHandler("hdfs");
+    private static final long serialVersionUID = 1L;
 
-        final HdfsResource resource1 = new HdfsResource("localhost", 9000, "/foo.bar.txt");
-        assertTrue(typeHandler.isParserFor(resource1.getClass()));
-        
-        final String path = typeHandler.createPath(resource1);
-        assertEquals("localhost:9000/foo.bar.txt", path);
-        
-        final HdfsResource resource2 = typeHandler.parsePath(path);
-        
-        // they should now be equal, but not the same instance
-        assertEquals(resource2, resource1);
-        assertNotSame(resource2, resource1);
+    private final Configuration _configuration;
+
+    public HadoopResource(String url, Configuration configuration) {
+        super(url);
+        _configuration = configuration;
+    }
+    
+    @Override
+    public Configuration getHadoopConfiguration() {
+        return _configuration;
     }
 }

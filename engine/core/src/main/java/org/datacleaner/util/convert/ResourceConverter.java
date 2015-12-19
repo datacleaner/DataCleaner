@@ -29,10 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +56,21 @@ public class ResourceConverter implements Converter<Resource> {
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("\\b([a-zA-Z]+)://(.+)");
 
-    private static Collection<? extends ResourceTypeHandler<?>> createDefaultHandlers(
+    public static Collection<? extends ResourceTypeHandler<?>> createDefaultHandlers(
             DataCleanerConfiguration configuration) {
+        return createDefaultHandlers(configuration.getHomeFolder());
+    }
+    
+
+    public static List<ResourceTypeHandler<?>> createDefaultHandlers(DataCleanerHomeFolder homeFolder) {
         final List<ResourceTypeHandler<?>> result = new ArrayList<>();
-        result.add(new FileResourceTypeHandler(configuration));
+        result.add(new FileResourceTypeHandler(homeFolder));
         result.add(new UrlResourceTypeHandler());
-        result.add(new HdfsResourceTypeHandler());
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_HDFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_EMRFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_MAPRFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_S3));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_SWIFT));
         result.add(new ClasspathResourceTypeHandler());
         result.add(new VfsResourceTypeHandler());
         return result;

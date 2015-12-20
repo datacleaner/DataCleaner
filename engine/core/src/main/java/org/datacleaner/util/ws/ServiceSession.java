@@ -19,6 +19,7 @@
  */
 package org.datacleaner.util.ws;
 
+import java.io.Closeable;
 import java.util.concurrent.Callable;
 
 /**
@@ -31,7 +32,7 @@ import java.util.concurrent.Callable;
  *            the type of result to expect from service invocations in this
  *            session.
  */
-public interface ServiceSession<R> {
+public interface ServiceSession<R> extends Closeable {
 
     /**
      * Invokes the main service that this session pertains to.
@@ -54,4 +55,7 @@ public interface ServiceSession<R> {
      * @return
      */
     public <E> E invokeAdhocService(Callable<E> callable) throws RuntimeException, IllegalStateException;
+    
+    @Override
+    public void close();
 }

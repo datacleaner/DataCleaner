@@ -90,6 +90,7 @@
 			<artifactId>DataCleaner-remote-components</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>

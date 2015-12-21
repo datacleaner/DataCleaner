@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -120,6 +121,8 @@ public class ComponentHandler {
     private final ComponentContext componentContext;
 
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration, AnalysisListener analysisListener) {
+        Objects.requireNonNull(componentConfiguration, "Component configuration cannot be null");
+        
         _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;

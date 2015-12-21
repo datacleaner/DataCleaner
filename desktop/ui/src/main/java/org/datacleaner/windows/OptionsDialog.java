@@ -119,12 +119,10 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
 
-        _tabbedPane.setUnclosableTab(0);
-        _tabbedPane.setUnclosableTab(1);
-        _tabbedPane.setUnclosableTab(2);
-        _tabbedPane.setUnclosableTab(3);
-        _tabbedPane.setUnclosableTab(4);
-        _tabbedPane.setUnclosableTab(5);
+        final int tabCount = _tabbedPane.getTabCount();
+        for (int i = 0; i < tabCount; i++) {
+            _tabbedPane.setUnclosableTab(i);
+        }
     }
 
     private URL getDataCleanerConfigurationFileURI() {

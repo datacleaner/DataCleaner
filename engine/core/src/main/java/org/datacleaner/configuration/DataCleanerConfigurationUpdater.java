@@ -19,17 +19,12 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.File;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,20 +32,26 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Class for updating values (content of tags) in the XML configuration file (conf.xml).
- * It does not create new tags nor removes any.
+ * Class for updating values (content of tags) in the XML configuration file
+ * (conf.xml). It does not create new tags nor removes any.
  */
 public class DataCleanerConfigurationUpdater {
+
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationUpdater.class);
-    private String configurationFilePath = null;
+
+    private final Resource configurationFileResource;
     private Document document = null;
 
-    public DataCleanerConfigurationUpdater(URL configurationFileURL) {
-        this.configurationFilePath = configurationFileURL.getPath();
+    public DataCleanerConfigurationUpdater(Resource configurationFileResource) {
+        this.configurationFileResource = configurationFileResource;
     }
 
-    public void update(String[] nodePath, String newValue) {
-        if (nodePath.length <= 0) {
+    public void update(String nodePath, String newValue) {
+        update(new String[] { nodePath }, newValue);
+    }
+
+    public void update(String[] nodePaths, String newValue) {
+        if (nodePaths.length <= 0) {
             return;
         }
 
@@ -58,7 +59,7 @@ public class DataCleanerConfigurationUpdater {
             load();
         }
 
-        Node node = findElementToUpdate(nodePath);
+        final Node node = findElementToUpdate(nodePaths);
 
         if (node != null) {
             node.setTextContent(newValue);
@@ -81,12 +82,13 @@ public class DataCleanerConfigurationUpdater {
     }
 
     private void load() {
+        final InputStream in = configurationFileResource.read();
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            document = documentBuilder.parse(configurationFilePath);
+            document = XmlUtils.parseDocument(in);
         } catch (Exception e) {
-            logger.warn("XML configuration was not loaded: " + e.getMessage());
+            logger.warn("XML configuration was not loaded: " + e.getMessage(), e);
+        } finally {
+            FileHelper.safeClose(in);
         }
     }
 
@@ -104,16 +106,19 @@ public class DataCleanerConfigurationUpdater {
         return null;
     }
 
-    private void write() {
+    public void write() {
+        final OutputStream out = configurationFileResource.write();
         try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(document);
-            StreamResult result = new StreamResult(new File(configurationFilePath));
-            transformer.transform(source, result);
+            XmlUtils.writeDocument(document, out);
+        } finally {
+            FileHelper.safeClose(out);
         }
-        catch (TransformerException e) {
-            logger.warn("XML configuration was not stored: " + e.getMessage());
+    }
+
+    public Document getDocument() {
+        if (document == null) {
+            load();
         }
+        return document;
     }
 }

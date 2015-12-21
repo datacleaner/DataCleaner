@@ -30,7 +30,11 @@ import javax.swing.Timer;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.OptionsDialog;
 
+/**
+ * The "Memory" panel found in the {@link OptionsDialog}
+ */
 public class MemoryOptionsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;

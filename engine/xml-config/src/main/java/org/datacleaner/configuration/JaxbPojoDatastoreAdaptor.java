@@ -29,9 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -65,6 +62,7 @@ import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -396,14 +394,6 @@ public class JaxbPojoDatastoreAdaptor {
         return;
     }
 
-    protected DocumentBuilder createDocumentBuilder() {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException("Failed to create DocumentBuilder", e);
-        }
-    }
-
     private org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,
             ColumnType type) {
         org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column columnType = new org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column();
@@ -429,8 +419,7 @@ public class JaxbPojoDatastoreAdaptor {
             final Query q = dataContext.query().from(table).select(usedColumns).toQuery();
             q.setMaxRows(maxRows);
 
-            final DocumentBuilder documentBuilder = createDocumentBuilder();
-            final Document document = documentBuilder.newDocument();
+            final Document document = XmlUtils.createDocument();
             final Rows rowsType = new Rows();
             try (final DataSet ds = dataContext.executeQuery(q)) {
                 while (ds.next()) {

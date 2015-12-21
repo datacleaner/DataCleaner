@@ -24,14 +24,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -83,6 +75,7 @@ import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
 import org.datacleaner.util.convert.VfsResourceTypeHandler;
+import org.datacleaner.util.xml.XmlUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.slf4j.Logger;
@@ -344,13 +337,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 resource.write(new Action<OutputStream>() {
                     @Override
                     public void run(final OutputStream out) throws Exception {
-                        final Source source = new DOMSource(document);
-                        final Result outputTarget = new StreamResult(out);
-                        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                        final Transformer transformer = transformerFactory.newTransformer();
-                        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-                        transformer.transform(source, outputTarget);
+                        XmlUtils.writeDocument(document, out);
                     }
                 });
 

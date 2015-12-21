@@ -20,17 +20,10 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -38,7 +31,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -47,9 +39,6 @@ import javax.swing.event.DocumentEvent;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
-import org.datacleaner.configuration.RemoteServerConfiguration;
-import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -63,21 +52,18 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
-import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.options.MemoryOptionsPanel;
+import org.datacleaner.widgets.options.RemoteComponentsOptionsPanel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The "Options" dialog of DataCleaner
@@ -85,15 +71,11 @@ import org.slf4j.LoggerFactory;
 public class OptionsDialog extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(OptionsDialog.class);
 
     private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
     private final DataCleanerConfiguration _configuration;
-  
-    private DataCleanerConfigurationUpdater _dcConfigurationUpdater;
-    private final Map<String, String> _dcConfigurationUpdates = new HashMap<>();
 
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
@@ -102,7 +84,6 @@ public class OptionsDialog extends AbstractWindow {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
-        _dcConfigurationUpdater = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileURI());
         _tabbedPane = new CloseableTabbedPane(true);
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
@@ -114,7 +95,7 @@ public class OptionsDialog extends AbstractWindow {
                 getNetworkTab());
         _tabbedPane.addTab("Remote components",
                 imageManager.getImageIcon("images/menu/remote-components.png", IconUtils.ICON_SIZE_TAB),
-                new RemoteComponentsTab());
+                new RemoteComponentsOptionsPanel(configuration));
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
@@ -126,20 +107,6 @@ public class OptionsDialog extends AbstractWindow {
         for (int i = 0; i < tabCount; i++) {
             _tabbedPane.setUnclosableTab(i);
         }
-    }
-
-    private URL getDataCleanerConfigurationFileURI() {
-        try {
-            final String path = _configuration.getHomeFolder().toFile().getAbsolutePath() + File.separator
-                    + DataCleanerConfigurationImpl.DEFAULT_FILENAME;
-            final File file = new File(path);
-
-            return file.toURI().toURL();
-        } catch (MalformedURLException e) {
-            logger.warn("Configuration file was not found: " + e.getMessage());
-        }
-
-        return null;
     }
 
     public void selectDatabaseDriversTab() {
@@ -367,7 +334,6 @@ public class OptionsDialog extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 _userPreferences.save();
-                updateDcConfiguration();
                 _configuration.getEnvironment().getDescriptorProvider().refresh();
                 OptionsDialog.this.dispose();
             }
@@ -385,13 +351,6 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(700, 500);
         return panel;
-    }
-
-    private void updateDcConfiguration() {
-        for (String nodePathString : _dcConfigurationUpdates.keySet()) {
-            String[] nodePath = nodePathString.split(":");
-            _dcConfigurationUpdater.update(nodePath, _dcConfigurationUpdates.get(nodePathString));
-        }
     }
 
     @Override
@@ -424,124 +383,5 @@ public class OptionsDialog extends AbstractWindow {
 
     public UserPreferences getUserPreferences() {
         return _userPreferences;
-    }
-
-    private class RemoteComponentsTab extends DCPanel {
-        private static final long serialVersionUID = 1L;
-        private int left = 0;
-        private int row = 0;
-        private int wholeLineSpan = 3;
-        private int rowSpan = 1;
-        private int padding = 5;
-        private int maxWeightx = 100;
-        private int weightx = 1;
-        private int weighty = 0;
-        private JTextField usernameTextField;
-        private JPasswordField passwordTextField;
-
-        public RemoteComponentsTab() {
-            setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-            setTitledBorder("Credentials");
-            addDescription();
-            createFields();
-            setupFields();
-            addAllFields();
-        }
-
-        private void addDescription() {
-            WidgetUtils.addToGridBag(getDescriptionComponent(), this, left, row, wholeLineSpan, rowSpan,
-                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.BOTH);
-        }
-
-        private void createFields() {
-            usernameTextField = WidgetFactory.createTextField("username");
-            usernameTextField.setName("username");
-            setSize(usernameTextField);
-
-            passwordTextField = WidgetFactory.createPasswordField();
-            passwordTextField.setName("password");
-            setSize(passwordTextField);
-        }
-
-        private void setSize(JTextField field) {
-            Dimension size = field.getPreferredSize();
-
-            field.setMinimumSize(size);
-            field.setPreferredSize(size);
-            field.setMaximumSize(size);
-        }
-
-        private void setupFields() {
-            final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                    .getRemoteServerConfiguration();
-            if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
-                usernameTextField.setEnabled(false);
-                passwordTextField.setEnabled(false);
-            } else {
-                final RemoteServerData remoteServerData = remoteServerConfiguration.getServerList().get(0);
-
-                setupFieldForRemoteComponentsTab(usernameTextField, remoteServerData.getUsername());
-                setupFieldForRemoteComponentsTab(passwordTextField, remoteServerData.getPassword());
-            }
-        }
-
-        private void addAllFields() {
-            addField("Username", usernameTextField);
-            addField("Password", passwordTextField);
-        }
-
-        private void addField(String labelText, JTextField field) {
-            row++;
-
-            JPanel spaceFiller = new JPanel();
-            spaceFiller.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-            WidgetUtils.addToGridBag(new JLabel(labelText), this, left, row, 1, 1, GridBagConstraints.LINE_START,
-                    padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
-            WidgetUtils.addToGridBag(field, this, left + 1, row, 1, 1, GridBagConstraints.LINE_START, padding, weightx,
-                    weighty, GridBagConstraints.HORIZONTAL);
-            WidgetUtils.addToGridBag(spaceFiller, this, left + 2, row, 1, 1, GridBagConstraints.LINE_END, padding,
-                    maxWeightx, weighty, GridBagConstraints.REMAINDER);
-        }
-
-        private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
-            RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                    .getRemoteServerConfiguration();
-            final RemoteServerData remoteServerData;
-
-            if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
-                return;
-            }
-
-            remoteServerData = remoteServerConfiguration.getServerList().get(0);
-            String finalInputValue = (textField instanceof JPasswordField)
-                    ? SecurityUtils.decodePasswordWithPrefix(value) : value;
-            textField.setText(finalInputValue);
-            textField.getDocument().addDocumentListener(new DCDocumentListener() {
-                @Override
-                protected void onChange(DocumentEvent e) {
-                    String fieldName = textField.getName();
-                    String nodePath = "descriptor-providers:remote-components:server:" + fieldName;
-
-                    if (textField instanceof JPasswordField) {
-                        remoteServerData.setPassword(textField.getText());
-                        _dcConfigurationUpdates.put(nodePath,
-                                SecurityUtils.encodePasswordWithPrefix(textField.getText()));
-                    } else {
-                        remoteServerData.setUsername(textField.getText());
-                        _dcConfigurationUpdates.put(nodePath, remoteServerData.getUsername());
-                    }
-                }
-            });
-
-        }
-
-        private Component getDescriptionComponent() {
-            DCHtmlBox htmlBox = new DCHtmlBox("This dialog is for credentials setting of users registered at "
-                    + "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>"
-                    + "Remote components are a cloud service providing new functions. "
-                    + "These remote components run at the server, consume provided input data and return the results. ");
-
-            return htmlBox;
-        }
     }
 }

@@ -37,7 +37,9 @@ import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,5 +241,10 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             return -1;
         }
         return lastModified;
+    }
+
+    @Override
+    public Resource toResource() {
+        return new FileResource(_file);
     }
 }

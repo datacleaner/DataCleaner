@@ -25,15 +25,6 @@ import static org.junit.Assert.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import junit.framework.TestCase;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.FileResource;
@@ -47,7 +38,10 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
+import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class DatastoreXmlExternalizerTest extends TestCase {
 
@@ -206,14 +200,9 @@ public class DatastoreXmlExternalizerTest extends TestCase {
     }
 
     private String transform(Element elem) throws Exception {
-        Source source = new DOMSource(elem);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Result outputTarget = new StreamResult(baos);
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.transform(source, outputTarget);
+        
+        XmlUtils.writeDocument(elem, baos);
 
         String str = new String(baos.toByteArray());
         return str;

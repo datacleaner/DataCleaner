@@ -64,6 +64,10 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
 
     @Override
     public HdfsResource parsePath(String path) {
+        final String prefix = getScheme() + "://";
+        if (!path.startsWith(prefix)) {
+            path = prefix + path;
+        }
         return new HdfsResource(path);
     }
 

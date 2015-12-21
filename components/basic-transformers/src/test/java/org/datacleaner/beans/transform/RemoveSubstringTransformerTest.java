@@ -44,7 +44,7 @@ public class RemoveSubstringTransformerTest {
         // Just to test that other types doesn't sent it spinning
         final InputColumn<?> booleanColumn = new MockInputColumn<>("booleanCol", Boolean.class);
 
-        final InputColumn[] subtractColumns =
+        final InputColumn<?>[] subtractColumns =
                 new InputColumn[] { stringColumn, numberColumn, listColumn, booleanColumn };
 
         _inputRow = new MockInputRow().put(baseColumn, "hello goodbye, 5, a, 2, c, true, false")

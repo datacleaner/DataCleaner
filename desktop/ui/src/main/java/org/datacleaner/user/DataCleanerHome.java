@@ -163,7 +163,7 @@ public final class DataCleanerHome {
 
             if (!upgraded) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
-                copyIfNonExisting(candidate, manager, "conf.xml");
+                copyIfNonExisting(candidate, manager, DataCleanerConfigurationImpl.DEFAULT_FILENAME);
 
                 final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
                 for (String filePath : allFilePaths) {
@@ -281,7 +281,7 @@ public final class DataCleanerHome {
     private static boolean isUsable(FileObject candidate) throws FileSystemException {
         if (candidate != null) {
             if (candidate.exists() && candidate.getType() == FileType.FOLDER) {
-                FileObject conf = candidate.resolveFile("conf.xml");
+                FileObject conf = candidate.resolveFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
                 if (conf.exists() && conf.getType() == FileType.FILE) {
                     return true;
                 }

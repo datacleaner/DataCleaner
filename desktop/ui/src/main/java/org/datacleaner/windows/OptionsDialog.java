@@ -48,6 +48,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
@@ -81,7 +82,6 @@ import org.slf4j.LoggerFactory;
 
 public class OptionsDialog extends AbstractWindow {
     private static final long serialVersionUID = 1L;
-    private static final String CONFIGURATION_FILE_NAME = "conf.xml";
     private static final Logger logger = LoggerFactory.getLogger(OptionsDialog.class);
 
     private final ImageManager imageManager = ImageManager.get();
@@ -127,9 +127,9 @@ public class OptionsDialog extends AbstractWindow {
 
     private URL getDataCleanerConfigurationFileURI() {
         try {
-            String path = _configuration.getHomeFolder().toFile().getAbsolutePath() + File.separator
-                    + CONFIGURATION_FILE_NAME;
-            File file = new File(path);
+            final String path = _configuration.getHomeFolder().toFile().getAbsolutePath() + File.separator
+                    + DataCleanerConfigurationImpl.DEFAULT_FILENAME;
+            final File file = new File(path);
 
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
@@ -350,7 +350,7 @@ public class OptionsDialog extends AbstractWindow {
         DCLabel descriptionLabel = DCLabel.darkMultiLine(
                 "Performance options are currently not configurable while you're running the application. "
                         + "You need to edit the applications configuration file for this. The configuration file is named "
-                        + "<b>" + CONFIGURATION_FILE_NAME + "</b> and is located in the root of the folder where "
+                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME + "</b> and is located in the root of the folder where "
                         + "you've installed DataCleaner.");
         descriptionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
         WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 2, 1);

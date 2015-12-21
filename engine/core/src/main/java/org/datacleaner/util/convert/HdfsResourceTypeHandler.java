@@ -30,8 +30,28 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource> {
 
-    private static final String PREFIX = "hdfs://";
+    private final String _scheme;
 
+    /**
+     * Default constructor for the "hdfs" scheme. Use of this constructor is
+     * discouraged since we support now many other schemes.
+     * 
+     * @deprecated use {@link #HdfsResourceTypeHandler(String)} instead
+     */
+    public HdfsResourceTypeHandler() {
+        this("hdfs");
+    }
+
+    /**
+     * Creates a {@link HdfsResourceTypeHandler} for a particular scheme.
+     * 
+     * @param scheme
+     *            a scheme such as "hdfs", "emrfs", "maprfs" etc.
+     */
+    public HdfsResourceTypeHandler(String scheme) {
+        _scheme = scheme;
+    }
+    
     @Override
     public boolean isParserFor(Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, HdfsResource.class);
@@ -39,22 +59,24 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
 
     @Override
     public String getScheme() {
-        return "hdfs";
+        return _scheme;
     }
 
     @Override
     public HdfsResource parsePath(String path) {
-        if (!path.startsWith(PREFIX)) {
-            path = PREFIX + path;
+        final String prefix = getScheme() + "://";
+        if (!path.startsWith(prefix)) {
+            path = prefix + path;
         }
         return new HdfsResource(path);
     }
 
     @Override
     public String createPath(Resource resource) {
+        final String prefix = getScheme() + "://";
         String path = resource.getQualifiedPath();
-        if (path.startsWith(PREFIX)) {
-            path = path.substring(PREFIX.length());
+        if (path.startsWith(prefix)) {
+            path = path.substring(prefix.length());
         }
         return path;
     }

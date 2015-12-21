@@ -60,7 +60,7 @@ public class Main {
         }
 
         final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
-                propertiesPath);
+                propertiesPath, sparkContext.hadoopConfiguration());
 
         final String resultJobFilePath;
         if (sparkJobContext.isResultEnabled()) {

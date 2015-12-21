@@ -76,7 +76,7 @@ public class ResultFilePathUtils {
             throws URISyntaxException {
 
         if (resultPath != null && !resultPath.endsWith(RESULT_FILE_EXTENSION)) {
-            final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
+            final String analysisJobXmlName = sparkJobContext.getJobName();
             final Date date = new Date();
             final String filename = analysisJobXmlName + "-" + date.getTime() + RESULT_FILE_EXTENSION;
             resultPath = createPath(resultPath, filename);

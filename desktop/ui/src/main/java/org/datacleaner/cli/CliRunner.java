@@ -103,19 +103,8 @@ public final class CliRunner implements Closeable {
                 };
             } else {
                 if(_arguments.getRunType() == CliRunType.SPARK){
-                    final Resource resource = new HdfsResource(outputFilePath);
-                    _writerRef = new LazyRef<Writer>() {
-                        @Override
-                        protected Writer fetch() throws Throwable {
-                            return new OutputStreamWriter(resource.write());
-                        }
-                    };
-                    _outputStreamRef = new LazyRef<OutputStream>() {
-                        @Override
-                        protected OutputStream fetch() throws Throwable {
-                            return resource.write();
-                        }
-                    };
+                    _writerRef = null;
+                    _outputStreamRef = null;
                 } else {
                     final FileObject outputFile;
                     try {
@@ -225,7 +214,9 @@ public final class CliRunner implements Closeable {
             System.err.println("Error:");
             e.printStackTrace(System.err);
         } finally {
-            configuration.getEnvironment().getTaskRunner().shutdown();
+            if(configuration != null) {
+                configuration.getEnvironment().getTaskRunner().shutdown();
+            }
         }
     }
 

@@ -255,6 +255,12 @@ public final class WidgetUtils {
      */
     public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
 
+    /**
+     * The 'carret' character used for "more options" symbol with the
+     * {@link #FONT_FONTAWESOME} font.
+     */
+    public static final String CHAR_CARET_DOWN = "\uf0d7";
+
     private WidgetUtils() {
         // prevent instantiation
     }

@@ -19,14 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.datacleaner.api.Analyzer;
@@ -286,7 +279,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         }
     }
 
-    public Set<DescriptorProviderState> getStatus() {
-        return new HashSet<>();
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
+        return new HashMap<>();
     }
 }

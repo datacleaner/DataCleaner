@@ -489,6 +489,7 @@ public class OptionsDialog extends AbstractWindow {
 
 
     private class RemoteComponentsTab extends DCPanel {
+        private static final long serialVersionUID = 1L;
         private int left = 0;
         private int row = 0;
         private int wholeLineSpan = 3;
@@ -566,7 +567,7 @@ public class OptionsDialog extends AbstractWindow {
                     .getRemoteServerConfiguration();
             final RemoteServerData remoteServerData;
 
-            if (remoteServerConfiguration == null || remoteServerConfiguration.isEmpty()) {
+            if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
                 return;
             }
 

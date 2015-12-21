@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.Alias;
@@ -44,11 +45,6 @@ import org.datacleaner.job.AnalysisJob;
  * used, and reuses existing descriptor definitions.
  */
 public interface DescriptorProvider {
-
-    /**
-     * @return a set of messages describing current status.
-     */
-    public Set<DescriptorProviderState> getStatus();
 
     /**
      * It refreshes the descriptor list.
@@ -197,4 +193,12 @@ public interface DescriptorProvider {
      * @param listener
      */
     public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);
+
+    /**
+     * Get information about providers. It is used in {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
+     *
+     * Don't use that. If you want to be notified, please add the listener to {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
+     * @return
+     */
+    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap();
 }

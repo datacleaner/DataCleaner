@@ -173,8 +173,7 @@ public final class DescriptorMenuBuilder {
 
     private static Collection<? extends ComponentDescriptor<?>> getFinalComponentDescriptors(
             Collection<? extends ComponentDescriptor<?>> allComponentDescriptors, boolean showAllRemoteComponents) {
-        Collections.sort((List<? extends ComponentDescriptor<?>>) allComponentDescriptors,
-                new ComponentDescriptorComparator());
+        allComponentDescriptors = CollectionUtils2.sorted(allComponentDescriptors, new ComponentDescriptorComparator());
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
                 allComponentDescriptors, new DeprecatedComponentPredicate());
 
@@ -227,7 +226,7 @@ public final class DescriptorMenuBuilder {
         };
 
         boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
-                .getRemoteServerConfiguration().showAllServers();
+                .getRemoteServerConfiguration().isShowComponentsFromAllServers();
         createMenuStructure(callback, _componentDescriptors, showAllRemoteComponents);
     }
 

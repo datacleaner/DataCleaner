@@ -228,7 +228,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     public OutputDataStreamJob[] getOutputDataStreamJobs() {
         return new OutputDataStreamJob[0];
     }
-    
+
     @Override
     public boolean isMultiStreamComponent() {
         return false;

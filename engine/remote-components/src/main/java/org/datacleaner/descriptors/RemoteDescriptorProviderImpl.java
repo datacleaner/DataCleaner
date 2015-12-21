@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
@@ -46,52 +47,62 @@ import org.slf4j.LoggerFactory;
  *
  * @Since 9/8/15
  */
-public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
-    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProvider.class);
+public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
-    private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
+    private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
-    private boolean lastConnectionCheckResult = false;
-    private boolean checkInProgress = false;
+    private boolean lastConnectionCheckResult = true;
 
-    public RemoteDescriptorProvider(RemoteServerData remoteServerData) {
+    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
         super(false);
         this.remoteServerData = remoteServerData;
         dataLazyReference.requestLoad();
     }
 
+    @Override
+    public Integer getServerPriority() {
+        return remoteServerData.getServerPriority();
+    }
+
+    @Override
+    public String getServerName() {
+        return remoteServerData.getServerName();
+    }
+
+    @Override
+    public String getServerHost() {
+        return remoteServerData.getHost();
+    }
+
+    @Override
+    public String getUsername() {
+        return remoteServerData.getUsername();
+    }
+
+    @Override
+    public String getPassword() {
+        return remoteServerData.getPassword();
+    }
+
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
-        boolean runCheck = false;
-
-        synchronized (this) { // not to start multiple threads/checks at the same time
-            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
-                runCheck = true;
-                lastConnectionCheckTime = now;
-                checkInProgress = true;
-            }
-        }
-
-        if (runCheck) {
-            (new Thread() {
-                @Override
-                public void run() {
-                    checkServerAvailability();
-                }
-            }).start();
-        }
-
+         if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
+                return lastConnectionCheckResult;
+         }
+        checkServerAvailability();
+        lastConnectionCheckTime = now;
         return lastConnectionCheckResult;
     }
 
     private void checkServerAvailability() {
+        Socket socket = new Socket();
         try {
             URL siteURL = new URL(remoteServerData.getHost());
-            Socket socket = new Socket();
             InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             lastConnectionCheckResult = socket.isConnected();
@@ -101,13 +112,13 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                     + ")' is down: " + e.getMessage());
         } finally {
             synchronized (this) {
-                checkInProgress = false;
+                FileHelper.safeClose(socket);
             }
         }
     }
 
     public void refresh() {
-        dataLazyReference = new RemoteLazyRef<>();
+        dataLazyReference = new RemoteLazyRef();
         notifyComponentDescriptorsUpdatedListeners();
     }
 
@@ -131,13 +142,26 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
         return Collections.unmodifiableCollection(dataLazyReference.get()._rendererBeanDescriptors.values());
     }
 
-    private final class RemoteLazyRef<E> extends LazyRef<E> {
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
+        Map<DescriptorProvider, DescriptorProviderState> stateMap = new HashMap<>();
+        if (!isServerUp()) {
+            DescriptorProviderState serverDownState = new DescriptorProviderState(
+                    DescriptorProviderState.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
+                    + "' is not available at the moment. ");
+            stateMap.put(this, serverDownState);
+        }
+
+        return stateMap;
+    }
+
+    private final class RemoteLazyRef extends LazyRef<Data> {
         @Override
-        public E fetch() throws Throwable {
+        public Data fetch() throws Throwable {
             Data data = new Data();
             data.downloadDescriptors();
 
-            return (E) data;
+            return data;
         }
     }
 
@@ -157,12 +181,8 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
-                                remoteServerData.getHost(), component.getName(), component.getSuperCategoryName(),
-                                component.getCategoryNames(), component.getIconData(), remoteServerData.getUsername(),
-                                remoteServerData.getPassword());
-                        transformerDescriptor.setServerName(remoteServerData.getServerName());
-                        transformerDescriptor.setServerPriority(remoteServerData.getServerPriority());
-                        transformerDescriptor.setRemoteDescriptorProvider(RemoteDescriptorProvider.this);
+                                RemoteDescriptorProviderImpl.this, component.getName(),
+                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
                             final String propertyName = propE.getKey();
@@ -227,18 +247,5 @@ public class RemoteDescriptorProvider extends AbstractDescriptorProvider {
             }
         }
         return annotations;
-    }
-
-    @Override
-    public Set<DescriptorProviderState> getStatus() {
-        Set<DescriptorProviderState> statusSet = new HashSet<>();
-
-        if (! isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server is not available at the moment. ");
-            statusSet.add(serverDownState);
-        }
-
-        return statusSet;
     }
 }

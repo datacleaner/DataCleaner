@@ -36,14 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -51,15 +45,14 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.monitor.configuration.ComponentCache;
-import org.datacleaner.monitor.configuration.ComponentCacheConfigWrapper;
-import org.datacleaner.monitor.configuration.ComponentCacheMapImpl;
-import org.datacleaner.monitor.configuration.ComponentHandlerFactory;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.ComponentCache;
+import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentController;
@@ -89,6 +82,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+
 /**
  * Controller for DataCleaner components (transformers and analyzers). It
  * enables to use a particular component and provide the input data separately
@@ -102,7 +100,6 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
-    private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_ID = "id";
@@ -116,20 +113,11 @@ public class ComponentControllerV1 implements ComponentController {
     @Autowired
     RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
-    @PostConstruct
-    public void init() {
-        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory, _remoteComponentsConfiguration);
-    }
+    @Autowired
+    ComponentHandlerFactory componentHandlerFactory;
 
-    @PreDestroy
-    public void close() {
-        try {
-            _componentCache.close();
-        }
-        catch (InterruptedException e) {
-            logger.warn(e.getMessage());
-        }
-    }
+    @Autowired
+    ComponentCache _componentCache;
 
     /**
      * It returns a list of all components and their configurations.
@@ -188,13 +176,19 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("Informing about output columns of '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
-                createInput.configuration, _remoteComponentsConfiguration);
+        ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, createInput.configuration);
         try {
             org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
             org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
+
             for (int i = 0; i < outCols.getColumnCount(); i++) {
-                result.add(outCols.getColumnName(i), outCols.getColumnType(i));
+                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+                try {
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+                } catch (JsonMappingException e) {
+                    throw new RuntimeException(e);
+                }
+                result.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
             }
             return result;
         } finally {
@@ -219,8 +213,7 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, decodedName,
-                processStatelessInput.configuration, _remoteComponentsConfiguration);
+        ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
         output.result = getJsonNode(handler.closeComponent());

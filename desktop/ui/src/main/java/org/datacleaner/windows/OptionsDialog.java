@@ -19,33 +19,38 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
-import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
-import org.datacleaner.configuration.jaxb.Configuration;
-import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
-import org.datacleaner.configuration.jaxb.RemoteComponentsType;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -89,8 +94,8 @@ public class OptionsDialog extends AbstractWindow {
 
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
-                            UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
-                            ExtensionPackagesPanel extensionPackagesPanel) {
+            UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
+            ExtensionPackagesPanel extensionPackagesPanel) {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
@@ -104,8 +109,9 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
-        _tabbedPane.addTab("Remote components", imageManager.getImageIcon("images/menu/remote-components.png",
-                IconUtils.ICON_SIZE_TAB), new RemoteComponentsTab());
+        _tabbedPane.addTab("Remote components",
+                imageManager.getImageIcon("images/menu/remote-components.png", IconUtils.ICON_SIZE_TAB),
+                new RemoteComponentsTab());
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
@@ -113,18 +119,16 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
 
-        _tabbedPane.setUnclosableTab(0);
-        _tabbedPane.setUnclosableTab(1);
-        _tabbedPane.setUnclosableTab(2);
-        _tabbedPane.setUnclosableTab(3);
-        _tabbedPane.setUnclosableTab(4);
-        _tabbedPane.setUnclosableTab(5);
+        final int tabCount = _tabbedPane.getTabCount();
+        for (int i = 0; i < tabCount; i++) {
+            _tabbedPane.setUnclosableTab(i);
+        }
     }
 
     private URL getDataCleanerConfigurationFileURI() {
         try {
-            String path = _configuration.getHomeFolder().toFile().getAbsolutePath() +
-                    File.separator + CONFIGURATION_FILE_NAME;
+            String path = _configuration.getHomeFolder().toFile().getAbsolutePath() + File.separator
+                    + CONFIGURATION_FILE_NAME;
             File file = new File(path);
 
             return file.toURI().toURL();
@@ -318,11 +322,10 @@ public class OptionsDialog extends AbstractWindow {
         TaskRunner taskRunner = _configuration.getEnvironment().getTaskRunner();
         WidgetUtils.addToGridBag(new JLabel("Task runner type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(taskRunner.getClass().getSimpleName()), panel, 1, row);
-        WidgetUtils
-                .addToGridBag(
-                        new HelpIcon(
-                                "The task runner is used to determine the execution strategy of Analysis jobs. The most common strategy for this is to use a multithreaded task runner which will spawn several threads to enable concurrent execution of jobs."),
-                        panel, 2, row);
+        WidgetUtils.addToGridBag(
+                new HelpIcon(
+                        "The task runner is used to determine the execution strategy of Analysis jobs. The most common strategy for this is to use a multithreaded task runner which will spawn several threads to enable concurrent execution of jobs."),
+                panel, 2, row);
 
         if (taskRunner instanceof MultiThreadedTaskRunner) {
             int numThreads = ((MultiThreadedTaskRunner) taskRunner).getNumThreads();
@@ -338,15 +341,14 @@ public class OptionsDialog extends AbstractWindow {
         StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
         WidgetUtils.addToGridBag(new JLabel("Storage provider type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(storageProvider.getClass().getSimpleName()), panel, 1, row);
-        WidgetUtils
-                .addToGridBag(
-                        new HelpIcon(
-                                "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
-                        panel, 2, row);
+        WidgetUtils.addToGridBag(
+                new HelpIcon(
+                        "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
+                panel, 2, row);
 
         row++;
-        DCLabel descriptionLabel = DCLabel
-                .darkMultiLine("Performance options are currently not configurable while you're running the application. "
+        DCLabel descriptionLabel = DCLabel.darkMultiLine(
+                "Performance options are currently not configurable while you're running the application. "
                         + "You need to edit the applications configuration file for this. The configuration file is named "
                         + "<b>" + CONFIGURATION_FILE_NAME + "</b> and is located in the root of the folder where "
                         + "you've installed DataCleaner.");
@@ -487,7 +489,6 @@ public class OptionsDialog extends AbstractWindow {
         return _userPreferences;
     }
 
-
     private class RemoteComponentsTab extends DCPanel {
         private static final long serialVersionUID = 1L;
         private int left = 0;
@@ -498,7 +499,6 @@ public class OptionsDialog extends AbstractWindow {
         private int maxWeightx = 100;
         private int weightx = 1;
         private int weighty = 0;
-        private RemoteComponentServerType remoteServer = getRemoteComponentsServer();
         private JTextField usernameTextField;
         private JPasswordField passwordTextField;
 
@@ -535,12 +535,16 @@ public class OptionsDialog extends AbstractWindow {
         }
 
         private void setupFields() {
-            if (remoteServer == null) {
+            final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
+                    .getRemoteServerConfiguration();
+            if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
                 usernameTextField.setEnabled(false);
                 passwordTextField.setEnabled(false);
             } else {
-                setupFieldForRemoteComponentsTab(usernameTextField, remoteServer.getUsername());
-                setupFieldForRemoteComponentsTab(passwordTextField, remoteServer.getPassword());
+                final RemoteServerData remoteServerData = remoteServerConfiguration.getServerList().get(0);
+
+                setupFieldForRemoteComponentsTab(usernameTextField, remoteServerData.getUsername());
+                setupFieldForRemoteComponentsTab(passwordTextField, remoteServerData.getPassword());
             }
         }
 
@@ -554,12 +558,12 @@ public class OptionsDialog extends AbstractWindow {
 
             JPanel spaceFiller = new JPanel();
             spaceFiller.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-            WidgetUtils.addToGridBag(new JLabel(labelText), this, left, row, 1, 1,
-                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
-            WidgetUtils.addToGridBag(field, this, left + 1, row, 1, 1,
-                    GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
-            WidgetUtils.addToGridBag(spaceFiller, this, left + 2, row, 1, 1,
-                    GridBagConstraints.LINE_END, padding, maxWeightx, weighty, GridBagConstraints.REMAINDER);
+            WidgetUtils.addToGridBag(new JLabel(labelText), this, left, row, 1, 1, GridBagConstraints.LINE_START,
+                    padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+            WidgetUtils.addToGridBag(field, this, left + 1, row, 1, 1, GridBagConstraints.LINE_START, padding, weightx,
+                    weighty, GridBagConstraints.HORIZONTAL);
+            WidgetUtils.addToGridBag(spaceFiller, this, left + 2, row, 1, 1, GridBagConstraints.LINE_END, padding,
+                    maxWeightx, weighty, GridBagConstraints.REMAINDER);
         }
 
         private void setupFieldForRemoteComponentsTab(final JTextField textField, String value) {
@@ -572,7 +576,8 @@ public class OptionsDialog extends AbstractWindow {
             }
 
             remoteServerData = remoteServerConfiguration.getServerList().get(0);
-            String finalInputValue = (textField instanceof JPasswordField) ? SecurityUtils.decodePasswordWithPrefix(value) : value;
+            String finalInputValue = (textField instanceof JPasswordField)
+                    ? SecurityUtils.decodePasswordWithPrefix(value) : value;
             textField.setText(finalInputValue);
             textField.getDocument().addDocumentListener(new DCDocumentListener() {
                 @Override
@@ -582,9 +587,9 @@ public class OptionsDialog extends AbstractWindow {
 
                     if (textField instanceof JPasswordField) {
                         remoteServerData.setPassword(textField.getText());
-                        _dcConfigurationUpdates.put(nodePath, SecurityUtils.encodePasswordWithPrefix(textField.getText()));
-                    }
-                    else {
+                        _dcConfigurationUpdates.put(nodePath,
+                                SecurityUtils.encodePasswordWithPrefix(textField.getText()));
+                    } else {
                         remoteServerData.setUsername(textField.getText());
                         _dcConfigurationUpdates.put(nodePath, remoteServerData.getUsername());
                     }
@@ -593,35 +598,11 @@ public class OptionsDialog extends AbstractWindow {
 
         }
 
-        private RemoteComponentServerType getRemoteComponentsServer() {
-            try {
-                InputStream inputStream = getDataCleanerConfigurationFileURI().openStream();
-                JaxbConfigurationReader jaxbConfigurationReader = new JaxbConfigurationReader();
-                Configuration configuration = jaxbConfigurationReader.unmarshall(inputStream);
-                List<Object> allProviders = configuration.getDescriptorProviders()
-                        .getCustomClassOrClasspathScannerOrRemoteComponents();
-
-                for (Object provider : allProviders) {
-                    if (provider instanceof RemoteComponentsType) {
-                        List<RemoteComponentServerType> servers = ((RemoteComponentsType) provider).getServer();
-
-                        // Only for the first server
-                        return servers == null || servers.isEmpty() ? null : servers.get(0);
-                    }
-                }
-            }
-            catch (IOException e) {
-                logger.warn(e.getMessage());
-            }
-
-            return null;
-        }
-
         private Component getDescriptionComponent() {
-            DCHtmlBox htmlBox = new DCHtmlBox("This dialog is for credentials setting of users registered at " +
-                    "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>" +
-                    "Remote components are a cloud service providing new functions. " +
-                    "These remote components run at the server, consume provided input data and return the results. ");
+            DCHtmlBox htmlBox = new DCHtmlBox("This dialog is for credentials setting of users registered at "
+                    + "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>"
+                    + "Remote components are a cloud service providing new functions. "
+                    + "These remote components run at the server, consume provided input data and return the results. ");
 
             return htmlBox;
         }

@@ -26,8 +26,13 @@ import java.util.List;
  * Implementation of {@link RemoteServerConfiguration}.
  */
 public class RemoteServerConfigurationImpl implements RemoteServerConfiguration {
+
+    private final List<RemoteServerData> remoteServerDataList;
     private boolean showComponentsFromAllServers = false;
-    private List<RemoteServerData> remoteServerDataList = new ArrayList<>();
+
+    public RemoteServerConfigurationImpl() {
+        remoteServerDataList = new ArrayList<>();
+    }
 
     @Override
     public boolean isShowComponentsFromAllServers() {

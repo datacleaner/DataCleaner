@@ -216,7 +216,7 @@ public final class IconUtils {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
-            if (!((RemoteTransformerDescriptor) descriptor).getRemoteDescriptorProvider().isServerUp()) {
+            if (!((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().isServerUp()) {
                 serverDown = true;
             }
         }

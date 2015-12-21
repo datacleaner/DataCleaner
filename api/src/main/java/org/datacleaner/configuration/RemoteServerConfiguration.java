@@ -25,6 +25,7 @@ import java.util.List;
  * Container for all remote servers' (DataCleaner Monitors) configuration.
  */
 public interface RemoteServerConfiguration {
+    
     /**
      * Getter for a flag indicating whether all components coming from various remote servers are shown together
      * (in the component's tree, components' context menu).

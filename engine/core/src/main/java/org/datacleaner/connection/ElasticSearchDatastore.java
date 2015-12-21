@@ -23,7 +23,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.util.List;
 
-import org.apache.metamodel.elasticsearch.ElasticSearchDataContext;
+import org.apache.metamodel.elasticsearch.nativeclient.ElasticSearchDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.StringUtils;
 import org.elasticsearch.client.Client;

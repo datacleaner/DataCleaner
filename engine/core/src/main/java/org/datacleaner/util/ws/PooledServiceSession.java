@@ -132,4 +132,13 @@ public class PooledServiceSession<R> extends RetryServiceSession<R> {
         }
     }
 
+    @Override
+    public void close() {
+        super.close();
+        try {
+            _connectionPool.close();
+        } catch (Exception e) {
+            // nothing to do
+        }
+    }
 }

@@ -11,7 +11,7 @@
 			<list>
 				<value>org.datacleaner</value>
 				<value>com.hi</value>
-				<value>com.neopost.cim</value>
+				<value>com.neopost</value>
 			</list>
 		</property>
 		<property name="numThreads" value="30" />

@@ -22,6 +22,7 @@ package org.datacleaner.configuration;
 import java.io.*;
 import java.net.URL;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.util.SecurityUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,12 +56,10 @@ public class DataCleanerConfigurationUpdaterTest {
     }
 
     private boolean isValuePresent(String value) {
-        InputStream inStream = null;
-
         try {
+            final InputStream inStream = getClass().getResourceAsStream(configurationFileClasspath);
+            final BufferedReader inReader = FileHelper.getBufferedReader(inStream, FileHelper.DEFAULT_ENCODING);
             try {
-                inStream = getClass().getResourceAsStream(configurationFileClasspath);
-                BufferedReader inReader = new BufferedReader(new InputStreamReader(inStream));
                 String line;
 
                 while ((line = inReader.readLine()) != null) {
@@ -69,9 +68,7 @@ public class DataCleanerConfigurationUpdaterTest {
                     }
                 }
             } finally {
-                if (inStream != null) {
-                    inStream.close();
-                }
+                FileHelper.safeClose(inReader, inStream);
             }
         } catch (IOException e) {
             Assert.fail(e.getMessage());

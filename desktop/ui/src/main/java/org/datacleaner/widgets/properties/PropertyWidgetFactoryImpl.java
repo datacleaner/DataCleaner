@@ -20,6 +20,7 @@
 package org.datacleaner.widgets.properties;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -342,6 +343,15 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 widgetClass = SingleDatastorePropertyWidget.class;
             } else if (type == Class.class) {
                 widgetClass = SingleClassPropertyWidget.class;
+            } else if (type == Map.class) {
+                final Class<?> genericType1 = propertyDescriptor.getTypeArgument(0);
+                final Class<?> genericType2 = propertyDescriptor.getTypeArgument(1);
+                if (genericType1 == String.class && genericType2 == String.class) {
+                    widgetClass = MapStringToStringPropertyWidget.class;
+                } else {
+                 // not yet implemented
+                    widgetClass = DummyPropertyWidget.class;
+                }
             } else {
                 // not yet implemented
                 widgetClass = DummyPropertyWidget.class;

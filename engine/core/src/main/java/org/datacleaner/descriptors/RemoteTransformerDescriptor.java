@@ -19,9 +19,11 @@
  */
 package org.datacleaner.descriptors;
 
+import org.datacleaner.api.Transformer;
+
 /**
  * A {@link TransformerDescriptor} for remote transformers.
  */
-public interface RemoteTransformerDescriptor extends TransformerDescriptor {
+public interface RemoteTransformerDescriptor<T extends Transformer> extends TransformerDescriptor<T> {
     public RemoteDescriptorProvider getRemoteDescriptorProvider();
 }

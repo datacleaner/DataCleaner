@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
-    private RemoteLazyRef<Data> dataLazyReference = new RemoteLazyRef<>();
+    private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
@@ -87,7 +88,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     public String getPassword() {
         return remoteServerData.getPassword();
     }
-    
+
     public boolean isServerUp() {
         final long now = System.currentTimeMillis();
          if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
@@ -99,9 +100,9 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     private void checkServerAvailability() {
+        Socket socket = new Socket();
         try {
             URL siteURL = new URL(remoteServerData.getHost());
-            Socket socket = new Socket();
             InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             lastConnectionCheckResult = socket.isConnected();
@@ -109,11 +110,15 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             lastConnectionCheckResult = false;
             logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
                     + ")' is down: " + e.getMessage());
+        } finally {
+            synchronized (this) {
+                FileHelper.safeClose(socket);
+            }
         }
     }
 
     public void refresh() {
-        dataLazyReference = new RemoteLazyRef<>();
+        dataLazyReference = new RemoteLazyRef();
         notifyComponentDescriptorsUpdatedListeners();
     }
 
@@ -150,13 +155,13 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return stateMap;
     }
 
-    private final class RemoteLazyRef<E> extends LazyRef<E> {
+    private final class RemoteLazyRef extends LazyRef<Data> {
         @Override
-        public E fetch() throws Throwable {
+        public Data fetch() throws Throwable {
             Data data = new Data();
             data.downloadDescriptors();
 
-            return (E) data;
+            return data;
         }
     }
 

@@ -35,12 +35,12 @@ public class SimpleRemoteComponentsConfigurationImpl implements RemoteComponents
 
 
     @Override
-    public boolean isAllowed(ComponentDescriptor componentDescriptor) {
+    public boolean isAllowed(ComponentDescriptor<?> componentDescriptor) {
         return true;
     }
 
     @Override
-    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor componentDescriptor) {
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor<?> componentDescriptor) {
         Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
         return configuredProperties;
     }

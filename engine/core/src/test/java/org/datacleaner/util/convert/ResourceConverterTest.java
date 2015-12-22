@@ -103,7 +103,7 @@ public class ResourceConverterTest extends TestCase {
     }
     @Test
     public void testConvertHdfsResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler());
+        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler("hdfs"));
         ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
         HdfsResource resource1 = new  HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");

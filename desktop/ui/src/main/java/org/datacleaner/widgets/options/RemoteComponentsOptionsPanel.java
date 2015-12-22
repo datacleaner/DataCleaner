@@ -64,7 +64,6 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private final int wholeLineSpan = 4;
     private final int rowSpan = 1;
     private final int padding = 5;
-    private final int maxWeightx = 100;
     private final int weightx = 1;
     private final int weighty = 0;
     private int row = 0;

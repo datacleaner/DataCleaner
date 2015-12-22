@@ -34,6 +34,7 @@ import java.util.Set;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @Since 9/8/15
  */
 public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
@@ -84,12 +85,12 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         }
 
         if (runCheck) {
-            (new Thread() {
+            SharedExecutorService.get().execute(new Runnable() {
                 @Override
                 public void run() {
                     checkServerAvailability();
                 }
-            }).start();
+            });
         }
 
         return lastConnectionCheckResult;
@@ -236,12 +237,12 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     @Override
-    public Set<DescriptorProviderState> getStatus() {
-        Set<DescriptorProviderState> statusSet = new HashSet<>();
+    public Collection<DescriptorProviderStatus> getStatus() {
+        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
 
         if (!isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(DescriptorProviderState.Level.ERROR,
-                    "Remote server is not available at the moment. ");
+            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
+                    DescriptorProviderStatus.Level.ERROR, "Remote server is not available at the moment. ");
             statusSet.add(serverDownState);
         }
 

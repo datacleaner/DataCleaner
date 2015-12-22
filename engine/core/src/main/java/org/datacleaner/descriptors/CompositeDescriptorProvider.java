@@ -213,14 +213,14 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
+    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
         for (DescriptorProvider provider : delegates) {
             provider.addComponentDescriptorsUpdatedListener(listener);
         }
     }
 
     @Override
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
+    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
         for (DescriptorProvider provider : delegates) {
             provider.removeComponentDescriptorsUpdatedListener(listener);
         }
@@ -235,8 +235,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         return null;
     }
 
-    public Set<DescriptorProviderState> getStatus() {
-        final Set<DescriptorProviderState> statusSet = new HashSet<>();
+    public Set<DescriptorProviderStatus> getStatus() {
+        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
         for (DescriptorProvider provider : delegates) {
             statusSet.addAll(provider.getStatus());
         }

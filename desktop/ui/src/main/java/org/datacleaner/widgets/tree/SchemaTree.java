@@ -64,7 +64,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ComponentDescriptorsUpdatedListener;
+import org.datacleaner.descriptors.ComponentDescriptorListener;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
-        ComponentDescriptorsUpdatedListener {
+        ComponentDescriptorListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
@@ -645,17 +645,18 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public Datastore getDatastore() {
         return _datastore;
     }
-
+    
     @Override
-    public void componentDescriptorsUpdated() {
+    public void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
         final TreeNode root = (TreeNode) getModel().getRoot();
         final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
         libraryNode.removeAllChildren();
         createLibrary(libraryNode);
-        DefaultTreeModel model = (DefaultTreeModel) getModel();
+        final DefaultTreeModel model = (DefaultTreeModel) getModel();
         model.reload(libraryNode);
         expandStandardPaths();
     }
+    
 
     /**
      * Refreshes the tree's contents

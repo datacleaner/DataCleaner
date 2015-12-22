@@ -44,6 +44,19 @@ import org.datacleaner.job.AnalysisJob;
  * used, and reuses existing descriptor definitions.
  */
 public interface DescriptorProvider {
+
+    /**
+     * @return a set of messages describing current status.
+     */
+    public Set<DescriptorProviderState> getStatus();
+
+    /**
+     * It refreshes the descriptor list.
+     *
+     * @return
+     */
+    public void refresh();
+
     /**
      * Gets all the {@link AnalyzerDescriptor}s currently registered.
      * 

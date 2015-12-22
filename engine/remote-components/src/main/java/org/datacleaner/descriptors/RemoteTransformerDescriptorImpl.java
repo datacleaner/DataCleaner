@@ -30,39 +30,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transformer descriptor that represents a remote transformer sitting on a DataCleaner Monitor server. This descriptor
- * is created by {@link RemoteDescriptorProvider} when it downloads a transformers list from the server.
- @Since 9/1/15
+ * Transformer descriptor that represents a remote transformer sitting on a
+ * DataCleaner Monitor server. This descriptor is created by
+ * {@link RemoteDescriptorProvider} when it downloads a transformers list from
+ * the server.
+ * 
+ * @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor implements TransformerDescriptor, HasIcon {
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer> implements RemoteTransformerDescriptor<RemoteTransformer>,
+        HasIcon {
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
-    private String baseUrl;
-    private String tenant;
     private String superCategoryName;
     private Set<String> categoryNames;
-    private String username;
-    private String password;
     private byte[] iconData;
+    private RemoteDescriptorProvider remoteDescriptorProvider;
 
-    public RemoteTransformerDescriptorImpl(String baseUrl, String displayName, String tenant,
-                                           String superCategoryName, Set<String> categoryNames, byte[] iconData,
-                                           String username, String password) {
-        super(RemoteTransformer.class);
+    public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
+            String superCategoryName, Set<String> categoryNames, byte[] iconData) {
+        super(RemoteTransformer.class, true);
+        this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
         this.superCategoryName = superCategoryName;
         this.categoryNames = categoryNames;
         this.iconData = iconData;
-        this.username = username;
-        this.password = password;
-        this.baseUrl = baseUrl;
-        this.tenant = tenant;
-        try {
-            this._initializeMethods.add(new InitializeMethodDescriptorImpl(RemoteTransformer.class.getMethod("init"), this));
-            this._closeMethods.add(new CloseMethodDescriptorImpl(RemoteTransformer.class.getMethod("close"), this));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    }
+
+    public RemoteDescriptorProvider getRemoteDescriptorProvider() {
+        return remoteDescriptorProvider;
     }
 
     public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -71,21 +67,21 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
     @Override
     public String getDisplayName() {
-        return remoteDisplayName + " (remote)";
+        return remoteDisplayName;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
-        return classFromName(superCategoryName, TransformSuperCategory.class);
+        return (Class<? extends ComponentSuperCategory>) classFromName(superCategoryName, TransformSuperCategory.class);
     }
 
-    private Class classFromName(String className, Class defaultClass) {
-        Class clazz = defaultClass;
-        
+    private Class<?> classFromName(String className, Class<?> defaultClass) {
+        Class<?> clazz = defaultClass;
+
         try {
             clazz = Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             logger.warn("Class '" + className + "' was not found. \n" + e.getMessage());
         }
 
@@ -98,7 +94,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
 
         try {
             for (String name : categoryNames) {
-                Class categoryClass = classFromName(name, null);
+                Class<?> categoryClass = classFromName(name, null);
 
                 if (categoryClass == null) {
                     continue;
@@ -107,8 +103,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
                 ComponentCategory category = (ComponentCategory) categoryClass.newInstance();
                 componentCategories.add(category);
             }
-        }
-        catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             logger.warn("New instance of a component category could not have been created. \n" + e.getMessage());
         }
 
@@ -116,14 +111,19 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor i
     }
 
     @Override
-    public Object newInstance() {
-        RemoteTransformer t = new RemoteTransformer(baseUrl, remoteDisplayName, tenant, username, password);
-        for(ConfiguredPropertyDescriptor prop: (Set<ConfiguredPropertyDescriptor>)_configuredProperties) {
-            if(prop instanceof RemoteConfiguredPropertyDescriptor) {
-                ((RemoteConfiguredPropertyDescriptor)prop).setDefaultValue(t);
+    public RemoteTransformer newInstance() {
+        String baseUrl = getRemoteDescriptorProvider().getServerHost();
+        String username = getRemoteDescriptorProvider().getUsername();
+        String password = getRemoteDescriptorProvider().getPassword();
+        RemoteTransformer remoteTransformer = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
+        
+        for (ConfiguredPropertyDescriptor propertyDescriptor : _configuredProperties) {
+            if (propertyDescriptor instanceof RemoteConfiguredPropertyDescriptor) {
+                ((RemoteConfiguredPropertyDescriptor) propertyDescriptor).setDefaultValue(remoteTransformer);
             }
         }
-        return t;
+
+        return remoteTransformer;
     }
 
     public byte[] getIconData() {

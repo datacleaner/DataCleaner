@@ -302,7 +302,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
-                            descriptorProvider, storageProvider, injectionManagerFactory);
+                            descriptorProvider, storageProvider, injectionManagerFactory,
+                            c.getEnvironment().getRemoteServerConfiguration());
 
                     _configuration = new DataCleanerConfigurationImpl(environment,
                             DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);

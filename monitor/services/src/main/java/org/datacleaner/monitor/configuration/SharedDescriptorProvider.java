@@ -33,6 +33,7 @@ import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptorsUpdatedListener;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderState;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
@@ -49,6 +50,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
 
     public void setDelegate(DescriptorProvider delegate) {
         _delegate = delegate;
+    }
+
+    public void refresh() {
+        if (_delegate != null) {
+            _delegate.refresh();
+        }
     }
 
     public DescriptorProvider getDelegate() {
@@ -132,18 +139,18 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
         return getDelegate().getTransformerDescriptors();
     }
-    
+
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
         return getComponentDescriptors();
     }
-    
+
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
             ComponentSuperCategory category) {
         return getDelegate().getComponentDescriptorsOfSuperCategory(category);
     }
-    
+
     @Override
     public Set<ComponentSuperCategory> getComponentSuperCategories() {
         return getDelegate().getComponentSuperCategories();
@@ -159,6 +166,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
         getDelegate().removeComponentDescriptorsUpdatedListener(listener);
     }
 
-    
-    
+    public Set<DescriptorProviderState> getStatus() {
+        return getDelegate().getStatus();
+    }
 }

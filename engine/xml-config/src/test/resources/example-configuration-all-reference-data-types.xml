@@ -21,6 +21,7 @@
 				description="dict_ds">
 				<datastore-name>my_jdbc_connection</datastore-name>
 				<column-path>EMPLOYEES.LASTNAME</column-path>
+				<load-into-memory>false</load-into-memory>
 			</datastore-dictionary>
 			<text-file-dictionary name="textfile_dict"
 				description="dict_txt">
@@ -56,6 +57,7 @@
 				<master-term-column-path>CUSTOMERS.CUSTOMERNAME</master-term-column-path>
 				<synonym-column-path>CUSTOMERS.CUSTOMERNUMBER</synonym-column-path>
 				<synonym-column-path>CUSTOMERS.PHONE</synonym-column-path>
+				<load-into-memory>true</load-into-memory>
 			</datastore-synonym-catalog>
 			<custom-synonym-catalog
 				class-name="org.datacleaner.configuration.SampleCustomSynonymCatalog">

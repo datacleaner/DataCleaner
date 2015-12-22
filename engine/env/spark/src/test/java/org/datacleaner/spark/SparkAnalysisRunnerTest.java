@@ -54,6 +54,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SparkAnalysisRunnerTest {
     private static class TestSparkJobLifeCycleListener implements SparkJobLifeCycleListener {
+        private static final long serialVersionUID = 1L;
         final AtomicBoolean _jobStartCalled = new AtomicBoolean();
         final AtomicBoolean _jobEndCalled = new AtomicBoolean();
 

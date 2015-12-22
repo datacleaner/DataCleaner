@@ -19,11 +19,18 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
@@ -36,26 +43,49 @@ import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Component;
+import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.InjectionPoint;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.api.HiddenProperty;
+import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalysisJobMetadata;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
+import org.datacleaner.job.runner.AnalysisListener;
+import org.datacleaner.job.runner.ComponentContextImpl;
+import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,50 +97,49 @@ import com.fasterxml.jackson.databind.node.TextNode;
 /**
  * This class is a component type independent wrapper that decides the proper
  * handler and provides its results.
- * 
+ *
  * @since 14. 07. 2015
  */
 public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
-
-    public static ObjectMapper mapper = Serializator.getJacksonObjectMapper();
+    public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
-    private final StringConverter _stringConverter;
+    private StringConverter _stringConverter;
+    private final ComponentDescriptor<?> descriptor;
+    private final Map<String, MutableColumn> columns;
+    private final Map<String, InputColumn<?>> inputColumns;
+    private final InputColumn<?>[] configuredInputColumns;
+    private final List<InputColumn<?>> inputColumnsList;
+    private final MutableTable table;
+    private final Component component;
+    private final LifeCycleHelper lifeCycleHelper;
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
+    private final org.datacleaner.job.ComponentConfiguration config;
+    private final ComponentContext componentContext;
 
-    private ComponentDescriptor<?> descriptor;
-    private Map<String, MutableColumn> columns;
-    private Map<String, InputColumn<?>> inputColumns;
-    private MutableTable table;
-    private Component component;
-
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration, AnalysisListener analysisListener) {
+        Objects.requireNonNull(componentConfiguration, "Component configuration cannot be null");
+        
+        _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
-        _stringConverter = new StringConverter(dcConfiguration);
-    }
-
-    public void createComponent(ComponentConfiguration componentConfiguration) {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(_componentName);
+        descriptor = resolveDescriptor(_componentName);
         table = new MutableTable("inputData");
-        if (descriptor == null) {
-            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                    .getAnalyzerDescriptorByDisplayName(_componentName);
-        }
-        if (descriptor == null) {
-            throw ComponentNotFoundException.createTypeNotFound(_componentName);
-        }
-
         component = (Component) descriptor.newInstance();
+
+        // TODO: differentiate between transformer/analyzer for ComponentJob parameter of ComponentContextImpl
+        AnalysisJob analysisJob = new ComponentHandlerAnalysisJob();
+        componentContext = new ComponentContextImpl(analysisJob, new ComponentHandlerTransformerJob(), analysisListener);
 
         // create "table" according to the columns specification (for now only a
         // list of names)
         int index = 0;
+        inputColumnsList = new ArrayList<>();
         for (JsonNode columnSpec : componentConfiguration.getColumns()) {
             String columnName;
             String columnTypeName;
@@ -137,6 +166,9 @@ public class ComponentHandler {
             }
             column = new MutableColumn(columnName, columnType, table, index, true);
             columns.put(columnName, column);
+            InputColumn<?> inputColumn = new MetaModelInputColumn(column);
+            inputColumns.put(columnName, inputColumn);
+            inputColumnsList.add(inputColumn);
             table.addColumn(index, column);
             index++;
         }
@@ -152,7 +184,14 @@ public class ComponentHandler {
                 configuredProperties.put(propDesc, defaultValue);
             }
         }
-        for (String propertyName : componentConfiguration.getProperties().keySet()) {
+
+        //Admin properties from xml context
+        Map<PropertyDescriptor, Object> remoteDefaultPropertiesMap = _remoteComponentsConfiguration.getDefaultValues(descriptor);
+        configuredProperties.putAll(remoteDefaultPropertiesMap);
+
+        List<InputColumn<?>> configuredInputColumnsList = new ArrayList<>();
+        //User properties
+        for(String propertyName: componentConfiguration.getProperties().keySet()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if (propDesc == null) {
                 LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
@@ -171,7 +210,9 @@ public class ComponentHandler {
                     List<String> colNames = convertToStringArray(userPropValue);
                     List<InputColumn<?>> inputCols = new ArrayList<>();
                     for (String columnName : colNames) {
-                        inputCols.add(getOrCreateInputColumn(columnName, propertyName));
+                        InputColumn<?> inputCol = getOrCreateInputColumn(columnName, propertyName);
+                        inputCols.add(inputCol);
+                        configuredInputColumnsList.add(inputCol);
                     }
                     configuredProperties.put(propDesc, inputCols.toArray(new InputColumn[inputCols.size()]));
                 } else {
@@ -180,9 +221,14 @@ public class ComponentHandler {
                 }
             }
         }
-        org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
+        configuredInputColumns = configuredInputColumnsList.toArray(new InputColumn[inputColumnsList.size()]);
+
+        config = new ImmutableComponentConfiguration(configuredProperties);
+
+        InjectionManager origInjMan = _dcConfiguration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_dcConfiguration, analysisJob);
+        InjectionManager injMan = new ComponentHandlerInjectionManager(origInjMan);
+        lifeCycleHelper = new LifeCycleHelper(injMan, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
@@ -193,44 +239,142 @@ public class ComponentHandler {
         return ((Transformer) component).getOutputColumns();
     }
 
-    public List<Object[]> runComponent(JsonNode data) {
+    public Collection<List<Object[]>> runComponent(JsonNode data) {
         if (data == null) {
             return null;
         }
 
-        final List<InputRow> inputRows = new ArrayList<>();
-        final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
-        int id = 0;
-
-        for (JsonNode row : data) {
-            final DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
-            inputRows.add(new MetaModelInputRow(id, inputRow));
-            id++;
-        }
-
         if (component instanceof Transformer) {
-            final List<Object[]> results = new ArrayList<>();
-            for (InputRow inputRow : inputRows) {
-                results.add(((Transformer) component).transform(inputRow));
-            }
-            return results;
+            return runTransformer(data);
         } else if (component instanceof Analyzer) {
-            for (InputRow inputRow : inputRows) {
-                ((Analyzer<?>) component).run(inputRow, 1);
-            }
-            return null;
+            throw new RuntimeException("NOT YET IMPLEMENTED");
         } else {
             throw new IllegalArgumentException("Unknown component type " + component.getClass());
         }
     }
 
     public AnalyzerResult closeComponent() {
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_dcConfiguration, null, false);
         lifeCycleHelper.close(descriptor, component, true);
         if (component instanceof HasAnalyzerResult) {
             return ((HasAnalyzerResult<?>) component).getResult();
         } else {
             return null;
+        }
+    }
+
+    private Collection<List<Object[]>> runTransformer(JsonNode data) {
+        final DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
+        final List<Throwable> errors = new ArrayList<>();
+        final AtomicInteger tasksPending = new AtomicInteger();
+        final TaskRunner taskRunner = _dcConfiguration.getEnvironment().getTaskRunner();
+
+        // Results will be collected in a tree map, sorted by row ID, to return the rows
+        // in the same order. It is needed because we do the transformation in threads and
+        // results could be computed in different order.
+        final Map<Integer, List<Object[]>> results = new TreeMap<>();
+
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+
+        int id = 0;
+        for (JsonNode jsonRow : data) {
+            final DefaultRow row = new DefaultRow(header, toRowValues((ArrayNode) jsonRow));
+            final InputRow inputRow = new MetaModelInputRow(id, row);
+            id++;
+
+            if(!errors.isEmpty()) {
+                break;
+            }
+            taskRunner.run(new Task() {
+                @Override
+                public void execute() throws Exception {
+                    if(!errors.isEmpty()) {
+                        LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
+                        return;
+                    }
+                    try {
+                        SecurityContextHolder.setContext(securityContext);
+                        transform(inputRow, results);
+                    } catch(Throwable t) {
+                        errors.add(t);
+                    } finally {
+                        tasksPending.decrementAndGet();
+                        SecurityContextHolder.clearContext();
+                    }
+                }
+            }, null);
+            tasksPending.incrementAndGet();
+        }
+
+        // Wait for threads
+        while(tasksPending.get() > 0) {
+            try {
+                taskRunner.assistExecution();
+            } catch(Throwable t) {
+                errors.add(t);
+            }
+        }
+
+        // Check if there were some errors in the threads
+        if(!errors.isEmpty()) {
+            Throwable firstError = errors.get(0);
+            if(firstError instanceof RuntimeException) {
+                throw (RuntimeException)firstError;
+            } else {
+                throw new RuntimeException(firstError);
+            }
+        }
+
+        LOGGER.debug("Returning " + results.size() + " rows");
+        return results.values();
+    }
+
+    /**
+     * Thread-safe transformation method that runs transformer for an 'inputRow'
+     * and puts a list of output rows to the 'results' map (key is the row ID).
+     */
+    private void transform(InputRow inputRow, Map<Integer, List<Object[]>> results) {
+        ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
+
+        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor
+                .getProvidedPropertiesByType(OutputRowCollector.class);
+        try {
+            // register output values listener in the transformer row collectors.
+            registerOutputListener(outputRowCollectorProperties, outputListener);
+
+            Object[] values = ((Transformer) component).transform(inputRow);
+            if(values != null) {
+                outputListener.onValues(values);
+            }
+            synchronized (results) {
+                results.put(inputRow.getId(), outputListener.outputRows);
+            }
+        } finally {
+            // unregister output values listener
+            unregisterOutputListener(outputRowCollectorProperties);
+        }
+    }
+
+    private void unregisterOutputListener(Set<ProvidedPropertyDescriptor> outputRowCollectorProperties) {
+        if(outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+            for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                    ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
+                }
+            }
+        }
+    }
+
+    private void registerOutputListener(Set<ProvidedPropertyDescriptor> outputRowCollectorProperties, ThreadLocalOutputListener outputListener) {
+        if (outputRowCollectorProperties != null && !outputRowCollectorProperties.isEmpty()) {
+            for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
+                OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(component);
+                if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
+                    ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(outputListener);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported output row collector type: " + outputRowCollector);
+                }
+            }
         }
     }
 
@@ -257,7 +401,7 @@ public class ComponentHandler {
                 break;
             }
             Column col = table.getColumn(i);
-            values.add(convertTableValue(_stringConverter, col.getType().getJavaEquivalentClass(), value));
+            values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
             i++;
         }
         return values.toArray(new Object[values.size()]);
@@ -266,27 +410,26 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class<?> type = propDesc.getType();
         try {
-            if (value.isArray() || value.isObject() || type.isEnum()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return _stringConverter.deserialize(value.asText(), type, propDesc.getCustomConverter());
-            }
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
                     + "': " + value.toString(), e);
         }
     }
 
-    private Object convertTableValue(StringConverter stringConverter, Class<?> type, JsonNode value) {
+    private Object convertTableValue(Class<?> type, JsonNode value) {
         try {
-            if (value.isArray() || value.isObject()) {
-                return mapper.readValue(value.traverse(), type);
-            } else {
-                return stringConverter.deserialize(value.asText(), type);
-            }
+            return convertValue(type, value);
         } catch (Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
+    }
+
+    private Object convertValue(Class<?> type, JsonNode value) throws IOException {
+        if(type == File.class) {
+            return getStringConverter().deserialize(value.asText(), type);
+        }
+        return mapper.readValue(value.traverse(), type);
     }
 
     private String toString(JsonNode item) {
@@ -312,5 +455,139 @@ public class ComponentHandler {
             result.add(toString(json));
         }
         return result;
+    }
+
+    protected StringConverter getStringConverter() {
+        if(_stringConverter == null) {
+            _stringConverter = new StringConverter(_dcConfiguration);
+        }
+        return _stringConverter;
+    }
+
+    private ComponentDescriptor<?> resolveDescriptor(String componentName) {
+        ComponentDescriptor<?> descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorByDisplayName(componentName);
+        if (descriptor == null) {
+            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
+                    .getAnalyzerDescriptorByDisplayName(componentName);
+        }
+        if (descriptor == null) {
+            LOGGER.info("Component {} not found.", _componentName);
+            throw ComponentNotFoundException.createTypeNotFound(componentName);
+        }
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            LOGGER.info("Component {} is not allowed.", _componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
+        }
+        return descriptor;
+    }
+
+    private static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
+        private final List<Object[]> outputRows = new ArrayList<>();
+        @Override
+        public void onValues(Object[] values) {
+            outputRows.add(values);
+        }
+    }
+
+    private class ComponentHandlerAnalysisJob implements AnalysisJob {
+
+        @Override
+        public AnalysisJobMetadata getMetadata() {
+            return null;
+        }
+
+        @Override
+        public Datastore getDatastore() {
+            return null;
+        }
+
+        @Override
+        public List<InputColumn<?>> getSourceColumns() {
+            return inputColumnsList;
+        }
+
+        @Override
+        public synchronized List<TransformerJob> getTransformerJobs() {
+            return Collections.singletonList((TransformerJob)new ComponentHandlerTransformerJob());
+        }
+
+        @Override
+        public List<FilterJob> getFilterJobs() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<AnalyzerJob> getAnalyzerJobs() {
+            return Collections.emptyList();
+        }
+    }
+
+    class ComponentHandlerTransformerJob implements TransformerJob {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public TransformerDescriptor<?> getDescriptor() {
+            return (TransformerDescriptor<?>)descriptor;
+        }
+
+        @Override
+        public String getName() {
+            return descriptor.getDisplayName();
+        }
+
+        @Override
+        public Map<String, String> getMetadataProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public org.datacleaner.job.ComponentConfiguration getConfiguration() {
+            return config;
+        }
+
+        @Override
+        public ComponentRequirement getComponentRequirement() {
+            return null;
+        }
+
+        @Override
+        public InputColumn<?>[] getInput() {
+            return configuredInputColumns;
+        }
+
+        @Override
+        public InputColumn<?>[] getOutput() {
+            // TODO
+            return new InputColumn<?>[0];
+        }
+
+        @Override
+        public OutputDataStreamJob[] getOutputDataStreamJobs() {
+            return new OutputDataStreamJob[0];
+        }
+    }
+
+    private class ComponentHandlerInjectionManager implements InjectionManager {
+        InjectionManager delegate;
+
+        ComponentHandlerInjectionManager(InjectionManager delegate) {
+            this.delegate = delegate;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+            E obj;
+            final Class<E> baseType = injectionPoint.getBaseType();
+            if (baseType == OutputRowCollector.class) {
+                obj = (E) new ThreadLocalOutputRowCollector();
+            } else if(baseType == ComponentContext.class) {
+                obj = (E) componentContext;
+            } else {
+                obj = delegate.getInstance(injectionPoint);
+            }
+            return obj;
+        }
     }
 }

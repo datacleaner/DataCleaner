@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 public class SerializatorTest {
     private static final Logger logger = LoggerFactory.getLogger(Serializator.class);
-    private final String tenantName = "demo";
     private final String componentName = "Concatenator";
     private final String componentDescription = "Concatenator description";
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -68,7 +67,7 @@ public class SerializatorTest {
         }
     }
 
-    private Object fromString(String value, Class type) {
+    private Object fromString(String value, Class<?> type) {
         try {
             return objectMapper.readValue(value, type);
         }

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  *
  * @Since 9/15/15
  */
-public class EnumerationValue implements HasName, JsonSerializable, Serializable {
+public class EnumerationValue implements HasName, JsonSerializable, Serializable, Comparable<EnumerationValue> {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
 
     public EnumerationValue(String value, String name) {
         this.value = value;
-        this.name = name;
+        this.name = name == null ? "" : name;
     }
 
     public EnumerationValue(String value) {
@@ -59,6 +59,9 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         this.value = enumValue.name();
         if (enumValue instanceof HasName) {
             name = ((HasName) enumValue).getName();
+            if (name == null) {
+                name = "";
+            }
         } else {
             name = value.toString();
         }
@@ -131,8 +134,8 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
                 return result;
             }
         }
-        throw new IllegalArgumentException(
-                "Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
+        throw new IllegalArgumentException("Unsupported enumeration value array: "
+                + (value == null ? null : value.getClass()));
     }
 
     public String[] getAliases() {
@@ -152,4 +155,20 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         };
     }
 
+    @Override
+    public int compareTo(EnumerationValue o) {
+        final Enum<?> javaEnum2 = o.asJavaEnum();
+        if (enumValue != null && javaEnum2 != null) {
+            try {
+                @SuppressWarnings("rawtypes")
+                final Enum javaEnum1 = (Enum<?>) asJavaEnum();
+                @SuppressWarnings("unchecked")
+                int result = javaEnum1.compareTo(javaEnum2);
+                return result;
+            } catch (Exception e) {
+                // nothing to do
+            }
+        }
+        return getName().compareTo(o.getName());
+    }
 }

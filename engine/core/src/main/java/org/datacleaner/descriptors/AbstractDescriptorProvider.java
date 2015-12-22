@@ -22,6 +22,7 @@ package org.datacleaner.descriptors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,9 +43,10 @@ import org.datacleaner.api.Transformer;
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     private final boolean _autoDiscover;
-    
+
     /**
-     * Creates a weak hashset. See {@link Collections#newSetFromMap(java.util.Map)}
+     * Creates a weak hashset. See
+     * {@link Collections#newSetFromMap(java.util.Map)}
      */
     private Set<ComponentDescriptorsUpdatedListener> _componentDescriptorsUpdatedListeners = Collections
             .newSetFromMap(new WeakHashMap<ComponentDescriptorsUpdatedListener, Boolean>());
@@ -109,7 +111,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      * 
      * @see http://eobjects.org/trac/ticket/417
      * 
-     * @param clazz
+     * @param filterClass
      * @return
      */
     protected final FilterDescriptor<?, ?> getFilterBeanDescriptorForClassUnbounded(Class<?> filterClass) {
@@ -258,16 +260,16 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     protected void notifyComponentDescriptorsUpdatedListeners() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (_componentDescriptorsUpdatedListeners) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (_componentDescriptorsUpdatedListeners) {
                     for (ComponentDescriptorsUpdatedListener listener : _componentDescriptorsUpdatedListeners) {
                         listener.componentDescriptorsUpdated();
-                    }                
                     }
                 }
-            }).start();
+            }
+        }).start();
     }
 
     @Override
@@ -282,5 +284,9 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         synchronized (_componentDescriptorsUpdatedListeners) {
             _componentDescriptorsUpdatedListeners.remove(listener);
         }
+    }
+
+    public Set<DescriptorProviderState> getStatus() {
+        return new HashSet<>();
     }
 }

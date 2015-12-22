@@ -19,14 +19,20 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
@@ -113,7 +119,14 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     protected DCBannerPanel createBanner(Image bannerImage) {
-        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle());
+        String remoteServerName = "";
+
+        if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
+            remoteServerName = " (" + ((RemoteTransformerDescriptor<?>)(_componentBuilder.getDescriptor()))
+                    .getRemoteDescriptorProvider().getServerName() + ")";
+        }
+
+        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle() + remoteServerName);
         banner.setTitle2(getBannerTitle2(true));
 
         final JButton renameButton = WidgetFactory.createDefaultButton("Rename", IconUtils.ACTION_RENAME);

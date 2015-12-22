@@ -17,32 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.documentation.swagger;
 
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * Class ComponentsFactory
- * 
- * @since 18.8.15
- */
-public class ComponentHandlerFactory {
+public class SwaggerLicenseTest {
+    private final SwaggerLicense swaggerLicense = new SwaggerLicense();
 
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration) throws RuntimeException {
-        ComponentHandler handler = new ComponentHandler(tenantContext.getConfiguration(), componentName);
-        handler.createComponent(configuration);
+    @Test
+    public void testSetAndGetName() throws Exception {
+        Assert.assertNotNull(swaggerLicense.getName());
+        final String name = "name";
+        swaggerLicense.setName(name);
+        Assert.assertEquals(name, swaggerLicense.getName());
+    }
 
-        return handler;
+    @Test
+    public void testSetAndGetUrl() throws Exception {
+        Assert.assertNotNull(swaggerLicense.getUrl());
+        final String url = "url";
+        swaggerLicense.setUrl(url);
+        Assert.assertEquals(url, swaggerLicense.getUrl());
     }
 }

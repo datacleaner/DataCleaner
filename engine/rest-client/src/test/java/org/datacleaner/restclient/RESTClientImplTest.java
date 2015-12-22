@@ -19,6 +19,7 @@
  */
 package org.datacleaner.restclient;
 
+import com.sun.jersey.api.client.Client;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class RESTClientImplTest {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
     private static final String URL = "http://localhost:1234";
-    private RESTClient restClient = new RESTClientImpl(this.USERNAME, this.PASSWORD);
+    private RESTClient restClient = new RESTClientImpl(USERNAME, PASSWORD);
 
     @Test
     public void testSetEndpoint() throws Exception {
@@ -40,7 +41,7 @@ public class RESTClientImplTest {
         }
 
         try {
-            restClient.getResponse(RESTClient.HttpMethod.GET, this.URL, requestBody);
+            restClient.getResponse(RESTClient.HttpMethod.GET, URL, requestBody);
         }
         catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
@@ -50,10 +51,24 @@ public class RESTClientImplTest {
     @Test
     public void testGetResponse() throws Exception {
         try {
-            restClient.getResponse(RESTClient.HttpMethod.GET, this.URL, "");
+            restClient.getResponse(RESTClient.HttpMethod.GET, URL, "");
         }
         catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
+    }
+
+    @Test
+    public void testCache() {
+        String username = "username";
+        String password = "password";
+        Client instance1 = new RESTClientImpl(username, password).getClient();
+        Client instance2 = new RESTClientImpl(username + "2", password + "2").getClient();
+        Client instance3 = new RESTClientImpl(username, password).getClient();
+        Client instance4 = new RESTClientImpl(username, password + "4").getClient();
+
+        Assert.assertEquals(instance1, instance3);
+        Assert.assertNotEquals(instance1, instance2);
+        Assert.assertNotEquals(instance1, instance4);
     }
 }

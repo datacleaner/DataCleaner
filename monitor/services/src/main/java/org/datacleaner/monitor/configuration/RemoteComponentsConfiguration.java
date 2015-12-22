@@ -17,16 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
+package org.datacleaner.monitor.configuration;
 
-public class ComponentNotFoundException extends RuntimeException {
-    private ComponentNotFoundException(String msg) {
-        super(msg);
-    }
-    public static ComponentNotFoundException createTypeNotFound(String type) {
-        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
-    }
-    public static ComponentNotFoundException createInstanceNotFound(String id) {
-        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
-    }
+import java.util.Map;
+
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
+
+/**
+ * Class RemoteComponentsConfiguration
+ *
+ */
+public interface RemoteComponentsConfiguration {
+
+
+    /**
+     * Is the component allowed?
+     *
+     * @param componentDescriptor
+     * @return
+     */
+    public boolean isAllowed(ComponentDescriptor<?> componentDescriptor);
+
+    /**
+     * Method returns map with default values of properties.
+     *
+     * @param componentDescriptor
+     */
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor<?> componentDescriptor);
 }

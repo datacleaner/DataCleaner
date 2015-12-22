@@ -20,7 +20,6 @@
 package org.datacleaner.restclient;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,5 +46,24 @@ public class ComponentConfiguration {
 
     public List<JsonNode> getColumns() {
         return columns;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ComponentConfiguration that = (ComponentConfiguration) o;
+
+        if (!properties.equals(that.properties)) return false;
+        return columns.equals(that.columns);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = properties.hashCode();
+        result = 31 * result + columns.hashCode();
+        return result;
     }
 }

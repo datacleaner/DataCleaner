@@ -39,12 +39,13 @@ public class DataCleanerConfigurationUpdaterTest {
     private String nodePathString = "descriptor-providers:remote-components:server:" + tagName;
 
     private final Resource originalConfigurationResource = new FileResource("src/test/resources/conf.xml");
-    private final Resource configurationResource = new InMemoryResource("/conf.xml");
+    private final Resource configurationResource = new FileResource(
+            "target/DataCleanerConfigurationUpdaterTest-conf.xml");
 
     @Test
     public void testUpdate() throws Exception {
         FileHelper.copy(originalConfigurationResource, configurationResource);
-        
+
         Assert.assertTrue(isValuePresent(originalPassword));
         Assert.assertFalse(isValuePresent(newPassword));
 
@@ -86,12 +87,8 @@ public class DataCleanerConfigurationUpdaterTest {
     }
 
     private void changePassword(String newValue) {
-        try {
-            DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(configurationResource);
-            String[] nodePath = nodePathString.split(":");
-            configurationUpdater.update(nodePath, newValue);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
+                configurationResource);
+        configurationUpdater.update(nodePathString, newValue);
     }
 }

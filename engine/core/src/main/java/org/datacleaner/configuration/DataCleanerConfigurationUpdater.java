@@ -46,12 +46,31 @@ public class DataCleanerConfigurationUpdater {
         this.configurationFileResource = configurationFileResource;
     }
 
+    /**
+     * Short-hand version of {@link #update(String[], String)} which allows to
+     * pass a colon-separated string with the node path elements in it, for
+     * instance: "descriptor-providers:remote-components:server:username" to
+     * update the username element in that path.
+     * 
+     * @param nodePath
+     *            a colon-separated path to an element
+     * @param newValue
+     *            the new value to set
+     */
     public void update(String nodePath, String newValue) {
-        update(new String[] { nodePath }, newValue);
+        update(nodePath.split(":"), newValue);
     }
 
-    public void update(String[] nodePaths, String newValue) {
-        if (nodePaths.length <= 0) {
+    /**
+     * Updates an element value at the location of the nodePathElements.
+     * 
+     * @param nodePathElements
+     *            a String array describing the path to an element
+     * @param newValue
+     *            the new value to set
+     */
+    public void update(String[] nodePathElements, String newValue) {
+        if (nodePathElements.length <= 0) {
             return;
         }
 
@@ -59,7 +78,7 @@ public class DataCleanerConfigurationUpdater {
             load();
         }
 
-        final Node node = findElementToUpdate(nodePaths);
+        final Node node = findElementToUpdate(nodePathElements);
 
         if (node != null) {
             node.setTextContent(newValue);

@@ -30,6 +30,8 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.ComponentRequirement;
@@ -42,6 +44,8 @@ import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ComponentBuilder} for {@link Transformer}s
@@ -53,6 +57,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         AbstractComponentBuilder<TransformerDescriptor<T>, T, TransformerComponentBuilder<T>> implements
         InputColumnSourceJob, InputColumnSinkJob, HasComponentRequirement {
 
+    private static final Logger logger = LoggerFactory.getLogger(TransformerComponentBuilder.class);
     private final String _id;
     private final List<MutableInputColumn<?>> _outputColumns = new ArrayList<MutableInputColumn<?>>();
     private final List<String> _automaticOutputColumnNames = new ArrayList<String>();
@@ -82,6 +87,18 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         }
 
         final Transformer transformer = (Transformer) component;
+        ComponentDescriptor componentDescriptor = getDescriptor();
+
+        if (componentDescriptor instanceof RemoteTransformerDescriptor) {
+            boolean serverUp = ((RemoteTransformerDescriptor) componentDescriptor).getRemoteDescriptorProvider()
+                    .isServerUp();
+
+            if (!serverUp) {
+                logger.warn("Output columns for transformer '" + transformer
+                        + "' can not be retrieved because the remote server is down. ");
+                return Collections.emptyList();
+            }
+        }
 
         final OutputColumns outputColumns = transformer.getOutputColumns();
         if (outputColumns == null) {
@@ -191,7 +208,8 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
         return new ImmutableTransformerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties(), outputDataStreamJobs);
+                getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties(),
+                outputDataStreamJobs);
     }
 
     @Override

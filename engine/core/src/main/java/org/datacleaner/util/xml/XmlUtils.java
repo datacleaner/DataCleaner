@@ -21,6 +21,7 @@ package org.datacleaner.util.xml;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,23 +42,35 @@ public class XmlUtils {
 
     private XmlUtils() {
     }
-
+    
     public static void writeDocument(Node docOrNode, OutputStream out) {
+        writeDocument(docOrNode, out, true);
+    }
+
+    public static void writeDocument(Node docOrNode, OutputStream out, boolean includeXmlDeclaration) {
+        final Transformer transformer = createTransformer(includeXmlDeclaration);
         try {
             final Source source = new DOMSource(docOrNode);
             final Result outputTarget = new StreamResult(out);
-            createTransformer().transform(source, outputTarget);
+            transformer.transform(source, outputTarget);
         } catch (TransformerException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static Transformer createTransformer() {
+        return createTransformer(true);
+    }
+
+    public static Transformer createTransformer(boolean includeXmlDeclaration) {
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             final Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            if (!includeXmlDeclaration) {
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            }
             return transformer;
         } catch (TransformerConfigurationException e) {
             // should never happen
@@ -87,5 +100,20 @@ public class XmlUtils {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static String writeDocumentToString(Node node, boolean includeXmlDeclaration) {
+        final Transformer transformer = createTransformer(includeXmlDeclaration);
+
+        final StringWriter sw = new StringWriter();
+        final StreamResult result = new StreamResult(sw);
+        final DOMSource source = new DOMSource(node);
+        try {
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            throw new IllegalStateException(e);
+        }
+        final String xmlString = sw.toString();
+        return xmlString;
     }
 }

@@ -19,7 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,12 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
@@ -306,24 +299,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     private String printNode(Node node) {
-        try {
-            // Set up the output transformer
-            TransformerFactory transfac = TransformerFactory.newInstance();
-            Transformer trans = transfac.newTransformer();
-            trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            // Print the DOM node
-            StringWriter sw = new StringWriter();
-            StreamResult result = new StreamResult(sw);
-            DOMSource source = new DOMSource(node);
-            trans.transform(source, result);
-            String xmlString = sw.toString();
-            return xmlString;
-        } catch (TransformerException e) {
-            logger.warn("Could not transform node '" + node + "' to pretty string: " + e.getMessage(), e);
-            return node.toString();
-        }
+        return XmlUtils.writeDocumentToString(node, false);
     }
 
     private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row, Document document) {

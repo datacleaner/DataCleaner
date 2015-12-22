@@ -379,6 +379,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providers.add(0, environment.getDescriptorProvider());
         }
         
+        if (providers.size() == 1) {
+            return providers.get(0);
+        }
+        
         return new CompositeDescriptorProvider(providers);
     }
 

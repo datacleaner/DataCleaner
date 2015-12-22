@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -51,7 +51,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
     }
 
     protected List<String> readFromUrl() throws Exception {
-        final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final Document document = documentBuilder.parse(_url);
         final Element documentElement = document.getDocumentElement();
         final String codebase = documentElement.getAttribute("codebase");

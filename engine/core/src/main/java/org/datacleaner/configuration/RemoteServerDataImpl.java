@@ -23,20 +23,29 @@ package org.datacleaner.configuration;
  * @since 15. 10. 2015
  */
 public class RemoteServerDataImpl implements RemoteServerData {
-    private String serverName;
-    private Integer serverPriority;
-    private String host;
-    private String username;
-    private String password;
 
-    public RemoteServerDataImpl(String host, String serverName, Integer serverPriority) {
-        this.host = host.replaceAll("/+$", "");
-        this.serverName = serverName;
+    private static final RemoteServerData NO_SERVER = new RemoteServerDataImpl(null, null, -1, null, null);
+
+    public static RemoteServerData noServer() {
+        return NO_SERVER;
+    }
+
+    private final String serverName;
+    private final int serverPriority;
+    private final String url;
+    private final String username;
+    private final String password;
+
+    public RemoteServerDataImpl(String url, String serverName, int serverPriority, String username, String password) {
+        this.url = url == null ? null : url.replaceAll("/+$", "");
+        this.serverName = serverName == null ? null : serverName;
         this.serverPriority = serverPriority;
+        this.username = username;
+        this.password = password;
     }
 
     @Override
-    public Integer getServerPriority() {
+    public int getServerPriority() {
         return serverPriority;
     }
 
@@ -46,25 +55,13 @@ public class RemoteServerDataImpl implements RemoteServerData {
     }
 
     @Override
-    public String getHost() {
-        return host;
-    }
-
-    @Override
-    public RemoteServerDataImpl setUsername(String username) {
-        this.username = username.trim();
-        return this;
+    public String getUrl() {
+        return url;
     }
 
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public RemoteServerDataImpl setPassword(String password) {
-        this.password = password;
-        return this;
     }
 
     @Override

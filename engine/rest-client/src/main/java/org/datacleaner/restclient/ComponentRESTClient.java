@@ -29,10 +29,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 02. 09. 2015
  */
 public class ComponentRESTClient {
+
     private final RESTClient restClient;
     private String tenantName;
     private String url;
-    private String componentName;
 
     public ComponentRESTClient(String url, String username, String password) {
         this.url = url;
@@ -57,7 +57,6 @@ public class ComponentRESTClient {
     }
 
     public ComponentList.ComponentInfo getComponentInfo(String componentName, boolean iconData) {
-        this.componentName = componentName;
         componentName = urlify(componentName);
         String response = call(RESTClient.HttpMethod.GET, getURL(componentName + "&iconData=" + iconData), "");
 
@@ -65,7 +64,6 @@ public class ComponentRESTClient {
     }
 
     public OutputColumns getOutputColumns(String componentName, CreateInput config) {
-        this.componentName = componentName;
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
         String response = call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
@@ -74,7 +72,6 @@ public class ComponentRESTClient {
     }
 
     public ProcessStatelessOutput processStateless(String componentName, ProcessStatelessInput processStatelessInput) {
-        this.componentName = componentName;
         componentName = urlify(componentName);
         String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL(componentName), configurationAndData);
@@ -83,7 +80,6 @@ public class ComponentRESTClient {
     }
 
     public String createComponent(String componentName, final String timeout, final CreateInput config) {
-        this.componentName = componentName;
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
 
@@ -138,13 +134,7 @@ public class ComponentRESTClient {
 
     private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody)
             throws RestrictedFunctionalityException {
-        try {
-            String response = restClient.getResponse(httpMethod, url, requestBody);
-
-            return response;
-        } catch (Exception e) {
-            throw new RestrictedFunctionalityException(
-                    "Remote component '" + componentName + "' is temporarily unavailable. \n" + e.getMessage());
-        }
+        String response = restClient.getResponse(httpMethod, url, requestBody);
+        return response;
     }
 }

@@ -29,8 +29,8 @@ import org.datacleaner.descriptors.RemoteTransformerDescriptor;
  */
 public class ComponentDescriptorComparator implements Comparator<ComponentDescriptor<?>> {
     /**
-     * The order of names is ascending.
-     * The order of priorities is descending.
+     * The order of names is ascending. The order of priorities is descending.
+     * 
      * @param firstDescriptor
      * @param secondDescriptor
      * @return
@@ -38,16 +38,20 @@ public class ComponentDescriptorComparator implements Comparator<ComponentDescri
     @Override
     public int compare(ComponentDescriptor<?> firstDescriptor, ComponentDescriptor<?> secondDescriptor) {
         boolean sameNames = (firstDescriptor.getDisplayName().equals(secondDescriptor.getDisplayName()));
-        boolean atLeastOneRemote = (firstDescriptor instanceof RemoteTransformerDescriptor || secondDescriptor instanceof RemoteTransformerDescriptor);
+        boolean atLeastOneRemote = (firstDescriptor instanceof RemoteTransformerDescriptor
+                || secondDescriptor instanceof RemoteTransformerDescriptor);
 
         if (sameNames && atLeastOneRemote) {
-            boolean bothRemote = (firstDescriptor instanceof RemoteTransformerDescriptor && secondDescriptor instanceof RemoteTransformerDescriptor);
+            final boolean bothRemote = (firstDescriptor instanceof RemoteTransformerDescriptor
+                    && secondDescriptor instanceof RemoteTransformerDescriptor);
 
             if (bothRemote) {
-                return ((RemoteTransformerDescriptor<?>) secondDescriptor).getRemoteDescriptorProvider().getServerPriority().compareTo(
-                        ((RemoteTransformerDescriptor<?>) firstDescriptor).getRemoteDescriptorProvider().getServerPriority());
-            }
-            else {
+                final int priority1 = ((RemoteTransformerDescriptor<?>) secondDescriptor).getRemoteDescriptorProvider()
+                        .getServerData().getServerPriority();
+                final int priority2 = ((RemoteTransformerDescriptor<?>) firstDescriptor).getRemoteDescriptorProvider()
+                        .getServerData().getServerPriority();
+                return priority1 - priority2;
+            } else {
                 return (secondDescriptor instanceof RemoteTransformerDescriptor) ? -1 : 1;
             }
         } else {

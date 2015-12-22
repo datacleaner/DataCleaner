@@ -52,6 +52,7 @@ import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
@@ -122,7 +123,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     private void initMetadataProperties() {
         if (_descriptor instanceof RemoteTransformerDescriptor) {
-            final String source = ((RemoteTransformerDescriptor<?>) _descriptor).getRemoteDescriptorProvider().getServerName();
+            final RemoteDescriptorProvider remoteDescriptorProvider = ((RemoteTransformerDescriptor<?>) _descriptor).getRemoteDescriptorProvider();
+            final String source = remoteDescriptorProvider.getServerData().getServerName();
             _metadataProperties.put("source", source);
         }
     }

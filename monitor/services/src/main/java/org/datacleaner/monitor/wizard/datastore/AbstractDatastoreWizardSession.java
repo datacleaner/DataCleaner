@@ -20,11 +20,11 @@
 package org.datacleaner.monitor.wizard.datastore;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.server.dao.DatastoreDao;
 import org.datacleaner.monitor.server.dao.DatastoreDaoImpl;
+import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -50,13 +50,7 @@ public abstract class AbstractDatastoreWizardSession implements DatastoreWizardS
 
     @Override
     public String finished() {
-        final DocumentBuilder documentBuilder;
-        try {
-            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+        final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
 
         final TenantContext tenantContext = _wizardContext.getTenantContext();
         final Element datastoreNode = createDatastoreElement(documentBuilder);

@@ -26,6 +26,7 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
+import org.datacleaner.configuration.RemoteServerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +38,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @Since 9/1/15
  */
-public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer> implements RemoteTransformerDescriptor<RemoteTransformer>,
-        HasIcon {
+public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer>
+        implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     private String remoteDisplayName;
@@ -112,11 +113,9 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
 
     @Override
     public RemoteTransformer newInstance() {
-        String baseUrl = getRemoteDescriptorProvider().getServerHost();
-        String username = getRemoteDescriptorProvider().getUsername();
-        String password = getRemoteDescriptorProvider().getPassword();
-        RemoteTransformer remoteTransformer = new RemoteTransformer(baseUrl, remoteDisplayName, username, password);
-        
+        final RemoteServerData serverData = getRemoteDescriptorProvider().getServerData();
+        final RemoteTransformer remoteTransformer = new RemoteTransformer(serverData, remoteDisplayName);
+
         for (ConfiguredPropertyDescriptor propertyDescriptor : _configuredProperties) {
             if (propertyDescriptor instanceof RemoteConfiguredPropertyDescriptor) {
                 ((RemoteConfiguredPropertyDescriptor) propertyDescriptor).setDefaultValue(remoteTransformer);

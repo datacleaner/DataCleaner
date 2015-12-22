@@ -72,8 +72,8 @@ public class ComponentDescriptorComparatorTest {
         Assert.assertEquals("xyz", fourth.getDisplayName());
     }
 
-    private RemoteDescriptorProvider getRemoteDescriptorProvider(Integer serverPriority) {
-        RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl("host", "name", serverPriority);
+    private RemoteDescriptorProvider getRemoteDescriptorProvider(int serverPriority) {
+        RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl("host", "name", serverPriority, null, null);
         RemoteDescriptorProvider remoteDescriptorProvider = new RemoteDescriptorProviderImpl(remoteServerData);
 
         return remoteDescriptorProvider;
@@ -100,11 +100,11 @@ public class ComponentDescriptorComparatorTest {
         RemoteTransformerDescriptor<?> third = list.get(2);
 
         Assert.assertEquals("abc", first.getDisplayName());
-        Assert.assertEquals(2, first.getRemoteDescriptorProvider().getServerPriority().intValue());
+        Assert.assertEquals(2, first.getRemoteDescriptorProvider().getServerData().getServerPriority());
         Assert.assertEquals("xyz", second.getDisplayName());
-        Assert.assertEquals(2, second.getRemoteDescriptorProvider().getServerPriority().intValue());
+        Assert.assertEquals(2, second.getRemoteDescriptorProvider().getServerData().getServerPriority());
         Assert.assertEquals("xyz", third.getDisplayName());
-        Assert.assertEquals(1, third.getRemoteDescriptorProvider().getServerPriority().intValue());
+        Assert.assertEquals(1, third.getRemoteDescriptorProvider().getServerData().getServerPriority());
     }
 
     @Test

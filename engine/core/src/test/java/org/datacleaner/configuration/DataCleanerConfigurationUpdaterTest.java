@@ -19,24 +19,33 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.InMemoryResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.SecurityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DataCleanerConfigurationUpdaterTest {
+
     private String originalPassword = encode("admin");
     private String newPassword = encode("newPassword");
     private String tagName = "password";
     private String nodePathString = "descriptor-providers:remote-components:server:" + tagName;
-    private String configurationFileName = "conf.xml";
-    private String configurationFileClasspath = "/" + configurationFileName;
+
+    private final Resource originalConfigurationResource = new FileResource("src/test/resources/conf.xml");
+    private final Resource configurationResource = new FileResource(
+            "target/DataCleanerConfigurationUpdaterTest-conf.xml");
 
     @Test
     public void testUpdate() throws Exception {
+        FileHelper.copy(originalConfigurationResource, configurationResource);
+
         Assert.assertTrue(isValuePresent(originalPassword));
         Assert.assertFalse(isValuePresent(newPassword));
 
@@ -57,8 +66,8 @@ public class DataCleanerConfigurationUpdaterTest {
 
     private boolean isValuePresent(String value) {
         try {
-            final InputStream inStream = getClass().getResourceAsStream(configurationFileClasspath);
-            final BufferedReader inReader = FileHelper.getBufferedReader(inStream, FileHelper.DEFAULT_ENCODING);
+            final InputStream in = configurationResource.read();
+            final BufferedReader inReader = FileHelper.getBufferedReader(in, FileHelper.DEFAULT_ENCODING);
             try {
                 String line;
 
@@ -68,7 +77,7 @@ public class DataCleanerConfigurationUpdaterTest {
                     }
                 }
             } finally {
-                FileHelper.safeClose(inReader, inStream);
+                FileHelper.safeClose(inReader, in);
             }
         } catch (IOException e) {
             Assert.fail(e.getMessage());
@@ -78,13 +87,8 @@ public class DataCleanerConfigurationUpdaterTest {
     }
 
     private void changePassword(String newValue) {
-        try {
-            URL url = getClass().getResource(configurationFileClasspath).toURI().toURL();
-            DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(url);
-            String[] nodePath = nodePathString.split(":");
-            configurationUpdater.update(nodePath, newValue);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+        DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
+                configurationResource);
+        configurationUpdater.update(nodePathString, newValue);
     }
 }

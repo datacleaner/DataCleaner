@@ -34,6 +34,7 @@ import java.util.Set;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * @Since 9/8/15
  */
 public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider implements RemoteDescriptorProvider {
+
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
@@ -66,28 +68,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     @Override
-    public Integer getServerPriority() {
-        return remoteServerData.getServerPriority();
-    }
-
-    @Override
-    public String getServerName() {
-        return remoteServerData.getServerName();
-    }
-
-    @Override
-    public String getServerHost() {
-        return remoteServerData.getHost();
-    }
-
-    @Override
-    public String getUsername() {
-        return remoteServerData.getUsername();
-    }
-
-    @Override
-    public String getPassword() {
-        return remoteServerData.getPassword();
+    public RemoteServerData getServerData() {
+        return remoteServerData;
     }
 
     public boolean isServerUp() {
@@ -103,12 +85,12 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         }
 
         if (runCheck) {
-            (new Thread() {
+            SharedExecutorService.get().execute(new Runnable() {
                 @Override
                 public void run() {
                     checkServerAvailability();
                 }
-            }).start();
+            });
         }
 
         return lastConnectionCheckResult;
@@ -117,14 +99,14 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     private void checkServerAvailability() {
         Socket socket = new Socket();
         try {
-            URL siteURL = new URL(remoteServerData.getHost());
+            URL siteURL = new URL(remoteServerData.getUrl());
             InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             lastConnectionCheckResult = socket.isConnected();
         } catch (IOException e) {
             lastConnectionCheckResult = false;
-            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getHost()
-                    + ")' is down: " + e.getMessage());
+            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
+                    + e.getMessage());
         } finally {
             synchronized (this) {
                 checkInProgress = false;
@@ -135,7 +117,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
     public void refresh() {
         dataLazyReference = new RemoteLazyRef();
-        notifyComponentDescriptorsUpdatedListeners();
+        notifyListeners();
     }
 
     @Override
@@ -176,8 +158,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
         private void downloadDescriptors() {
             try {
-                logger.info("Loading remote components list from " + remoteServerData.getHost());
-                final ComponentRESTClient client = new ComponentRESTClient(remoteServerData.getHost(),
+                logger.info("Loading remote components list from " + remoteServerData.getUrl());
+                final ComponentRESTClient client = new ComponentRESTClient(remoteServerData.getUrl(),
                         remoteServerData.getUsername(), remoteServerData.getPassword());
                 final ComponentList components = client.getAllComponents(true);
 
@@ -185,31 +167,33 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 RemoteDescriptorProviderImpl.this, component.getName(),
-                                component.getSuperCategoryName(), component.getCategoryNames(), component.getIconData());
+                                component.getSuperCategoryName(), component.getCategoryNames(),
+                                component.getIconData());
 
-                        for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties().entrySet()) {
+                        for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
+                                .entrySet()) {
                             final String propertyName = propE.getKey();
                             final ComponentList.PropertyInfo propInfo = propE.getValue();
                             final String className = propInfo.getClassName();
                             try {
                                 Class<?> cl = findClass(className);
-                                transformerDescriptor
-                                        .addPropertyDescriptor(new TypeBasedConfiguredPropertyDescriptorImpl(
-                                                propertyName, propInfo.getDescription(), cl, propInfo.isRequired(),
+                                transformerDescriptor.addPropertyDescriptor(
+                                        new TypeBasedConfiguredPropertyDescriptorImpl(propertyName,
+                                                propInfo.getDescription(), cl, propInfo.isRequired(),
                                                 transformerDescriptor, initAnnotations(component.getName(),
-                                                        propertyName, propInfo.getAnnotations()), propInfo
-                                                        .getDefaultValue()));
+                                                        propertyName, propInfo.getAnnotations()),
+                                                propInfo.getDefaultValue()));
                             } catch (ClassNotFoundException e) {
                                 logger.debug("Cannot initialize typed property descriptor '{}'.'{}' because of {}",
                                         component.getName(), propertyName, e.toString());
                                 // class not available on this server.
-                                transformerDescriptor
-                                        .addPropertyDescriptor(new JsonSchemaConfiguredPropertyDescriptorImpl(
-                                                propertyName, propInfo.getSchema(), propInfo.isInputColumn(), propInfo
-                                                        .getDescription(), propInfo.isRequired(),
+                                transformerDescriptor.addPropertyDescriptor(
+                                        new JsonSchemaConfiguredPropertyDescriptorImpl(propertyName,
+                                                propInfo.getSchema(), propInfo.isInputColumn(),
+                                                propInfo.getDescription(), propInfo.isRequired(),
                                                 transformerDescriptor, initAnnotations(component.getName(),
-                                                        propertyName, propInfo.getAnnotations()), propInfo
-                                                        .getDefaultValue()));
+                                                        propertyName, propInfo.getAnnotations()),
+                                                propInfo.getDefaultValue()));
                             }
                         }
                         _transformerBeanDescriptors.put(transformerDescriptor.getDisplayName(), transformerDescriptor);
@@ -219,7 +203,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                     }
                 }
             } catch (Exception e) {
-                logger.error("Cannot get list of remote components on " + remoteServerData.getHost(), e);
+                logger.error("Cannot get list of remote components on " + remoteServerData.getUrl(), e);
                 // TODO: plan a task to try again after somw while. And then
                 // notify listeners...
             }
@@ -239,8 +223,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         for (Map.Entry<String, Map<String, Object>> annInfoE : annotationsInfo.entrySet()) {
             try {
                 @SuppressWarnings("unchecked")
-                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class.forName(annInfoE
-                        .getKey());
+                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class
+                        .forName(annInfoE.getKey());
                 final Map<String, Object> anProperties = annInfoE.getValue();
                 final Annotation anProxy = AnnotationProxy.newAnnotation(anClass, anProperties);
                 annotations.put(anClass, anProxy);
@@ -253,12 +237,12 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     @Override
-    public Set<DescriptorProviderState> getStatus() {
-        Set<DescriptorProviderState> statusSet = new HashSet<>();
+    public Collection<DescriptorProviderStatus> getStatus() {
+        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
 
         if (!isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(DescriptorProviderState.Level.ERROR,
-                    "Remote server is not available at the moment. ");
+            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
+                    DescriptorProviderStatus.Level.ERROR, "Remote server is not available at the moment. ");
             statusSet.add(serverDownState);
         }
 

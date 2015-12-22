@@ -24,9 +24,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
@@ -47,6 +44,7 @@ import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,27 +65,14 @@ public class DatastoreXmlExternalizer {
     private final Document _document;
 
     public DatastoreXmlExternalizer() {
-        final DocumentBuilder documentBuilder;
-        try {
-            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        _document = documentBuilder.newDocument();
+        _document = XmlUtils.createDocument();
     }
 
     public DatastoreXmlExternalizer(Resource resource) {
         _document = resource.read(new Func<InputStream, Document>() {
             @Override
             public Document eval(InputStream in) {
-                try {
-                    final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                    final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                    return documentBuilder.parse(in);
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
+                return XmlUtils.parseDocument(in);
             }
         });
 

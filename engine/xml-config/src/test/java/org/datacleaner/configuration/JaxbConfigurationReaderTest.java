@@ -545,19 +545,19 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
         RemoteServerData server0 = remoteConf.getServerList().get(0);
         Assert.assertEquals("server0", server0.getServerName());
-        Assert.assertEquals("http://host1:8888", server0.getHost());
+        Assert.assertEquals("http://host1:8888", server0.getUrl());
         Assert.assertEquals("totoro", server0.getUsername());
         Assert.assertEquals("admin", server0.getPassword());
 
         RemoteServerData server1 = remoteConf.getServerList().get(1);
         Assert.assertEquals("serverHost2", server1.getServerName());
-        Assert.assertEquals("http://host2:8888", server1.getHost());
+        Assert.assertEquals("http://host2:8888", server1.getUrl());
         Assert.assertEquals("momo", server1.getUsername());
         Assert.assertEquals("admin", server1.getPassword());
 
         RemoteServerData server2 = remoteConf.getServerList().get(2);
         Assert.assertEquals("serverHost3", server2.getServerName());
-        Assert.assertEquals("http://host3:8888", server2.getHost());
+        Assert.assertEquals("http://host3:8888", server2.getUrl());
         Assert.assertEquals("momo", server2.getUsername());
         Assert.assertEquals("admin", server2.getPassword());
     }

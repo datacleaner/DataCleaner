@@ -31,13 +31,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.ResourceManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.http.HttpXmlUtils;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -161,7 +161,7 @@ public class ExtensionReader {
     }
 
     private ExtensionPackage readExtension(String name, InputStream inputStream, File[] files) throws Exception {
-        final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final Document document = documentBuilder.parse(inputStream);
         final Element documentElement = document.getDocumentElement();
         if (StringUtils.isNullOrEmpty(name)) {

@@ -46,9 +46,10 @@ import org.datacleaner.job.AnalysisJob;
 public interface DescriptorProvider {
 
     /**
-     * @return a set of messages describing current status.
+     * @return a collection of {@link DescriptorProviderStatus} describing
+     *         current status.
      */
-    public Set<DescriptorProviderState> getStatus();
+    public Collection<DescriptorProviderStatus> getStatus();
 
     /**
      * It refreshes the descriptor list.
@@ -184,17 +185,17 @@ public interface DescriptorProvider {
             Class<? extends RenderingFormat<?>> renderingFormat);
 
     /**
-     * Add a {@link ComponentDescriptorsUpdatedListener} that will be notified
+     * Add a {@link DescriptorProviderListener} that will be notified
      * if the list of descriptors change.
      * 
      * @param listener
      */
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);
+    public void addListener(DescriptorProviderListener listener);
 
     /**
-     * Remove a {@link ComponentDescriptorsUpdatedListener}
+     * Remove a {@link DescriptorProviderListener}
      * 
      * @param listener
      */
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);
+    public void removeListener(DescriptorProviderListener listener);
 }

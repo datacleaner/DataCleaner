@@ -41,7 +41,7 @@ import org.datacleaner.api.Transformer;
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     private final boolean _autoDiscover;
-    private final Collection<ComponentDescriptorListener> _componentDescriptorsListeners;
+    private final Collection<DescriptorProviderListener> _componentDescriptorsListeners;
 
     /**
      * Creates an {@link AbstractDescriptorProvider}
@@ -247,21 +247,21 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     protected void notifyComponentDescriptorsUpdatedListeners() {
         synchronized (_componentDescriptorsListeners) {
-            for (ComponentDescriptorListener listener : _componentDescriptorsListeners) {
+            for (DescriptorProviderListener listener : _componentDescriptorsListeners) {
                 listener.onDescriptorsUpdated(this);
             }
         }
     }
 
     @Override
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
+    public void addListener(DescriptorProviderListener listener) {
         synchronized (_componentDescriptorsListeners) {
             _componentDescriptorsListeners.add(listener);
         }
     }
 
     @Override
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
+    public void removeListener(DescriptorProviderListener listener) {
         synchronized (_componentDescriptorsListeners) {
             _componentDescriptorsListeners.remove(listener);
         }

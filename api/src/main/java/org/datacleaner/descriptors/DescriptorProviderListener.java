@@ -27,7 +27,7 @@ package org.datacleaner.descriptors;
  * descriptors they may change due to updates on the server. In case of local
  * descriptors they may change due to installed or removed extensions etc.
  */
-public interface ComponentDescriptorListener {
+public interface DescriptorProviderListener {
 
     public void onDescriptorsUpdated(DescriptorProvider descriptorProvider);
 

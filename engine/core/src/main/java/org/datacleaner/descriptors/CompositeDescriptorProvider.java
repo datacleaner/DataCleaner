@@ -213,16 +213,16 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
+    public void addListener(DescriptorProviderListener listener) {
         for (DescriptorProvider provider : delegates) {
-            provider.addComponentDescriptorsUpdatedListener(listener);
+            provider.addListener(listener);
         }
     }
 
     @Override
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
+    public void removeListener(DescriptorProviderListener listener) {
         for (DescriptorProvider provider : delegates) {
-            provider.removeComponentDescriptorsUpdatedListener(listener);
+            provider.removeListener(listener);
         }
     }
 

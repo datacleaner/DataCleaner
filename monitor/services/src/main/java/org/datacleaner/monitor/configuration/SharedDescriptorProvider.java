@@ -31,7 +31,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ComponentDescriptorListener;
+import org.datacleaner.descriptors.DescriptorProviderListener;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProviderStatus;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -157,13 +157,13 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
-        getDelegate().addComponentDescriptorsUpdatedListener(listener);
+    public void addListener(DescriptorProviderListener listener) {
+        getDelegate().addListener(listener);
     }
 
     @Override
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorListener listener) {
-        getDelegate().removeComponentDescriptorsUpdatedListener(listener);
+    public void removeListener(DescriptorProviderListener listener) {
+        getDelegate().removeListener(listener);
     }
 
     @Override

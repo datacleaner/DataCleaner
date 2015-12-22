@@ -59,8 +59,8 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
 
     private static final Logger logger = LoggerFactory.getLogger(TransformerComponentBuilder.class);
     private final String _id;
-    private final List<MutableInputColumn<?>> _outputColumns = new ArrayList<MutableInputColumn<?>>();
-    private final List<String> _automaticOutputColumnNames = new ArrayList<String>();
+    private final List<MutableInputColumn<?>> _outputColumns = new ArrayList<>();
+    private final List<String> _automaticOutputColumnNames = new ArrayList<>();
     private final IdGenerator _idGenerator;
     private final List<TransformerChangeListener> _localChangeListeners;
 
@@ -69,14 +69,14 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         super(analysisJobBuilder, descriptor, TransformerComponentBuilder.class);
         _id = "trans-" + idGenerator.nextId();
         _idGenerator = idGenerator;
-        _localChangeListeners = new ArrayList<TransformerChangeListener>(0);
+        _localChangeListeners = new ArrayList<>(0);
     }
 
     /**
      * Gets the output column of this transformation with it's current
      * configuration.
      * 
-     * @return
+     * @return transformer's output columns
      */
     public List<MutableInputColumn<?>> getOutputColumns() {
         final Component component = getComponentInstanceForQuestioning();
@@ -117,7 +117,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
                     final int nextIndex = _outputColumns.size();
                     final String name = getColumnName(outputColumns, nextIndex);
                     final String id = _id + "-" + _idGenerator.nextId();
-                    _outputColumns.add(new TransformedInputColumn<Object>(name, id));
+                    _outputColumns.add(new TransformedInputColumn<>(name, id));
                     _automaticOutputColumnNames.add(name);
                 }
             } else if (colDiff < 0) {
@@ -221,13 +221,13 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     /**
      * Builds a temporary list of all listeners, both global and local
      * 
-     * @return
+     * @return a list of global and local listeners
      */
     private List<TransformerChangeListener> getAllListeners() {
         @SuppressWarnings("deprecation")
         List<TransformerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getTransformerChangeListeners();
 
-        List<TransformerChangeListener> list = new ArrayList<TransformerChangeListener>(globalChangeListeners.size()
+        List<TransformerChangeListener> list = new ArrayList<>(globalChangeListeners.size()
                 + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
@@ -239,8 +239,8 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
      * 
      * @see #getOutputColumns()
      * 
-     * @param name
-     * @return
+     * @param name name of the output column
+     * @return output column
      */
     public MutableInputColumn<?> getOutputColumnByName(String name) {
         if (StringUtils.isNullOrEmpty(name)) {
@@ -306,7 +306,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     /**
      * Adds a change listener to this component
      * 
-     * @param listener
+     * @param listener a new change listener
      */
     public void addChangeListener(TransformerChangeListener listener) {
         _localChangeListeners.add(listener);
@@ -315,7 +315,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     /**
      * Removes a change listener from this component
      * 
-     * @param listener
+     * @param listener the change listener to be removed
      * @return whether or not the listener was found and removed.
      */
     public boolean removeChangeListener(TransformerChangeListener listener) {

@@ -521,8 +521,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         final String dsName = getStringVariable("datastoreName", ddt.getDatastoreName());
                         final String columnPath = getStringVariable("columnPath", ddt.getColumnPath());
+                        final boolean loadIntoMemory = getBooleanVariable("loadIntoMemory", ddt.isLoadIntoMemory(), true);
 
-                        final DatastoreDictionary dict = new DatastoreDictionary(name, dsName, columnPath);
+                        final DatastoreDictionary dict = new DatastoreDictionary(name, dsName, columnPath, loadIntoMemory);
                         dict.setDescription(ddt.getDescription());
 
                         dictionaryList.add(dict);
@@ -614,11 +615,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                                 datastoreSynonymCatalogType.getDatastoreName());
                         final String masterTermColumnPath = getStringVariable("masterTermColumnPath",
                                 datastoreSynonymCatalogType.getMasterTermColumnPath());
+                        final boolean loadIntoMemory = getBooleanVariable("loadIntoMemory",
+                                datastoreSynonymCatalogType.isLoadIntoMemory(), true);
 
-                        final String[] synonymColumnPaths = datastoreSynonymCatalogType.getSynonymColumnPath().toArray(
-                                new String[0]);
+                        final String[] synonymColumnPaths = datastoreSynonymCatalogType.getSynonymColumnPath()
+                                .toArray(new String[0]);
                         final DatastoreSynonymCatalog sc = new DatastoreSynonymCatalog(name, dataStoreName,
-                                masterTermColumnPath, synonymColumnPaths);
+                                masterTermColumnPath, synonymColumnPaths, loadIntoMemory);
                         sc.setDescription(datastoreSynonymCatalogType.getDescription());
                         synonymCatalogList.add(sc);
 

@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
@@ -44,6 +44,8 @@ import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -69,11 +71,20 @@ public class SparkJobContext implements Serializable {
     private transient AnalysisJobBuilder _analysisJobBuilder;
 
     public SparkJobContext(final String dataCleanerConfigurationPath, final String analysisJobXmlPath,
-            final String customPropertiesPath, final Configuration configuration) {
-        final HdfsHelper hdfsHelper = new HdfsHelper(configuration);
+            final String customPropertiesPath, final JavaSparkContext sparkContext) {
+        final HdfsHelper hdfsHelper = new HdfsHelper(sparkContext);
         _jobName = getAnalysisJobName(analysisJobXmlPath);
-        _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath);
-        _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath);
+        logger.info("Loading SparkJobContext for {} - job name '{}'", analysisJobXmlPath, _jobName);
+        
+        _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
+        if (Strings.isNullOrEmpty(_configurationXml)) {
+            throw new IllegalArgumentException("Failed to read content from configuration file: " + dataCleanerConfigurationPath);
+        }
+        
+        _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
+        if (Strings.isNullOrEmpty(_analysisJobXml)) {
+            throw new IllegalArgumentException("Failed to read content from job file: " + analysisJobXmlPath);
+        }
 
         final String propertiesString = hdfsHelper.readFile(customPropertiesPath);
         if (propertiesString == null) {
@@ -81,8 +92,8 @@ public class SparkJobContext implements Serializable {
         } else {
             // this is a pretty ugly way to go back to the bytes to read the
             // properties - but works and is quick
-            _customProperties = new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString
-                    .getBytes()));
+            _customProperties = new InputStreamToPropertiesMapFunc()
+                    .eval(new ByteArrayInputStream(propertiesString.getBytes()));
         }
     }
 

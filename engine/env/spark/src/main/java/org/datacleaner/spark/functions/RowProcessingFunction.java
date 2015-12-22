@@ -55,6 +55,8 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.spark.NamedAnalyzerResult;
 import org.datacleaner.spark.SparkAnalysisRunner;
 import org.datacleaner.spark.SparkJobContext;
+import org.datacleaner.spark.utils.HdfsHelper;
+import org.datacleaner.util.HadoopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +71,8 @@ import scala.Tuple2;
  * This class implements two interfaces because it has two (quite similar)
  * styles of usages in the {@link SparkAnalysisRunner}.
  */
-public final class RowProcessingFunction implements
-        Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
+public final class RowProcessingFunction
+        implements Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
         PairFlatMapFunction<Iterator<InputRow>, String, NamedAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(RowProcessingFunction.class);
@@ -137,8 +139,8 @@ public final class RowProcessingFunction implements
                     final Resource resource = resourceDatastore.getResource();
                     final Resource replacementResource = createReplacementResource(resource, partitionNumber);
                     if (replacementResource != null) {
-                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb,
-                                resourceDatastore, replacementResource);
+                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb, resourceDatastore,
+                                replacementResource);
                         if (replacementDatastore != null) {
                             cb.setConfiguredProperty(targetDatastoreProperty, replacementDatastore);
                         }
@@ -181,10 +183,9 @@ public final class RowProcessingFunction implements
      */
     private Resource createReplacementResource(final Resource resource, int partitionNumber) {
         final String formattedPartitionNumber = String.format("%05d", partitionNumber);
-        if (resource instanceof HdfsResource) {
-            final HdfsResource hdfsResource = (HdfsResource) resource;
-            final HdfsResource replacementResource = new HdfsResource(hdfsResource.getQualifiedPath() + "/part-"
-                    + formattedPartitionNumber);
+        if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
+            final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
+            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(path);
             return replacementResource;
         }
         if (resource instanceof FileResource) {
@@ -197,8 +198,8 @@ public final class RowProcessingFunction implements
             if (!file.exists()) {
                 file.mkdirs();
             }
-            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-"
-                    + formattedPartitionNumber);
+            final FileResource fileResource = new FileResource(
+                    resource.getQualifiedPath() + "/part-" + formattedPartitionNumber);
             return fileResource;
         }
         return null;
@@ -223,8 +224,8 @@ public final class RowProcessingFunction implements
             return new JsonDatastore(name, replacementResource, ((JsonDatastore) datastore).getSchemaBuilder());
         }
 
-        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name, datastore
-                .getClass().getSimpleName());
+        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name,
+                datastore.getClass().getSimpleName());
         return datastore;
     }
 
@@ -247,12 +248,12 @@ public final class RowProcessingFunction implements
             consumeRowHandler.consumeRow(inputRow);
             logger.debug("Consumed row no. {}", inputRow.getId());
         }
-        
+
         logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler
-                .getConsumers());
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(
+                consumeRowHandler.getConsumers());
 
         // await any future results
         for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext();) {
@@ -293,7 +294,8 @@ public final class RowProcessingFunction implements
             for (ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
                 List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
                         .getConsumers();
-                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(outputDataStreamConsumers);
+                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
+                        outputDataStreamConsumers);
                 analyzerResults.addAll(outputDataStreamsAnalyzerResults);
             }
         }

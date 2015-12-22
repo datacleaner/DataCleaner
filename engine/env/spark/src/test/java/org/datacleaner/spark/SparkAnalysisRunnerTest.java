@@ -144,11 +144,11 @@ public class SparkAnalysisRunnerTest {
             final SparkJobContext sparkJobContext;
             if (saveResult) {
                 sparkJobContext = new SparkJobContext(
-                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", null, sparkContext.hadoopConfiguration());
+                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", null, sparkContext);
             } else {
                 sparkJobContext = new SparkJobContext(
                         "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml",
-                        "src/test/resources/jobProperties/noResult.properties", sparkContext.hadoopConfiguration());
+                        "src/test/resources/jobProperties/noResult.properties", sparkContext);
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
@@ -359,7 +359,7 @@ public class SparkAnalysisRunnerTest {
                 appName);
         try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
             final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    analysisJobXmlPath, null, sparkContext.hadoopConfiguration());
+                    analysisJobXmlPath, null, sparkContext);
             if (sparkJobLifeCycleListener != null) {
                 sparkJobContext.addSparkJobLifeCycleListener(sparkJobLifeCycleListener);
             }

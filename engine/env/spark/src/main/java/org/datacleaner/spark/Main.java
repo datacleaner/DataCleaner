@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
-import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
@@ -59,49 +59,48 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
-                propertiesPath, sparkContext.hadoopConfiguration());
-
-        final String resultJobFilePath;
-        if (sparkJobContext.isResultEnabled()) {
-            // get the path of the result file here so that it can fail fast(not
-            // after the job has run).
-            resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-            logger.info("DataCleaner result will be written to {}", resultJobFilePath);
-        } else {
-            resultJobFilePath = null;
-        }
+        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath,
+                sparkContext);
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
-            if (resultJobFilePath != null) {
-                final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
-                final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
-                        hdfsResource);
-                try {
-                    analysisResultSaveHandler.saveOrThrow();
-                } catch (SerializationException e) {
-                    // attempt to save what we can - and then rethrow
-                    final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
-                    if (safeAnalysisResult == null) {
-                        logger.error("Serialization of result failed without any safe result elements to persist");
-                    } else {
-                        final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
-                                .getUnsafeResultElements();
-                        logger.error("Serialization of result failed with the following unsafe elements: {}",
-                                unsafeResultElements);
-                        logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultJobFilePath);
 
-                        analysisResultSaveHandler.saveWithoutUnsafeResultElements();
-                    }
+            result.await();
 
-                    // rethrow the exception regardless
-                    throw e;
-                }
+            if (sparkJobContext.isResultEnabled()) {
+                final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
+                logger.info("DataCleaner result will be written to: {}", resultResource);
+                saveResult(result, resultResource);
+            } else {
+                logger.info("DataCleaner result will not be written - disabled");
             }
         } finally {
             sparkContext.stop();
+        }
+    }
+
+    private static void saveResult(AnalysisResultFuture result, Resource resultResource) {
+        final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result, resultResource);
+        try {
+            analysisResultSaveHandler.saveOrThrow();
+        } catch (SerializationException e) {
+            // attempt to save what we can - and then rethrow
+            final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+            if (safeAnalysisResult == null) {
+                logger.error("Serialization of result failed without any safe result elements to persist");
+            } else {
+                final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
+                        .getUnsafeResultElements();
+                logger.error("Serialization of result failed with the following unsafe elements: {}",
+                        unsafeResultElements);
+                logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultResource.getQualifiedPath());
+
+                analysisResultSaveHandler.saveWithoutUnsafeResultElements();
+            }
+
+            // rethrow the exception regardless
+            throw e;
         }
     }
 }

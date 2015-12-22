@@ -25,7 +25,6 @@ import java.io.InputStream;
 
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.InMemoryResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.SecurityUtils;
 import org.junit.Assert;

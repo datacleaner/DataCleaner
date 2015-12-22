@@ -19,16 +19,22 @@
  */
 package org.datacleaner.spark.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.deploy.SparkHadoopUtil;
 import org.datacleaner.util.HadoopResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -37,18 +43,66 @@ import com.google.common.base.Strings;
  */
 public class HdfsHelper {
 
+    private static final Logger logger = LoggerFactory.getLogger(HdfsHelper.class);
+
+    private static Configuration _lastKnownConfiguration;
     private final Configuration _hadoopConfiguration;
 
+    /**
+     * Creates a {@link HdfsHelper} without any configuration or context
+     * available. This is normally not the recommended way to obtain a
+     * {@link HdfsHelper} but may be necessary in executor functions where the
+     * {@link JavaSparkContext} is not in scope and not made available by Spark
+     * (at least spark's end-user API).
+     * 
+     * @return
+     */
+    public static HdfsHelper createHelper() {
+        Configuration configuration = _lastKnownConfiguration;
+        if (configuration == null) {
+            try {
+                final SparkHadoopUtil sparkHadoopUtil = SparkHadoopUtil.get();
+                if (sparkHadoopUtil.isYarnMode()) {
+                    configuration = sparkHadoopUtil.conf();
+                }
+            } catch (Exception e) {
+                // the above is developer API so we don't consider it very
+                // stable.
+            }
+        }
+        return new HdfsHelper(configuration);
+    }
+
     public HdfsHelper(JavaSparkContext sparkContext) {
-        this(sparkContext.hadoopConfiguration());
+        this(getHadoopConfigurationIfYarnMode(sparkContext));
+    }
+
+    private static Configuration getHadoopConfigurationIfYarnMode(JavaSparkContext sparkContext) {
+        final String sparkMaster = sparkContext.getConf().get("spark.master");
+        if (Strings.isNullOrEmpty(sparkMaster) || "local".equals(sparkMaster)) {
+            return null;
+        }
+        return sparkContext.hadoopConfiguration();
     }
 
     public HdfsHelper(Configuration configuration) {
+        if (configuration == null) {
+            logger.warn("Hadoop Configuration is null!", new Throwable());
+        } else {
+            _lastKnownConfiguration = configuration;
+        }
         _hadoopConfiguration = configuration;
     }
 
     public String readFile(String filepath) {
+        return readFile(filepath, false);
+    }
+
+    public String readFile(String filepath, boolean failOnNoData) {
         final Resource resourceInUse = getResourceToUse(filepath);
+        if (failOnNoData && resourceInUse == null) {
+            throw new IllegalArgumentException("Could not resolve resource: " + filepath);
+        }
         return readResource(resourceInUse);
     }
 
@@ -91,6 +145,7 @@ public class HdfsHelper {
         if (Strings.isNullOrEmpty(path)) {
             return null;
         }
+        path = path.trim();
         if (_hadoopConfiguration == null) {
             if (path.toLowerCase().startsWith("hdfs:")) {
                 return new HdfsResource(path);
@@ -98,5 +153,26 @@ public class HdfsHelper {
             return new FileResource(path);
         }
         return new HadoopResource(path, _hadoopConfiguration);
+    }
+
+    public boolean isDirectory(String path) {
+        final Resource resource = getResourceToUse(path);
+        if (!resource.isExists()) {
+            return false;
+        }
+        if (resource instanceof FileResource) {
+            return ((FileResource) resource).getFile().isDirectory();
+        }
+        if (resource instanceof HdfsResource) {
+            final FileSystem fileSystem = ((HdfsResource) resource).getHadoopFileSystem();
+            final Path hadoopPath = ((HdfsResource) resource).getHadoopPath();
+            try {
+                return fileSystem.isDirectory(hadoopPath);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        // actually we don't know, but most likely it's not a directory
+        return false;
     }
 }

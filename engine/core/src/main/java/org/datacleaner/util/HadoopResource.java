@@ -32,9 +32,14 @@ public class HadoopResource extends HdfsResource {
         super(url);
         _configuration = configuration;
     }
-    
+
     @Override
     public Configuration getHadoopConfiguration() {
         return _configuration;
+    }
+
+    @Override
+    public String toString() {
+        return "HadoopResource[" + getQualifiedPath() + "]";
     }
 }

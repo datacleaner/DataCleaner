@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.options;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +27,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -96,26 +94,15 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         usernameTextField = WidgetFactory.createTextField("username");
         usernameTextField.setName("username");
         usernameTextField.getDocument().addDocumentListener(documentListener);
-        setSize(usernameTextField);
 
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         passwordTextField.getDocument().addDocumentListener(documentListener);
-        setSize(passwordTextField);
 
         setTitledBorder("Credentials");
         setupFields();
         addAllFields();
 
-    }
-
-    // TODO: Check necesity
-    private void setSize(JTextField field) {
-        Dimension size = field.getPreferredSize();
-
-        field.setMinimumSize(size);
-        field.setPreferredSize(size);
-        field.setMaximumSize(size);
     }
 
     private void setupFields() {
@@ -144,16 +131,12 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private void addField(String labelText, JComponent... fields) {
         row++;
 
-        JPanel spaceFiller = new JPanel();
-        spaceFiller.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         WidgetUtils.addToGridBag(new JLabel(labelText), this, 0, row, 1, 1, GridBagConstraints.LINE_START, padding,
-                weightx, weighty, GridBagConstraints.HORIZONTAL);
+                0, weighty, GridBagConstraints.HORIZONTAL);
         for (int i = 0; i < fields.length; i++) {
             WidgetUtils.addToGridBag(fields[i], this, 1 + i, row, 1, 1, GridBagConstraints.LINE_START, padding, weightx,
                     weighty, GridBagConstraints.HORIZONTAL);
         }
-        WidgetUtils.addToGridBag(spaceFiller, this, 1 + fields.length, row, 1, 1, GridBagConstraints.LINE_END, padding,
-                maxWeightx, weighty, GridBagConstraints.REMAINDER);
     }
 
     private Component getDescriptionComponent() {

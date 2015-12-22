@@ -22,12 +22,27 @@ package org.datacleaner.configuration;
 import java.util.List;
 
 /**
- * Object for data about all DataCleaner Monitor servers.
+ * Container for all remote servers' (DataCleaner Monitors) configuration.
  */
 public interface RemoteServerConfiguration {
-    public void setShowAllServers(boolean showAll);
-    public boolean showAllServers();
+    
+    /**
+     * Getter for a flag indicating whether all components coming from various remote servers are shown together
+     * (in the component's tree, components' context menu).
+     * @return true if multiple components with exactly same name can occur (differentiated by server name).
+     * False if there is a selection logic eliminating duplicate components/names.
+     */
+    public boolean isShowComponentsFromAllServers();
+
+    /**
+     * Setter for a flag indicating whether all components coming from various remote servers are shown together
+     * (in the component's tree, components' context menu).
+     * @param showComponentsFromAllServers
+     */
+    public void setShowComponentsFromAllServers(boolean showComponentsFromAllServers);
+
+    /**
+     * @return list of all remote server configurations.
+     */
     public List<RemoteServerData> getServerList();
-    public void addServer(RemoteServerData remoteServerData);
-    public boolean isEmpty();
 }

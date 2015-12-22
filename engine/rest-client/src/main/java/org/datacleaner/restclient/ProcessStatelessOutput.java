@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessStatelessOutput implements Serializable {
+    private static final long serialVersionUID = 1L;
     @JsonProperty
     public JsonNode result;
     @JsonProperty

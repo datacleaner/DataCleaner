@@ -19,6 +19,7 @@
  */
 package org.datacleaner.spark;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -82,6 +83,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     public AnalysisResultFuture run() {
+        _sparkJobContext.triggerOnJobStart();
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 
@@ -97,19 +99,35 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
                     .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
-
-            final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                    .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
-
-            namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
-                    _sparkJobContext));
+            
+            if (_sparkJobContext.isResultEnabled()) {
+                final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
+                        .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
+                
+                namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
+                        _sparkJobContext));
+            } else {
+                // call count() to block and wait for RDD to be fully processed
+                processedTuplesRdd.count();
+                namedAnalyzerResultsRDD = null;
+            }
         } else {
             logger.warn("Running the job in non-distributed mode");
-            JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
+            final JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
             namedAnalyzerResultsRDD = coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(
                     _sparkJobContext));
+            
+            if (!_sparkJobContext.isResultEnabled()) {
+                // call count() to block and wait for RDD to be fully processed
+                namedAnalyzerResultsRDD.count();
+            }
         }
-
+        
+        if (!_sparkJobContext.isResultEnabled()) {
+            final List<Tuple2<String, AnalyzerResult>> results = Collections.emptyList();
+            return new SparkAnalysisResultFuture(results, _sparkJobContext);
+        }
+        
         final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFunction());
 
@@ -123,6 +141,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
         }
 
+        _sparkJobContext.triggerOnJobEnd();
         return new SparkAnalysisResultFuture(results, _sparkJobContext);
     }
 
@@ -130,6 +149,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
+            assert resource != null;
             final String datastorePath = resource.getQualifiedPath();
 
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();

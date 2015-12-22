@@ -20,6 +20,8 @@
 package org.datacleaner.connection;
 
 import org.datacleaner.util.UsageAwareCloseable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.metamodel.DataContext;
 
 /**
@@ -30,9 +32,11 @@ import org.apache.metamodel.DataContext;
  */
 public abstract class UsageAwareDatastoreConnection<E extends DataContext> extends UsageAwareCloseable implements DatastoreConnection {
 
+    private static final Logger logger = LoggerFactory.getLogger(UsageAwareDatastoreConnection.class);
     private final Datastore _datastore;
 
     public UsageAwareDatastoreConnection(Datastore datastore) {
+        super(logger);
         _datastore = datastore;
     }
 

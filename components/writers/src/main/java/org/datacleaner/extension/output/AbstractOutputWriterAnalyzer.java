@@ -19,6 +19,8 @@
  */
 package org.datacleaner.extension.output;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.Analyzer;
@@ -27,6 +29,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MappedProperty;
+import org.datacleaner.api.Validate;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.output.OutputRow;
@@ -47,6 +50,20 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteData
     String[] fields;
 
 	protected OutputWriter outputWriter;
+	
+	@Validate
+	public final void validateFieldNames() {
+	    if (fields != null) {
+	        final Set<String> uniqueFieldNames = new HashSet<>();
+	        for (String fieldName : fields) {
+	            final String normalizedFieldName = fieldName.trim().toLowerCase();
+	            final boolean added = uniqueFieldNames.add(normalizedFieldName);
+	            if (!added) {
+	                throw new IllegalStateException("Field names must be unique. Field name '" + normalizedFieldName + "' occurs multiple times.");
+	            }
+	        }
+	    }
+	}
 
 	@Initialize
 	public final void init() {

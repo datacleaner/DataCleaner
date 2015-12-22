@@ -96,7 +96,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
         _previewButton.setBorder(WidgetUtils.BORDER_EMPTY);
-        _previewAlternativesButton = WidgetFactory.createDefaultButton("\uf0d7");
+        _previewAlternativesButton = WidgetFactory.createDefaultButton(WidgetUtils.CHAR_CARET_DOWN);
         _previewAlternativesButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
         final int defaultPreviewRows = getPreviewRows();

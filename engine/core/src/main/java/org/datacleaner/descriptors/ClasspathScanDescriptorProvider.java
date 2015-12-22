@@ -40,7 +40,6 @@ import java.util.jar.JarFile;
 
 import javax.inject.Named;
 
-import com.fasterxml.jackson.databind.annotation.NoClass;
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
@@ -482,7 +481,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 scanInputStreamOfClassFile(inputStream, classLoader, strictClassLoader);
             } catch (RuntimeException e) {
                 logger.error("Failed to scan JAR class file entry: " + entryName, e);
+            } catch (NoClassDefFoundError e) {
+                logger.error("Failed to scan JAR class file entry: " + entryName, e);
             }
+           
         } else {
 
             if (logger.isInfoEnabled()) {

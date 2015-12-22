@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>4.5.3-SNAPSHOT</version>
+		<version>5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-components</artifactId>
 	<packaging>pom</packaging>
@@ -28,6 +28,7 @@
 		<module>network-tools</module>
 		<module>writers</module>
 		<module>el</module>
+		<module>http</module>
 		<module>javascript</module>
 		<module>i18n</module>
 		<module>standard-components</module>

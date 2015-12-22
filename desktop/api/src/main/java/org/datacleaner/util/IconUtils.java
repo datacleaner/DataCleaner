@@ -58,6 +58,7 @@ import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.HasIcon;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
@@ -211,23 +212,27 @@ public final class IconUtils {
         // prevent instantiation
     }
 
-    public static ImageIcon getIcon(String relativePath) {
-        return new ImageIcon(IconUtils.class.getClassLoader().getResource(relativePath));
-    }
-
     public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+        boolean serverDown = false;
+
+        if (descriptor instanceof RemoteTransformerDescriptor) {
+            if (!((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().isServerUp()) {
+                serverDown = true;
+            }
+        }
+
         if (descriptor instanceof HasIcon) {
             ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
 
             if (imageIcon != null) {
-                return imageIcon;
+                return serverDown ? addErrorOverlay(imageIcon) : imageIcon;
             }
         }
 
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
 
         if (configured) {
-            return descriptorIcon;
+            return serverDown ? addErrorOverlay(descriptorIcon) : descriptorIcon;
         }
 
         return addErrorOverlay(descriptorIcon);

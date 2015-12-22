@@ -19,32 +19,27 @@
  */
 package org.datacleaner.spark;
 
-import java.io.OutputStream;
-import java.net.URI;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.log4j.Logger;
-import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
-import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.save.AnalysisResultSaveHandler;
+import org.datacleaner.spark.utils.ResultFilePathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    static Logger logger = Logger.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    private static String DEFAULT_RESULT_PATH = "/datacleaner/results/";
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
                     + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
@@ -64,57 +59,49 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath,
+        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath,
                 propertiesPath);
+
+        final String resultJobFilePath;
+        if (sparkJobContext.isResultEnabled()) {
+            // get the path of the result file here so that it can fail fast(not
+            // after the job has run).
+            resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
+            logger.info("DataCleaner result will be written to {}", resultJobFilePath);
+        } else {
+            resultJobFilePath = null;
+        }
+
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {
             final AnalysisResultFuture result = sparkAnalysisRunner.run();
-            if (result.isDone()) {
-                final Map<ComponentJob, AnalyzerResult> resultMap = result.getResultMap();
-                final SimpleAnalysisResult simpleAnalysisResult = new SimpleAnalysisResult(resultMap,
-                        result.getCreationDate());
-                final String resultJobFilePath = getResultJobFilePath(sparkContext, sparkJobContext);
-                logger.info("The result of the job was written to " + resultJobFilePath);
-                if (resultJobFilePath != null) {
-                    final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
-                    final OutputStream out = hdfsResource.write();
-                    try {
-                        SerializationUtils.serialize(simpleAnalysisResult, out);
-                    } catch (SerializationException e) {
-                        logger.error("Error while trying to serialize the job");
-                        throw e;
-                    } finally {
-                        FileHelper.safeClose(out);
+            if (resultJobFilePath != null) {
+                final HdfsResource hdfsResource = new HdfsResource(resultJobFilePath);
+                final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
+                        hdfsResource);
+                try {
+                    analysisResultSaveHandler.saveOrThrow();
+                } catch (SerializationException e) {
+                    // attempt to save what we can - and then rethrow
+                    final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+                    if (safeAnalysisResult == null) {
+                        logger.error("Serialization of result failed without any safe result elements to persist");
+                    } else {
+                        final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
+                                .getUnsafeResultElements();
+                        logger.error("Serialization of result failed with the following unsafe elements: {}",
+                                unsafeResultElements);
+                        logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultJobFilePath);
+
+                        analysisResultSaveHandler.saveWithoutUnsafeResultElements();
                     }
+
+                    // rethrow the exception regardless
+                    throw e;
                 }
             }
-        } catch (Exception e) {
-            logger.error("Exception " + e.getStackTrace());
-            throw e;
         } finally {
             sparkContext.stop();
         }
-    }
-
-    private static String getResultJobFilePath(final JavaSparkContext sparkContext,
-            final SparkJobContext sparkJobContext)  {
-        String resultPath = sparkJobContext.getResultPath();
-        final Configuration hadoopConfiguration = sparkContext.hadoopConfiguration();
-        final String fileSystemPrefix = hadoopConfiguration.get("fs.defaultFS");
-        if (resultPath == null) {
-            resultPath = fileSystemPrefix + DEFAULT_RESULT_PATH;
-        } else { 
-            final URI uri = URI.create(resultPath);
-            if (!uri.isAbsolute()){
-                resultPath = fileSystemPrefix + resultPath;
-            }
-        }
-        final String analysisJobXmlName = sparkJobContext.getAnalysisJobName();
-        final Date date = new Date();
-        if (!resultPath.endsWith("/")) {
-            resultPath = resultPath + "/";
-        }
-        final String filePath = resultPath + analysisJobXmlName + "-" + date.getTime() + ".analysis.result.dat";
-        return filePath;
     }
 }

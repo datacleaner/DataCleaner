@@ -181,6 +181,7 @@ public class Serializator {
     /**
      * When calling the REST API, we want the input columns to be specified only by its name in the JSON payload.
      */
+    @SuppressWarnings("rawtypes")
     private static class MyInputColumnSerializer extends StdSerializer<InputColumn> {
         protected MyInputColumnSerializer() {
             super(InputColumn.class);
@@ -207,6 +208,7 @@ public class Serializator {
      *   ]
      * }</pre>
      */
+    @SuppressWarnings("rawtypes")
     private static class MyEnumSerializer extends StdSerializer<Enum> {
         protected MyEnumSerializer() {
             super(Enum.class);
@@ -247,7 +249,7 @@ public class Serializator {
             }
         }
 
-        protected String enumValueToSchemaString(Enum value) {
+        protected String enumValueToSchemaString(Enum<?> value) {
             if(value instanceof  HasName) {
                 return value.name() + "::" + ((HasName)value).getName();
             } else {

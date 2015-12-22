@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -48,6 +49,7 @@ public class DelegatingConverter implements Converter<Object> {
     private final List<Converter<?>> _converters;
     private final NullConverter _nullConverter;
     private final ArrayConverter _arrayConverter;
+    private final MapStringToStringConverter _mapStringToStringConverter;
 
     public DelegatingConverter() {
         this(null);
@@ -57,6 +59,7 @@ public class DelegatingConverter implements Converter<Object> {
         _converters = new ArrayList<Converter<? extends Object>>();
         _nullConverter = new NullConverter();
         _arrayConverter = new ArrayConverter(this);
+        _mapStringToStringConverter = new MapStringToStringConverter();
 
         if (converters != null) {
             _converters.addAll(converters);
@@ -93,6 +96,9 @@ public class DelegatingConverter implements Converter<Object> {
         if (ReflectionUtils.is(type, List.class)) {
             return _arrayConverter.fromString(type, serializedForm);
         }
+        if (ReflectionUtils.is(type, Map.class)) {
+            return _mapStringToStringConverter.fromString(type, serializedForm);
+        }
 
         Convertable convertable = ReflectionUtils.getAnnotation(type, Convertable.class);
         if (convertable != null) {
@@ -121,12 +127,15 @@ public class DelegatingConverter implements Converter<Object> {
         if (_arrayConverter.isConvertable(type)) {
             return _arrayConverter.toString(instance);
         }
+        if (_mapStringToStringConverter.isConvertable(type)) {
+            return _mapStringToStringConverter.toString((Map<?,?>) instance);
+        }
 
         for (Converter<?> converter : _converters) {
             if (converter.isConvertable(type)) {
                 @SuppressWarnings("unchecked")
-                Converter<Object> castedConverter = (Converter<Object>) converter;
-                String serializedForm = castedConverter.toString(instance);
+                final Converter<Object> castedConverter = (Converter<Object>) converter;
+                final String serializedForm = castedConverter.toString(instance);
 
                 return SerializationStringEscaper.escape(serializedForm);
             }

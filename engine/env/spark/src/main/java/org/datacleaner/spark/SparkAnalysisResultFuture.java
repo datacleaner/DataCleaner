@@ -105,7 +105,9 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
         for (Tuple2<String, AnalyzerResult> tuple : _results) {
             final ComponentJob component = _sparkJobContext.getComponentByKey(tuple._1);
             final AnalyzerResult analyzerResult = tuple._2;
-            resultMap.put(component, analyzerResult);
+            if (analyzerResult != null) {
+                resultMap.put(component, analyzerResult);
+            }
         }
         return resultMap;
     }

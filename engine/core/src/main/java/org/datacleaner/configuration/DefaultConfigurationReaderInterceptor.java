@@ -45,25 +45,41 @@ import org.datacleaner.util.convert.VfsResourceTypeHandler;
 public class DefaultConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
 
     private final Map<String, String> _propertyOverrides;
+    private final DataCleanerEnvironment _baseEnvironment;
 
     public DefaultConfigurationReaderInterceptor() {
         this((Resource) null);
     }
 
+    public DefaultConfigurationReaderInterceptor(DataCleanerEnvironment baseEnvironment) {
+        this((Resource) null, baseEnvironment);
+    }
+
     public DefaultConfigurationReaderInterceptor(Map<String, String> propertyOverrides) {
+        this(propertyOverrides, new DataCleanerEnvironmentImpl());
+    }
+
+    public DefaultConfigurationReaderInterceptor(Map<String, String> propertyOverrides,
+            DataCleanerEnvironment baseEnvironment) {
         if (propertyOverrides == null) {
             _propertyOverrides = Collections.emptyMap();
         } else {
             _propertyOverrides = propertyOverrides;
         }
+        _baseEnvironment = baseEnvironment;
     }
 
     public DefaultConfigurationReaderInterceptor(Resource propertiesResource) {
+        this(propertiesResource, new DataCleanerEnvironmentImpl());
+    }
+
+    public DefaultConfigurationReaderInterceptor(Resource propertiesResource, DataCleanerEnvironment baseEnvironment) {
         if (propertiesResource == null || !propertiesResource.isExists()) {
             _propertyOverrides = Collections.emptyMap();
         } else {
             _propertyOverrides = propertiesResource.read(new InputStreamToPropertiesMapFunc());
         }
+        _baseEnvironment = baseEnvironment;
     }
 
     @Override
@@ -143,6 +159,6 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
 
     @Override
     public DataCleanerEnvironment createBaseEnvironment() {
-        return new DataCleanerEnvironmentImpl();
+        return _baseEnvironment;
     }
 }

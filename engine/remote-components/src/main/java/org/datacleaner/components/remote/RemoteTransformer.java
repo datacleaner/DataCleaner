@@ -24,8 +24,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.Close;
@@ -33,7 +39,6 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -47,9 +52,6 @@ import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -82,12 +84,12 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     }
 
     @Initialize
-    public void initClient() throws RestrictedFunctionalityException {
+    public void initClient() throws RemoteComponentException {
         try {
             logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
             client = new ComponentRESTClient(baseUrl, username, password);
         } catch (Exception e) {
-            throw new RestrictedFunctionalityException(
+            throw new RemoteComponentException(
                     "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());
         }
     }
@@ -106,13 +108,13 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         try {
             CreateInput createInput = new CreateInput();
             createInput.configuration = getConfiguration(getUsedInputColumns());
-            if(lastOutputColumns != null && createInput.equals(lastCreateInput)) {
+            if (lastOutputColumns != null && createInput.equals(lastCreateInput)) {
                 logger.debug("Reusing cached output columns, nothing changed");
                 outCols = lastOutputColumns;
             } else {
                 logger.debug("Getting output columns from server");
                 boolean wasInit = false;
-                if(client == null) {
+                if (client == null) {
                     wasInit = true;
                     initClient();
                 }
@@ -126,16 +128,20 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                         try {
                             outCols.setColumnType(i, Class.forName(colSpec.type));
                         } catch (ClassNotFoundException e) {
-                            // TODO: what to do with data types - classes that are not on our classpath?
-                            // Provide it as pure JsonNode?
-                            outCols.setColumnType(i, JsonNode.class);
+                            final Class<?> type;
+                            if (isOutputColumnEnumeration(colSpec.schema)) {
+                                type = String.class;
+                            } else {
+                                type = JsonNode.class;
+                            }
+                            outCols.setColumnType(i, type);
                         }
                         i++;
                     }
                     lastOutputColumns = outCols;
                     lastCreateInput = createInput;
                 } finally {
-                    if(wasInit) {
+                    if (wasInit) {
                         closeClient();
                     }
                 }
@@ -146,13 +152,34 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
     }
 
-    private ComponentConfiguration getConfiguration(List<InputColumn> inputColumns) {
+    private boolean isOutputColumnEnumeration(JsonSchema schema) {
+        if(schema == null){
+            return false;
+        }
+        boolean isArray = schema.isArraySchema();
+        JsonSchema baseSchema;
+        if (isArray) {
+            baseSchema = ((ArraySchema) schema).getItems().asSingleItems().getSchema();
+        } else {
+            baseSchema = schema;
+        }
+
+        if (baseSchema instanceof ValueTypeSchema) {
+            Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ComponentConfiguration getConfiguration(List<InputColumn<?>> inputColumns) {
         ComponentConfiguration configuration = new ComponentConfiguration();
         for(Map.Entry<String, Object> propertyE: configuredProperties.entrySet()) {
             configuration.getProperties().put(propertyE.getKey(), mapper.valueToTree(propertyE.getValue()));
         }
 
-        for(InputColumn col: inputColumns) {
+        for(InputColumn<?> col: inputColumns) {
             configuration.getColumns().add(ComponentsRestClientUtils.createInputColumnSpecification(
                     col.getName(),
                     col.getDataType(),
@@ -162,19 +189,19 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         return configuration;
     }
 
-    private List<InputColumn> getUsedInputColumns() {
-        ArrayList<InputColumn> columns = new ArrayList<>();
+    private List<InputColumn<?>> getUsedInputColumns() {
+        ArrayList<InputColumn<?>> columns = new ArrayList<>();
         for(Object propValue: configuredProperties.values()) {
             if(propValue instanceof InputColumn) {
-                columns.add((InputColumn) propValue);
+                columns.add((InputColumn<?>) propValue);
             } else if(propValue instanceof InputColumn[]) {
-                for(InputColumn col: ((InputColumn[])propValue)) {
+                for(InputColumn<?> col: ((InputColumn[])propValue)) {
                     columns.add(col);
                 }
             } else if(propValue instanceof Collection) {
-                for(Object value: ((Collection)propValue)) {
+                for(Object value: ((Collection<?>)propValue)) {
                     if(value instanceof InputColumn) {
-                        columns.add((InputColumn)value);
+                        columns.add((InputColumn<?>)value);
                     } else {
                         // don't iterate the rest if the first item is not an input column.
                         break;
@@ -199,11 +226,11 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             List<Object[]> outRowSet = new ArrayList<>();
 
             for(JsonNode row: rowSet) {
-                List values = new ArrayList();
+                final List<Object> values = new ArrayList<>();
                 int i = 0;
                 for (JsonNode value : row) {
                     // TODO: should JsonNode be the default?
-                    Class cl = String.class;
+                    Class<?> cl = String.class;
                     if (i < outCols.getColumnCount()) {
                         cl = outCols.getColumnType(i);
                     }
@@ -220,7 +247,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
     }
 
-    private Object convertOutputValue(JsonNode value, Class cl) {
+    private Object convertOutputValue(JsonNode value, Class<?> cl) {
         try {
             if(cl == JsonNode.class) {
                 return value;
@@ -253,14 +280,14 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     @Override
     public void map(BatchSource<InputRow> source, BatchSink<Collection<Object[]>> sink) {
-        List<InputColumn> cols = getUsedInputColumns();
+        List<InputColumn<?>> cols = getUsedInputColumns();
         int size = source.size();
         Object[] rows = new Object[size];
         for(int i = 0; i < size; i++) {
             InputRow inputRow = source.getInput(i);
             Object[] values = new Object[cols.size()];
             int j = 0;
-            for(InputColumn col: cols) {
+            for(InputColumn<?> col: cols) {
                 values[j] = inputRow.getValue(col);
                 j++;
             }

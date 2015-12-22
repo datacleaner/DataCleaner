@@ -329,7 +329,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             };
 
             boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
-                    .getRemoteServerConfiguration().showAllServers();
+                    .getRemoteServerConfiguration().isShowComponentsFromAllServers();
             DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, showAllRemoteComponents);
 
         }

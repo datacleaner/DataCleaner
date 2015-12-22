@@ -42,6 +42,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
+import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,6 +134,9 @@ public class SparkJobContext implements Serializable {
 
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         if (_analysisJobBuilder == null) {
+            // set HDFS as default scheme to avoid file resources
+            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, "hdfs");
+            
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);
             _analysisJobBuilder = jobReader.create(createInputStream(_analysisJobXml), _customProperties);

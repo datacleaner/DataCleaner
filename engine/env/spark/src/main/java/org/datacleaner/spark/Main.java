@@ -45,7 +45,7 @@ public class Main {
                     + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
                     + "Got: " + Arrays.toString(args));
         }
-
+        
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
 

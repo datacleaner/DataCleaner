@@ -41,7 +41,7 @@ import org.datacleaner.api.Transformer;
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     private final boolean _autoDiscover;
-    private final Collection<DescriptorProviderListener> _componentDescriptorsListeners;
+    private final Collection<DescriptorProviderListener> _listeners;
 
     /**
      * Creates an {@link AbstractDescriptorProvider}
@@ -55,7 +55,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      */
     public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
         _autoDiscover = autoLoadDescriptorClasses;
-        _componentDescriptorsListeners = new ArrayList<>();
+        _listeners = new ArrayList<>();
     }
 
     @Override
@@ -245,9 +245,9 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    protected void notifyComponentDescriptorsUpdatedListeners() {
-        synchronized (_componentDescriptorsListeners) {
-            for (DescriptorProviderListener listener : _componentDescriptorsListeners) {
+    protected void notifyListeners() {
+        synchronized (_listeners) {
+            for (DescriptorProviderListener listener : _listeners) {
                 listener.onDescriptorsUpdated(this);
             }
         }
@@ -255,15 +255,15 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @Override
     public void addListener(DescriptorProviderListener listener) {
-        synchronized (_componentDescriptorsListeners) {
-            _componentDescriptorsListeners.add(listener);
+        synchronized (_listeners) {
+            _listeners.add(listener);
         }
     }
 
     @Override
     public void removeListener(DescriptorProviderListener listener) {
-        synchronized (_componentDescriptorsListeners) {
-            _componentDescriptorsListeners.remove(listener);
+        synchronized (_listeners) {
+            _listeners.remove(listener);
         }
     }
 

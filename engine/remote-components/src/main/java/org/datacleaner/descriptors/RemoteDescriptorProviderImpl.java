@@ -117,7 +117,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
     public void refresh() {
         dataLazyReference = new RemoteLazyRef();
-        notifyComponentDescriptorsUpdatedListeners();
+        notifyListeners();
     }
 
     @Override

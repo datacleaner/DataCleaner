@@ -1,23 +1,50 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.spark;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.spark.utils.ResultFilePathUtils;
+import org.junit.Rule;
 import org.junit.Test;
-
-import junit.framework.TestCase;
+import org.junit.rules.TestName;
 
 /**
  * This class tests the path of the result specified in the job properties file
  * or otherwise.
  */
-public class JobResultPathTest extends TestCase {
+public class JobResultPathTest {
+
+    @Rule
+    public TestName name = new TestName();
 
     @Test
     public void testResultPathAbolutePathSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -37,7 +64,7 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathSpecifiedEmptyPath() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -60,7 +87,7 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathNameJustFolderSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -82,7 +109,7 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathNameNoVariableSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 

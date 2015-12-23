@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,12 +77,13 @@ public class SparkJobContext implements Serializable {
         final HdfsHelper hdfsHelper = new HdfsHelper(sparkContext);
         _jobName = getAnalysisJobName(analysisJobXmlPath);
         logger.info("Loading SparkJobContext for {} - job name '{}'", analysisJobXmlPath, _jobName);
-        
+
         _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
         if (Strings.isNullOrEmpty(_configurationXml)) {
-            throw new IllegalArgumentException("Failed to read content from configuration file: " + dataCleanerConfigurationPath);
+            throw new IllegalArgumentException(
+                    "Failed to read content from configuration file: " + dataCleanerConfigurationPath);
         }
-        
+
         _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
         if (Strings.isNullOrEmpty(_analysisJobXml)) {
             throw new IllegalArgumentException("Failed to read content from job file: " + analysisJobXmlPath);
@@ -96,6 +98,7 @@ public class SparkJobContext implements Serializable {
             _customProperties = new InputStreamToPropertiesMapFunc()
                     .eval(new ByteArrayInputStream(propertiesString.getBytes()));
         }
+        validateCustomProperties();
     }
 
     public SparkJobContext(final String jobName, final String dataCleanerConfiguration, final String analysisJobXml,
@@ -104,6 +107,17 @@ public class SparkJobContext implements Serializable {
         _customProperties = customProperties;
         _configurationXml = dataCleanerConfiguration;
         _analysisJobXml = analysisJobXml;
+        validateCustomProperties();
+    }
+
+    private void validateCustomProperties() {
+        if (isResultEnabled()) {
+            final String resultPath = getResultPath();
+            if (resultPath != null) {
+                // ensure parsability
+                URI.create(resultPath);
+            }
+        }
     }
 
     public DataCleanerConfiguration getConfiguration() {
@@ -136,7 +150,7 @@ public class SparkJobContext implements Serializable {
         if (_analysisJobBuilder == null) {
             // set HDFS as default scheme to avoid file resources
             SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, "hdfs");
-            
+
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);
             _analysisJobBuilder = jobReader.create(createInputStream(_analysisJobXml), _customProperties);

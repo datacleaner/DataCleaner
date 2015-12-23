@@ -45,7 +45,7 @@ public class Main {
                     + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
                     + "Got: " + Arrays.toString(args));
         }
-        
+
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
@@ -81,7 +81,8 @@ public class Main {
     }
 
     private static void saveResult(AnalysisResultFuture result, Resource resultResource) {
-        final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result, resultResource);
+        final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
+                resultResource);
         try {
             analysisResultSaveHandler.saveOrThrow();
         } catch (SerializationException e) {
@@ -94,7 +95,8 @@ public class Main {
                         .getUnsafeResultElements();
                 logger.error("Serialization of result failed with the following unsafe elements: {}",
                         unsafeResultElements);
-                logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultResource.getQualifiedPath());
+                logger.warn("Partial AnalysisResult will be persisted to filename '{}'",
+                        resultResource.getQualifiedPath());
 
                 analysisResultSaveHandler.saveWithoutUnsafeResultElements();
             }

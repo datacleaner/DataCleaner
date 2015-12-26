@@ -172,7 +172,7 @@ public class ResourceConverter implements Converter<Resource> {
     public ResourceConverter(ResourceTypeHandler<?>... handlers) {
         this(Arrays.asList(handlers), getConfiguredDefaultScheme());
     }
-
+    
     @Override
     public Resource fromString(Class<?> type, String serializedForm) {
         final ResourceStructure structure = parseStructure(serializedForm);

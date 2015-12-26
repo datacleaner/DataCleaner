@@ -72,8 +72,8 @@ public class SparkJobContext implements Serializable {
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
 
-    public SparkJobContext(final String dataCleanerConfigurationPath, final String analysisJobXmlPath,
-            final String customPropertiesPath, final JavaSparkContext sparkContext) {
+    public SparkJobContext(final URI dataCleanerConfigurationPath, final URI analysisJobXmlPath,
+            final URI customPropertiesPath, final JavaSparkContext sparkContext) {
         final HdfsHelper hdfsHelper = new HdfsHelper(sparkContext);
         _jobName = getAnalysisJobName(analysisJobXmlPath);
         logger.info("Loading SparkJobContext for {} - job name '{}'", analysisJobXmlPath, _jobName);
@@ -112,11 +112,8 @@ public class SparkJobContext implements Serializable {
 
     private void validateCustomProperties() {
         if (isResultEnabled()) {
-            final String resultPath = getResultPath();
-            if (resultPath != null) {
-                // ensure parsability
-                URI.create(resultPath);
-            }
+            // ensure parsability of result path
+            getResultPath();
         }
     }
 
@@ -230,8 +227,12 @@ public class SparkJobContext implements Serializable {
      *
      * @return
      */
-    public String getResultPath() {
-        return _customProperties.get(PROPERTY_RESULT_PATH);
+    public URI getResultPath() {
+        final String str = _customProperties.get(PROPERTY_RESULT_PATH);
+        if (Strings.isNullOrEmpty(str)) {
+            return null;
+        }
+        return URI.create(str);
     }
 
     public boolean isResultEnabled() {
@@ -244,7 +245,8 @@ public class SparkJobContext implements Serializable {
      *
      * @return
      */
-    private static String getAnalysisJobName(String filename) {
+    private static String getAnalysisJobName(URI uri) {
+        final String filename = uri.getPath();
         final int lastIndexOfSlash = filename.lastIndexOf("/");
         final int lastIndexOfFileExtension = filename.lastIndexOf(".analysis.xml");
         final String jobName = filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);

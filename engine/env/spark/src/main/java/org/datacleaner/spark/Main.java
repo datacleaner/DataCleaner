@@ -19,6 +19,7 @@
  */
 package org.datacleaner.spark;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -49,12 +50,12 @@ public class Main {
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
-        final String confXmlPath = args[0];
-        final String analysisJobXmlPath = args[1];
+        final URI confXmlPath = URI.create(args[0]);
+        final URI analysisJobXmlPath = URI.create(args[1]);
 
-        final String propertiesPath;
+        final URI propertiesPath;
         if (args.length > 2) {
-            propertiesPath = args[2];
+            propertiesPath = URI.create(args[2]);
         } else {
             propertiesPath = null;
         }

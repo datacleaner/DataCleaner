@@ -19,8 +19,11 @@
  */
 package org.datacleaner.util;
 
+import java.net.URI;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 
 public class HadoopResource extends HdfsResource {
 
@@ -28,8 +31,13 @@ public class HadoopResource extends HdfsResource {
 
     private final Configuration _configuration;
 
-    public HadoopResource(String url, Configuration configuration) {
-        super(url);
+    public HadoopResource(URI uri, Configuration configuration) {
+        super(uri.toString());
+        _configuration = configuration;
+    }
+
+    public HadoopResource(Resource resource, Configuration configuration) {
+        super(resource.getQualifiedPath());
         _configuration = configuration;
     }
 

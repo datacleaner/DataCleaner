@@ -19,12 +19,12 @@
  */
 package org.datacleaner.spark.utils;
 
+import java.net.URI;
+
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.spark.SparkJobContext;
 import org.datacleaner.util.FileFilters;
-
-import com.google.common.base.Strings;
 
 public class ResultFilePathUtils {
 
@@ -47,15 +47,15 @@ public class ResultFilePathUtils {
             final SparkJobContext sparkJobContext) {
         final HdfsHelper hdfsHelper = new HdfsHelper(sparkContext);
 
-        final String resultPath;
-        if (Strings.isNullOrEmpty(sparkJobContext.getResultPath())) {
-            resultPath = DEFAULT_RESULT_PATH + '/' + generateResultFilename(sparkJobContext);
+        URI resultPath = sparkJobContext.getResultPath();
+        if (resultPath == null) {
+            resultPath = URI.create(DEFAULT_RESULT_PATH + '/' + generateResultFilename(sparkJobContext));
         } else {
-            if (hdfsHelper.isDirectory(sparkJobContext.getResultPath())) {
-                if (sparkJobContext.getResultPath().endsWith("/")) {
-                    resultPath = sparkJobContext.getResultPath() + generateResultFilename(sparkJobContext);
+            if (hdfsHelper.isDirectory(resultPath)) {
+                if (resultPath.toString().endsWith("/")) {
+                    resultPath = URI.create(resultPath.toString() + generateResultFilename(sparkJobContext));
                 } else {
-                    resultPath = sparkJobContext.getResultPath() + '/' + generateResultFilename(sparkJobContext);
+                    resultPath = URI.create(resultPath.toString() + '/' + generateResultFilename(sparkJobContext));
                 }
             } else {
                 resultPath = sparkJobContext.getResultPath();

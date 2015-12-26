@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
+
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -48,9 +50,9 @@ public class JobResultPathTest {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobAbsolutePath.properties", sparkContext);
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobAbsolutePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertEquals("file:///target/results/myresult.analysis.result.dat", sparkJobContext.getResultPath());
@@ -68,9 +70,9 @@ public class JobResultPathTest {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobEmptyPath.properties", sparkContext);
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobEmptyPath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertEquals("", sparkJobContext.getResultPath());
@@ -91,9 +93,9 @@ public class JobResultPathTest {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobRelativePath.properties", sparkContext);
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobRelativePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertEquals("target", sparkJobContext.getResultPath());
@@ -113,8 +115,8 @@ public class JobResultPathTest {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml", null, sparkContext);
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"), null, sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertNull(sparkJobContext.getResultPath());

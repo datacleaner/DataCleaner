@@ -21,6 +21,7 @@ package org.datacleaner.spark.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -94,11 +95,11 @@ public class HdfsHelper {
         _hadoopConfiguration = configuration;
     }
 
-    public String readFile(String filepath) {
+    public String readFile(URI filepath) {
         return readFile(filepath, false);
     }
 
-    public String readFile(String filepath, boolean failOnNoData) {
+    public String readFile(URI filepath, boolean failOnNoData) {
         final Resource resourceInUse = getResourceToUse(filepath);
         if (failOnNoData && resourceInUse == null) {
             throw new IllegalArgumentException("Could not resolve resource: " + filepath);
@@ -128,34 +129,33 @@ public class HdfsHelper {
         }
         if (resource instanceof HdfsResource) {
             // wrap the resource with our known configuration
-            return new HadoopResource(resource.getQualifiedPath(), _hadoopConfiguration);
+            return new HadoopResource(resource, _hadoopConfiguration);
         }
         if (resource instanceof FileResource) {
             // this may very well be a path that was mis-interpreted as a local
             // file because no scheme was defined
             if (resource.getQualifiedPath().startsWith("/")) {
-                return new HadoopResource(resource.getQualifiedPath(), _hadoopConfiguration);
+                return new HadoopResource(resource, _hadoopConfiguration);
             }
         }
 
         return resource;
     }
 
-    public Resource getResourceToUse(String path) {
-        if (Strings.isNullOrEmpty(path)) {
+    public Resource getResourceToUse(URI path) {
+        if (path == null) {
             return null;
         }
-        path = path.trim();
         if (_hadoopConfiguration == null) {
-            if (path.toLowerCase().startsWith("hdfs:")) {
-                return new HdfsResource(path);
+            if ("hdfs".equals(path.getScheme())) {
+                return new HdfsResource(path.toString());
             }
-            return new FileResource(path);
+            return new FileResource(path.toString());
         }
         return new HadoopResource(path, _hadoopConfiguration);
     }
 
-    public boolean isDirectory(String path) {
+    public boolean isDirectory(URI path) {
         final Resource resource = getResourceToUse(path);
         if (!resource.isExists()) {
             return false;

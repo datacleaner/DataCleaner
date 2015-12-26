@@ -20,6 +20,7 @@
 package org.datacleaner.spark.functions;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -185,7 +186,8 @@ public final class RowProcessingFunction
         final String formattedPartitionNumber = String.format("%05d", partitionNumber);
         if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
             final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
-            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(path);
+            final URI uri = URI.create(path);
+            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(uri);
             return replacementResource;
         }
         if (resource instanceof FileResource) {

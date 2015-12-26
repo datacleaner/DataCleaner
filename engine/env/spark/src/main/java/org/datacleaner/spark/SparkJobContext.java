@@ -80,8 +80,8 @@ public class SparkJobContext implements Serializable {
 
         _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
         if (Strings.isNullOrEmpty(_configurationXml)) {
-            throw new IllegalArgumentException(
-                    "Failed to read content from configuration file: " + dataCleanerConfigurationPath);
+            throw new IllegalArgumentException("Failed to read content from configuration file: "
+                    + dataCleanerConfigurationPath);
         }
 
         _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
@@ -95,8 +95,8 @@ public class SparkJobContext implements Serializable {
         } else {
             // this is a pretty ugly way to go back to the bytes to read the
             // properties - but works and is quick
-            _customProperties = new InputStreamToPropertiesMapFunc()
-                    .eval(new ByteArrayInputStream(propertiesString.getBytes()));
+            _customProperties = new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString
+                    .getBytes()));
         }
         validateCustomProperties();
     }
@@ -168,8 +168,8 @@ public class SparkJobContext implements Serializable {
             AtomicInteger currentComponentIndex) {
         final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
         for (ComponentBuilder componentBuilder : componentBuilders) {
-            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
-                    Integer.toString(currentComponentIndex.getAndIncrement()));
+            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX, Integer.toString(
+                    currentComponentIndex.getAndIncrement()));
         }
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();

@@ -72,8 +72,8 @@ import scala.Tuple2;
  * This class implements two interfaces because it has two (quite similar)
  * styles of usages in the {@link SparkAnalysisRunner}.
  */
-public final class RowProcessingFunction
-        implements Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
+public final class RowProcessingFunction implements
+        Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
         PairFlatMapFunction<Iterator<InputRow>, String, NamedAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(RowProcessingFunction.class);
@@ -200,8 +200,8 @@ public final class RowProcessingFunction
             if (!file.exists()) {
                 file.mkdirs();
             }
-            final FileResource fileResource = new FileResource(
-                    resource.getQualifiedPath() + "/part-" + formattedPartitionNumber);
+            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-"
+                    + formattedPartitionNumber);
             return fileResource;
         }
         return null;
@@ -226,8 +226,8 @@ public final class RowProcessingFunction
             return new JsonDatastore(name, replacementResource, ((JsonDatastore) datastore).getSchemaBuilder());
         }
 
-        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name,
-                datastore.getClass().getSimpleName());
+        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name, datastore
+                .getClass().getSimpleName());
         return datastore;
     }
 
@@ -254,8 +254,8 @@ public final class RowProcessingFunction
         logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(
-                consumeRowHandler.getConsumers());
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler
+                .getConsumers());
 
         // await any future results
         for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext();) {

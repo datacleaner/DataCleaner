@@ -100,8 +100,8 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testVanillaScenario() throws Exception {
-        final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(),
-                URI.create("src/test/resources/vanilla-job.analysis.xml"), "vanilla-job", false);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
+                "src/test/resources/vanilla-job.analysis.xml"), "vanilla-job", false);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -112,8 +112,8 @@ public class SparkAnalysisRunnerTest {
         assertEquals(2, results.size());
 
         final StringAnalyzerResult stringAnalyzerResult = result.getResults(StringAnalyzerResult.class).get(0);
-        assertEquals("[MetaModelInputColumn[resources.person_names.txt.company]]",
-                Arrays.toString(stringAnalyzerResult.getColumns()));
+        assertEquals("[MetaModelInputColumn[resources.person_names.txt.company]]", Arrays.toString(stringAnalyzerResult
+                .getColumns()));
 
         final int rowCount = stringAnalyzerResult.getRowCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, rowCount);
@@ -155,12 +155,12 @@ public class SparkAnalysisRunnerTest {
 
             final SparkJobContext sparkJobContext;
             if (saveResult) {
-                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
-                        URI.create("src/test/resources/write-job.analysis.xml"), null, sparkContext);
+                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"), URI.create(
+                        "src/test/resources/write-job.analysis.xml"), null, sparkContext);
             } else {
-                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
-                        URI.create("src/test/resources/write-job.analysis.xml"),
-                        URI.create("src/test/resources/jobProperties/noResult.properties"), sparkContext);
+                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"), URI.create(
+                        "src/test/resources/write-job.analysis.xml"), URI.create(
+                                "src/test/resources/jobProperties/noResult.properties"), sparkContext);
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
@@ -200,25 +200,25 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testOutputDataStreamsScenario() throws Exception {
-        final AnalysisResultFuture result = runAnalysisJob("DCTest - testOutputDataStreamsScenario",
-                URI.create("src/test/resources/melon-job.analysis.xml"), "melon-job", false);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testOutputDataStreamsScenario", URI.create(
+                "src/test/resources/melon-job.analysis.xml"), "melon-job", false);
 
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(3, results.size());
 
-        final CompletenessAnalyzerResult completenessAnalyzerResult = result
-                .getResults(CompletenessAnalyzerResult.class).get(0);
+        final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(
+                CompletenessAnalyzerResult.class).get(0);
         assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         assertEquals(7, completenessAnalyzerResult.getValidRowCount());
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
 
-        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result
-                .getResults(ValueMatchAnalyzerResult.class).get(0);
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(
+                ValueMatchAnalyzerResult.class).get(0);
         assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(0), incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
 
-        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result
-                .getResults(ValueMatchAnalyzerResult.class).get(1);
+        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(
+                ValueMatchAnalyzerResult.class).get(1);
         assertEquals(7, completeValueMatcherAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(1), completeValueMatcherAnalyzerResult.getCount("Tomasz"));
         assertEquals(Integer.valueOf(6), completeValueMatcherAnalyzerResult.getUnexpectedValueCount());
@@ -228,8 +228,8 @@ public class SparkAnalysisRunnerTest {
     public void testOutputDataStreamsNonDistributableScenario() throws Exception {
         final AnalysisResultFuture result;
 
-        result = runAnalysisJob("DCTest - testOutputDataStreamsNonDistributableScenario",
-                URI.create("src/test/resources/non-dist-melon-job.analysis.xml"), "non-dist-melon-job", true);
+        result = runAnalysisJob("DCTest - testOutputDataStreamsNonDistributableScenario", URI.create(
+                "src/test/resources/non-dist-melon-job.analysis.xml"), "non-dist-melon-job", true);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -238,19 +238,19 @@ public class SparkAnalysisRunnerTest {
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(3, results.size());
 
-        final CompletenessAnalyzerResult completenessAnalyzerResult = result
-                .getResults(CompletenessAnalyzerResult.class).get(0);
+        final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(
+                CompletenessAnalyzerResult.class).get(0);
         assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         assertEquals(7, completenessAnalyzerResult.getValidRowCount());
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
 
-        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result
-                .getResults(ValueMatchAnalyzerResult.class).get(0);
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(
+                ValueMatchAnalyzerResult.class).get(0);
         assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(0), incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
 
-        final UniqueKeyCheckAnalyzerResult uniqueKeyCheckAnalyzerResult = result
-                .getResults(UniqueKeyCheckAnalyzerResult.class).get(0);
+        final UniqueKeyCheckAnalyzerResult uniqueKeyCheckAnalyzerResult = result.getResults(
+                UniqueKeyCheckAnalyzerResult.class).get(0);
         assertEquals(7, uniqueKeyCheckAnalyzerResult.getRowCount());
         assertEquals(7, uniqueKeyCheckAnalyzerResult.getUniqueCount());
         assertEquals(0, uniqueKeyCheckAnalyzerResult.getNonUniqueCount());
@@ -261,8 +261,28 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testValueDistributionReducer() throws Exception {
-        final AnalysisResultFuture result = runAnalysisJob("DCTest - testValueDistributionReducer",
-                URI.create("src/test/resources/distributable-value-dist.analysis.xml"), "distributable-value-dist",
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testValueDistributionReducer", URI.create(
+                "src/test/resources/distributable-value-dist.analysis.xml"), "distributable-value-dist", true);
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(1, results.size());
+
+        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
+                ValueDistributionAnalyzerResult.class).get(0);
+        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
+        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
+        assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
+    }
+
+    @Test
+    public void testGroupedValueDistributionReducer() throws Exception {
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testGroupedValueDistributionReducer", URI.create(
+                "src/test/resources/distributable-grouped-value-dist.analysis.xml"), "distributable-grouped-value-dist",
                 true);
 
         if (result.isErrornous()) {
@@ -272,29 +292,8 @@ public class SparkAnalysisRunnerTest {
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(1, results.size());
 
-        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result
-                .getResults(ValueDistributionAnalyzerResult.class).get(0);
-        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
-        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
-        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getDistinctCount());
-        assertEquals(0, completeValueDistributionAnalyzerResult.getNullCount());
-    }
-
-    @Test
-    public void testGroupedValueDistributionReducer() throws Exception {
-        final AnalysisResultFuture result = runAnalysisJob("DCTest - testGroupedValueDistributionReducer",
-                URI.create("src/test/resources/distributable-grouped-value-dist.analysis.xml"),
-                "distributable-grouped-value-dist", true);
-
-        if (result.isErrornous()) {
-            throw (Exception) result.getErrors().get(0);
-        }
-
-        final List<AnalyzerResult> results = result.getResults();
-        assertEquals(1, results.size());
-
-        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result
-                .getResults(ValueDistributionAnalyzerResult.class).get(0);
+        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
+                ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
         GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
         Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
@@ -313,17 +312,17 @@ public class SparkAnalysisRunnerTest {
     @Test
     public void testJsonDatastore() throws Exception {
         final String appName = "DCTest - " + getName();
-        final AnalysisResultFuture result = runAnalysisJob(appName,
-                URI.create("src/test/resources/json-job.analysis.xml"), "json-job", false);
+        final AnalysisResultFuture result = runAnalysisJob(appName, URI.create(
+                "src/test/resources/json-job.analysis.xml"), "json-job", false);
 
         final List<AnalyzerResult> results = result.getResults();
         assertNotNull(results);
         assertEquals(1, results.size());
 
-        final ValueDistributionAnalyzerResult valueDistributionAnalyzerResult = result
-                .getResults(ValueDistributionAnalyzerResult.class).get(0);
-        assertEquals("[[blue->3], [green->2], [<unique>->1]]",
-                valueDistributionAnalyzerResult.getValueCounts().toString());
+        final ValueDistributionAnalyzerResult valueDistributionAnalyzerResult = result.getResults(
+                ValueDistributionAnalyzerResult.class).get(0);
+        assertEquals("[[blue->3], [green->2], [<unique>->1]]", valueDistributionAnalyzerResult.getValueCounts()
+                .toString());
 
         assertEquals(1, valueDistributionAnalyzerResult.getUniqueCount().intValue());
         assertEquals("[brown]", valueDistributionAnalyzerResult.getUniqueValues().toString());

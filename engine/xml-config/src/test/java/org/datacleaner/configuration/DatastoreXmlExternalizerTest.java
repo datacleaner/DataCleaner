@@ -218,6 +218,6 @@ public class DatastoreXmlExternalizerTest extends TestCase {
     }
 
     private String transform(Element elem) throws Exception {
-        return XmlUtils.writeDocumentToString(elem, false);
+        return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }
 }

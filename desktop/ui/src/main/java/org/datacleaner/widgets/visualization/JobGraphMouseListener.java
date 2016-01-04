@@ -58,6 +58,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.ChangeRequirementMenu;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
+import org.datacleaner.windows.MetadataDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -231,6 +232,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         final Point point = me.getPoint();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getMainAnalysisJobBuilder();
         final DataCleanerConfiguration configuration = analysisJobBuilder.getConfiguration();
+        
+        // add component options
         final Set<ComponentSuperCategory> superCategories = configuration.getEnvironment().getDescriptorProvider()
                 .getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
@@ -241,6 +244,19 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             menu.setIcon(IconUtils.getComponentSuperCategoryIcon(superCategory, IconUtils.ICON_SIZE_MENU_ITEM));
             menuBuilder.addItemsToMenu(menu);
             popup.add(menu);
+        }
+        
+        // add (datastore and job) metadata option
+        {
+            final JMenuItem menuItem = WidgetFactory.createMenuItem("Job metadata", IconUtils.MODEL_METADATA);
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final MetadataDialog dialog = new MetadataDialog(_windowContext, analysisJobBuilder);
+                    dialog.open();
+                }
+            });
+            popup.add(menuItem);
         }
 
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());

@@ -394,7 +394,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
 
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
-                ResourceConverter.DEFAULT_DEFAULT_SCHEME);
+                ResourceConverter.getConfiguredDefaultScheme());
         return resourceConverter;
     }
 

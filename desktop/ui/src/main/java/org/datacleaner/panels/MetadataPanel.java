@@ -39,7 +39,6 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -62,7 +61,6 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;
-        _analysisJobBuilder.addSourceColumnChangeListener(this);
 
         _table = new DCTable(COLUMN_NAMES);
         _table.setColumnControlVisible(false);
@@ -100,10 +98,6 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
         final DCPanel jobMetadataPanel = new DCPanel();
         jobMetadataPanel.setLayout(new VerticalLayout(4));
-
-        final DCLabel jobMetadataHeaderLabel = DCLabel.dark("Job metadata");
-        jobMetadataHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
-        jobMetadataPanel.add(jobMetadataHeaderLabel);
 
         jobMetadataPanel.add(_jobNameTextField);
         jobMetadataPanel.add(_jobDescriptionTextField);
@@ -161,6 +155,18 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
         }
 
         _table.setModel(model);
+    }
+    
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _analysisJobBuilder.addSourceColumnChangeListener(this);
+    }
+    
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _analysisJobBuilder.removeSourceColumnChangeListener(this);
     }
 
     @Override

@@ -78,7 +78,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
 
             @Override
-            protected void onScopeChangeComplete(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
+            protected void onScopeChangeComplete(final AnalysisJobBuilder osJobBuilder,
+                    final ComponentBuilder osComponentBuilder) {
                 _changingScope = false;
                 _componentScopeButton.updateText(osJobBuilder, osComponentBuilder);
                 initialize();
@@ -119,11 +120,15 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     protected DCBannerPanel createBanner(Image bannerImage) {
-        String remoteServerName = "";
+        final String remoteServerName;
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            remoteServerName = " (" + ((RemoteTransformerDescriptor<?>)(_componentBuilder.getDescriptor()))
-                    .getRemoteDescriptorProvider().getServerName() + ")";
+            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor = (RemoteTransformerDescriptor<?>) (_componentBuilder
+                    .getDescriptor());
+            remoteServerName = " ("
+                    + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName() + ")";
+        } else {
+            remoteServerName = "";
         }
 
         final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle() + remoteServerName);
@@ -140,8 +145,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
         final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
                 IconUtils.MENU_DOCUMENTATION);
-        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(_componentBuilder
-                .getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
+        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(
+                _componentBuilder.getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
 
         if (_componentScopeButton.isRelevant()) {
             banner.add(_componentScopeButton);
@@ -188,7 +193,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     public void onRemove(ComponentBuilder componentBuilder) {
-        if(!_changingScope){
+        if (!_changingScope) {
             close();
         }
     }

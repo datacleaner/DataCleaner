@@ -35,6 +35,12 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The default filename used to store the configuration file in DataCleaner
+     * (without any directory specification, since it varies).
+     */
+    public static final String DEFAULT_FILENAME = "conf.xml";
+
     private final transient DataCleanerEnvironment _environment;
     private final transient DataCleanerHomeFolder _homeFolder;
     private final DatastoreCatalog _datastoreCatalog;
@@ -47,7 +53,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
     public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, DataCleanerHomeFolder homeFolder) {
         this(environment, homeFolder, defaultDatastoreCatalog(), defaultReferenceDataCatalog());
     }
-    
+
     public DataCleanerConfigurationImpl(DataCleanerConfiguration c) {
         this(c.getEnvironment(), c.getHomeFolder(), c.getDatastoreCatalog(), c.getReferenceDataCatalog());
     }
@@ -103,7 +109,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
         return new DataCleanerConfigurationImpl(environment, getHomeFolder(), getDatastoreCatalog(),
                 getReferenceDataCatalog());
     }
-    
+
     @Override
     public DatastoreCatalog getDatastoreCatalog() {
         return _datastoreCatalog;

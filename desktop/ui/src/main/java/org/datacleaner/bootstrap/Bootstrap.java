@@ -46,6 +46,7 @@ import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.cli.CliRunner;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -168,7 +169,8 @@ public final class Bootstrap {
         final UserPreferences initialUserPreferences = new UserPreferencesImpl(null);
 
         final String configurationFilePath = arguments.getConfigurationFile();
-        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml", initialUserPreferences);
+        final FileObject configurationFile = resolveFile(configurationFilePath,
+                DataCleanerConfigurationImpl.DEFAULT_FILENAME, initialUserPreferences);
 
         Injector injector = Guice.createInjector(new DCModuleImpl(DataCleanerHome.get(), configurationFile));
 

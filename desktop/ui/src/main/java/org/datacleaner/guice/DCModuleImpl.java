@@ -19,18 +19,8 @@
  */
 package org.datacleaner.guice;
 
-import java.io.File;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -68,14 +58,10 @@ import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
-import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
-import org.datacleaner.util.convert.FileResourceTypeHandler;
-import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.datacleaner.util.convert.UrlResourceTypeHandler;
-import org.datacleaner.util.convert.VfsResourceTypeHandler;
+import org.datacleaner.util.xml.XmlUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.slf4j.Logger;
@@ -338,13 +324,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 resource.write(new Action<OutputStream>() {
                     @Override
                     public void run(final OutputStream out) throws Exception {
-                        final Source source = new DOMSource(document);
-                        final Result outputTarget = new StreamResult(out);
-                        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                        final Transformer transformer = transformerFactory.newTransformer();
-                        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-                        transformer.transform(source, outputTarget);
+                        XmlUtils.writeDocument(document, out);
                     }
                 });
 
@@ -404,19 +384,11 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     public ResourceConverter getResourceConverter() {
-        final FileObject dataCleanerHome = DataCleanerHome.get();
-        final File dataCleanerHomeDirectory = VFSUtils.toFile(dataCleanerHome);
-
-        final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
-        handlers.add(new FileResourceTypeHandler(dataCleanerHomeDirectory));
-        handlers.add(new UrlResourceTypeHandler());
-        handlers.add(new ClasspathResourceTypeHandler());
-        handlers.add(new VfsResourceTypeHandler());
-        handlers.add(new HdfsResourceTypeHandler());
+        final List<ResourceTypeHandler<?>> handlers = ResourceConverter.createDefaultHandlers(DataCleanerHome.getAsDataCleanerHomeFolder());
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
 
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
-                ResourceConverter.DEFAULT_DEFAULT_SCHEME);
+                ResourceConverter.getConfiguredDefaultScheme());
         return resourceConverter;
     }
 

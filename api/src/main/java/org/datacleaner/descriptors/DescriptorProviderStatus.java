@@ -24,7 +24,8 @@ import java.util.Objects;
 /**
  * Represents the status/state of a {@link DescriptorProvider}.
  */
-public class DescriptorProviderState {
+public class DescriptorProviderStatus {
+    
     public enum Level {
         INFO, ERROR;
     };
@@ -32,7 +33,7 @@ public class DescriptorProviderState {
     private final Level level;
     private final String message;
 
-    public DescriptorProviderState(Level level, String message) {
+    public DescriptorProviderStatus(Level level, String message) {
         this.level = level;
         this.message = message;
     }
@@ -47,8 +48,8 @@ public class DescriptorProviderState {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DescriptorProviderState) {
-            final DescriptorProviderState other = (DescriptorProviderState) o;
+        if (o instanceof DescriptorProviderStatus) {
+            final DescriptorProviderStatus other = (DescriptorProviderStatus) o;
             return Objects.equals(this.level, other.level) && Objects.equals(this.message, other.message);
         }
         return false;

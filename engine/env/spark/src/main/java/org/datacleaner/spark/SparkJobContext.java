@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,11 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
@@ -44,7 +41,9 @@ import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
+import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +62,9 @@ public class SparkJobContext implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private final String _jobName;
     private final String _configurationXml;
     private final String _analysisJobXml;
-    private final String _analysisJobXmlPath;
     private final Map<String, String> _customProperties;
     private final List<SparkJobLifeCycleListener> _sparkJobLifeCycleListeners = new ArrayList<>();
 
@@ -73,38 +72,49 @@ public class SparkJobContext implements Serializable {
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
 
-    public SparkJobContext(final String dataCleanerConfigurationPath,
-            final String analysisJobXmlPath) {
-        this(dataCleanerConfigurationPath, analysisJobXmlPath, null);
-    }
+    public SparkJobContext(final URI dataCleanerConfigurationPath, final URI analysisJobXmlPath,
+            final URI customPropertiesPath, final JavaSparkContext sparkContext) {
+        final HdfsHelper hdfsHelper = new HdfsHelper(sparkContext);
+        _jobName = getAnalysisJobName(analysisJobXmlPath);
+        logger.info("Loading SparkJobContext for {} - job name '{}'", analysisJobXmlPath, _jobName);
 
-    public SparkJobContext(final String dataCleanerConfigurationPath,
-            final String analysisJobXmlPath, final String propertiesPath) {
-        _customProperties = readCustomProperties(propertiesPath);
-        _configurationXml = readFile(dataCleanerConfigurationPath);
-        _analysisJobXml = readFile(analysisJobXmlPath);
-        _analysisJobXmlPath = analysisJobXmlPath;
-    }
-
-    private static Resource createResource(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            return null;
+        _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
+        if (Strings.isNullOrEmpty(_configurationXml)) {
+            throw new IllegalArgumentException("Failed to read content from configuration file: "
+                    + dataCleanerConfigurationPath);
         }
-        if (path.toLowerCase().startsWith("hdfs:")) {
-            return new HdfsResource(path);
+
+        _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
+        if (Strings.isNullOrEmpty(_analysisJobXml)) {
+            throw new IllegalArgumentException("Failed to read content from job file: " + analysisJobXmlPath);
         }
-        return new FileResource(path);
+
+        final String propertiesString = hdfsHelper.readFile(customPropertiesPath);
+        if (propertiesString == null) {
+            _customProperties = Collections.emptyMap();
+        } else {
+            // this is a pretty ugly way to go back to the bytes to read the
+            // properties - but works and is quick
+            _customProperties = new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString
+                    .getBytes()));
+        }
+        validateCustomProperties();
     }
 
-    private String readFile(String path) {
-        final Resource resource = createResource(path);
-        assert resource != null;
-        return resource.read(new Func<InputStream, String>() {
-            @Override
-            public String eval(InputStream in) {
-                return FileHelper.readInputStreamAsString(in, "UTF-8");
-            }
-        });
+    public SparkJobContext(final String jobName, final String dataCleanerConfiguration, final String analysisJobXml,
+            final Map<String, String> customProperties) {
+        _jobName = jobName;
+        _customProperties = customProperties;
+        _configurationXml = dataCleanerConfiguration;
+        _analysisJobXml = analysisJobXml;
+        validateCustomProperties();
+    }
+
+    private void validateCustomProperties() {
+        if (isResultEnabled()) {
+            // ensure parsability of result path
+            getResultPath();
+        }
     }
 
     public DataCleanerConfiguration getConfiguration() {
@@ -116,6 +126,10 @@ public class SparkJobContext implements Serializable {
         return _dataCleanerConfiguration;
     }
 
+    public String getJobName() {
+        return _jobName;
+    }
+
     private InputStream createInputStream(String fileContents) {
         try {
             final byte[] bytes = fileContents.getBytes("UTF-8");
@@ -125,20 +139,15 @@ public class SparkJobContext implements Serializable {
         }
     }
 
-    private Map<String, String> readCustomProperties(String propertiesPath) {
-        final Resource propertiesResource = createResource(propertiesPath);
-        if (propertiesResource != null && propertiesResource.isExists()) {
-            return propertiesResource.read(new InputStreamToPropertiesMapFunc());
-        }
-        return Collections.emptyMap();
-    }
-
     public AnalysisJob getAnalysisJob() {
         return getAnalysisJobBuilder().toAnalysisJob();
     }
 
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         if (_analysisJobBuilder == null) {
+            // set HDFS as default scheme to avoid file resources
+            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, "hdfs");
+
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);
             _analysisJobBuilder = jobReader.create(createInputStream(_analysisJobXml), _customProperties);
@@ -159,8 +168,8 @@ public class SparkJobContext implements Serializable {
             AtomicInteger currentComponentIndex) {
         final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
         for (ComponentBuilder componentBuilder : componentBuilders) {
-            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
-                    Integer.toString(currentComponentIndex.getAndIncrement()));
+            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX, Integer.toString(
+                    currentComponentIndex.getAndIncrement()));
         }
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
@@ -218,8 +227,12 @@ public class SparkJobContext implements Serializable {
      *
      * @return
      */
-    public String getResultPath() {
-        return _customProperties.get(PROPERTY_RESULT_PATH);
+    public URI getResultPath() {
+        final String str = _customProperties.get(PROPERTY_RESULT_PATH);
+        if (Strings.isNullOrEmpty(str)) {
+            return null;
+        }
+        return URI.create(str);
     }
 
     public boolean isResultEnabled() {
@@ -232,16 +245,19 @@ public class SparkJobContext implements Serializable {
      *
      * @return
      */
-    public String getAnalysisJobName() {
-        final int lastIndexOfSlash = _analysisJobXmlPath.lastIndexOf("/");
-        final int lastIndexOfFileExtension = _analysisJobXmlPath.lastIndexOf(".analysis.xml");
-        final String jobName = _analysisJobXmlPath.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
+    private static String getAnalysisJobName(URI uri) {
+        final String filename = uri.getPath();
+        final int lastIndexOfSlash = filename.lastIndexOf("/");
+        final int lastIndexOfFileExtension = filename.lastIndexOf(".analysis.xml");
+        final String jobName = filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
         return jobName;
     }
 
     /**
      * Adds a listener for the job life cycle.
-     * @param sparkJobLifeCycleListener The listener to add. Must be serializable.
+     * 
+     * @param sparkJobLifeCycleListener
+     *            The listener to add. Must be serializable.
      */
     public void addSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.add(sparkJobLifeCycleListener);
@@ -249,7 +265,8 @@ public class SparkJobContext implements Serializable {
 
     /**
      * Removes a life cycle listener. Please note that this will _not_ work
-     * globally after job start. If you remove it on a node, it will only be removed on that node.
+     * globally after job start. If you remove it on a node, it will only be
+     * removed on that node.
      */
     public void removeSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);

@@ -39,6 +39,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -65,10 +66,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformer.class);
     private static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
-    private String baseUrl;
+    private final RemoteServerData serverData;
     private String componentDisplayName;
-    private String username;
-    private String password;
 
     private OutputColumns lastOutputColumns;
     private CreateInput lastCreateInput;
@@ -76,10 +75,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
-    public RemoteTransformer(String baseUrl, String componentDisplayName, String username, String password) {
-        this.baseUrl = baseUrl;
-        this.username = username;
-        this.password = password;
+    public RemoteTransformer(RemoteServerData serverData, String componentDisplayName) {
+        this.serverData = serverData;
         this.componentDisplayName = componentDisplayName;
     }
 
@@ -87,7 +84,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     public void initClient() throws RemoteComponentException {
         try {
             logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
-            client = new ComponentRESTClient(baseUrl, username, password);
+            client = new ComponentRESTClient(serverData.getUrl(), serverData.getUsername(), serverData.getPassword());
         } catch (Exception e) {
             throw new RemoteComponentException(
                     "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());

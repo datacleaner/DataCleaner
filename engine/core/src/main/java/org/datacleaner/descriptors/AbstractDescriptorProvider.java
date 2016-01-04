@@ -19,7 +19,12 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.datacleaner.api.Analyzer;
@@ -36,21 +41,7 @@ import org.datacleaner.api.Transformer;
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     private final boolean _autoDiscover;
-
-    /**
-     * Creates a weak hashset. See
-     * {@link Collections#newSetFromMap(java.util.Map)}
-     */
-    private Set<ComponentDescriptorsUpdatedListener> _componentDescriptorsUpdatedListeners = Collections
-            .newSetFromMap(new WeakHashMap<ComponentDescriptorsUpdatedListener, Boolean>());
-
-    /**
-     * @deprecated use {@link #AbstractDescriptorProvider(boolean)} instead.
-     */
-    @Deprecated
-    public AbstractDescriptorProvider() {
-        this(false);
-    }
+    private final Collection<DescriptorProviderListener> _listeners;
 
     /**
      * Creates an {@link AbstractDescriptorProvider}
@@ -64,7 +55,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      */
     public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
         _autoDiscover = autoLoadDescriptorClasses;
-
+        _listeners = new ArrayList<>();
     }
 
     @Override
@@ -74,7 +65,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> analyzerBeanClass) {
+    public final <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(
+            Class<A> analyzerBeanClass) {
         for (AnalyzerDescriptor<?> descriptor : getAnalyzerDescriptors()) {
             if (descriptor.getComponentClass() == analyzerBeanClass) {
                 return (AnalyzerDescriptor<A>) descriptor;
@@ -160,7 +152,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    private <E extends ComponentDescriptor<?>> E getBeanDescriptorByDisplayName(String name, Collection<E> descriptors) {
+    private <E extends ComponentDescriptor<?>> E getBeanDescriptorByDisplayName(String name,
+            Collection<E> descriptors) {
         if (name == null) {
             return null;
         }
@@ -252,31 +245,30 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    protected void notifyComponentDescriptorsUpdatedListeners() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (_componentDescriptorsUpdatedListeners) {
-                    for (ComponentDescriptorsUpdatedListener listener : _componentDescriptorsUpdatedListeners) {
-                        listener.componentDescriptorsUpdated();
-                    }
-                }
+    protected void notifyListeners() {
+        synchronized (_listeners) {
+            for (DescriptorProviderListener listener : _listeners) {
+                listener.onDescriptorsUpdated(this);
             }
-        }).start();
-    }
-
-    @Override
-    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
-        synchronized (_componentDescriptorsUpdatedListeners) {
-            _componentDescriptorsUpdatedListeners.add(listener);
         }
     }
 
     @Override
-    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
-        synchronized (_componentDescriptorsUpdatedListeners) {
-            _componentDescriptorsUpdatedListeners.remove(listener);
+    public void addListener(DescriptorProviderListener listener) {
+        synchronized (_listeners) {
+            _listeners.add(listener);
         }
+    }
+
+    @Override
+    public void removeListener(DescriptorProviderListener listener) {
+        synchronized (_listeners) {
+            _listeners.remove(listener);
+        }
+    }
+
+    public Collection<DescriptorProviderStatus> getStatus() {
+        return Collections.emptySet();
     }
 
     @Override

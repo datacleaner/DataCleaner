@@ -20,7 +20,6 @@
 package org.datacleaner.configuration;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +28,8 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
-import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
-import org.datacleaner.util.convert.FileResourceTypeHandler;
-import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.datacleaner.util.convert.UrlResourceTypeHandler;
-import org.datacleaner.util.convert.VfsResourceTypeHandler;
 
 /**
  * Defines a default implementation of the
@@ -102,7 +96,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     @Override
     public Resource createResource(String resourceUrl) {
         final ResourceConverter converter = new ResourceConverter(getResourceTypeHandlers(),
-                ResourceConverter.DEFAULT_DEFAULT_SCHEME);
+                ResourceConverter.getConfiguredDefaultScheme());
         final Resource resource = converter.fromString(Resource.class, resourceUrl);
         return resource;
     }
@@ -114,13 +108,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * @return
      */
     protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
-        final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
-        handlers.add(new FileResourceTypeHandler(getHomeFolder()));
-        handlers.add(new UrlResourceTypeHandler());
-        handlers.add(new HdfsResourceTypeHandler());
-        handlers.add(new ClasspathResourceTypeHandler());
-        handlers.add(new VfsResourceTypeHandler());
-        return handlers;
+        return ResourceConverter.createDefaultHandlers(getHomeFolder());
     }
 
     /**

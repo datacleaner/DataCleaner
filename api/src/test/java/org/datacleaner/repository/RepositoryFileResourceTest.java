@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.InMemoryResource;
+import org.apache.metamodel.util.Resource;
 
 public class RepositoryFileResourceTest extends TestCase {
 
@@ -113,6 +114,11 @@ public class RepositoryFileResourceTest extends TestCase {
                     return _resource.append();
                 }
                 return _resource.write();
+            }
+
+            @Override
+            public Resource toResource() {
+                throw new UnsupportedOperationException();
             }
         };
 

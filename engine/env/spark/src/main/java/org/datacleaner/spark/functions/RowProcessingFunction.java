@@ -20,6 +20,7 @@
 package org.datacleaner.spark.functions;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -55,6 +56,8 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.spark.NamedAnalyzerResult;
 import org.datacleaner.spark.SparkAnalysisRunner;
 import org.datacleaner.spark.SparkJobContext;
+import org.datacleaner.spark.utils.HdfsHelper;
+import org.datacleaner.util.HadoopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,8 +140,8 @@ public final class RowProcessingFunction implements
                     final Resource resource = resourceDatastore.getResource();
                     final Resource replacementResource = createReplacementResource(resource, partitionNumber);
                     if (replacementResource != null) {
-                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb,
-                                resourceDatastore, replacementResource);
+                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb, resourceDatastore,
+                                replacementResource);
                         if (replacementDatastore != null) {
                             cb.setConfiguredProperty(targetDatastoreProperty, replacementDatastore);
                         }
@@ -181,10 +184,10 @@ public final class RowProcessingFunction implements
      */
     private Resource createReplacementResource(final Resource resource, int partitionNumber) {
         final String formattedPartitionNumber = String.format("%05d", partitionNumber);
-        if (resource instanceof HdfsResource) {
-            final HdfsResource hdfsResource = (HdfsResource) resource;
-            final HdfsResource replacementResource = new HdfsResource(hdfsResource.getQualifiedPath() + "/part-"
-                    + formattedPartitionNumber);
+        if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
+            final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
+            final URI uri = URI.create(path);
+            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(uri);
             return replacementResource;
         }
         if (resource instanceof FileResource) {
@@ -247,7 +250,7 @@ public final class RowProcessingFunction implements
             consumeRowHandler.consumeRow(inputRow);
             logger.debug("Consumed row no. {}", inputRow.getId());
         }
-        
+
         logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
@@ -293,7 +296,8 @@ public final class RowProcessingFunction implements
             for (ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
                 List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
                         .getConsumers();
-                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(outputDataStreamConsumers);
+                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
+                        outputDataStreamConsumers);
                 analyzerResults.addAll(outputDataStreamsAnalyzerResults);
             }
         }

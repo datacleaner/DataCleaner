@@ -180,6 +180,11 @@ public interface DescriptorProvider {
             Class<? extends RenderingFormat<?>> renderingFormat);
 
     /**
+     * Notify all listenene
+     */
+    public void notifyListeners();
+
+    /**
      * Add a {@link DescriptorProviderListener} that will be notified
      * if the list of descriptors change.
      * 
@@ -195,10 +200,15 @@ public interface DescriptorProvider {
     public void removeListener(DescriptorProviderListener listener);
 
     /**
-     * Get information about providers. It is used in {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
+     * Get information about providers.
      *
-     * Don't use that. If you want to be notified, please add the listener to {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
      * @return
      */
-    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap();
+
+    /**
+     * Check status od descriptor provider.
+     * Don't use that. If you want to be notified, please add the listener to this object.
+     */
+     public void checkStatus();
 }

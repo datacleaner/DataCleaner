@@ -39,7 +39,6 @@ import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.DescriptorProviderStateNotifier;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProviderStatus;
@@ -245,10 +244,9 @@ public class JobGraphTransformers {
                 Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
 
                 if (descriptor instanceof RemoteTransformerDescriptorImpl) {
-                    DescriptorProviderStateNotifier notifier = componentBuilder.getAnalysisJobBuilder().getConfiguration().getEnvironment().getDescriptorProviderStateNotifier();
-                    Map<DescriptorProvider, DescriptorProviderStatus> descriptorProviderStateMap = notifier.getStateMap();
-                    if (descriptorProviderStateMap != null) {
-                        DescriptorProviderStatus state = descriptorProviderStateMap.get(((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider());
+                    Map<DescriptorProvider, DescriptorProviderStatus> actualDescriptorProviderStatusMap  = componentBuilder.getAnalysisJobBuilder().getConfiguration().getEnvironment().getDescriptorProvider().getActualStatusMap();
+                    if (actualDescriptorProviderStatusMap != null) {
+                        DescriptorProviderStatus state = actualDescriptorProviderStatusMap.get(((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider());
                         if (state != null && state.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
                             descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
                         }

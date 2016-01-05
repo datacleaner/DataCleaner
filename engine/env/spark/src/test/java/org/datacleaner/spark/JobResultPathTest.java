@@ -45,7 +45,6 @@ public class JobResultPathTest {
     @Rule
     public TestName name = new TestName();
 
-    @Ignore
     @Test
     public void testResultPathAbolutePathSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
@@ -112,7 +111,6 @@ public class JobResultPathTest {
         }
     }
 
-    @Ignore
     @Test
     public void testResultPathNameNoVariableSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());

@@ -72,6 +72,7 @@ import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderListener;
 import org.datacleaner.descriptors.DescriptorProviderStatus;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
@@ -256,10 +257,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-    private class DescriptorProviderStateListenerImpl implements DescriptorProviderStateListener{
+    private class DescriptorProviderListenerImpl implements DescriptorProviderListener {
+        public void setup(DescriptorProvider descriptorProvider) {
+            _descriptorProviderStateMap = descriptorProvider.getActualStatusMap();
+            descriptorProvider.addListener(this);
+        }
+
         @Override
-        public void notify(Map<DescriptorProvider, DescriptorProviderStatus> descriptorProviderStateMap) {
-            _descriptorProviderStateMap = descriptorProviderStateMap;
+        public void onDescriptorsUpdated(final DescriptorProvider descriptorProvider) {
+            _descriptorProviderStateMap.putAll(descriptorProvider.getActualStatusMap());
             updateStatusLabel();
             _graph.getPanel().updateUI();
         }
@@ -305,7 +311,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
-    private final DescriptorProviderStateListener _descriptorProviderStateListener = new DescriptorProviderStateListenerImpl();
+    private final DescriptorProviderListenerImpl _descriptorProviderListener = new DescriptorProviderListenerImpl();
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -385,7 +391,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
 
-        _configuration.getEnvironment().getDescriptorProviderStateNotifier().addListener(_descriptorProviderStateListener);
+        DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+        _descriptorProviderListener.setup(descriptorProvider);
     }
 
     @Override
@@ -671,7 +678,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private void cleanupForWindowClose() {
         _analysisJobChangeListener.onDeactivation(_analysisJobBuilder);
-        _configuration.getEnvironment().getDescriptorProviderStateNotifier().removeListener(_descriptorProviderStateListener);
         _analysisJobBuilder.close();
         if (_datastoreConnection != null) {
             _datastoreConnection.close();

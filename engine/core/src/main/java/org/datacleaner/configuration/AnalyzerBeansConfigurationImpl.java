@@ -205,11 +205,6 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
-    public DescriptorProviderStateNotifier getDescriptorProviderStateNotifier() {
-        return _environment.getDescriptorProviderStateNotifier();
-    }
-
-    @Override
     public DataCleanerEnvironment getEnvironment() {
         return _environment;
     }

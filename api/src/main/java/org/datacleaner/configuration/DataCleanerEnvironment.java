@@ -61,10 +61,4 @@ public interface DataCleanerEnvironment {
      * @return the injection manager factory defined in this configuration
      */
     public InjectionManagerFactory getInjectionManagerFactory();
-
-    /**
-     * @see DescriptorProviderStateNotifier
-     * @return instance of notifier
-     */
-    public DescriptorProviderStateNotifier getDescriptorProviderStateNotifier();
 }

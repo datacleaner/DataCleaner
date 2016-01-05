@@ -127,6 +127,11 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
+    public void notifyListeners() {
+        getDelegate().notifyListeners();
+    }
+
+    @Override
     public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String arg0) {
         return getDelegate().getTransformerDescriptorByDisplayName(arg0);
     }
@@ -168,7 +173,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
-        return getDelegate().getProviderStatusMap();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap() {
+        return getDelegate().getActualStatusMap();
+    }
+
+    @Override
+    public void checkStatus() {
+        getDelegate().checkStatus();
     }
 }

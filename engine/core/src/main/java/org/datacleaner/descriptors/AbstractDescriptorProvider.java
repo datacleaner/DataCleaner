@@ -247,7 +247,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    protected void notifyListeners() {
+    @Override
+    public void notifyListeners() {
         synchronized (_listeners) {
             for (DescriptorProviderListener listener : _listeners) {
                 listener.onDescriptorsUpdated(this);
@@ -274,7 +275,12 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap() {
         return new HashMap<>();
+    }
+
+    @Override
+    public void checkStatus() {
+        //nothing.
     }
 }

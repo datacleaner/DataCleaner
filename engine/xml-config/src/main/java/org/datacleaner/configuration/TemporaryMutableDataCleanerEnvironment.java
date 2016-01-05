@@ -35,7 +35,6 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
     private DescriptorProvider _descriptorProvider;
     private TaskRunner _taskRunner;
     private final RemoteServerConfiguration _remoteServerConfiguration;
-    private final DescriptorProviderStateNotifier _descriptorProviderStateNotifier;
 
     public TemporaryMutableDataCleanerEnvironment(DataCleanerEnvironment baseEnvironment) {
         _injectionManagerFactory = baseEnvironment.getInjectionManagerFactory();
@@ -43,7 +42,6 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
         _descriptorProvider = baseEnvironment.getDescriptorProvider();
         _taskRunner = baseEnvironment.getTaskRunner();
         _remoteServerConfiguration = baseEnvironment.getRemoteServerConfiguration();
-        _descriptorProviderStateNotifier = baseEnvironment.getDescriptorProviderStateNotifier();
     }
 
     @Override
@@ -69,11 +67,6 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
     @Override
     public InjectionManagerFactory getInjectionManagerFactory() {
         return _injectionManagerFactory;
-    }
-
-    @Override
-    public DescriptorProviderStateNotifier getDescriptorProviderStateNotifier() {
-        return _descriptorProviderStateNotifier;
     }
 
     public void setDescriptorProvider(DescriptorProvider descriptorProvider) {

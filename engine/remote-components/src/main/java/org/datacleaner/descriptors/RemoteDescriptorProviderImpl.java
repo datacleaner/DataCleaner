@@ -52,6 +52,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
+    private DescriptorProviderStatus actualStatus;
 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
@@ -124,15 +125,23 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
-        Map<DescriptorProvider, DescriptorProviderStatus> stateMap = new HashMap<>();
-        if (!isServerUp()) {
+    public void checkStatus() {
+        if (isServerUp()) {
+            actualStatus = null;
+        } else {
             DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
                     DescriptorProviderStatus.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
                     + "' is not available at the moment. ");
-            stateMap.put(this, serverDownState);
+            actualStatus = serverDownState;
         }
+    }
 
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap() {
+        Map<DescriptorProvider, DescriptorProviderStatus> stateMap = new HashMap<>();
+        if (actualStatus != null) {
+            stateMap.put(this, actualStatus);
+        }
         return stateMap;
     }
 

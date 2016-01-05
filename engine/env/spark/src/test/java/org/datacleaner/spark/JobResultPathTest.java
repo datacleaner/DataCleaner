@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.net.URI;
 
 import org.apache.metamodel.util.Resource;
@@ -58,8 +59,8 @@ public class JobResultPathTest {
             assertEquals("file:///target/results/myresult.analysis.result.dat", sparkJobContext.getResultPath()
                     .toString());
             assertEquals("vanilla-job", sparkJobContext.getJobName());
-            assertTrue(ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext).getQualifiedPath().endsWith(
-                    "results/myresult.analysis.result.dat"));
+            assertTrue(ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext).getQualifiedPath()
+                    .endsWith("results" + File.separator + "myresult.analysis.result.dat"));
         } finally {
             sparkContext.close();
         }
@@ -126,9 +127,8 @@ public class JobResultPathTest {
             final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
             final int lastIndexOfDash = resultResource.getQualifiedPath().lastIndexOf("-");
             assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
-            assertEquals("/datacleaner/results/vanilla-job", resultResource.getQualifiedPath().substring(0,
-                    lastIndexOfDash));
-
+            assertTrue(resultResource.getQualifiedPath().substring(0, lastIndexOfDash)
+                    .endsWith("datacleaner" + File.separator + "results" + File.separator + "vanilla-job"));
         } finally {
             sparkContext.close();
         }

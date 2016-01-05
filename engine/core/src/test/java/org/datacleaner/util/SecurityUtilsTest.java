@@ -22,6 +22,9 @@ package org.datacleaner.util;
 import junit.framework.TestCase;
 
 public class SecurityUtilsTest extends TestCase {
+    private static final String PLAIN_TEXT_VALUE = "my secret";
+    private static final String ENCODED_VALUE = "yK+2geb+XAdUYlWNuHMD6A==";
+    private static final String ENCODED_VALUE_WITH_PREFIX = SecurityUtils.PREFIX + ENCODED_VALUE;
 
     public void testNullValues() throws Exception {
         assertNull(SecurityUtils.encodePassword((char[]) null));
@@ -41,10 +44,21 @@ public class SecurityUtilsTest extends TestCase {
     }
 
     public void testEncodeAndDecode() throws Exception {
-        String encoded = SecurityUtils.encodePassword("my secret".toCharArray());
-        assertEquals("yK+2geb+XAdUYlWNuHMD6A==", encoded);
+        String encoded = SecurityUtils.encodePassword(PLAIN_TEXT_VALUE.toCharArray());
+        assertEquals(ENCODED_VALUE, encoded);
 
         String decoded = SecurityUtils.decodePassword(encoded);
-        assertEquals("my secret", decoded);
+        assertEquals(PLAIN_TEXT_VALUE, decoded);
+    }
+
+    public void testEncodeAndDecodeWithPrefix() throws Exception {
+        String encodedWithPrefix = SecurityUtils.encodePasswordWithPrefix(PLAIN_TEXT_VALUE);
+        assertEquals(ENCODED_VALUE_WITH_PREFIX, encodedWithPrefix);
+
+        String decoded = SecurityUtils.decodePasswordWithPrefix(encodedWithPrefix);
+        assertEquals(PLAIN_TEXT_VALUE, decoded);
+
+        decoded = SecurityUtils.decodePasswordWithPrefix(PLAIN_TEXT_VALUE);
+        assertEquals(PLAIN_TEXT_VALUE, decoded);
     }
 }

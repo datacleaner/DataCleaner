@@ -21,6 +21,7 @@ package org.datacleaner.spark;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,8 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.result.ReducedSingleValueDistributionResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
+import org.datacleaner.util.SystemProperties;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -53,19 +56,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class SparkAnalysisRunnerTest {
+
     private static class TestSparkJobLifeCycleListener implements SparkJobLifeCycleListener {
+        private static final long serialVersionUID = 1L;
         final AtomicBoolean _jobStartCalled = new AtomicBoolean();
         final AtomicBoolean _jobEndCalled = new AtomicBoolean();
 
         @Override
         public void onPartitionProcessingStart() {
-            // Unfortunately, serialization only goes one way, so we can't assert on this.
+            // Unfortunately, serialization only goes one way, so we can't
+            // assert on this.
             System.out.println("Node start");
         }
 
         @Override
         public void onPartitionProcessingEnd() {
-            // Unfortunately, serialization only goes one way, so we can't assert on this.
+            // Unfortunately, serialization only goes one way, so we can't
+            // assert on this.
             System.out.println("Node end");
         }
 
@@ -81,14 +88,20 @@ public class SparkAnalysisRunnerTest {
     }
 
     private static final int MIN_PARTITIONS_MULTIPLE = 4;
+
     @Rule
     public TestName testName = new TestName();
 
+    @BeforeClass
+    public static void init() {
+        // use local filesystem as default during tests
+        System.setProperty(SystemProperties.DEFAULT_RESOURCE_SCHEME, "file");
+    }
+
     @Test
     public void testVanillaScenario() throws Exception {
-        final AnalysisResultFuture result =
-                runAnalysisJob("DCTest - " + getName(), "src/test/resources/vanilla-job.analysis.xml",
-                        "vanilla-job", false);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
+                "src/test/resources/vanilla-job.analysis.xml"), "vanilla-job", false);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -99,8 +112,8 @@ public class SparkAnalysisRunnerTest {
         assertEquals(2, results.size());
 
         final StringAnalyzerResult stringAnalyzerResult = result.getResults(StringAnalyzerResult.class).get(0);
-        assertEquals("[MetaModelInputColumn[resources.person_names.txt.company]]",
-                Arrays.toString(stringAnalyzerResult.getColumns()));
+        assertEquals("[MetaModelInputColumn[resources.person_names.txt.company]]", Arrays.toString(stringAnalyzerResult
+                .getColumns()));
 
         final int rowCount = stringAnalyzerResult.getRowCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, rowCount);
@@ -142,12 +155,12 @@ public class SparkAnalysisRunnerTest {
 
             final SparkJobContext sparkJobContext;
             if (saveResult) {
-                sparkJobContext = new SparkJobContext(
-                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", null, sparkContext.hadoopConfiguration());
+                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"), URI.create(
+                        "src/test/resources/write-job.analysis.xml"), null, sparkContext);
             } else {
-                sparkJobContext = new SparkJobContext(
-                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml",
-                        "src/test/resources/jobProperties/noResult.properties", sparkContext.hadoopConfiguration());
+                sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"), URI.create(
+                        "src/test/resources/write-job.analysis.xml"), URI.create(
+                                "src/test/resources/jobProperties/noResult.properties"), sparkContext);
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
@@ -187,8 +200,8 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testOutputDataStreamsScenario() throws Exception {
-        final AnalysisResultFuture result = runAnalysisJob("DCTest - testOutputDataStreamsScenario",
-                "src/test/resources/melon-job.analysis.xml", "melon-job", false);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testOutputDataStreamsScenario", URI.create(
+                "src/test/resources/melon-job.analysis.xml"), "melon-job", false);
 
         final List<AnalyzerResult> results = result.getResults();
         assertEquals(3, results.size());
@@ -215,8 +228,8 @@ public class SparkAnalysisRunnerTest {
     public void testOutputDataStreamsNonDistributableScenario() throws Exception {
         final AnalysisResultFuture result;
 
-        result = runAnalysisJob("DCTest - testOutputDataStreamsNonDistributableScenario",
-                "src/test/resources/non-dist-melon-job.analysis.xml", "non-dist-melon-job", true);
+        result = runAnalysisJob("DCTest - testOutputDataStreamsNonDistributableScenario", URI.create(
+                "src/test/resources/non-dist-melon-job.analysis.xml"), "non-dist-melon-job", true);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -248,9 +261,8 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testValueDistributionReducer() throws Exception {
-        final AnalysisResultFuture result =
-                runAnalysisJob("DCTest - testValueDistributionReducer",
-                        "src/test/resources/distributable-value-dist.analysis.xml", "distributable-value-dist", true);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testValueDistributionReducer", URI.create(
+                "src/test/resources/distributable-value-dist.analysis.xml"), "distributable-value-dist", true);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -269,10 +281,9 @@ public class SparkAnalysisRunnerTest {
 
     @Test
     public void testGroupedValueDistributionReducer() throws Exception {
-        final AnalysisResultFuture result =
-                runAnalysisJob("DCTest - testGroupedValueDistributionReducer",
-                        "src/test/resources/distributable-grouped-value-dist.analysis.xml",
-                        "distributable-grouped-value-dist", true);
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - testGroupedValueDistributionReducer", URI.create(
+                "src/test/resources/distributable-grouped-value-dist.analysis.xml"), "distributable-grouped-value-dist",
+                true);
 
         if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
@@ -284,8 +295,7 @@ public class SparkAnalysisRunnerTest {
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
                 ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
-        GroupedValueDistributionResult completeGroupedResult =
-                (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
+        GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
         Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
         ReducedSingleValueDistributionResult group1 = (ReducedSingleValueDistributionResult) iterator.next();
         ReducedSingleValueDistributionResult group2 = (ReducedSingleValueDistributionResult) iterator.next();
@@ -302,8 +312,8 @@ public class SparkAnalysisRunnerTest {
     @Test
     public void testJsonDatastore() throws Exception {
         final String appName = "DCTest - " + getName();
-        final AnalysisResultFuture result =
-                runAnalysisJob(appName, "src/test/resources/json-job.analysis.xml", "json-job", false);
+        final AnalysisResultFuture result = runAnalysisJob(appName, URI.create(
+                "src/test/resources/json-job.analysis.xml"), "json-job", false);
 
         final List<AnalyzerResult> results = result.getResults();
         assertNotNull(results);
@@ -321,7 +331,7 @@ public class SparkAnalysisRunnerTest {
     @Test
     public void testLifeCycleListener() throws Exception {
         final String appName = "DCTest - " + getName();
-        final String analysisJobXmlPath = "src/test/resources/json-job.analysis.xml";
+        final URI analysisJobXmlPath = URI.create("src/test/resources/json-job.analysis.xml");
         final String expectedAnalysisJobName = "json-job";
         final TestSparkJobLifeCycleListener sparkJobLifeCycleListener = new TestSparkJobLifeCycleListener();
 
@@ -344,21 +354,19 @@ public class SparkAnalysisRunnerTest {
         return testName.getMethodName();
     }
 
-    private AnalysisResultFuture runAnalysisJob(final String appName, final String analysisJobXmlPath,
+    private AnalysisResultFuture runAnalysisJob(final String appName, final URI analysisJobXmlPath,
             final String expectedAnalysisJobName, boolean useMinPartitions) throws Exception {
         return runAnalysisJob(appName, analysisJobXmlPath, expectedAnalysisJobName, useMinPartitions, null);
     }
 
-    private AnalysisResultFuture runAnalysisJob(
-            final String appName, final String analysisJobXmlPath,
+    private AnalysisResultFuture runAnalysisJob(final String appName, final URI analysisJobXmlPath,
             final String expectedAnalysisJobName, boolean useMinPartitions,
             final SparkJobLifeCycleListener sparkJobLifeCycleListener) throws Exception {
         final AnalysisResultFuture result;
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName(
-                appName);
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName(appName);
         try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    analysisJobXmlPath, null, sparkContext.hadoopConfiguration());
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    analysisJobXmlPath, null, sparkContext);
             if (sparkJobLifeCycleListener != null) {
                 sparkJobContext.addSparkJobLifeCycleListener(sparkJobLifeCycleListener);
             }

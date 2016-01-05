@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -41,6 +39,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicNameValuePair;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -103,25 +102,13 @@ public final class HttpXmlUtils {
                 throw new InvalidHttpResponseException(url, response);
             }
             InputStream inputStream = response.getEntity().getContent();
-            Document document = createDocumentBuilder().parse(inputStream);
+            Document document = XmlUtils.createDocumentBuilder().parse(inputStream);
             return (Element) document.getFirstChild();
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
             throw new IllegalStateException("Could not get root XML node of url=" + url, e);
-        }
-    }
-
-    public static DocumentBuilder createDocumentBuilder() {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setIgnoringComments(true);
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            return db;
-        } catch (Exception e) {
-            // This shouldn't be possible
-            throw new RuntimeException(e);
         }
     }
 

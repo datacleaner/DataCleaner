@@ -1,5 +1,3 @@
-package org.datacleaner.spark;
-
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -19,38 +17,50 @@ package org.datacleaner.spark;
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-import java.net.URISyntaxException;
+package org.datacleaner.spark;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URI;
+
+import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.spark.utils.ResultFilePathUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * This class tests the path of the result specified in the job properties file
  * or otherwise.
  */
-public class JobResultPathTest extends TestCase {
+public class JobResultPathTest {
+
+    @Rule
+    public TestName name = new TestName();
 
     @Test
     public void testResultPathAbolutePathSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobAbsolutePath.properties", sparkContext.hadoopConfiguration());
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
+                            "src/test/resources/jobProperties/jobAbsolutePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("hdfs://bigdatavm:9000/target/results/myresult.analysis.result.dat",
-                    sparkJobContext.getResultPath());
+            assertEquals("file:///target/results/myresult.analysis.result.dat", sparkJobContext.getResultPath()
+                    .toString());
             assertEquals("vanilla-job", sparkJobContext.getJobName());
-            assertEquals("hdfs://bigdatavm:9000/target/results/myresult.analysis.result.dat",
-                    ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext));
+            assertTrue(ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext).getQualifiedPath()
+                    .endsWith("results" + File.separator + "myresult.analysis.result.dat"));
         } finally {
             sparkContext.close();
         }
@@ -58,21 +68,21 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathSpecifiedEmptyPath() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobEmptyPath.properties", sparkContext.hadoopConfiguration());
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
+                            "src/test/resources/jobProperties/jobEmptyPath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("", sparkJobContext.getResultPath());
+            assertEquals(null, sparkJobContext.getResultPath());
             final String analysisJobName = sparkJobContext.getJobName();
             assertEquals("vanilla-job", analysisJobName);
 
-            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-            assertTrue(resultJobFilePath.contains(analysisJobName));
+            final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
+            assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
 
         } finally {
             sparkContext.close();
@@ -81,49 +91,21 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathNameJustFolderSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobRelativePath.properties", sparkContext.hadoopConfiguration());
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
+                            "src/test/resources/jobProperties/jobRelativePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("/target/results", sparkJobContext.getResultPath());
+            assertEquals("target", sparkJobContext.getResultPath().toString());
             final String analysisJobName = sparkJobContext.getJobName();
             assertEquals("vanilla-job", analysisJobName);
 
-            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-            final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
-            assertTrue(resultJobFilePath.contains(analysisJobName));
-            assertEquals("hdfs://target/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
-
-        } finally {
-            sparkContext.close();
-        }
-    }
-
-    @Test
-    public void testResultPathNameJustANameSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
-
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml",
-                    "src/test/resources/jobProperties/jobSimpleNamePath.properties", sparkContext.hadoopConfiguration());
-            final AnalysisJob job = sparkJobContext.getAnalysisJob();
-            assertNotNull(job);
-            assertEquals("myresult", sparkJobContext.getResultPath());
-            final String analysisJobName = sparkJobContext.getJobName();
-            assertEquals("vanilla-job", analysisJobName);
-
-            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-            final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
-            assertTrue(resultJobFilePath.contains(analysisJobName));
-            assertEquals("hdfs://myresult/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
-
+            final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
+            assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
         } finally {
             sparkContext.close();
         }
@@ -131,36 +113,24 @@ public class JobResultPathTest extends TestCase {
 
     @Test
     public void testResultPathNameNoVariableSpecified() throws Exception {
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + getName());
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    "src/test/resources/vanilla-job.analysis.xml", null, sparkContext.hadoopConfiguration());
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"), null, sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertNull(sparkJobContext.getResultPath());
             final String analysisJobName = sparkJobContext.getJobName();
             assertEquals("vanilla-job", analysisJobName);
-            final String resultJobFilePath = ResultFilePathUtils.getResultFilePath(sparkContext, sparkJobContext);
-            final int lastIndexOfDash = resultJobFilePath.lastIndexOf("-");
-            assertTrue(resultJobFilePath.contains(analysisJobName));
-            assertEquals("hdfs://datacleaner/results/vanilla-job", resultJobFilePath.substring(0, lastIndexOfDash));
-
+            final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
+            final int lastIndexOfDash = resultResource.getQualifiedPath().lastIndexOf("-");
+            assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
+            assertTrue(resultResource.getQualifiedPath().substring(0, lastIndexOfDash)
+                    .endsWith("datacleaner" + File.separator + "results" + File.separator + "vanilla-job"));
         } finally {
             sparkContext.close();
         }
     }
-
-    @Test
-    public void testCreatePath() throws URISyntaxException {
-        final String newPath1 = ResultFilePathUtils.createPath("hdfs://bigdatavm:9000",
-                "mypath/myfile.analysis.result.dat");
-        assertEquals("hdfs://bigdatavm:9000/mypath/myfile.analysis.result.dat", newPath1);
-
-        final String newPath2 = ResultFilePathUtils.createPath("hdfs://bigdatavm:9000",
-                "/mypath/myfile.analysis.result.dat");
-        assertEquals("hdfs://bigdatavm:9000/mypath/myfile.analysis.result.dat", newPath2);
-    }
-
 }

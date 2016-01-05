@@ -24,7 +24,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.text.NumberFormat;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -34,12 +33,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -60,10 +59,15 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
+import org.datacleaner.widgets.options.MemoryOptionsPanel;
+import org.datacleaner.widgets.options.RemoteComponentsOptionsPanel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+/**
+ * The "Options" dialog of DataCleaner
+ */
 public class OptionsDialog extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
@@ -72,7 +76,6 @@ public class OptionsDialog extends AbstractWindow {
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
     private final DataCleanerConfiguration _configuration;
-    private Timer _updateMemoryTimer;
 
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
@@ -90,19 +93,20 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
+        _tabbedPane.addTab("Remote components",
+                imageManager.getImageIcon("images/menu/remote-components.png", IconUtils.ICON_SIZE_TAB),
+                new RemoteComponentsOptionsPanel(configuration));
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
-                getMemoryTab());
+                new MemoryOptionsPanel());
         _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
 
-        _tabbedPane.setUnclosableTab(0);
-        _tabbedPane.setUnclosableTab(1);
-        _tabbedPane.setUnclosableTab(2);
-        _tabbedPane.setUnclosableTab(3);
-        _tabbedPane.setUnclosableTab(4);
-        _tabbedPane.setUnclosableTab(5);
+        final int tabCount = _tabbedPane.getTabCount();
+        for (int i = 0; i < tabCount; i++) {
+            _tabbedPane.setUnclosableTab(i);
+        }
     }
 
     public void selectDatabaseDriversTab() {
@@ -288,11 +292,10 @@ public class OptionsDialog extends AbstractWindow {
         TaskRunner taskRunner = _configuration.getEnvironment().getTaskRunner();
         WidgetUtils.addToGridBag(new JLabel("Task runner type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(taskRunner.getClass().getSimpleName()), panel, 1, row);
-        WidgetUtils
-                .addToGridBag(
-                        new HelpIcon(
-                                "The task runner is used to determine the execution strategy of Analysis jobs. The most common strategy for this is to use a multithreaded task runner which will spawn several threads to enable concurrent execution of jobs."),
-                        panel, 2, row);
+        WidgetUtils.addToGridBag(
+                new HelpIcon(
+                        "The task runner is used to determine the execution strategy of Analysis jobs. The most common strategy for this is to use a multithreaded task runner which will spawn several threads to enable concurrent execution of jobs."),
+                panel, 2, row);
 
         if (taskRunner instanceof MultiThreadedTaskRunner) {
             int numThreads = ((MultiThreadedTaskRunner) taskRunner).getNumThreads();
@@ -308,86 +311,20 @@ public class OptionsDialog extends AbstractWindow {
         StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
         WidgetUtils.addToGridBag(new JLabel("Storage provider type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(storageProvider.getClass().getSimpleName()), panel, 1, row);
-        WidgetUtils
-                .addToGridBag(
-                        new HelpIcon(
-                                "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
-                        panel, 2, row);
+        WidgetUtils.addToGridBag(
+                new HelpIcon(
+                        "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
+                panel, 2, row);
 
         row++;
-        DCLabel descriptionLabel = DCLabel
-                .darkMultiLine("Performance options are currently not configurable while you're running the application. "
+        DCLabel descriptionLabel = DCLabel.darkMultiLine(
+                "Performance options are currently not configurable while you're running the application. "
                         + "You need to edit the applications configuration file for this. The configuration file is named "
-                        + "<b>conf.xml</b> and is located in the root of the folder where you've installed DataCleaner.");
+                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME + "</b> and is located in the root of the folder where "
+                        + "you've installed DataCleaner.");
         descriptionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
         WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 2, 1);
         return panel;
-    }
-
-    private DCPanel getMemoryTab() {
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-
-        final JLabel maxMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
-        final JLabel totalMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
-        final JLabel usedMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
-        final JLabel freeMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
-
-        WidgetUtils.addToGridBag(new JLabel("Max available memory:"), panel, 0, 0);
-        WidgetUtils.addToGridBag(maxMemoryLabel, panel, 1, 0);
-        WidgetUtils.addToGridBag(new JLabel("Allocated memory:"), panel, 0, 1);
-        WidgetUtils.addToGridBag(totalMemoryLabel, panel, 1, 1);
-        WidgetUtils.addToGridBag(new JLabel("Used memory:"), panel, 0, 2);
-        WidgetUtils.addToGridBag(usedMemoryLabel, panel, 1, 2);
-        WidgetUtils.addToGridBag(new JLabel("Free memory:"), panel, 0, 3);
-        WidgetUtils.addToGridBag(freeMemoryLabel, panel, 1, 3);
-
-        _updateMemoryTimer = new Timer(1000, new ActionListener() {
-            private final Runtime runtime = Runtime.getRuntime();
-            private final NumberFormat nf = NumberFormat.getIntegerInstance();
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                long totalMemory = runtime.totalMemory();
-                long freeMemory = runtime.freeMemory();
-                long maxMemory = runtime.maxMemory();
-                long usedMemory = totalMemory - freeMemory;
-
-                if (maxMemory == Long.MAX_VALUE) {
-                    maxMemoryLabel.setText("(no limit)");
-                } else {
-                    maxMemoryLabel.setText(nf.format(maxMemory / 1024) + " kb");
-                }
-                totalMemoryLabel.setText(nf.format(totalMemory / 1024) + " kb");
-                usedMemoryLabel.setText(nf.format(usedMemory / 1024) + " kb");
-                freeMemoryLabel.setText(nf.format(freeMemory / 1024) + " kb");
-            }
-        });
-        _updateMemoryTimer.setInitialDelay(0);
-        _updateMemoryTimer.start();
-
-        JButton button = WidgetFactory.createDefaultButton("Perform garbage collection");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.gc();
-                System.runFinalization();
-            }
-        });
-        WidgetUtils.addToGridBag(button, panel, 1, 4);
-
-        return panel;
-    }
-
-    @Override
-    protected boolean onWindowClosing() {
-        boolean closing = super.onWindowClosing();
-        if (closing) {
-            if (_updateMemoryTimer != null) {
-                _updateMemoryTimer.stop();
-            }
-        }
-        return closing;
     }
 
     @Override
@@ -397,6 +334,7 @@ public class OptionsDialog extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 _userPreferences.save();
+                _configuration.getEnvironment().getDescriptorProvider().refresh();
                 OptionsDialog.this.dispose();
             }
         });

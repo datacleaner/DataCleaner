@@ -45,6 +45,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -248,7 +249,7 @@ public class RegexSwapDialog extends AbstractDialog {
     }
 
     private void updateCategories() {
-        new Thread() {
+        SharedExecutorService.get().submit(new Runnable() {
             @Override
             public void run() {
                 DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
@@ -262,7 +263,7 @@ public class RegexSwapDialog extends AbstractDialog {
                 TreeModel treeModel = new DefaultTreeModel(rootNode);
                 _categoryTree.setModel(treeModel);
             }
-        }.start();
+        });
     }
 
     private void fireCategorySelected(final Category category) {

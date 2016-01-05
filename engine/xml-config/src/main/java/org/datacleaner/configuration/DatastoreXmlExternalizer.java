@@ -24,9 +24,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
@@ -47,6 +44,7 @@ import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,27 +65,14 @@ public class DatastoreXmlExternalizer {
     private final Document _document;
 
     public DatastoreXmlExternalizer() {
-        final DocumentBuilder documentBuilder;
-        try {
-            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        _document = documentBuilder.newDocument();
+        _document = XmlUtils.createDocument();
     }
 
     public DatastoreXmlExternalizer(Resource resource) {
         _document = resource.read(new Func<InputStream, Document>() {
             @Override
             public Document eval(InputStream in) {
-                try {
-                    final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                    final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                    return documentBuilder.parse(in);
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
+                return XmlUtils.parseDocument(in);
             }
         });
 
@@ -273,7 +258,6 @@ public class DatastoreXmlExternalizer {
      * Externalizes a {@link JdbcDatastore} to a XML element.
      * 
      * @param datastore
-     * @param doc
      * @return
      */
     public Element toElement(JdbcDatastore datastore) {
@@ -316,14 +300,12 @@ public class DatastoreXmlExternalizer {
         if (password == null) {
             return null;
         }
-        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
+
+        return SecurityUtils.encodePasswordWithPrefix(password);
     }
 
     private String encodePassword(char[] password) {
-        if (password == null) {
-            return null;
-        }
-        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
+        return encodePassword(new String(password));
     }
 
     /**
@@ -377,7 +359,7 @@ public class DatastoreXmlExternalizer {
     }
 
     /**
-     * Externalizes a {@link CouchDa} to a XML element
+     * Externalizes a {@link CouchDbDatastore} to a XML element
      * 
      * @param datastore
      * @return
@@ -399,7 +381,7 @@ public class DatastoreXmlExternalizer {
     }
 
     /**
-     * Externalizes a {@link CouchDa} to an XML element
+     * Externalizes a {@link CouchDbDatastore} to an XML element
      * 
      * @param datastore
      * @return

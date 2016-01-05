@@ -19,14 +19,20 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
@@ -72,7 +78,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
 
             @Override
-            protected void onScopeChangeComplete(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
+            protected void onScopeChangeComplete(final AnalysisJobBuilder osJobBuilder,
+                    final ComponentBuilder osComponentBuilder) {
                 _changingScope = false;
                 _componentScopeButton.updateText(osJobBuilder, osComponentBuilder);
                 initialize();
@@ -113,7 +120,18 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     protected DCBannerPanel createBanner(Image bannerImage) {
-        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle());
+        final String remoteServerName;
+
+        if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
+            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor = (RemoteTransformerDescriptor<?>) (_componentBuilder
+                    .getDescriptor());
+            remoteServerName = " ("
+                    + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName() + ")";
+        } else {
+            remoteServerName = "";
+        }
+
+        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle() + remoteServerName);
         banner.setTitle2(getBannerTitle2(true));
 
         final JButton renameButton = WidgetFactory.createDefaultButton("Rename", IconUtils.ACTION_RENAME);
@@ -127,8 +145,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
         final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
                 IconUtils.MENU_DOCUMENTATION);
-        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(_componentBuilder
-                .getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
+        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(
+                _componentBuilder.getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
 
         if (_componentScopeButton.isRelevant()) {
             banner.add(_componentScopeButton);
@@ -175,7 +193,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     public void onRemove(ComponentBuilder componentBuilder) {
-        if(!_changingScope){
+        if (!_changingScope) {
             close();
         }
     }

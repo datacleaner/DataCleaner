@@ -27,7 +27,7 @@ import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 
 /**
- * Default (immutable) implementation of {@link DataCleanerEnvironment}.
+ * Default (immutable) implementation of {@link DataCleanerEnvironmentImpl}.
  */
 public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
 
@@ -35,6 +35,20 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     private final DescriptorProvider _descriptorProvider;
     private final StorageProvider _storageProvider;
     private final InjectionManagerFactory _injectionManagerFactory;
+    private final RemoteServerConfiguration _remoteServerConfiguration;
+
+    /**
+     * Creates a {@link DataCleanerEnvironment}
+     *
+     * @param taskRunner
+     * @param descriptorProvider
+     * @param storageProvider
+     * @param injectionManagerFactory
+     */
+    public DataCleanerEnvironmentImpl(TaskRunner taskRunner, DescriptorProvider descriptorProvider,
+                                      StorageProvider storageProvider, InjectionManagerFactory injectionManagerFactory) {
+        this(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory, null);
+    }
 
     /**
      * Creates a {@link DataCleanerEnvironment}
@@ -43,28 +57,40 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
      * @param descriptorProvider
      * @param storageProvider
      * @param injectionManagerFactory
+     * @param remoteServerConfiguration
      */
     public DataCleanerEnvironmentImpl(TaskRunner taskRunner, DescriptorProvider descriptorProvider,
-            StorageProvider storageProvider, InjectionManagerFactory injectionManagerFactory) {
+            StorageProvider storageProvider, InjectionManagerFactory injectionManagerFactory,
+            RemoteServerConfiguration remoteServerConfiguration) {
         if (taskRunner == null) {
             _taskRunner = defaultTaskRunner();
         } else {
             _taskRunner = taskRunner;
         }
+
         if (descriptorProvider == null) {
             _descriptorProvider = defaultDescriptorProvider();
         } else {
             _descriptorProvider = descriptorProvider;
         }
+
         if (storageProvider == null) {
             _storageProvider = defaultStorageProvider();
         } else {
             _storageProvider = storageProvider;
         }
+
         if (injectionManagerFactory == null) {
             _injectionManagerFactory = defaultInjectionManagerFactory();
         } else {
             _injectionManagerFactory = injectionManagerFactory;
+        }
+
+        if (remoteServerConfiguration == null) {
+            _remoteServerConfiguration = defaultRemoteServerConfiguration();
+        }
+        else {
+            _remoteServerConfiguration = remoteServerConfiguration;
         }
     }
 
@@ -73,7 +99,7 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
      */
     public DataCleanerEnvironmentImpl() {
         this(defaultTaskRunner(), defaultDescriptorProvider(), defaultStorageProvider(),
-                defaultInjectionManagerFactory());
+                defaultInjectionManagerFactory(), defaultRemoteServerConfiguration());
     }
 
     /**
@@ -82,27 +108,33 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
      * @param e
      */
     public DataCleanerEnvironmentImpl(DataCleanerEnvironment e) {
-        this(e.getTaskRunner(), e.getDescriptorProvider(), e.getStorageProvider(), e.getInjectionManagerFactory());
+        this(e.getTaskRunner(), e.getDescriptorProvider(), e.getStorageProvider(), e.getInjectionManagerFactory(),
+                e.getRemoteServerConfiguration());
     }
 
     public DataCleanerEnvironmentImpl withTaskRunner(TaskRunner taskRunner) {
         return new DataCleanerEnvironmentImpl(taskRunner, getDescriptorProvider(), getStorageProvider(),
-                getInjectionManagerFactory());
+                getInjectionManagerFactory(), getRemoteServerConfiguration());
     }
 
     public DataCleanerEnvironmentImpl withDescriptorProvider(DescriptorProvider descriptorProvider) {
         return new DataCleanerEnvironmentImpl(getTaskRunner(), descriptorProvider, getStorageProvider(),
-                getInjectionManagerFactory());
+                getInjectionManagerFactory(), getRemoteServerConfiguration());
     }
 
     public DataCleanerEnvironmentImpl withStorageProvider(StorageProvider storageProvider) {
         return new DataCleanerEnvironmentImpl(getTaskRunner(), getDescriptorProvider(), storageProvider,
-                getInjectionManagerFactory());
+                getInjectionManagerFactory(), getRemoteServerConfiguration());
     }
 
     public DataCleanerEnvironmentImpl withInjectionManagerFactory(InjectionManagerFactory injectionManagerFactory) {
         return new DataCleanerEnvironmentImpl(getTaskRunner(), getDescriptorProvider(), getStorageProvider(),
-                injectionManagerFactory);
+                injectionManagerFactory, getRemoteServerConfiguration());
+    }
+
+    @Override
+    public RemoteServerConfiguration getRemoteServerConfiguration() {
+        return _remoteServerConfiguration;
     }
 
     @Override
@@ -139,5 +171,9 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
 
     public static TaskRunner defaultTaskRunner() {
         return new SingleThreadedTaskRunner();
+    }
+
+    public static RemoteServerConfiguration defaultRemoteServerConfiguration() {
+        return new RemoteServerConfigurationImpl();
     }
 }

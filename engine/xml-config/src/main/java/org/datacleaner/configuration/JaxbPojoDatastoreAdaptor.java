@@ -19,7 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,15 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
@@ -65,6 +55,7 @@ import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -308,24 +299,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     private String printNode(Node node) {
-        try {
-            // Set up the output transformer
-            TransformerFactory transfac = TransformerFactory.newInstance();
-            Transformer trans = transfac.newTransformer();
-            trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            // Print the DOM node
-            StringWriter sw = new StringWriter();
-            StreamResult result = new StreamResult(sw);
-            DOMSource source = new DOMSource(node);
-            trans.transform(source, result);
-            String xmlString = sw.toString();
-            return xmlString;
-        } catch (TransformerException e) {
-            logger.warn("Could not transform node '" + node + "' to pretty string: " + e.getMessage(), e);
-            return node.toString();
-        }
+        return XmlUtils.writeDocumentToString(node, false);
     }
 
     private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row, Document document) {
@@ -396,14 +370,6 @@ public class JaxbPojoDatastoreAdaptor {
         return;
     }
 
-    protected DocumentBuilder createDocumentBuilder() {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException("Failed to create DocumentBuilder", e);
-        }
-    }
-
     private org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,
             ColumnType type) {
         org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column columnType = new org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column();
@@ -429,8 +395,7 @@ public class JaxbPojoDatastoreAdaptor {
             final Query q = dataContext.query().from(table).select(usedColumns).toQuery();
             q.setMaxRows(maxRows);
 
-            final DocumentBuilder documentBuilder = createDocumentBuilder();
-            final Document document = documentBuilder.newDocument();
+            final Document document = XmlUtils.createDocument();
             final Rows rowsType = new Rows();
             try (final DataSet ds = dataContext.executeQuery(q)) {
                 while (ds.next()) {

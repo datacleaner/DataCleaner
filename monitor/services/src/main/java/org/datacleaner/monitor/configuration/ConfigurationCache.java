@@ -60,9 +60,10 @@ final class ConfigurationCache {
         
         final RepositoryFolder tenantFolder = _tenantContext.getTenantRootFolder();
         
-        RepositoryFile file = tenantFolder.getFile("conf.xml");
+        RepositoryFile file = tenantFolder.getFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
         if (file == null) {
-            file = tenantFolder.createFile("conf.xml", new WriteDefaultTenantConfigurationAction());
+            file = tenantFolder.createFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME,
+                    new WriteDefaultTenantConfigurationAction());
         }
         _file = file;
     }

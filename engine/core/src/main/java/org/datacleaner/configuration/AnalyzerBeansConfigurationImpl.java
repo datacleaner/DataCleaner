@@ -165,6 +165,11 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
+    public RemoteServerConfiguration getRemoteServerConfiguration() {
+        return _environment.getRemoteServerConfiguration();
+    }
+
+    @Override
     public DatastoreCatalog getDatastoreCatalog() {
         return _datastoreCatalog;
     }

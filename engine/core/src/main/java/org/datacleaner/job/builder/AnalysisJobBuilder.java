@@ -1192,11 +1192,21 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void removeAllSourceColumns() {
-        final List<MetaModelInputColumn> sourceColumns = new ArrayList<>(_sourceColumns);
-        for (MetaModelInputColumn inputColumn : sourceColumns) {
-            removeSourceColumn(inputColumn);
+        final Collection<ComponentBuilder> componentBuilders = getComponentBuilders();
+
+        for (ComponentBuilder componentBuilder : componentBuilders) {
+            componentBuilder.clearInputColumns();
         }
-        assert _sourceColumns.isEmpty();
+
+        final List<SourceColumnChangeListener> listeners = new ArrayList<>(_sourceColumnListeners);
+
+        for (SourceColumnChangeListener listener : listeners) {
+            for (MetaModelInputColumn inputColumn : _sourceColumns) {
+                listener.onRemove(inputColumn);
+            }
+        }
+
+        _sourceColumns.clear();
     }
 
     public void removeAllAnalyzers() {

@@ -28,8 +28,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -40,16 +38,23 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
+import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
+import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.ComponentCache;
+import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList;
-import org.datacleaner.restclient.ComponentNotFoundException;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -57,11 +62,23 @@ public class ComponentControllerV1Test {
     private String componentName = "Concatenator";
     private String timeout = "42";
     private ComponentControllerV1 componentControllerV1 = new ComponentControllerV1();
+    private ComponentCache componentCache;
 
     @Before
     public void setUp() {
-        componentControllerV1._tenantContextFactory = getTenantContextFactoryMock();
-        componentControllerV1.init();
+        RemoteComponentsConfiguration remoteCfg = new SimpleRemoteComponentsConfigurationImpl();
+        ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(remoteCfg);
+        TenantContextFactory tenantCtxFac = getTenantContextFactoryMock();
+        componentCache = new ComponentCache(compHandlerFac, tenantCtxFac);
+        componentControllerV1._tenantContextFactory = tenantCtxFac;
+        componentControllerV1._remoteComponentsConfiguration = remoteCfg;
+        componentControllerV1.componentHandlerFactory = compHandlerFac;
+        componentControllerV1._componentCache = componentCache;
+    }
+
+    @After
+    public void tearDown() throws InterruptedException {
+        componentCache.close();
     }
 
     private TenantContextFactory getTenantContextFactoryMock() {
@@ -203,11 +220,6 @@ public class ComponentControllerV1Test {
         replay(jsonNode);
 
         return jsonNode;
-    }
-
-    @Test
-    public void testClose() throws Exception {
-        componentControllerV1.close();
     }
 
     @Test

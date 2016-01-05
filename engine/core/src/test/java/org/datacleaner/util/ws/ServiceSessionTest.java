@@ -57,6 +57,8 @@ public class ServiceSessionTest extends TestCase {
         for (int i = 0; i < threads.length; i++) {
             threads[i].join();
         }
+        
+        session.close();
 
         assertEquals(threads.length, executionTimes.size());
 

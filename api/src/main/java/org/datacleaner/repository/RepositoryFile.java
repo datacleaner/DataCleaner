@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
 
 /**
  * Represents a file in the {@link Repository}.
@@ -123,4 +124,11 @@ public interface RepositoryFile extends RepositoryNode {
      *         the timestamp
      */
     public long getLastModified();
+
+    /**
+     * Gets a {@link Resource} representation of the {@link RepositoryFile}.
+     * 
+     * @return
+     */
+    public Resource toResource();
 }

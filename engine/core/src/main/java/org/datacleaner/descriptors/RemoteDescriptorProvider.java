@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
+package org.datacleaner.descriptors;
 
-public class ComponentNotFoundException extends RuntimeException {
-    private ComponentNotFoundException(String msg) {
-        super(msg);
-    }
-    public static ComponentNotFoundException createTypeNotFound(String type) {
-        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
-    }
-    public static ComponentNotFoundException createInstanceNotFound(String id) {
-        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
-    }
+import org.datacleaner.configuration.RemoteServerData;
+
+/**
+ * Descriptor provider for remote components.
+ */
+public interface RemoteDescriptorProvider extends DescriptorProvider {
+    
+    public RemoteServerData getServerData();
+    
+    public boolean isServerUp();
 }

@@ -19,37 +19,51 @@
  */
 package org.datacleaner.restclient;
 
+import java.io.IOException;
+
+import org.datacleaner.api.RestrictedFunctionalityException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * @since 02. 09. 2015
  */
-public class ComponentRESTClient implements ComponentController {
-    
-    private RESTClient restClient = null;
-    private String tenantName = "";
-    private String host = "";
+public class ComponentRESTClient {
 
-    public ComponentRESTClient(String host, String username, String password) {
-        this.tenantName = username;
-        this.host = host;
+    private final RESTClient restClient;
+    private String tenantName;
+    private String url;
+
+    public ComponentRESTClient(String url, String username, String password) {
+        this.url = url;
         restClient = new RESTClientImpl(username, password);
+        getUserTenantName();
     }
 
-    public ComponentList getAllComponents(final String tenant, final boolean iconData) {
-        this.tenantName = tenant;
+    /**
+     * Mainly for tests, tenant can be recognized automatically when other
+     * constructor is used
+     */
+    public ComponentRESTClient(String url, String username, String password, String tenantName) {
+        this.url = url;
+        restClient = new RESTClientImpl(username, password);
+        this.tenantName = tenantName;
+    }
+
+    public ComponentList getAllComponents(final boolean iconData) {
         String response = call(RESTClient.HttpMethod.GET, getURL("?iconData=" + iconData), "");
 
         return Serializator.componentList(response);
     }
 
-    public ComponentList.ComponentInfo getComponentInfo(final String tenant, String componentName, boolean iconData) {
-        this.tenantName = tenant;
+    public ComponentList.ComponentInfo getComponentInfo(String componentName, boolean iconData) {
         componentName = urlify(componentName);
         String response = call(RESTClient.HttpMethod.GET, getURL(componentName + "&iconData=" + iconData), "");
 
         return Serializator.componentInfo(response);
     }
 
-    public OutputColumns getOutputColumns(String tenant, String componentName, CreateInput config) {
+    public OutputColumns getOutputColumns(String componentName, CreateInput config) {
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
         String response = call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
@@ -57,7 +71,7 @@ public class ComponentRESTClient implements ComponentController {
         return Serializator.outputColumnsOutput(response);
     }
 
-    public ProcessStatelessOutput processStateless(String tenant, String componentName, ProcessStatelessInput processStatelessInput) {
+    public ProcessStatelessOutput processStateless(String componentName, ProcessStatelessInput processStatelessInput) {
         componentName = urlify(componentName);
         String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL(componentName), configurationAndData);
@@ -65,29 +79,45 @@ public class ComponentRESTClient implements ComponentController {
         return Serializator.processStatelessOutput(response);
     }
 
-    public String createComponent(final String tenant, String componentName, final String timeout, final CreateInput config) {
+    public String createComponent(String componentName, final String timeout, final CreateInput config) {
         componentName = urlify(componentName);
         String configuration = Serializator.stringCreateInput(config);
 
         return call(RESTClient.HttpMethod.POST, getURL(componentName + "?timeout=" + timeout), configuration);
     }
 
-    public ProcessOutput processComponent(final String tenant, final String instanceId, final ProcessInput processInput)
-            throws ComponentNotFoundException {
+    public ProcessOutput processComponent(final String instanceId, final ProcessInput processInput) {
         String inputData = Serializator.stringProcessInput(processInput);
         String response = call(RESTClient.HttpMethod.PUT, getURL("/_instance/" + instanceId), inputData);
 
         return Serializator.processOutput(response);
     }
 
-    public ProcessResult getFinalResult(final String tenant, final String instanceId) throws ComponentNotFoundException {
+    public ProcessResult getFinalResult(final String instanceId) {
         String response = call(RESTClient.HttpMethod.GET, getURL(instanceId + "/result"), "");
 
         return Serializator.processResult(response);
     }
 
-    public void deleteComponent(final String tenant, final String instanceId) throws ComponentNotFoundException {
+    public void deleteComponent(final String instanceId) {
         call(RESTClient.HttpMethod.DELETE, getURL(instanceId), "");
+    }
+
+    public String getUserTenantName() {
+        String url = String.format("%s%s", this.url, "/repository/_user");
+        String response = call(RESTClient.HttpMethod.GET, url, "");
+        JsonNode userInfo = null;
+        try {
+            userInfo = Serializator.getJacksonObjectMapper().readTree(response);
+            JsonNode tenantN = userInfo.get("tenant");
+            if (tenantN == null) {
+                return tenantName = "unknown";
+            } else {
+                return tenantName = tenantN.asText();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String urlify(String string) {
@@ -95,16 +125,16 @@ public class ComponentRESTClient implements ComponentController {
     }
 
     private String getURL(String suffix) {
-        if (suffix != null && ! suffix.isEmpty()) {
+        if (suffix != null && !suffix.isEmpty()) {
             suffix = "/" + suffix;
         }
 
-        return String.format("%s/repository/%s/components%s", host, tenantName, suffix);
+        return String.format("%s/repository/%s/components%s", url, urlify(tenantName), suffix);
     }
 
-    private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody) {
+    private String call(RESTClient.HttpMethod httpMethod, String url, String requestBody)
+            throws RestrictedFunctionalityException {
         String response = restClient.getResponse(httpMethod, url, requestBody);
-
         return response;
     }
 }

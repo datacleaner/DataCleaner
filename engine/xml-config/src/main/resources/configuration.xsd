@@ -173,12 +173,14 @@
 
     <complexType name="remoteComponentsType">
         <sequence>
-            <element name="server" type="ab:remoteComponentServerType"/>
+            <element name="server" type="ab:remoteComponentServerType" minOccurs="1" maxOccurs="unbounded"/>
         </sequence>
+        <attribute name="showAll" type="boolean" default="false"/>
     </complexType>
 
     <complexType name="remoteComponentServerType">
         <sequence>
+            <element name="name" type="string" minOccurs="0" maxOccurs="1"/>
             <element name="url" type="string" minOccurs="0" maxOccurs="1">
                 <annotation>
                     <documentation>
@@ -947,6 +949,8 @@
 				maxOccurs="1" type="string" />
 			<element name="synonym-column-path" minOccurs="1" maxOccurs="unbounded"
 				type="string" />
+			<element name="load-into-memory" minOccurs="0" maxOccurs="1"
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -975,6 +979,8 @@
 			<element name="datastore-name" minOccurs="1" maxOccurs="1"
 				type="string" />
 			<element name="column-path" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="load-into-memory" minOccurs="0" maxOccurs="1"
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />

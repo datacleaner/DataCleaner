@@ -17,10 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.monitor.configuration;
 
-public interface ComponentDescriptorsUpdatedListener {
-    
-    public void componentDescriptorsUpdated();
-    
+import java.util.Map;
+
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
+
+/**
+ * Class RemoteComponentsConfiguration
+ *
+ */
+public interface RemoteComponentsConfiguration {
+
+
+    /**
+     * Is the component allowed?
+     *
+     * @param componentDescriptor
+     * @return
+     */
+    public boolean isAllowed(ComponentDescriptor<?> componentDescriptor);
+
+    /**
+     * Method returns map with default values of properties.
+     *
+     * @param componentDescriptor
+     */
+    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor<?> componentDescriptor);
 }

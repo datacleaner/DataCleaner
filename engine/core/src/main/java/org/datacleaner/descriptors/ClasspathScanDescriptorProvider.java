@@ -338,7 +338,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
                     logger.debug("Scanned resources of {}: {}", packageName, count);
                 }
-                notifyComponentDescriptorsUpdatedListeners();
+                notifyListeners();
             }
         };
         _taskRunner.run(task, listener);
@@ -613,7 +613,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofAnalyzer(clazz);
                 _analyzerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -627,7 +627,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofTransformer(clazz);
                 _transformerBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -640,7 +640,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofFilterUnbound(clazz);
                 _filterBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -653,7 +653,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             try {
                 descriptor = Descriptors.ofRenderer(clazz);
                 _rendererBeanDescriptors.put(clazz.getName(), descriptor);
-            } catch (Exception e) {
+            } catch (Exception | NoClassDefFoundError e) {
                 logger.error("Unexpected error occurred while creating descriptor for: " + clazz, e);
             }
         }
@@ -714,5 +714,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
     public Predicate<Class<? extends RenderingFormat<?>>> getRenderingFormatPredicate() {
         return _renderingFormatPredicate;
+    }
+
+    public void refresh() {
     }
 }

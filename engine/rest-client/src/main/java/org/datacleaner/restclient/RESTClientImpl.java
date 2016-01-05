@@ -19,10 +19,15 @@
  */
 package org.datacleaner.restclient;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.MediaType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -33,20 +38,46 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
  * @since 03. 09. 2015
  */
 public class RESTClientImpl implements RESTClient {
+    private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
     private Client client = null;
-
     private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
 
     public RESTClientImpl(String username, String password) {
-        if(username == null) { username = ""; }
-        client = clientCache.get(username);
-        if(client == null) {
+        if (username == null) {
+            username = "";
+        }
+
+        String cacheKey = makeKey(username, password);
+        client = clientCache.get(cacheKey);
+
+        if (client == null) {
             client = Client.create();
+
             if (username != null && password != null) {
                 client.addFilter(new HTTPBasicAuthFilter(username, password));
             }
-            clientCache.put(username, client);
+
+            clientCache.put(cacheKey, client);
         }
+    }
+
+    protected Client getClient() {
+        return client;
+    }
+
+    private String makeKey(String username, String password) {
+        String key = "";
+        MessageDigest md = null;
+
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            logger.warn("Creation of cache index has failed. " + e.getMessage());
+        }
+
+        key = new String(md.digest((username + password).getBytes()));
+
+        return key;
     }
 
     /**

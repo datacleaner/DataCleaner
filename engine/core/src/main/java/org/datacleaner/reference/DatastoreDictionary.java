@@ -84,7 +84,9 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
         final Column column = getColumn(datastoreConnection);
 
         final Query query = dataContext.query().from(column.getTable()).select(column).toQuery();
-        query.getSelectClause().setDistinct(true);
+        if (datastoreConnection.getDatastore().getPerformanceCharacteristics().isQueryOptimizationPreferred()) {
+            query.getSelectClause().setDistinct(true);
+        }
 
         final Set<String> values = new HashSet<>();
 
@@ -140,5 +142,9 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
 
     public String getQualifiedColumnName() {
         return _qualifiedColumnName;
+    }
+
+    public boolean isLoadIntoMemory() {
+        return _loadIntoMemory;
     }
 }

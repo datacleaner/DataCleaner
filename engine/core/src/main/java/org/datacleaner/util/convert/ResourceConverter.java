@@ -29,11 +29,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,17 +52,40 @@ public class ResourceConverter implements Converter<Resource> {
     /**
      * Represents the default "default scheme", for representations that does
      * not have a scheme in the path. This default scheme is "file".
+     * 
+     * @deprecated use {@link #getConfiguredDefaultScheme()} by as a way to
+     *             access this
      */
+    @Deprecated
     public static final String DEFAULT_DEFAULT_SCHEME = FileResourceTypeHandler.DEFAULT_SCHEME;
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("\\b([a-zA-Z]+)://(.+)");
 
-    private static Collection<? extends ResourceTypeHandler<?>> createDefaultHandlers(
+    /**
+     * Gets the "default scheme" (see {@link #DEFAULT_DEFAULT_SCHEME}) while
+     * taking into account that this may have been configured via
+     * {@link SystemProperties#DEFAULT_RESOURCE_SCHEME}.
+     * 
+     * @return
+     */
+    public static String getConfiguredDefaultScheme() {
+        return SystemProperties.getString(SystemProperties.DEFAULT_RESOURCE_SCHEME, DEFAULT_DEFAULT_SCHEME);
+    }
+
+    public static Collection<? extends ResourceTypeHandler<?>> createDefaultHandlers(
             DataCleanerConfiguration configuration) {
+        return createDefaultHandlers(configuration.getHomeFolder());
+    }
+
+    public static List<ResourceTypeHandler<?>> createDefaultHandlers(DataCleanerHomeFolder homeFolder) {
         final List<ResourceTypeHandler<?>> result = new ArrayList<>();
-        result.add(new FileResourceTypeHandler(configuration));
+        result.add(new FileResourceTypeHandler(homeFolder));
         result.add(new UrlResourceTypeHandler());
-        result.add(new HdfsResourceTypeHandler());
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_HDFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_EMRFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_MAPRFS));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_S3));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_SWIFT));
         result.add(new ClasspathResourceTypeHandler());
         result.add(new VfsResourceTypeHandler());
         return result;
@@ -117,11 +143,11 @@ public class ResourceConverter implements Converter<Resource> {
     }
 
     public ResourceConverter(DataCleanerConfiguration configuration) {
-        this(configuration, DEFAULT_DEFAULT_SCHEME);
+        this(configuration, getConfiguredDefaultScheme());
     }
 
     public ResourceConverter(Collection<? extends ResourceTypeHandler<?>> handlers) {
-        this(handlers, DEFAULT_DEFAULT_SCHEME);
+        this(handlers, getConfiguredDefaultScheme());
     }
 
     public ResourceConverter(DataCleanerConfiguration configuration, String defaultScheme) {
@@ -144,9 +170,9 @@ public class ResourceConverter implements Converter<Resource> {
     }
 
     public ResourceConverter(ResourceTypeHandler<?>... handlers) {
-        this(Arrays.asList(handlers), DEFAULT_DEFAULT_SCHEME);
+        this(Arrays.asList(handlers), getConfiguredDefaultScheme());
     }
-
+    
     @Override
     public Resource fromString(Class<?> type, String serializedForm) {
         final ResourceStructure structure = parseStructure(serializedForm);

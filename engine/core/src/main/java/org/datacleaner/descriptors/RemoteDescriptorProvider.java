@@ -19,19 +19,14 @@
  */
 package org.datacleaner.descriptors;
 
+import org.datacleaner.configuration.RemoteServerData;
+
 /**
  * Descriptor provider for remote components.
  */
 public interface RemoteDescriptorProvider extends DescriptorProvider {
-    public Integer getServerPriority();
-
-    public String getServerName();
-
-    public String getServerHost();
-
-    public String getUsername();
-
-    public String getPassword();
-
+    
+    public RemoteServerData getServerData();
+    
     public boolean isServerUp();
 }

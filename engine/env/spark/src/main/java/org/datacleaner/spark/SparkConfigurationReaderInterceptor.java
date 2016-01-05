@@ -19,8 +19,10 @@
  */
 package org.datacleaner.spark;
 
+import java.net.URI;
 import java.util.Map;
 
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -29,6 +31,7 @@ import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 
@@ -46,8 +49,17 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
             .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER)
             .withStorageProvider(STORAGE_PROVIDER);
 
+    private final HdfsHelper _hdfsHelper;
+
     public SparkConfigurationReaderInterceptor(Map<String, String> customProperties) {
         super(customProperties, BASE_ENVIRONMENT);
+        _hdfsHelper = HdfsHelper.createHelper();
+    }
+
+    @Override
+    public Resource createResource(String resourceUrl) {
+        final URI uri = URI.create(resourceUrl);
+        return _hdfsHelper.getResourceToUse(uri);
     }
 
 }

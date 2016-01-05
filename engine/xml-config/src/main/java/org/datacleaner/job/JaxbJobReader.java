@@ -677,7 +677,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                             if (transformerBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
                                 RemoteTransformerDescriptor remoteTransformerDescriptor = (RemoteTransformerDescriptor) transformerBuilder.getDescriptor();
                                 final String componentName = remoteTransformerDescriptor.getDisplayName();
-                                final String serverName = remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerName();
+                                final String serverName = remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName();
                                 message = "There has been error during loading the remote component '"
                                         + componentName +
                                         "'. This problem could be caused by connection issues to DataCleaner Server '" + serverName + "'.";

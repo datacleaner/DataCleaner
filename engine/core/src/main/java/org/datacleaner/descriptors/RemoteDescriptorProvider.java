@@ -26,7 +26,5 @@ import org.datacleaner.configuration.RemoteServerData;
  */
 public interface RemoteDescriptorProvider extends DescriptorProvider {
     
-    public RemoteServerData getServerData();
-    
-    public boolean isServerUp();
+    RemoteServerData getServerData();
 }

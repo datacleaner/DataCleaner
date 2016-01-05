@@ -34,7 +34,6 @@ import java.util.Set;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
@@ -71,7 +70,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return remoteServerData;
     }
 
-    public boolean isServerUp() {
+    private boolean isServerUp() {
         final long now = System.currentTimeMillis();
          if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
                 return lastConnectionCheckResult;
@@ -125,11 +124,11 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
-        Map<DescriptorProvider, DescriptorProviderState> stateMap = new HashMap<>();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
+        Map<DescriptorProvider, DescriptorProviderStatus> stateMap = new HashMap<>();
         if (!isServerUp()) {
-            DescriptorProviderState serverDownState = new DescriptorProviderState(
-                    DescriptorProviderState.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
+            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
+                    DescriptorProviderStatus.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
                     + "' is not available at the moment. ");
             stateMap.put(this, serverDownState);
         }

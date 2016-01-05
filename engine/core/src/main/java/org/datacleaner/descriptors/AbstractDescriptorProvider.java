@@ -22,7 +22,9 @@ package org.datacleaner.descriptors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -272,7 +274,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
+    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
         return new HashMap<>();
     }
 }

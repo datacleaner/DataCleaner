@@ -20,7 +20,7 @@
 package org.datacleaner.configuration;
 
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.DescriptorProviderState;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
     private DescriptorProvider _descriptorProvider;
     private final Set<DescriptorProviderStateListener> _listenerSet = Collections.synchronizedSet(new HashSet<DescriptorProviderStateListener>());
 
-    private Map<DescriptorProvider, DescriptorProviderState> _stateMap = new HashMap<>();
+    private Map<DescriptorProvider, DescriptorProviderStatus> _stateMap = new HashMap<>();
     private ServerChecker _serverChecker;
 
     public DescriptorProviderStateNotifierImpl(DescriptorProvider descriptorProvider) {
@@ -40,7 +40,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderState> getStateMap() {
+    public Map<DescriptorProvider, DescriptorProviderStatus> getStateMap() {
         return new HashMap<>(_stateMap);
     }
 
@@ -114,7 +114,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
                         }
                     }
                 }
-                Map<DescriptorProvider, DescriptorProviderState> providerStatesMap = _descriptorProvider.getProviderStatesMap();
+                Map<DescriptorProvider, DescriptorProviderStatus> providerStatesMap = _descriptorProvider.getProviderStatusMap();
                 boolean equals = equals(providerStatesMap, _stateMap);
                 if (!equals) {
                     _stateMap = providerStatesMap;
@@ -123,7 +123,7 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
             }
         }
 
-        private boolean equals(Map<DescriptorProvider, DescriptorProviderState> map1, Map<DescriptorProvider, DescriptorProviderState> map2) {
+        private boolean equals(Map<DescriptorProvider, DescriptorProviderStatus> map1, Map<DescriptorProvider, DescriptorProviderStatus> map2) {
             if (map1 == null || map2 == null) {
                 return map1 == null && map2 == null;
             }
@@ -132,8 +132,8 @@ public class DescriptorProviderStateNotifierImpl implements DescriptorProviderSt
                 return false;
             }
 
-            for (Map.Entry<DescriptorProvider, DescriptorProviderState> map1Entry : map1.entrySet()) {
-                DescriptorProviderState map2State = map2.get(map1Entry.getKey());
+            for (Map.Entry<DescriptorProvider, DescriptorProviderStatus> map1Entry : map1.entrySet()) {
+                DescriptorProviderStatus map2State = map2.get(map1Entry.getKey());
                 if (map2State == null) {
                     return false;
                 }

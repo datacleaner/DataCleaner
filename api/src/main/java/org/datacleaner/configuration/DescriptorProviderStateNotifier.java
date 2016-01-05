@@ -20,7 +20,7 @@
 package org.datacleaner.configuration;
 
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.DescriptorProviderState;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public interface DescriptorProviderStateNotifier {
      * Returns map with actual states. This map won't be actualized.
      * @return map
      */
-    Map<DescriptorProvider, DescriptorProviderState> getStateMap();
+    Map<DescriptorProvider, DescriptorProviderStatus> getStateMap();
 
     void setDescriptorProvider(DescriptorProvider descriptorProvider);
 

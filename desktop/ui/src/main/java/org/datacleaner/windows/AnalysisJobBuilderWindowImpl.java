@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -71,7 +72,7 @@ import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.DescriptorProviderState;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.guice.DCModule;
@@ -257,7 +258,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private class DescriptorProviderStateListenerImpl implements DescriptorProviderStateListener{
         @Override
-        public void notify(Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap) {
+        public void notify(Map<DescriptorProvider, DescriptorProviderStatus> descriptorProviderStateMap) {
             _descriptorProviderStateMap = descriptorProviderStateMap;
             updateStatusLabel();
             _graph.getPanel().updateUI();
@@ -273,7 +274,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
-    private Map<DescriptorProvider, DescriptorProviderState> _descriptorProviderStateMap = new HashMap<>();
+    private Map<DescriptorProvider, DescriptorProviderStatus> _descriptorProviderStateMap = new HashMap<>();
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -305,7 +306,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
     private final DescriptorProviderStateListener _descriptorProviderStateListener = new DescriptorProviderStateListenerImpl();
-    private JobClassicView _classicView;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -513,15 +513,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     public void updateStatusLabel() {
-        DescriptorProviderState remoteErrorState = null;
+        DescriptorProviderStatus remoteErrorState = null;
         boolean remoteExecuteEnable = true;
 
         for (ComponentBuilder componentBuilder : _analysisJobBuilder.getComponentBuilders()) {
             ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
             if (descriptor instanceof RemoteTransformerDescriptorImpl) {
                 RemoteDescriptorProvider remoteDescriptorProvider = ((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider();
-                DescriptorProviderState descriptorProviderState = _descriptorProviderStateMap.get(remoteDescriptorProvider);
-                if (descriptorProviderState != null && descriptorProviderState.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
+                DescriptorProviderStatus descriptorProviderState = _descriptorProviderStateMap.get(remoteDescriptorProvider);
+                if (descriptorProviderState != null && descriptorProviderState.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
                     remoteErrorState = descriptorProviderState;
                     break;
                 }
@@ -529,8 +529,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         if (remoteErrorState == null) {
-            for (DescriptorProviderState descriptorProviderState : _descriptorProviderStateMap.values()) {
-                if (descriptorProviderState.getLevel().equals(DescriptorProviderState.Level.ERROR)) {
+            for (DescriptorProviderStatus descriptorProviderState : _descriptorProviderStateMap.values()) {
+                if (descriptorProviderState.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
                     remoteErrorState = descriptorProviderState;
                     break;
                 }

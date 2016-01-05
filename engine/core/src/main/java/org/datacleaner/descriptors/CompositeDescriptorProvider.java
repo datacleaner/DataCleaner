@@ -22,8 +22,10 @@ package org.datacleaner.descriptors;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -235,10 +237,10 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         return null;
     }
 
-    public Map<DescriptorProvider, DescriptorProviderState> getStatus() {
-        Map<DescriptorProvider, DescriptorProviderState> statusMap = new HashMap<>();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
+        Map<DescriptorProvider, DescriptorProviderStatus> statusMap = new HashMap<>();
         for (DescriptorProvider provider : delegates) {
-            statusMap.putAll(provider, provider.getStatus());
+            statusMap.putAll(provider.getProviderStatusMap());
         }
         return statusMap;
     }

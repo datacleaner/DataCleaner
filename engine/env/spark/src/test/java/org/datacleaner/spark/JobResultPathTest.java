@@ -31,6 +31,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.spark.utils.ResultFilePathUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -44,6 +45,7 @@ public class JobResultPathTest {
     @Rule
     public TestName name = new TestName();
 
+    @Ignore
     @Test
     public void testResultPathAbolutePathSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
@@ -110,6 +112,7 @@ public class JobResultPathTest {
         }
     }
 
+    @Ignore
     @Test
     public void testResultPathNameNoVariableSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());

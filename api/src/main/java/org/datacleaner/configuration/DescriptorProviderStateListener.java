@@ -20,7 +20,7 @@
 package org.datacleaner.configuration;
 
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.DescriptorProviderState;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
 
 import java.util.Map;
 
@@ -29,5 +29,5 @@ import java.util.Map;
  */
 public interface DescriptorProviderStateListener {
 
-    public void notify(Map<DescriptorProvider, DescriptorProviderState> descriptorProviderStateMap);
+    public void notify(Map<DescriptorProvider, DescriptorProviderStatus> descriptorProviderStateMap);
 }

@@ -168,7 +168,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap() {
-        return getDelegate().getProviderStatesMap();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap() {
+        return getDelegate().getProviderStatusMap();
     }
 }

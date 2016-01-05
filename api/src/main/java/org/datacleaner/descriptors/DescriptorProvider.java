@@ -47,12 +47,6 @@ import org.datacleaner.job.AnalysisJob;
 public interface DescriptorProvider {
 
     /**
-     * @return a collection of {@link DescriptorProviderStatus} describing
-     *         current status.
-     */
-    public Collection<DescriptorProviderStatus> getStatus();
-
-    /**
      * It refreshes the descriptor list.
      *
      * @return
@@ -206,5 +200,5 @@ public interface DescriptorProvider {
      * Don't use that. If you want to be notified, please add the listener to {@link org.datacleaner.configuration.DescriptorProviderStateNotifier}
      * @return
      */
-    public Map<DescriptorProvider, DescriptorProviderState> getProviderStatesMap();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getProviderStatusMap();
 }

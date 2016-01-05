@@ -17,32 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
-
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.restclient.ComponentConfiguration;
+package org.datacleaner.descriptors;
 
 /**
- * Class ComponentsFactory
+ * Listener interface for objects that wish to listen in on changes to
+ * descriptor providers.
  * 
- * @since 18.8.15
+ * Note that descriptor providers rarely change. In the case of remote
+ * descriptors they may change due to updates on the server. In case of local
+ * descriptors they may change due to installed or removed extensions etc.
  */
-public class ComponentHandlerFactory {
+public interface DescriptorProviderListener {
 
-    /**
-     * Creates new Handler from configuration
-     * 
-     * @param tenantContext
-     * @param componentName
-     * @param configuration
-     * @return
-     * @throws RuntimeException
-     */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration) throws RuntimeException {
-        ComponentHandler handler = new ComponentHandler(tenantContext.getConfiguration(), componentName);
-        handler.createComponent(configuration);
+    public void onDescriptorsUpdated(DescriptorProvider descriptorProvider);
 
-        return handler;
-    }
 }

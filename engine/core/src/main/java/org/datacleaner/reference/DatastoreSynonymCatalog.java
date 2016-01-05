@@ -165,4 +165,8 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
         }
         return synonyms.toArray(new String[synonyms.size()]);
     }
+    
+    public boolean isLoadIntoMemory() {
+        return _loadIntoMemory;
+    }
 }

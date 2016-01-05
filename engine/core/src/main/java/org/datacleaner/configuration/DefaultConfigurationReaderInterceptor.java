@@ -96,7 +96,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     @Override
     public Resource createResource(String resourceUrl) {
         final ResourceConverter converter = new ResourceConverter(getResourceTypeHandlers(),
-                ResourceConverter.DEFAULT_DEFAULT_SCHEME);
+                ResourceConverter.getConfiguredDefaultScheme());
         final Resource resource = converter.fromString(Resource.class, resourceUrl);
         return resource;
     }

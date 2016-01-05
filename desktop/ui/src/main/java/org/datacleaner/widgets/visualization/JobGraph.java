@@ -44,6 +44,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.TransferHandler;
 
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
@@ -71,15 +79,6 @@ import org.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
-import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
-
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
  * of them as a graph.
@@ -102,13 +101,13 @@ public final class JobGraph {
     private int _scrollHorizontal;
     private int _scrollVertical;
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
-            UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         this(windowContext, userPreferences, analysisJobBuilder, null, usageLogger);
     }
 
-    public JobGraph(WindowContext windowContext, UserPreferences userPreferences, AnalysisJobBuilder analysisJobBuilder,
-            RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -227,9 +226,7 @@ public final class JobGraph {
 
                 if (data instanceof ComponentDescriptor<?>) {
                     final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) data;
-
                     final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(dropPoint);
-
                     _analysisJobBuilder.addComponent(descriptor, null, null, metadata);
                 }
                 return true;
@@ -262,8 +259,8 @@ public final class JobGraph {
                     return;
                 }
 
-                final String showCanvasHints = _userPreferences.getAdditionalProperties()
-                        .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                final String showCanvasHints = _userPreferences.getAdditionalProperties().get(
+                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
                 if ("false".equals(showCanvasHints)) {
                     // don't show the background hints - the user has decided
                     // not to have them.
@@ -433,8 +430,8 @@ public final class JobGraph {
     }
 
     private JButton createGraphPreferencesButton() {
-        final JButton uiPreferencesButton = WidgetFactory
-                .createSmallButton(ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
+        final JButton uiPreferencesButton = WidgetFactory.createSmallButton(ImageManager.get().getImageIcon(
+                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
         uiPreferencesButton.setOpaque(false);
         uiPreferencesButton.setBorder(null);
         uiPreferencesButton.addActionListener(new ActionListener() {

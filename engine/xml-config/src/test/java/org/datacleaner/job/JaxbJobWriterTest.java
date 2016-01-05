@@ -432,24 +432,26 @@ public class JaxbJobWriterTest extends TestCase {
 
     private void assertMatchesBenchmark(AnalysisJob analysisJob, String filename) throws Exception {
         final File outputFolder = new File("target/test-output/");
+
         if (!outputFolder.exists()) {
             assertTrue("Could not create output folder!", outputFolder.mkdirs());
         }
 
         final File benchmarkFolder = new File("src/test/resources/");
-
         File outputFile = new File(outputFolder, filename);
 
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
             _writer.write(analysisJob, bos);
             bos.flush();
         }
-        String output = FileHelper.readFileAsString(outputFile);
 
+        String output = FileHelper.readFileAsString(outputFile);
         File benchmarkFile = new File(benchmarkFolder, filename);
+
         if (!benchmarkFile.exists()) {
             assertEquals("No benchmark file '" + filename + "' exists!", output);
         }
+
         String benchmark = FileHelper.readFileAsString(benchmarkFile);
         assertEquals(benchmark, output);
     }

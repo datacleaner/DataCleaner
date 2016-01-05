@@ -61,6 +61,12 @@ public class SystemProperties {
     public static final String SANDBOX = "datacleaner.sandbox";
 
     /**
+     * Property used to determine the default scheme, which is normally "file",
+     * but could be set to e.g. "hdfs" for Hadoop environments etc.
+     */
+    public static final String DEFAULT_RESOURCE_SCHEME = "datacleaner.resources.scheme.default";
+
+    /**
      * Property used for keeping the license key for commercial DataCleaner
      * editions.
      */
@@ -203,5 +209,12 @@ public class SystemProperties {
         }
 
         return valueIfNull;
+    }
+
+    public static void setIfNotSpecified(String property, String value) {
+        final String existingValue = System.getProperty(property);
+        if (Strings.isNullOrEmpty(existingValue)) {
+            System.setProperty(property, value);
+        }
     }
 }

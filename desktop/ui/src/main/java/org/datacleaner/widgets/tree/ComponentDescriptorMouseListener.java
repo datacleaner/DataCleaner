@@ -57,32 +57,53 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
         final Object userObject = node.getUserObject();
 
-        if (userObject instanceof ComponentDescriptor<?>) {
-            final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
-
-            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
-                _analysisJobBuilder.addComponent(componentDescriptor);
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-
-                final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add component",
-                        IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
-                addTableItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _analysisJobBuilder.addComponent(componentDescriptor);
-                    }
-                });
-
-                final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Documentation",
-                        IconUtils.MENU_DOCUMENTATION);
-                referenceDocumentationItem.addActionListener(new ComponentReferenceDocumentationActionListener(
-                        _analysisJobBuilder.getConfiguration(), componentDescriptor));
-
-                final JPopupMenu popup = new JPopupMenu(componentDescriptor.getDisplayName());
-                popup.add(addTableItem);
-                popup.add(referenceDocumentationItem);
-                popup.show((Component) e.getSource(), e.getX(), e.getY());
-            }
+        if (userObject instanceof String && userObject.equals("Library") && e.getButton() == MouseEvent.BUTTON3) {
+            showLibraryPopupMenu(userObject, e);
+        } else if (userObject instanceof ComponentDescriptor<?>) {
+            showComponentPopupMenu(userObject, e);
         }
+    }
+
+    private void showComponentPopupMenu(Object userObject, MouseEvent mouseEvent) {
+        final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
+
+        if (SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() > 1) {
+            _analysisJobBuilder.addComponent(componentDescriptor);
+        } else if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+
+            final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add component",
+                    IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
+            addTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _analysisJobBuilder.addComponent(componentDescriptor);
+                }
+            });
+
+            final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Documentation",
+                    IconUtils.MENU_DOCUMENTATION);
+            referenceDocumentationItem.addActionListener(new ComponentReferenceDocumentationActionListener(
+                    _analysisJobBuilder.getConfiguration(), componentDescriptor));
+
+            final JPopupMenu popup = new JPopupMenu(componentDescriptor.getDisplayName());
+            popup.add(addTableItem);
+            popup.add(referenceDocumentationItem);
+            popup.show((Component) mouseEvent.getSource(), mouseEvent.getX(), mouseEvent.getY());
+        }
+    }
+
+    private void showLibraryPopupMenu(Object userObject, MouseEvent mouseEvent) {
+        final JMenuItem refreshLibraryMenuItem = WidgetFactory.createMenuItem("Refresh", IconUtils.MENU_REFRESH);
+
+        refreshLibraryMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider().refresh();
+            }
+        });
+
+        final JPopupMenu popup = new JPopupMenu(userObject.toString());
+        popup.add(refreshLibraryMenuItem);
+        popup.show((Component) mouseEvent.getSource(), mouseEvent.getX(), mouseEvent.getY());
     }
 }

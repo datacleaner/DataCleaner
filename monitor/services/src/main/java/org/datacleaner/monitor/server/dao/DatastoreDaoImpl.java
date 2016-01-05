@@ -27,17 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
@@ -46,8 +43,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
+import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -196,23 +192,10 @@ public class DatastoreDaoImpl implements DatastoreDao {
     }
 
     protected DocumentBuilder getDocumentBuilder() {
-        try {
-            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            return documentBuilder;
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
+        return XmlUtils.createDocumentBuilder();
     }
 
     protected Transformer getTransformer() {
-        try {
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            return transformer;
-        } catch (TransformerConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
+        return XmlUtils.createTransformer();
     }
 }

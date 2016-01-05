@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngine;
@@ -83,10 +82,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         final TenantInjectionManagerFactory tenantInjectionManagerFactory = new TenantInjectionManagerFactory(
                 injectionManagerFactory, repository, this);
 
-        final DataCleanerEnvironmentImpl tenantEnvironment = new DataCleanerEnvironmentImpl(environment)
-                .withInjectionManagerFactory(tenantInjectionManagerFactory);
-
-        _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
+        _configurationCache = new ConfigurationCache(tenantInjectionManagerFactory, this, repository);
         _componentStore = new ComponentStoreImpl(_repository, _tenantId);
         _jobCache = buildJobCache();
     }

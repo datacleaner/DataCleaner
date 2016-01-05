@@ -21,45 +21,32 @@ package org.datacleaner.cli;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
 import org.datacleaner.job.runner.RowProcessingMetrics;
-import org.apache.metamodel.schema.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.util.ProgressCounter;
 
 final class CliProgressAnalysisListener extends AnalysisListenerAdaptor {
 
-	private static final Logger logger = LoggerFactory.getLogger(CliProgressAnalysisListener.class);
+    private final Map<Table, ProgressCounter> rowCounts = new HashMap<Table, ProgressCounter>();
 
-	private Map<Table, AtomicInteger> rowCounts = new HashMap<Table, AtomicInteger>();
+    @Override
+    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+        final Table table = metrics.getTable();
+        rowCounts.put(table, new ProgressCounter());
+    }
 
-	@Override
-	public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
-		Table table = metrics.getTable();
-		logger.info("Analyzing rows from table: {}", table.getName());
-		rowCounts.put(table, new AtomicInteger(0));
-	}
-
-	@Override
-	public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
-		Table table = metrics.getTable();
-		AtomicInteger rowCount = rowCounts.get(table);
-		if (rowCount != null) {
-			int countBefore = rowCount.get();
-			rowCount.lazySet(currentRow);
-			int fiveHundredsBefore = countBefore / 500;
-			int fiveHundredsAfter = currentRow / 500;
-			if (fiveHundredsAfter != fiveHundredsBefore) {
-				System.out.println(currentRow + " rows processed from table: " + table.getName());
-			}
-		}
-	}
-
-	@Override
-	public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
-		logger.info("Done processing rows from table: {}", metrics.getTable().getName());
-	}
+    @Override
+    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
+        final Table table = metrics.getTable();
+        final ProgressCounter progressCounter = rowCounts.get(table);
+        if (progressCounter != null) {
+            final boolean significant = progressCounter.setIfSignificantToUser(currentRow);
+            if (significant) {
+                System.out.println(currentRow + " rows processed from table: " + table.getName());
+            }
+        }
+    }
 }

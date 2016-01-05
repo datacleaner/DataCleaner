@@ -28,9 +28,9 @@ public class HdfsResourceTypeHandlerTest {
 
     @Test
     public void testToAndFromString() throws Exception {
-        final HdfsResourceTypeHandler typeHandler = new HdfsResourceTypeHandler();
+        final HdfsResourceTypeHandler typeHandler = new HdfsResourceTypeHandler("hdfs");
 
-        final HdfsResource resource1 = new HdfsResource("localhost", 9000, "/foo.bar.txt");
+        final HdfsResource resource1 = new HdfsResource("hdfs", "localhost", 9000, "/foo.bar.txt", null);
         assertTrue(typeHandler.isParserFor(resource1.getClass()));
         
         final String path = typeHandler.createPath(resource1);

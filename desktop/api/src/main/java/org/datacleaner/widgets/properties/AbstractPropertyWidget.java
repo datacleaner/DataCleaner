@@ -149,7 +149,11 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
     }
 
     protected void add(Component component, int index) {
-        _panel.add(component, index);
+        if (_panel.getComponentCount() <= index) {
+            _panel.add(component);
+        } else {
+            _panel.add(component, index);
+        }
     }
 
     protected Component[] getComponents() {

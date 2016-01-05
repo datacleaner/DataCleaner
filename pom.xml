@@ -17,7 +17,7 @@
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
-		<metamodel.version>4.4.1</metamodel.version>
+		<metamodel.version>4.5.0</metamodel.version>
 		<metamodel.extras.version>4.4.0</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
@@ -42,14 +42,14 @@
 	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>4.5.3-SNAPSHOT</version>
+	<version>4.5.4-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
 		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
-
+	
 	<modules>
 		<module>engine</module>
 	</modules>
@@ -430,6 +430,9 @@
 
 										<!-- standard is overlapping with jstl -->
 										<exclude>taglibs:standard:*</exclude>
+
+										<!-- org.apache.geronimo.bundles:json is overlapping with org.json:json -->
+										<exclude>org.apache.geronimo.bundles:json:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -685,6 +688,17 @@
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-json</artifactId>
 				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-neo4j</artifactId>
+				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.bundles</groupId>
+						<artifactId>json</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>

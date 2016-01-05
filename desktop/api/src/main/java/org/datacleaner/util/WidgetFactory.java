@@ -27,6 +27,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.text.Format;
 import java.text.ParseException;
@@ -257,6 +259,30 @@ public final class WidgetFactory {
 
     public static Component createToolBarSeparator() {
         return Box.createHorizontalGlue();
+    }
+    
+    public static JButton createToolbarButton(String text, String iconPath) {
+        final ImageIcon icon;
+        if (iconPath == null) {
+            icon = null;
+        } else {
+            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+        }
+        final JButton button = new JButton(text, icon);
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+            }
+        });
+
+        WidgetUtils.setDarkButtonStyle(button);
+        return button;
     }
 
     public static JButton createSmallButton(String imagePath) {

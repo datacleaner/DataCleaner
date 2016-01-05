@@ -143,15 +143,15 @@ public class SparkAnalysisRunnerTest {
             final SparkJobContext sparkJobContext;
             if (saveResult) {
                 sparkJobContext = new SparkJobContext(
-                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml");
+                        "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml", null, sparkContext.hadoopConfiguration());
             } else {
                 sparkJobContext = new SparkJobContext(
                         "src/test/resources/conf_local.xml", "src/test/resources/write-job.analysis.xml",
-                        "src/test/resources/jobProperties/noResult.properties");
+                        "src/test/resources/jobProperties/noResult.properties", sparkContext.hadoopConfiguration());
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("write-job", sparkJobContext.getAnalysisJobName());
+            assertEquals("write-job", sparkJobContext.getJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     MIN_PARTITIONS_MULTIPLE);
@@ -358,13 +358,13 @@ public class SparkAnalysisRunnerTest {
                 appName);
         try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
             final SparkJobContext sparkJobContext = new SparkJobContext("src/test/resources/conf_local.xml",
-                    analysisJobXmlPath);
+                    analysisJobXmlPath, null, sparkContext.hadoopConfiguration());
             if (sparkJobLifeCycleListener != null) {
                 sparkJobContext.addSparkJobLifeCycleListener(sparkJobLifeCycleListener);
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals(expectedAnalysisJobName, sparkJobContext.getAnalysisJobName());
+            assertEquals(expectedAnalysisJobName, sparkJobContext.getJobName());
 
             final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext,
                     useMinPartitions ? MIN_PARTITIONS_MULTIPLE : null);

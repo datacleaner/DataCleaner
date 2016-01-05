@@ -180,7 +180,7 @@ public interface DescriptorProvider {
             Class<? extends RenderingFormat<?>> renderingFormat);
 
     /**
-     * Notify all listenene
+     * Notify all listeners
      */
     public void notifyListeners();
 
@@ -210,5 +210,5 @@ public interface DescriptorProvider {
      * Check status od descriptor provider.
      * Don't use that. If you want to be notified, please add the listener to this object.
      */
-     public void checkStatus();
+    public void checkStatus();
 }

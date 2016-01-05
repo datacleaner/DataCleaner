@@ -21,6 +21,7 @@ The main application modules are:
   * env - Different/alternative environments that DataCleaner can run in, for instance Apache Spark or webapp-cluster
  * components
   * ... - many sub modules containing built-in as well as additional components/extensions to use with DataCleaner.
+  * standard-components - a container-project that dependends on all components that are normally bundled in DataCleaner community edition.
  * desktop
   * api - The public API for the DataCleaner desktop application.
   * ui - The Swing-based user interface for desktop users

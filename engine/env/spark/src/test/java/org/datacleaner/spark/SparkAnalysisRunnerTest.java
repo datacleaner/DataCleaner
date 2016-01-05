@@ -58,24 +58,24 @@ public class SparkAnalysisRunnerTest {
         final AtomicBoolean _jobEndCalled = new AtomicBoolean();
 
         @Override
-        public void onPartitionProcessingStart() {
+        public void onPartitionProcessingStart(SparkJobContext sparkJobContext) {
             // Unfortunately, serialization only goes one way, so we can't assert on this.
             System.out.println("Node start");
         }
 
         @Override
-        public void onPartitionProcessingEnd() {
+        public void onPartitionProcessingEnd(SparkJobContext sparkJobContext) {
             // Unfortunately, serialization only goes one way, so we can't assert on this.
             System.out.println("Node end");
         }
 
         @Override
-        public void onJobStart() {
+        public void onJobStart(SparkJobContext sparkJobContext) {
             _jobStartCalled.set(true);
         }
 
         @Override
-        public void onJobEnd() {
+        public void onJobEnd(SparkJobContext sparkJobContext) {
             _jobEndCalled.set(true);
         }
     }

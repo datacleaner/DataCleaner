@@ -56,7 +56,7 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
-import org.elasticsearch.common.base.Strings;
+import com.google.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXFormattedTextField;

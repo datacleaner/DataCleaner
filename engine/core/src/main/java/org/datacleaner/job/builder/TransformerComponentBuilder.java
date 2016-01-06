@@ -96,11 +96,14 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
             Map<DescriptorProvider, DescriptorProviderStatus> status =
                     ((RemoteTransformerDescriptor) componentDescriptor).getRemoteDescriptorProvider()
                             .getActualStatusMap();
-            boolean serverUp = status.get(componentDescriptor).getLevel().equals(DescriptorProviderStatus.Level.ERROR);
-            if (!serverUp) {
-                logger.warn("Output columns for transformer '" + transformer
-                        + "' can not be retrieved because the remote server is down. ");
-                return Collections.emptyList();
+            if (status.get(componentDescriptor) != null) {
+                boolean serverUp =
+                        status.get(componentDescriptor).getLevel().equals(DescriptorProviderStatus.Level.ERROR);
+                if (!serverUp) {
+                    logger.warn("Output columns for transformer '" + transformer
+                            + "' can not be retrieved because the remote server is down. ");
+                    return Collections.emptyList();
+                }
             }
         }
 

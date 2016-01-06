@@ -265,12 +265,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         @Override
         public void onDescriptorsUpdated(final DescriptorProvider descriptorProvider) {
-            _descriptorProviderStateMap.putAll(descriptorProvider.getActualStatusMap());
+            Map<DescriptorProvider, DescriptorProviderStatus> actualStatusMap = descriptorProvider.getActualStatusMap();
+            if(actualStatusMap.isEmpty()){
+                _descriptorProviderStateMap.remove(descriptorProvider);
+            }else {
+                _descriptorProviderStateMap.putAll(actualStatusMap);
+            }
             updateStatusLabel();
             _graph.getPanel().updateUI();
         }
     }
-    private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
     private static final long serialVersionUID = 1L;
 

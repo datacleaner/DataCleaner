@@ -34,7 +34,6 @@ import java.util.Set;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
@@ -53,13 +52,13 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
+    private DescriptorProviderStatus actualStatus;
 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
-    private boolean lastConnectionCheckResult = false;
-    private boolean checkInProgress = false;
+    private boolean lastConnectionCheckResult = true;
 
     public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
         super(false);
@@ -72,27 +71,13 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return remoteServerData;
     }
 
-    public boolean isServerUp() {
+    private boolean isServerUp() {
         final long now = System.currentTimeMillis();
-        boolean runCheck = false;
-
-        synchronized (this) { // not to start multiple checks at once
-            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
-                runCheck = true;
-                lastConnectionCheckTime = now;
-                checkInProgress = true;
-            }
-        }
-
-        if (runCheck) {
-            SharedExecutorService.get().execute(new Runnable() {
-                @Override
-                public void run() {
-                    checkServerAvailability();
-                }
-            });
-        }
-
+         if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL > now) {
+                return lastConnectionCheckResult;
+         }
+        checkServerAvailability();
+        lastConnectionCheckTime = now;
         return lastConnectionCheckResult;
     }
 
@@ -109,7 +94,6 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                     + e.getMessage());
         } finally {
             synchronized (this) {
-                checkInProgress = false;
                 FileHelper.safeClose(socket);
             }
         }
@@ -138,6 +122,27 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
         return Collections.unmodifiableCollection(dataLazyReference.get()._rendererBeanDescriptors.values());
+    }
+
+    @Override
+    public void checkStatus() {
+        if (isServerUp()) {
+            actualStatus = null;
+        } else {
+            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
+                    DescriptorProviderStatus.Level.ERROR, "Remote server '" + remoteServerData.getServerName()
+                    + "' is not available at the moment. ");
+            actualStatus = serverDownState;
+        }
+    }
+
+    @Override
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap() {
+        Map<DescriptorProvider, DescriptorProviderStatus> stateMap = new HashMap<>();
+        if (actualStatus != null) {
+            stateMap.put(this, actualStatus);
+        }
+        return stateMap;
     }
 
     private final class RemoteLazyRef extends LazyRef<Data> {
@@ -234,18 +239,5 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             }
         }
         return annotations;
-    }
-
-    @Override
-    public Collection<DescriptorProviderStatus> getStatus() {
-        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
-
-        if (!isServerUp()) {
-            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
-                    DescriptorProviderStatus.Level.ERROR, "Remote server is not available at the moment. ");
-            statusSet.add(serverDownState);
-        }
-
-        return statusSet;
     }
 }

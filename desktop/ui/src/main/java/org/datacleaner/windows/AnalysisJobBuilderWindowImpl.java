@@ -31,7 +31,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -62,11 +64,18 @@ import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DescriptorProviderStateListener;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderListener;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
@@ -248,6 +257,25 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
+    private class DescriptorProviderListenerImpl implements DescriptorProviderListener {
+        public void setup(DescriptorProvider descriptorProvider) {
+            _descriptorProviderStateMap = descriptorProvider.getActualStatusMap();
+            descriptorProvider.addListener(this);
+        }
+
+        @Override
+        public void onDescriptorsUpdated(final DescriptorProvider descriptorProvider) {
+            Map<DescriptorProvider, DescriptorProviderStatus> actualStatusMap = descriptorProvider.getActualStatusMap();
+            if(actualStatusMap.isEmpty()){
+                _descriptorProviderStateMap.remove(descriptorProvider);
+            }else {
+                _descriptorProviderStateMap.putAll(actualStatusMap);
+            }
+            updateStatusLabel();
+            _graph.getPanel().updateUI();
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
@@ -255,6 +283,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
+
+    private Map<DescriptorProvider, DescriptorProviderStatus> _descriptorProviderStateMap = new HashMap<>();
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -285,6 +315,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final DescriptorProviderListenerImpl _descriptorProviderListener = new DescriptorProviderListenerImpl();
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -363,6 +394,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+
+        DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+        _descriptorProviderListener.setup(descriptorProvider);
     }
 
     @Override
@@ -490,19 +524,54 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     public void updateStatusLabel() {
+        DescriptorProviderStatus remoteErrorState = null;
+        boolean remoteExecuteEnable = true;
+
+        for (ComponentBuilder componentBuilder : _analysisJobBuilder.getComponentBuilders()) {
+            ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+            if (descriptor instanceof RemoteTransformerDescriptorImpl) {
+                RemoteDescriptorProvider remoteDescriptorProvider = ((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider();
+                DescriptorProviderStatus descriptorProviderState = _descriptorProviderStateMap.get(remoteDescriptorProvider);
+                if (descriptorProviderState != null && descriptorProviderState.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
+                    remoteErrorState = descriptorProviderState;
+                    break;
+                }
+            }
+        }
+
+        if (remoteErrorState == null) {
+            for (DescriptorProviderStatus descriptorProviderState : _descriptorProviderStateMap.values()) {
+                if (descriptorProviderState.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
+                    remoteErrorState = descriptorProviderState;
+                    break;
+                }
+            }
+        } else {
+            remoteExecuteEnable = false;
+        }
+
         boolean executeable = false;
 
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getDistributionVersion());
             _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
+        } else if (!remoteExecuteEnable) {
+            setStatusLabelText(remoteErrorState.getMessage());
+            setStatusLabelError();
+            executeable = remoteExecuteEnable;
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
                 executeable = true;
             }
             try {
                 if (_analysisJobBuilder.isConfigured(true)) {
-                    setStatusLabelText("Job is correctly configured");
-                    setStatusLabelValid();
+                    if (remoteErrorState == null) {
+                        setStatusLabelText("Job is correctly configured");
+                        setStatusLabelValid();
+                    } else {
+                        setStatusLabelText(remoteErrorState.getMessage());
+                        setStatusLabelWarning();
+                    }
                 } else {
                     setStatusLabelText("Job is not correctly configured");
                     setStatusLabelWarning();
@@ -617,6 +686,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
+
         getContentPane().removeAll();
     }
 

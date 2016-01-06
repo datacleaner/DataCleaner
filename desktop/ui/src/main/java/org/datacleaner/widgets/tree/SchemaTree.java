@@ -645,9 +645,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public Datastore getDatastore() {
         return _datastore;
     }
-    
+
     @Override
-    public void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
+    public synchronized void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
         final TreeNode root = (TreeNode) getModel().getRoot();
         final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
         libraryNode.removeAllChildren();
@@ -656,7 +656,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         model.reload(libraryNode);
         expandStandardPaths();
     }
-    
+
 
     /**
      * Refreshes the tree's contents

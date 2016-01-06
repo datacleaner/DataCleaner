@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
@@ -31,6 +32,8 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
 import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
@@ -90,13 +93,17 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         ComponentDescriptor componentDescriptor = getDescriptor();
 
         if (componentDescriptor instanceof RemoteTransformerDescriptor) {
-            boolean serverUp = ((RemoteTransformerDescriptor) componentDescriptor).getRemoteDescriptorProvider()
-                    .isServerUp();
-
-            if (!serverUp) {
-                logger.warn("Output columns for transformer '" + transformer
-                        + "' can not be retrieved because the remote server is down. ");
-                return Collections.emptyList();
+            Map<DescriptorProvider, DescriptorProviderStatus> status =
+                    ((RemoteTransformerDescriptor) componentDescriptor).getRemoteDescriptorProvider()
+                            .getActualStatusMap();
+            if (status.get(componentDescriptor) != null) {
+                boolean serverUp =
+                        status.get(componentDescriptor).getLevel().equals(DescriptorProviderStatus.Level.ERROR);
+                if (!serverUp) {
+                    logger.warn("Output columns for transformer '" + transformer
+                            + "' can not be retrieved because the remote server is down. ");
+                    return Collections.emptyList();
+                }
             }
         }
 

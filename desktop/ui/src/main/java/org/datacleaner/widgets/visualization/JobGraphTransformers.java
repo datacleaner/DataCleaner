@@ -25,9 +25,11 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -38,6 +40,9 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
+import org.datacleaner.descriptors.RemoteTransformerDescriptorImpl;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
@@ -104,7 +109,7 @@ public class JobGraphTransformers {
     }
 
     public static final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> EDGE_ARROW_PREDICATE = TruePredicate
-            .getInstance();;
+            .getInstance();
 
     public static final Transformer<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = new Transformer<JobGraphLink, String>() {
         @Override
@@ -235,7 +240,20 @@ public class JobGraphTransformers {
                 } else {
                     configured = componentBuilder.isConfigured(false);
                 }
-                return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                Icon descriptorIcon = IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+
+                if (descriptor instanceof RemoteTransformerDescriptorImpl) {
+                    Map<DescriptorProvider, DescriptorProviderStatus> actualDescriptorProviderStatusMap  = componentBuilder.getAnalysisJobBuilder().getConfiguration().getEnvironment().getDescriptorProvider().getActualStatusMap();
+                    if (actualDescriptorProviderStatusMap != null) {
+                        DescriptorProviderStatus state = actualDescriptorProviderStatusMap.get(((RemoteTransformerDescriptorImpl) descriptor).getRemoteDescriptorProvider());
+                        if (state != null && state.getLevel().equals(DescriptorProviderStatus.Level.ERROR)) {
+                            descriptorIcon = IconUtils.addErrorOverlay((ImageIcon) descriptorIcon);
+                        }
+                    }
+                }
+
+                return descriptorIcon;
             }
             if (obj instanceof FilterOutcome) {
                 return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);

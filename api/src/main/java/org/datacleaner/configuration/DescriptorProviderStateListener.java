@@ -17,14 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.configuration;
 
-import org.datacleaner.configuration.RemoteServerData;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProviderStatus;
+
+import java.util.Map;
 
 /**
- * Descriptor provider for remote components.
+ * Listener for notification about providers. {@link DescriptorProviderStateNotifier}
  */
-public interface RemoteDescriptorProvider extends DescriptorProvider {
-    
-    RemoteServerData getServerData();
+public interface DescriptorProviderStateListener {
+
+    public void notify(Map<DescriptorProvider, DescriptorProviderStatus> descriptorProviderStateMap);
 }

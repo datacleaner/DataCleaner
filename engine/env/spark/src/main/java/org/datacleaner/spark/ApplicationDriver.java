@@ -22,15 +22,18 @@ package org.datacleaner.spark;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.hadoop.conf.Configuration;
@@ -38,6 +41,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
+import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
@@ -55,13 +59,20 @@ public class ApplicationDriver {
 
     private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-env-spark";
 
-    private final String _hostname;
-    private final int _port;
+    private final URI _defaultFs;
+    private final DistributedFileSystem _fileSystem;
     private final String _jarDirectoryPath;
     private final String _sparkHome;
 
-    public ApplicationDriver(String hostname, int port, String jarDirectoryPath) {
-        this(hostname, port, jarDirectoryPath, determineSparkHome());
+    public ApplicationDriver(URI uri, String jarDirectoryPath) throws IOException {
+        this(uri, jarDirectoryPath, determineSparkHome());
+    }
+
+    public ApplicationDriver(URI defaultFs, String jarDirectoryPath, String sparkHome) throws IOException {
+        _defaultFs = defaultFs;
+        _fileSystem = (DistributedFileSystem) FileSystem.newInstance(_defaultFs, new Configuration());
+        _jarDirectoryPath = jarDirectoryPath;
+        _sparkHome = sparkHome;
     }
 
     private static String determineSparkHome() {
@@ -80,16 +91,9 @@ public class ApplicationDriver {
         return sparkHome;
     }
 
-    public ApplicationDriver(String hostname, int port, String jarDirectoryPath, String sparkHome) {
-        _hostname = hostname;
-        _port = port;
-        _jarDirectoryPath = jarDirectoryPath;
-        _sparkHome = sparkHome;
-    }
-
     /**
      * Launches and waits for the execution of a DataCleaner job on Spark.
-     * 
+     *
      * @param configurationHdfsPath
      *            configuration file path (on HDFS)
      * @param jobHdfsPath
@@ -101,7 +105,8 @@ public class ApplicationDriver {
         // create hadoop configuration directory
         final File hadoopConfDir = createTemporaryHadoopConfDir();
 
-        final SparkLauncher sparkLauncher = createSparkLauncher(hadoopConfDir, configurationHdfsPath, jobHdfsPath);
+        final SparkLauncher sparkLauncher =
+                createSparkLauncher(hadoopConfDir, configurationHdfsPath, jobHdfsPath, null);
 
         return launch(sparkLauncher);
     }
@@ -131,15 +136,25 @@ public class ApplicationDriver {
                 } catch (Exception e) {
                     logger.warn("Logger thread failure: " + e.getMessage(), e);
                 }
-            };
+            }
+
+            ;
         }.start();
     }
 
     public HdfsResource createResource(String hdfsPath) {
-        return new HdfsResource(_hostname, _port, hdfsPath);
+        return new HdfsResource(_defaultFs.resolve(hdfsPath).toString());
     }
 
-    public SparkLauncher createSparkLauncher(File hadoopConfDir, String configurationHdfsPath, String jobHdfsPath)
+    public SparkLauncher createSparkLauncher(File hadoopConfDir, URI configurationHdfsUri, URI jobHdfsUri,
+            URI resultHdfsUri)
+            throws Exception {
+        return createSparkLauncher(hadoopConfDir, configurationHdfsUri.toString(), jobHdfsUri.toString(),
+                resultHdfsUri == null ? null : resultHdfsUri.toString());
+    }
+
+    public SparkLauncher createSparkLauncher(File hadoopConfDir, String configurationHdfsPath, String jobHdfsPath,
+            String resultHdfsPath)
             throws Exception {
         // mimic env. variables
         final Map<String, String> env = new HashMap<>();
@@ -159,34 +174,42 @@ public class ApplicationDriver {
         for (final String jar : jars) {
             sparkLauncher.addJar(jar);
         }
+
         sparkLauncher.setMainClass(Main.class.getName());
+        sparkLauncher.setConf("spark.serializer", "org.apache.spark.serializer.JavaSerializer");
 
         // the primary jar is always the first argument
         sparkLauncher.addAppArgs(primaryJar.get());
 
-        sparkLauncher.addAppArgs(toHdfsPath(configurationHdfsPath));
-        sparkLauncher.addAppArgs(toHdfsPath(jobHdfsPath));
+        sparkLauncher.addAppArgs(toHadoopPath(configurationHdfsPath));
+        sparkLauncher.addAppArgs(toHadoopPath(jobHdfsPath));
+
+        if (!StringUtils.isNullOrEmpty(resultHdfsPath)) {
+            Properties properties = new Properties();
+            properties.setProperty("datacleaner.result.hdfs.path", resultHdfsPath);
+            File tempFile = File.createTempFile("job-", ".properties");
+            properties.store(new FileWriter(tempFile), "DataCleaner Spark runner properties");
+            final URI uri = copyFileToHdfs(tempFile,
+                    _fileSystem.getHomeDirectory().toUri().resolve("temp/" + tempFile).toString());
+            sparkLauncher.addAppArgs(uri.toString());
+        }
 
         return sparkLauncher;
     }
 
-    private String toHdfsPath(String path) {
-        if (path.startsWith("hdfs://")) {
+    private String toHadoopPath(String path) {
+        if (URI.create(path).getScheme() != null) {
             return path;
         }
-        return "hdfs://" + _hostname + ":" + _port + path;
+
+        return _defaultFs.resolve(path).toString();
     }
 
     private List<String> buildJarFiles(MutableRef<String> primaryJarRef) throws IOException {
         final List<String> list = new ArrayList<>();
 
-        final Configuration conf = new Configuration();
-        conf.set("fs.defaultFS", "hdfs://" + _hostname + ":" + _port);
-
-        final FileSystem fs = FileSystem.newInstance(conf);
-        try {
             final Path directoryPath = new Path(_jarDirectoryPath);
-            final RemoteIterator<LocatedFileStatus> files = fs.listFiles(directoryPath, false);
+            final RemoteIterator<LocatedFileStatus> files = _fileSystem.listFiles(directoryPath, false);
             while (files.hasNext()) {
                 final LocatedFileStatus file = files.next();
                 final Path path = file.getPath();
@@ -197,9 +220,6 @@ public class ApplicationDriver {
                     list.add(path.toString());
                 }
             }
-        } finally {
-            FileHelper.safeClose(fs);
-        }
 
         if (primaryJarRef.get() == null) {
             throw new IllegalArgumentException("Failed to find primary jar (starting with '"
@@ -230,8 +250,8 @@ public class ApplicationDriver {
             try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
                 while (line != null) {
-                    line = StringUtils.replaceAll(line, "${HDFS_HOSTNAME}", _hostname);
-                    line = StringUtils.replaceAll(line, "${HDFS_PORT}", _port + "");
+                    line = StringUtils.replaceAll(line, "${HDFS_HOSTNAME}", _defaultFs.getHost());
+                    line = StringUtils.replaceAll(line, "${HDFS_PORT}", _defaultFs.getPort() + "");
                     writer.write(line);
 
                     line = reader.readLine();
@@ -241,25 +261,26 @@ public class ApplicationDriver {
         }
     }
 
-    public void copyFileToHdfs(File file, String hdfsPath) {
-        copyFileToHdfs(file, hdfsPath, true);
+    public URI copyFileToHdfs(File file, String hdfsPath) {
+        return copyFileToHdfs(file, hdfsPath, true);
     }
 
-    public void copyFileToHdfs(final File file, final String hdfsPath, final boolean overwrite) {
+    public URI copyFileToHdfs(final File file, final String hdfsPath, final boolean overwrite) {
         final HdfsResource hdfsResource = createResource(hdfsPath);
+        final URI uri = hdfsResource.getHadoopPath().toUri();
         final boolean exists = hdfsResource.isExists();
         if (!overwrite && exists) {
             // no need to copy
             logger.debug("Skipping file-copy to {} because file already exists", hdfsPath);
-            return;
+            return uri;
         }
-        
+
         if (exists) {
             logger.info("Overwriting file on HDFS: {}", hdfsPath);
         } else {
             logger.debug("Copying file to HDFS: {}", hdfsPath);
         }
-        
+
         hdfsResource.write(new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
@@ -268,5 +289,7 @@ public class ApplicationDriver {
                 in.close();
             }
         });
+
+        return uri;
     }
 }

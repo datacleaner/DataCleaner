@@ -20,6 +20,7 @@
 package org.datacleaner.spark;
 
 import java.io.File;
+import java.net.URI;
 
 import org.apache.spark.launcher.SparkLauncher;
 
@@ -52,8 +53,7 @@ import org.apache.spark.launcher.SparkLauncher;
  */
 public class ExampleLaunch {
 
-    private static final String HDFS_HOSTNAME = "bigdatavm";
-    private static final int HDFS_PORT = 9000;
+    private static final URI HDFS_NAMENODE = URI.create("hdfs://bigdatavm:9000/");
     private static final String HDFS_JAR_LOCATION = "/datacleaner/lib";
     private static final String CONFIGURATION_LOCATION = "/datacleaner/test/conf.xml";
     private static final String SPARK_HOME = "C:\\dev\\spark-1.5.1-bin-hadoop2.6";
@@ -65,7 +65,7 @@ public class ExampleLaunch {
             System.setProperty("SPARK_HOME", SPARK_HOME);
         }
         
-        final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
+        final ApplicationDriver launcher = new ApplicationDriver(HDFS_NAMENODE, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location
         launcher.copyFileToHdfs(new File("src/test/resources/person_names.txt"), DATA_LOCATION, false);
@@ -74,7 +74,7 @@ public class ExampleLaunch {
 
         final File hadoopConfDir = launcher.createTemporaryHadoopConfDir();
         final SparkLauncher sparkLauncher = launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION,
-                JOB_LOCATION);
+                JOB_LOCATION, null);
         final int exitCode = launcher.launch(sparkLauncher);
 
         System.out.println("Exit code: " + exitCode);

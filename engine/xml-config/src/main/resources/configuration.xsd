@@ -947,6 +947,8 @@
 				maxOccurs="1" type="string" />
 			<element name="synonym-column-path" minOccurs="1" maxOccurs="unbounded"
 				type="string" />
+			<element name="load-into-memory" minOccurs="0" maxOccurs="1"
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -975,6 +977,8 @@
 			<element name="datastore-name" minOccurs="1" maxOccurs="1"
 				type="string" />
 			<element name="column-path" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="load-into-memory" minOccurs="0" maxOccurs="1"
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />

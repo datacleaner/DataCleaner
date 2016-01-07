@@ -65,6 +65,8 @@ import org.datacleaner.descriptors.RendererBeanDescriptor;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
+import org.datacleaner.reference.DatastoreDictionary;
+import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
 import org.datacleaner.reference.ReferenceDataCatalog;
@@ -139,8 +141,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("[Column[name=Foo,columnNumber=0,type=VARCHAR,nullable=true,nativeType=null,columnSize=null], "
                 + "Column[name=Bar,columnNumber=1,type=MAP,nullable=true,nativeType=null,columnSize=null], "
                 + "Column[name=Baz,columnNumber=2,type=LIST,nullable=true,nativeType=null,columnSize=null], "
-                + "Column[name=bytes,columnNumber=3,type=BINARY,nullable=true,nativeType=null,columnSize=null]]",
-                Arrays.toString(columns));
+                + "Column[name=bytes,columnNumber=3,type=BINARY,nullable=true,nativeType=null,columnSize=null]]", Arrays
+                        .toString(columns));
 
         DataSet ds = dc.query().from(table).select(columns).execute();
 
@@ -199,8 +201,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 "src/test/resources/example-configuration-valid.xml"));
 
         DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
-        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
-                Arrays.toString(datastoreCatalog.getDatastoreNames()));
+        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]", Arrays.toString(datastoreCatalog
+                .getDatastoreNames()));
 
         assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);
     }
@@ -215,7 +217,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         CombinedStorageProvider csp = (CombinedStorageProvider) storageProvider;
         assertEquals(BerkeleyDbStorageProvider.class, csp.getCollectionsStorageProvider().getClass());
         assertEquals(InMemoryStorageProvider.class, csp.getRowAnnotationsStorageProvider().getClass());
-        
+
         RowAnnotationFactory rowAnnotationFactory = csp.getRowAnnotationsStorageProvider().createRowAnnotationFactory();
         assertEquals(InMemoryRowAnnotationFactory2.class, rowAnnotationFactory.getClass());
     }
@@ -245,8 +247,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("my_keyspace", cassandraDatastore.getKeyspace());
         assertEquals("foo", cassandraDatastore.getUsername());
         assertEquals("bar", cassandraDatastore.getPassword());
-        assertEquals("[SimpleTableDef[name=table,columnNames=[bah, baz],columnTypes=[STRING, STRING]]]",
-                Arrays.toString(cassandraDatastore.getTableDefs()));
+        assertEquals("[SimpleTableDef[name=table,columnNames=[bah, baz],columnTypes=[STRING, STRING]]]", Arrays
+                .toString(cassandraDatastore.getTableDefs()));
 
         ElasticSearchDatastore esDatastore = (ElasticSearchDatastore) datastoreCatalog.getDatastore("my es index");
         assertEquals("localhost", esDatastore.getHostname());
@@ -318,15 +320,14 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("localhost", mongoDbDatastore.getHostname());
         assertEquals(27017, mongoDbDatastore.getPort());
         SimpleTableDef[] tableDefs = mongoDbDatastore.getTableDefs();
-        assertEquals(
-                "[SimpleTableDef[name=my_col_1,columnNames=[foo, bar, baz],columnTypes=[VARCHAR, INTEGER, DATE]]]",
+        assertEquals("[SimpleTableDef[name=my_col_1,columnNames=[foo, bar, baz],columnTypes=[VARCHAR, INTEGER, DATE]]]",
                 Arrays.toString(tableDefs));
 
         XmlDatastore xmlDatastore = (XmlDatastore) datastoreCatalog.getDatastore("my_sax_xml");
         assertEquals("../core/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
         assertEquals("[XmlSaxTableDef[rowXpath=/greetings/greeting,"
-                + "valueXpaths=[/greetings/greeting/how, /greetings/greeting/what]]]",
-                Arrays.toString(xmlDatastore.getTableDefs()));
+                + "valueXpaths=[/greetings/greeting/how, /greetings/greeting/what]]]", Arrays.toString(xmlDatastore
+                        .getTableDefs()));
 
         FixedWidthDatastore ds = (FixedWidthDatastore) datastoreCatalog.getDatastore("my_fixed_width_1");
         assertEquals(19, ds.getFixedValueWidth());
@@ -363,7 +364,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertThat(dataHubDatastore.isHttps(), is(false));
         assertThat(dataHubDatastore.isAcceptUnverifiedSslPeers(), is(false));
         assertThat(dataHubDatastore.getSecurityMode(), is(DataHubSecurityMode.DEFAULT));
-        
+
         for (String name : datastoreNames) {
             // test that all connections, except the JNDI-, MongoDB- and
             // CouchDB-based on will work
@@ -408,7 +409,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         ReferenceDataCatalog referenceDataCatalog = conf.getReferenceDataCatalog();
         String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
         assertEquals("[custom_dict, datastore_dict, textfile_dict, valuelist_dict]", Arrays.toString(dictionaryNames));
-        
+
         LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(conf, null, true);
 
         Dictionary d = referenceDataCatalog.getDictionary("datastore_dict");
@@ -420,6 +421,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertTrue(dictionaryConnection.containsValue("Murphy"));
         assertFalse(dictionaryConnection.containsValue("Gates"));
         dictionaryConnection.close();
+        assertFalse(((DatastoreDictionary) d).isLoadIntoMemory());
 
         d = referenceDataCatalog.getDictionary("textfile_dict");
         assertEquals("dict_txt", d.getDescription());
@@ -470,9 +472,10 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
         s = referenceDataCatalog.getSynonymCatalog("datastore_syn");
         assertEquals("syn_ds", s.getDescription());
+        assertTrue(((DatastoreSynonymCatalog) s).isLoadIntoMemory());
         lifeCycleHelper.assignProvidedProperties(Descriptors.ofComponent(s.getClass()), s);
         lifeCycleHelper.initialize(Descriptors.ofComponent(s.getClass()), s);
-        
+
         synonymConnection = s.openConnection(conf);
 
         // lookup by id
@@ -480,14 +483,14 @@ public class JaxbConfigurationReaderTest extends TestCase {
         // lookup by phone number (string)
         assertEquals("Danish Wholesale Imports", synonymConnection.getMasterTerm("31 12 3555"));
         assertEquals(null, synonymConnection.getMasterTerm("foobar"));
-        
+
         synonymConnection.close();
 
         s = referenceDataCatalog.getSynonymCatalog("custom_syn");
         assertEquals("syn_custom", s.getDescription());
         lifeCycleHelper.initialize(Descriptors.ofComponent(s.getClass()), s);
-        
-        synonymConnection= s.openConnection(conf);
+
+        synonymConnection = s.openConnection(conf);
         assertEquals("DNK", synonymConnection.getMasterTerm("Denmark"));
         assertEquals("DNK", synonymConnection.getMasterTerm("Danmark"));
         assertEquals(null, synonymConnection.getMasterTerm("DK"));
@@ -524,8 +527,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
     public void testCustomDictionaryWithInjectedDatastore() {
         DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
         ReferenceDataCatalog referenceDataCatalog = configuration.getReferenceDataCatalog();
-        SampleCustomDictionary sampleCustomDictionary = (SampleCustomDictionary) referenceDataCatalog
-                .getDictionary("custom_dict");
+        SampleCustomDictionary sampleCustomDictionary = (SampleCustomDictionary) referenceDataCatalog.getDictionary(
+                "custom_dict");
         Assert.assertEquals("my_jdbc_connection", sampleCustomDictionary.datastore.getName());
     }
 

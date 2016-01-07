@@ -143,4 +143,8 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
     public String getQualifiedColumnName() {
         return _qualifiedColumnName;
     }
+
+    public boolean isLoadIntoMemory() {
+        return _loadIntoMemory;
+    }
 }

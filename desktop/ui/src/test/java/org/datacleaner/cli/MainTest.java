@@ -136,7 +136,7 @@ public class MainTest extends TestCase {
     }
 
     public void testListSchemas() throws Throwable {
-        Main.main("-conf srcdeco/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
+        Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         assertEquals("Schemas:\n" + "--------\n" + "INFORMATION_SCHEMA\n" + "PUBLIC\n", out);

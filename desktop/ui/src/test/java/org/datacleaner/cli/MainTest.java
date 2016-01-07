@@ -110,7 +110,7 @@ public class MainTest extends TestCase {
         assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",lines[9].trim());
 
         assertEquals(
-                "-runtype (--runtype) [LOCAL | SPARK]                     : How/where to run the job",
+                "-runtype (--runtype) [LOCAL | SPARK]                       : How/where to run the job",
                 lines[10].trim());
         assertEquals(
                 "-s (-schema, --schema-name) VAL                            : Name of schema when printing a list of tables or columns",
@@ -136,7 +136,7 @@ public class MainTest extends TestCase {
     }
 
     public void testListSchemas() throws Throwable {
-        Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
+        Main.main("-conf srcdeco/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         assertEquals("Schemas:\n" + "--------\n" + "INFORMATION_SCHEMA\n" + "PUBLIC\n", out);

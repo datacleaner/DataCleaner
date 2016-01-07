@@ -257,7 +257,7 @@
 		<url>https://github.com/datacleaner/DataCleaner</url>
 		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>release/4.5.4</tag>
 	</scm>
 	<mailingLists>
 		<mailingList>

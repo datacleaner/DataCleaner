@@ -20,5 +20,5 @@
 package org.datacleaner.cli;
 
 public enum CliRunType {
-    DESKTOP, SPARK
+    LOCAL, SPARK
 }

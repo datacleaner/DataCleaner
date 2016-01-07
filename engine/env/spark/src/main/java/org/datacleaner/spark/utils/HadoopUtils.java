@@ -25,7 +25,6 @@ import java.io.InputStream;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.util.FileHelper;
 
 import com.google.common.base.Strings;
@@ -85,5 +84,9 @@ public class HadoopUtils {
         addResourceIfExists(conf, hadoopConfigurationDirectory, "hdfs-site.xml");
 
         return conf;
+    }
+
+    public static FileSystem getFileSystem() throws IOException {
+        return  FileSystem.newInstance(HadoopUtils.getHadoopConfiguration(getHadoopConfigurationDirectoryToUse()));
     }
 }

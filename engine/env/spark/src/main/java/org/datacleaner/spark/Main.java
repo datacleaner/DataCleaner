@@ -67,7 +67,7 @@ public class Main {
         final ServiceLoader<SparkJobLifeCycleListener> listenerLoaders =
                 ServiceLoader.load(SparkJobLifeCycleListener.class);
 
-        for(SparkJobLifeCycleListener listener : listenerLoaders){
+        for (SparkJobLifeCycleListener listener : listenerLoaders) {
             sparkJobContext.addSparkJobLifeCycleListener(listener);
         }
 

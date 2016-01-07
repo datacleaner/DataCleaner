@@ -30,7 +30,7 @@ import org.apache.spark.launcher.SparkLauncher;
 import org.datacleaner.spark.utils.HadoopUtils;
 
 /**
- * Prepares for Spark launching from
+ * Prepares job for launching on Spark
  */
 public class SparkRunner {
     public final static String DATACLEANER_DIR = "/datacleaner";
@@ -47,7 +47,7 @@ public class SparkRunner {
     public SparkRunner(String configurationFilePath, String jobFilePath, String resultFilePath) throws IOException {
         try {
             _hadoopConfigurationDirectory = HadoopUtils.getHadoopConfigurationDirectoryToUse();
-            _hadoopDefaultFS = FileSystem.newInstance(HadoopUtils.getHadoopConfiguration(_hadoopConfigurationDirectory));
+            _hadoopDefaultFS = HadoopUtils.getFileSystem();
         } catch (IOException e) {
             throw new IllegalStateException("Could not create Hadoop filesystem", e);
         }

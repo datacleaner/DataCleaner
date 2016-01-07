@@ -110,7 +110,7 @@ public class MainTest extends TestCase {
         assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",lines[9].trim());
 
         assertEquals(
-                "-runtype (--runtype) [DESKTOP | SPARK]                     : How/where to run the job",
+                "-runtype (--runtype) [LOCAL | SPARK]                     : How/where to run the job",
                 lines[10].trim());
         assertEquals(
                 "-s (-schema, --schema-name) VAL                            : Name of schema when printing a list of tables or columns",

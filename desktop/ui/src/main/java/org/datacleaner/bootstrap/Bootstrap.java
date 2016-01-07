@@ -164,7 +164,7 @@ public final class Bootstrap {
             LookAndFeelManager.get().init();
         }
 
-        if(arguments.getRunType() == CliRunType.SPARK){
+        if (arguments.getRunType() == CliRunType.SPARK) {
             runCli(arguments, null);
             return;
         }

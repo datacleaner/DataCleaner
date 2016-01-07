@@ -203,7 +203,7 @@ public class CliArguments {
 
     public CliRunType getRunType() {
         if (runType == null){
-            return CliRunType.DESKTOP;
+            return CliRunType.LOCAL;
         }
         return runType;
     }

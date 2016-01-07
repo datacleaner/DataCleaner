@@ -87,10 +87,10 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         }
 
         final Transformer transformer = (Transformer) component;
-        ComponentDescriptor componentDescriptor = getDescriptor();
+        ComponentDescriptor<?> componentDescriptor = getDescriptor();
 
         if (componentDescriptor instanceof RemoteTransformerDescriptor) {
-            boolean serverUp = ((RemoteTransformerDescriptor) componentDescriptor).getRemoteDescriptorProvider()
+            boolean serverUp = ((RemoteTransformerDescriptor<?>) componentDescriptor).getRemoteDescriptorProvider()
                     .isServerUp();
 
             if (!serverUp) {

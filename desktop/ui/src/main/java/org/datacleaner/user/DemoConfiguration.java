@@ -52,6 +52,7 @@ public class DemoConfiguration {
     public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = addFile("jobs/US Customer STATE check.analysis.xml");
     public static final String JOB_CUSTOMER_AGE_FILTERING = addFile("jobs/Customer filtering.analysis.xml");
     public static final String JOB_ORDERDB_NAME_PHONE_CLEANSING = addFile("jobs/OrderDB Name and Phone Cleansing.analysis.xml");
+    public static final String JOB_DENORMALIZE_STACKED_AREA = addFile("jobs/Denormalize order totals and present as stacked area chart.analysis.xml");
 
     public static final String OTHER_DEDUP_MODEL_SFDC_USERS = addFile("jobs/sfdc_dupe_model_users.dedupmodel.xml");
     public static final String OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_model.dedupmodel.xml");

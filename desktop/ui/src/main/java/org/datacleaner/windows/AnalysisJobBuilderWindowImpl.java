@@ -64,7 +64,6 @@ import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DescriptorProviderStateListener;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;

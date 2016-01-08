@@ -647,7 +647,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     @Override
-    public synchronized void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
+    public void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
         final TreeNode root = (TreeNode) getModel().getRoot();
         final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
         libraryNode.removeAllChildren();

@@ -32,7 +32,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.spark.utils.ResultFilePathUtils;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;

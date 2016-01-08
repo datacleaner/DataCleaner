@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Created with DataCleaner Community edition UNKNOWN</job-description>
+        <author>kaspers</author>
+        <updated-date>2016-01-07+01:00</updated-date>
+        <metadata-properties>
+            <property name="CoordinatesY.PUBLIC.ORDERFACT">298</property>
+            <property name="CoordinatesX.PUBLIC.ORDERFACT">136</property>
+            <property name="CoordinatesX.PUBLIC.PRODUCTS">183</property>
+            <property name="CoordinatesX.PUBLIC.CUSTOMERS">269</property>
+            <property name="CoordinatesY.PUBLIC.PRODUCTS">180</property>
+            <property name="CoordinatesY.PUBLIC.CUSTOMERS">141</property>
+        </metadata-properties>
+    </job-metadata>
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_ordernumber" path="ORDERFACT.ORDERNUMBER" type="INTEGER"/>
+            <column id="col_productcode" path="ORDERFACT.PRODUCTCODE" type="VARCHAR"/>
+            <column id="col_quantityordered" path="ORDERFACT.QUANTITYORDERED" type="INTEGER"/>
+            <column id="col_priceeach" path="ORDERFACT.PRICEEACH" type="DECIMAL"/>
+            <column id="col_orderlinenumber" path="ORDERFACT.ORDERLINENUMBER" type="INTEGER"/>
+            <column id="col_totalprice" path="ORDERFACT.TOTALPRICE" type="REAL"/>
+            <column id="col_orderdate" path="ORDERFACT.ORDERDATE" type="TIMESTAMP"/>
+            <column id="col_requireddate" path="ORDERFACT.REQUIREDDATE" type="TIMESTAMP"/>
+            <column id="col_shippeddate" path="ORDERFACT.SHIPPEDDATE" type="TIMESTAMP"/>
+            <column id="col_status" path="ORDERFACT.STATUS" type="VARCHAR"/>
+            <column id="col_comments" path="ORDERFACT.COMMENTS" type="LONGVARCHAR"/>
+            <column id="col_customernumber" path="ORDERFACT.CUSTOMERNUMBER" type="INTEGER"/>
+            <column id="col_time_id" path="ORDERFACT.TIME_ID" type="VARCHAR"/>
+            <column id="col_qtr_id" path="ORDERFACT.QTR_ID" type="BIGINT"/>
+            <column id="col_month_id" path="ORDERFACT.MONTH_ID" type="BIGINT"/>
+            <column id="col_year_id" path="ORDERFACT.YEAR_ID" type="BIGINT"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer name="Extract date parts">
+            <descriptor ref="Extract date part"/>
+            <metadata-properties>
+                <property name="CoordinatesY">299</property>
+                <property name="CoordinatesX">298</property>
+            </metadata-properties>
+            <properties>
+                <property name="Year" value="true"/>
+                <property name="Month" value="true"/>
+                <property name="Day of month" value="false"/>
+                <property name="Hour" value="false"/>
+                <property name="Minute" value="false"/>
+                <property name="Second" value="false"/>
+                <property name="Day of week" value="false"/>
+                <property name="Week number" value="false"/>
+                <property name="Minimal days in first week" value="4"/>
+                <property name="First day of week" value="MONDAY"/>
+            </properties>
+            <input ref="col_orderdate"/>
+            <output id="col_orderdateyear2" name="ORDERDATE (year)"/>
+            <output id="col_orderdatemonth" name="ORDERDATE (month)"/>
+        </transformer>
+        <transformer name="Grouper - per year, sum monthly">
+            <descriptor ref="Grouper"/>
+            <metadata-properties>
+                <property name="CoordinatesY">438</property>
+                <property name="CoordinatesX">464</property>
+            </metadata-properties>
+            <properties>
+                <property name="AggregationTypes" value="[SUM,SUM,SUM,SUM,SUM,SUM,SUM,SUM,SUM,SUM,SUM,SUM]"/>
+                <property name="Value sortation" value="NONE"/>
+                <property name="Concatenation separator" value="&amp;#44; "/>
+                <property name="Skip null group keys" value="true"/>
+                <property name="Skip null values" value="true"/>
+            </properties>
+            <input ref="col_orderdateyear2" name="Group key"/>
+            <input ref="col_jan2" name="Aggregated values"/>
+            <input ref="col_feb2" name="Aggregated values"/>
+            <input ref="col_mar2" name="Aggregated values"/>
+            <input ref="col_apr2" name="Aggregated values"/>
+            <input ref="col_may2" name="Aggregated values"/>
+            <input ref="col_jun2" name="Aggregated values"/>
+            <input ref="col_jul2" name="Aggregated values"/>
+            <input ref="col_aug2" name="Aggregated values"/>
+            <input ref="col_sep2" name="Aggregated values"/>
+            <input ref="col_oct2" name="Aggregated values"/>
+            <input ref="col_nov2" name="Aggregated values"/>
+            <input ref="col_dec2" name="Aggregated values"/>
+            <output-data-stream name="output">
+                <job>
+                    <source>
+                        <columns>
+                            <column id="col_orderdateyear" path="ORDERDATE (year)" type="OTHER"/>
+                            <column id="col_row_count" path="row_count" type="INTEGER"/>
+                            <column id="col_jan" path="Jan" type="NUMBER"/>
+                            <column id="col_feb" path="Feb" type="NUMBER"/>
+                            <column id="col_mar" path="Mar" type="NUMBER"/>
+                            <column id="col_apr" path="Apr" type="NUMBER"/>
+                            <column id="col_may" path="May" type="NUMBER"/>
+                            <column id="col_jun" path="Jun" type="NUMBER"/>
+                            <column id="col_jul" path="Jul" type="NUMBER"/>
+                            <column id="col_aug" path="Aug" type="NUMBER"/>
+                            <column id="col_sep" path="Sep" type="NUMBER"/>
+                            <column id="col_oct" path="Oct" type="NUMBER"/>
+                            <column id="col_nov" path="Nov" type="NUMBER"/>
+                            <column id="col_dec" path="Dec" type="NUMBER"/>
+                        </columns>
+                    </source>
+                    <transformation>
+                        <transformer name="Create &quot;YEAR&quot; scale">
+                            <descriptor ref="Convert to number"/>
+                            <metadata-properties>
+<property name="CoordinatesY">437</property>
+<property name="CoordinatesX">735</property>
+                            </metadata-properties>
+                            <properties>
+<property name="Decimal separator" value="&amp;#44;"/>
+<property name="Minus sign" value="-"/>
+<property name="Null replacement" value="&lt;null&gt;"/>
+<property name="Thousand separator" value="."/>
+                            </properties>
+                            <input ref="col_orderdateyear"/>
+                            <output id="col_year" name="YEAR"/>
+                        </transformer>
+                    </transformation>
+                    <analysis>
+                        <analyzer>
+                            <descriptor ref="Stacked area plot"/>
+                            <metadata-properties>
+<property name="CoordinatesY">434</property>
+<property name="CoordinatesX">917</property>
+                            </metadata-properties>
+                            <properties/>
+                            <input ref="col_jan" name="Measure columns"/>
+                            <input ref="col_feb" name="Measure columns"/>
+                            <input ref="col_mar" name="Measure columns"/>
+                            <input ref="col_apr" name="Measure columns"/>
+                            <input ref="col_may" name="Measure columns"/>
+                            <input ref="col_jun" name="Measure columns"/>
+                            <input ref="col_jul" name="Measure columns"/>
+                            <input ref="col_aug" name="Measure columns"/>
+                            <input ref="col_sep" name="Measure columns"/>
+                            <input ref="col_oct" name="Measure columns"/>
+                            <input ref="col_nov" name="Measure columns"/>
+                            <input ref="col_dec" name="Measure columns"/>
+                            <input ref="col_year" name="Category column"/>
+                        </analyzer>
+                    </analysis>
+                </job>
+            </output-data-stream>
+        </transformer>
+        <transformer name="Spread price to months">
+            <descriptor ref="JavaScript transformer (advanced)"/>
+            <metadata-properties>
+                <property name="CoordinatesY">298</property>
+                <property name="CoordinatesX">463</property>
+            </metadata-properties>
+            <properties>
+                <property name="Return types" value="[java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number,java.lang.Number]"/>
+                <property name="Source code">var transformerObj = {
+	initialize: function() {
+		logger.info('Initializing advanced JavaScript transformer...');
+	}&amp;#44;
+
+	transform: function(columns&amp;#44;values&amp;#44;outputCollector) {
+		var result = &amp;#91;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#44;null&amp;#93;;
+		var index = values&amp;#91;0&amp;#93; - 1; // month index
+		var price = values&amp;#91;1&amp;#93;;
+		result&amp;#91;index&amp;#93; = price;
+		
+		outputCollector.putValues(result)
+		
+	}&amp;#44;
+
+	close: function() {
+		logger.info('Closing advanced JavaScript transformer...');
+	}
+}</property>
+            </properties>
+            <input ref="col_orderdatemonth"/>
+            <input ref="col_totalprice"/>
+            <output id="col_jan2" name="Jan"/>
+            <output id="col_feb2" name="Feb"/>
+            <output id="col_mar2" name="Mar"/>
+            <output id="col_apr2" name="Apr"/>
+            <output id="col_may2" name="May"/>
+            <output id="col_jun2" name="Jun"/>
+            <output id="col_jul2" name="Jul"/>
+            <output id="col_aug2" name="Aug"/>
+            <output id="col_sep2" name="Sep"/>
+            <output id="col_oct2" name="Oct"/>
+            <output id="col_nov2" name="Nov"/>
+            <output id="col_dec2" name="Dec"/>
+        </transformer>
+    </transformation>
+    <analysis/>
+</job>

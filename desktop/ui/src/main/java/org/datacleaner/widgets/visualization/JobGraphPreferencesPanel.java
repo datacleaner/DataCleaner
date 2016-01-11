@@ -37,8 +37,9 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.HorizontalLayout;
+
+import com.google.common.base.Strings;
 
 /**
  * Panel which is shown in a popup to modify visual/UI preferences of the job

@@ -44,6 +44,7 @@ import org.datacleaner.Version;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
+import org.datacleaner.cli.CliRunType;
 import org.datacleaner.cli.CliRunner;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -163,6 +164,11 @@ public final class Bootstrap {
             LookAndFeelManager.get().init();
         }
 
+        if (arguments.getRunType() == CliRunType.SPARK) {
+            runCli(arguments, null);
+            return;
+        }
+
         // initially use a temporary non-persistent user preferences object.
         // This is just to have basic settings available for eg. resolving
         // files.
@@ -182,18 +188,7 @@ public final class Bootstrap {
         usageLogger.logApplicationStartup();
 
         if (cliMode) {
-            // run in CLI mode
-
-            int exitCode = 0;
-            try (final CliRunner runner = new CliRunner(arguments)) {
-                runner.run(configuration);
-            } catch (Throwable e) {
-                logger.error("Error occurred while running DataCleaner command line mode", e);
-                exitCode = 1;
-            } finally {
-                exitCommandLine(configuration, exitCode);
-            }
-            return;
+            runCli(arguments, configuration);
         } else {
             // run in GUI mode
             final AnalysisJobBuilderWindow analysisJobBuilderWindow;
@@ -263,6 +258,20 @@ public final class Bootstrap {
             if (exitActionListener != null) {
                 windowContext.addExitActionListener(exitActionListener);
             }
+        }
+    }
+
+    private void runCli(final CliArguments arguments, final DataCleanerConfiguration configuration) {
+        // run in CLI mode
+
+        int exitCode = 0;
+        try (final CliRunner runner = new CliRunner(arguments)) {
+            runner.run(configuration);
+        } catch (Throwable e) {
+            logger.error("Error occurred while running DataCleaner command line mode", e);
+            exitCode = 1;
+        } finally {
+            exitCommandLine(configuration, exitCode);
         }
     }
 

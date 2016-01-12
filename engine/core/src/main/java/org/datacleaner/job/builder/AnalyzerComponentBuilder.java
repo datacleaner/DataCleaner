@@ -55,8 +55,10 @@ import org.slf4j.LoggerFactory;
  * @param <A>
  *            the type of {@link Analyzer} being built.
  */
-public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
-        extends AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
+public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
+        AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
+
+    public static final String METADATA_PROPERTY_BUILDER_ID = "org.datacleaner.componentbuilder.id";
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
@@ -96,8 +98,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
     private List<AnalyzerChangeListener> getAllListeners() {
         @SuppressWarnings("deprecation")
         List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        List<AnalyzerChangeListener> list = new ArrayList<>(
-                globalChangeListeners.size() + _localChangeListeners.size());
+        List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
+                .size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
@@ -119,8 +121,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
         }
 
         if (validate && analyzerJobs.length > 1) {
-            throw new IllegalStateException(
-                    "This builder generates " + analyzerJobs.length + " jobs, but a single job was requested");
+            throw new IllegalStateException("This builder generates " + analyzerJobs.length
+                    + " jobs, but a single job was requested");
         }
 
         return analyzerJobs[0];
@@ -145,6 +147,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
         if (!isMultipleJobsSupported()) {
+
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
             final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
@@ -262,8 +265,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
                     }
                 }
                 if (throwException) {
-                    throw new ComponentConfigurationException(
-                            "No input columns configured for " + LabelUtils.getLabel(this));
+                    throw new ComponentConfigurationException("No input columns configured for " + LabelUtils.getLabel(
+                            this));
                 } else {
                     return false;
                 }
@@ -279,14 +282,19 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
                 configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
 
+        // set the component builder ID property to allow correlating partion
+        // jobs back to their builder
+        final Map<String, String> metadataProperties = new LinkedHashMap<>(getMetadataProperties());
+        metadataProperties.put(METADATA_PROPERTY_BUILDER_ID, "" + System.identityHashCode(this));
+
         // we do not currently support this combination of multiple analyzer
         // jobs and having output data streams
         final OutputDataStreamJob[] outputDataStreamJobs = new OutputDataStreamJob[0];
 
-        final ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer()
-                .load(getComponentRequirement());
+        final ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(
+                getComponentRequirement());
         final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                new ImmutableComponentConfiguration(jobProperties), componentRequirement, getMetadataProperties(),
+                new ImmutableComponentConfiguration(jobProperties), componentRequirement, metadataProperties,
                 outputDataStreamJobs);
         return job;
     }

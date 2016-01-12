@@ -63,23 +63,6 @@
                 <property name="Minus sign" value="-"/>
             </properties>
             <input ref="col_firstname" name="Column"/>
-        </analyzer>
-        <analyzer name="pf 1">
-            <descriptor ref="Pattern finder"/>
-            <properties>
-                <property name="Discriminate text case" value="true"/>
-                <property name="Discriminate negative numbers" value="false"/>
-                <property name="Discriminate decimals" value="true"/>
-                <property name="Enable mixed tokens" value="false"/>
-                <property name="Ignore repeated spaces" value="false"/>
-                <property name="Upper case patterns expand in size" value="false"/>
-                <property name="Lower case patterns expand in size" value="true"/>
-                <property name="Predefined token name" value="&lt;null&gt;"/>
-                <property name="Predefined token regexes" value="&lt;null&gt;"/>
-                <property name="Decimal separator" value="."/>
-                <property name="Thousands separator" value="&amp;#44;"/>
-                <property name="Minus sign" value="-"/>
-            </properties>
             <input ref="col_username" name="Column"/>
         </analyzer>
         <analyzer requires="outcome_1" name="pf 2">

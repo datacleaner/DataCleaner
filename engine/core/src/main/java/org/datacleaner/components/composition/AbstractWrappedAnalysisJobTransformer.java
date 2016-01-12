@@ -133,7 +133,7 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
         final String[] names = new String[size];
         final Class<?>[] types = new Class[size];
         for (int i = 0; i < size; i++) {
-            InputColumn<?> outputColumn = _outputColumns.get(0);
+            final InputColumn<?> outputColumn = _outputColumns.get(i);
             names[i] = outputColumn.getName();
             types[i] = outputColumn.getDataType();
         }

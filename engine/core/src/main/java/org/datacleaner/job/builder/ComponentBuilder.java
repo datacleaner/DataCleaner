@@ -45,7 +45,7 @@ import org.datacleaner.metadata.HasMetadataProperties;
  */
 public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, OutputDataStreamJobSource,
         HasComponentRequirement, HasName, Renderable {
-
+    
     /**
      * Determines if the underlying component is fully configured or not. This
      * is equivalent to invoking {@link #isConfigured(boolean))} with a 'false'

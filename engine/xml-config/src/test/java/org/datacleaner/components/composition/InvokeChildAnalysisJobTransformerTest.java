@@ -76,6 +76,10 @@ public class InvokeChildAnalysisJobTransformerTest {
             transformer.addInputColumns(ajb.getSourceColumns());
 
             assertTrue(transformer.isConfigured());
+            
+            assertEquals(2, transformer.getOutputColumns().size());
+            assertEquals("country (standardized)", transformer.getOutputColumns().get(0).getName());
+            assertEquals("fullname", transformer.getOutputColumns().get(1).getName());
 
             final AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(transformer.getOutputColumns());

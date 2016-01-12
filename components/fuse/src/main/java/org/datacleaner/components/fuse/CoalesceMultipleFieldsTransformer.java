@@ -21,6 +21,7 @@ package org.datacleaner.components.fuse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
@@ -45,7 +46,6 @@ import org.slf4j.LoggerFactory;
         + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
 public class CoalesceMultipleFieldsTransformer implements Transformer {
-
     private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
 
     @Configured
@@ -60,6 +60,8 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     private CoalesceFunction _coalesceFunction;
 
+    private CoalesceUnit[] _initializedUnits;
+
     public CoalesceMultipleFieldsTransformer() {
     }
 
@@ -71,8 +73,9 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     @Initialize
     public void init() {
         _coalesceFunction = new CoalesceFunction(considerEmptyStringAsNull);
-        for (CoalesceUnit unit : _units) {
-            unit.refreshInputColumns(_input);
+        _initializedUnits = new CoalesceUnit[_units.length];
+        for (int i = 0; i < _units.length; i++) {
+            _initializedUnits[i] = _units[i].updateInputColumns(_input);
         }
     }
 
@@ -82,12 +85,10 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
      * @param units
      */
     public void configureUsingCoalesceUnits(CoalesceUnit... units) {
-        final List<InputColumn<?>> input = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> input = new ArrayList<>();
         for (CoalesceUnit coalesceUnit : units) {
-            final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns(null);
-            for (final InputColumn<?> inputColumn : inputColumns) {
-                input.add(inputColumn);
-            }
+            final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns();
+            Collections.addAll(input, inputColumns);
         }
 
         _input = input.toArray(new InputColumn[input.size()]);
@@ -98,8 +99,9 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     public OutputColumns getOutputColumns() {
         final OutputColumns outputColumns = new OutputColumns(_units.length, Object.class);
         for (int i = 0; i < _units.length; i++) {
-            final CoalesceUnit unit = _units[i];
-            final Class<?> dataType = unit.getOutputDataType(_input);
+            // Not necessarily initialized yet, so no _initializedUnits available
+            final CoalesceUnit unit = _units[i].updateInputColumns(_input);
+            final Class<?> dataType = unit.getOutputDataType();
             outputColumns.setColumnType(i, dataType);
         }
         return outputColumns;
@@ -107,10 +109,10 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     @Override
     public Object[] transform(InputRow inputRow) {
-        final Object[] result = new Object[_units.length];
-        for (int i = 0; i < _units.length; i++) {
-            final CoalesceUnit unit = _units[i];
-            final InputColumn<?>[] inputColumns = unit.getInputColumns(_input);
+        final Object[] result = new Object[_initializedUnits.length];
+        for (int i = 0; i < _initializedUnits.length; i++) {
+            final CoalesceUnit unit = _initializedUnits[i];
+            final InputColumn<?>[] inputColumns = unit.getInputColumns();
             final List<Object> values = inputRow.getValues(inputColumns);
             final Object value = _coalesceFunction.coalesce(values);
             result[i] = value;

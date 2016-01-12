@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_given_name" path="CUSTOMERS.CONTACTFIRSTNAME" type="STRING"/>
+            <column id="col_family_name" path="CUSTOMERS.CONTACTLASTNAME" type="STRING"/>
+            <column id="col_country" path="CUSTOMERS.COUNTRY" type="STRING"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer>
+            <descriptor ref="Country standardizer"/>
+            <metadata-properties>
+                <property name="CoordinatesY">301</property>
+                <property name="CoordinatesX">278</property>
+            </metadata-properties>
+            <properties>
+                <property name="Default country" value="&lt;null&gt;"/>
+                <property name="Output format" value="ISO2"/>
+            </properties>
+            <input ref="col_country"/>
+            <output id="col_countrystandardized" name="country (standardized)"/>
+        </transformer>
+        <transformer requires="outcome_0">
+            <descriptor ref="Concatenator"/>
+            <metadata-properties>
+                <property name="CoordinatesY">298</property>
+                <property name="CoordinatesX">655</property>
+            </metadata-properties>
+            <properties>
+                <property name="Separator" value=" "/>
+            </properties>
+            <input ref="col_family_name"/>
+            <input ref="col_given_name"/>
+            <output id="col_fullname" name="fullname"/>
+        </transformer>
+        <filter>
+            <descriptor ref="Equals"/>
+            <metadata-properties>
+                <property name="CoordinatesY">300</property>
+                <property name="CoordinatesX">444</property>
+            </metadata-properties>
+            <properties>
+                <property name="Compare values" value="[US,UK]"/>
+            </properties>
+            <input ref="col_countrystandardized" name="Input column"/>
+            <outcome id="outcome_0" category="EQUALS"/>
+        </filter>
+    </transformation>
+    <analysis/>
+</job>

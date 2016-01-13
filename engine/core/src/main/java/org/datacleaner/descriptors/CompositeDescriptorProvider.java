@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
 public class CompositeDescriptorProvider implements DescriptorProvider {
     private static final Logger logger = LoggerFactory.getLogger(CompositeDescriptorProvider.class);
     private static final long CLOSE_TIMEOUT = 5000;
-    private ServerChecker serverChecker;
-    private Thread serverCheckerThread;
+    private final ServerChecker serverChecker;
+    private final Thread serverCheckerThread;
 
     private final List<DescriptorProvider> delegates;
 
@@ -59,6 +59,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         this.delegates = delegates;
         serverChecker = new ServerChecker();
         serverCheckerThread = new Thread(serverChecker);
+        serverCheckerThread.setDaemon(true);
+        serverCheckerThread.setName("ServerChecker");
         serverCheckerThread.start();
     }
 
@@ -276,7 +278,6 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
                 serverChecker.stop();
                 serverChecker.notifyAll();
             }
-            serverChecker = null;
         }
 
         try {

@@ -27,29 +27,31 @@ import java.util.Map;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.FileProperty;
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.FileProperty.FileAccessMode;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.CompositionCategory;
 import org.datacleaner.components.composition.AbstractWrappedAnalysisJobTransformer;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Resource;
 
 @Named("Invoke child Analysis job")
 @Description("Wraps another (external) Analysis job's transformations and invokes them as an integrated part of the current job. Using this transformation you can compose parent and child jobs for more coarse or more fine granularity of transformations.")
 @Categorized(CompositionCategory.class)
 public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
+    
+    public static final String PROPERTY_JOB_RESOURCE = "Analysis job";
 
     @Configured
     InputColumn<?>[] input;
 
-    @Configured("Analysis job")
+    @Configured(PROPERTY_JOB_RESOURCE)
     @FileProperty(accessMode = FileAccessMode.OPEN, extension = ".analysis.xml")
     Resource analysisJobResource;
 

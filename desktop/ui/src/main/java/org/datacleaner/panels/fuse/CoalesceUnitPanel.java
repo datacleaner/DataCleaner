@@ -59,10 +59,10 @@ public class CoalesceUnitPanel extends DCPanel {
 
     public CoalesceUnitPanel(ColumnListMultipleCoalesceUnitPropertyWidget parent, CoalesceUnit unit) {
         _parent = parent;
-        _inputColumns = new ArrayList<InputColumn<?>>();
-        _inputColumnPanels = new IdentityHashMap<InputColumn<?>, DCPanel>();
+        _inputColumns = new ArrayList<>();
+        _inputColumnPanels = new IdentityHashMap<>();
 
-        _comboBox = new DCComboBox<InputColumn<?>>();
+        _comboBox = new DCComboBox<>();
         SchemaStructureComboBoxListRenderer renderer = new SchemaStructureComboBoxListRenderer();
         renderer.setNullText("- Add input column -");
         _comboBox.setRenderer(renderer);
@@ -95,8 +95,8 @@ public class CoalesceUnitPanel extends DCPanel {
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            InputColumn<?>[] inputColumns = unit.getInputColumns(availableInputColumns
-                    .toArray(new InputColumn[availableInputColumns.size()]));
+            InputColumn<?>[] inputColumns = unit.updateInputColumns(availableInputColumns
+                    .toArray(new InputColumn[availableInputColumns.size()])).getInputColumns();
             for (InputColumn<?> inputColumn : inputColumns) {
                 addInputColumn(inputColumn);
             }
@@ -115,7 +115,7 @@ public class CoalesceUnitPanel extends DCPanel {
             items[index] = inputColumn;
             index++;
         }
-        final DefaultComboBoxModel<InputColumn<?>> model = new DefaultComboBoxModel<InputColumn<?>>(items);
+        final DefaultComboBoxModel<InputColumn<?>> model = new DefaultComboBoxModel<>(items);
         _comboBox.setModel(model);
     }
 

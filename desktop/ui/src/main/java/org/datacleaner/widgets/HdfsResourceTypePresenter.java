@@ -33,8 +33,9 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
-import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.JXTextField;
+
+import com.google.common.base.Strings;
 
 /**
  * {@link ResourceTypePresenter} for {@link HdfsResource}s.

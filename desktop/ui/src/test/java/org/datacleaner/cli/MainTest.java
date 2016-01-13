@@ -84,7 +84,7 @@ public class MainTest extends TestCase {
 
         String[] lines = out1.split("\n");
 
-        assertEquals(12, lines.length);
+        assertEquals(13, lines.length);
 
         assertEquals(
                 "-conf (-configuration, --configuration-file) PATH          : Path to an XML file describing the configuration of",
@@ -108,12 +108,16 @@ public class MainTest extends TestCase {
                 "-ot (--output-type) [TEXT | HTML | SERIALIZED]             : How to represent the result of the job",
                 lines[8].trim());
         assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",lines[9].trim());
+
         assertEquals(
-                "-s (-schema, --schema-name) VAL                            : Name of schema when printing a list of tables or columns",
+                "-runtype (--runtype) [LOCAL | SPARK]                       : How/where to run the job",
                 lines[10].trim());
         assertEquals(
-                "-t (-table, --table-name) VAL                              : Name of table when printing a list of columns",
+                "-s (-schema, --schema-name) VAL                            : Name of schema when printing a list of tables or columns",
                 lines[11].trim());
+        assertEquals(
+                "-t (-table, --table-name) VAL                              : Name of table when printing a list of columns",
+                lines[12].trim());
 
         // again without the -usage flag
         _stringWriter = new StringWriter();

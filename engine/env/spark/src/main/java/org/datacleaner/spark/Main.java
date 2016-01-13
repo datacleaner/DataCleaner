@@ -22,6 +22,7 @@ package org.datacleaner.spark;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.metamodel.util.Resource;
@@ -62,6 +63,13 @@ public class Main {
 
         final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath,
                 sparkContext);
+
+        final ServiceLoader<SparkJobLifeCycleListener> listenerLoaders =
+                ServiceLoader.load(SparkJobLifeCycleListener.class);
+
+        for (SparkJobLifeCycleListener listener : listenerLoaders) {
+            sparkJobContext.addSparkJobLifeCycleListener(listener);
+        }
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         try {

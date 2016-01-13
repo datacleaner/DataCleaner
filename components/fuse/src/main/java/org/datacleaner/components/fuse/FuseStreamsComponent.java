@@ -21,6 +21,7 @@ package org.datacleaner.components.fuse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
@@ -64,6 +65,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
 
     private OutputRowCollector _outputRowCollector;
     private CoalesceFunction _coalesceFunction;
+    private CoalesceUnit[] _initializedUnits;
 
     public FuseStreamsComponent() {
     }
@@ -76,8 +78,9 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     @Initialize
     public void init() {
         _coalesceFunction = new CoalesceFunction(false);
-        for (CoalesceUnit unit : _units) {
-            unit.refreshInputColumns(_inputs);
+        _initializedUnits = new CoalesceUnit[_units.length];
+        for (int i = 0; i < _units.length; i++) {
+            _initializedUnits[i] = _units[i].updateInputColumns(_inputs);
         }
     }
 
@@ -87,24 +90,23 @@ public class FuseStreamsComponent extends MultiStreamComponent {
      * @param units
      */
     public void configureUsingCoalesceUnits(CoalesceUnit... units) {
-        final List<InputColumn<?>> input = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> input = new ArrayList<>();
         for (CoalesceUnit coalesceUnit : units) {
-            final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns(null);
-            for (final InputColumn<?> inputColumn : inputColumns) {
-                input.add(inputColumn);
-            }
+            final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns();
+            Collections.addAll(input, inputColumns);
         }
 
         _inputs = input.toArray(new InputColumn[input.size()]);
         _units = units;
+        init();
     }
 
     @Override
     public void run(InputRow inputRow) {
-        final Object[] output = new Object[_units.length];
-        for (int i = 0; i < _units.length; i++) {
-            final CoalesceUnit unit = _units[i];
-            final InputColumn<?>[] inputColumns = unit.getInputColumns(_inputs);
+        final Object[] output = new Object[_initializedUnits.length];
+        for (int i = 0; i < _initializedUnits.length; i++) {
+            final CoalesceUnit unit = _initializedUnits[i];
+            final InputColumn<?>[] inputColumns = unit.getInputColumns();
             final List<Object> values = inputRow.getValues(inputColumns);
             final Object value = _coalesceFunction.coalesce(values);
             output[i] = value;
@@ -121,8 +123,9 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
         for (int i = 0; i < _units.length; i++) {
-            final CoalesceUnit unit = _units[i];
-            final Class<?> dataType = unit.getOutputDataType(_inputs);
+            // Not necessarily initialized yet, so no _initializedUnits available
+            final CoalesceUnit unit = _units[i].updateInputColumns(_inputs);
+            final Class<?> dataType = unit.getOutputDataType();
             final String columnName = unit.getSuggestedOutputColumnName();
             final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
             builder.withColumn(columnName, columnType);

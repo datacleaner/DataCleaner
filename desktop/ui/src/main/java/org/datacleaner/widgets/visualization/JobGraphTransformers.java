@@ -55,7 +55,8 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
-import org.elasticsearch.common.base.Strings;
+
+import com.google.common.base.Strings;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;

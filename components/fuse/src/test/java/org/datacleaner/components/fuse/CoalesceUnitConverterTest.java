@@ -24,8 +24,6 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.fuse.CoalesceUnit;
-import org.datacleaner.components.fuse.CoalesceUnitConverter;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.data.MockInputColumn;
@@ -33,15 +31,15 @@ import org.datacleaner.util.convert.StringConverter;
 
 public class CoalesceUnitConverterTest extends TestCase {
 
-    private final MockInputColumn<?> numberCol1 = new MockInputColumn<Number>("num1", Number.class);
-    private final MockInputColumn<?> numberCol2 = new MockInputColumn<Number>("num1", Number.class);
-    private final MockInputColumn<?> integerCol1 = new MockInputColumn<Integer>("int1", Integer.class);
-    private final MockInputColumn<?> integerCol2 = new MockInputColumn<Integer>("int2", Integer.class);
-    private final MockInputColumn<?> stringCol1 = new MockInputColumn<String>("str1", String.class);
-    private final MockInputColumn<?> stringCol2 = new MockInputColumn<String>("str2", String.class);
-    private final MockInputColumn<?> stringCommaCol1 = new MockInputColumn<String>("str1,a", String.class);
-    private final MockInputColumn<?> stringCommaCol2 = new MockInputColumn<String>("str2,b", String.class);
-    private final MockInputColumn<?> objCol1 = new MockInputColumn<Object>("obj1", Object.class);
+    private final MockInputColumn<?> numberCol1 = new MockInputColumn<>("num1", Number.class);
+    private final MockInputColumn<?> numberCol2 = new MockInputColumn<>("num1", Number.class);
+    private final MockInputColumn<?> integerCol1 = new MockInputColumn<>("int1", Integer.class);
+    private final MockInputColumn<?> integerCol2 = new MockInputColumn<>("int2", Integer.class);
+    private final MockInputColumn<?> stringCol1 = new MockInputColumn<>("str1", String.class);
+    private final MockInputColumn<?> stringCol2 = new MockInputColumn<>("str2", String.class);
+    private final MockInputColumn<?> stringCommaCol1 = new MockInputColumn<>("str1,a", String.class);
+    private final MockInputColumn<?> stringCommaCol2 = new MockInputColumn<>("str2,b", String.class);
+    private final MockInputColumn<?> objCol1 = new MockInputColumn<>("obj1", Object.class);
 
     public void testGetOutputDataType() throws Exception {
         CoalesceUnitConverter converter = new CoalesceUnitConverter();
@@ -55,7 +53,7 @@ public class CoalesceUnitConverterTest extends TestCase {
 
         CoalesceUnit unit2 = converter.fromString(CoalesceUnit.class, str);
         assertEquals("[str1, str2]", Arrays.toString(unit2.getInputColumnNames()));
-        assertEquals(String.class, unit2.getOutputDataType(allColumns));
+        assertEquals(String.class, unit2.updateInputColumns(allColumns).getOutputDataType());
     }
 
     public void testDiscoverAndResolveConverter() throws Exception {

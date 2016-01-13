@@ -275,7 +275,7 @@ public class SparkJobContext implements Serializable {
     public void triggerOnPartitionProcessingEnd() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onPartitionProcessingEnd();
+                listener.onPartitionProcessingEnd(this);
             } catch (Throwable e) {
                 logger.warn("onPartitionProcessingEnd: Listener {} threw exception", listener, e);
             }
@@ -285,7 +285,7 @@ public class SparkJobContext implements Serializable {
     public void triggerOnPartitionProcessingStart() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onPartitionProcessingStart();
+                listener.onPartitionProcessingStart(this);
             } catch (Throwable e) {
                 logger.warn("onPartitionProcessingStart: Listener {} threw exception", listener, e);
             }
@@ -295,7 +295,7 @@ public class SparkJobContext implements Serializable {
     public void triggerOnJobStart() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onJobStart();
+                listener.onJobStart(this);
             } catch (Throwable e) {
                 logger.warn("onJobStart: Listener {} threw exception", listener, e);
             }
@@ -305,7 +305,7 @@ public class SparkJobContext implements Serializable {
     public void triggerOnJobEnd() {
         for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
-                listener.onJobEnd();
+                listener.onJobEnd(this);
             } catch (Throwable e) {
                 logger.warn("onJobEnd: Listener {} threw exception", listener, e);
             }

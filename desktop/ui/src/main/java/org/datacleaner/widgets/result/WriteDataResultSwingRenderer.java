@@ -151,40 +151,46 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             final DCPanel errorRowsPanel = new DCPanel();
             errorRowsPanel.setLayout(new BorderLayout());
 
-            final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
-            errorRowsPanel.add(icon, BorderLayout.WEST);
-
             final FileDatastore errorDatastore = result.getErrorDatastore();
 
-            final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
-                    + " records</b> could <i>not</i> be written to the table!<br/>"
-                    + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
-                    + errorDatastore.getFilename()
-                    + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
-            editorPane.setEditable(false);
-            editorPane.setOpaque(false);
-            editorPane.addHyperlinkListener(new HyperlinkListener() {
-                @Override
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                        final String href = e.getDescription();
-                        if ("http://datacleaner.org/register_datastore".equals(href)) {
-                            _datastoreCatalog.addDatastore(errorDatastore);
-                            JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
-                        } else if ("http://datacleaner.org/preview_datastore".equals(href)) {
-                            try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
-                                Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
-                                PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-                                        windowContext, errorDatastore, table);
-                                actionListener.actionPerformed(null);
+            if (errorDatastore != null) {
+                final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
+                errorRowsPanel.add(icon, BorderLayout.WEST);
+                
+                final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
+                        + " records</b> could <i>not</i> be written to the table!<br/>"
+                        + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
+                        + errorDatastore.getFilename()
+                        + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
+                editorPane.setEditable(false);
+                editorPane.setOpaque(false);
+                editorPane.addHyperlinkListener(new HyperlinkListener() {
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+                            final String href = e.getDescription();
+                            if ("http://datacleaner.org/register_datastore".equals(href)) {
+                                _datastoreCatalog.addDatastore(errorDatastore);
+                                JOptionPane.showMessageDialog(editorPane,
+                                        "Saved datastore: " + errorDatastore.getName());
+                            } else if ("http://datacleaner.org/preview_datastore".equals(href)) {
+                                try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
+                                    Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
+                                    PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+                                            windowContext, errorDatastore, table);
+                                    actionListener.actionPerformed(null);
+                                }
+                            } else {
+                                logger.error("Unexpected href: " + href + ". Event was: " + e);
                             }
-                        } else {
-                            logger.error("Unexpected href: " + href + ". Event was: " + e);
                         }
                     }
-                }
-            });
-            errorRowsPanel.add(editorPane, BorderLayout.CENTER);
+                });
+                errorRowsPanel.add(editorPane, BorderLayout.CENTER);
+            } else {
+                final JLabel icon = new JLabel(result.getErrorRowCount() + " records could not be written to the table!", imageManager.getImageIcon(IconUtils.STATUS_ERROR), JLabel.LEFT);
+                errorRowsPanel.add(icon, BorderLayout.WEST);
+            }
 
             panel.add(errorRowsPanel);
         }

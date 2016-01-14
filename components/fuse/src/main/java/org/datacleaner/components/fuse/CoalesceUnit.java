@@ -77,7 +77,7 @@ public class CoalesceUnit {
 
     /**
      * Refreshes the current transient setup of {@link InputColumn}s in the
-     * {@link CoalesceUnit}. This is necesary to do before any job execution to
+     * {@link CoalesceUnit}. This is necessary to do before any job execution to
      * ensure that the {@link InputColumn} references are intact and don't point
      * to e.g. a copy of the input columns from a cloned job.
      * 

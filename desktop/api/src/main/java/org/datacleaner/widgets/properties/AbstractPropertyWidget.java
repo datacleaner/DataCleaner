@@ -85,12 +85,9 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
         _batchUpdateCounter++;
         try {
             action.run();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Exception occurred in widget batch update, fireValueChanged() will not be invoked", e);
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IllegalStateException(e);
+            throw e;
         } finally {
             _batchUpdateCounter--;
         }

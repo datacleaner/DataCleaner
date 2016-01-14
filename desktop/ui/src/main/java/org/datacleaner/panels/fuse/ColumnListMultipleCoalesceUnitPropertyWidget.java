@@ -26,8 +26,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -379,8 +381,10 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
     private void fireBothValuesChanged() {
         if (!isUpdating() && !isBatchUpdating()) {
-            _unitPropertyWidget.fireValueChanged();
-            fireValueChanged();
+            Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
+            properties.put(getPropertyDescriptor(), getValue());
+            properties.put(_unitProperty, _unitPropertyWidget.getValue());
+            fireValuesChanged(properties);
         }
     }
 }

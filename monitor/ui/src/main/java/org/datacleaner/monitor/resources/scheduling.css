@@ -1,3 +1,4 @@
+
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -61,7 +62,7 @@
 }
 
 .SchedulingOverviewPanel .AlertsColumn div {
-	display:inline;
+	display:inline-table;
 }
 
 .SchedulingOverviewPanel .ActionsColumn {

@@ -170,5 +170,4 @@ public class CoalesceUnitPanel extends DCPanel {
         }
         return new CoalesceUnit(_inputColumns);
     }
-
 }

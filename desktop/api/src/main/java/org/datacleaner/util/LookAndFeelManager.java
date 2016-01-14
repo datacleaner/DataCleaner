@@ -20,6 +20,7 @@
 package org.datacleaner.util;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -222,6 +223,7 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(30,30)); 
         UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);

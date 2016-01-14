@@ -192,10 +192,15 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
-    public void setConfiguredProperties(Map<ConfiguredPropertyDescriptor, Object> configuredPropeties) {
-        final ImmutableComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(
-                configuredPropeties);
-        setConfiguredProperties(beanConfiguration);
+    public void setConfiguredProperties(Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
+        boolean changed = false;
+        for(Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()){
+            changed = setConfiguredPropertyIfChanged(entry.getKey(), entry.getValue()) || changed;
+        }
+
+        if(changed){
+            onConfigurationChanged();
+        }
     }
 
     @Override

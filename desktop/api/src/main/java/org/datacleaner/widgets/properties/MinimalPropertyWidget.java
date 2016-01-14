@@ -21,6 +21,7 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -148,6 +149,26 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
             if (logger.isWarnEnabled()) {
                 logger.warn(
                         "Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(), e);
+            }
+        } finally {
+            setUpdating(false);
+        }
+    }
+
+    protected final void fireValuesChanged(Map<ConfiguredPropertyDescriptor, Object> properties) {
+        // TODO: For now we accept the code duplication with fireValueChanged above, since
+        // escalateToMultipleJobs requires setConfiguredProperty as it overrides it.
+        setUpdating(true);
+        try {
+            _componentBuilder.setConfiguredProperties(properties);
+        } catch (Exception e) {
+            // an exception will be thrown here if setting an invalid property
+            // value (which may just be work in progress, so we don't make a
+            // fuzz about it)
+            if (logger.isWarnEnabled()) {
+                logger.warn(
+                        "Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(),
+                        e);
             }
         } finally {
             setUpdating(false);

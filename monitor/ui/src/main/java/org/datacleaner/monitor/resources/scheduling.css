@@ -103,11 +103,6 @@
 	min-height: 30px;
 }
 
-.SchedulePanel .ScheduleColumn {
-	overflow: hidden;
-	white-space: nowrap;
-}
-
 .SchedulePanel .ScheduleColumn a {
 	background-position: left center;
 	background-repeat: no-repeat;
@@ -193,6 +188,7 @@
 	padding-left: 26px;
 	line-height: 1em;
 	min-height: 18px;
+	padding-right: 5px;
 }
 
 .CustomizeAlertPanel {

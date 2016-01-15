@@ -1,3 +1,4 @@
+
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -61,7 +62,7 @@
 }
 
 .SchedulingOverviewPanel .AlertsColumn div {
-	display:inline;
+	display:inline-table;
 }
 
 .SchedulingOverviewPanel .ActionsColumn {
@@ -93,7 +94,6 @@
 .SchedulingOverviewPanel .ScheduleGroupPanel .SchedulePanel {
 	border-bottom: 1px solid #f0f0f0;
 	clear: both;
-	line-height: 30px;
 }
 
 .SchedulePanel {
@@ -101,11 +101,6 @@
 	background-repeat: no-repeat;
 	background-position: 4px center;
 	min-height: 30px;
-}
-
-.SchedulePanel .ScheduleColumn {
-	overflow: hidden;
-	white-space: nowrap;
 }
 
 .SchedulePanel .ScheduleColumn a {
@@ -193,6 +188,7 @@
 	padding-left: 26px;
 	line-height: 1em;
 	min-height: 18px;
+	padding-right: 5px;
 }
 
 .CustomizeAlertPanel {

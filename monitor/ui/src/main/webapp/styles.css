@@ -90,6 +90,9 @@ li {
 	padding-left: 0px;
 }
 
+button {
+	line-height:1.2em;
+}
 /*
  * Page containers
  */

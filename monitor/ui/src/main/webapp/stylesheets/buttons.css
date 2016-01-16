@@ -1,0 +1,43 @@
+.callToActionButton {
+	font-size: 1.3em;
+	display: inline-block;
+}
+
+.callToActionButton a {
+	margin: 10px;
+	display: inline-block;
+	background: linear-gradient(#67A2E7, #5792D7);
+	border: 1px solid #67A2E7;
+	border-radius: 1px;
+	padding: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	color: white;
+	text-decoration: none;
+}
+
+.callToActionButton.grey a {
+	background: linear-gradient(#fcfdfd, #eceded);
+	color: #666;
+}
+
+.callToActionButton.grey.disabled a {
+	color: #aaa;
+	border: 1px solid #eee;
+}
+
+.callToActionButton.grey.disabled a span {
+	border-bottom: 2px solid #ddd;
+}
+
+.callToActionButton a span {
+	border-bottom: 2px solid #ffa800;
+}
+
+.callToActionButton.grey a span {
+	border-bottom: 2px solid #67A2E7;
+}
+
+.callToActionButton a:hover span {
+	border-bottom: 2px solid #111;
+}

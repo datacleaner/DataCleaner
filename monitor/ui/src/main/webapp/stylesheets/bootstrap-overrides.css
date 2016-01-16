@@ -1,0 +1,128 @@
+.container-fluid {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse,
+	.container-fluid>.navbar-collapse {
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand
+	{
+	margin-left: 0 !important;
+}
+
+.navbar {
+	border-radius: 0;
+}
+
+.navbar-nav .open .dropdown-menu {
+	background-color: #3b76bc;
+	background-image: url("../images/nav_submenu_bg.png");
+	background-repeat: repeat-x;
+	background-position-y: top;
+	color: black;
+}
+
+.navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+	color: white;
+}
+
+.jumbotron {
+	margin-top: -70px;
+	margin-bottom: 0;
+	background-color: transparent;
+	background-position: 0 70px;
+	height: 100%;
+	padding: 30px 0px;
+}
+
+.navbar a {
+	text-decoration: none;
+}
+
+.navbar li {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+a {
+	text-decoration: underline;
+}
+
+label {
+	font-weight: normal;
+}
+
+.btn-primary {
+	border-radius: 2px;
+	border-width: 0;
+	background-color: #3b76bc;
+	background-image: url("../images/nav_submenu_bg.png");
+	background-repeat: repeat-x;
+}
+
+.btn-primary:hover {
+	background-color: #333;
+	background-image: none;
+	color: white;
+}
+
+span.glyphicon {
+	font-size: 16px;
+	vertical-align: baseline;
+}
+
+h1 span.glyphicon, h2 span.glyphicon, h3 span.glyphicon {
+	color: white;
+	margin-right: 0.6em;
+}
+
+button span.glyphicon {
+	vertical-align: middle;
+	color: white;
+	margin-right: 0.3em;
+}
+
+button span {
+	vertical-align: middle;
+}
+
+.form-control {
+	border-radius: 2px;
+}
+
+.alert {
+	border-radius: 2px;
+}
+
+.alert-info {
+	color: #333;
+	background-color: #9dc7f6;
+	border-color: #67A2E7;
+	border-width: 0;
+}
+
+.alert-warning {
+	color: #333;
+	background-color: #ffd392;
+	border-color: #ffa800;
+	border-width: 0;
+}
+
+.alert-info .alert-link, .alert-warning .alert-link {
+	color: #333;
+}
+
+.nav-tabs>li>a {
+	text-decoration: none;
+}
+
+.tab-content {
+	padding: 1em;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}

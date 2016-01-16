@@ -122,6 +122,11 @@ public class UserBean implements User, Serializable {
 
     @Override
     public boolean isLoggedIn() {
+        return isAuthenticated();
+    }
+    
+    @Override
+    public boolean isAuthenticated() {
         return getUsername() != null;
     }
 

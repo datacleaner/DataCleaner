@@ -1,22 +1,50 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
 	<h:head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>DataCleaner monitor</title>
 
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700|Lobster|Open+Sans' rel='stylesheet' type='text/css' />
-		<link rel="stylesheet" type="text/css" href="styles.css" />
-		<link rel="stylesheet" type="text/css" href="styles_additional.css" />
-		<script type="text/javascript" language="javascript" src="javascripts/jquery-1.11.0.min.js" />
-		<link rel="shortcut icon" href="images/favicon.png" />
+		<link
+			href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700|Lobster|Open+Sans'
+			rel='stylesheet' type='text/css' />
+
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/bootstrap-overrides.css" />
+
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}styles.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}styles_additional.css" />
+
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/footer.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/main-elements.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/buttons.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/datacleaner-styles.css" />
+
+		<script type="text/javascript"
+			src="#{request.contextPath}javascripts/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript"
+			src="#{request.contextPath}javascripts/bootstrap.min.js"></script>
+
+		<link rel="shortcut icon"
+			href="#{request.contextPath}images/favicon.png" />
 
 		<script type="text/javascript">
-		//<![CDATA[
+			//<![CDATA[
 			var dq_monitor_client_config = {
 				tenant_id : '#{user.tenant}',
 				dashboard_default_group : 'true',
@@ -26,7 +54,7 @@
 				role_configuration_editor : '#{user.configurationEditor}',
 				role_dashboard_editor : '#{user.dashboardEditor}'
 			}
-		//]]>
+			//]]>
 		</script>
 
 		<ui:insert name="head" />
@@ -35,41 +63,61 @@
 		<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
 			style="position: absolute; width: 0; height: 0; border: 0"></iframe>
 
-		<div class="pageContainer">
-			<div class="pageHeader">
-				<div class="logo">
-					<c:if test="#{user.loggedIn}">
-						<div id="user_panel">
-							<span>Welcome <span class="username">#{user.username}</span>
-								<span class="tenant">(#{user.tenant})</span>
-								|
-								<span class="logout"><a href="logout">Log out</a></span>
-							</span>
-						</div>
-					</c:if>
+		<nav class="navbar navbar-default navbar-inverse" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#navbar">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" style="padding: 0px" href="/"> <img
+						src="#{request.contextPath}images/dc-logo-50.png" alt="[DC]" />
+					</a> <a class="navbar-brand" href="#{request.contextPath}"> <span
+						class="visible-xs hidden-sm visible-md visible-lg">DataCleaner
+							monitor</span>
+					</a>
 				</div>
 
-				<div class="navContainer">
-					<ul id="nav">
+				<div id="navbar" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
 						<ui:include src="template_nav_basic.xhtml" />
 						<ui:include src="template_nav_additional.xhtml" />
 					</ul>
-				</div>
-			</div>
 
-			<div class="pageContent">
-				<ui:insert name="content" />
-				<div style="clear: both;"></div>
-			</div>
-				
-			<div class="pageFooter">
-				<ui:include src="version-info.xhtml" />
-				
-				<div class="logo">
-					<span class="tagline">the premier data quality solution! powered by</span>
+
+					<ul class="nav navbar-nav navbar-right">
+						<c:choose>
+							<c:when test="#{user.authenticated}">
+								<li><a>Welcome #{user.username} <span class="tenant">(#{user.tenant})</span></a>
+								</li>
+								<li><a href="/logout">Log out</a></li>
+							</c:when>
+							<c:otherwise>
+								<li><a href="/login">Sign in </a></li>
+								<li><a href="/register">Register </a></li>
+							</c:otherwise>
+						</c:choose>
+					</ul>
+
 				</div>
+				<!-- /.navbar-collapse -->
 			</div>
-		</div>
+		</nav>
+
+		<ui:insert name="content" />
+
+		<footer class="footer">
+			<div class="container">
+				<ui:include src="version-info.xhtml" />
+				the premier data quality solution! powered by <a
+					onclick="recordOutboundLink(this,'outbound','neopost'); return false;"
+					href="http://www.neopost.com" target="_blank"><img
+					src="#{request.contextPath}/images/by_neopost_family.png"
+					alt="Powered by Neopost" style="padding-left: 1em" /></a>
+			</div>
+		</footer>
 	</h:body>
 </f:view>
 </html>

@@ -22,7 +22,7 @@
 -->
 <module>
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+	<inherits name='com.google.gwt.user.theme.clean.CleanResources' />
 	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="com.google.gwt.json.JSON" />
 	
@@ -34,6 +34,7 @@
 	<source path='wizard' />
 	<source path='util' />
 	
+	<stylesheet src="clean-theme-modified.css" />
 	<stylesheet src="shared.css" />
 	<public path="resources" />
 	

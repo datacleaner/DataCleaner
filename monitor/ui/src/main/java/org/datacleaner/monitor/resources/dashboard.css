@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 .DashboardGroupSelectionPanel {
-	width: 160px;
+	width: 20%;
 	float: left;
 }
 
@@ -36,7 +36,6 @@
 
 .DashboardGroupSelectionPanel .AnchorPanel a {
 	display: block;
-	width: 150px;
 	line-height: 2em;
 	padding-left: 30px;
 	background-color: #f0f0f0;
@@ -64,7 +63,7 @@
 }
 
 .DashboardGroupPanel {
-	width: 720px;
+	width: 78%;
 	float: right;
 }
 

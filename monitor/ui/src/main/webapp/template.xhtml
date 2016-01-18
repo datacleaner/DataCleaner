@@ -13,7 +13,7 @@
 		<title>DataCleaner monitor</title>
 
 		<link
-			href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700|Lobster|Open+Sans'
+			href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700'
 			rel='stylesheet' type='text/css' />
 
 		<link rel="stylesheet" type="text/css"
@@ -95,10 +95,10 @@
 							<c:when test="#{user.authenticated}">
 								<li><a>Welcome #{user.username} <span class="tenant">(#{user.tenant})</span></a>
 								</li>
-								<li><a href="/logout">Log out</a></li>
+								<li><a href="#{request.contextPath}/logout">Log out</a></li>
 							</c:when>
 							<c:otherwise>
-								<li><a href="/login">Sign in </a></li>
+								<li><a href="#{request.contextPath}/login.jsf">Sign in </a></li>
 							</c:otherwise>
 						</c:choose>
 					</ul>

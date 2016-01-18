@@ -1,4 +1,3 @@
-
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
@@ -35,11 +34,12 @@
 
 .SchedulingOverviewPanel .ColumnHeaders .JobColumn {
 	padding-left: 4px;
+	width: 78%;
+	display: inline-block;
 }
 
 .SchedulingOverviewPanel .JobColumn {
 	min-height: 1em;
-	float: left;
 	font-weight: bold;
 	font-size: 1.1em;
 }
@@ -47,35 +47,34 @@
 .SchedulingOverviewPanel .ScheduleColumn {
 	min-height: 1em;
 	width: 100%;
-	float: left;
-
 }
-.SchedulingOverviewPanel .ScheduleColumn a, .SchedulingOverviewPanel .AlertsColumn a{
-	color:#858383;;
+
+.SchedulingOverviewPanel .ScheduleColumn a, .SchedulingOverviewPanel .AlertsColumn a
+	{
+	color: #858383;;
 }
 
 .SchedulingOverviewPanel .AlertsColumn {
 	border-left: 1px solid #ddd;
-    margin-left: 10px;
-    min-height: 1em;
-    padding-left: 10px;
+	margin-left: 10px;
+	min-height: 1em;
+	padding-left: 10px;
 }
 
 .SchedulingOverviewPanel .AlertsColumn div {
-	display:inline-table;
+	display: inline-table;
 }
 
 .SchedulingOverviewPanel .ActionsColumn {
 	min-height: 1em;
 	width: 20%;
-	float: right;
+	display: inline-block;
 }
 
 .SchedulingOverviewPanel .ColumnHeaders {
 	font-weight: bold;
 	background: none repeat scroll 0 0 #f2f2f2;
 	color: #333;
-	height: 22px;
 	line-height: 22px;
 	padding: 8px 0;
 }
@@ -124,18 +123,19 @@
 
 .ExecuteButton {
 	background-color: #f0ad4e;
-    border-color: #eea236;
-    color: #fff;
+	border-color: #eea236;
+	color: #fff;
 	padding: 5px 20px;
-	font-weight:bold;
+	font-weight: bold;
 }
 
 .ExecuteButton:hover {
-	background-color:#ff9600;
+	background-color: #ff9600;
 	border-color: #eea236;
 }
 
 .LaunchButton {
+	
 }
 
 .SchedulePanel .ScheduleColumn .gwt-Label {
@@ -203,32 +203,30 @@
 	background-position: right center;
 }
 
-.AlertPanel-INTELLIGENCE,.CustomizeAlertPanel .gwt-RadioButton-INTELLIGENCE
+.AlertPanel-INTELLIGENCE, .CustomizeAlertPanel .gwt-RadioButton-INTELLIGENCE
 	{
 	background-image: url("alert-intelligence.png");
 }
 
-.AlertPanel-SURVEILLANCE,.CustomizeAlertPanel .gwt-RadioButton-SURVEILLANCE
+.AlertPanel-SURVEILLANCE, .CustomizeAlertPanel .gwt-RadioButton-SURVEILLANCE
 	{
 	background-image: url("alert-surveillance.png");
 }
 
-.AlertPanel-WARNING,.CustomizeAlertPanel .gwt-RadioButton-WARNING {
+.AlertPanel-WARNING, .CustomizeAlertPanel .gwt-RadioButton-WARNING {
 	background-image: url("alert-warning.png");
 }
 
-.AlertPanel-FATAL,.CustomizeAlertPanel .gwt-RadioButton-FATAL {
+.AlertPanel-FATAL, .CustomizeAlertPanel .gwt-RadioButton-FATAL {
 	background-image: url("alert-fatal.png");
 }
 
-
-.ActionsColumn .DropDownAnchor{
+.ActionsColumn .DropDownAnchor {
 	border: 1px #ddd solid;
 	padding: 4px 22px 4px 15px;
 	border-radius: 2px;
 	background-position: 94% center;
 }
-
 
 /**
  * Job history and Execution log panels
@@ -270,7 +268,8 @@
 	font-size: 0.85em;
 }
 
-.JobHistoryPanel .ExecutionCellList .ExecutionIdentifier span.beginDate {
+.JobHistoryPanel .ExecutionCellList .ExecutionIdentifier span.beginDate
+	{
 	font-size: 1em;
 }
 
@@ -296,32 +295,32 @@
 	padding: 4px;
 }
 
-.jobColumnContainer{
-	float:left; 
-	width:70%;
-	padding-left:5px;
-}
-.ScheduleGroupPanel .ActionsColumn{
-	margin-top:5px;
-}
-.pull-left {
-	float:left;
+.jobColumnContainer {
+	width: 78%;
+	display: inline-block;
 }
 
-#SchedulingPage .showFormButton, #uploadJobs input[type="submit"]{
-	height: 30px!important;
+.ScheduleGroupPanel .ActionsColumn {
+}
+
+.pull-left {
+	float: left;
+}
+
+#SchedulingPage .showFormButton, #uploadJobs input[type="submit"] {
+	height: 30px !important;
 	padding: 4px 6px;
 	font-size: 14px;
 	margin-left: 4px;
 }
 
-#SchedulingPage #uploadJobs{
-	margin:0 0 10px 4px;
+#SchedulingPage #uploadJobs {
+	margin: 0 0 10px 4px;
 }
 
 #uploadJobs input[type="file"] {
 	padding: 4px 0 4px 4px;
 	margin: 0;
 	height: 20px;
-	border:1px #ddd solid;
+	border: 1px #ddd solid;
 }

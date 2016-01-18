@@ -17,26 +17,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-/**
- * Overrides of the "clean" theme for basic elements
- */
-body,table td,select,button,input {
-	font-family: "Open Sans", sans-serif;
-}
-
-input,select,textarea {
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-a {
-	color: #377FCF;
-}
-
-a:hover {
-	color: #377FCF;
-	cursor: pointer;
-}
 
 /*
  * GWT built-in style modifications 
@@ -46,7 +26,6 @@ a:hover {
 	border: 1px solid #CCC;
 	border-top: 1px solid #999;
 	font-size: 0.9em;
-	font-family: "Open Sans", sans-serif;
 }
 
 .gwt-TextBox {
@@ -128,7 +107,6 @@ a:hover {
 }
 
 .HeadingLabel {
-	font-family: "Ubuntu", sans-serif;
 	color: #377FCF;
 	font-size: 1.2em;
 	margin-bottom: 10px;
@@ -148,14 +126,6 @@ a:hover {
 .ButtonPanel {
 	text-align: center;
 	padding: 10px;
-}
-
-.NewJobButton {
-	background-image: url("new.png");
-}
-
-.NewDatastoreButton {
-	background-image: url("new.png");
 }
 
 .FormRow {

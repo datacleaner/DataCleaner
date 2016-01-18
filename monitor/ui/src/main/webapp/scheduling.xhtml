@@ -26,19 +26,13 @@
 					}
 				}
 
-				function confirmUpload(file, fileType) {
-					if (file.value) {
-						if (confirm('Are you sure you wish to upload the '
-								+ fileType
-								+ ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
-							return true;
-						}
-						return false;
-					} else {
-						alert('Please choose a ' + fileType
-								+ ' file to upload.');
-						return false;
+				function confirmUpload(fileType) {
+					if (confirm('Are you sure you wish to upload (and overwrite) the '
+							+ fileType
+							+ ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
+						return true;
 					}
+					return false;
 				}
 
 				function showUploadJobForm(button) {

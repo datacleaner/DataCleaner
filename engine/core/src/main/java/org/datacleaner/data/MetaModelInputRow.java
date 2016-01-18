@@ -19,12 +19,16 @@
  */
 package org.datacleaner.data;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.metamodel.data.Row;
@@ -39,23 +43,42 @@ import org.slf4j.LoggerFactory;
 /**
  * A physical {@link InputRow} originating from a MetaModel {@link Row} object.
  */
-public final class MetaModelInputRow extends AbstractInputRow {
+public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(MetaModelInputRow.class);
 
     private final Row _row;
-    private final int _rowNumber;
+    private final long _id;
 
-    public MetaModelInputRow(int rowNumber, Row row) {
-        _rowNumber = rowNumber;
+    public MetaModelInputRow(long rowNumber, Row row) {
+        _id = rowNumber;
         _row = row;
+    }
+    
+    @Override
+    protected String getFieldNameForNewId() {
+        return "_id";
+    }
+    
+    @Override
+    protected String getFieldNameForOldId() {
+        return "_rowNumber";
+    }
+    
+    @Override
+    protected Collection<String> getFieldNamesInAdditionToId() {
+        return Arrays.asList("_row");
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        doReadObject(stream);
     }
 
     @Override
-    public int getId() {
-        return _rowNumber;
+    public long getId() {
+        return _id;
     }
 
     public Row getRow() {

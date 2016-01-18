@@ -43,7 +43,7 @@ import org.datacleaner.result.ListResult;
 import org.junit.Assert;
 
 @Named("Mock output data stream analyzer")
-public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer>>, HasOutputDataStreams {
+public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>>, HasOutputDataStreams {
 
     public static final String PROPERTY_IDENTIFIER = "Identifier";
     public static final String STREAM_NAME1 = "foo bar records";
@@ -58,7 +58,7 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer
     private OutputRowCollector collector1;
     private OutputRowCollector collector2;
     private AtomicInteger counter;
-    private List<Integer> list;
+    private List<Number> list;
     private boolean _hasBeenValidated = false;
 
     @Configured
@@ -112,7 +112,7 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer
                     + identifier);
         }
 
-        final int id = row.getId();
+        final long id = row.getId();
         if (id % 3 == 0) {
             // one third of the times we will write to our result list
             list.add(id);
@@ -130,7 +130,7 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer
     }
 
     @Override
-    public ListResult<Integer> getResult() {
+    public ListResult<Number> getResult() {
         if (collector1 != null) {
             collector1.putValues("baz", null);
         }

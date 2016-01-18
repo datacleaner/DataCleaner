@@ -271,7 +271,7 @@ public class ComponentHandler {
         // Results will be collected in a tree map, sorted by row ID, to return the rows
         // in the same order. It is needed because we do the transformation in threads and
         // results could be computed in different order.
-        final Map<Integer, List<Object[]>> results = new TreeMap<>();
+        final Map<Long, List<Object[]>> results = new TreeMap<>();
 
         final SecurityContext securityContext = SecurityContextHolder.getContext();
 
@@ -332,7 +332,7 @@ public class ComponentHandler {
      * Thread-safe transformation method that runs transformer for an 'inputRow'
      * and puts a list of output rows to the 'results' map (key is the row ID).
      */
-    private void transform(InputRow inputRow, Map<Integer, List<Object[]>> results) {
+    private void transform(InputRow inputRow, Map<Long, List<Object[]>> results) {
         ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
 
         final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor

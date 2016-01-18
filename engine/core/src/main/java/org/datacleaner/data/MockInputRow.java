@@ -19,10 +19,15 @@
  */
 package org.datacleaner.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.InputColumn;
@@ -31,29 +36,29 @@ import org.datacleaner.api.InputColumn;
  * A mock implementation of the InputRow interface. Allows for adhoc generation
  * of a row using the put(...) method.
  */
-public class MockInputRow extends AbstractInputRow {
+public class MockInputRow extends AbstractLegacyAwareInputRow {
 
     private static final long serialVersionUID = 1L;
 
     private static final AtomicInteger _idGenerator = new AtomicInteger(Integer.MIN_VALUE);
 
     private final Map<InputColumn<?>, Object> _values;
-    private final int _id;
+    private final long _rowId;
 
     public MockInputRow() {
         this(_idGenerator.getAndIncrement());
     }
 
-    public MockInputRow(int id, Map<InputColumn<?>, Object> values) {
+    public MockInputRow(long id, Map<InputColumn<?>, Object> values) {
         _values = values;
-        _id = id;
+        _rowId = id;
     }
 
     public MockInputRow(Map<InputColumn<?>, Object> values) {
         this(_idGenerator.getAndIncrement(), values);
     }
 
-    public MockInputRow(int id) {
+    public MockInputRow(long id) {
         this(id, new LinkedHashMap<InputColumn<?>, Object>());
     }
 
@@ -69,8 +74,27 @@ public class MockInputRow extends AbstractInputRow {
     }
 
     @Override
-    public int getId() {
-        return _id;
+    protected String getFieldNameForNewId() {
+        return "_rowId";
+    }
+
+    @Override
+    protected String getFieldNameForOldId() {
+        return "_id";
+    }
+
+    @Override
+    protected Collection<String> getFieldNamesInAdditionToId() {
+        return Arrays.asList("_values");
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        doReadObject(stream);
+    }
+
+    @Override
+    public long getId() {
+        return _rowId;
     }
 
     @Override
@@ -114,11 +138,7 @@ public class MockInputRow extends AbstractInputRow {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + _id;
-        result = prime * result + ((_values == null) ? 0 : _values.hashCode());
-        return result;
+        return Objects.hash(_rowId, _values);
     }
 
     @Override
@@ -130,7 +150,7 @@ public class MockInputRow extends AbstractInputRow {
         if (getClass() != obj.getClass())
             return false;
         MockInputRow other = (MockInputRow) obj;
-        if (_id != other._id)
+        if (_rowId != other._rowId)
             return false;
         if (_values == null) {
             if (other._values != null)
@@ -142,6 +162,6 @@ public class MockInputRow extends AbstractInputRow {
 
     @Override
     public String toString() {
-        return "MockInputRow[id=" + _id + "]";
+        return "MockInputRow[id=" + _rowId + "]";
     }
 }

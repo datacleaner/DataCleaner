@@ -1,88 +1,76 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-<f:view>
-	<h:head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<title>DataCleaner monitor</title>
 
-		<link
-			href='http://fonts.googleapis.com/css?family=Ubuntu|Lobster|Open+Sans'
-			rel='stylesheet' type='text/css' />
-		<link rel="stylesheet" type="text/css" href="styles.css" />
-		<link rel="stylesheet" type="text/css" href="styles_login.css" />
-		<link rel="shortcut icon" href="images/favicon.png" />
-	</h:head>
-	<h:body>
+	<ui:define name="content">
 
-		<div class="pageContainer">
-			<div class="pageHeader">
-				<div class="logo"></div>
-			</div>
+		<div class="LoginPage container">
 
-			<div class="login_panel_container">
-				<div class="login_panel_form_container">
-					<form action="j_spring_security_check" method="POST">
-						<h3 class="login_panel_header">
-							Log in to <span class="blue">DataCleaner</span> <span
-								class="orange">monitor</span>
-						</h3>
-						<div class="login_panel_content">
-							<p>Username:</p>
-							<p>
-								<input name="j_username" type="text" size="20" />
-							</p>
+			<c:if test="#{not empty param.error}">
+				<div class="alert alert-warning">Your login attempt was
+					unsuccessful. Please try again.</div>
+				<c:if test="#{not empty param.debug}">
+					<div class="alert alert-warning">
+						#{SPRING_SECURITY_LAST_EXCEPTION.getClass().simpleName}:
+						#{SPRING_SECURITY_LAST_EXCEPTION.message}</div>
+				</c:if>
+			</c:if>
 
-							<p>Password:</p>
-							<p>
-								<input name="j_password" type="password" size="20" />
-							</p>
-						</div>
-
-						<input type="submit" value="Log in" />
-
-						<div style="clear: both"></div>
-					</form>
-				</div>
-
-				<div class="login_panel_information">
-					<c:if test="#{not empty param.error}">
-						<div class="warning">
-							Your login attempt was unsuccessful,<br/>
-							please try again.
-						</div>
-						<c:if test="#{not empty param.debug}">
-							<div class="warning">
- 								#{SPRING_SECURITY_LAST_EXCEPTION.getClass().simpleName}:
-								#{SPRING_SECURITY_LAST_EXCEPTION.message}
+			<form action="j_spring_security_check" method="POST">
+				<h3>
+					Sign in to <span class="blue">DataCleaner</span> <span
+						class="orange">monitor</span>
+				</h3>
+				<div class="row">
+					<div class="col-xs-12 col-sm-8">
+						<div style="max-width: 40em;">
+							<div class="form-group">
+								<label for="inputUsername" class="sr-only">Username</label> <input
+									name="j_username" type="text" id="inputUsername"
+									class="form-control" placeholder="Username" required="required"
+									autofocus="autofocus" value="#{param['email']}" />
 							</div>
-						</c:if>
-					</c:if>
-					
-					<h3 class="login_panel_header">Demo accounts</h3>
-					<div class="login_panel_content">
 
-						<p>Try logging in using any of these demo credentials:</p>
-						<ul>
-							<li>admin/admin: The administrator of the 'DC' tenant.</li>
-							<li>viewer/viewer: A dashboard viewer of the 'DC' tenant</li>
-						</ul>
-						
+							<div class="form-group">
+								<label for="inputPassword" class="sr-only">Password</label> <input
+									name="j_password" type="password" id="inputPassword"
+									class="form-control" placeholder="Password" required="required" />
+							</div>
+
+							<div class="checkbox">
+								<label> <input type="checkbox" name="rememberMe"
+									value="true" /> Remember me
+								</label>
+							</div>
+
+							<input type="hidden" name="r" value="#{param['r']}" />
+
+							<button class="btn btn-lg btn-primary btn-block" type="submit">
+								<span class="glyphicon glyphicon-log-in" aria-hidden="true" />
+								<span>Sign in</span>
+							</button>
+						</div>
+					</div>
+					
+					<div class="col-xs-12 col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Demo accounts</div>
+							<div class="panel-body">
+								<p>Try logging in using any of these demo credentials:</p>
+								<ul>
+									<li>admin/admin: The administrator of the 'demo' tenant.</li>
+									<li>viewer/viewer: A dashboard viewer of the 'demo' tenant</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-			
-			<div class="pageFooter">
-				<ui:include src="version-info.xhtml" />
-				
-				<div class="logo">
-					<span class="tagline">the premier open source data quality solution! powered by</span>
-				</div>
-			</div>
+			</form>
+
 		</div>
-	</h:body>
-</f:view>
-</html>
+
+	</ui:define>
+</ui:composition>

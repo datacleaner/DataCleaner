@@ -18,7 +18,11 @@
 
 			function showUploadJobForm(button) {
 				var form = button.form;
-				form.innerHTML = '<div style="clear:left"></div><input type="file" name="file" /> <input type="submit" value="Upload" onclick="return confirmUpload(\'job\')" />';
+				form.innerHTML = '<div>'+
+					'<div>Upload job file</div>'+
+					'<div><span class="btn btn-default btn-file">Browse <input type="file" name="file" /></span>' + 
+					'<button type="submit" class="btn btn-warning" onclick="return confirmUpload(\'job\')"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span><span>Upload</span></button>' + 
+					'</div></div>';
 			}
 			//]]>
 		</script>
@@ -94,7 +98,7 @@
 			<ul class="repositoryView">
 				<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
 					<li class="folder">#{folder.name}</li>
-					<ul class="repositoryView">
+					<ul>
 						<ui:repeat var="file" value="#{folder.files}">
 							<li class="file #{file.type}">#{file.name}</li>
 						</ui:repeat>
@@ -107,9 +111,10 @@
 							<h:panelGroup rendered="#{user.jobEditor}"
 								styleClass="uploadJobPanel">
 								<form action="repository/#{user.tenant}/jobs/#{file.name}"
-									method="post" enctype="multipart/form-data">
-									<input class="showFormButton" onclick="showUploadJobForm(this)"
-										type="button" alt="Upload/replace the job file contents" />
+									method="post" enctype="multipart/form-data" style="display: inline;">
+										<button onclick="showUploadJobForm(this);" class="text-warning btn-textlike">
+											<span class="glyphicon glyphicon-upload" aria-hidden="true" />
+										</button>
 								</form>
 							</h:panelGroup></li>
 					</h:panelGroup>
@@ -124,7 +129,7 @@
 				<ui:repeat var="folder"
 					value="#{tenantContext.timelineFolder.folders}">
 					<li class="folder">#{folder.name}</li>
-					<ul class="repositoryView">
+					<ul>
 						<ui:repeat var="file" value="#{folder.files}">
 							<li class="file #{file.type}"><a
 								href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
@@ -149,7 +154,7 @@
 				<ui:repeat var="folder"
 					value="#{tenantContext.resultFolder.folders}">
 					<li class="folder">#{folder.name}</li>
-					<ul class="repositoryView">
+					<ul>
 						<ui:repeat var="file" value="#{folder.files}">
 							<li class="file #{file.type}">#{file.name}</li>
 						</ui:repeat>

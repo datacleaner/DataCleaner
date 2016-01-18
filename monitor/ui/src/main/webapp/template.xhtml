@@ -17,31 +17,31 @@
 			rel='stylesheet' type='text/css' />
 
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/bootstrap.min.css" />
+			href="#{request.contextPath}/stylesheets/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/bootstrap-overrides.css" />
+			href="#{request.contextPath}/stylesheets/bootstrap-overrides.css" />
 
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}styles.css" />
+			href="#{request.contextPath}/styles.css" />
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}styles_additional.css" />
+			href="#{request.contextPath}/styles_additional.css" />
 
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/footer.css" />
+			href="#{request.contextPath}/stylesheets/footer.css" />
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/main-elements.css" />
+			href="#{request.contextPath}/stylesheets/main-elements.css" />
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/buttons.css" />
+			href="#{request.contextPath}/stylesheets/buttons.css" />
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}stylesheets/datacleaner-styles.css" />
+			href="#{request.contextPath}/stylesheets/datacleaner-styles.css" />
 
 		<script type="text/javascript"
-			src="#{request.contextPath}javascripts/jquery-1.11.2.min.js"></script>
+			src="#{request.contextPath}/javascripts/jquery-1.11.2.min.js"></script>
 		<script type="text/javascript"
-			src="#{request.contextPath}javascripts/bootstrap.min.js"></script>
+			src="#{request.contextPath}/javascripts/bootstrap.min.js"></script>
 
 		<link rel="shortcut icon"
-			href="#{request.contextPath}images/favicon.png" />
+			href="#{request.contextPath}/images/favicon.png" />
 
 		<script type="text/javascript">
 			//<![CDATA[
@@ -72,9 +72,10 @@
 							class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" style="padding: 0px" href="/"> <img
-						src="#{request.contextPath}images/dc-logo-50.png" alt="[DC]" />
-					</a> <a class="navbar-brand" href="#{request.contextPath}"> <span
+					<a class="navbar-brand" style="padding: 0px"
+						href="#{request.contextPath}/"> <img
+						src="#{request.contextPath}/images/dc-logo-50.png" alt="[DC]" />
+					</a> <a class="navbar-brand" href="#{request.contextPath}/"> <span
 						class="visible-xs hidden-sm visible-md visible-lg">DataCleaner
 							monitor</span>
 					</a>
@@ -82,10 +83,11 @@
 
 				<div id="navbar" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<ui:include src="template_nav_basic.xhtml" />
-						<ui:include src="template_nav_additional.xhtml" />
+						<c:if test="#{user.authenticated}">
+							<ui:include src="template_nav_basic.xhtml" />
+							<ui:include src="template_nav_additional.xhtml" />
+						</c:if>
 					</ul>
-
 
 					<ul class="nav navbar-nav navbar-right">
 						<c:choose>
@@ -96,7 +98,6 @@
 							</c:when>
 							<c:otherwise>
 								<li><a href="/login">Sign in </a></li>
-								<li><a href="/register">Register </a></li>
 							</c:otherwise>
 						</c:choose>
 					</ul>

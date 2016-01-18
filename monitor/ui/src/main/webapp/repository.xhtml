@@ -6,64 +6,90 @@
 
 	<ui:define name="head">
 		<script type="text/javascript">
-		//<![CDATA[
-		    function confirmUpload(fileType) {
-		    	if (confirm('Are you sure you wish to upload (and overwrite) the ' + fileType + ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
-		    		return true;
-		    	}
-		    	return false;
-		    }
-		           
+			//<![CDATA[
+			function confirmUpload(fileType) {
+				if (confirm('Are you sure you wish to upload (and overwrite) the '
+						+ fileType
+						+ ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
+					return true;
+				}
+				return false;
+			}
+
 			function showUploadJobForm(button) {
 				var form = button.form;
 				form.innerHTML = '<div style="clear:left"></div><input type="file" name="file" /> <input type="submit" value="Upload" onclick="return confirmUpload(\'job\')" />';
 			}
-		//]]>
+			//]]>
 		</script>
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}stylesheets/repository.css" />
 	</ui:define>
 
 	<ui:define name="content">
 		<div id="RepositoryPage" class="container">
-			<h:panelGroup rendered="#{user.configurationEditor}"
-				styleClass="uploadConfigurationPanel">
-				<h3>Configuration file</h3>
-				<h:panelGroup rendered="#{param['configuration_upload'] == 'Success'}">
-					<p>
-						Configuration file <a href="repository/#{user.tenant}/conf.xml"
-							target="_blank">conf.xml</a> uploaded successfully.
-					</p>
-				</h:panelGroup>
-				<h:panelGroup rendered="#{param['configuration_upload'] != 'Success'}">
-					<p>
-						Upload new <a href="repository/#{user.tenant}/conf.xml"
-							target="_blank">conf.xml</a> file:
-					</p>
-					<form action="repository/#{user.tenant}/configuration" method="post"
-						enctype="multipart/form-data">
-						<input type="file" name="file" /> <input type="submit" class="orangeButton"
-							value="Upload"
-							onclick="return confirmUpload('configuration')" />
-					</form>
-				</h:panelGroup>
+			<h:panelGroup
+				rendered="#{param['configuration_upload'] == 'Success'}">
+				<div class="alert alert-success">
+					Configuration file <a href="repository/#{user.tenant}/conf.xml"
+						target="_blank">conf.xml</a> uploaded successfully.
+				</div>
 			</h:panelGroup>
-			
-			<h:panelGroup rendered="#{user.admin}"
-				styleClass="uploadConfigurationPanel">
-				<h3>Repository backup + restore</h3>
-				<p>
-					Download <a href="repository/#{user.tenant}/zip">the repository as a .zip file</a>.
-				</p>
-				<p>
-					Restore repository using zip file:
-				</p>
-				<form action="repository/#{user.tenant}/zip" method="post"
-					enctype="multipart/form-data">
-					<input type="file" name="file" /> <input type="submit" class="orangeButton"
-						value="Upload"
-						onclick="return confirmUpload('repository')" />
-				</form>
+
+			<h:panelGroup rendered="#{user.configurationEditor}">
+				<div class="panel panel-default panel-right">
+					<div class="panel-heading">Configuration file</div>
+					<div class="panel-body">
+						<p>
+							Upload new <a href="repository/#{user.tenant}/conf.xml"
+								target="_blank">conf.xml</a> file:
+						</p>
+						<form action="repository/#{user.tenant}/configuration"
+							method="post" enctype="multipart/form-data">
+							
+							<span class="btn btn-default btn-file">
+							    Browse <input type="file" name="file" />
+							</span>
+							
+							<button type="submit"
+								class="btn btn-warning"
+								onclick="return confirmUpload('configuration')">
+								<span class="glyphicon glyphicon-upload" aria-hidden="true" />
+								<span>Upload</span>
+							</button>
+						</form>
+					</div>
+				</div>
 			</h:panelGroup>
-			
+
+			<h:panelGroup rendered="#{user.admin}">
+				<div class="panel panel-default panel-right">
+					<div class="panel-heading">Repository backup + restore</div>
+					<div class="panel-body">
+						<p>
+							You can download <a href="repository/#{user.tenant}/zip">the
+								repository as a .zip file</a>. Use this as a backup or as a way to replicate a repository from one tenant to another.
+						</p>
+						<div class="spacer"></div>
+						<p>Restore repository by uploading a corresponding zip file:</p>
+						<form action="repository/#{user.tenant}/zip" method="post"
+							enctype="multipart/form-data">
+							
+								<span class="btn btn-default btn-file">
+							    Browse <input type="file" name="file" />
+							</span>
+							
+							<button type="submit"
+								class="btn btn-warning"
+								onclick="return confirmUpload('repository')">
+								<span class="glyphicon glyphicon-upload" aria-hidden="true" />
+								<span>Upload</span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</h:panelGroup>
+
 			<h2>Jobs</h2>
 			<ul class="repositoryView">
 				<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
@@ -76,22 +102,23 @@
 				</ui:repeat>
 				<ui:repeat var="file" value="#{tenantContext.jobFolder.files}">
 					<h:panelGroup rendered="#{file.type eq 'ANALYSIS_JOB'}">
-						<li class="file #{file.type}">
-							<a href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a>
-							<h:panelGroup rendered="#{user.jobEditor}" styleClass="uploadJobPanel">
-								<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
-									enctype="multipart/form-data">
-									<input class="showFormButton" onclick="showUploadJobForm(this)" type="button" alt="Upload/replace the job file contents" />
+						<li class="file #{file.type}"><a
+							href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a>
+							<h:panelGroup rendered="#{user.jobEditor}"
+								styleClass="uploadJobPanel">
+								<form action="repository/#{user.tenant}/jobs/#{file.name}"
+									method="post" enctype="multipart/form-data">
+									<input class="showFormButton" onclick="showUploadJobForm(this)"
+										type="button" alt="Upload/replace the job file contents" />
 								</form>
-							</h:panelGroup>
-						</li>
+							</h:panelGroup></li>
 					</h:panelGroup>
 					<h:panelGroup rendered="#{file.type ne 'ANALYSIS_JOB'}">
 						<li class="file #{file.type}">#{file.name}</li>
 					</h:panelGroup>
 				</ui:repeat>
 			</ul>
-			
+
 			<h2>Timelines</h2>
 			<ul class="repositoryView">
 				<ui:repeat var="folder"
@@ -99,7 +126,8 @@
 					<li class="folder">#{folder.name}</li>
 					<ul class="repositoryView">
 						<ui:repeat var="file" value="#{folder.files}">
-							<li class="file #{file.type}"><a href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
+							<li class="file #{file.type}"><a
+								href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
 						</ui:repeat>
 					</ul>
 				</ui:repeat>
@@ -107,18 +135,19 @@
 					<li class="file #{file.type}"><a href="dashboard.jsf">#{file.name}</a></li>
 				</ui:repeat>
 			</ul>
-			
-					
+
+
 			<h2>Datastores</h2>
 			<ul class="repositoryView">
 				<ui:repeat var="ds" value="#{jsfHelper.datastores}">
 					<li class="file DATASTORE">#{ds.name}</li>
 				</ui:repeat>
 			</ul>
-	
+
 			<h2>Results</h2>
 			<ul class="repositoryView">
-				<ui:repeat var="folder" value="#{tenantContext.resultFolder.folders}">
+				<ui:repeat var="folder"
+					value="#{tenantContext.resultFolder.folders}">
 					<li class="folder">#{folder.name}</li>
 					<ul class="repositoryView">
 						<ui:repeat var="file" value="#{folder.files}">

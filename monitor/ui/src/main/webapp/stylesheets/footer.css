@@ -1,11 +1,11 @@
 body {
 	/* Margin bottom by footer height plus any margin */
-	margin-bottom: 160px; /* 10px margin */
+	margin-bottom: 110px; /* 10px margin */
 }
 
 .footer {
 	/* Set the fixed height of the footer here */
-	height: 150px;
+	height: 110px;
 }
 
 .footer {

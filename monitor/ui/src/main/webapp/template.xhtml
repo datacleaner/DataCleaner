@@ -22,18 +22,19 @@
 			href="#{request.contextPath}/stylesheets/bootstrap-overrides.css" />
 
 		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}/styles.css" />
-		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}/styles_additional.css" />
-
+			href="#{request.contextPath}/stylesheets/main-elements.css" />
 		<link rel="stylesheet" type="text/css"
 			href="#{request.contextPath}/stylesheets/footer.css" />
-		<link rel="stylesheet" type="text/css"
-			href="#{request.contextPath}/stylesheets/main-elements.css" />
 		<link rel="stylesheet" type="text/css"
 			href="#{request.contextPath}/stylesheets/buttons.css" />
 		<link rel="stylesheet" type="text/css"
 			href="#{request.contextPath}/stylesheets/datacleaner-styles.css" />
+			
+		<!-- old/deprecated styles.css files -->
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}/styles.css" />
+		<link rel="stylesheet" type="text/css"
+			href="#{request.contextPath}/styles_additional.css" />
 
 		<script type="text/javascript"
 			src="#{request.contextPath}/javascripts/jquery-1.11.2.min.js"></script>
@@ -111,12 +112,20 @@
 
 		<footer class="footer">
 			<div class="container">
-				<ui:include src="version-info.xhtml" />
-				the premier data quality solution! powered by <a
-					onclick="recordOutboundLink(this,'outbound','neopost'); return false;"
-					href="http://www.neopost.com" target="_blank"><img
-					src="#{request.contextPath}/images/by_neopost_family.png"
-					alt="Powered by Neopost" style="padding-left: 1em" /></a>
+				<div class="row">
+					<div class="col-md-5 col-xs-12">
+						<ui:include src="version-info.xhtml" />
+					</div>
+					<div class="col-md-7 col-xs-12">
+						<div style="text-align: right;">
+						The premier data quality solution! Powered by <a
+						onclick="recordOutboundLink(this,'outbound','neopost'); return false;"
+						href="http://www.neopost.com" target="_blank"><img
+						src="#{request.contextPath}/images/by_neopost_family.png"
+						alt="Powered by Neopost" style="padding-left: 1em" /></a>
+						</div>
+					</div>
+				</div>
 			</div>
 		</footer>
 	</h:body>

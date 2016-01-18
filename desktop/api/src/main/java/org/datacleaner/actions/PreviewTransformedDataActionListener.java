@@ -267,7 +267,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             for (ComponentBuilder componentBuilder : componentBuilders) {
 
                 // flag to indicate if this component is directly involved in
-                // populating data for the preview'ed component
+                // populating data for the previewed component
                 boolean importantComponent = componentBuilder == tjb;
 
                 final List<OutputDataStream> streams = componentBuilder.getOutputDataStreams();
@@ -290,6 +290,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                     // components
                     relevantAnalysisJobBuilder.removeComponent(componentBuilder);
                 }
+                
+                if (!importantComponent){
+                    //remove the components that are not configured. 
+                   if (componentBuilder.getInput().length == 0){
+                       relevantAnalysisJobBuilder.removeComponent(componentBuilder);
+                   }
+                }
+                
+            
             }
         }
     }

@@ -45,8 +45,10 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockTransformer;
+import org.junit.Test;
 
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest extends TestCase {
@@ -77,6 +79,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
     }
 
+    @Test
     public void testPreviewTransformationInOutputDataStream() throws Exception {
         final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> streamProducer = analysisJobBuilder
                 .addAnalyzer(MockOutputDataStreamAnalyzer.class);
@@ -96,6 +99,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         assertEquals("mocked: bar", tableModel.getValueAt(0, 1));
     }
 
+    @Test
     public void testPreviewTransformationInMultiStreamGeneratedOutputDataStream() throws Exception {
         analysisJobBuilder.addSourceColumns("PUBLIC.CUSTOMERS.PHONE");
 
@@ -233,5 +237,39 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
             assertEquals("mpatterso", tableModel.getValueAt(2, 0).toString());
             assertEquals("m", tableModel.getValueAt(2, 1).toString());
         }
+    }
+    
+    @Test()
+    public void testUnchainedTransformers() throws Exception{
+       
+        final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
+                .addTransformer(ConcatenatorTransformer.class);
+        
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                emailTransformerBuilder);
+        
+        final TableModel tableModel = action.call();
+
+        assertEquals(3, tableModel.getColumnCount());
+        assertEquals("EMAIL", tableModel.getColumnName(0));
+        assertEquals("Username", tableModel.getColumnName(1));
+        assertEquals("Domain", tableModel.getColumnName(2));
+
+        assertEquals(23, tableModel.getRowCount());
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            assertTrue(tableModel.getValueAt(i, 0).toString().indexOf('@') > 1);
+            assertNotNull(tableModel.getValueAt(i, 1).toString());
+            assertNotNull(tableModel.getValueAt(i, 2).toString());
+        }
+
+        assertEquals("dmurphy@classicmodelcars.com", tableModel.getValueAt(0, 0).toString());
+        assertEquals("dmurphy", tableModel.getValueAt(0, 1).toString());
+        assertEquals("classicmodelcars.com", tableModel.getValueAt(0, 2).toString());
+
+        assertEquals("mpatterso@classicmodelcars.com", tableModel.getValueAt(1, 0).toString());
+        assertEquals("mpatterso", tableModel.getValueAt(1, 1).toString());
+        assertEquals("classicmodelcars.com", tableModel.getValueAt(1, 2).toString());
+               
     }
 }

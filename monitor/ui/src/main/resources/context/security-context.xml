@@ -11,6 +11,7 @@
 	<http pattern="/repository/*/launch-resources/images/**" security="none" />
 
 	<!-- unprotected static resources/urls -->
+	<http pattern="/" security="none" />
 	<http pattern="/favicon.ico" security="none" />
 	<http pattern="/login.jsf" security="none" />
 	<http pattern="/images/**" security="none" />
@@ -18,25 +19,22 @@
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner monitor">
-		<anonymous enabled="true" username="anonymous" />
-
 		<intercept-url pattern="/repository/**" access="ROLE_USER" />
 
 		<http-basic />
 	</http>
 
 	<!-- Form based authentication for the web pages -->
-	<http auto-config="true" realm="DataCleaner monitor">
-		<anonymous enabled="true" username="anonymous" />
-
-		<intercept-url pattern="/**" access="ROLE_USER" />
-
+	<http realm="DataCleaner monitor">
+		<intercept-url pattern="/*.jsf" access="ROLE_USER" />
+		
+		<http-basic />
 		<form-login login-page="/login.jsf" authentication-failure-url="/login.jsf?error=true" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 		<logout logout-url="/logout" />
 	</http>
-
+	
 	<global-method-security jsr250-annotations="enabled" />
 
 	<authentication-manager alias="authenticationManager">

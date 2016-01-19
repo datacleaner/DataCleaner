@@ -174,7 +174,7 @@ public class DataSetWindow extends AbstractWindow {
                     logger.error("Unexpected error occurred while building DataSetWindow contents", e);
                     DataSetWindow.this.dispose();
                     WidgetUtils.showErrorMessage("Unexpected error",
-                            "An unexpected error occurred while building data set. See logs for details." + e.getMessage());
+                            "An unexpected error occurred while building data set. See logs for details.");
                 }
             };
         }.execute();

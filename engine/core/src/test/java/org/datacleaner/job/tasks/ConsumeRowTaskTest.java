@@ -110,9 +110,9 @@ public class ConsumeRowTaskTest extends TestCase {
         assertEquals(10, list.get(12).getValue(countingColumn));
 
         // assert that all generated rows have unique ids
-        Set<Integer> ids = new HashSet<Integer>();
+        final Set<Long> ids = new HashSet<>();
         for (InputRow row : list) {
-            int id = row.getId();
+            final long id = row.getId();
             if (ids.contains(id)) {
                 fail("Multiple rows with id " + id);
             }

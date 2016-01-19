@@ -70,7 +70,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
         if (storeRow) {
             // TODO: In clustered scenarios, there's a chance of row ID
             // collision
-            final int rowId = row.getId();
+            final int rowId = (int) row.getId();
             if (_cachedRows != null) {
                 Boolean previously = _cachedRows.asMap().putIfAbsent(rowId, true);
                 if (previously == null) {

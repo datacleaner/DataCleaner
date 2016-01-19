@@ -49,7 +49,7 @@ public interface InputRow extends Serializable {
      * 
      * @return an identifier for this row
      */
-    public int getId();
+    public long getId();
 
     /**
      * @return the input columns represented in this row

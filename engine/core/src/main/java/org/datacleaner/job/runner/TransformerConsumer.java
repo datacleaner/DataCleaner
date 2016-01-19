@@ -164,14 +164,14 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         }
     }
 
-    private int getNextVirtualRowId(InputRow row, int recordNo) {
+    private long getNextVirtualRowId(InputRow row, int recordNo) {
         if (_idGenerator == null) {
             // this can more or less never happen, except in test cases or in
             // cases where the consumers are programmatically being used outside
             // of an AnalysisRunner. There's a risk then here that we get the
             // same row ID twice, but that's life :-P
-            int offset = Integer.MAX_VALUE;
-            int hiLoIntervalOffset = row.getId() * 1000;
+            long offset = Long.MAX_VALUE;
+            long hiLoIntervalOffset = row.getId() * 10000;
             return offset - hiLoIntervalOffset + recordNo;
         }
         return _idGenerator.nextVirtualRowId();

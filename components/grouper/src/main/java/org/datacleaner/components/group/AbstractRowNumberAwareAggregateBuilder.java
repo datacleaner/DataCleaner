@@ -49,7 +49,7 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
             _values = new TreeSet<>(Collections.reverseOrder(ObjectComparator.getComparator()));
             break;
         case RECORD_ORDER:
-            _values = new TreeMap<Integer, Object>();
+            _values = new TreeMap<Long, Object>();
             break;
         default:
             throw new UnsupportedOperationException();
@@ -61,7 +61,7 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
         throw new UnsupportedOperationException();
     }
 
-    public final void add(Object o, int rowNumber) {
+    public final void add(Object o, long rowNumber) {
         if (_skipNulls && o == null) {
             return;
         }
@@ -78,7 +78,7 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
             break;
         case RECORD_ORDER:
             @SuppressWarnings("unchecked")
-            final Map<Integer, Object> map = (Map<Integer, Object>) _values;
+            final Map<Long, Object> map = (Map<Long, Object>) _values;
             map.put(rowNumber, o);
             break;
         }

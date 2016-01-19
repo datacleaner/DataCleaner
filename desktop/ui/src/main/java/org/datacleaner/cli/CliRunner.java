@@ -40,7 +40,6 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;

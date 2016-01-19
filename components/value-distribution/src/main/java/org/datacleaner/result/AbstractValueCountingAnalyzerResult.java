@@ -53,6 +53,7 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
                 result.remove(null);
                 result.remove(LabelUtils.NULL_LABEL);
                 result.remove(LabelUtils.UNEXPECTED_LABEL);
+                result.remove(LabelUtils.UNIQUE_LABEL);
                 return result;
             }
 

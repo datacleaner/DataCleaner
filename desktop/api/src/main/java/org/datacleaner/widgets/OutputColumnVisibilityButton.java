@@ -50,6 +50,6 @@ public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<
 
     @Override
     public void onItemSelected(MutableInputColumn<?> item, boolean selected) {
-        item.setHidden(!selected);
+       //do nothing on the visibility of the button. It should be visible 
     }
 }

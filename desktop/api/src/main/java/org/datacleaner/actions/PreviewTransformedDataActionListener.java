@@ -293,7 +293,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
                 if (!importantComponent) {
                     // remove the components that are not configured.
-                    if (componentBuilder.getInput().length == 0) {
+                    if (!componentBuilder.isConfigured(false)) {
                         relevantAnalysisJobBuilder.removeComponent(componentBuilder);
                     }
                 }

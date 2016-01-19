@@ -32,6 +32,7 @@
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
 		<commons.collection.version>3.2.1</commons.collection.version>
+		<ocpsoft.rewrite.version>2.0.12.Final</ocpsoft.rewrite.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -982,6 +983,22 @@
 				<artifactId>xml-apis</artifactId>
 				<groupId>xml-apis</groupId>
 				<version>1.4.01</version>
+			</dependency>
+			<!-- Pretty faces - URL rewriting for JSF 2.x -->
+			<dependency>
+				<groupId>org.ocpsoft.rewrite</groupId>
+				<artifactId>rewrite-servlet</artifactId>
+				<version>${ocpsoft.rewrite.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ocpsoft.rewrite</groupId>
+				<artifactId>rewrite-config-prettyfaces</artifactId>
+				<version>${ocpsoft.rewrite.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ocpsoft.rewrite</groupId>
+				<artifactId>rewrite-impl-servlet-3.0</artifactId>
+				<version>${ocpsoft.rewrite.version}</version>
 			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>

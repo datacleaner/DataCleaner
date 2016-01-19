@@ -64,6 +64,26 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:context/application-context.xml</param-value>
 	</context-param>
+	
+	<!-- Pretty faces URL rewriting -->
+	<listener>
+		<listener-class>org.ocpsoft.rewrite.servlet.impl.RewriteServletRequestListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.ocpsoft.rewrite.servlet.impl.RewriteServletContextListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>OCPsoft Rewrite Filter</filter-name>
+		<filter-class>org.ocpsoft.rewrite.servlet.RewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>OCPsoft Rewrite Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
 
 	<!-- JSF servlet -->
 	<servlet>

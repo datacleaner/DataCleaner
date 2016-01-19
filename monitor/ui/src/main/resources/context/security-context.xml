@@ -13,7 +13,7 @@
 	<!-- unprotected static resources/urls -->
 	<http pattern="/" security="none" />
 	<http pattern="/favicon.ico" security="none" />
-	<http pattern="/login.jsf" security="none" />
+	<http pattern="/login" security="none" />
 	<http pattern="/images/**" security="none" />
 	<http pattern="/*.css" security="none" />
 
@@ -27,9 +27,14 @@
 	<!-- Form based authentication for the web pages -->
 	<http realm="DataCleaner monitor">
 		<intercept-url pattern="/*.jsf" access="ROLE_USER" />
+		<intercept-url pattern="/dashboard" access="ROLE_USER" />
+		<intercept-url pattern="/scheduling" access="ROLE_USER" />
+		<intercept-url pattern="/datastores" access="ROLE_USER" />
+		<intercept-url pattern="/repository" access="ROLE_USER" />
+		<intercept-url pattern="/query" access="ROLE_USER" />
 		
 		<http-basic />
-		<form-login login-page="/login.jsf" authentication-failure-url="/login.jsf?error=true" login-processing-url="/j_spring_security_check"
+		<form-login login-page="/login" authentication-failure-url="/login?error=true" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 		<logout logout-url="/logout" />

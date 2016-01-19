@@ -98,7 +98,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
                     }
 
                     if (user.isQueryAllowed()) {
-                        frag.addBodyElement("<button onclick=\"window.open('../../../query.jsf?ds="
+                        frag.addBodyElement("<button onclick=\"window.open('../../../query?ds="
                                 + encodedName
                                 + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
                     }

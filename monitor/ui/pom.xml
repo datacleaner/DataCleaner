@@ -271,6 +271,20 @@
 			<version>2.2</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Pretty faces - URL rewriting for JSF 2.x -->
+		<dependency>
+			<groupId>org.ocpsoft.rewrite</groupId>
+			<artifactId>rewrite-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ocpsoft.rewrite</groupId>
+			<artifactId>rewrite-config-prettyfaces</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ocpsoft.rewrite</groupId>
+			<artifactId>rewrite-impl-servlet-3.0</artifactId>
+		</dependency>
 
 		<!-- Servlet+JSP dependencies -->
 		<dependency>

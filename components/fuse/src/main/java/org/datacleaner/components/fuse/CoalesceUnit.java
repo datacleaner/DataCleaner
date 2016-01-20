@@ -62,7 +62,12 @@ public class CoalesceUnit {
     private String[] getInputColumnNames(InputColumn<?>[] inputColumns) {
         final String[] result = new String[inputColumns.length];
         for (int i = 0; i < inputColumns.length; i++) {
-            result[i] = inputColumns[i].getName();
+            final InputColumn<?> inputColumn = inputColumns[i];
+            if(inputColumn.isPhysicalColumn()){
+                result[i] = inputColumn.getPhysicalColumn().getQualifiedLabel();
+            } else {
+                result[i] = inputColumn.getName();
+            }
         }
         return result;
     }
@@ -97,7 +102,27 @@ public class CoalesceUnit {
 
             final String name = newInputColumnNames[i];
 
-            // first do an exact match round
+            // Exact match round on path.
+            for (final InputColumn<?> inputColumn : allInputColumns) {
+                if (name.contains(".") && inputColumn.isPhysicalColumn() && name
+                        .equals(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
+                    newInputColumns[i] = inputColumn;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                // Trimmed and case-insensitive path match round.
+                for (final InputColumn<?> inputColumn : allInputColumns) {
+                    if (name.contains(".") && inputColumn.isPhysicalColumn() && name.trim()
+                            .equalsIgnoreCase(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
+                        newInputColumns[i] = inputColumn;
+                        found = true;
+                    }
+                }
+            }
+
+            // Legacy: Exact name match round
             for (final InputColumn<?> inputColumn : allInputColumns) {
                 if (name.equals(inputColumn.getName())) {
                     newInputColumns[i] = inputColumn;
@@ -106,7 +131,7 @@ public class CoalesceUnit {
             }
 
             if (!found) {
-                // try with trimming and case-insensitive matching
+                // Legacy: Trimmed and case-insensitive name match round.
                 for (final InputColumn<?> inputColumn : allInputColumns) {
                     if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
                         newInputColumns[i] = inputColumn;
@@ -127,6 +152,7 @@ public class CoalesceUnit {
             return new CoalesceUnit(newInputColumns);
         }
     }
+
 
     public InputColumn<?>[] getInputColumns() {
         return _inputColumns;
@@ -187,7 +213,15 @@ public class CoalesceUnit {
         return "CoalesceUnit[inputColumnNames=" + Arrays.toString(getInputColumnNames()) + "]";
     }
 
+    private static String getSimpleName(String name){
+        int dotIndex = name.lastIndexOf('.');
+        if(dotIndex == -1){
+            return name;
+        }
+        return name.substring(dotIndex + 1);
+    }
+
     public String getSuggestedOutputColumnName() {
-        return getInputColumnNames()[0];
+        return getSimpleName(getInputColumnNames()[0]);
     }
 }

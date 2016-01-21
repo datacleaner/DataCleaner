@@ -36,10 +36,11 @@ import org.ocpsoft.rewrite.servlet.config.rule.Join;
 public class RewriteConfigurationProvider extends HttpConfigurationProvider {
 
     @Override
-    public Configuration getConfiguration(ServletContext arg0) {
+    public Configuration getConfiguration(ServletContext servletContext) {
         ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
-        builder.addRule().when(Path.matches("/")).perform(Redirect.permanent("/dashboard"));
+        builder.addRule().when(Path.matches("/")).perform(Redirect.temporary(servletContext.getContextPath()
+                + "/dashboard"));
 
         builder = addJoinRule(builder, "/login", "/login.jsf");
         builder = addJoinRule(builder, "/dashboard", "/dashboard.jsf");

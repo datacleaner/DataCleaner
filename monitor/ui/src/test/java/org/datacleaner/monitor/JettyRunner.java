@@ -60,12 +60,13 @@ public class JettyRunner {
         server.addConnector(connector);
 
         WebAppContext webApp = new WebAppContext();
-        webApp.setContextPath("/");
+        webApp.setContextPath("/DataCleaner-monitor");
         webApp.setWar(webappFolder.getCanonicalPath());
         server.setHandler(webApp);
         server.start();
 
         System.out.println("Jetty running now! Type 'exit' to try graceful shutdown.");
+        System.out.println("To see the site, go to http://127.0.0.1:8888/DataCleaner-monitor");
         createExitListenerThread(server);
 
         server.join();

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.dashboard.widgets;
 
+import org.datacleaner.monitor.shared.widgets.DCButtons;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -54,6 +56,9 @@ public class WelcomePanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
+        DCButtons.applyDefaultStyle(newTimelineButton);
+        DCButtons.applyDangerStyle(toggleWelcomeTextButton);
+        
         toggleWelcomeTextButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

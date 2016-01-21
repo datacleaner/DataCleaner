@@ -26,6 +26,7 @@ import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.StringParameterizedMetricTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -92,7 +93,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
 
-        final Button addButton = new Button("Add");
+        final Button addButton = DCButtons.defaultButton("glyphicon-plus", "Add");
         addButton.addStyleName("StringParameterizedMetricPresenterAddButton");
         addButton.addClickHandler(new ClickHandler() {
             @Override

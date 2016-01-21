@@ -21,6 +21,7 @@ package org.datacleaner.monitor.dashboard.widgets;
 
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -94,7 +95,7 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     private Button configureSaveColorButton(final DCPopupPanel popUp, final SelectColorPanel selectColorPanel) {
-        Button saveButton = new Button("Save");
+        Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.setVisible(true);
         saveButton.setTitle("Save");
         saveButton.addStyleName("SaveButton");

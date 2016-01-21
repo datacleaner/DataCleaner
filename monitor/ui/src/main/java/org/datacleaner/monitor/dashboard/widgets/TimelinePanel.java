@@ -25,6 +25,8 @@ import org.datacleaner.monitor.dashboard.model.TimelineData;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.datacleaner.monitor.util.DCAsyncCallback;
@@ -66,11 +68,9 @@ public class TimelinePanel extends FlowPanel {
         _loadingIndicator = new LoadingIndicator();
         _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4) + "px");
 
-        _saveButton = new Button("");
+        _saveButton = DCButtons.defaultButton("glyphicon-save", null);
         _saveButton.setVisible(isDashboardEditor);
-        _saveButton.addStyleDependentName("ImageButton");
         _saveButton.setTitle("Save timeline");
-        _saveButton.addStyleName("SaveButton");
         _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
 
         if (_timelineIdentifier != null) {
@@ -79,11 +79,9 @@ public class TimelinePanel extends FlowPanel {
             setTimelineDefinitionUnchanged();
         }
 
-        _deleteButton = new Button();
+        _deleteButton = DCButtons.dangerButton("glyphicon-minus", null);
         _deleteButton.setVisible(isDashboardEditor);
-        _deleteButton.addStyleDependentName("ImageButton");
         _deleteButton.setTitle("Delete timeline");
-        _deleteButton.addStyleName("DeleteButton");
         _deleteButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -201,7 +199,8 @@ public class TimelinePanel extends FlowPanel {
 
     private void renderChart() {
         remove(_loadingIndicator);
-        TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this, _isDashboardEditor);
+        TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this,
+                _isDashboardEditor);
         add(timeLineDesigner.createPlot());
         add(timeLineDesigner.getLegendPanel());
     }
@@ -211,36 +210,36 @@ public class TimelinePanel extends FlowPanel {
     }
 
     private FlowPanel createButtonPanel() {
-        final Button customizeButton = new Button("");
+        final Button customizeButton = DCButtons.defaultButton("glyphicon-cog", null);
         customizeButton.setVisible(_isDashboardEditor);
-        customizeButton.addStyleDependentName("ImageButton");
         customizeButton.setTitle("Customize timeline");
-        customizeButton.addStyleName("CustomizeButton");
         customizeButton.addClickHandler(new CustomizeTimelineHandler(_service, this));
 
-        final Button copyButton = new Button("");
+        final Button copyButton = DCButtons.defaultButton("glyphicon-duplicate", null);
         copyButton.setVisible(_isDashboardEditor);
-        copyButton.addStyleDependentName("ImageButton");
         copyButton.setTitle("Copy timeline");
-        copyButton.addStyleName("CopyButton");
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel, _isDashboardEditor);
+                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel,
+                        _isDashboardEditor);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
                 _timelineGroupPanel.add(copyPanel);
             }
         });
-
-        final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.addStyleName("TimelineButtonPanel");
-        buttonPanel.add(_header);
+        
+        final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(_saveButton);
         buttonPanel.add(_deleteButton);
 
-        return buttonPanel;
+        final FlowPanel timelineButtonPanel = new FlowPanel();
+        timelineButtonPanel.addStyleName("TimelineButtonPanel");
+        timelineButtonPanel.add(_header);
+        timelineButtonPanel.add(buttonPanel);
+
+        return timelineButtonPanel;
     }
 
     public DashboardGroupPanel getTimelineGroupPanel() {

@@ -27,6 +27,7 @@ import org.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.datacleaner.monitor.shared.model.TableIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.datacleaner.monitor.shared.widgets.SchemaTree;
@@ -79,7 +80,7 @@ public class QueryPanel extends FlowPanel {
 
         }
 
-        _executeQueryButton = new Button("Ok");
+        _executeQueryButton = DCButtons.defaultButton(null, "Ok");
         _executeQueryButton.addStyleName("ExecuteQueryButton");
 
         _loadingIcon = new LoadingIndicator();

@@ -24,7 +24,9 @@
 
 	<g:HTMLPanel>
 		<g:Button ui:field="newTimelineButton" text="New timeline chart" />
-		<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton" />
+		<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true" />
+		</g:Button>
 		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="InfographicContainer">
 			<div class="InfographicPart InfographicIntro">
 				<h1>

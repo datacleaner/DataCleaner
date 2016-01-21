@@ -342,20 +342,14 @@ div.center {
 }
 
 .DefineMetricPanel .AddMetricButton {
-	background-image: url("add.png");
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 28px;
-	height: 24px;
 	float: right;
 }
 
 .DefineMetricPanel .RemoveMetricButton {
-	background-image: url("remove.png");
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 28px;
-	height: 24px;
 	clear: right;
 	float: right;
 }
@@ -363,9 +357,7 @@ div.center {
 .SelectMetricPanel {
 	margin-top: 10px;
 	padding: 10px;
-	background-color: #fdfdfd;
-	border: 1px solid #f0f0f0;
-	width: 300px;
+	border: 2px solid #67A2E7;
 }
 
 .SelectMetricPanel .DisplayNameBox {

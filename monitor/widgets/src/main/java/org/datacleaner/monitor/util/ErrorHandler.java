@@ -24,6 +24,7 @@ import java.util.Set;
 import org.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
@@ -191,7 +192,7 @@ public class ErrorHandler {
             panel.add(textArea);
         }
 
-        final Button closeButton = new Button("Close");
+        final Button closeButton = DCButtons.defaultButton(null, "Close");
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

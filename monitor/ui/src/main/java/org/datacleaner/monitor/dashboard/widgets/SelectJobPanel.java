@@ -24,6 +24,7 @@ import java.util.List;
 import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.datacleaner.monitor.util.DCAsyncCallback;
@@ -76,7 +77,7 @@ public abstract class SelectJobPanel extends FlowPanel {
     }
 
     public Button createSelectButton() {
-        final Button button = new Button("Select job");
+        final Button button = DCButtons.defaultButton(null, "Select job");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

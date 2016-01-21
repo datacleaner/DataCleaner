@@ -58,7 +58,8 @@ label {
 
 .btn-primary {
 	border-radius: 2px;
-	border-width: 0;
+	border-width: 1px;
+	border-color: #3b76bc;
 	background-color: #3b76bc;
 	background-image: url("../images/nav_submenu_bg.png");
 	background-repeat: repeat-x;
@@ -70,23 +71,13 @@ label {
 	color: white;
 }
 
-span.glyphicon {
-	font-size: 16px;
-	vertical-align: baseline;
-}
-
 h1 span.glyphicon, h2 span.glyphicon, h3 span.glyphicon {
 	color: white;
 	margin-right: 0.6em;
 }
 
-button span.glyphicon {
-	vertical-align: middle;
-	margin-right: 0.3em;
-}
-
-button span {
-	vertical-align: middle;
+button span.glyphicon + span {
+	margin-left: 0.3em;
 }
 
 .form-control {

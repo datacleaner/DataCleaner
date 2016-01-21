@@ -29,6 +29,7 @@ public class ButtonPanel extends FlowPanel {
 
     public ButtonPanel() {
         super();
+        addStyleName("btn-group");
         addStyleName("ButtonPanel");
     }
 

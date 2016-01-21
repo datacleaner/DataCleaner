@@ -27,6 +27,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 
@@ -91,7 +92,7 @@ public class CreateTimelineHandler implements ClickHandler {
             }
         };
 
-        final Button saveButton = new Button("Save");
+        final Button saveButton = DCButtons.defaultButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

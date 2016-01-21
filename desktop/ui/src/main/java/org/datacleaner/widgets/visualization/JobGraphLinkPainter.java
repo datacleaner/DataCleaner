@@ -19,7 +19,11 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -27,16 +31,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
@@ -212,7 +218,7 @@ public class JobGraphLinkPainter {
             } catch (Exception e) {
                 outputColumns = new InputColumn[0];
             }
-            sourceColumns = Arrays.asList(outputColumns);
+            sourceColumns = getVisibleOutputColumns(outputColumns);
             filterOutcomes = null;
         } else if (fromVertex.getVertex() instanceof HasFilterOutcomes) {
             final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex.getVertex();
@@ -222,7 +228,6 @@ public class JobGraphLinkPainter {
             sourceColumns = null;
             filterOutcomes = null;
         }
-
         if (toVertex instanceof ComponentBuilder) {
             final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
 
@@ -247,13 +252,14 @@ public class JobGraphLinkPainter {
                             .getDefaultConfiguredPropertyForInput();
 
                     final ColumnProperty columnProperty = inputProperty.getAnnotation(ColumnProperty.class);
-                    if (inputProperty.isArray() || (columnProperty != null && columnProperty.escalateToMultipleJobs())) {
+                    if (inputProperty.isArray() || (columnProperty != null && columnProperty
+                            .escalateToMultipleJobs())) {
                         componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        final InputColumn<?> firstRelevantSourceColumn =
-                                getFirstRelevantSourceColumn(sourceColumns, inputProperty);
-                        if(firstRelevantSourceColumn != null){
+                        final InputColumn<?> firstRelevantSourceColumn = getFirstRelevantSourceColumn(sourceColumns,
+                                inputProperty);
+                        if (firstRelevantSourceColumn != null) {
                             componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
                         }
                     }
@@ -297,10 +303,11 @@ public class JobGraphLinkPainter {
     }
 
     /**
-     * This will check if components are in a different scope, and ask the user for
-     * permission to change the scope of the target component
+     * This will check if components are in a different scope, and ask the user
+     * for permission to change the scope of the target component
      *
-     * @return true if permitted or irrelevant, false if user refused a necessary scope change.
+     * @return true if permitted or irrelevant, false if user refused a
+     *         necessary scope change.
      */
     private boolean scopeUpdatePermitted(final AnalysisJobBuilder sourceAnalysisJobBuilder,
             final ComponentBuilder componentBuilder) {
@@ -313,7 +320,7 @@ public class JobGraphLinkPainter {
                                 + ", thereby losing its configured columns and/or requirements", "Change scope?",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
-                if(response == JOptionPane.CANCEL_OPTION){
+                if (response == JOptionPane.CANCEL_OPTION) {
                     _graphContext.getJobGraph().refresh();
                     return false;
                 }
@@ -347,7 +354,7 @@ public class JobGraphLinkPainter {
     }
 
     private InputColumn<?> getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
-            ConfiguredPropertyDescriptor inputProperty){
+            ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
         final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
@@ -360,7 +367,6 @@ public class JobGraphLinkPainter {
 
         return null;
     }
-
 
     private Collection<? extends InputColumn<?>> getRelevantSourceColumns(List<? extends InputColumn<?>> sourceColumns,
             ConfiguredPropertyDescriptor inputProperty) {
@@ -376,6 +382,19 @@ public class JobGraphLinkPainter {
         }
 
         return result;
+    }
+
+    private List<InputColumn<?>> getVisibleOutputColumns(InputColumn<?>[] outputColumns) {
+        List<InputColumn<?>> visibleColumns = new ArrayList<>();
+        for (int i = 0; i < outputColumns.length; i++) {
+            if (outputColumns[i] instanceof MutableInputColumn) {
+                MutableInputColumn<?> mutableOutputColum = (MutableInputColumn<?>) outputColumns[i];
+                if (!mutableOutputColum.isHidden()) {
+                    visibleColumns.add(mutableOutputColum);
+                }
+            }
+        }
+        return visibleColumns;
     }
 
     private void transformEdgeShape(Point2D down, Point2D out) {

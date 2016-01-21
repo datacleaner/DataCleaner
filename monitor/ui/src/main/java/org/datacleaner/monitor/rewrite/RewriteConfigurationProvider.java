@@ -25,6 +25,8 @@ import org.ocpsoft.rewrite.annotation.RewriteConfiguration;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.servlet.config.HttpConfigurationProvider;
+import org.ocpsoft.rewrite.servlet.config.Path;
+import org.ocpsoft.rewrite.servlet.config.Redirect;
 import org.ocpsoft.rewrite.servlet.config.rule.Join;
 
 /**
@@ -37,7 +39,8 @@ public class RewriteConfigurationProvider extends HttpConfigurationProvider {
     public Configuration getConfiguration(ServletContext arg0) {
         ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
-        builder = addJoinRule(builder, "/", "/index.html");
+        builder.addRule().when(Path.matches("/")).perform(Redirect.permanent("/dashboard"));
+
         builder = addJoinRule(builder, "/login", "/login.jsf");
         builder = addJoinRule(builder, "/dashboard", "/dashboard.jsf");
         builder = addJoinRule(builder, "/scheduling", "/scheduling.jsf");

@@ -392,6 +392,8 @@ public class JobGraphLinkPainter {
                 if (!mutableOutputColum.isHidden()) {
                     visibleColumns.add(mutableOutputColum);
                 }
+            }else{
+                visibleColumns.add(outputColumns[i]);
             }
         }
         return visibleColumns;

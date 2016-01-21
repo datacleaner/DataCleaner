@@ -990,16 +990,6 @@
 				<artifactId>rewrite-servlet</artifactId>
 				<version>${ocpsoft.rewrite.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.ocpsoft.rewrite</groupId>
-				<artifactId>rewrite-config-prettyfaces</artifactId>
-				<version>${ocpsoft.rewrite.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ocpsoft.rewrite</groupId>
-				<artifactId>rewrite-impl-servlet-3.0</artifactId>
-				<version>${ocpsoft.rewrite.version}</version>
-			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>
 				<groupId>net.sourceforge.jtds</groupId>

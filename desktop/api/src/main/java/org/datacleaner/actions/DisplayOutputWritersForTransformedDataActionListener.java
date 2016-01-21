@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -66,8 +67,12 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
 
             final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<InputColumn<?>>();
             inputColumnsToAdd.addAll(_transformerJobBuilder.getInputColumns());
-            inputColumnsToAdd.addAll(_transformerJobBuilder.getOutputColumns());
-
+            final List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
+            for(MutableInputColumn<?> outputColumn: outputColumns){
+                if (!outputColumn.isHidden()){
+                    inputColumnsToAdd.add(outputColumn);
+                }
+            }
             componentBuilder.addInputColumns(inputColumnsToAdd, property);
         }
     }

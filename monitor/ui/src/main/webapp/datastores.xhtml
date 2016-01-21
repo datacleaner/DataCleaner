@@ -92,7 +92,7 @@
 								<c:choose>
 									<c:when test="#{param['gwt.codesvr'] != null}">
 										<button
-											onclick="window.open('query.jsf?ds=#{ds.name}&amp;gwt.codesvr=#{param['gwt.codesvr']}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
+											onclick="window.open('query?ds=#{ds.name}&amp;gwt.codesvr=#{param['gwt.codesvr']}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
 											class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-console" aria-hidden="true" />
 											<span>Query</span>
@@ -100,7 +100,7 @@
 									</c:when>
 									<c:otherwise>
 										<button
-											onclick="window.open('query.jsf?ds=#{ds.name}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
+											onclick="window.open('query?ds=#{ds.name}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
 											class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-console" aria-hidden="true" />
 											<span>Query</span>

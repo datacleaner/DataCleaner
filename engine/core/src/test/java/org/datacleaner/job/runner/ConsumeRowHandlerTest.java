@@ -151,7 +151,7 @@ public class ConsumeRowHandlerTest extends TestCase {
                 + "TransformedInputColumn[id=trans-0001-0003,name=Mock multi row transformer (2)]=42, "
                 + "TransformedInputColumn[id=trans-0004-0005,name=mock output]=mocked: 2}," + "delegate=" + inputRow
                 + "]", outputRow.toString());
-        assertEquals(2147383649, outputRow.getId());
+        assertEquals(9223372036853775809l, outputRow.getId());
 
         outputRow = result.get(2);
         assertEquals("TransformedInputRow[values={"
@@ -159,7 +159,7 @@ public class ConsumeRowHandlerTest extends TestCase {
                 + "TransformedInputColumn[id=trans-0001-0003,name=Mock multi row transformer (2)]=42, "
                 + "TransformedInputColumn[id=trans-0004-0005,name=mock output]=mocked: 3}," + "delegate=" + inputRow
                 + "]", outputRow.toString());
-        assertEquals(2147383650, outputRow.getId());
+        assertEquals(9223372036853775810l, outputRow.getId());
 
         List<InputColumn<?>> outputColumns = outputRow.getInputColumns();
         assertEquals(6, outputColumns.size());

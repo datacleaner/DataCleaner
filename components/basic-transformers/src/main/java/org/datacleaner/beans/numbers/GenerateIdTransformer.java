@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.numbers;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Named;
 
@@ -65,12 +65,12 @@ public class GenerateIdTransformer implements Transformer {
     InputColumn<?> columnInScope;
 
     @Configured
-    int offset = 0;
+    long offset = 0;
 
-    private final AtomicInteger _counter;
+    private final AtomicLong _counter;
 
     public GenerateIdTransformer() {
-        _counter = new AtomicInteger();
+        _counter = new AtomicLong();
     }
 
     @Initialize
@@ -80,18 +80,18 @@ public class GenerateIdTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(Integer.class, "Generated ID");
+        return new OutputColumns(Number.class, "Generated ID");
     }
 
     @Override
-    public Integer[] transform(InputRow inputRow) {
-        final int id;
+    public Number[] transform(InputRow inputRow) {
+        final long id;
         if (IdType.ROW_NUMBER == idType) {
             id = inputRow.getId();
         } else {
             id = _counter.incrementAndGet();
         }
-        return new Integer[] { id };
+        return new Number[] { id };
     }
 
 }

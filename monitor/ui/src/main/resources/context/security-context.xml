@@ -11,8 +11,9 @@
 	<http pattern="/repository/*/launch-resources/images/**" security="none" />
 
 	<!-- unprotected static resources/urls -->
+	<http pattern="/" security="none" />
 	<http pattern="/favicon.ico" security="none" />
-	<http pattern="/login.jsf" security="none" />
+	<http pattern="/login" security="none" />
 	<http pattern="/images/**" security="none" />
 	<http pattern="/stylesheets/**" security="none" />
 	<http pattern="/javascripts/**" security="none" />
@@ -21,27 +22,29 @@
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner monitor">
-		<anonymous enabled="true" username="anonymous" />
-
 		<intercept-url pattern="/repository/**" access="ROLE_USER" />
 
 		<http-basic />
 	</http>
 
 	<!-- Form based authentication for the web pages -->
-	<http auto-config="true" realm="DataCleaner monitor">
-		<anonymous enabled="true" username="anonymous" />
-
-		<intercept-url pattern="/**" access="ROLE_USER" />
-
-		<form-login login-page="/login.jsf" authentication-failure-url="/login.jsf?error=true" login-processing-url="/j_spring_security_check"
+	<http realm="DataCleaner monitor">
+		<intercept-url pattern="/*.jsf" access="ROLE_USER" />
+		<intercept-url pattern="/dashboard" access="ROLE_USER" />
+		<intercept-url pattern="/scheduling" access="ROLE_USER" />
+		<intercept-url pattern="/datastores" access="ROLE_USER" />
+		<intercept-url pattern="/repository" access="ROLE_USER" />
+		<intercept-url pattern="/query" access="ROLE_USER" />
+		
+		<http-basic />
+		<form-login login-page="/login" authentication-failure-url="/login?error=true" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 		<logout logout-url="/logout" />
 		<remember-me remember-me-parameter="rememberMe"
 			key="datacleaner.monitor.rememberMe" token-validity-seconds="31536000" />
 	</http>
-
+	
 	<global-method-security jsr250-annotations="enabled" />
 
 	<authentication-manager alias="authenticationManager">

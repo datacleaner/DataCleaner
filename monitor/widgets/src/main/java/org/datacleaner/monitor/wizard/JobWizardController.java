@@ -119,7 +119,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                closeWizardAfterFinishing(jobName, "scheduling.jsf");
+                closeWizardAfterFinishing(jobName, "scheduling");
             }
         });
 

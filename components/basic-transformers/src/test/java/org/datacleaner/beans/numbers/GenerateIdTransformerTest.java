@@ -60,15 +60,15 @@ public class GenerateIdTransformerTest extends TestCase {
     public void testRowId() throws Exception {
         transformer.idType = IdType.ROW_NUMBER;
         
-        final Integer[] result1 = transformer.transform(new MockInputRow().put(col, null));
-        final Integer[] result2 = transformer.transform(new MockInputRow().put(col, null));
-        final Integer[] result3 = transformer.transform(new MockInputRow().put(col, null));
-        final Integer[] result4 = transformer.transform(new MockInputRow().put(col, null));
+        final Number[] result1 = transformer.transform(new MockInputRow().put(col, null));
+        final Number[] result2 = transformer.transform(new MockInputRow().put(col, null));
+        final Number[] result3 = transformer.transform(new MockInputRow().put(col, null));
+        final Number[] result4 = transformer.transform(new MockInputRow().put(col, null));
         
-        final int id1 = result1[0];
-        final int id2 = result2[0];
-        final int id3 = result3[0];
-        final int id4 = result4[0];
+        final int id1 = result1[0].intValue();
+        final int id2 = result2[0].intValue();
+        final int id3 = result3[0].intValue();
+        final int id4 = result4[0].intValue();
         
         assertTrue(id1 < id2);
         assertTrue(id2 < id3);

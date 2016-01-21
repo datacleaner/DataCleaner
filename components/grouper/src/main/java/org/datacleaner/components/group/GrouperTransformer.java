@@ -195,7 +195,7 @@ public class GrouperTransformer extends MultiStreamComponent {
 
 
         final List<AggregateBuilder<?>> aggregateBuilders = getAggregateBuilders(key);
-        final int rowId = row.getId();
+        final long rowId = row.getId();
         
         // send rowId to COUNT function
         aggregateBuilders.get(0).add(rowId);

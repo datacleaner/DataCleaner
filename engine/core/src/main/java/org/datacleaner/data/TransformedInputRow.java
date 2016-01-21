@@ -19,6 +19,10 @@
  */
 package org.datacleaner.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Represents a row with transformed values as well as a delegate row (typically
  * a {@link MetaModelInputRow} delegate).
  */
-public final class TransformedInputRow extends AbstractInputRow {
+public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +45,7 @@ public final class TransformedInputRow extends AbstractInputRow {
 
     private final InputRow _delegate;
     private final Map<InputColumn<?>, Object> _values;
-    private final int _rowId;
+    private final long _id;
 
     /**
      * Constructs a {@link TransformedInputRow} based on another row, or returns
@@ -78,22 +82,50 @@ public final class TransformedInputRow extends AbstractInputRow {
      * @param delegate
      * @param rowId
      */
-    public TransformedInputRow(InputRow delegate, Integer rowId) {
+    public TransformedInputRow(InputRow delegate, Number rowId) {
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
         _delegate = delegate;
         if (rowId == null) {
-            _rowId = delegate.getId();
+            _id = delegate.getId();
         } else {
-            _rowId = rowId;
+            _id = rowId.longValue();
         }
         _values = new LinkedHashMap<InputColumn<?>, Object>();
     }
 
+    public TransformedInputRow(InputRow delegate, long rowId) {
+        if (delegate == null) {
+            throw new IllegalArgumentException("Delegate cannot be null");
+        }
+        _delegate = delegate;
+        _id = rowId;
+        _values = new LinkedHashMap<InputColumn<?>, Object>();
+    }
+
     @Override
-    public int getId() {
-        return _rowId;
+    protected String getFieldNameForNewId() {
+        return "_id";
+    }
+
+    @Override
+    protected String getFieldNameForOldId() {
+        return "_rowId";
+    }
+
+    @Override
+    protected Collection<String> getFieldNamesInAdditionToId() {
+        return Arrays.asList("_delegate", "_values");
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        doReadObject(stream);
+    }
+
+    @Override
+    public long getId() {
+        return _id;
     }
 
     @Override

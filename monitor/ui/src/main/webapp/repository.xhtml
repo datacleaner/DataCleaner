@@ -99,12 +99,12 @@
 					<li class="folder">#{folder.name}</li>
 					<ul class="repositoryView">
 						<ui:repeat var="file" value="#{folder.files}">
-							<li class="file #{file.type}"><a href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
+							<li class="file #{file.type}"><a href="dashboard##{folder.name}">#{file.name}</a></li>
 						</ui:repeat>
 					</ul>
 				</ui:repeat>
 				<ui:repeat var="file" value="#{tenantContext.timelineFolder.files}">
-					<li class="file #{file.type}"><a href="dashboard.jsf">#{file.name}</a></li>
+					<li class="file #{file.type}"><a href="dashboard">#{file.name}</a></li>
 				</ui:repeat>
 			</ul>
 			

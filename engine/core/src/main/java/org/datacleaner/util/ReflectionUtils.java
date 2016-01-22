@@ -336,8 +336,8 @@ public final class ReflectionUtils {
         assert supertype != null;
 
         if (!ReflectionUtils.is(subtype, supertype)) {
-            throw new IllegalArgumentException("Not a valid subtype of " + supertype.getName() + ": "
-                    + subtype.getName());
+            throw new IllegalArgumentException("Not a valid subtype of " + supertype.getName() + ": " + subtype
+                    .getName());
         }
 
         if (supertype.isInterface()) {
@@ -499,58 +499,39 @@ public final class ReflectionUtils {
      * Tells which approach {@link #getMethods(Class)} is being implemented with
      * 
      * @return
+     * 
+     * @deprecated since DataCleaner 5.0 we no longer support Java 7 or older,
+     *             so there is no longer a "legacy approach". This method always
+     *             returns false.
      */
+    @Deprecated
     public static boolean isGetMethodsLegacyApproach() {
-        final String version = SystemProperties.getString("java.version", "");
-        final boolean legacyApproach = version.startsWith("1.7");
-        return legacyApproach;
+        return false;
     }
 
     /**
      * Gets all methods of a class, excluding those from Object.
      * 
-     * Warning: This method's result varies slightly on Java 7 and on Java 8.
-     * With Java 8 overridden methods are properly removed from the result, and
-     * inherited annotations thus also available from the result. On Java 7,
-     * overridden methods will be returned multiple times.
-     * 
-     * @see #isGetMethodsLegacyApproach()
-     * 
      * @param clazz
      * @return
      */
     public static Method[] getMethods(Class<?> clazz) {
-        final boolean legacyApproach = isGetMethodsLegacyApproach();
-
         final List<Method> allMethods = new ArrayList<>();
-        addMethods(allMethods, clazz, legacyApproach);
+        addMethods(allMethods, clazz);
 
         return allMethods.toArray(new Method[allMethods.size()]);
     }
 
-    private static void addMethods(final List<Method> allMethods, final Class<?> clazz, final boolean legacyApproach) {
+    private static void addMethods(final List<Method> allMethods, final Class<?> clazz) {
         if (clazz == Object.class || clazz == null) {
             return;
         }
 
-        if (legacyApproach) {
-            // in java 7 and previous, getDeclaredMethods() is used and a
-            // recursive call is applied throughout the hierarchy
-
-            final Method[] methods = clazz.getDeclaredMethods();
-            for (final Method method : methods) {
+        final Method[] methods = clazz.getMethods();
+        for (final Method method : methods) {
+            final Class<?> declaringClass = method.getDeclaringClass();
+            if (declaringClass != Object.class) {
                 allMethods.add(method);
-            }
-            final Class<?> superclass = clazz.getSuperclass();
-            addMethods(allMethods, superclass, legacyApproach);
-        } else {
-            // since java 8, getMethods() returns all relevant methods
-            final Method[] methods = clazz.getMethods();
-            for (final Method method : methods) {
-                final Class<?> declaringClass = method.getDeclaringClass();
-                if (declaringClass != Object.class) {
-                    allMethods.add(method);
-                }
             }
         }
     }
@@ -568,7 +549,8 @@ public final class ReflectionUtils {
     }
 
     /**
-     * Gets non-synthetic fields of a class, including private fields in super-classes.
+     * Gets non-synthetic fields of a class, including private fields in
+     * super-classes.
      *
      * @param clazz
      * @return
@@ -627,7 +609,7 @@ public final class ReflectionUtils {
     public static <A extends Annotation> A getAnnotation(AnnotatedElement element, Class<A> annotationClass) {
         synchronized (ANNOTATION_REFLECTION_LOCK) {
             final A annotation = element.getAnnotation(annotationClass);
-            if (annotation == null && !isGetMethodsLegacyApproach() && element instanceof Method) {
+            if (annotation == null && element instanceof Method) {
                 // check for annotations on overridden methods. Since Java 8
                 // those are not returned by .getAnnotation(...)
                 final Method m = (Method) element;

@@ -605,7 +605,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) inputColumn;
                 mutableInputColumn.addListener(this);
                 if (mutableInputColumn.isHidden()) {
-                    decoration.setVisible(false);
+                    //If the column was already selected before it was hidden, we still show it. 
+                    if (!checkBox.isSelected()){
+                        decoration.setVisible(false);
+                    }
                 }
             }
         }

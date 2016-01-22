@@ -209,8 +209,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         for (RepositoryFolder tenantFolder : tenantFolders) {
             final String tenantId = tenantFolder.getName();
             try {
-                final Set<TriggerKey> triggerKeys = _scheduler
-                        .getTriggerKeys(GroupMatcher.triggerGroupEquals(tenantId));
+                final Set<TriggerKey> triggerKeys = _scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(
+                        tenantId));
                 if (triggerKeys == null || triggerKeys.isEmpty()) {
                     logger.info("No triggers initialized for tenant: {}", tenantId);
                 } else {
@@ -263,8 +263,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         final Map<String, String> immutableJobMetadataProperties = jobContext.getMetadataProperties();
-        //Convert Immutable map to mutable map as it will be transferred to a GWT object on the front end .
-        final Map<String, String> jobMetadataProperties = new HashMap<String,String>(immutableJobMetadataProperties); 
+        // Convert Immutable map to mutable map as it will be transferred to a
+        // GWT object on the front end .
+        final Map<String, String> jobMetadataProperties = new HashMap<String, String>(immutableJobMetadataProperties);
 
         final String groupName = jobContext.getGroupName();
 
@@ -292,7 +293,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public ScheduleDefinition updateSchedule(final TenantIdentifier tenant, final ScheduleDefinition scheduleDefinition) {
+    public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
+            final ScheduleDefinition scheduleDefinition) {
 
         initializeSchedule(scheduleDefinition);
 
@@ -347,8 +349,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     final String scheduleExpression = schedule.getCronExpression();
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
                     final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-                    final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
-                            .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
+                    final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(
+                            jobDetail).withSchedule(cronSchedule).startNow().build();
 
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
@@ -361,8 +363,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
                     if (nextValidTimeAfter != null) {
                         final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-                        final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
-                                .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
+                        final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(
+                                jobDetail).withSchedule(cronSchedule).startNow().build();
                         logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName,
                                 cronExpression);
                         _scheduler.scheduleJob(jobDetail, trigger);
@@ -392,11 +394,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             dateInfoExtractor.setTime(oneTimeSchedule);
             int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
             StringBuilder cronStringBuilder = new StringBuilder();
-            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND))
-                    .append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ")
-                    .append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ")
-                    .append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ")
-                    .append(dateInfoExtractor.get(Calendar.YEAR)).toString();
+            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(
+                    " ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(
+                            Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH))
+                    .append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
             cronExpression = new CronExpression(cronBuilder);
         } catch (ParseException e) {
             throw new IllegalStateException("Failed to parse cron expression for one time schedule: "
@@ -492,8 +493,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 }
             }
             if (addJob) {
-                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class)
-                        .withIdentity(jobNameToBeTriggered, tenant.getId()).storeDurably().build();
+                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobNameToBeTriggered,
+                        tenant.getId()).storeDurably().build();
                 _scheduler.addJob(jobDetail, true);
             }
 
@@ -540,17 +541,17 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
-        final List<RepositoryFile> files = resultFolder.getFiles(job.getName(),
-                FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+        final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML
+                .getExtension());
 
         final List<ExecutionIdentifier> executionIdentifiers = CollectionUtils.map(files,
                 new Func<RepositoryFile, ExecutionIdentifier>() {
                     @Override
-                    public ExecutionIdentifier eval(RepositoryFile file) {
+                    public ExecutionIdentifier eval(final RepositoryFile file) {
                         ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
                             @Override
                             public ExecutionIdentifier eval(InputStream in) {
-                                return SaxExecutionIdentifierReader.read(in);
+                                return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
                             }
                         });
                         return result;
@@ -576,8 +577,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
-        final RepositoryFile file = resultFolder.getFile(resultId
-                + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+        final RepositoryFile file = resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML
+                .getExtension());
         if (file == null) {
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
@@ -598,7 +599,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     return reader.read(in, jobIdentifier, tenant);
                 } catch (JaxbException e) {
                     if (retries > 0) {
-                        logger.debug("Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
+                        logger.debug(
+                                "Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
                         return null;
                     } else {
                         logger.info("Failed to read execution log, returning unknown status.");

@@ -42,25 +42,20 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @since 24.7.15
  */
 public class ComponentStoreImpl implements ComponentStore {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentStore.class);
 
+    public static final String FOLDER_NAME = "components";
+    
+    private static final Logger logger = LoggerFactory.getLogger(ComponentStore.class);
+    
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwLock.readLock();
     private final Lock writeLock = rwLock.writeLock();
-
-    public static final String FOLDER_NAME = "components";
-
-    private RepositoryFolder componentsFolder;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RepositoryFolder componentsFolder;
 
     public ComponentStoreImpl(Repository repository, String tenantId) {
         RepositoryFolder tenantFolder = repository.getFolder(tenantId);
-        componentsFolder = tenantFolder.getFolder(FOLDER_NAME);
-        if (componentsFolder == null) {
-            componentsFolder = tenantFolder.createFolder(FOLDER_NAME);
-        }
-
+        componentsFolder = tenantFolder.getOrCreateFolder(FOLDER_NAME);
     }
 
     /**

@@ -123,7 +123,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         {
             if (units != null) {
                 for (CoalesceUnit unit : units) {
-                    final InputColumn<?>[] coalescedInputColumns = unit.getInputColumns();
+                    final InputColumn<?>[] coalescedInputColumns = unit.updateInputColumns(inputColumns).getInputColumns();
                     for (InputColumn<?> inputColumn : coalescedInputColumns) {
                         final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
                         coalescedTablesAndColumns.put(table, inputColumn);

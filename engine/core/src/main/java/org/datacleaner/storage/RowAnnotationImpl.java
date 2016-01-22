@@ -39,7 +39,11 @@ public final class RowAnnotationImpl implements RowAnnotation {
     private final AtomicInteger _counter;
 
     public RowAnnotationImpl() {
-        _counter = new AtomicInteger();
+        this(0);
+    }
+    
+    public RowAnnotationImpl(int initialRowCount) {
+        _counter = new AtomicInteger(initialRowCount);
     }
 
     public void incrementRowCount(int increment) {

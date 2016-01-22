@@ -31,6 +31,8 @@ import org.datacleaner.components.tablelookup.TableLookupTransformer.JoinSemanti
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AbstractOutputRowCollector;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotations;
@@ -206,5 +208,10 @@ public class TableLookupTransformerTest extends TestCase {
         assertEquals("[Jane doe]", Arrays.toString(result.get(7 + 2)));
 
         trans.close();
+    }
+    
+    public void testIsDistributable() throws Exception {
+        final TransformerDescriptor<TableLookupTransformer> descriptor = Descriptors.ofTransformer(TableLookupTransformer.class);
+        assertTrue(descriptor.isDistributable());
     }
 }

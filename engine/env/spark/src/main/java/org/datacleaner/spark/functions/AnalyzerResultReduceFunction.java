@@ -69,7 +69,7 @@ public final class AnalyzerResultReduceFunction implements
         final Class<? extends AnalyzerResultReducer<?>> resultReducerClass = rd.getResultReducerClass();
 
         if (resultReducerClass == null) {
-            throw new IllegalStateException("The analyzer (" + analyzerResult1 + ") is not distributable!");
+            throw new IllegalStateException("The result type (" + analyzerResult1 + ") is not distributable!");
         }
 
         final AnalyzerResultReducer<AnalyzerResult> reducer = initializeReducer(resultReducerClass);

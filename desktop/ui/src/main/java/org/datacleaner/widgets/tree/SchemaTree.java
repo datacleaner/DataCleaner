@@ -645,7 +645,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public Datastore getDatastore() {
         return _datastore;
     }
-    
+
     @Override
     public void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
         WidgetUtils.invokeSwingAction(new Runnable() {
@@ -661,7 +661,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             }
         });
     }
-    
+
 
     /**
      * Refreshes the tree's contents

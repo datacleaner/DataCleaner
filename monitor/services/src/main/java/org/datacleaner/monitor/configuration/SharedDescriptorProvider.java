@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.configuration;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.Analyzer;
@@ -126,6 +127,11 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
+    public void notifyListeners() {
+        getDelegate().notifyListeners();
+    }
+
+    @Override
     public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String arg0) {
         return getDelegate().getTransformerDescriptorByDisplayName(arg0);
     }
@@ -167,7 +173,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public Collection<DescriptorProviderStatus> getStatus() {
-        return getDelegate().getStatus();
+    public Map<DescriptorProvider, DescriptorProviderStatus> getActualStatusMap() {
+        return getDelegate().getActualStatusMap();
+    }
+
+    @Override
+    public void checkStatus() {
+        getDelegate().checkStatus();
     }
 }

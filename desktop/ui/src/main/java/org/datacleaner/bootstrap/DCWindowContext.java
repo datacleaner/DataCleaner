@@ -28,6 +28,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.windows.AbstractDialog;
@@ -151,6 +153,10 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 		}
 		if (_configuration != null) {
 			_configuration.getEnvironment().getTaskRunner().shutdown();
+			DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+			if(descriptorProvider instanceof CompositeDescriptorProvider){
+				((CompositeDescriptorProvider) descriptorProvider).shutdown();
+			}
 		}
 		for (ExitActionListener actionListener : _exitActionListeners) {
 			actionListener.exit(0);

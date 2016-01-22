@@ -88,10 +88,10 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
 
         if (remoteServerConfiguration == null) {
             _remoteServerConfiguration = defaultRemoteServerConfiguration();
-        }
-        else {
+        } else {
             _remoteServerConfiguration = remoteServerConfiguration;
         }
+
     }
 
     /**

@@ -8,6 +8,16 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css"
 			href="#{request.contextPath}/stylesheets/login.css" />
+			
+		<c:if test="#{user.authenticated}">
+			<script type="text/javascript">
+				//<![CDATA[
+				window.onload = function() {
+					window.location = "#{request.contextPath}/dashboard";
+				};
+				//]]>
+			</script>
+		</c:if>
 	</ui:define>
 
 	<ui:define name="content">

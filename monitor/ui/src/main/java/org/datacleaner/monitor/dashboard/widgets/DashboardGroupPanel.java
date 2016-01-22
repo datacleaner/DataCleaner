@@ -25,6 +25,7 @@ import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.util.DCAsyncCallback;
@@ -61,7 +62,7 @@ public class DashboardGroupPanel extends FlowPanel {
 
         addStyleName("DashboardGroupPanel");
 
-        _removeGroupButton = DCButtons.defaultButton("glyphicon-minus", "Remove this group");
+        _removeGroupButton = DCButtons.dangerButton("glyphicon-minus", "Remove this group");
         _removeGroupButton.setVisible(false);
         _removeGroupButton.addClickHandler(new ClickHandler() {
             @Override
@@ -101,8 +102,11 @@ public class DashboardGroupPanel extends FlowPanel {
 
             _welcomePanel = null;
             newTimelineButton = DCButtons.defaultButton("glyphicon-plus", "New timeline chart");
-            add(newTimelineButton);
-            add(_removeGroupButton);
+            
+            final ButtonPanel buttonPanel = new ButtonPanel(false);
+            buttonPanel.add(newTimelineButton);
+            buttonPanel.add(_removeGroupButton);
+            add(buttonPanel);
         }
 
         newTimelineButton.setVisible(_isDashboardEditor);

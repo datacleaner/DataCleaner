@@ -57,7 +57,7 @@ public class WelcomePanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
 
         DCButtons.applyDefaultStyle(newTimelineButton);
-        DCButtons.applyDangerStyle(toggleWelcomeTextButton);
+        DCButtons.applyPrimaryStyle(toggleWelcomeTextButton);
         
         toggleWelcomeTextButton.addClickHandler(new ClickHandler() {
             @Override

@@ -48,6 +48,10 @@ label {
 	font-weight: normal;
 }
 
+.btn-group-justified {
+	width: auto;
+}
+
 .btn-primary {
 	border-radius: 2px;
 	border-width: 1px;
@@ -106,4 +110,8 @@ button span.glyphicon + span {
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
+}
+
+span.input-group-btn > input.input-sm {
+	margin-top: 1px;
 }

@@ -69,6 +69,7 @@
 	min-height: 1em;
 	width: 20%;
 	display: inline-block;
+	vertical-align: text-bottom;
 }
 
 .SchedulingOverviewPanel .ColumnHeaders {

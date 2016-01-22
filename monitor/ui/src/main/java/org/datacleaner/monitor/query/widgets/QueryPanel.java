@@ -26,7 +26,6 @@ import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.datacleaner.monitor.shared.model.TableIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
@@ -133,9 +132,8 @@ public class QueryPanel extends FlowPanel {
         add(schemaPanel);
         add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
-//        add(_queryTextArea);
         
-        ButtonPanel buttonPanel = new ButtonPanel();
+        final FlowPanel buttonPanel = new FlowPanel();
         buttonPanel.add(_queryTextArea);;
         buttonPanel.add(_executeQueryButton);
         

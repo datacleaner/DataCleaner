@@ -101,9 +101,14 @@
  */
 .DCPopupPanel {
 	max-width: 80%;
+	z-index: 500;
 }
  
 .DCPopupPanelContent {
+}
+
+.DCPopupPanel .btn-group-justified {
+	margin-top: 30px;
 }
 
 .HeadingLabel {

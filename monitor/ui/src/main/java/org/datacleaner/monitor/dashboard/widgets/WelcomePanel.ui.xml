@@ -23,10 +23,16 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<g:HTMLPanel>
-		<g:Button ui:field="newTimelineButton" text="New timeline chart" />
-		<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton">
-			<span class="glyphicon glyphicon-info-sign" aria-hidden="true" />
-		</g:Button>
+		<div class="btn-group">
+			<g:Button ui:field="newTimelineButton">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true" />
+				<span>New timeline chart</span>
+			</g:Button>
+			<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton">
+				<span class="glyphicon glyphicon-info-sign" aria-hidden="true" />
+				<span>Show/hide introduction</span>
+			</g:Button>
+		</div>
 		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="InfographicContainer">
 			<div class="InfographicPart InfographicIntro">
 				<h1>

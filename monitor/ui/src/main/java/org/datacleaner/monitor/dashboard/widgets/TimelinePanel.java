@@ -228,7 +228,7 @@ public class TimelinePanel extends FlowPanel {
             }
         });
         
-        final ButtonPanel buttonPanel = new ButtonPanel();
+        final ButtonPanel buttonPanel = new ButtonPanel(false);
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(_saveButton);

@@ -11,9 +11,7 @@
 	<http pattern="/repository/*/launch-resources/images/**" security="none" />
 
 	<!-- unprotected static resources/urls -->
-	<http pattern="/" security="none" />
 	<http pattern="/favicon.ico" security="none" />
-	<http pattern="/login" security="none" />
 	<http pattern="/images/**" security="none" />
 	<http pattern="/stylesheets/**" security="none" />
 	<http pattern="/javascripts/**" security="none" />

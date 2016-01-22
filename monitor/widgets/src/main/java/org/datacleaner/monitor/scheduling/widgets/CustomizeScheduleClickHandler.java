@@ -23,6 +23,7 @@ import org.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -53,7 +54,7 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
 
         final CustomizeSchedulePanel customizeSchedulePanel = new CustomizeSchedulePanel(_service, _tenant, _schedule);
 
-        final Button saveButton = new Button("Save schedule");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save schedule");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

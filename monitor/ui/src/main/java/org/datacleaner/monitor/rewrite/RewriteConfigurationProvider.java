@@ -40,7 +40,7 @@ public class RewriteConfigurationProvider extends HttpConfigurationProvider {
         ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
         builder.addRule().when(Path.matches("/").or(Path.matches(""))).perform(Redirect.temporary(servletContext
-                .getContextPath() + "/dashboard"));
+                .getContextPath() + "/login"));
 
         builder = addJoinRule(builder, "/login", "/login.jsf");
         builder = addJoinRule(builder, "/dashboard", "/dashboard.jsf");

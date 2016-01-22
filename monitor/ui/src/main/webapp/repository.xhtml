@@ -17,12 +17,9 @@
 			}
 
 			function showUploadJobForm(button) {
-				var form = button.form;
-				form.innerHTML = '<div>'+
-					'<div>Upload job file</div>'+
-					'<div><span class="btn btn-default btn-file">Browse <input type="file" name="file" /></span>' + 
-					'<button type="submit" class="btn btn-warning" onclick="return confirmUpload(\'job\')"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span><span>Upload</span></button>' + 
-					'</div></div>';
+				var contentClone = $("#UploadFileTemplateDiv").clone();
+				applyFileSelectEventHandler(contentClone);
+				$(button).replaceWith(contentClone);
 			}
 			//]]>
 		</script>
@@ -39,7 +36,7 @@
 						target="_blank">conf.xml</a> uploaded successfully.
 				</div>
 			</h:panelGroup>
-
+			
 			<h:panelGroup rendered="#{user.configurationEditor}">
 				<div class="panel panel-default panel-right">
 					<div class="panel-heading">Configuration file</div>
@@ -50,13 +47,20 @@
 						</p>
 						<form action="repository/#{user.tenant}/configuration"
 							method="post" enctype="multipart/form-data">
+							 
+							<div class="input-group">
+								<span class="input-group-btn">
+									<span class="btn btn-primary btn-file">
+										Browse … <input type="file" name="file" />
+									</span>
+								</span>
+								<input type="text" class="form-control" readonly="readonly" />
+							</div>
 							
-							<span class="btn btn-default btn-file">
-							    Browse <input type="file" name="file" />
-							</span>
+							<div class="spacer-xs"></div>
 							
 							<button type="submit"
-								class="btn btn-warning"
+								class="btn btn-warning btn-block"
 								onclick="return confirmUpload('configuration')">
 								<span class="glyphicon glyphicon-upload" aria-hidden="true" />
 								<span>Upload</span>
@@ -74,17 +78,25 @@
 							You can download <a href="repository/#{user.tenant}/zip">the
 								repository as a .zip file</a>. Use this as a backup or as a way to replicate a repository from one tenant to another.
 						</p>
-						<div class="spacer"></div>
 						<p>Restore repository by uploading a corresponding zip file:</p>
+						<div class="spacer-sm"></div>
+						
 						<form action="repository/#{user.tenant}/zip" method="post"
 							enctype="multipart/form-data">
 							
-								<span class="btn btn-default btn-file">
-							    Browse <input type="file" name="file" />
-							</span>
+							<div class="input-group">
+								<span class="input-group-btn">
+									<span class="btn btn-primary btn-file">
+										Browse … <input type="file" name="file" />
+									</span>
+								</span>
+								<input type="text" class="form-control" readonly="readonly" />
+							</div>
+							
+							<div class="spacer-xs"></div>
 							
 							<button type="submit"
-								class="btn btn-warning"
+								class="btn btn-warning btn-block"
 								onclick="return confirmUpload('repository')">
 								<span class="glyphicon glyphicon-upload" aria-hidden="true" />
 								<span>Upload</span>
@@ -111,8 +123,8 @@
 							<h:panelGroup rendered="#{user.jobEditor}"
 								styleClass="uploadJobPanel">
 								<form action="repository/#{user.tenant}/jobs/#{file.name}"
-									method="post" enctype="multipart/form-data" style="display: inline;">
-										<button onclick="showUploadJobForm(this);" class="text-warning btn-textlike">
+									method="post" enctype="multipart/form-data" class="form-inline" style="display: inline;">
+										<button onclick="showUploadJobForm(this);" class="text-warning btn-textlike" type="button">
 											<span class="glyphicon glyphicon-upload" aria-hidden="true" />
 										</button>
 								</form>
@@ -170,6 +182,25 @@
 					</h:panelGroup>
 				</ui:repeat>
 			</ul>
+		</div>
+		
+		<div style="visibility: hidden; display: none">
+			<div id="UploadFileTemplateDiv">
+				<p>Replace job file:</p>
+				<div class="input-group">
+					<span class="input-group-btn"> <span
+						class="btn btn-primary btn-file"> Browse … <input
+							type="file" name="file" />
+					</span>
+					</span> <input type="text" class="form-control" readonly="readonly" />
+				</div>
+
+				<button type="submit" class="btn btn-primary"
+					onclick="return confirmUpload(\'job\')">
+					<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload</span>
+				</button>
+
+			</div>
 		</div>
 	</ui:define>
 

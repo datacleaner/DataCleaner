@@ -6,10 +6,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript"
-			src="scheduling/scheduling.nocache.js" />
-		<script type="text/javascript" language="javascript"
-			src="wizard/wizard.nocache.js" />
+		<script type="text/javascript" src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" src="wizard/wizard.nocache.js" />
 		<c:if test="#{user.scheduleEditor}">
 			<script type="text/javascript">
 				//<![CDATA[
@@ -36,12 +34,7 @@
 				}
 
 				function showUploadJobForm(button) {
-					var form = button.form;
-					form.innerHTML = '<div>'+
-						'<div>Upload job file</div>'+
-						'<div><span class="btn btn-default btn-file">Browse <input type="file" name="file" /></span>' + 
-						'<button type="submit" class="btn btn-warning" onclick="return confirmUpload(\'job\')"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span><span>Upload</span></button>' + 
-						'</div></div>';
+					$(button).replaceWith($("#UploadFileTemplateDiv"));
 				}
 				//]]>
 			</script>
@@ -51,26 +44,44 @@
 	<ui:define name="content">
 		<div id="SchedulingPage" class="container">
 			<c:if test="#{user.scheduleEditor}">
-				<div class="btn-group">
+				<div>
 					<button class="btn btn-primary"
 						onclick="datacleaner.startJobWizard();">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true" /> <span>Build
 							job</span>
 					</button>
+					<form action="repository/#{user.tenant}/jobs/#{file.name}"
+						method="post" enctype="multipart/form-data" class="form-inline" style="display: inline;"
+						id="uploadJobs">
+						<button class="btn btn-default" onclick="showUploadJobForm(this)" type="button">
+							<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload
+								job</span>
+						</button>
+					</form>
 				</div>
-				<form action="repository/#{user.tenant}/jobs/#{file.name}"
-					method="post" enctype="multipart/form-data" style="display: inline"
-					id="uploadJobs">
-					<button class="btn btn-default" onclick="showUploadJobForm(this)">
-						<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload
-							job</span>
-					</button>
-				</form>
 
 				<div class="spacer"></div>
 			</c:if>
 
 			<div id="RootPanelTarget"></div>
+		</div>
+
+		<div style="visibility: hidden; display: none">
+			<div id="UploadFileTemplateDiv" style="display: inline-block;">
+				<div class="input-group">
+					<span class="input-group-btn"> <span
+						class="btn btn-primary btn-file"> Browse … <input
+							type="file" name="file" />
+					</span>
+					</span> <input type="text" class="form-control" readonly="readonly" />
+				</div>
+
+				<button type="submit" class="btn btn-primary"
+					onclick="return confirmUpload(\'job\')">
+					<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload</span>
+				</button>
+
+			</div>
 		</div>
 	</ui:define>
 

@@ -18,14 +18,6 @@
 	border-radius: 0;
 }
 
-.navbar-nav .open .dropdown-menu {
-	background-color: #3b76bc;
-	background-image: url("../images/nav_submenu_bg.png");
-	background-repeat: repeat-x;
-	background-position-y: top;
-	color: black;
-}
-
 .navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
 	color: white;
 }
@@ -61,7 +53,6 @@ label {
 	border-width: 1px;
 	border-color: #3b76bc;
 	background-color: #3b76bc;
-	background-image: url("../images/nav_submenu_bg.png");
 	background-repeat: repeat-x;
 }
 

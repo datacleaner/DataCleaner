@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.modify")
+@RequestMapping(value = "/{tenant}/jobs/{job:.+}.modify")
 public class JobModificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobModificationController.class);

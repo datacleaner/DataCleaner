@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.copy")
+@RequestMapping(value = "/{tenant}/jobs/{job:.+}.copy")
 public class JobCopyController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobCopyController.class);

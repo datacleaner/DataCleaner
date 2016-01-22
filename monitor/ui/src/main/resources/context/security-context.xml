@@ -39,7 +39,7 @@
 		<http-basic />
 		<form-login login-page="/login" authentication-failure-url="/login?error=true" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
-			default-target-url="/index.html" />
+			default-target-url="/dashboard" />
 		<logout logout-url="/logout" />
 		<remember-me remember-me-parameter="rememberMe"
 			key="datacleaner.monitor.rememberMe" token-validity-seconds="31536000" />

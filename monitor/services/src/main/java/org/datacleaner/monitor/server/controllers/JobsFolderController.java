@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.net.UrlEscapers;
+
 @Controller
 @RequestMapping(value = "/{tenant}/jobs")
 public class JobsFolderController {
@@ -60,7 +63,7 @@ public class JobsFolderController {
     @Autowired
     TenantContextFactory _contextFactory;
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -85,9 +88,19 @@ public class JobsFolderController {
     }
     
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadAnalysisJobToFolderHtml(@PathVariable("tenant") final String tenant,
+        @RequestParam("file") final MultipartFile file) {
+        final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, file);
+        final String status = outcome.get("status");
+        final String filename = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
+        return "redirect:/scheduling?job_upload=" + status + "&job_filename=" + filename;
+    }
+    
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public Map<String, String> uploadAnalysisJobToFolder(@PathVariable("tenant") final String tenant,
+    public Map<String, String> uploadAnalysisJobToFolderJson(@PathVariable("tenant") final String tenant,
         @RequestParam("file") final MultipartFile file) {
         if (file == null) {
             throw new IllegalArgumentException(

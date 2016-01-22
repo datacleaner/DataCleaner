@@ -175,11 +175,7 @@ public class ReflectionUtilsTest extends TestCase {
 
         final Method[] methods2 = ReflectionUtils.getMethods(ClassB.class);
 
-        if (ReflectionUtils.isGetMethodsLegacyApproach()) {
-            assertEquals(3, methods2.length);
-        } else {
-            assertEquals(2, methods2.length);
-        }
+        assertEquals(2, methods2.length);
 
         for (Method method : methods2) {
             switch (method.getName()) {

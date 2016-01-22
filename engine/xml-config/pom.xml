@@ -162,10 +162,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<artifactId>xml-apis</artifactId>
-			<groupId>xml-apis</groupId>
-		</dependency>
-		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-testware</artifactId>
 			<version>${project.version}</version>

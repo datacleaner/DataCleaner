@@ -24,8 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
@@ -35,15 +35,15 @@ import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+
+import junit.framework.TestCase;
 
 public class SaxExecutionIdentifierReaderTest extends TestCase {
 
     public void testRead() throws Exception {
 
-        final ScheduleDefinition schedule = new ScheduleDefinition(new TenantIdentifier("DC"),
-                new JobIdentifier("job1"), "my_ds");
+        final ScheduleDefinition schedule = new ScheduleDefinition(new TenantIdentifier("DC"), new JobIdentifier(
+                "job1"), "my_ds");
         schedule.setDependentJob(new JobIdentifier("job2"));
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId("my-result");
@@ -63,7 +63,7 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
 
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 
-        final ExecutionIdentifier result = SaxExecutionIdentifierReader.read(in);
+        final ExecutionIdentifier result = SaxExecutionIdentifierReader.read(in, "test file");
 
         assertEquals("my-result", result.getResultId());
         assertEquals(ExecutionStatus.SUCCESS, result.getExecutionStatus());

@@ -21,8 +21,6 @@ package org.datacleaner.actions;
 
 import javax.swing.table.TableModel;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.filter.RangeFilterCategory;
 import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
@@ -45,10 +43,11 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest extends TestCase {
@@ -242,6 +241,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
     @Test()
     public void testUnchainedTransformers() throws Exception{
        
+        @SuppressWarnings("unused")
         final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
                 .addTransformer(ConcatenatorTransformer.class);
         

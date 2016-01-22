@@ -130,6 +130,14 @@
 						<groupId>net.jcip</groupId>
 						<artifactId>jcip-annotations</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>

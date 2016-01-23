@@ -92,7 +92,7 @@ public class CreateTimelineHandler implements ClickHandler {
             }
         };
 
-        final Button saveButton = DCButtons.defaultButton("glyphicon-save", "Save");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

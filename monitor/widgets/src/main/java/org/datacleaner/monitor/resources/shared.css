@@ -100,7 +100,7 @@
  * General purpose style modifiers
  */
 .DCPopupPanel {
-	max-width: 80%;
+	max-width: 800px;
 	z-index: 500;
 }
  

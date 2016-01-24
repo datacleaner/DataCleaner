@@ -24,6 +24,8 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Reader;
+import java.sql.Clob;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;
@@ -62,11 +65,9 @@ public class DCTableCellRenderer implements TableCellRenderer {
 			int row, int column) {
 		logger.debug("getTableCellRendererComponent({},{})", row, column);
 
-		if (value != null) {
-			if (value.getClass().isArray()) {
-				// arrays are printed nicely this way
-				value = ArrayUtils.toString(value);
-			}
+		if (value != null && value.getClass().isArray()) {
+            // arrays are printed nicely this way
+            value = ArrayUtils.toString(value);
 		}
 
 		// icons are displayed as labels
@@ -74,6 +75,16 @@ public class DCTableCellRenderer implements TableCellRenderer {
 			final JLabel label = new JLabel((Icon) value);
 			label.setOpaque(true);
 			value = label;
+		}
+		
+		if (value instanceof Clob) {
+		    final Clob clob = (Clob) value;
+		    try {
+		        final Reader reader = clob.getCharacterStream();
+		        value = FileHelper.readAsString(reader);
+		    } catch (Exception e) {
+		        logger.error("Failed to read String from CLOB: {}", clob, e);
+		    }
 		}
 
 		final Component result;
@@ -96,7 +107,7 @@ public class DCTableCellRenderer implements TableCellRenderer {
 			
 			result = component;
 		} else {
-			result = _delegate.getTableCellRendererComponent(_table, value, isSelected, hasFocus, row, column);
+			result = _delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			assert result instanceof JLabel;
 		}
 

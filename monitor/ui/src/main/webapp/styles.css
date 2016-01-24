@@ -143,18 +143,6 @@ div.loader {
 	margin-top: 10px;
 }
 
-.descriptionLabel {
-	color: #333;
-	background-color: #f4f4d3;
-	padding: 4px;
-	border: 1px solid #a0a0a0;
-}
-
-.descriptionLabel p {
-	margin-top: 4px;
-	margin-bottom: 4px;
-}
-
 /**
  * Error dialog styling
  */

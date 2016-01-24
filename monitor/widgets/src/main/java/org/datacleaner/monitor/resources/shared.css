@@ -32,12 +32,24 @@
 	min-width: 200px;
 }
 
+.gwt-Anchor {
+	cursor: pointer;
+}
+
 .gwt-ListBox {
 	min-width: 210px;
 }
 
 .gwt-CheckBox label {
 	padding-left: 4px;
+}
+
+.gwt-PopupPanel {
+	z-index: 500;
+}
+
+.ErrorDialog {
+	z-index: 600;
 }
 
 .gwt-PopupPanel .popupContent {
@@ -96,12 +108,20 @@
 	filter: alpha(opacity=50);
 }
 
+.gwt-RadioButton input {
+	margin-right: 1em;
+	margin-left: 0.2em;
+}
+
 /*
  * General purpose style modifiers
  */
 .DCPopupPanel {
 	max-width: 800px;
-	z-index: 500;
+}
+
+.dateBoxPopup, .gwt-SuggestBoxPopup {
+	z-index: 600;
 }
  
 .DCPopupPanelContent {
@@ -209,7 +229,7 @@ div.center {
 }
 
 .WizardPanel .HeadingLabel {
-	padding-left: 26px;
+	padding-left: 36px;
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
@@ -227,8 +247,8 @@ div.center {
 	margin: 10px;
 	display: block;
 	background-repeat: no-repeat;
-	padding-left: 28px;
-	line-height: 22px;
+	padding-left: 36px;
+	line-height: 32px;
 }
 .WizardFinishedPanel .gwt-Anchor.QueryDatastore {
 	background-image: url("query.png");
@@ -243,7 +263,7 @@ div.center {
 	background-image: url("timeline.png");
 }
 .WizardFinishedPanel .gwt-Anchor.ScheduleJob {
-	background-image: url("trigger_type_periodic.png");
+	background-image: url("schedule.png");
 }
 
 .WizardFinishedPanel .gwt-Label {
@@ -256,7 +276,7 @@ div.center {
  * Styling for wizard progress bar
  */
 .WizardProgressBar {
-	padding-left: 26px;
+	padding-left: 36px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 10px;
@@ -299,29 +319,33 @@ div.center {
  * Styling for Schema tree
  */
 .SchemaTree .gwt-TreeItem {
-	margin-left: 20px;
+	margin-left: 32px;
 }
  
 .SchemaTree .datastoreItem {
 	background-image: url("datastore.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px top;
 }
 
 .SchemaTree .schemaItem {
 	background-image: url("schema.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }
 
 .SchemaTree .tableItem {
 	background-image: url("table.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }
 
 .SchemaTree .columnItem {
 	background-image: url("column.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }

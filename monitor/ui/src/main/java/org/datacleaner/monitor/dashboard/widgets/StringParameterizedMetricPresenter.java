@@ -58,7 +58,9 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         public MetricPanel(final MetricIdentifier metric) {
             super();
             addStyleName("StringParameterizedMetricPresenterMetricPanel");
+            addStyleName("input-group");
             _checkBox = new CheckBox();
+            _checkBox.addStyleName("input-group-addon");
             final MetricIdentifier activeMetric = isActiveMetric(metric);
             if (activeMetric == null) {
                 _metricToReturn = _metricIdentifier.copy();

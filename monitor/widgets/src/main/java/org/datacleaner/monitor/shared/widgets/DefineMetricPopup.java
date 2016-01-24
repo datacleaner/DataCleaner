@@ -59,8 +59,8 @@ public class DefineMetricPopup extends DCPopupPanel {
 
         setWidget(panel);
 
-        getButtonPanel().add(saveButton);
-        getButtonPanel().add(new CancelPopupButton(this));
+        addButton(saveButton);
+        addButton(new CancelPopupButton(this));
 
         center();
         show();

@@ -52,7 +52,7 @@ public class ErrorHandler {
 
     private static DialogBox getDialogBox() {
         if (sharedDialogBox == null) {
-            Caption caption = new DialogBox.CaptionImpl();
+            final Caption caption = new DialogBox.CaptionImpl();
             caption.setText("Error");
             sharedDialogBox = new DialogBox(false, true, caption);
             sharedDialogBox.addStyleName("ErrorDialog");
@@ -201,7 +201,7 @@ public class ErrorHandler {
         });
 
         final ButtonPanel buttonPanel = new ButtonPanel();
-        buttonPanel.add(closeButton);
+        buttonPanel.addButton(closeButton);
         panel.add(buttonPanel);
 
         dialogBox.setWidget(panel);

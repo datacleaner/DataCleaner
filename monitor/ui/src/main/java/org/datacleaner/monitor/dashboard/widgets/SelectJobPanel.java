@@ -43,13 +43,14 @@ public abstract class SelectJobPanel extends FlowPanel {
     private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final LoadingIndicator _loadingIndicator;
-    private ListBox _listBox;
+    private final ListBox _listBox;
 
     public SelectJobPanel(DashboardServiceAsync service, TenantIdentifier tenant) {
         _service = service;
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();
         _listBox = new ListBox();
+        _listBox.addStyleName("form-control");
         _listBox.setMultipleSelect(false);
         addStyleName("SelectJobPanel");
 

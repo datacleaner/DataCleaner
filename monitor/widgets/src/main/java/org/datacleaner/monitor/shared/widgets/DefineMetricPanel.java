@@ -71,6 +71,7 @@ public class DefineMetricPanel extends FlowPanel {
         _formulaRemoveMetricButton.setVisible(formulaBased);
 
         _formulaTextBox = new TextBox();
+        _formulaTextBox.setStyleName("form-control");
         _formulaTextBox.addStyleName("FormulaTextBox");
         _formulaTextBox.setVisible(formulaBased);
         // provide an example template, which makes it convenient to do a

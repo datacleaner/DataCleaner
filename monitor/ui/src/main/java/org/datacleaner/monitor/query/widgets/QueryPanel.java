@@ -70,7 +70,8 @@ public class QueryPanel extends FlowPanel {
         _tenant = tenant;
         _datastore = datastore;
         _queryTextArea = new TextArea();
-        _queryTextArea.setStyleName("QueryTextArea");
+        _queryTextArea.setStyleName("form-control");
+        _queryTextArea.setHeight("6.5em");
 
         if (tables.isEmpty()) {
             writeQuery(null);
@@ -79,8 +80,8 @@ public class QueryPanel extends FlowPanel {
 
         }
 
-        _executeQueryButton = DCButtons.defaultButton(null, "Ok");
-        _executeQueryButton.addStyleName("ExecuteQueryButton");
+        _executeQueryButton = DCButtons.primaryButton(null, "Ok");
+        _executeQueryButton.addStyleName("btn-block");
 
         _loadingIcon = new LoadingIndicator();
         _loadingIcon.setVisible(false);

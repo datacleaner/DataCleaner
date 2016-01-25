@@ -27,7 +27,7 @@
 		<icu4j.version>55.1</icu4j.version>
 		<jackson.version>2.4.6</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
-		<javax.jsp.version>2.0</javax.jsp.version>
+		<javax.jsp.version>2.3.1</javax.jsp.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
@@ -388,7 +388,11 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
-										<exclude>javax.servlet:jsp-api:*:jar:compile</exclude>
+										
+										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
+										<exclude>javax.servlet:jsp-api:*</exclude>
+										<exclude>javax.servlet.jsp:jsp-api:*</exclude>
+										
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
@@ -770,6 +774,12 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-common</artifactId>
 				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet.jsp</groupId>
+						<artifactId>jsp-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -976,8 +986,8 @@
 				<version>${httpcomponents.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>jsp-api</artifactId>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>javax.servlet.jsp-api</artifactId>
 				<version>${javax.jsp.version}</version>
 			</dependency>
 			<dependency>

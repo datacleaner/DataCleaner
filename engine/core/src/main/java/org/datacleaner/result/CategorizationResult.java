@@ -27,14 +27,17 @@ import java.util.Map.Entry;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Metric;
 import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotationImpl;
 
 /**
  * A simple {@link AnalyzerResult} that exposes a set of categories/annotations
  */
+@Distributed(reducer = CategorizationResultReducer.class)
 public class CategorizationResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
@@ -76,11 +79,8 @@ public class CategorizationResult implements AnalyzerResult {
         return _categories.keySet();
     }
 
-    public Integer getCategoryCount(String category) {
-        RowAnnotation annotation = _categories.get(category);
-        if (annotation == null) {
-            return 0;
-        }
+    public int getCategoryCount(String category) {
+        final RowAnnotation annotation = getCategoryRowAnnotation(category);
         return annotation.getRowCount();
     }
 
@@ -94,6 +94,15 @@ public class CategorizationResult implements AnalyzerResult {
             return null;
         }
         return new AnnotatedRowsResult(annotation, rowAnnotationFactory);
+    }
+
+    public RowAnnotation getCategoryRowAnnotation(String category) {
+        final RowAnnotation annotation = _categories.get(category);
+        if (annotation == null) {
+            // return an empty annotation
+            return new RowAnnotationImpl();
+        }
+        return annotation;
     }
 
 }

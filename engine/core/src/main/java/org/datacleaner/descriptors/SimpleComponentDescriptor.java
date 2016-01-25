@@ -369,12 +369,20 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public boolean isDistributable() {
+    public final boolean isDistributable() {
         final Distributed distributed = getAnnotation(Distributed.class);
-        if (distributed == null) {
-            return ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class);
+        if (distributed != null) {
+            return distributed.value();
         }
-        return distributed.value();
+        final boolean hasDistributionAdvice = ReflectionUtils.is(getComponentClass(), HasDistributionAdvice.class);
+        if (hasDistributionAdvice) {
+            return true;
+        }
+        return isDistributableByDefault();
+    }
+
+    protected boolean isDistributableByDefault() {
+        return false;
     }
 
     @Override
@@ -398,7 +406,8 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     @Override
     public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional) {
-        Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<ConfiguredPropertyDescriptor>(_configuredProperties);
+        Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<ConfiguredPropertyDescriptor>(
+                _configuredProperties);
         for (Iterator<ConfiguredPropertyDescriptor> it = descriptors.iterator(); it.hasNext();) {
             ConfiguredPropertyDescriptor propertyDescriptor = it.next();
             if (!propertyDescriptor.isInputColumn()) {

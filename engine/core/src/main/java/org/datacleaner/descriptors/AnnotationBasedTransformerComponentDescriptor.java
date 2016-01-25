@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import org.datacleaner.api.ComponentSuperCategory;
-import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
@@ -57,12 +56,7 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
     }
 
     @Override
-    public boolean isDistributable() {
-        final Distributed annotation = getAnnotation(Distributed.class);
-        if (annotation != null) {
-            return annotation.value();
-        }
-        
+    public boolean isDistributableByDefault() {
         return true;
     }
 }

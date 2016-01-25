@@ -999,7 +999,7 @@
 			</annotation>
 		</attribute>
 		<attribute name="max-sets-threshold" type="int" use="optional"
-			default="250">
+			default="150">
 			<annotation>
 				<documentation>
 					Sets a threshold upon the number of sample sets with

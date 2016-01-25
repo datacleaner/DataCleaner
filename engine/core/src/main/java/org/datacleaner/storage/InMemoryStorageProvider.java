@@ -34,16 +34,19 @@ import java.util.Set;
  * 
  */
 public final class InMemoryStorageProvider implements StorageProvider {
+    
+    public static final int DEFAULT_MAX_SAMPLE_SETS = 1000;
+    public static final int DEFAULT_MAX_SAMPLE_RECORDS = 150;
 
     private final int _maxSampleSets;
     private final int _maxSampleRecords;
 
     public InMemoryStorageProvider() {
-        this(500, 500);
+        this(DEFAULT_MAX_SAMPLE_SETS, DEFAULT_MAX_SAMPLE_RECORDS);
     }
 
     public InMemoryStorageProvider(int maxSampleRecords) {
-        this(Math.min(10, 500 * 500 / maxSampleRecords), maxSampleRecords);
+        this(Math.min(10, DEFAULT_MAX_SAMPLE_SETS * DEFAULT_MAX_SAMPLE_RECORDS / maxSampleRecords), maxSampleRecords);
     }
 
     public InMemoryStorageProvider(int maxSampleSets, int maxSampleRecords) {

@@ -25,6 +25,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -90,7 +91,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         if (_componentBuilder.isConfigured()) {
             outputColumns = safeGetOutputColumns(transformerJobBuilder);
         } else {
-            outputColumns = new ArrayList<>(0);
+            outputColumns = Collections.emptyList();
         }
 
         _outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
@@ -148,7 +149,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             return _componentBuilder.getOutputColumns();
         } catch (Exception e) {
             logger.warn("Could not get outputColumns for transformer {}", transformerJobBuilder.getName(), e);
-            return new ArrayList<>(0);
+            return Collections.emptyList();
         }
     }
 

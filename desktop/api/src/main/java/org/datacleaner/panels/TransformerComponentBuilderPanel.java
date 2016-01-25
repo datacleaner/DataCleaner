@@ -25,6 +25,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -47,6 +48,8 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ComboButton;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for
@@ -60,6 +63,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         implements TransformerComponentBuilderPresenter, TransformerChangeListener {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(TransformerComponentBuilderPanel.class);
 
     private final TransformerComponentBuilder<?> _componentBuilder;
     private final ColumnListTable _outputColumnsTable;
@@ -85,10 +89,11 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
         final List<MutableInputColumn<?>> outputColumns;
         if (_componentBuilder.isConfigured()) {
-            outputColumns = _componentBuilder.getOutputColumns();
+            outputColumns = safeGetOutputColumns(transformerJobBuilder);
         } else {
-            outputColumns = new ArrayList<MutableInputColumn<?>>(0);
+            outputColumns = Collections.emptyList();
         }
+
         _outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
 
         _writeDataButton = WidgetFactory.createDefaultButton("Write data", IconUtils.COMPONENT_TYPE_WRITE_DATA);
@@ -136,6 +141,16 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
                 menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
             }
         });
+    }
+
+    private List<MutableInputColumn<?>> safeGetOutputColumns(
+            final TransformerComponentBuilder<?> transformerJobBuilder) {
+        try {
+            return _componentBuilder.getOutputColumns();
+        } catch (Exception e) {
+            logger.warn("Could not get outputColumns for transformer {}", transformerJobBuilder.getName(), e);
+            return Collections.emptyList();
+        }
     }
 
     @Override

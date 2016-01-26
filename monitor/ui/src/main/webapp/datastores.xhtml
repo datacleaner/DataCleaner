@@ -79,7 +79,7 @@
 									<span>Download</span>
 								</button>
 							</h:panelGroup>
-							<h:panelGroup rendered="#{user.jobEditor}">
+							<h:panelGroup rendered="#{user.jobEditor and monitorUIPreferences.showWebstartLaunchOptions}">
 								<button
 									onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.analyze.jnlp'"
 									class="btn btn-default btn-sm">

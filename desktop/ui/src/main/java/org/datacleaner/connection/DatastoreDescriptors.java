@@ -41,6 +41,7 @@ import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
+import org.datacleaner.windows.Neo4jDatastoreDialog;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
 import org.datacleaner.windows.SasDatastoreDialog;
 import org.datacleaner.windows.SugarCrmDatastoreDialog;
@@ -103,6 +104,10 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class,
             ElasticSearchDatastoreDialog.class, IconUtils.ELASTICSEARCH_IMAGEPATH, true);
+    
+    private static final DatastoreDescriptor NEO4J_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
+            "Neo4j graph database", "Connect to a Neo4j graph database", Neo4jDatastore.class,
+            Neo4jDatastoreDialog.class, IconUtils.NEO4J_IMAGEPATH, true);
 
     private static final DatastoreDescriptor CASSANDRA_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Cassandra database", "Connect to an Apache Cassandra database", CassandraDatastore.class,
@@ -196,6 +201,7 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+       
 
         return availableCloudBasedDatabaseDescriptors;
     }
@@ -219,6 +225,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(HBASE_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR);
 
         return datastoreDescriptors;
     }

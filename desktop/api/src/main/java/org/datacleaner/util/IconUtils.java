@@ -194,6 +194,7 @@ public final class IconUtils {
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
     public static final String DATAHUB_IMAGEPATH = "images/datastore-types/datahub.png";
+    public static final String NEO4J_IMAGEPATH = "images/datastore-types/neo4j.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";

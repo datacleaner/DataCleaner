@@ -17,26 +17,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-/**
- * Overrides of the "clean" theme for basic elements
- */
-body,table td,select,button,input {
-	font-family: "Open Sans", sans-serif;
-}
-
-input,select,textarea {
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-a {
-	color: #377FCF;
-}
-
-a:hover {
-	color: #377FCF;
-	cursor: pointer;
-}
 
 /*
  * GWT built-in style modifications 
@@ -46,11 +26,14 @@ a:hover {
 	border: 1px solid #CCC;
 	border-top: 1px solid #999;
 	font-size: 0.9em;
-	font-family: "Open Sans", sans-serif;
 }
 
 .gwt-TextBox {
 	min-width: 200px;
+}
+
+.gwt-Anchor {
+	cursor: pointer;
 }
 
 .gwt-ListBox {
@@ -59,6 +42,14 @@ a:hover {
 
 .gwt-CheckBox label {
 	padding-left: 4px;
+}
+
+.gwt-PopupPanel {
+	z-index: 500;
+}
+
+.ErrorDialog {
+	z-index: 600;
 }
 
 .gwt-PopupPanel .popupContent {
@@ -117,18 +108,30 @@ a:hover {
 	filter: alpha(opacity=50);
 }
 
+.gwt-RadioButton input {
+	margin-right: 1em;
+	margin-left: 0.2em;
+}
+
 /*
  * General purpose style modifiers
  */
 .DCPopupPanel {
-	max-width: 80%;
+	max-width: 800px;
+}
+
+.dateBoxPopup, .gwt-SuggestBoxPopup {
+	z-index: 600;
 }
  
 .DCPopupPanelContent {
 }
 
+.DCPopupPanel .btn-group-justified {
+	margin-top: 30px;
+}
+
 .HeadingLabel {
-	font-family: "Ubuntu", sans-serif;
 	color: #377FCF;
 	font-size: 1.2em;
 	margin-bottom: 10px;
@@ -148,31 +151,6 @@ a:hover {
 .ButtonPanel {
 	text-align: center;
 	padding: 10px;
-}
-
-.NewJobButton {
-	background-image: url("new.png");
-}
-
-.NewDatastoreButton {
-	background-image: url("new.png");
-}
-
-.FormRow {
-	clear: left;
-}
-
-.FormRow .FormKey {
-	float: left;
-	width: 200px;
-}
-
-.FormRow .FormValue {
-	float: left;
-}
-
-.FormRow .gwt-Button {
-	float: right;
 }
 
 th.center, td.center {
@@ -234,7 +212,7 @@ div.center {
 }
 
 .WizardPanel .HeadingLabel {
-	padding-left: 26px;
+	padding-left: 36px;
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
@@ -252,8 +230,8 @@ div.center {
 	margin: 10px;
 	display: block;
 	background-repeat: no-repeat;
-	padding-left: 28px;
-	line-height: 22px;
+	padding-left: 36px;
+	line-height: 32px;
 }
 .WizardFinishedPanel .gwt-Anchor.QueryDatastore {
 	background-image: url("query.png");
@@ -268,7 +246,7 @@ div.center {
 	background-image: url("timeline.png");
 }
 .WizardFinishedPanel .gwt-Anchor.ScheduleJob {
-	background-image: url("trigger_type_periodic.png");
+	background-image: url("schedule.png");
 }
 
 .WizardFinishedPanel .gwt-Label {
@@ -281,7 +259,7 @@ div.center {
  * Styling for wizard progress bar
  */
 .WizardProgressBar {
-	padding-left: 26px;
+	padding-left: 36px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 10px;
@@ -324,29 +302,33 @@ div.center {
  * Styling for Schema tree
  */
 .SchemaTree .gwt-TreeItem {
-	margin-left: 20px;
+	margin-left: 32px;
 }
  
 .SchemaTree .datastoreItem {
 	background-image: url("datastore.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px top;
 }
 
 .SchemaTree .schemaItem {
 	background-image: url("schema.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }
 
 .SchemaTree .tableItem {
 	background-image: url("table.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }
 
 .SchemaTree .columnItem {
 	background-image: url("column.png");
+	background-size: 22px 22px;
 	background-repeat: no-repeat;
 	background-position: 20px 5px;
 }
@@ -355,7 +337,6 @@ div.center {
  * Styling for metric definition and selection
  */
 .DefineMetricPanel {
-	width: 400px;
 	min-height: 350px;
 }
 
@@ -372,30 +353,23 @@ div.center {
 }
 
 .DefineMetricPanel .AddMetricButton {
-	background-image: url("add.png");
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 28px;
-	height: 24px;
 	float: right;
 }
 
 .DefineMetricPanel .RemoveMetricButton {
-	background-image: url("remove.png");
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 28px;
-	height: 24px;
 	clear: right;
 	float: right;
 }
 
 .SelectMetricPanel {
+	width: 90%;
 	margin-top: 10px;
 	padding: 10px;
-	background-color: #fdfdfd;
-	border: 1px solid #f0f0f0;
-	width: 300px;
+	border-left: 2px solid #5594DD;
 }
 
 .SelectMetricPanel .DisplayNameBox {

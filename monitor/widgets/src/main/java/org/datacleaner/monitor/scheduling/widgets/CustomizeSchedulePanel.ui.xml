@@ -24,7 +24,7 @@
 	xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
 
 	<g:HTMLPanel styleName="CustomizeSchedulePanel">
-		<div class="descriptionLabel">
+		<div class="alert alert-info">
 			<p>You can configure the schedule of a job in a number of different
 				ways.</p>
 			<p>
@@ -57,8 +57,8 @@
 					name="triggerTypeRadio" />
 				<div class="configurationPanel">
 					<p>Please provide a scheduling expression (cron syntax):</p>
-					<g:SuggestBox ui:field="periodicTriggerExpressionTextBox" />
-					<div id="periodicErrorMessage" style ="color:red"></div>
+					<g:SuggestBox ui:field="periodicTriggerExpressionTextBox" styleName="form-control" />
+					<div id="periodicErrorMessage" class="text-danger"></div>
 					<p class="discrete">
 						Use
 						<i>cron</i>
@@ -78,9 +78,9 @@
 					name="triggerTypeRadio" />
 				<div class="configurationPanel">
 					<p>Please provide a date for one time scheduling:</p>
-					<dp:DateBox ui:field="dateBox" />
-					<div id="errorMessage" style ="color:red"></div>
-					    <div id="serverDate" style="color:green"></div>
+					<dp:DateBox ui:field="dateBox" styleName="form-control" />
+					<div id="errorMessage" class="text-danger"></div>
+					<div id="serverDate" class="text-info"></div>
 				</div>
 			</div>
 			<div class="triggerPanel">
@@ -88,7 +88,7 @@
 					name="triggerTypeRadio" />
 				<div class="configurationPanel">
 					<p>Please select the preceding job that this job will run after:</p>
-					<g:ListBox ui:field="dependentTriggerJobListBox" />
+					<g:ListBox ui:field="dependentTriggerJobListBox" styleName="form-control" />
 				</div>
 			</div>
 			</div>

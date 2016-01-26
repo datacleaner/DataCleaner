@@ -44,6 +44,7 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
 
     public StringParameterizedMetricTextBox(String text, final CheckBox checkBoxToActivate, SuggestOracle suggestOracle) {
         super(suggestOracle);
+        setStyleName("form-control");
         addStyleName("StringParameterizedMetricTextBox");
         setText(text);
 

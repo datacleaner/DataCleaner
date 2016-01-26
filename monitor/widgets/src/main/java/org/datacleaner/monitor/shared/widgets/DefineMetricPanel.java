@@ -63,14 +63,15 @@ public class DefineMetricPanel extends FlowPanel {
         _jobMetrics = jobMetrics;
         _selectMetricPanels = new ArrayList<SelectMetricPanel>();
 
-        _formulaAddMetricButton = new Button();
+        _formulaAddMetricButton = DCButtons.defaultButton("glyphicon-plus", null);
         _formulaAddMetricButton.addStyleName("AddMetricButton");
         _formulaAddMetricButton.setVisible(formulaBased);
-        _formulaRemoveMetricButton = new Button();
+        _formulaRemoveMetricButton = DCButtons.defaultButton("glyphicon-minus", null);
         _formulaRemoveMetricButton.addStyleName("RemoveMetricButton");
         _formulaRemoveMetricButton.setVisible(formulaBased);
 
         _formulaTextBox = new TextBox();
+        _formulaTextBox.setStyleName("form-control");
         _formulaTextBox.addStyleName("FormulaTextBox");
         _formulaTextBox.setVisible(formulaBased);
         // provide an example template, which makes it convenient to do a

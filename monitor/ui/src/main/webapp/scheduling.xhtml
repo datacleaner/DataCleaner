@@ -1,10 +1,13 @@
-<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript" src="scheduling/scheduling.nocache.js" />
-		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
+		<script type="text/javascript" src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" src="wizard/wizard.nocache.js" />
 		<c:if test="#{user.scheduleEditor}">
 			<script type="text/javascript">
 				//<![CDATA[
@@ -20,22 +23,18 @@
 						});
 					}
 				}
-				
-				function confirmUpload(file, fileType) {
-					if(file.value) {
-			    	    if (confirm('Are you sure you wish to upload the ' + fileType + ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
-			    		    return true;
-			    	    }
-			    	    return false;
-					} else {
-						alert('Please choose a ' + fileType + ' file to upload.') ;
-					    return false ;
+
+				function confirmUpload(fileType) {
+					if (confirm('Are you sure you wish to upload (and overwrite) the '
+							+ fileType
+							+ ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
+						return true;
 					}
-			    }
-			           
+					return false;
+				}
+
 				function showUploadJobForm(button) {
-					var form = button.form;
-					form.innerHTML = '<div style="clear:left"></div><input type="file" name="file" /> <input type="submit" value="Upload" onclick="return confirmUpload(file,\'job\')" />';
+					$(button).replaceWith($("#UploadFileTemplateDiv"));
 				}
 				//]]>
 			</script>
@@ -43,21 +42,53 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<div id="SchedulingPage">
+		<div id="SchedulingPage" class="container">
+			<h:panelGroup
+				rendered="#{param['job_upload'] == 'Success'}">
+				<div class="alert alert-success">
+					Job file <b>#{param['job_filename']}</b> uploaded successfully.
+				</div>
+			</h:panelGroup>
+		
 			<c:if test="#{user.scheduleEditor}">
 				<div>
-					<button class="gwt-Button-ImageTextButton NewJobButton orangeButton pull-left" onclick="datacleaner.startJobWizard();">Build job</button>
+					<button class="btn btn-primary"
+						onclick="datacleaner.startJobWizard();">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true" /> <span>Build
+							job</span>
+					</button>
+					<form action="repository/#{user.tenant}/jobs/#{file.name}"
+						method="post" enctype="multipart/form-data" class="form-inline" style="display: inline;"
+						id="uploadJobs">
+						<button class="btn btn-default" onclick="showUploadJobForm(this)" type="button">
+							<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload
+								job</span>
+						</button>
+					</form>
 				</div>
-				<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
-				    enctype="multipart/form-data" class="pull-left" id="uploadJobs">
-				    <input class="showFormButton" onclick="showUploadJobForm(this)" type="button" 
-				        value="Upload Job" alt="Upload/replace the job file contents" />
-				</form>
-				
+
 				<div class="spacer"></div>
 			</c:if>
-			
+
 			<div id="RootPanelTarget"></div>
+		</div>
+
+		<div style="visibility: hidden; display: none">
+			<div id="UploadFileTemplateDiv" style="display: inline-block;">
+				<div class="input-group">
+					<span class="input-group-btn"> <span
+						class="btn btn-primary btn-file"> Browse … <input
+							type="file" name="file" />
+					</span>
+					</span> <input type="text" class="form-control" readonly="readonly" />
+				</div>
+
+				<button type="submit" class="btn btn-primary"
+					onclick="return confirmUpload(\'job\')">
+					<span class="glyphicon glyphicon-upload" aria-hidden="true" /> <span>Upload</span>
+				</button>
+
+			</div>
 		</div>
 	</ui:define>
 

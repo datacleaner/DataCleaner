@@ -21,6 +21,11 @@ package org.datacleaner.monitor.shared.widgets;
 
 import com.google.gwt.user.client.ui.Anchor;
 
+/**
+ * 
+ * @deprecated use a button from {@link DCButtons} instead.
+ */
+@Deprecated
 public class DropDownAnchor extends Anchor {
     
     public DropDownAnchor() {

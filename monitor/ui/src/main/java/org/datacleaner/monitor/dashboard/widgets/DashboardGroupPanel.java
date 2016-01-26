@@ -25,6 +25,8 @@ import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -60,9 +62,7 @@ public class DashboardGroupPanel extends FlowPanel {
 
         addStyleName("DashboardGroupPanel");
 
-        _removeGroupButton = new Button("Remove this group");
-        _removeGroupButton.addStyleDependentName("ImageTextButton");
-        _removeGroupButton.addStyleName("RemoveButton");
+        _removeGroupButton = DCButtons.dangerButton("glyphicon-minus", "Remove this group");
         _removeGroupButton.setVisible(false);
         _removeGroupButton.addClickHandler(new ClickHandler() {
             @Override
@@ -101,14 +101,15 @@ public class DashboardGroupPanel extends FlowPanel {
             }
 
             _welcomePanel = null;
-            newTimelineButton = new Button("New timeline chart");
-            add(newTimelineButton);
-            add(_removeGroupButton);
+            newTimelineButton = DCButtons.defaultButton("glyphicon-plus", "New timeline chart");
+            
+            final ButtonPanel buttonPanel = new ButtonPanel(false);
+            buttonPanel.add(newTimelineButton);
+            buttonPanel.add(_removeGroupButton);
+            add(buttonPanel);
         }
 
         newTimelineButton.setVisible(_isDashboardEditor);
-        newTimelineButton.addStyleDependentName("ImageTextButton");
-        newTimelineButton.addStyleName("NewDashboardWidgetButton");
         newTimelineButton.addClickHandler(new CreateTimelineHandler(_service, _tenant, this));
 
         _service.getTimelines(_tenant, _group, new DCAsyncCallback<List<TimelineIdentifier>>() {
@@ -118,7 +119,7 @@ public class DashboardGroupPanel extends FlowPanel {
                     addTimelinePanel(identifier);
                 }
 
-                if (_dashboardWidgetCount == 0 && _group!= null && !_group.isDefaultGroup()) {
+                if (_dashboardWidgetCount == 0 && _group != null && !_group.isDefaultGroup()) {
                     _removeGroupButton.setVisible(true);
                 }
             }

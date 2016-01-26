@@ -26,6 +26,7 @@ import org.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.datacleaner.monitor.shared.WizardServiceAsync;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 import org.datacleaner.monitor.util.Urls;
 
@@ -140,7 +141,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
     protected void wizardFinished(final String datastoreName) {
         final String encodedDatastoreName = URL.encodeQueryString(datastoreName);
 
-        final Button button = new Button("Close");
+        final Button button = DCButtons.primaryButton(null, "Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

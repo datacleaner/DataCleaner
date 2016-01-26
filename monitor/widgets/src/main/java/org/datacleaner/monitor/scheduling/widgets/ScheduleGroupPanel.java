@@ -40,6 +40,7 @@ public class ScheduleGroupPanel extends FlowPanel {
         _service = service;
 
         addStyleName("ScheduleGroupPanel");
+        addStyleName("row");
         if (name != null) {
             add(createHeader(name));
         }
@@ -47,6 +48,7 @@ public class ScheduleGroupPanel extends FlowPanel {
 
     private Widget createHeader(String name) {
         final HeadingLabel label = new HeadingLabel(name);
+        label.addStyleName("col-xs-12");
         return label;
     }
 

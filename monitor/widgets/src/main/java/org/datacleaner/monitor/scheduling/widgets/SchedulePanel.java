@@ -28,7 +28,7 @@ import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.monitor.shared.widgets.DropDownAnchor;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -61,7 +61,7 @@ public class SchedulePanel extends Composite {
     Label jobLabel;
     
     @UiField
-    DropDownAnchor moreLabel;
+    Button moreButton;
     
     @UiField
     Anchor scheduleAnchor;
@@ -80,7 +80,6 @@ public class SchedulePanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        moreLabel.setText("More");
         // add the job type as a style name
         final String jobType = schedule.getJob().getType();
         if (jobType != null) {
@@ -94,7 +93,7 @@ public class SchedulePanel extends Composite {
         final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
 
         if (_clientConfig.isJobEditor()) {
-            moreLabel.addClickHandler(new CustomizeJobClickHandler(this,tenant,schedule,service));
+            moreButton.addClickHandler(new CustomizeJobClickHandler(this,tenant,schedule,service));
         }
 
         if (_clientConfig.isScheduleEditor()) {
@@ -156,6 +155,12 @@ public class SchedulePanel extends Composite {
     }
 
     public void updateScheduleWidgets() {
+        DCButtons.applyPrimaryStyle(executeButton);
+        executeButton.addStyleName("btn-sm");
+        
+        DCButtons.applyDefaultStyle(moreButton);
+        moreButton.addStyleName("btn-sm");
+        
         final JobIdentifier job = _schedule.getJob();
         jobLabel.setText(job.getName());
 

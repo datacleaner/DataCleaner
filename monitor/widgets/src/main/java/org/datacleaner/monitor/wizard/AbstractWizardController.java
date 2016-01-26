@@ -26,6 +26,7 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.datacleaner.monitor.shared.model.WizardPage;
 import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler;
 import org.datacleaner.monitor.shared.widgets.FormWizardClientController;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
@@ -82,20 +83,19 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _loadingIndicator = new LoadingIndicator();
         _wizardPanel.setContent(_loadingIndicator);
 
-        _previousStepButton = new Button("‹ Previous");
+        _previousStepButton = DCButtons.defaultButton("glyphicon-menu-left", "Previous");
         _previousStepButton.getElement().setId("wizardPreviousButton");
         _previousStepButton.setEnabled(false);
         _previousStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_previousStepButton);
 
-        _nextStepButton = new Button("Next ›");
+        _nextStepButton = DCButtons.primaryButton("glyphicon-menu-right", "Next");
         _nextStepButton.getElement().setId("wizardNextButton");
         _nextStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_nextStepButton);
         
-        Button cancelButton = new Button("Cancel");
+        final Button cancelButton = DCButtons.defaultButton(null, "Cancel");
         cancelButton.getElement().setId("wizardCancelButton");
-        cancelButton.addStyleName("wizard-navigation-button");
         cancelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

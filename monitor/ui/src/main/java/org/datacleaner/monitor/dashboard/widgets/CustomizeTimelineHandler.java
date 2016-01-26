@@ -25,6 +25,7 @@ import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -69,7 +70,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
     }
 
     private Button createSaveButton() {
-        final Button saveButton = new Button("Save");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

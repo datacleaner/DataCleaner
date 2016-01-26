@@ -1,9 +1,12 @@
-<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
+		<script type="text/javascript" src="wizard/wizard.nocache.js" />
 		<c:if test="#{user.configurationEditor}">
 			<script type="text/javascript">
 			//<![CDATA[
@@ -34,14 +37,17 @@
 
 	<ui:define name="content">
 
-		<div id="DatastoresPage">
+		<div id="DatastoresPage" class="container">
 
 			<c:if test="#{user.configurationEditor}">
 				<div>
-					<button class="gwt-Button-ImageTextButton NewDatastoreButton orangeButton"
-						onclick="datacleaner.startDatastoreWizard();">Register Datastore</button>
+					<button class="btn btn-primary"
+						onclick="datacleaner.startDatastoreWizard();">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true" /> <span>Register
+							Datastore</span>
+					</button>
 				</div>
-				
+
 				<div class="spacer"></div>
 			</c:if>
 
@@ -49,82 +55,107 @@
 
 			<div class="datastoreList">
 				<ui:repeat var="ds" value="#{jsfHelper.datastores}">
-					<div class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
-						<h:panelGroup rendered="#{user.configurationEditor}">
-							<div style="float: right">
-								<form action="repository/#{tenantContext.tenantId}/datastores/#{ds.name}.remove" method="post">
-									<input class="RemoveButton" type="submit" value="Remove" onclick="return confirmRemoveDatastore('#{ds.name}');" />
+					<div
+						class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
+						<div class="btn-group right" role="group">
+							<h:panelGroup rendered="#{user.configurationEditor}">
+								<form style="display: inline;"
+									action="repository/#{tenantContext.tenantId}/datastores/#{ds.name}.remove"
+									method="post">
+									<button class="btn btn-danger btn-sm"
+										style="margin-left: 0.3em"
+										onclick="return confirmRemoveDatastore('#{ds.name}');">
+										<span class="glyphicon glyphicon-minus" aria-hidden="true" />
+										<span>Remove</span>
+									</button>
 								</form>
-							</div>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{user.jobEditor}">
-							<div style="float: right">
-								<button onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.analyze.jnlp'"
-									class="LaunchButton">Analyze</button>
-							</div>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{user.queryAllowed}">
-							<div style="float: right">
+							</h:panelGroup>
+							<h:panelGroup
+								rendered="#{ds.fileDatastore and user.configurationEditor}">
+								<button
+									onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.download'"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-download" aria-hidden="true" />
+									<span>Download</span>
+								</button>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{user.jobEditor}">
+								<button
+									onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.analyze.jnlp'"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-stats" aria-hidden="true" />
+									<span>Analyze</span>
+								</button>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{user.queryAllowed}">
 								<c:choose>
 									<c:when test="#{param['gwt.codesvr'] != null}">
 										<button
 											onclick="window.open('query?ds=#{ds.name}&amp;gwt.codesvr=#{param['gwt.codesvr']}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
-											class="QueryButton">Query</button>
+											class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-console" aria-hidden="true" />
+											<span>Query</span>
+										</button>
 									</c:when>
 									<c:otherwise>
 										<button
 											onclick="window.open('query?ds=#{ds.name}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
-											class="QueryButton">Query</button>
+											class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-console" aria-hidden="true" />
+											<span>Query</span>
+										</button>
 									</c:otherwise>
 								</c:choose>
-							</div>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{ds.fileDatastore and user.configurationEditor}">
-							<div style="float: right">
-								<button onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.download'"
-									class="DownloadButton">Download</button>
-							</div>
-						</h:panelGroup>
+							</h:panelGroup>
+						</div>
 
 						<h2 class="name">#{ds.name}</h2>
 
-						<div class="description" style="white-space: pre-line;">#{ds.description}</div>
-
-						<div class="details">
-							<div class="datastoreType">
-								<span class="label">Type:</span> <span class="value">#{ds.simpleClassName}</span>
+						<div class="panel panel-default">
+							<div class="panel-heading">#{ds.description}</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-xs-3">Type:</div>
+									<div class="col-xs-9">#{ds.simpleClassName}</div>
+								</div>
+								<h:panelGroup
+									rendered="#{ds.fileDatastore and user.configurationEditor}">
+									<div class="row">
+										<div class="col-xs-3">Filename:</div>
+										<div class="col-xs-9">
+											<span>#{ds.filename}</span>
+											<h:panelGroup rendered="#{not ds.fileFound}">
+												<span class="label label-danger">File not found</span>
+											</h:panelGroup>
+										</div>
+									</div>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{ds.hostnameBasedDatastore}">
+									<div class="row">
+										<div class="col-xs-3">Hostname:</div>
+										<div class="col-xs-9">#{ds.hostname}</div>
+									</div>
+								</h:panelGroup>
+								<h:panelGroup
+									rendered="#{ds.jdbcDatastore and user.configurationEditor}">
+									<div class="row">
+										<div class="col-xs-3">URL:</div>
+										<div class="col-xs-9">#{ds.jdbcUrl}</div>
+									</div>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{ds.usernameDatastore}">
+									<div class="row">
+										<div class="col-xs-3">Username:</div>
+										<div class="col-xs-9">#{ds.username}</div>
+									</div>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{ds.compositeDatastore}">
+									<div class="row">
+										<div class="col-xs-3">Child datastores:</div>
+										<div class="col-xs-9">#{ds.childDatastores}</div>
+									</div>
+								</h:panelGroup>
 							</div>
-							<h:panelGroup rendered="#{ds.fileDatastore and user.configurationEditor}">
-								<div class="filename">
-									<span class="label">Filename:</span> <span class="value"> #{ds.filename} <h:panelGroup
-											rendered="#{not ds.fileFound}">
-											<span class="warning">File not found</span>
-										</h:panelGroup>
-									</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup rendered="#{ds.hostnameBasedDatastore}">
-								<div class="url">
-									<span class="label">Hostname:</span> <span class="value">#{ds.hostname}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup rendered="#{ds.jdbcDatastore and user.configurationEditor}">
-								<div class="url">
-									<span class="label">URL:</span> <span class="value">#{ds.jdbcUrl}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup rendered="#{ds.usernameDatastore}">
-								<div class="url">
-									<span class="label">Username:</span> <span class="value">#{ds.username}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup rendered="#{ds.compositeDatastore}">
-								<div class="url">
-									<span class="label">Child datastores:</span> <span class="value"> #{ds.childDatastores} </span>
-								</div>
-							</h:panelGroup>
-
-							<div style="clear: both;"></div>
 						</div>
 					</div>
 				</ui:repeat>

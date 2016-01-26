@@ -1,0 +1,49 @@
+.panel-right {
+	float: right;
+	width: 30%;
+	clear: right;
+}
+
+.repositoryView {
+	width: 60%;
+	margin-left: 10px;
+	padding-left: 10px;
+	list-style: none;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+}
+
+.repositoryView li {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	padding-left: 34px;
+	line-height: 32px;
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+.repositoryView .folder {
+	background-image: url("../images/repository_folder.png");
+}
+
+.repositoryView .file {
+	background-image: url("../images/repository_file.png");
+}
+
+.repositoryView .file.DATASTORE {
+	background-image: url("../images/datastore_database.png");
+}
+
+.repositoryView .file.ANALYSIS_JOB {
+	background-image: url("../images/repository_file_job.png");
+}
+
+.repositoryView .file.ANALYSIS_RESULT {
+	background-image: url("../images/repository_file_result.png");
+}
+
+.repositoryView .file.TIMELINE_SPEC {
+	background-image: url("../images/repository_file_timeline.png");
+}

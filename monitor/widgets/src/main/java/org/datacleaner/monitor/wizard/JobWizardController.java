@@ -36,6 +36,7 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -115,7 +116,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
     @Override
     protected void wizardFinished(final String jobName) {
-        final Button closeButton = new Button("Close");
+        final Button closeButton = DCButtons.primaryButton(null, "Close");
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

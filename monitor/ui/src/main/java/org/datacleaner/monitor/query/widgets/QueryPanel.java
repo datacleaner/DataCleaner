@@ -26,7 +26,7 @@ import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.datacleaner.monitor.shared.model.TableIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.datacleaner.monitor.shared.widgets.SchemaTree;
@@ -70,7 +70,8 @@ public class QueryPanel extends FlowPanel {
         _tenant = tenant;
         _datastore = datastore;
         _queryTextArea = new TextArea();
-        _queryTextArea.setStyleName("QueryTextArea");
+        _queryTextArea.setStyleName("form-control");
+        _queryTextArea.setHeight("6.5em");
 
         if (tables.isEmpty()) {
             writeQuery(null);
@@ -79,8 +80,8 @@ public class QueryPanel extends FlowPanel {
 
         }
 
-        _executeQueryButton = new Button("Ok");
-        _executeQueryButton.addStyleName("ExecuteQueryButton");
+        _executeQueryButton = DCButtons.primaryButton(null, "Ok");
+        _executeQueryButton.addStyleName("btn-block");
 
         _loadingIcon = new LoadingIndicator();
         _loadingIcon.setVisible(false);
@@ -132,9 +133,8 @@ public class QueryPanel extends FlowPanel {
         add(schemaPanel);
         add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
-//        add(_queryTextArea);
         
-        ButtonPanel buttonPanel = new ButtonPanel();
+        final FlowPanel buttonPanel = new FlowPanel();
         buttonPanel.add(_queryTextArea);;
         buttonPanel.add(_executeQueryButton);
         

@@ -21,6 +21,7 @@ package org.datacleaner.monitor.dashboard.widgets;
 
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -64,7 +65,7 @@ public class LegendClickHandler implements ClickHandler {
             @Override
             public void execute() {
                 popupPanel.hide();
-                configureEditMetricPopup();
+                showEditMetricNamePopup();
             }
         });
         popupMenuBar.addItem(editMetricNameItem);
@@ -94,7 +95,7 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     private Button configureSaveColorButton(final DCPopupPanel popUp, final SelectColorPanel selectColorPanel) {
-        Button saveButton = new Button("Save");
+        Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.setVisible(true);
         saveButton.setTitle("Save");
         saveButton.addStyleName("SaveButton");
@@ -113,7 +114,7 @@ public class LegendClickHandler implements ClickHandler {
         return saveButton;
     }
 
-    private void configureEditMetricPopup() {
+    private void showEditMetricNamePopup() {
         final DCPopupPanel editMetricPopUp = new DCPopupPanel("Edit Metric Name");
         final TextBox textBox = new TextBox();
         textBox.setText(_data);
@@ -127,10 +128,9 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     private Button configureSaveButton(final DCPopupPanel popUp, final TextBox textBox) {
-        Button saveButton = new Button("Save");
+        Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.setVisible(true);
         saveButton.setTitle("Save");
-        saveButton.addStyleName("SaveButton");
         saveButton.addClickHandler(new ClickHandler() {
 
             @Override

@@ -25,6 +25,7 @@ import org.datacleaner.monitor.dashboard.model.TimelineData;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.datacleaner.monitor.util.Urls;
 
@@ -69,7 +70,7 @@ public class DrillToProfilingResultSelectHandler {
 
         final Integer index = _item.getDataIndex();
         GWT.log("Item index: " + index);
-        
+
         final Date date = _timelineData.getRows().get(index).getDate();
         final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
         final String resultFilePath = _timelineData.getRows().get(index).getResultFilePath();
@@ -80,7 +81,7 @@ public class DrillToProfilingResultSelectHandler {
         final String url = Urls.createRelativeUrl("repository" + resultFilePath) + bookmark;
         GWT.log("Drill to result URL: " + url);
 
-        final Button showResultButton = new Button("Show results");
+        final Button showResultButton = DCButtons.primaryButton("glyphicon-stats", "Show results");
         showResultButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -92,7 +93,7 @@ public class DrillToProfilingResultSelectHandler {
             }
         });
 
-        final Button showResultFullPageButton = new Button("Show results (new window)");
+        final Button showResultFullPageButton = DCButtons.defaultButton("glyphicon-stats", "Show results (new window)");
         showResultFullPageButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -100,10 +101,9 @@ public class DrillToProfilingResultSelectHandler {
             }
         });
 
-        final SafeHtml labelHtml = new SafeHtmlBuilder()
-                .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendEscaped(metricLabel)
-                .appendEscapedLines("\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?")
-                .toSafeHtml();
+        final SafeHtml labelHtml = new SafeHtmlBuilder().appendHtmlConstant(
+                "Do you wish to inspect the profiling result for ").appendEscaped(metricLabel).appendEscapedLines(
+                        "\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?").toSafeHtml();
 
         _popup.setWidget(new HTML(labelHtml));
         _popup.removeButtons();

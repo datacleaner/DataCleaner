@@ -59,7 +59,7 @@ public class ConfigurationFileController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadConfigurationFileHtml(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws Exception {
-        Map<String, String> outcome = uploadConfigurationFileJson(tenant, file);
+        final Map<String, String> outcome = uploadConfigurationFileJson(tenant, file);
         return "redirect:/repository?configuration_upload=" + outcome.get("status");
     }
 

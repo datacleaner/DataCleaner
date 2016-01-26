@@ -45,7 +45,7 @@ public class SelectColorPanel extends FlowPanel {
     private void renderColorPanel() {
         addStyleName("SelectColorPanel");
         HTML description = new HTML("<p>Please select one of the following approaches for determining the metric's color in the timeline.</p>");
-        description.setStyleName("descriptionLabel");
+        description.setStyleName("alert alert-info");
         add(description);
         _rbAutoSelectColor = new RadioButton("colorGroup", "Automatically apply a color");
         _rbManualSelectColor = new RadioButton("colorGroup", "Select color from palette");

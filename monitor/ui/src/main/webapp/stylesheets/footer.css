@@ -1,0 +1,39 @@
+body {
+	/* Margin bottom by footer height plus any margin */
+	margin-bottom: 110px; /* 10px margin */
+}
+
+.footer {
+	/* Set the fixed height of the footer here */
+	height: 110px;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	overflow: hidden;
+	padding-top: 1em;
+	background-color: black;
+	color: white;
+}
+
+.footer ul li {
+	border-bottom: 1px #999999 dotted;
+	color: #939393;
+	line-height: 20px;
+}
+
+.footer span {
+	font-size: 11px;
+	color: #949494;
+}
+
+.footer a {
+	text-decoration: none;
+	color: #999999;
+}
+
+.footer a:hover {
+	color: white;
+}

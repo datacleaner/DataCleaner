@@ -40,6 +40,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,8 +49,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.net.UrlEscapers;
+
 @Controller
-@RequestMapping("/{tenant}/jobs/{job}.analysis.xml")
+@RequestMapping("/{tenant}/jobs/{job:.+}.analysis.xml")
 public class JobFileController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobFileController.class);
@@ -58,11 +61,21 @@ public class JobFileController {
 
     @Autowired
     TenantContextFactory _contextFactory;
+    
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadAnalysisJobHtml(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
+        final Map<String, String> outcome = uploadAnalysisJobJson(tenant, jobName, file);
+        final String status = outcome.get("status");
+        final String filename = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
+        return "redirect:/repository?job_upload=" + status + "&job_filename=" + filename;
+    }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public Map<String, String> uploadAnalysisJob(@PathVariable("tenant") final String tenant,
+    public Map<String, String> uploadAnalysisJobJson(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
         if (file == null) {
             throw new IllegalArgumentException(

@@ -60,8 +60,6 @@ public class SecureGwtServlet extends RemoteServiceServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory.getLogger(SecureGwtServlet.class);
-
     protected TenantResolver getTenantResolver() {
         final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
         final TenantResolver tenantResolver = applicationContext.getBean(TenantResolver.class);
@@ -79,13 +77,22 @@ public class SecureGwtServlet extends RemoteServiceServlet {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
                 return;
             } catch (IOException e) {
-                logger.error("Failed to send error: " + exception.getMessage(), e);
+                getLogger().error("Failed to send error: " + exception.getMessage(), e);
             }
         } else {
-            logger.warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(), exception);
+            getLogger().warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(),
+                    exception);
         }
-
         super.doUnexpectedFailure(exception);
+    }
+
+    private Logger getLogger() {
+        /**
+         * Due to some timing issue the private static Logger would not log the
+         * errors to the log file(it is possible the logger is created too
+         * early). Therefore we create a logger, when it is needed
+         **/
+        return LoggerFactory.getLogger(SecureGwtServlet.class);
     }
 
     protected boolean hasRole(String roleName) {

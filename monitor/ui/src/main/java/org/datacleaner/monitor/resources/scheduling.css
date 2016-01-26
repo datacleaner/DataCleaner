@@ -17,59 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-.SchedulingOverviewPanel .ButtonPanel {
-	text-align: left;
-	padding-left: 0;
-}
-
-.SchedulingOverviewPanel .EmptyColumn {
-	min-height: 1em;
-	width: 5%;
-	float: left;
-}
-
-.SchedulingOverviewPanel .ColumnHeaders .EmptyColumn {
-	width: 1%;
-}
-
-.SchedulingOverviewPanel .ColumnHeaders .JobColumn {
-	padding-left: 4px;
-	width: 78%;
-	display: inline-block;
-}
-
-.SchedulingOverviewPanel .JobColumn {
-	min-height: 1em;
-	font-weight: bold;
-	font-size: 1.1em;
-}
-
-.SchedulingOverviewPanel .ScheduleColumn {
-	min-height: 1em;
-	width: 100%;
-}
-
 .SchedulingOverviewPanel .ScheduleColumn a, .SchedulingOverviewPanel .AlertsColumn a
 	{
-	color: #858383;;
-}
-
-.SchedulingOverviewPanel .AlertsColumn {
-	border-left: 1px solid #ddd;
-	margin-left: 10px;
-	min-height: 1em;
-	padding-left: 10px;
-}
-
-.SchedulingOverviewPanel .AlertsColumn div {
-	display: inline-table;
-}
-
-.SchedulingOverviewPanel .ActionsColumn {
-	min-height: 1em;
-	width: 20%;
-	display: inline-block;
-	vertical-align: text-bottom;
+	color: #858383;
 }
 
 .SchedulingOverviewPanel .ColumnHeaders {
@@ -80,32 +30,13 @@
 	padding: 8px 0;
 }
 
-/* a "row" representing a datastore header */
-.SchedulingOverviewPanel .ScheduleGroupPanel .HeadingLabel {
-	clear: both;
-	padding-left: 4px;
-	background-color: #D1D1D1;
-	color: #333;
-	margin-bottom: 0;
-	line-height: 34px;
+.ScheduleGroupPanel {
 }
 
-/* a "row" representing a single scheduled job */
-.SchedulingOverviewPanel .ScheduleGroupPanel .SchedulePanel {
-	border-bottom: 1px solid #f0f0f0;
-	clear: both;
-}
-
-.SchedulePanel {
-	font-size: 0.9em;
-	background-repeat: no-repeat;
-	background-position: 4px center;
-	min-height: 30px;
-}
-
-.SchedulePanel .ScheduleColumn a {
-	background-position: left center;
-	background-repeat: no-repeat;
+.ScheduleGroupPanel .HeadingLabel {
+	background-color: #e8e8e8;
+	padding: 0.2em;
+	padding-left: 0.6em;
 }
 
 .ScheduleGroupPanel a {
@@ -122,31 +53,29 @@
 	color: #377FCF;
 }
 
-.ExecuteButton {
-	background-color: #f0ad4e;
-	border-color: #eea236;
-	color: #fff;
-	padding: 5px 20px;
+.SchedulePanel {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.SchedulePanel .JobColumn {
 	font-weight: bold;
 }
 
-.ExecuteButton:hover {
-	background-color: #ff9600;
-	border-color: #eea236;
+.SchedulePanel .AlertsColumn {
+	border-left: 1px solid #f2f2f2;
+	margin-left: 10px;
+	min-height: 1em;
+	padding-left: 10px;
 }
 
-.LaunchButton {
-	
+.SchedulePanel .AlertsColumn div {
+	display: inline-table;
 }
 
-.SchedulePanel .ScheduleColumn .gwt-Label {
-	background-image: url("schedule.png");
-	background-repeat: no-repeat;
+.SchedulePanel .ScheduleColumn a {
 	background-position: left center;
-	padding-left: 26px;
-}
-
-.CustomizeSchedulePanel {
+	background-repeat: no-repeat;
 }
 
 .CustomizeSchedulePanel .triggerPanel {
@@ -159,27 +88,6 @@
 	padding-left: 4px;
 }
 
-.SchedulePanel .AlertsColumn {
-	background-color: white;
-}
-
-.SchedulePanel .ActionsColumn .gwt-Button {
-	margin-left: 0px;
-	margin-right: 2px;
-	margin-top: 3px;
-	margin-bottom: 3px;
-}
-
-.CreateAlertAnchor {
-	background-image: url("add.png");
-	background-repeat: no-repeat;
-	padding-left: 20px;
-}
-
-.AlertListPanel {
-	padding-left: 2px;
-}
-
 .AlertPanel {
 	margin-top: 2px;
 	margin-bottom: 2px;
@@ -189,10 +97,6 @@
 	line-height: 1em;
 	min-height: 18px;
 	padding-right: 5px;
-}
-
-.CustomizeAlertPanel {
-	min-height: 200px;
 }
 
 .CustomizeAlertPanel .gwt-RadioButton {

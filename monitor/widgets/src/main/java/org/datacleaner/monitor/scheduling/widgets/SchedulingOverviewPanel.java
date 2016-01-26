@@ -188,17 +188,20 @@ public class SchedulingOverviewPanel extends Composite {
     private Panel createHeaderPanel() {
         final FlowPanel panel = new FlowPanel();
         panel.addStyleName("ColumnHeaders");
+        panel.addStyleName("row");
 
-        panel.add(createLabel("Job name", "JobColumn"));
-        panel.add(createLabel("Actions", "ActionsColumn"));
+        panel.add(createLabel("Job name", "col-sm-9", "col-xs-8"));
+        panel.add(createLabel("Actions", "col-sm-3", "col-xs-4"));
 
         return panel;
     }
 
-    private Label createLabel(String text, String styleName) {
+    private Label createLabel(String text, String ... styleNames) {
         final Label label = new Label();
         label.setText(text);
-        label.setStyleName(styleName);
+        for (String styleName : styleNames) {
+            label.addStyleName(styleName);
+        }
         return label;
     }
 }

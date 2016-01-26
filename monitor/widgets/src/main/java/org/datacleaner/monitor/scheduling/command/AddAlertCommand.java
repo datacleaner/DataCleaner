@@ -68,6 +68,8 @@ public class AddAlertCommand implements Command {
 
                 final DCPopupPanel popup = new DCPopupPanel("Create alert: Define metric to monitor");
                 final Button nextButton = DCButtons.primaryButton("glyphicon-menu-right", "Next");
+                final CancelPopupButton cancelButton = new CancelPopupButton(popup);
+                
                 nextButton.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
@@ -95,16 +97,17 @@ public class AddAlertCommand implements Command {
                             }
                         });
 
-                        popup.removeButton(nextButton);
-                        popup.getButtonPanel().insert(saveButton, 0);
+                        popup.getButtonPanel().removeAllButtons();
+                        popup.addButton(nextButton);
+                        popup.addButton(cancelButton);
                         popup.setWidget(customizeAlertPanel);
                         popup.center();
                     }
                 });
-
+                
                 popup.setWidget(defineMetricPanel);
                 popup.addButton(nextButton);
-                popup.addButton(new CancelPopupButton(popup));
+                popup.addButton(cancelButton);
                 popup.center();
                 popup.show();
             }

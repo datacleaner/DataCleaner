@@ -1,7 +1,9 @@
+/*
 .container-fluid {
 	padding-right: 0;
 	padding-left: 0;
 }
+*/
 
 .container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse,
 	.container-fluid>.navbar-collapse {

@@ -192,7 +192,6 @@
 }
 
 .CustomizeAlertPanel {
-	width: 550px;
 	min-height: 200px;
 }
 
@@ -232,7 +231,6 @@
  * Job history and Execution log panels
  */
 .ExecutionStatusPanel {
-	width: 550px;
 	height: 300px;
 	text-align: center;
 }
@@ -253,13 +251,9 @@
 	display: block;
 }
 
-.JobHistoryPanel {
-	width: 720px;
-}
-
 .JobHistoryPanel .ExecutionCellList {
 	float: left;
-	width: 200px;
+	width: 20%;
 	overflow: auto;
 }
 
@@ -274,19 +268,15 @@
 }
 
 .JobHistoryPanel .ExecutionLogPanelTarget {
-	float: left;
-	width: 500px;
+	width: 70%;
+	float: right;
 	margin-left: 15px;
-}
-
-.ExecutionLogPanel {
-	width: 500px;
 }
 
 .LogOutputPanel {
 	background-color: #f0f0f0;
 	border: 1px solid #999;
-	height: 270px;
+	height: 18em;
 	overflow: scroll;
 }
 

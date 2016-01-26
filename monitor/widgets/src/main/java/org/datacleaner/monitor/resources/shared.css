@@ -153,23 +153,6 @@
 	padding: 10px;
 }
 
-.FormRow {
-	clear: left;
-}
-
-.FormRow .FormKey {
-	float: left;
-	width: 200px;
-}
-
-.FormRow .FormValue {
-	float: left;
-}
-
-.FormRow .gwt-Button {
-	float: right;
-}
-
 th.center, td.center {
 	text-align: center;
 }
@@ -354,7 +337,6 @@ div.center {
  * Styling for metric definition and selection
  */
 .DefineMetricPanel {
-	width: 400px;
 	min-height: 350px;
 }
 
@@ -384,9 +366,10 @@ div.center {
 }
 
 .SelectMetricPanel {
+	width: 90%;
 	margin-top: 10px;
 	padding: 10px;
-	border: 2px solid #67A2E7;
+	border-left: 2px solid #5594DD;
 }
 
 .SelectMetricPanel .DisplayNameBox {

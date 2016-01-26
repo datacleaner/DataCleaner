@@ -19,7 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.DataContext;
 import org.apache.metamodel.neo4j.Neo4jDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 

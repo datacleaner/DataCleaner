@@ -47,6 +47,7 @@ import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
@@ -536,7 +537,10 @@ public final class IconUtils {
             imagePath = COMPOSITE_IMAGEPATH;
         } else if (datastore instanceof DataHubDatastore) {
             imagePath = DATAHUB_IMAGEPATH;
+        } else if (datastore instanceof Neo4jDatastore){
+            imagePath = NEO4J_IMAGEPATH;
         }
+        
         return imagePath;
     }
 }

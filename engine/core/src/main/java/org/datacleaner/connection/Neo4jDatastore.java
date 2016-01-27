@@ -20,7 +20,6 @@
 package org.datacleaner.connection;
 
 import org.apache.metamodel.neo4j.Neo4jDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * Datastore providing access to Neo4j graph database
@@ -28,9 +27,6 @@ import org.apache.metamodel.util.SimpleTableDef;
 public class Neo4jDatastore extends UsageAwareDatastore<Neo4jDataContext> {
 
     private static final long serialVersionUID = 1L;
-
-    // TODO add this field to the constructor
-    private SimpleTableDef[] _tableDefs;
 
     private final String _hostname;
     private final int _port;
@@ -78,10 +74,6 @@ public class Neo4jDatastore extends UsageAwareDatastore<Neo4jDataContext> {
 
     public int getPort() {
         return _port;
-    }
-
-    public SimpleTableDef[] getTableDefs() {
-        return _tableDefs;
     }
 
     @Override

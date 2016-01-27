@@ -25,7 +25,7 @@
 			<header-line-number>0</header-line-number>
 		</csv-datastore>
 		
-		<neo4j-datastore name="best_movies_ever">
+		<neo4j-datastore name="mydb_neo4j">
 			<hostname>localhost</hostname>
 			<port>7474</port>
 			<username>neo4j</username>

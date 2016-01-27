@@ -51,6 +51,7 @@ import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
@@ -79,6 +80,7 @@ import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
+import org.datacleaner.windows.Neo4jDatastoreDialog;
 import org.datacleaner.windows.OdbDatastoreDialog;
 import org.datacleaner.windows.QueryWindow;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
@@ -382,6 +384,16 @@ public class DatastorePanel extends DCPanel {
                     dialog.open();
                 }
             });
+        } else if (datastore instanceof Neo4jDatastore){
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final Injector injector = getInjectorBuilder().with(Neo4jDatastore.class, datastore)
+                            .createInjector();
+                    final Neo4jDatastoreDialog dialog = injector.getInstance(Neo4jDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
         } else if (datastore instanceof CompositeDatastore) {
             editButton.addActionListener(new ActionListener() {
                 @Override
@@ -420,9 +432,12 @@ public class DatastorePanel extends DCPanel {
             return cassandraDatastore.getKeyspace();
         } else if (datastore instanceof MongoDbDatastore) {
             final MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
-            return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - "
-                    + mongoDbDatastore.getDatabaseName();
-        } else if (datastore instanceof CouchDbDatastore) {
+            return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - " + mongoDbDatastore
+                    .getDatabaseName();
+        }else if (datastore instanceof Neo4jDatastore) {
+            final Neo4jDatastore neo4jDbDatastore = (Neo4jDatastore) datastore;
+            return neo4jDbDatastore.getHostname() + ":" + neo4jDbDatastore.getPort();
+        }   else if (datastore instanceof CouchDbDatastore) {
             final CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
             return (couchDbDatastore.isSslEnabled() ? "https://" : "http://") + couchDbDatastore.getHostname() + ":"
                     + couchDbDatastore.getPort();

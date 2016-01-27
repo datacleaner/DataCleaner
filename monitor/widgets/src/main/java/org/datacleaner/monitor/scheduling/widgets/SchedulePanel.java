@@ -93,7 +93,7 @@ public class SchedulePanel extends Composite {
         final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
 
         if (_clientConfig.isJobEditor()) {
-            moreButton.addClickHandler(new CustomizeJobClickHandler(this,tenant,schedule,service));
+            moreButton.addClickHandler(new CustomizeJobClickHandler(this, tenant, schedule, service, _clientConfig));
         }
 
         if (_clientConfig.isScheduleEditor()) {

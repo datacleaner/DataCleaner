@@ -44,7 +44,7 @@
 				</div>
 			</h:panelGroup>
 			
-			<h:panelGroup rendered="#{user.configurationEditor}">
+			<h:panelGroup rendered="#{user.configurationEditor and monitorUIPreferences.showConfXmlUploadOptions}">
 				<div class="panel panel-default panel-right">
 					<div class="panel-heading">Configuration file</div>
 					<div class="panel-body">
@@ -77,7 +77,7 @@
 				</div>
 			</h:panelGroup>
 
-			<h:panelGroup rendered="#{user.admin}">
+			<h:panelGroup rendered="#{user.admin and monitorUIPreferences.showRepositoryUploadOptions}">
 				<div class="panel panel-default panel-right">
 					<div class="panel-heading">Repository backup + restore</div>
 					<div class="panel-body">

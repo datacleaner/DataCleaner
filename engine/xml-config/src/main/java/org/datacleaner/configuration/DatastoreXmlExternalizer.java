@@ -143,9 +143,9 @@ public class DatastoreXmlExternalizer {
         if (datastore instanceof DataHubDatastore) {
             return true;
         }
-        
-        if (datastore instanceof Neo4jDatastore){
-            return true; 
+
+        if (datastore instanceof Neo4jDatastore) {
+            return true;
         }
 
         return false;
@@ -220,9 +220,9 @@ public class DatastoreXmlExternalizer {
             elem = toElement((SalesforceDatastore) datastore);
         } else if (datastore instanceof DataHubDatastore) {
             elem = toElement((DataHubDatastore) datastore);
-        } else if (datastore instanceof Neo4jDatastore){
-            elem = toElement((Neo4jDatastore)datastore); 
-        }        else {
+        } else if (datastore instanceof Neo4jDatastore) {
+            elem = toElement((Neo4jDatastore) datastore);
+        } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
 
@@ -432,23 +432,24 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "https", datastore.isHttps());
         appendElement(ds, "acceptunverifiedsslpeers", datastore.isAcceptUnverifiedSslPeers());
         appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());
-        
+
         return ds;
     }
 
-    private Element toElement(Neo4jDatastore datastore){
+    private Element toElement(Neo4jDatastore datastore) {
         final Element ds = getDocument().createElement("neo4j-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!isNullOrEmpty(datastore.getDescription())){
+        if (!isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
         appendElement(ds, "hostname", datastore.getHostname());
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
-         
-        return ds; 
+
+        return ds;
     }
+
     /**
      * Externalizes a {@link ExcelDatastore} to a XML element.
      * 

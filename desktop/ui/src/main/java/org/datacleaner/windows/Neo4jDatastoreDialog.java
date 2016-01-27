@@ -137,7 +137,7 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
 
         final String username = _usernameTextField.getText();
         if (StringUtils.isNullOrEmpty(username)) {
-            setStatusError("Please enter username space");
+            setStatusError("Please enter username");
             return false;
         }
 

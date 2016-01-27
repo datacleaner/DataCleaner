@@ -52,8 +52,7 @@
 				</choice>
 				<element name="storage-provider" type="ab:storageProviderType"
 					minOccurs="0" maxOccurs="1" />
-				<element name="descriptor-providers" type="ab:descriptorProvidersType"
-					minOccurs="0" maxOccurs="1" />
+				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="0" maxOccurs="1" />
 
 				<!-- Deprecated - for backward compatibility -->
 				<choice minOccurs="0" maxOccurs="1">
@@ -129,36 +128,32 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="descriptorProvidersType">
-		<choice minOccurs="1" maxOccurs="unbounded">
-			<element name="custom-class" type="ab:customElementType"
-				minOccurs="1" maxOccurs="1">
-				<annotation>
-					<documentation>
-						Defines a custom component by a class name and properties values
-					</documentation>
-				</annotation>
-			</element>
-			<element name="classpath-scanner" type="ab:classpathScannerType"
-				minOccurs="0" maxOccurs="1">
-				<annotation>
-					<documentation>
-						Defines which java packages should be scanned for
-						components to use in DataCleaner.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="remote-components" type="ab:remoteComponentsType"
-				minOccurs="0" maxOccurs="1">
-				<annotation>
-					<documentation>
-						Defines connection to DC monitor which provides DataCleaner components
-						remotely over network.
-					</documentation>
-				</annotation>
-			</element>
-		</choice>
-	</complexType>
+    <complexType name="descriptorProvidersType">
+        <choice minOccurs="1" maxOccurs="unbounded">
+            <element name="custom-class" type="ab:customElementType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines a custom component by a class name and properties values
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="classpath-scanner" type="ab:classpathScannerType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines which java packages should be scanned for
+                        components to use in DataCleaner.
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="remote-components" type="ab:remoteComponentsType" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines connection to DC monitor which provides DataCleaner components remotely over network.
+                    </documentation>
+                </annotation>
+            </element>
+        </choice>
+    </complexType>
 
 	<complexType name="classpathScannerType">
 		<sequence>
@@ -176,30 +171,26 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="remoteComponentsType">
-		<sequence>
-			<element name="server" type="ab:remoteComponentServerType"
-				minOccurs="1" maxOccurs="unbounded" />
-		</sequence>
-		<attribute name="showAll" type="boolean" default="false" />
-	</complexType>
+    <complexType name="remoteComponentsType">
+        <sequence>
+            <element name="server" type="ab:remoteComponentServerType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="showAll" type="boolean" default="false"/>
+    </complexType>
 
-	<complexType name="remoteComponentServerType">
-		<sequence>
-			<element name="name" type="string" minOccurs="0" maxOccurs="1" />
-			<element name="url" type="string" minOccurs="0" maxOccurs="1">
-				<annotation>
-					<documentation>
-						Defines base URL to the DataCleaner monitor server
-					</documentation>
-				</annotation>
-			</element>
-			<element name="security-mode" type="string" minOccurs="0"
-				maxOccurs="1" />
-			<element name="username" type="string" minOccurs="0"
-				maxOccurs="1" />
-			<element name="password" type="string" minOccurs="0"
-				maxOccurs="1" />
+    <complexType name="remoteComponentServerType">
+        <sequence>
+            <element name="name" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="url" type="string" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>
+                        Defines base URL to the DataCleaner monitor server
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="security-mode" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
 		</sequence>
 	</complexType>
 
@@ -510,18 +501,32 @@
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
 				<all>
-					<element name="host" type="string" minOccurs="1" maxOccurs="1" />
-					<element name="port" type="int" minOccurs="1" maxOccurs="1" />
+					<element name="host" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="port" type="int" minOccurs="1"
+						maxOccurs="1" />
 					<element name="username" type="string" minOccurs="1"
 						maxOccurs="1" />
 					<element name="password" type="string" minOccurs="1"
 						maxOccurs="1" />
-					<element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
-					<element name="acceptunverifiedsslpeers" minOccurs="1"
-						maxOccurs="1" type="boolean" />
-					<element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum"
-						minOccurs="1" maxOccurs="1" />
+				    <element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
+				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
+						maxOccurs="1" />
 				</all>
+			</extension>
+		</complexContent>
+		
+	</complexType>
+		<complexType name="neo4jDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
@@ -681,10 +686,8 @@
 					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
-					<element name="keystore-path" minOccurs="0" maxOccurs="1"
-						type="string" />
-					<element name="keystore-password" minOccurs="0" maxOccurs="1"
-						type="string" />
+					<element name="keystore-path" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="keystore-password" minOccurs="0" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -750,19 +753,6 @@
 							</sequence>
 						</complexType>
 					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="neo4jDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>

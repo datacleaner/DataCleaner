@@ -808,7 +808,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
         final String username = getStringVariable("username", datastoreType.getUsername());
         final String password = getPasswordVariable("password", datastoreType.getPassword());
-        return new Neo4jDatastore(name, hostname, username, password);
+        return new Neo4jDatastore(name, hostname, port, username, password);
     }
 
     private Datastore createDatastore(String name, CassandraDatastoreType datastoreType) {

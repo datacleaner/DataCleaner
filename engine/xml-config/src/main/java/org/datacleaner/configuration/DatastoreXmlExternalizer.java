@@ -41,6 +41,7 @@ import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
@@ -142,6 +143,10 @@ public class DatastoreXmlExternalizer {
         if (datastore instanceof DataHubDatastore) {
             return true;
         }
+        
+        if (datastore instanceof Neo4jDatastore){
+            return true; 
+        }
 
         return false;
     }
@@ -215,7 +220,9 @@ public class DatastoreXmlExternalizer {
             elem = toElement((SalesforceDatastore) datastore);
         } else if (datastore instanceof DataHubDatastore) {
             elem = toElement((DataHubDatastore) datastore);
-        } else {
+        } else if (datastore instanceof Neo4jDatastore){
+            elem = toElement((Neo4jDatastore)datastore); 
+        }        else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
 
@@ -429,6 +436,19 @@ public class DatastoreXmlExternalizer {
         return ds;
     }
 
+    private Element toElement(Neo4jDatastore datastore){
+        final Element ds = getDocument().createElement("neo4j-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!isNullOrEmpty(datastore.getDescription())){
+            ds.setAttribute("description", datastore.getDescription());
+        }
+        appendElement(ds, "hostname", datastore.getHostname());
+        appendElement(ds, "port", datastore.getPort());
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
+         
+        return ds; 
+    }
     /**
      * Externalizes a {@link ExcelDatastore} to a XML element.
      * 

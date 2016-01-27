@@ -32,6 +32,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.util.xml.XmlUtils;
@@ -217,6 +218,18 @@ public class DatastoreXmlExternalizerTest extends TestCase {
         assertEquals(expectedConfiguration.toString(), transform(externalized));
     }
 
+    public void testExternalizeNeo4jDatastoreWithPassword() throws Exception {
+        
+        final Neo4jDatastore neo4jDatastore = new Neo4jDatastore("neo4j", "localhost", 7474, "neo4jUsername", "cleo");
+        final Element externalized = externalizer.externalize(neo4jDatastore);
+        assertEquals("<neo4j-datastore name=\"neo4j\">\n" 
+                    + "  <hostname>localhost</hostname>\n" 
+                    + "  <port>7474</port>\n"
+                    + "  <username>neo4jUsername</username>\n"
+                    + "  <password>enc:4efGXfL3VSE=</password>\n"    
+                    + "</neo4j-datastore>\n",transform(externalized));        
+        
+    }
     private String transform(Element elem) throws Exception {
         return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }

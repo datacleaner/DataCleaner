@@ -27,7 +27,6 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.neo4j.Neo4jDataContext;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
@@ -92,7 +91,7 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
         });
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
-            _portTextField.setText("" + Neo4jDataContext.DEFAULT_PORT);
+            _portTextField.setText("" + Neo4jDatastore.DEFAULT_PORT);
             _usernameTextField.setText("neo4j");
             _passwordTextField.setText("neo4j");
         } else {

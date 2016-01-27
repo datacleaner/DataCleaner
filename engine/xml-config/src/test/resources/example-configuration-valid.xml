@@ -24,6 +24,13 @@
 			<separator-char>,</separator-char>
 			<header-line-number>0</header-line-number>
 		</csv-datastore>
+		
+		<neo4j-datastore name="best_movies_ever">
+			<hostname>localhost</hostname>
+			<port>7474</port>
+			<username>neo4j</username>
+			<password>neo4j</password>
+		</neo4j-datastore>
 
 		<composite-datastore name="composite_datastore">
 			<datastore-name>persons_csv</datastore-name>

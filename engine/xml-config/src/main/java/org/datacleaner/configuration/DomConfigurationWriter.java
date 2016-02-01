@@ -23,6 +23,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
@@ -42,8 +43,17 @@ import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
+import org.datacleaner.reference.DatastoreDictionary;
+import org.datacleaner.reference.DatastoreSynonymCatalog;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.RegexStringPattern;
+import org.datacleaner.reference.SimpleDictionary;
+import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.TextFileDictionary;
+import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.util.SecurityUtils;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -54,11 +64,12 @@ import org.w3c.dom.NodeList;
 import com.google.common.base.Strings;
 
 /**
- * Utility class for externalizing datastores to the XML format of conf.xml.
+ * Utility class for writing configuration elements to the XML format of
+ * conf.xml.
  * 
  * Generally speaking, XML elements created by this class, and placed in a the
- * <datastore-catalog> element of conf.xml, will be readable by
- * {@link JaxbConfigurationReader}.
+ * <datastore-catalog> and <reference-data-catalog> elements of conf.xml, will
+ * be readable by {@link JaxbConfigurationReader}.
  */
 public class DomConfigurationWriter {
 
@@ -144,6 +155,19 @@ public class DomConfigurationWriter {
         }
 
         return false;
+    }
+
+    public boolean isExternalizable(Dictionary dict) {
+        return dict instanceof SimpleDictionary || dict instanceof TextFileDictionary
+                || dict instanceof DatastoreDictionary;
+    }
+
+    public boolean isExternalizable(SynonymCatalog sc) {
+        return sc instanceof TextFileSynonymCatalog || sc instanceof DatastoreSynonymCatalog;
+    }
+
+    public boolean isExternalizable(StringPattern sp) {
+        return sp instanceof SimpleStringPattern || sp instanceof RegexStringPattern;
     }
 
     /**
@@ -267,6 +291,181 @@ public class DomConfigurationWriter {
         return elem;
     }
 
+    public Element externalize(Dictionary dictionary) throws UnsupportedOperationException {
+        if (dictionary == null) {
+            throw new IllegalArgumentException("Dictionary cannot be null");
+        }
+
+        final Element elem;
+
+        if (dictionary instanceof SimpleDictionary) {
+            elem = toElement((SimpleDictionary) dictionary);
+        } else if (dictionary instanceof TextFileDictionary) {
+            elem = toElement((TextFileDictionary) dictionary);
+        } else if (dictionary instanceof DatastoreDictionary) {
+            elem = toElement((DatastoreDictionary) dictionary);
+        } else {
+            throw new UnsupportedOperationException("Non-supported dictionary: " + dictionary);
+        }
+
+        final Element dictionariesElement = getDictionariesElement();
+        dictionariesElement.appendChild(elem);
+
+        onDocumentChanged(getDocument());
+
+        return elem;
+    }
+
+    public Element externalize(SynonymCatalog sc) throws UnsupportedOperationException {
+        if (sc == null) {
+            throw new IllegalArgumentException("SynonymCatalog cannot be null");
+        }
+
+        final Element elem;
+
+        if (sc instanceof TextFileSynonymCatalog) {
+            elem = toElement((TextFileSynonymCatalog) sc);
+        } else if (sc instanceof DatastoreSynonymCatalog) {
+            elem = toElement((DatastoreSynonymCatalog) sc);
+        } else {
+            throw new UnsupportedOperationException("Non-supported synonym catalog: " + sc);
+        }
+
+        final Element synonymCatalogsElement = getSynonymCatalogsElement();
+        synonymCatalogsElement.appendChild(elem);
+
+        onDocumentChanged(getDocument());
+
+        return elem;
+    }
+
+    public Element externalize(StringPattern sp) throws UnsupportedOperationException {
+        if (sp == null) {
+            throw new IllegalArgumentException("StringPattern cannot be null");
+        }
+
+        final Element elem;
+
+        if (sp instanceof SimpleStringPattern) {
+            elem = toElement((SimpleStringPattern) sp);
+        } else if (sp instanceof RegexStringPattern) {
+            elem = toElement((RegexStringPattern) sp);
+        } else {
+            throw new UnsupportedOperationException("Non-supported string pattern: " + sp);
+        }
+
+        final Element stringPatternsElement = getStringPatternsElement();
+        stringPatternsElement.appendChild(elem);
+
+        onDocumentChanged(getDocument());
+
+        return elem;
+    }
+
+    private Element toElement(RegexStringPattern sp) {
+        final Element elem = getDocument().createElement("regex-pattern");
+        elem.setAttribute("name", sp.getName());
+        if (!Strings.isNullOrEmpty(sp.getDescription())) {
+            elem.setAttribute("description", sp.getDescription());
+        }
+
+        appendElement(elem, "expression", sp.getExpression());
+        appendElement(elem, "match-entire-string", sp.isMatchEntireString());
+
+        return elem;
+    }
+
+    private Element toElement(SimpleStringPattern sp) {
+        final Element elem = getDocument().createElement("simple-pattern");
+        elem.setAttribute("name", sp.getName());
+        if (!Strings.isNullOrEmpty(sp.getDescription())) {
+            elem.setAttribute("description", sp.getDescription());
+        }
+
+        appendElement(elem, "expression", sp.getExpression());
+
+        return elem;
+    }
+
+    private Element toElement(DatastoreSynonymCatalog sc) {
+        final Element elem = getDocument().createElement("datastore-synonym-catalog");
+        elem.setAttribute("name", sc.getName());
+        if (!Strings.isNullOrEmpty(sc.getDescription())) {
+            elem.setAttribute("description", sc.getDescription());
+        }
+
+        appendElement(elem, "datastore-name", sc.getDatastoreName());
+        appendElement(elem, "master-term-column-path", sc.getMasterTermColumnPath());
+
+        final String[] synonymColumnPaths = sc.getSynonymColumnPaths();
+        for (String path : synonymColumnPaths) {
+            appendElement(elem, "synonym-column-path", path);
+        }
+
+        appendElement(elem, "load-into-memory", sc.isLoadIntoMemory());
+
+        return elem;
+    }
+
+    private Element toElement(TextFileSynonymCatalog sc) {
+        final Element elem = getDocument().createElement("text-file-synonym-catalog");
+        elem.setAttribute("name", sc.getName());
+        if (!Strings.isNullOrEmpty(sc.getDescription())) {
+            elem.setAttribute("description", sc.getDescription());
+        }
+
+        appendElement(elem, "filename", sc.getFilename());
+        appendElement(elem, "encoding", sc.getEncoding());
+        appendElement(elem, "case-sensitive", sc.isCaseSensitive());
+
+        return elem;
+    }
+
+    private Element toElement(SimpleDictionary dictionary) {
+        final Element elem = getDocument().createElement("value-list-dictionary");
+        elem.setAttribute("name", dictionary.getName());
+        if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
+            elem.setAttribute("description", dictionary.getDescription());
+        }
+
+        final Set<String> values = dictionary.getValueSet();
+        for (String value : values) {
+            appendElement(elem, "value", value);
+        }
+
+        appendElement(elem, "case-sensitive", dictionary.isCaseSensitive());
+
+        return elem;
+    }
+
+    private Element toElement(TextFileDictionary dictionary) {
+        final Element elem = getDocument().createElement("text-file-dictionary");
+        elem.setAttribute("name", dictionary.getName());
+        if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
+            elem.setAttribute("description", dictionary.getDescription());
+        }
+
+        appendElement(elem, "filename", dictionary.getFilename());
+        appendElement(elem, "encoding", dictionary.getEncoding());
+        appendElement(elem, "case-sensitive", dictionary.isCaseSensitive());
+
+        return elem;
+    }
+
+    private Element toElement(DatastoreDictionary dictionary) {
+        final Element elem = getDocument().createElement("datastore-dictionary");
+        elem.setAttribute("name", dictionary.getName());
+        if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
+            elem.setAttribute("description", dictionary.getDescription());
+        }
+
+        appendElement(elem, "datastore-name", dictionary.getDatastoreName());
+        appendElement(elem, "column-path", dictionary.getQualifiedColumnName());
+        appendElement(elem, "load-into-memory", dictionary.isLoadIntoMemory());
+
+        return elem;
+    }
+
     /**
      * Overrideable method, invoked whenever the document has changed
      * 
@@ -303,7 +502,7 @@ public class DomConfigurationWriter {
     public Element toElement(JdbcDatastore datastore) {
         final Element ds = getDocument().createElement("jdbc-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -357,7 +556,7 @@ public class DomConfigurationWriter {
     public Element toElement(ElasticSearchDatastore datastore) {
         final Element ds = getDocument().createElement("elasticsearch-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -385,7 +584,7 @@ public class DomConfigurationWriter {
     public Element toElement(MongoDbDatastore datastore) {
         final Element ds = getDocument().createElement("mongodb-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -407,7 +606,7 @@ public class DomConfigurationWriter {
     public Element toElement(CouchDbDatastore datastore) {
         final Element ds = getDocument().createElement("couchdb-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -429,7 +628,7 @@ public class DomConfigurationWriter {
     public Element toElement(SalesforceDatastore datastore) {
         final Element ds = getDocument().createElement("salesforce-datastore");
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -484,7 +683,7 @@ public class DomConfigurationWriter {
         final Element ds = getDocument().createElement("excel-datastore");
 
         ds.setAttribute("name", datastore.getName());
-        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
@@ -510,7 +709,7 @@ public class DomConfigurationWriter {
         datastoreElement.setAttribute("name", datastore.getName());
 
         final String description = datastore.getDescription();
-        if (!StringUtils.isNullOrEmpty(description)) {
+        if (!Strings.isNullOrEmpty(description)) {
             datastoreElement.setAttribute("description", description);
         }
 
@@ -624,8 +823,7 @@ public class DomConfigurationWriter {
         Element elem = getChildElementByTagName(element, tagName);
         if (elem == null) {
             elem = getDocument().createElement(tagName);
-            final Element configurationFileDocumentElement = getDocumentElement();
-            configurationFileDocumentElement.appendChild(elem);
+            element.appendChild(elem);
         }
         return elem;
     }

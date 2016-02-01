@@ -200,11 +200,6 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				}
 			});
 
-			if (!_catalog.isStringPatternMutable(name)) {
-				editButton.setEnabled(false);
-				removeButton.setEnabled(false);
-			}
-
 			final DCPanel stringPatternPanel = new DCPanel();
 			stringPatternPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 			WidgetUtils.addToGridBag(stringPatternLabel, stringPatternPanel, 0, 0, 1.0, 0.0);

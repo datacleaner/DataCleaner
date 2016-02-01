@@ -35,8 +35,8 @@ import org.datacleaner.api.Configured;
  * will match values against different dictionaries.
  * 
  * All reference data types ( {@link Dictionary} , {@link SynonymCatalog},
- * {@link StringPattern} etc.) is injectable into components using the @Configured
- * annotation.
+ * {@link StringPattern} etc.) is injectable into components using
+ * the @Configured annotation.
  * 
  * @see Configured
  */
@@ -58,6 +58,16 @@ public interface ReferenceDataCatalog extends Serializable {
     public Dictionary getDictionary(String name);
 
     /**
+     * Determines if the catalog contains a particular dictionary
+     * 
+     * @param name
+     * @return
+     */
+    public default boolean containsDictionary(String name) {
+        return getDictionary(name) != null;
+    }
+
+    /**
      * Gets the names of all registered {@link SynonymCatalog}.
      * 
      * @return
@@ -73,6 +83,16 @@ public interface ReferenceDataCatalog extends Serializable {
     public SynonymCatalog getSynonymCatalog(String name);
 
     /**
+     * Determines if the catalog contains a particular synonym catalog
+     * 
+     * @param name
+     * @return
+     */
+    public default boolean containsSynonymCatalog(String name) {
+        return getSynonymCatalog(name) != null;
+    }
+
+    /**
      * Gets the names of all registered {@link StringPattern}s.
      * 
      * @return
@@ -86,4 +106,14 @@ public interface ReferenceDataCatalog extends Serializable {
      * @return
      */
     public StringPattern getStringPattern(String name);
+
+    /**
+     * Determines if the catalog contains a particular string pattern
+     * 
+     * @param name
+     * @return
+     */
+    public default boolean containsStringPattern(String name) {
+        return getStringPattern(name) != null;
+    }
 }

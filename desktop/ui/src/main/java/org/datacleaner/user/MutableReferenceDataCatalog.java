@@ -20,8 +20,10 @@
 package org.datacleaner.user;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -42,24 +44,22 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<Dictionary> _dictionaries;
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
-	private final List<SynonymCatalog> _synonymCatalogs;
 	private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<SynonymCatalogChangeListener>();
-	private final List<StringPattern> _stringPatterns;
 	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
 	private final LifeCycleHelper _lifeCycleHelper;
+    private final DomConfigurationWriter _configurationWriter;
+    private final UserPreferences _userPreferences;
 
 	/**
 	 * No-args constructor, mostly usable for testing code.
 	 */
 	public MutableReferenceDataCatalog() {
 		_immutableDelegate = new ReferenceDataCatalogImpl();
+		_configurationWriter = new DomConfigurationWriter();
+		_userPreferences = new UserPreferencesImpl(null);
 		_lifeCycleHelper = new LifeCycleHelper(null, true);
-		_dictionaries = new ArrayList<Dictionary>();
-		_synonymCatalogs = new ArrayList<SynonymCatalog>();
-		_stringPatterns = new ArrayList<StringPattern>();
 	}
 
 	/**
@@ -69,20 +69,19 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	 * @param datastoreCatalog
 	 * @param userPreferences
 	 */
-	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, final UserPreferences userPreferences,
-			LifeCycleHelper lifeCycleHelper) {
+	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, final DomConfigurationWriter configurationWriter, final UserPreferences userPreferences,
+			final LifeCycleHelper lifeCycleHelper) {
 		_immutableDelegate = immutableDelegate;
+		_configurationWriter = configurationWriter;
+		_userPreferences = userPreferences;
 		_lifeCycleHelper = lifeCycleHelper;
-		_dictionaries = userPreferences.getUserDictionaries();
-		_synonymCatalogs = userPreferences.getUserSynonymCatalogs();
-		_stringPatterns = userPreferences.getUserStringPatterns();
 
 		String[] names = _immutableDelegate.getDictionaryNames();
 		for (String name : names) {
 			if (containsDictionary(name)) {
 				// remove any copies of the dictionary - the immutable (XML)
 				// version should always win
-				_dictionaries.remove(getDictionary(name));
+				removeDictionary(getDictionary(name), false);
 			}
 			addDictionary(_immutableDelegate.getDictionary(name));
 		}
@@ -92,7 +91,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			if (containsSynonymCatalog(name)) {
 				// remove any copies of the synonym catalog - the immutable
 				// (XML) version should always win
-				_synonymCatalogs.remove(getSynonymCatalog(name));
+				removeSynonymCatalog(getSynonymCatalog(name), false);
 			}
 			addSynonymCatalog(_immutableDelegate.getSynonymCatalog(name));
 		}
@@ -100,96 +99,64 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		names = _immutableDelegate.getStringPatternNames();
 		for (String name : names) {
 			if (containsStringPattern(name)) {
-				_stringPatterns.remove(getStringPattern(name));
+				removeStringPattern(getStringPattern(name), false);
 			}
 			addStringPattern(_immutableDelegate.getStringPattern(name));
 		}
 
-		assignProvidedProperties(_dictionaries.toArray());
-		assignProvidedProperties(_synonymCatalogs.toArray());
-		assignProvidedProperties(_stringPatterns.toArray());
+		assignProvidedProperties(_userPreferences.getUserDictionaries());
+		assignProvidedProperties(_userPreferences.getUserSynonymCatalogs());
+		assignProvidedProperties(_userPreferences.getUserStringPatterns());
 	}
 
-	private void assignProvidedProperties(Object... objects) {
+    private void assignProvidedProperties(Collection<?> objects) {
 		for (Object object : objects) {
-			ComponentDescriptor<?> descriptor = Descriptors.ofComponent(object.getClass());
-			_lifeCycleHelper.assignProvidedProperties(descriptor, object);
+		    assignProvidedProperties(object);
 		}
 	}
 
-	@Override
+	private void assignProvidedProperties(Object object) {
+	    final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(object.getClass());
+        _lifeCycleHelper.assignProvidedProperties(descriptor, object);
+    }
+
+    @Override
 	public String[] getDictionaryNames() {
-		String[] result = new String[_dictionaries.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = _dictionaries.get(i).getName();
-		}
-		return result;
+	    return _userPreferences.getUserDictionaries().stream().map(d -> d.getName()).toArray(size -> new String[size]);
 	}
-
-	public boolean isDictionaryMutable(String name) {
-		return _immutableDelegate.getDictionary(name) == null;
-	}
-
-	public boolean containsDictionary(String name) {
-		for (Dictionary dictionary : _dictionaries) {
-			if (name.equals(dictionary.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isSynonymCatalogMutable(String name) {
-		return _immutableDelegate.getSynonymCatalog(name) == null;
-	}
-
-	public boolean isStringPatternMutable(String name) {
-		return _immutableDelegate.getStringPattern(name) == null;
-	}
-
-	public boolean containsSynonymCatalog(String name) {
-		for (SynonymCatalog sc : _synonymCatalogs) {
-			if (name.equals(sc.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean containsStringPattern(String name) {
-		for (StringPattern sp : _stringPatterns) {
-			if (name.equals(sp.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
+	
 	public void addDictionary(Dictionary dict) {
 		String name = dict.getName();
 		if (StringUtils.isNullOrEmpty(name)) {
 			throw new IllegalArgumentException("Dictionary has no name!");
 		}
-		for (Dictionary dictionary : _dictionaries) {
+		final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
+		for (Dictionary dictionary : dictionaries) {
 			if (name.equals(dictionary.getName())) {
 				throw new IllegalArgumentException("Dictionary name '" + name + "' is not unique!");
 			}
 		}
 		assignProvidedProperties(dict);
-		_dictionaries.add(dict);
+		dictionaries.add(dict);
 		for (DictionaryChangeListener listener : _dictionaryListeners) {
 			listener.onAdd(dict);
 		}
 	}
-
+	
 	public void removeDictionary(Dictionary dict) {
-		if (!isDictionaryMutable(dict.getName())) {
-			throw new IllegalArgumentException("Dictionary '" + dict.getName() + " is not removeable");
-		}
-		if (_dictionaries.remove(dict)) {
+	    removeDictionary(dict, true);
+	}
+
+	public void removeDictionary(Dictionary dict, boolean externalize) {
+	    final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
+		if (dictionaries.remove(dict)) {
 			for (DictionaryChangeListener listener : _dictionaryListeners) {
 				listener.onRemove(dict);
 			}
+		}
+		if (externalize) {
+		    _configurationWriter.removeDictionary(dict.getName());
+		    _userPreferences.save();
 		}
 	}
 
@@ -198,33 +165,40 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		if (StringUtils.isNullOrEmpty(name)) {
 			throw new IllegalArgumentException("StringPattern has no name!");
 		}
-		for (StringPattern stringPattern : _stringPatterns) {
+		final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
+		for (StringPattern stringPattern : stringPatterns) {
 			if (name.equals(stringPattern.getName())) {
 				throw new IllegalArgumentException("StringPattern name '" + name + "' is not unique!");
 			}
 		}
 		assignProvidedProperties(sp);
-		_stringPatterns.add(sp);
+		stringPatterns.add(sp);
 		for (StringPatternChangeListener listener : _stringPatternListeners) {
 			listener.onAdd(sp);
 		}
 	}
-
+	
 	public void removeStringPattern(StringPattern sp) {
-		if (!isStringPatternMutable(sp.getName())) {
-			throw new IllegalArgumentException("StringPattern '" + sp.getName() + " is not removeable");
-		}
-		if (_stringPatterns.remove(sp)) {
+	    removeStringPattern(sp, true);
+	}
+
+	public void removeStringPattern(StringPattern sp, boolean externalize) {
+	    final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
+		if (stringPatterns.remove(sp)) {
 			for (StringPatternChangeListener listener : _stringPatternListeners) {
 				listener.onRemove(sp);
 			}
+		}
+		if (externalize) {
+		    _configurationWriter.removeStringPattern(sp.getName());
+		    _userPreferences.save();
 		}
 	}
 
 	@Override
 	public Dictionary getDictionary(String name) {
 		if (name != null) {
-			for (Dictionary dict : _dictionaries) {
+			for (Dictionary dict : _userPreferences.getUserDictionaries()) {
 				if (name.equals(dict.getName())) {
 					return dict;
 				}
@@ -235,11 +209,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	@Override
 	public String[] getSynonymCatalogNames() {
-		String[] result = new String[_synonymCatalogs.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = _synonymCatalogs.get(i).getName();
-		}
-		return result;
+	    return _userPreferences.getUserSynonymCatalogs().stream().map(d -> d.getName()).toArray(size -> new String[size]);
 	}
 
 	public void addSynonymCatalog(SynonymCatalog sc) {
@@ -247,34 +217,41 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		if (StringUtils.isNullOrEmpty(name)) {
 			throw new IllegalArgumentException("SynonymCatalog has no name!");
 		}
-		for (SynonymCatalog synonymCatalog : _synonymCatalogs) {
+		final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
+		for (SynonymCatalog synonymCatalog : synonymCatalogs) {
 			if (name.equals(synonymCatalog.getName())) {
 				throw new IllegalArgumentException("SynonymCatalog name '" + name + "' is not unique!");
 			}
 		}
 
 		assignProvidedProperties(sc);
-		_synonymCatalogs.add(sc);
+		synonymCatalogs.add(sc);
 		for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
 			listener.onAdd(sc);
 		}
 	}
 
 	public void removeSynonymCatalog(SynonymCatalog sc) {
-		if (!isSynonymCatalogMutable(sc.getName())) {
-			throw new IllegalArgumentException("Synonym catalog '" + sc.getName() + " is not removeable");
-		}
-		if (_synonymCatalogs.remove(sc)) {
-			for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
-				listener.onRemove(sc);
-			}
-		}
+	    removeSynonymCatalog(sc, true);
 	}
 
+	public void removeSynonymCatalog(SynonymCatalog sc, boolean externalize) {
+        final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
+	    if (synonymCatalogs.remove(sc)) {
+	        for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+	            listener.onRemove(sc);
+	        }
+	    }
+	    if (externalize) {
+	        _configurationWriter.removeSynonymCatalog(sc.getName());
+	        _userPreferences.save();
+	    }
+	}
+	
 	@Override
 	public SynonymCatalog getSynonymCatalog(String name) {
 		if (name != null) {
-			for (SynonymCatalog sc : _synonymCatalogs) {
+			for (SynonymCatalog sc : _userPreferences.getUserSynonymCatalogs()) {
 				if (name.equals(sc.getName())) {
 					return sc;
 				}
@@ -285,17 +262,13 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	@Override
 	public String[] getStringPatternNames() {
-		String[] names = new String[_stringPatterns.size()];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = _stringPatterns.get(i).getName();
-		}
-		return names;
+	    return _userPreferences.getUserStringPatterns().stream().map(d -> d.getName()).toArray(size -> new String[size]);
 	}
 
 	@Override
 	public StringPattern getStringPattern(String name) {
 		if (name != null) {
-			for (StringPattern sp : _stringPatterns) {
+			for (StringPattern sp : _userPreferences.getUserStringPatterns()) {
 				if (name.equals(sp.getName())) {
 					return sp;
 				}

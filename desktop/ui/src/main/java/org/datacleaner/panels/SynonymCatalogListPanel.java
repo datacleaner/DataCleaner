@@ -197,11 +197,6 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				}
 			});
 
-			if (!_catalog.isSynonymCatalogMutable(name)) {
-				editButton.setEnabled(false);
-				removeButton.setEnabled(false);
-			}
-
 			final DCPanel synonymCatalogPanel = new DCPanel();
 			synonymCatalogPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 			WidgetUtils.addToGridBag(synonymCatalogLabel, synonymCatalogPanel, 0, 0, 1.0, 0.0);

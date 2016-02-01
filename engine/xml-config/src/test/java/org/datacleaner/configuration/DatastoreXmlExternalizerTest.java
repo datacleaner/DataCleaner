@@ -42,14 +42,14 @@ import junit.framework.TestCase;
 
 public class DatastoreXmlExternalizerTest extends TestCase {
 
-    private DatastoreXmlExternalizer externalizer;
+    private DomConfigurationWriter externalizer;
 
     private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        externalizer = new DatastoreXmlExternalizer();
+        externalizer = new DomConfigurationWriter();
     }
 
     public void testExternalizeCsvDatastore() throws Exception {

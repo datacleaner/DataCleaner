@@ -132,7 +132,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         final DataContext dataContext;
 
         if (_tableDefs == null || _tableDefs.length == 0) {
-            if (_clientType == ClientType.NODE || _clientType == ClientType.TRANSPORT) {
+            if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
                 dataContext = new ElasticSearchDataContext((Client) client, _indexName);
             } else {
                 dataContext = new ElasticSearchRestDataContext((JestClient) client, _indexName);

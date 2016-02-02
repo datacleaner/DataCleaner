@@ -221,7 +221,7 @@ public class CreateTableDialog extends AbstractDialog {
             }
         });
         
-        final JButton removeAllColumnsButton = WidgetFactory.createSmallButton("Remove all column",
+        final JButton removeAllColumnsButton = WidgetFactory.createSmallButton("Remove all columns",
                 IconUtils.ACTION_REMOVE);
         removeAllColumnsButton.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
         removeAllColumnsButton.addActionListener(new ActionListener() {

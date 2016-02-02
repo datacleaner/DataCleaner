@@ -159,7 +159,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     private JestClient getClientForRestProtocol() {
         final JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + _port).multiThreaded(true)
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(true)
                 .build());
         final JestClient client = factory.getObject();
         return client;

@@ -23,8 +23,9 @@ import java.io.Closeable;
 import java.util.Iterator;
 
 public interface DictionaryConnection extends Closeable {
-
     public boolean containsValue(String value);
+
+    public Iterator<String> getLengthSortedValues();
 
     public Iterator<String> getAllValues();
 

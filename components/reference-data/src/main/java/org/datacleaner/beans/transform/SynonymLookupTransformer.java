@@ -21,8 +21,10 @@ package org.datacleaner.beans.transform;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
@@ -44,6 +46,8 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.SynonymCatalogConnection;
 
+import com.google.common.base.Joiner;
+
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with
  * it's master term.
@@ -56,6 +60,20 @@ import org.datacleaner.reference.SynonymCatalogConnection;
         @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
+    public enum ReplacedSynonymsType implements HasName {
+        STRING("String"), LIST("List");
+
+        private final String _name;
+
+        ReplacedSynonymsType(String name) {
+            _name = name;
+        }
+
+        @Override
+        public String getName() {
+            return _name;
+        }
+    }
 
     @Configured
     InputColumn<String> column;
@@ -70,6 +88,11 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     @Configured
     @Description("Tokenize and look up every token of the input, rather than looking up the complete input string?")
     boolean lookUpEveryToken = false;
+
+    @Inject
+    @Configured
+    @Description("How should the synonyms and the master terms that replaced them be returned?" +" As a concatenated String or as a List.")
+    ReplacedSynonymsType replacedSynonymsType = ReplacedSynonymsType.STRING;
 
     @Provided
     DataCleanerConfiguration configuration;
@@ -91,10 +114,16 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     @Override
     public OutputColumns getOutputColumns() {
         if (lookUpEveryToken) {
+            final Class[] columnTypes;
+            if( replacedSynonymsType == ReplacedSynonymsType.STRING) {
+                columnTypes = new Class[] { String.class, String.class, String.class };
+            } else {
+                columnTypes = new Class[] { String.class, List.class, List.class };
+            }
+
             return new OutputColumns(
                     new String[] { column.getName() + " (synonyms replaced)", column.getName() + " (synonyms found)",
-                            column.getName() + " (master terms found)" },
-                    new Class[] { String.class, List.class, List.class });
+                            column.getName() + " (master terms found)" }, columnTypes);
         } else {
             return new OutputColumns(String.class,
                     new String[] { column.getName() + " (synonyms replaced)" });
@@ -131,9 +160,14 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         }
 
         if (lookUpEveryToken) {
-            SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(originalValue);
-            return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(),
-                    replacement.getMasterTerms() };
+            final SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(originalValue);
+            if (replacedSynonymsType == ReplacedSynonymsType.STRING) {
+                return new Object[] { replacement.getReplacedString(), Joiner.on(' ').join(replacement.getSynonyms()),
+                        Joiner.on(' ').join(replacement.getMasterTerms()) };
+            } else {
+                return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(),
+                        replacement.getMasterTerms() };
+            }
         } else {
             final String replacedValue = lookup(originalValue);
             return new String[] { replacedValue };

@@ -133,6 +133,8 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     @Override
     public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
         return new SynonymCatalogConnection() {
+
+
             SortedMap<String, String> _sortedSynonymMap = createSortedSynonymMap();
 
             @Override

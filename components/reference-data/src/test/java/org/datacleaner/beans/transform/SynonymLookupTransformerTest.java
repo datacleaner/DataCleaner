@@ -70,6 +70,7 @@ public class SynonymLookupTransformerTest extends TestCase {
         // with retain original value
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
         transformer.lookUpEveryToken = true;
+        transformer.replacedSynonymsType = SynonymLookupTransformer.ReplacedSynonymsType.LIST;
         transformer.init();
         assertEquals(3, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));

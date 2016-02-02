@@ -48,9 +48,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 @Named("Remove dictionary matches")
@@ -94,8 +92,8 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Provided
     DataCleanerConfiguration _configuration;
 
-    private DictionaryConnection dictionaryConnection;
-    private List<String> dictionary;
+    private DictionaryConnection _dictionaryConnection;
+    private List<String> dictionaryValues;
 
     public RemoveDictionaryMatchesTransformer() {
     }
@@ -134,20 +132,20 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     @Initialize
     public void init() {
-        dictionaryConnection = _dictionary.openConnection(_configuration);
-        dictionary = new ArrayList<>();
+        _dictionaryConnection = _dictionary.openConnection(_configuration);
+        dictionaryValues = new ArrayList<>();
 
-        final Iterator<String> allValues = dictionaryConnection.getAllValues();
+        final Iterator<String> allValues = _dictionaryConnection.getLengthSortedValues();
         while (allValues.hasNext()) {
-            dictionary.add(allValues.next());
+            dictionaryValues.add(allValues.next());
         }
     }
 
     @Close
     public void close() {
-        if (dictionaryConnection != null) {
-            dictionaryConnection.close();
-            dictionaryConnection = null;
+        if (_dictionaryConnection != null) {
+            _dictionaryConnection.close();
+            _dictionaryConnection = null;
         }
     }
 
@@ -160,7 +158,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public Object[] transform(String value) {
         final List<String> removedParts = new ArrayList<>(2);
         if (!Strings.isNullOrEmpty(value)) {
-            for(String entry : dictionary) {
+            for(String entry : dictionaryValues) {
                 final Matcher matcher = Pattern.compile("\\b" + Pattern.quote(entry) + "\\b").matcher(value);
                 while(matcher.find()){
                     final int start;

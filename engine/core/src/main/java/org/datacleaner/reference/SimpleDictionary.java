@@ -137,14 +137,18 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
 
     @Override
     public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
-        final SortedSet<String> connectionValueSet = new TreeSet<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
-        connectionValueSet.addAll(_valueSet);
         return new DictionaryConnection() {
-            SortedSet<String> _values = connectionValueSet;
 
             @Override
             public Iterator<String> getAllValues() {
-                return _values.iterator();
+                return _valueSet.iterator();
+            }
+
+            @Override
+            public Iterator<String> getLengthSortedValues() {
+                final SortedSet<String> connectionValueSet = new TreeSet<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+                connectionValueSet.addAll(_valueSet);
+                return connectionValueSet.iterator();
             }
 
             @Override
@@ -155,7 +159,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
                 if (!_caseSensitive) {
                     value = value.toLowerCase();
                 }
-                return _values.contains(value);
+                return _valueSet.contains(value);
             }
 
             @Override

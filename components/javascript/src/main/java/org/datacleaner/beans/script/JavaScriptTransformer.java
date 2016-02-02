@@ -52,7 +52,9 @@ public class JavaScriptTransformer implements Transformer {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JavaScriptTransformer.class);
 
-	public enum ReturnType {STRING, NUMBER, BOOLEAN}
+	public static enum ReturnType {
+		STRING, NUMBER, BOOLEAN;
+	}
 
 	@Configured
 	InputColumn<?>[] columns;

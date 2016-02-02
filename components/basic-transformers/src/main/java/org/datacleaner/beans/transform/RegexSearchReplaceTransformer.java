@@ -31,6 +31,7 @@ import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.PatternProperty;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
@@ -52,7 +53,8 @@ public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(order = 3)
     @Description("Regular expression pattern used for replacement.\nExample: 'Mister $1'")
-    Pattern replacementPattern;
+    @PatternProperty(emptyString = true)
+    Pattern replacementPattern = Pattern.compile("");
 
     @Override
     public OutputColumns getOutputColumns() {

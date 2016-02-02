@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
@@ -231,7 +232,7 @@ public class DomConfigurationWriterTest {
     @Test
     public void testWriteAndReadAllDictionaries() throws Exception {
         configurationWriter.externalize(new SimpleDictionary("simple dict", false, "foo", "bar", "baz"));
-        configurationWriter.externalize(new TextFileDictionary("textfile dict", "/foo/bar.txt", "UTF8"));
+        configurationWriter.externalize(new TextFileDictionary("textfile dict", "/foo/bar.txt", "UTF8", false));
         configurationWriter.externalize(new DatastoreDictionary("ds dict", "orderdb", "products.productname", false));
 
         final String str = transform(configurationWriter.getDocument());
@@ -241,6 +242,24 @@ public class DomConfigurationWriterTest {
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
         assertEquals("[ds dict, simple dict, textfile dict]", Arrays.toString(configuration.getReferenceDataCatalog()
                 .getDictionaryNames()));
+
+        final SimpleDictionary simpleDictionary = (SimpleDictionary) configuration.getReferenceDataCatalog()
+                .getDictionary("simple dict");
+        assertEquals(false, simpleDictionary.isCaseSensitive());
+        assertEquals("[bar, baz, foo]", simpleDictionary.getValueSet().stream().sorted().collect(Collectors.toList())
+                .toString());
+
+        final TextFileDictionary textFileDictionary = (TextFileDictionary) configuration.getReferenceDataCatalog()
+                .getDictionary("textfile dict");
+        assertEquals(false, textFileDictionary.isCaseSensitive());
+        assertEquals("UTF8", textFileDictionary.getEncoding());
+        assertTrue(textFileDictionary.getFilename().endsWith("bar.txt"));
+
+        final DatastoreDictionary datastoreDictionary = (DatastoreDictionary) configuration.getReferenceDataCatalog()
+                .getDictionary("ds dict");
+        assertEquals(false, datastoreDictionary.isLoadIntoMemory());
+        assertEquals("orderdb", datastoreDictionary.getDatastoreName());
+        assertEquals("products.productname", datastoreDictionary.getQualifiedColumnName());
     }
 
     @Test
@@ -256,12 +275,25 @@ public class DomConfigurationWriterTest {
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
         assertEquals("[ds sc, textfile sc]", Arrays.toString(configuration.getReferenceDataCatalog()
                 .getSynonymCatalogNames()));
+
+        final TextFileSynonymCatalog textFileSynonymCatalog = (TextFileSynonymCatalog) configuration
+                .getReferenceDataCatalog().getSynonymCatalog("textfile sc");
+        assertEquals("UTF8", textFileSynonymCatalog.getEncoding());
+        assertTrue(textFileSynonymCatalog.getFilename().endsWith("bar.txt"));
+
+        final DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) configuration
+                .getReferenceDataCatalog().getSynonymCatalog("ds sc");
+        assertEquals(false, datastoreSynonymCatalog.isLoadIntoMemory());
+        assertEquals("orderdb", datastoreSynonymCatalog.getDatastoreName());
+        assertEquals("products.productname", datastoreSynonymCatalog.getMasterTermColumnPath());
+        assertEquals("[products.productline, product.producttype]", Arrays.toString(datastoreSynonymCatalog
+                .getSynonymColumnPaths()));
     }
 
     @Test
     public void testWriteAndReadAllStringPatterns() throws Exception {
         configurationWriter.externalize(new SimpleStringPattern("simple sp", "aaaa@aaaa.aaa"));
-        configurationWriter.externalize(new RegexStringPattern("regex pattern", ".*", true));
+        configurationWriter.externalize(new RegexStringPattern("regex pattern", ".*", false));
 
         final String str = transform(configurationWriter.getDocument());
         final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
@@ -270,6 +302,15 @@ public class DomConfigurationWriterTest {
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
         assertEquals("[regex pattern, simple sp]", Arrays.toString(configuration.getReferenceDataCatalog()
                 .getStringPatternNames()));
+
+        final SimpleStringPattern simpleStringPattern = (SimpleStringPattern) configuration.getReferenceDataCatalog()
+                .getStringPattern("simple sp");
+        assertEquals("aaaa@aaaa.aaa", simpleStringPattern.getExpression());
+
+        final RegexStringPattern regexStringPattern = (RegexStringPattern) configuration.getReferenceDataCatalog()
+                .getStringPattern("regex pattern");
+        assertEquals(".*", regexStringPattern.getExpression());
+        assertEquals(false, regexStringPattern.isMatchEntireString());
     }
 
     private String transform(Node elem) throws Exception {

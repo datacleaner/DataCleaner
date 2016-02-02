@@ -697,8 +697,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DatastoreCatalog createDatastoreCatalog(DatastoreCatalogType datastoreCatalogType,
             DataCleanerConfigurationImpl temporaryConfiguration, DataCleanerEnvironment environment) {
+        if (datastoreCatalogType == null) {
+            return temporaryConfiguration.getDatastoreCatalog();
+        }
+        
         final Map<String, Datastore> datastores = new HashMap<String, Datastore>();
-
+        
         // read all single, non-custom datastores
         final List<AbstractDatastoreType> datastoreTypes = datastoreCatalogType
                 .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();

@@ -814,6 +814,7 @@ public class DomConfigurationWriter {
         Element documentElement = document.getDocumentElement();
         if (documentElement == null) {
             documentElement = document.createElement("configuration");
+            documentElement.setAttribute("xmlns", "http://eobjects.org/analyzerbeans/configuration/1.0");
             document.appendChild(documentElement);
         }
         return documentElement;

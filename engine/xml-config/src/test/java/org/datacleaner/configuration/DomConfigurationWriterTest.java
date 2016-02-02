@@ -19,10 +19,17 @@
  */
 package org.datacleaner.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
+import java.util.Arrays;
 
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
+import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -34,29 +41,42 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
+import org.datacleaner.reference.DatastoreDictionary;
+import org.datacleaner.reference.DatastoreSynonymCatalog;
+import org.datacleaner.reference.RegexStringPattern;
+import org.datacleaner.reference.SimpleDictionary;
+import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.TextFileDictionary;
+import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.util.xml.XmlUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import junit.framework.TestCase;
+public class DomConfigurationWriterTest {
 
-public class DatastoreXmlExternalizerTest extends TestCase {
-
-    private DomConfigurationWriter externalizer;
+    private DomConfigurationWriter configurationWriter;
 
     private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        externalizer = new DomConfigurationWriter();
+    @Rule
+    public TestName testName = new TestName();
+
+    @Before
+    public void setUp() throws Exception {
+        configurationWriter = new DomConfigurationWriter();
     }
 
+    @Test
     public void testExternalizeCsvDatastore() throws Exception {
         CsvDatastore ds = new CsvDatastore("foo", "foo.txt");
         ds.setDescription("bar");
 
-        Element elem = externalizer.toElement(ds, "baz.txt");
+        Element elem = configurationWriter.toElement(ds, "baz.txt");
 
         String str = transform(elem);
 
@@ -68,11 +88,12 @@ public class DatastoreXmlExternalizerTest extends TestCase {
                 + "</csv-datastore>\n", str);
     }
 
+    @Test
     public void testExternalizeExcelDatastore() throws Exception {
         ExcelDatastore ds = new ExcelDatastore("foo", new FileResource("foo.txt"), "foo.txt");
         ds.setDescription("bar");
 
-        Element elem = externalizer.toElement(ds, "baz.txt");
+        Element elem = configurationWriter.toElement(ds, "baz.txt");
 
         String str = transform(elem);
 
@@ -81,13 +102,14 @@ public class DatastoreXmlExternalizerTest extends TestCase {
                 str);
     }
 
+    @Test
     public void testIsExternalizableAndExternalize() throws Exception {
         final Resource resource = new ClasspathResource("foo.txt");
         final CsvDatastore unsupportedDatastore = new CsvDatastore("foo", resource);
-        assertFalse(externalizer.isExternalizable(unsupportedDatastore));
+        assertFalse(configurationWriter.isExternalizable(unsupportedDatastore));
 
         try {
-            externalizer.externalize(unsupportedDatastore);
+            configurationWriter.externalize(unsupportedDatastore);
             fail("Exception expected");
         } catch (UnsupportedOperationException e) {
             assertEquals("Unsupported resource type: ClasspathResource[foo.txt]", e.getMessage());
@@ -95,9 +117,9 @@ public class DatastoreXmlExternalizerTest extends TestCase {
 
         final CsvDatastore datastore1 = new CsvDatastore("foo", "src/test/resources/example-dates.csv");
 
-        assertTrue(externalizer.isExternalizable(datastore1));
+        assertTrue(configurationWriter.isExternalizable(datastore1));
 
-        final Element elem = externalizer.externalize(datastore1);
+        final Element elem = configurationWriter.externalize(datastore1);
         final String str = transform(elem);
 
         final char sep = File.separatorChar;
@@ -109,99 +131,88 @@ public class DatastoreXmlExternalizerTest extends TestCase {
                 + "</csv-datastore>\n", str);
     }
 
+    @Test
     public void testExternalizeJdbcDatastore() throws Exception {
         final JdbcDatastore datastore1 = new JdbcDatastore("foo ds 1", "jdbc:foo//bar", "foo.bar.Baz");
 
-        assertTrue(externalizer.isExternalizable(datastore1));
-        final String str1 = transform(externalizer.externalize(datastore1));
+        assertTrue(configurationWriter.isExternalizable(datastore1));
+        final String str1 = transform(configurationWriter.externalize(datastore1));
         assertEquals("<jdbc-datastore name=\"foo ds 1\">\n" + "  <url>jdbc:foo//bar</url>\n"
-                + "  <driver>foo.bar.Baz</driver>\n"
-                + "  <multiple-connections>true</multiple-connections>\n"
+                + "  <driver>foo.bar.Baz</driver>\n" + "  <multiple-connections>true</multiple-connections>\n"
                 + "</jdbc-datastore>\n", str1);
 
-        final JdbcDatastore datastore2 = new JdbcDatastore("foo ds 2", "JNDI_URL",
-                new TableType[] { TableType.VIEW, TableType.ALIAS }, "mycatalog");
-        assertTrue(externalizer.isExternalizable(datastore2));
-        final String str2 = transform(externalizer.externalize(datastore2));
+        final JdbcDatastore datastore2 = new JdbcDatastore("foo ds 2", "JNDI_URL", new TableType[] { TableType.VIEW,
+                TableType.ALIAS }, "mycatalog");
+        assertTrue(configurationWriter.isExternalizable(datastore2));
+        final String str2 = transform(configurationWriter.externalize(datastore2));
         assertEquals("<jdbc-datastore name=\"foo ds 2\">\n" + "  <datasource-jndi-url>JNDI_URL</datasource-jndi-url>\n"
                 + "  <table-types>\n    <table-type>VIEW</table-type>\n    <table-type>ALIAS</table-type>\n  </table-types>\n"
                 + "  <catalog-name>mycatalog</catalog-name>\n</jdbc-datastore>\n", str2);
 
-        final Element documentElement = externalizer.getDocument().getDocumentElement();
+        final Element documentElement = configurationWriter.getDocument().getDocumentElement();
         final NodeList jdbcDatastoreElements1 = documentElement.getElementsByTagName("jdbc-datastore");
         assertEquals(2, jdbcDatastoreElements1.getLength());
-        
-        boolean removed = externalizer.removeDatastore("foo ds");
+
+        boolean removed = configurationWriter.removeDatastore("foo ds");
         assertFalse(removed);
 
-        removed = externalizer.removeDatastore("foo ds 1");
+        removed = configurationWriter.removeDatastore("foo ds 1");
         assertTrue(removed);
 
         final NodeList jdbcDatastoreElements2 = documentElement.getElementsByTagName("jdbc-datastore");
         assertEquals(1, jdbcDatastoreElements2.getLength());
     }
 
+    @Test
     public void testExternalizeJdbcDatastoreWithPassword() throws Exception {
         Datastore ds1 = new JdbcDatastore("name", "jdbcUrl", "driverClass", "username", "password", true,
                 new TableType[] { TableType.ALIAS }, "catalogName");
 
-        Element externalized = externalizer.externalize(ds1);
-        assertEquals(
-                "<jdbc-datastore name=\"name\">\n"
-                + "  <url>jdbcUrl</url>\n"
-                + "  <driver>driverClass</driver>\n"
-                + "  <username>username</username>\n"
-                + "  <password>"
-                        + PASSWORD_ENCODED + "</password>\n"
-                        + "  <multiple-connections>true</multiple-connections>\n"
-                        + "  <table-types>\n"
-                        + "    <table-type>ALIAS</table-type>\n"
-                        + "  </table-types>\n"
-                        + "  <catalog-name>catalogName</catalog-name>\n"
-                        + "</jdbc-datastore>\n",
-                transform(externalized));
+        Element externalized = configurationWriter.externalize(ds1);
+        assertEquals("<jdbc-datastore name=\"name\">\n" + "  <url>jdbcUrl</url>\n" + "  <driver>driverClass</driver>\n"
+                + "  <username>username</username>\n" + "  <password>" + PASSWORD_ENCODED + "</password>\n"
+                + "  <multiple-connections>true</multiple-connections>\n" + "  <table-types>\n"
+                + "    <table-type>ALIAS</table-type>\n" + "  </table-types>\n"
+                + "  <catalog-name>catalogName</catalog-name>\n" + "</jdbc-datastore>\n", transform(externalized));
     }
 
+    @Test
     public void testExternalizeMongoDbDatastoreWithPassword() throws Exception {
         Datastore ds1 = new MongoDbDatastore("name", "hostname", 1234, "database", "user", "password");
 
-        Element externalized = externalizer.externalize(ds1);
-        assertEquals(
-                "<mongodb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n  <port>1234</port>\n"
-                        + "  <database-name>database</database-name>\n" + "  <username>user</username>\n"
-                        + "  <password>" + PASSWORD_ENCODED + "</password>\n</mongodb-datastore>\n",
-                transform(externalized));
+        Element externalized = configurationWriter.externalize(ds1);
+        assertEquals("<mongodb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n  <port>1234</port>\n"
+                + "  <database-name>database</database-name>\n" + "  <username>user</username>\n" + "  <password>"
+                + PASSWORD_ENCODED + "</password>\n</mongodb-datastore>\n", transform(externalized));
     }
 
+    @Test
     public void testExternalizeCouchDbDatastoreWithPassword() throws Exception {
         Datastore ds1 = new CouchDbDatastore("name", "hostname", 1234, "user", "password", true, null);
 
-        Element externalized = externalizer.externalize(ds1);
-        assertEquals("<couchdb-datastore name=\"name\">\n"
-                + "  <hostname>hostname</hostname>\n"
-                + "  <port>1234</port>\n"
-                + "  <username>user</username>\n"
-                + "  <password>" + PASSWORD_ENCODED + "</password>\n"
-                + "  <ssl>true</ssl>\n"
-                + "</couchdb-datastore>\n", transform(externalized));
+        Element externalized = configurationWriter.externalize(ds1);
+        assertEquals("<couchdb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n"
+                + "  <port>1234</port>\n" + "  <username>user</username>\n" + "  <password>" + PASSWORD_ENCODED
+                + "</password>\n" + "  <ssl>true</ssl>\n" + "</couchdb-datastore>\n", transform(externalized));
     }
 
+    @Test
     public void testExternalizeSalesforceDatastoreWithPassword() throws Exception {
         Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
 
-        Element externalized = externalizer.externalize(ds1);
-        assertEquals(
-                "<salesforce-datastore name=\"name\">\n" + "  <username>username</username>\n" + "  <password>"
-                        + PASSWORD_ENCODED + "</password>\n"
-                        + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n",
-                transform(externalized));
+        Element externalized = configurationWriter.externalize(ds1);
+        assertEquals("<salesforce-datastore name=\"name\">\n" + "  <username>username</username>\n" + "  <password>"
+                + PASSWORD_ENCODED + "</password>\n"
+                + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n", transform(
+                        externalized));
     }
 
+    @Test
     public void testExternalizeDataHubDatastoreWithPassword() throws Exception {
         Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", false, false,
                 DataHubSecurityMode.DEFAULT);
 
-        Element externalized = externalizer.externalize(datastore);
+        Element externalized = configurationWriter.externalize(datastore);
         StringBuilder expectedConfiguration = new StringBuilder();
         expectedConfiguration//
                 .append("<datahub-datastore name=\"name\">\n")//
@@ -217,7 +228,51 @@ public class DatastoreXmlExternalizerTest extends TestCase {
         assertEquals(expectedConfiguration.toString(), transform(externalized));
     }
 
-    private String transform(Element elem) throws Exception {
+    @Test
+    public void testWriteAndReadAllDictionaries() throws Exception {
+        configurationWriter.externalize(new SimpleDictionary("simple dict", false, "foo", "bar", "baz"));
+        configurationWriter.externalize(new TextFileDictionary("textfile dict", "/foo/bar.txt", "UTF8"));
+        configurationWriter.externalize(new DatastoreDictionary("ds dict", "orderdb", "products.productname", false));
+
+        final String str = transform(configurationWriter.getDocument());
+        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+        FileHelper.writeStringAsFile(file, str);
+
+        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+        assertEquals("[ds dict, simple dict, textfile dict]", Arrays.toString(configuration.getReferenceDataCatalog()
+                .getDictionaryNames()));
+    }
+
+    @Test
+    public void testWriteAndReadAllSynonymCatalogs() throws Exception {
+        configurationWriter.externalize(new TextFileSynonymCatalog("textfile sc", "/foo/bar.txt", false, "UTF8"));
+        configurationWriter.externalize(new DatastoreSynonymCatalog("ds sc", "orderdb", "products.productname",
+                new String[] { "products.productline", "product.producttype" }, false));
+
+        final String str = transform(configurationWriter.getDocument());
+        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+        FileHelper.writeStringAsFile(file, str);
+
+        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+        assertEquals("[ds sc, textfile sc]", Arrays.toString(configuration.getReferenceDataCatalog()
+                .getSynonymCatalogNames()));
+    }
+
+    @Test
+    public void testWriteAndReadAllStringPatterns() throws Exception {
+        configurationWriter.externalize(new SimpleStringPattern("simple sp", "aaaa@aaaa.aaa"));
+        configurationWriter.externalize(new RegexStringPattern("regex pattern", ".*", true));
+
+        final String str = transform(configurationWriter.getDocument());
+        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+        FileHelper.writeStringAsFile(file, str);
+
+        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+        assertEquals("[regex pattern, simple sp]", Arrays.toString(configuration.getReferenceDataCatalog()
+                .getStringPatternNames()));
+    }
+
+    private String transform(Node elem) throws Exception {
         return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }
 }

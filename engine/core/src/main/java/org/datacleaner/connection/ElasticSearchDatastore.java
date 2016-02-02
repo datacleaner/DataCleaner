@@ -115,41 +115,36 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
-
-        Object client = null;
-        switch (_clientType) {
-        case NODE:
-            client = getClientForJoingClusterAsNode();
-            break;
-        case TRANSPORT:
-            client = getClientForTransportProtocol();
-            break;
-        case REST:
-            client = getClientForRestProtocol();
-        default:
-            // do nothing
-        }
         final DataContext dataContext;
-
         if (_tableDefs == null || _tableDefs.length == 0) {
             if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
-                dataContext = new ElasticSearchDataContext((Client) client, _indexName);
+                final Client client = getClientForNodeAndTransportProtocol();
+                dataContext = new ElasticSearchDataContext(client, _indexName);
+                return createConnection(dataContext, client);
             } else {
-                dataContext = new ElasticSearchRestDataContext((JestClient) client, _indexName);
+                dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName);
+                return createConnection(dataContext, null);
             }
         } else {
             if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
-                dataContext = new ElasticSearchDataContext((Client) client, _indexName, _tableDefs);
+                final Client client = getClientForNodeAndTransportProtocol();
+                dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
+                return createConnection(dataContext, client);
             } else {
-                dataContext = new ElasticSearchRestDataContext((JestClient) client, _indexName, _tableDefs);
+                dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName, _tableDefs);
+                return createConnection(dataContext, null);
             }
         }
 
+    }
+
+    private final UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(DataContext dataContext,
+            Client simpleclient) {
         switch (_clientType) {
         case NODE:
         case TRANSPORT:
             return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>((ElasticSearchDataContext) dataContext,
-                    this, (Client) client);
+                    this, simpleclient);
         case REST:
             return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(
                     (ElasticSearchRestDataContext) dataContext, this);
@@ -157,15 +152,26 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         return null;
     }
 
+    private Client getClientForNodeAndTransportProtocol() {
+        switch (_clientType) {
+        case NODE:
+            return getClientForJoiningClusterAsNode();
+        case TRANSPORT:
+            return getClientForTransportProtocol();
+        default:
+            return null;
+        }
+    }
+
     private JestClient getClientForRestProtocol() {
         final JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(true)
-                .build());
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
+                true).build());
         final JestClient client = factory.getObject();
         return client;
     }
 
-    private Client getClientForJoingClusterAsNode() {
+    private Client getClientForJoiningClusterAsNode() {
         final Client client;
         final Builder settingsBuilder = ImmutableSettings.builder();
         settingsBuilder.put("name", "DataCleaner");

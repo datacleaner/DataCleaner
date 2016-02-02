@@ -60,7 +60,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     private static final long serialVersionUID = 1L;
 
-    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.TRANSPORT;
+    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.REST;
     private static final boolean DEFAULT_SSL = false;
 
     private final JComboBox<ClientType> _clientTypeComboBox;
@@ -140,7 +140,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                                 _hostnameTextField.setText(originalDatastore.getHostname());
                             }
                             if (originalDatastore.getPort() == null) {
-                                _portTextField.setText("9300");
+                                _portTextField.setText("9200");
                             } else {
                                 _portTextField.setText("" + originalDatastore.getPort());
                             }
@@ -226,7 +226,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
-            _portTextField.setText("9300");
+            _portTextField.setText("9200");
         } else {
             _clientTypeComboBox.setSelectedItem(originalDatastore.getClientType());
             _datastoreNameTextField.setText(originalDatastore.getName());

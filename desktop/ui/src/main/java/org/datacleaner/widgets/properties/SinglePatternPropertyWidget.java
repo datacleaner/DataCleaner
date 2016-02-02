@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.datacleaner.api.PatternProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.WidgetFactory;
@@ -40,11 +41,15 @@ import org.jdesktop.swingx.JXTextField;
 public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
 
 	private final JXTextField _textField;
+    private final PatternProperty patternPropertyAnnotation;
 
 	@Inject
 	public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
+        
+        patternPropertyAnnotation = propertyDescriptor.getAnnotation(PatternProperty.class);
+        
 		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
 		Pattern currentValue = getCurrentValue();
@@ -55,7 +60,12 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
 
 	@Override
 	public boolean isSet() {
-		return _textField.getText() != null && _textField.getText().length() > 0 && isValidPattern();
+	    if (_textField.getText() == null) {
+	        return false;
+	    }
+	    
+        return ((patternPropertyAnnotation != null && patternPropertyAnnotation.emptyString()) 
+                || _textField.getText().length() > 0) && isValidPattern();
 	}
 
 	@Override

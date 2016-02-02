@@ -859,7 +859,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         String clientType = getStringVariable("clientType", datastoreType.getClientType());
         if (clientType == null) {
-            clientType = ClientType.TRANSPORT.name().toString();
+            clientType = ClientType.TRANSPORT.name();
         }
         final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList = datastoreType
                 .getTableDef();

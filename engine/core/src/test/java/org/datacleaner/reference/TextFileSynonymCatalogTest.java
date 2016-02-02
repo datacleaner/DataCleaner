@@ -51,6 +51,7 @@ public class TextFileSynonymCatalogTest extends TestCase {
         }
     }
 
+
     public void testCountrySynonymsCaseInsensitive() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", false,
                 "UTF-8");

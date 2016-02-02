@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.StringTokenizer;
+import java.util.List;
 
 import javax.inject.Named;
 
@@ -90,7 +90,15 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(String.class, new String[] { column.getName() + " (synonyms replaced)" });
+        if (lookUpEveryToken) {
+            return new OutputColumns(
+                    new String[] { column.getName() + " (synonyms replaced)", column.getName() + " (synonyms found)",
+                            column.getName() + " (master terms found)" },
+                    new Class[] { String.class, List.class, List.class });
+        } else {
+            return new OutputColumns(String.class,
+                    new String[] { column.getName() + " (synonyms replaced)" });
+        }
     }
 
     @Override
@@ -115,7 +123,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public Object[] transform(InputRow inputRow) {
         final String originalValue = inputRow.getValue(column);
 
         if (originalValue == null) {
@@ -123,27 +131,9 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         }
 
         if (lookUpEveryToken) {
-            final String delim = " \t\n\r\f.,!?\"'+-_:;/\\\\()%@";
-            final StringBuilder sb = new StringBuilder();
-            final StringTokenizer tokenizer = new StringTokenizer(originalValue, delim, true);
-            final int numTokens = tokenizer.countTokens();
-            for (int i = 0; i < numTokens; i++) {
-                final String token = tokenizer.nextToken();
-                if (token.matches(delim)) {
-                    // add the delim as-is
-                    sb.append(token);
-                } else {
-                    // look up the token
-                    String replacedToken = lookup(token);
-                    if (replacedToken == null) {
-                        sb.append(token);
-                    } else {
-                        sb.append(replacedToken);
-                    }
-                }
-            }
-            return new String[] { sb.toString() };
-
+            SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(originalValue);
+            return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(),
+                    replacement.getMasterTerms() };
         } else {
             final String replacedValue = lookup(originalValue);
             return new String[] { replacedValue };

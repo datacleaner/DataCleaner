@@ -72,6 +72,12 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     }
 
     @Override
+    public Replacement replaceInline(final String sentence) {
+        final SimpleSynonymCatalog simpleSynonymCatalog = _synonymCatalog.loadIntoMemory(_datastoreConnection);
+        return simpleSynonymCatalog.openConnection(null).replaceInline(sentence);
+    }
+
+    @Override
     public void close() {
         _datastoreConnection.close();
     }

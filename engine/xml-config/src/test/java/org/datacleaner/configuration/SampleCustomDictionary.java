@@ -20,6 +20,8 @@
 package org.datacleaner.configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,6 +69,9 @@ public class SampleCustomDictionary implements Dictionary {
         for (int i = 0; i < SampleCustomDictionary.this.values; i++) {
             valueList.add("value" + i);
         }
+
+        Collections
+                .sort(valueList, Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
         return new DictionaryConnection() {
 
             @Override

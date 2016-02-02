@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.transform;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -35,7 +37,7 @@ public class SynonymLookupTransformerTest extends TestCase {
             "src/test/resources/synonym-countries.txt", true, "UTF8");
 
     public void testTransformWithCompleteInput() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("my col", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
         // with retain original value
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
@@ -63,18 +65,33 @@ public class SynonymLookupTransformerTest extends TestCase {
     }
 
     public void testTransformWithEveryToken() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("my col", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
         // with retain original value
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
         transformer.lookUpEveryToken = true;
         transformer.init();
-        assertEquals(1, transformer.getOutputColumns().getColumnCount());
+        assertEquals(3, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
+        assertEquals("my col (synonyms found)", transformer.getOutputColumns().getColumnName(1));
+        assertEquals("my col (master terms found)", transformer.getOutputColumns().getColumnName(2));
 
         assertEquals("hello", transformer.transform(new MockInputRow().put(col, "hello"))[0]);
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
         assertEquals("I come from ALB!", transformer.transform(new MockInputRow().put(col, "I come from ALB!"))[0]);
+        assertEquals("I come from GBR!", transformer.transform(new MockInputRow().put(col, "I come from Britain!"))[0]);
+        assertEquals("I come from GBR!", transformer.transform(new MockInputRow().put(col, "I come from Great Britain!"))[0]);
+        final Object[] result  =
+                transformer.transform(new MockInputRow().put(col, "I come from Great Great Britain Albania!"));
+        assertEquals("I come from Great GBR ALB!", result [0]);
+        @SuppressWarnings("unchecked") List<String> synonyms = (List<String>) result[1];
+        @SuppressWarnings("unchecked") List<String> masterTerms  = (List<String>) result[2];
+        assertEquals("Great Britain", synonyms.get(0));
+        assertEquals("Albania", synonyms.get(1));
+
+        assertEquals("GBR", masterTerms.get(0));
+        assertEquals("ALB", masterTerms.get(1));
+
         transformer.close();
 
         // without retain original value

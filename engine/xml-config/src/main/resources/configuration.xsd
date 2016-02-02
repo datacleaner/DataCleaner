@@ -662,6 +662,8 @@
 							</sequence>
 						</complexType>
 					</element>
+					<element name="client-type" minOccurs="1" maxOccurs="1"
+						type="string" />
 					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />

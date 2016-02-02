@@ -60,8 +60,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     private static final long serialVersionUID = 1L;
 
-    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE =
-            ElasticSearchDatastore.ClientType.TRANSPORT;
+    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.TRANSPORT;
     private static final boolean DEFAULT_SSL = false;
 
     private final JComboBox<ClientType> _clientTypeComboBox;
@@ -152,7 +151,11 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                             _keystorePasswordField.setText(originalDatastore.getKeystorePassword());
                         } else {
                             _hostnameTextField.setText("localhost");
-                            _portTextField.setText("9300");
+                            if (ElasticSearchDatastore.ClientType.REST.equals(newSelectedItem)) {
+                                _portTextField.setText("9200");
+                            } else {
+                                _portTextField.setText("9300");
+                            }
                             _sslCheckBox.setSelected(DEFAULT_SSL);
                         }
                     }
@@ -160,7 +163,6 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
             }
         });
-
 
         final DCDocumentListener verifyAndUpdateDocumentListener = new DCDocumentListener() {
 
@@ -249,7 +251,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             return false;
         }
 
-        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(_clientTypeComboBox.getSelectedItem())) {
+        final ElasticSearchDatastore.ClientType selectedClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
+        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType) || ElasticSearchDatastore.ClientType.REST.equals(selectedClientType)) {
             final String hostname = _hostnameTextField.getText();
             if (StringUtils.isNullOrEmpty(hostname)) {
                 setStatusError("Please enter hostname");
@@ -327,7 +330,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String hostname = _hostnameTextField.getText();
         final ElasticSearchDatastore.ClientType selectedClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
         final Integer port;
-        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType)) {
+        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType)
+                || ElasticSearchDatastore.ClientType.REST.equals(selectedClientType)) {
             port = Integer.parseInt(_portTextField.getText());
         } else {
             port = null;
@@ -339,8 +343,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final boolean ssl = _sslCheckBox.isSelected();
         final String keystorePath = _keystorePathField.getFilename();
         final String keystorePassword = new String(_keystorePasswordField.getPassword());
-        if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)
-                && StringUtils.isNullOrEmpty(keystorePath) && StringUtils.isNullOrEmpty(keystorePassword)) {
+        if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password) && StringUtils.isNullOrEmpty(
+                keystorePath) && StringUtils.isNullOrEmpty(keystorePassword)) {
             return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName);
         } else {
             return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName,

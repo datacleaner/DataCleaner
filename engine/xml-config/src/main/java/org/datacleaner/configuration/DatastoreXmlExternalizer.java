@@ -325,6 +325,7 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "cluster-name", datastore.getClusterName());
         appendElement(ds, "index-name", datastore.getIndexName());
+        appendElement(ds, "client-type", datastore.getClientType().name());
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "ssl", datastore.getSsl());

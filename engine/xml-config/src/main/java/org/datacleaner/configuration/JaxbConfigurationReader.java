@@ -857,6 +857,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final String indexName = getStringVariable("indexName", datastoreType.getIndexName());
 
+        final String clientType = getStringVariable("clientType", datastoreType.getClientType()); 
         final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList = datastoreType
                 .getTableDef();
         final SimpleTableDef[] tableDefs;
@@ -891,7 +892,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName, tableDefs,
+        return new ElasticSearchDatastore(name, ClientType.valueOf(clientType), hostname, port, clusterName, indexName, tableDefs,
                 username, password, ssl, keystorePath, keystorePassword);
     }
 

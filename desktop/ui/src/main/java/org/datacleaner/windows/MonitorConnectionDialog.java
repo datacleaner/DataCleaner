@@ -22,8 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
-import java.util.Map;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -32,10 +31,6 @@ import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
@@ -51,7 +46,6 @@ import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCCheckBox.Listener;
@@ -61,7 +55,6 @@ import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 /**
@@ -287,37 +280,12 @@ public class MonitorConnectionDialog extends AbstractDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
                 final MonitorConnection connection = createMonitorConnection();
-                final String pingUrl = connection.getRepositoryUrl() + "/ping";
-                final HttpGet request = new HttpGet(pingUrl);
-                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
-                    final HttpResponse response = monitorHttpClient.execute(request);
-
-                    final StatusLine statusLine = response.getStatusLine();
-
-                    if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
-                        // read response as JSON.
-                        final InputStream content = response.getEntity().getContent();
-                        final Map<?, ?> map;
-                        try {
-                            map = new ObjectMapper().readValue(content, Map.class);
-                        } finally {
-                            FileHelper.safeClose(content);
-                        }
-                        logger.info("Ping request responded: {}", map);
-                        JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
-                    } else {
-                        final String reasonPhrase = statusLine.getReasonPhrase();
-                        WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
-                    }
-                } catch (Exception e) {
-                    // TODO: This dialog is shown behind the modal dialog
-                    WidgetUtils
-                            .showErrorMessage(
-                                    "Connection failed",
-                                    "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
-                                    e);
-                }
+                try {
+                    logger.info("Ping request responded: {}", connection.ping());
+                    JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
+                } catch (IOException e) {
+                    WidgetUtils.showErrorMessage("Connection failed", e.getMessage());
+                }                
             }
         });
 

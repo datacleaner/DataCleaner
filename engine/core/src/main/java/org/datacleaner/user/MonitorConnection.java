@@ -19,13 +19,20 @@
  */
 package org.datacleaner.user;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
@@ -35,6 +42,8 @@ import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Describes the connection information needed to connect to the DataCleaner
@@ -224,5 +233,33 @@ public class MonitorConnection implements Serializable {
 
     public void setAcceptUnverifiedSslPeers(boolean acceptUnverifiedSslPeers) {
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
+    }
+
+    public Map<?, ?> ping() throws IOException {
+        final String pingUrl = getRepositoryUrl() + "/ping";
+        final HttpGet request = new HttpGet(pingUrl);
+        final MonitorHttpClient monitorHttpClient = getHttpClient();
+        try {
+            final HttpResponse response = monitorHttpClient.execute(request);
+
+            final StatusLine statusLine = response.getStatusLine();
+
+            if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
+                // read response as JSON.
+                final InputStream content = response.getEntity().getContent();
+                try {
+                    return new ObjectMapper().readValue(content, Map.class);
+                } finally {
+                    FileHelper.safeClose(content);
+                }
+            } else {
+                throw new IOException("Server replied with status " + statusLine.getStatusCode() + ":\n" + statusLine
+                        .getReasonPhrase());
+            }
+        } catch (Exception e) {
+            throw new IOException(
+                    "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
+                    e);
+        }
     }
 }

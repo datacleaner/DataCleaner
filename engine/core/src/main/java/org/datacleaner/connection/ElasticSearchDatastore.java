@@ -148,6 +148,8 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         case REST:
             return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(
                     (ElasticSearchRestDataContext) dataContext, this);
+        default:
+            //do nothing
         }
         return null;
     }
@@ -159,8 +161,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         case TRANSPORT:
             return getClientForTransportProtocol();
         default:
-            return null;
+            //do nothing
         }
+        return null;
     }
 
     private JestClient getClientForRestProtocol() {

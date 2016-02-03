@@ -75,6 +75,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
+    private RuntimeException lastException = null;
+
     public RemoteTransformer(RemoteServerData serverData, String componentDisplayName) {
         this.serverData = serverData;
         this.componentDisplayName = componentDisplayName;
@@ -298,10 +300,18 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         logger.debug("Processing remotely {} rows", size);
 
         if (client == null) {
+            if (lastException != null) {
+                throw lastException;
+            }
             throw new RuntimeException("Remote transformer's connection has already been closed. ");
         }
-
-        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
+        ProcessStatelessOutput out;
+        try {
+            out = client.processStateless(componentDisplayName, input);
+        } catch (RuntimeException e) {
+            lastException = e;
+            throw e;
+        }
         convertOutputRows(out.rows, sink, size);
     }
 }

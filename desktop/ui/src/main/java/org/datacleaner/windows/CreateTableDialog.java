@@ -220,8 +220,18 @@ public class CreateTableDialog extends AbstractDialog {
                 addColumnDefinitionPanel();
             }
         });
+        
+        final JButton removeAllColumnsButton = WidgetFactory.createSmallButton("Remove all columns",
+                IconUtils.ACTION_REMOVE);
+        removeAllColumnsButton.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        removeAllColumnsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeAllColumns();
+            }
+        });
 
-        final DCPanel buttonPanel = DCPanel.around(addColumnButton);
+        final DCPanel buttonPanel = DCPanel.flow(addColumnButton, removeAllColumnsButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_WELL_BACKGROUND);
@@ -272,6 +282,13 @@ public class CreateTableDialog extends AbstractDialog {
     public void addColumnDefinitionPanel() {
         final CreateTableColumnDefintionPanel columnDefintionPanel = new CreateTableColumnDefintionPanel(this);
         addColumnDefinitionPanel(columnDefintionPanel);
+    }
+    
+
+    protected void removeAllColumns() {
+        _columnDefinitionPanels.clear();
+        _columnsListPanel.removeAll();
+        _columnsListPanel.updateUI();
     }
 
     private void addColumnDefinitionPanel(CreateTableColumnDefintionPanel columnDefintionPanel) {

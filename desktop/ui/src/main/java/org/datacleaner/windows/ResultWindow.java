@@ -596,8 +596,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             @Override
             public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row,
                     Throwable throwable) {
-                _progressInformationPanel.addUserLog(
-                        "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable, true);
+                if(!(throwable instanceof PreviousErrorsExistException)){
+                    _progressInformationPanel.addUserLog(
+                            "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable, true);
+                }
             }
 
             @Override

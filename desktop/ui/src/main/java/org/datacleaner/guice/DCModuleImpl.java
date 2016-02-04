@@ -37,7 +37,7 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
-import org.datacleaner.configuration.DatastoreXmlExternalizer;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -273,10 +273,11 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
             synchronized (DCModuleImpl.class) {
                 if (_configuration == null) {
                     // make the configuration mutable
+                    final DomConfigurationWriter configurationWriter = createConfigurationWriter();
                     final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(
-                            c.getDatastoreCatalog(), createDatastoreXmlExternalizer(), userPreferences);
+                            c.getDatastoreCatalog(), configurationWriter, userPreferences);
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-                            c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
+                            c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), true));
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
@@ -318,13 +319,13 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         return _configuration;
     }
 
-    private DatastoreXmlExternalizer createDatastoreXmlExternalizer() {
+    private DomConfigurationWriter createConfigurationWriter() {
         final FileObject configurationFile = _undecoratedConfigurationRef.getConfigurationFile();
         if (configurationFile == null) {
-            return new DatastoreXmlExternalizer();
+            return new DomConfigurationWriter();
         }
         final VfsResource resource = new VfsResource(configurationFile);
-        return new DatastoreXmlExternalizer(resource) {
+        return new DomConfigurationWriter(resource) {
             @Override
             protected void onDocumentChanged(final Document document) {
                 resource.write(new Action<OutputStream>() {

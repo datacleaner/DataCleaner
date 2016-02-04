@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.datacleaner.configuration.DatastoreXmlExternalizer;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.util.StringUtils;
@@ -38,13 +38,13 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final DatastoreXmlExternalizer _datastoreXmlExternalizer;
+    private final DomConfigurationWriter _configurationWriter;
     private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
     private final UserPreferences _userPreferences;
 
     public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate,
-            final DatastoreXmlExternalizer datastoreXmlExternalizer, final UserPreferences userPreferences) {
-        _datastoreXmlExternalizer = datastoreXmlExternalizer;
+            final DomConfigurationWriter configurationWriter, final UserPreferences userPreferences) {
+        _configurationWriter = configurationWriter;
         _userPreferences = userPreferences;
         String[] datastoreNames = immutableDelegate.getDatastoreNames();
         for (String name : datastoreNames) {
@@ -57,29 +57,19 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         }
     }
 
-    @Override
-    public boolean containsDatastore(String name) {
-        final List<Datastore> datastores = _userPreferences.getUserDatastores();
-        for (Datastore datastore : datastores) {
-            if (name.equals(datastore.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void removeDatastore(Datastore ds) {
         removeDatastore(ds, true);
     }
 
     private synchronized void removeDatastore(Datastore ds, boolean externalize) {
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
-        datastores.remove(ds);
-        for (DatastoreChangeListener listener : _listeners) {
-            listener.onRemove(ds);
+        if (datastores.remove(ds)) {
+            for (DatastoreChangeListener listener : _listeners) {
+                listener.onRemove(ds);
+            }
         }
         if (externalize) {
-            _datastoreXmlExternalizer.removeDatastore(ds.getName());
+            _configurationWriter.removeDatastore(ds.getName());
             _userPreferences.save();
         }
     }
@@ -104,8 +94,8 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
             listener.onAdd(ds);
         }
         if (externalize) {
-            if (_datastoreXmlExternalizer.isExternalizable(ds)) {
-                _datastoreXmlExternalizer.externalize(ds);
+            if (_configurationWriter.isExternalizable(ds)) {
+                _configurationWriter.externalize(ds);
             }
             _userPreferences.save();
         }

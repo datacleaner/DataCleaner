@@ -155,7 +155,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
                 final String stringPatternName = "PF: " + label;
 
-                if (!_catalog.containsStringPattern(stringPatternName)) {
+                if (_catalog.containsStringPattern(stringPatternName)) {
                     DCPanel panel = new DCPanel();
                     panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 

@@ -94,12 +94,6 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         _expressionNameString = expressionName;
         _expressionNameField.setText(expressionName);
         _expressionField.setText(expression);
-        if (!_catalog.isStringPatternMutable(_expressionNameString)) {
-            _expressionField.setEnabled(false);
-            _expressionNameField.setEnabled(false);
-            _resetButton.setEnabled(false);
-            _saveButton.setEnabled(false);
-        }
         _simpleStringPattern = (SimpleStringPattern) _catalog.getStringPattern(_expressionNameString);
     }
 

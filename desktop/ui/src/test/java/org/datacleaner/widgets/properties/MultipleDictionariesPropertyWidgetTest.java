@@ -27,6 +27,7 @@ import javax.inject.Provider;
 import junit.framework.TestCase;
 
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -47,8 +48,8 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 			"Dictionary array property");
 	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, null, true);
-	private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-			configuration.getReferenceDataCatalog(), new UserPreferencesImpl(null), lifeCycleHelper);
+    private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(configuration
+            .getReferenceDataCatalog(), new DomConfigurationWriter(), new UserPreferencesImpl(null), lifeCycleHelper);
 	private Provider<ReferenceDataDialog> referenceDataDialogProvider = null;
 
 	public void testInitialSelection() throws Exception {

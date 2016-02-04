@@ -29,7 +29,7 @@ public class TestHelper {
     public static DataSource createSampleDatabaseDataSource() {
         BasicDataSource _dataSource = new BasicDataSource();
         _dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
-        _dataSource.setUrl("jdbc:hsqldb:res:testwareorderdb;readonly=true");
+        _dataSource.setUrl("jdbc:hsqldb:res:orderdb;readonly=true");
         _dataSource.setMaxActive(-1);
         _dataSource.setDefaultAutoCommit(false);
         return _dataSource;

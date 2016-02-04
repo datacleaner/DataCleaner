@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +41,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.configuration.RemoteServerData;
+import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
@@ -74,6 +76,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
+
+    private final AtomicBoolean failed = new AtomicBoolean(false);
 
     public RemoteTransformer(RemoteServerData serverData, String componentDisplayName) {
         this.serverData = serverData;
@@ -298,10 +302,22 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         logger.debug("Processing remotely {} rows", size);
 
         if (client == null) {
+            if (failed.get()) {
+                throw new PreviousErrorsExistException();
+            }
             throw new RuntimeException("Remote transformer's connection has already been closed. ");
         }
-
-        ProcessStatelessOutput out = client.processStateless(componentDisplayName, input);
+        ProcessStatelessOutput out;
+        try {
+            out = client.processStateless(componentDisplayName, input);
+        } catch (RuntimeException e) {
+            boolean alreadyFailed = failed.getAndSet(true);
+            if (!alreadyFailed) {
+                throw e;
+            } else {
+                throw new PreviousErrorsExistException();
+            }
+        }
         convertOutputRows(out.rows, sink, size);
     }
 }

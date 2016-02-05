@@ -65,7 +65,8 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     private static final long serialVersionUID = 1L;
 
-    public static final int DEFAULT_PORT = 9300;
+    public static final int DEFAULT_PORT = 9200;
+    public static final int TRANSPORT_PORT = 9300;
 
     private final SimpleTableDef[] _tableDefs;
     private final ClientType _clientType;

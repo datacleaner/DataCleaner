@@ -140,7 +140,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                                 _hostnameTextField.setText(originalDatastore.getHostname());
                             }
                             if (originalDatastore.getPort() == null) {
-                                _portTextField.setText("9200");
+                                _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
                             } else {
                                 _portTextField.setText("" + originalDatastore.getPort());
                             }
@@ -152,9 +152,9 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         } else {
                             _hostnameTextField.setText("localhost");
                             if (ElasticSearchDatastore.ClientType.REST.equals(newSelectedItem)) {
-                                _portTextField.setText("9200");
+                                _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
                             } else {
-                                _portTextField.setText("9300");
+                                _portTextField.setText(""+ElasticSearchDatastore.TRANSPORT_PORT);
                             }
                             _sslCheckBox.setSelected(DEFAULT_SSL);
                         }
@@ -226,7 +226,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
-            _portTextField.setText("9200");
+            _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
         } else {
             _clientTypeComboBox.setSelectedItem(originalDatastore.getClientType());
             _datastoreNameTextField.setText(originalDatastore.getName());

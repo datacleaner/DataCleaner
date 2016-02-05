@@ -297,7 +297,7 @@ public class ComponentControllerV1 implements ComponentController {
     }
 
     public void setMaxBatchSize(int maxBatchSize){
-        this._maxBatchSize = maxBatchSize;
+        _maxBatchSize = maxBatchSize;
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,

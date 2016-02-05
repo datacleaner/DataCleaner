@@ -560,8 +560,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         if (encoding == null) {
                             encoding = FileHelper.UTF_8_ENCODING;
                         }
+                        
+                        final boolean caseSensitive = getBooleanVariable("caseSensitive", tfdt.isCaseSensitive(), true);
 
-                        final TextFileDictionary dict = new TextFileDictionary(name, filename, encoding);
+                        final TextFileDictionary dict = new TextFileDictionary(name, filename, encoding, caseSensitive);
                         dict.setDescription(tfdt.getDescription());
                         dictionaryList.add(dict);
 
@@ -573,7 +575,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         checkName(name, Dictionary.class, dictionaryList);
 
                         final List<String> values = vldt.getValue();
-                        final SimpleDictionary dict = new SimpleDictionary(name, values);
+                        final boolean caseSensitive = getBooleanVariable("caseSensitive", vldt.isCaseSensitive(), true);
+                        final SimpleDictionary dict = new SimpleDictionary(name, values, caseSensitive);
                         dict.setDescription(vldt.getDescription());
                         dictionaryList.add(dict);
                     } else if (dictionaryType instanceof CustomElementType) {
@@ -694,8 +697,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private DatastoreCatalog createDatastoreCatalog(DatastoreCatalogType datastoreCatalogType,
             DataCleanerConfigurationImpl temporaryConfiguration, DataCleanerEnvironment environment) {
+        if (datastoreCatalogType == null) {
+            return temporaryConfiguration.getDatastoreCatalog();
+        }
+        
         final Map<String, Datastore> datastores = new HashMap<String, Datastore>();
-
+        
         // read all single, non-custom datastores
         final List<AbstractDatastoreType> datastoreTypes = datastoreCatalogType
                 .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();

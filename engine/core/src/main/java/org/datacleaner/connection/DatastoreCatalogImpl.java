@@ -40,19 +40,6 @@ public class DatastoreCatalogImpl implements DatastoreCatalog {
         _datastores = datastores;
     }
 
-    @Override
-    public boolean containsDatastore(String name) {
-        if (name == null) {
-            return false;
-        }
-        for (Datastore datastore : _datastores) {
-            if (name.equals(datastore.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public DatastoreCatalogImpl(Datastore... datastores) {
         _datastores = new ArrayList<>();
         for (Datastore datastore : datastores) {

@@ -20,9 +20,12 @@
 package org.datacleaner.job;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputRow;
 
 /**
@@ -30,40 +33,72 @@ import org.datacleaner.api.InputRow;
  * requires just any of the provided outcomes.
  */
 public class CompoundComponentRequirement implements ComponentRequirement {
-
     private static final long serialVersionUID = 1L;
 
+    public enum CompundingType implements HasName {
+        ANY("OR"), ALL("AND");
+
+        private final String _name;
+
+        CompundingType(String name) {
+            _name = name;
+        }
+
+        public String getName() {
+            return _name;
+        }
+
+        public String toString() {
+            return " " + getName() + " ";
+        }
+    }
+
     private final Set<FilterOutcome> _outcomes;
+    private final CompundingType _compoundingType;
+
+    public CompoundComponentRequirement(CompundingType compoundingType, Collection<? extends FilterOutcome> outcomes) {
+        _outcomes = new LinkedHashSet<>(outcomes);
+        _compoundingType = compoundingType;
+    }
 
     public CompoundComponentRequirement(Collection<? extends FilterOutcome> outcomes) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-        for (FilterOutcome outcome : outcomes) {
-            _outcomes.add(outcome);
-        }
+        this(CompundingType.ANY, outcomes);
+    }
+
+    public CompoundComponentRequirement(CompundingType compoundingType, FilterOutcome... outcomes) {
+        _outcomes = new LinkedHashSet<>();
+        Collections.addAll(_outcomes, outcomes);
+        _compoundingType = compoundingType;
     }
 
     public CompoundComponentRequirement(FilterOutcome... outcomes) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-        for (FilterOutcome outcome : outcomes) {
-            _outcomes.add(outcome);
-        }
+        this(CompundingType.ANY, outcomes);
+    }
+
+    public CompoundComponentRequirement(CompundingType compoundingType, ComponentRequirement existingRequirement,
+            FilterOutcome filterOutcome) {
+        _outcomes = new LinkedHashSet<>();
+        _outcomes.addAll(existingRequirement.getProcessingDependencies());
+        _outcomes.add(filterOutcome);
+        _compoundingType = compoundingType;
     }
 
     public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-
-        _outcomes.addAll(existingRequirement.getProcessingDependencies());
-        _outcomes.add(filterOutcome);
+        this(CompundingType.ANY, existingRequirement, filterOutcome);
     }
 
     /**
      * Gets the {@link FilterOutcome} that this
      * {@link CompoundComponentRequirement} represents.
-     * 
+     *
      * @return
      */
     public Set<FilterOutcome> getOutcomes() {
         return _outcomes;
+    }
+
+    public CompundingType getCompoundingType() {
+        return _compoundingType;
     }
 
     public Set<FilterOutcome> getOutcomesFrom(HasFilterOutcomes producingComponent) {
@@ -95,12 +130,21 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
-        for (FilterOutcome outcome : outcomes.getOutcomes()) {
-            if (_outcomes.contains(outcome)) {
-                return true;
+        if(_compoundingType == CompundingType.ANY || row == null) {
+            for (FilterOutcome outcome : outcomes.getOutcomes()) {
+                if (_outcomes.contains(outcome)) {
+                    return true;
+                }
             }
+            return false;
+        } else {
+            for (FilterOutcome outcome : outcomes.getOutcomes()) {
+                if (!_outcomes.contains(outcome)) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return false;
     }
 
     @Override
@@ -108,7 +152,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         final StringBuilder sb = new StringBuilder();
         for (FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
-                sb.append(" OR ");
+                sb.append(_compoundingType);
             }
             sb.append(outcome.getSimpleName());
         }
@@ -120,7 +164,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         final StringBuilder sb = new StringBuilder();
         for (FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
-                sb.append(" OR ");
+                sb.append(_compoundingType);
             }
             sb.append(outcome.toString());
         }
@@ -129,10 +173,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_outcomes == null) ? 0 : _outcomes.hashCode());
-        return result;
+        return Objects.hash(_outcomes, _compoundingType);
     }
 
     @Override
@@ -144,11 +185,8 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         if (getClass() != obj.getClass())
             return false;
         final CompoundComponentRequirement other = (CompoundComponentRequirement) obj;
-        if (_outcomes == null) {
-            if (other._outcomes != null)
-                return false;
-        } else if (!_outcomes.equals(other._outcomes))
-            return false;
-        return true;
+
+        // TODO: This wasn't anything equivalent to deepEquals before... But should it have been?
+        return Objects.equals(_outcomes, other._outcomes) && _compoundingType == other._compoundingType;
     }
 }

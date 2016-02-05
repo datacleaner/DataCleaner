@@ -19,6 +19,9 @@
  */
 package org.datacleaner.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.TableModel;
 
 import org.datacleaner.beans.filter.EqualsFilter;
@@ -51,6 +54,8 @@ import org.datacleaner.test.MockTransformer;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.common.base.Joiner;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -300,8 +305,17 @@ public class PreviewTransformedDataActionListenerTest {
         assertEquals(200, tableModel.getRowCount());
 
         for(int i=0; i<tableModel.getRowCount();i++){
-            assertNotEquals(tableModel.getValueAt(i,0).toString(), tableModel.getValueAt(i,1).toString());
+            assertTrue(printRow(tableModel, i), tableModel.getValueAt(i,0) == null || tableModel.getValueAt(i,1) == null);
         }
+    }
+
+    private String printRow(TableModel tableModel, int row) {
+        List<String> values = new ArrayList<>(tableModel.getColumnCount());
+        for (int i = 0;i<tableModel.getColumnCount(); i++) {
+            Object value = tableModel.getValueAt(row, i);
+            values.add(value == null?"<null>":value.toString());
+        }
+        return Joiner.on(',').join(values);
     }
 
     @Test()

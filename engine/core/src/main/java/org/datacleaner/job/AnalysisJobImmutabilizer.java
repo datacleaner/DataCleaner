@@ -92,7 +92,8 @@ public final class AnalysisJobImmutabilizer {
             }
         } else if (req instanceof CompoundComponentRequirement) {
             boolean changed = false;
-            final Set<FilterOutcome> originalOutcomes = ((CompoundComponentRequirement) req).getOutcomes();
+            final CompoundComponentRequirement componentRequirement = (CompoundComponentRequirement) req;
+            final Set<FilterOutcome> originalOutcomes = componentRequirement.getOutcomes();
             final List<FilterOutcome> loadedOutcomes = new ArrayList<>(originalOutcomes.size());
             for (final FilterOutcome originalOutcome : originalOutcomes) {
                 final FilterOutcome loadedOutcome = load(originalOutcome);
@@ -102,7 +103,7 @@ public final class AnalysisJobImmutabilizer {
                 loadedOutcomes.add(loadedOutcome);
             }
             if (changed) {
-                return new CompoundComponentRequirement(loadedOutcomes);
+                return new CompoundComponentRequirement(componentRequirement.getCompoundingType(), loadedOutcomes);
             }
         }
         return req;

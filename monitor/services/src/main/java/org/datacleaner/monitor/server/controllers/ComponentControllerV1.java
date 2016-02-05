@@ -106,6 +106,7 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String PARAMETER_NAME_NAME = "name";
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private static BufferedImage remoteMark = null;
+    private int _maxBatchSize = Integer.MAX_VALUE;
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -215,7 +216,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data));
+        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
@@ -263,7 +264,7 @@ public class ComponentControllerV1 implements ComponentController {
         }
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
-        out.rows = handler.runComponent(processInput.data);
+        out.rows = handler.runComponent(processInput.data, _maxBatchSize);
         return out;
     }
 
@@ -293,6 +294,10 @@ public class ComponentControllerV1 implements ComponentController {
             logger.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
+    }
+
+    public void setMaxBatchSize(int maxBatchSize){
+        this._maxBatchSize = maxBatchSize;
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,

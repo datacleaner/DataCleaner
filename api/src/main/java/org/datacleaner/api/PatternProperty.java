@@ -17,39 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.connection;
+package org.datacleaner.api;
 
-import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Represents a collection of datastores, referenceable and usable by jobs.
+ * Annotation containing supplementary metadata about a {@link Configured}
+ * pattern property. This metadata can be used as a way to give hints to the UI
+ * as to how the content should be presented.
  */
-public interface DatastoreCatalog extends Serializable {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+@Documented
+@Inherited
+@Qualifier
+public @interface PatternProperty {
 
     /**
-     * Determines if a datastore by a specific name is contained in the
-     * {@link DatastoreCatalog}.
-     * 
-     * @param name
-     * @return
+     * @return true if an empty string value is acceptable
      */
-    public default boolean containsDatastore(String name) {
-        return getDatastore(name) != null;
-    };
-
-    /**
-     * Gets all the names of the datastores in this datastore catalog.
-     * 
-     * @return
-     */
-    public String[] getDatastoreNames();
-
-    /**
-     * Gets a datastore by it's name. If no such datastore is found, null will
-     * be returned.
-     * 
-     * @param name
-     * @return
-     */
-    public Datastore getDatastore(String name);
+    public boolean emptyString() default false;
 }

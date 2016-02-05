@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.datacleaner.api.PatternProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.WidgetFactory;
@@ -39,76 +40,85 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
 
-	private final JXTextField _textField;
+    private final JXTextField _textField;
+    private final PatternProperty patternPropertyAnnotation;
 
-	@Inject
-	public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			ComponentBuilder componentBuilder) {
+    @Inject
+    public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+            ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
-		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
-		_textField.getDocument().addDocumentListener(this);
-		Pattern currentValue = getCurrentValue();
-		setValue(currentValue);
-		updateColor();
-		add(_textField);
-	}
 
-	@Override
-	public boolean isSet() {
-		return _textField.getText() != null && _textField.getText().length() > 0 && isValidPattern();
-	}
+        patternPropertyAnnotation = propertyDescriptor.getAnnotation(PatternProperty.class);
 
-	@Override
-	public Pattern getValue() {
-		try {
-			return Pattern.compile(_textField.getText());
-		} catch (PatternSyntaxException e) {
-			return null;
-		}
-	}
+        _textField = WidgetFactory.createTextField(propertyDescriptor.getName());
+        _textField.getDocument().addDocumentListener(this);
+        Pattern currentValue = getCurrentValue();
+        setValue(currentValue);
+        updateColor();
+        add(_textField);
+    }
 
-	public boolean isValidPattern() {
-		try {
-			Pattern.compile(_textField.getText());
-		} catch (PatternSyntaxException e) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean isSet() {
+        if (_textField.getText() == null) {
+            return false;
+        }
 
-	private void updateColor() {
-		if (_textField.getText() == null || _textField.getText().length() == 0) {
-			_textField.setBackground(Color.white);
-		} else if (isValidPattern()) {
-			_textField.setBackground(Color.green);
-			fireValueChanged();
-		} else {
-			_textField.setBackground(Color.red);
-		}
-	}
+        return ((patternPropertyAnnotation != null && patternPropertyAnnotation.emptyString()) 
+                || _textField.getText().length() > 0) && isValidPattern();
+    }
 
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-		updateColor();
-	}
+    @Override
+    public Pattern getValue() {
+        try {
+            return Pattern.compile(_textField.getText());
+        } catch (PatternSyntaxException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public void insertUpdate(DocumentEvent e) {
-		updateColor();
-	}
+    public boolean isValidPattern() {
+        try {
+            Pattern.compile(_textField.getText());
+        } catch (PatternSyntaxException e) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-		updateColor();
-	}
+    private void updateColor() {
+        if (_textField.getText() == null || _textField.getText().length() == 0) {
+            _textField.setBackground(Color.white);
+        } else if (isValidPattern()) {
+            _textField.setBackground(Color.green);
+            fireValueChanged();
+        } else {
+            _textField.setBackground(Color.red);
+        }
+    }
 
-	@Override
-	protected void setValue(Pattern value) {
-		if (value != null) {
-			String pattern = value.pattern();
-			if (!pattern.equals(_textField.getText())) {
-				_textField.setText(pattern);
-			}
-		}
-	}
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        updateColor();
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateColor();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateColor();
+    }
+
+    @Override
+    protected void setValue(Pattern value) {
+        if (value != null) {
+            String pattern = value.pattern();
+            if (!pattern.equals(_textField.getText())) {
+                _textField.setText(pattern);
+            }
+        }
+    }
 }

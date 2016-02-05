@@ -962,6 +962,8 @@
 		<sequence>
 			<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
 			<element name="encoding" minOccurs="0" maxOccurs="1" type="token" />
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -971,6 +973,8 @@
 		<sequence>
 			<element name="value" minOccurs="1" maxOccurs="unbounded"
 				type="string" />
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />

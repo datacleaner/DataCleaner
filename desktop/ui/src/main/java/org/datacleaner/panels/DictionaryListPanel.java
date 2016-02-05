@@ -218,11 +218,6 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
                 }
             });
 
-            if (!_catalog.isDictionaryMutable(name)) {
-                editButton.setEnabled(false);
-                removeButton.setEnabled(false);
-            }
-
             final DCPanel dictionaryPanel = new DCPanel();
             dictionaryPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
             WidgetUtils.addToGridBag(dictLabel, dictionaryPanel, 0, 0, 1.0, 0.0);

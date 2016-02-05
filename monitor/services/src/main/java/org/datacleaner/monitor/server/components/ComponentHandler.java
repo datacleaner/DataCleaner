@@ -32,6 +32,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.http.HTTPException;
+
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
@@ -102,12 +105,119 @@ import com.fasterxml.jackson.databind.node.TextNode;
  */
 public class ComponentHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
-    public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
+    private static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
+        private final List<Object[]> outputRows = new ArrayList<>();
+        @Override
+        public void onValues(Object[] values) {
+            outputRows.add(values);
+        }
+    }
 
+    private class ComponentHandlerAnalysisJob implements AnalysisJob {
+
+        @Override
+        public AnalysisJobMetadata getMetadata() {
+            return null;
+        }
+
+        @Override
+        public Datastore getDatastore() {
+            return null;
+        }
+
+        @Override
+        public List<InputColumn<?>> getSourceColumns() {
+            return inputColumnsList;
+        }
+
+        @Override
+        public synchronized List<TransformerJob> getTransformerJobs() {
+            return Collections.singletonList((TransformerJob)new ComponentHandlerTransformerJob());
+        }
+
+        @Override
+        public List<FilterJob> getFilterJobs() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<AnalyzerJob> getAnalyzerJobs() {
+            return Collections.emptyList();
+        }
+    }
+
+    class ComponentHandlerTransformerJob implements TransformerJob {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public TransformerDescriptor<?> getDescriptor() {
+            return (TransformerDescriptor<?>)descriptor;
+        }
+
+        @Override
+        public String getName() {
+            return descriptor.getDisplayName();
+        }
+
+        @Override
+        public Map<String, String> getMetadataProperties() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public org.datacleaner.job.ComponentConfiguration getConfiguration() {
+            return config;
+        }
+
+        @Override
+        public ComponentRequirement getComponentRequirement() {
+            return null;
+        }
+
+        @Override
+        public InputColumn<?>[] getInput() {
+            return configuredInputColumns;
+        }
+
+        @Override
+        public InputColumn<?>[] getOutput() {
+            // TODO
+            return new InputColumn<?>[0];
+        }
+
+        @Override
+        public OutputDataStreamJob[] getOutputDataStreamJobs() {
+            return new OutputDataStreamJob[0];
+        }
+    }
+
+    private class ComponentHandlerInjectionManager implements InjectionManager {
+        InjectionManager delegate;
+
+        ComponentHandlerInjectionManager(InjectionManager delegate) {
+            this.delegate = delegate;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+            E obj;
+            final Class<E> baseType = injectionPoint.getBaseType();
+            if (baseType == OutputRowCollector.class) {
+                obj = (E) new ThreadLocalOutputRowCollector();
+            } else if(baseType == ComponentContext.class) {
+                obj = (E) componentContext;
+            } else {
+                obj = delegate.getInstance(injectionPoint);
+            }
+            return obj;
+        }
+    }
+    public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
+    public static final long MAX_BATCH_SIZE = 50;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
-    private StringConverter _stringConverter;
     private final ComponentDescriptor<?> descriptor;
     private final Map<String, MutableColumn> columns;
     private final Map<String, InputColumn<?>> inputColumns;
@@ -116,13 +226,14 @@ public class ComponentHandler {
     private final MutableTable table;
     private final Component component;
     private final LifeCycleHelper lifeCycleHelper;
-    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
     private final org.datacleaner.job.ComponentConfiguration config;
     private final ComponentContext componentContext;
+    private StringConverter _stringConverter;
+    private RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
     public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration, AnalysisListener analysisListener) {
         Objects.requireNonNull(componentConfiguration, "Component configuration cannot be null");
-        
+
         _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
         _componentName = componentName;
@@ -244,7 +355,9 @@ public class ComponentHandler {
             return null;
         }
 
-        if (component instanceof Transformer) {
+        if(data.size() > MAX_BATCH_SIZE){
+            throw new BatchMaxSizeException(data.size(), MAX_BATCH_SIZE);
+        }else if (component instanceof Transformer) {
             return runTransformer(data);
         } else if (component instanceof Analyzer) {
             throw new RuntimeException("NOT YET IMPLEMENTED");
@@ -480,114 +593,5 @@ public class ComponentHandler {
             throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
         }
         return descriptor;
-    }
-
-    private static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {
-        private final List<Object[]> outputRows = new ArrayList<>();
-        @Override
-        public void onValues(Object[] values) {
-            outputRows.add(values);
-        }
-    }
-
-    private class ComponentHandlerAnalysisJob implements AnalysisJob {
-
-        @Override
-        public AnalysisJobMetadata getMetadata() {
-            return null;
-        }
-
-        @Override
-        public Datastore getDatastore() {
-            return null;
-        }
-
-        @Override
-        public List<InputColumn<?>> getSourceColumns() {
-            return inputColumnsList;
-        }
-
-        @Override
-        public synchronized List<TransformerJob> getTransformerJobs() {
-            return Collections.singletonList((TransformerJob)new ComponentHandlerTransformerJob());
-        }
-
-        @Override
-        public List<FilterJob> getFilterJobs() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<AnalyzerJob> getAnalyzerJobs() {
-            return Collections.emptyList();
-        }
-    }
-
-    class ComponentHandlerTransformerJob implements TransformerJob {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public TransformerDescriptor<?> getDescriptor() {
-            return (TransformerDescriptor<?>)descriptor;
-        }
-
-        @Override
-        public String getName() {
-            return descriptor.getDisplayName();
-        }
-
-        @Override
-        public Map<String, String> getMetadataProperties() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public org.datacleaner.job.ComponentConfiguration getConfiguration() {
-            return config;
-        }
-
-        @Override
-        public ComponentRequirement getComponentRequirement() {
-            return null;
-        }
-
-        @Override
-        public InputColumn<?>[] getInput() {
-            return configuredInputColumns;
-        }
-
-        @Override
-        public InputColumn<?>[] getOutput() {
-            // TODO
-            return new InputColumn<?>[0];
-        }
-
-        @Override
-        public OutputDataStreamJob[] getOutputDataStreamJobs() {
-            return new OutputDataStreamJob[0];
-        }
-    }
-
-    private class ComponentHandlerInjectionManager implements InjectionManager {
-        InjectionManager delegate;
-
-        ComponentHandlerInjectionManager(InjectionManager delegate) {
-            this.delegate = delegate;
-        }
-
-        @SuppressWarnings("unchecked")
-        public <E> E getInstance(InjectionPoint<E> injectionPoint) {
-            E obj;
-            final Class<E> baseType = injectionPoint.getBaseType();
-            if (baseType == OutputRowCollector.class) {
-                obj = (E) new ThreadLocalOutputRowCollector();
-            } else if(baseType == ComponentContext.class) {
-                obj = (E) componentContext;
-            } else {
-                obj = delegate.getInstance(injectionPoint);
-            }
-            return obj;
-        }
     }
 }

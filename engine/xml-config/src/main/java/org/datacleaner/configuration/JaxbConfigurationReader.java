@@ -858,12 +858,18 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String keystorePassword = getPasswordVariable("keystorePassword", datastoreType.getKeystorePassword());
 
         Integer port = getIntegerVariable("port", datastoreType.getPort());
+        final String indexName = getStringVariable("indexName", datastoreType.getIndexName());
+        String clientType = getStringVariable("clientType", datastoreType.getClientType());
+        // for backwards compatibility, the default ClientType was a TRANSPORT by default (bug)
+        if (clientType == null) {
+            clientType = ClientType.TRANSPORT.name();
+            if (port == null) {
+                port = ElasticSearchDatastore.TRANSPORT_PORT;
+            }
+        }
         if (port == null) {
             port = ElasticSearchDatastore.DEFAULT_PORT;
         }
-
-        final String indexName = getStringVariable("indexName", datastoreType.getIndexName());
-
         final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList = datastoreType
                 .getTableDef();
         final SimpleTableDef[] tableDefs;
@@ -898,7 +904,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName, tableDefs,
+        return new ElasticSearchDatastore(name, ClientType.valueOf(clientType), hostname, port, clusterName, indexName, tableDefs,
                 username, password, ssl, keystorePath, keystorePassword);
     }
 

@@ -92,13 +92,14 @@ public class AddAlertCommand implements Command {
                                     public void onSuccess(ScheduleDefinition result) {
                                         GWT.log("Succesfully added alert in schedule: " + result);
                                         Window.Location.reload();
+                                        
                                     }
                                 });
                             }
                         });
 
                         popup.getButtonPanel().removeAllButtons();
-                        popup.addButton(nextButton);
+                        popup.addButton(saveButton);
                         popup.addButton(cancelButton);
                         popup.setWidget(customizeAlertPanel);
                         popup.center();

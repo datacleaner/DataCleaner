@@ -20,7 +20,10 @@
 package org.datacleaner.beans.transform;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,9 +48,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 @Named("Remove dictionary matches")
@@ -55,14 +56,12 @@ import com.google.common.base.Strings;
 @ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class RemoveDictionaryMatchesTransformer implements Transformer {
-
-    public static enum RemovedMatchesType implements HasName {
-
+    public enum RemovedMatchesType implements HasName {
         STRING("String"), LIST("List");
 
         private final String _name;
 
-        private RemovedMatchesType(String name) {
+        RemovedMatchesType(String name) {
             _name = name;
         }
 
@@ -70,9 +69,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
         public String getName() {
             return _name;
         }
-    };
-
-    private static final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
+    }
 
     public static final String PROPERTY_DICTIONARY = "Dictionary";
     public static final String PROPERTY_COLUMN = "Column";
@@ -95,7 +92,8 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Provided
     DataCleanerConfiguration _configuration;
 
-    private DictionaryConnection dictionaryConnection;
+    private DictionaryConnection _dictionaryConnection;
+    private List<String> dictionaryValues;
 
     public RemoveDictionaryMatchesTransformer() {
     }
@@ -134,38 +132,50 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     @Initialize
     public void init() {
-        dictionaryConnection = _dictionary.openConnection(_configuration);
+        _dictionaryConnection = _dictionary.openConnection(_configuration);
+        dictionaryValues = new ArrayList<>();
+
+        final Iterator<String> allValues = _dictionaryConnection.getLengthSortedValues();
+        while (allValues.hasNext()) {
+            dictionaryValues.add(allValues.next());
+        }
     }
 
     @Close
     public void close() {
-        if (dictionaryConnection != null) {
-            dictionaryConnection.close();
-            dictionaryConnection = null;
+        if (_dictionaryConnection != null) {
+            _dictionaryConnection.close();
+            _dictionaryConnection = null;
         }
     }
 
     @Override
     public Object[] transform(InputRow inputRow) {
         final String value = inputRow.getValue(_column);
-        final Object[] result = transform(value);
-        return result;
+        return transform(value);
     }
 
-    public Object[] transform(final String value) {
+    public Object[] transform(String value) {
         final List<String> removedParts = new ArrayList<>(2);
-        final StringBuilder survivorString = new StringBuilder();
-
         if (!Strings.isNullOrEmpty(value)) {
-            final Iterable<String> tokens = SPLITTER.split(value);
-            for (String token : tokens) {
-                if (!dictionaryConnection.containsValue(token)) {
-                    if (survivorString.length() != 0) {
-                        survivorString.append(' ');
+            for(String entry : dictionaryValues) {
+                final Matcher matcher = Pattern.compile("\\b" + Pattern.quote(entry) + "\\b").matcher(value);
+                while(matcher.find()){
+                    final int start;
+                    final int end;
+                    if (matcher.start() > 0 && value.charAt(matcher.start() - 1) == ' ') {
+                        start = matcher.start() - 1;
+                        end = matcher.end();
+                    } else if ( matcher.end() < value.length() && value.charAt(matcher.end()) == ' ') {
+                        start = matcher.start();
+                        end = matcher.end() + 1;
+                    } else {
+                        start = matcher.start();
+                        end = matcher.end();
                     }
-                    survivorString.append(token);
-                } else {
-                    removedParts.add(token);
+
+                    value = value.substring(0, start) + value.substring(end);
+                    removedParts.add(entry);
                 }
             }
         }
@@ -173,9 +183,9 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
         switch (_removedMatchesType) {
         case STRING:
             final String removedPartsString = Joiner.on(' ').join(removedParts);
-            return new String[] { survivorString.toString(), removedPartsString };
+            return new String[] { value, removedPartsString };
         case LIST:
-            return new Object[] { survivorString.toString(), removedParts };
+            return new Object[] { value, removedParts };
         default:
             throw new UnsupportedOperationException("Unsupported output type: " + _removedMatchesType);
         }

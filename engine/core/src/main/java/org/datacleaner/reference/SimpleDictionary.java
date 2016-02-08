@@ -25,9 +25,12 @@ import java.io.ObjectInputStream.GetField;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -135,9 +138,17 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     @Override
     public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
         return new DictionaryConnection() {
+
             @Override
             public Iterator<String> getAllValues() {
                 return _valueSet.iterator();
+            }
+
+            @Override
+            public Iterator<String> getLengthSortedValues() {
+                final SortedSet<String> connectionValueSet = new TreeSet<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+                connectionValueSet.addAll(_valueSet);
+                return connectionValueSet.iterator();
             }
 
             @Override
@@ -160,7 +171,6 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     public Set<String> getValueSet() {
         return _valueSet;
     }
-
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

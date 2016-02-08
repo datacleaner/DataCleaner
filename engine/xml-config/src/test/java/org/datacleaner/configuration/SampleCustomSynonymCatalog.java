@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.datacleaner.api.Configured;
 import org.datacleaner.reference.SimpleSynonym;
+import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.Synonym;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.SynonymCatalogConnection;
@@ -56,7 +57,7 @@ public class SampleCustomSynonymCatalog implements SynonymCatalog {
 
             @Override
             public Collection<Synonym> getSynonyms() {
-                List<Synonym> result = new ArrayList<Synonym>();
+                List<Synonym> result = new ArrayList<>();
                 for (String[] strings : values) {
                     result.add(new SimpleSynonym(strings[0], strings));
                 }
@@ -77,6 +78,14 @@ public class SampleCustomSynonymCatalog implements SynonymCatalog {
                     }
                 }
                 return null;
+            }
+
+            @Override
+            public Replacement replaceInline(final String sentence) {
+                final Collection<Synonym> synonyms = getSynonyms();
+                final Synonym[] synonymsArray = synonyms.toArray(new Synonym[synonyms.size()]);
+                final SimpleSynonymCatalog simpleSynonymCatalog = new SimpleSynonymCatalog(getName(), synonymsArray);
+                return simpleSynonymCatalog.openConnection(null).replaceInline(sentence);
             }
 
             @Override

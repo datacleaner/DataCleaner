@@ -27,8 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -42,6 +44,7 @@ import javax.swing.border.EmptyBorder;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.Version;
+import org.datacleaner.VersionComparator;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.UserPreferences;
@@ -50,6 +53,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;
@@ -100,6 +104,35 @@ public class WelcomePanel extends DCSplashPanel {
         add(_titleLabel, BorderLayout.NORTH);
         add(contentPanel, BorderLayout.CENTER);
         add(_buttonPanel, BorderLayout.SOUTH);
+
+        checkForNewVersion();
+    }
+
+    private void checkForNewVersion() {
+        if (_userPreferences.getMonitorConnection() != null) {
+            try {
+                final Map<?, ?> pingResult = _userPreferences.getMonitorConnection().ping();
+
+                final String monitorVersion = (String) pingResult.get("version");
+                final String dataCleanerVersion = Version.getVersion();
+
+                if (dataCleanerVersion != Version.UNKNOWN_VERSION 
+                        && monitorVersion != null && monitorVersion != Version.UNKNOWN_VERSION 
+                        && new VersionComparator().compare(monitorVersion, dataCleanerVersion) > 0) {
+
+                    final DCLabel versionMessage = new DCLabel(false, "DataCleaner Monitor has a higher version: "
+                            + monitorVersion + ". It is advised you upgrade DataCleaner to this version too.",
+                            WidgetUtils.BG_COLOR_ORANGE_BRIGHT, null);
+                    final EmptyBorder border = new EmptyBorder(20, MARGIN_LEFT, 10, 20);
+
+                    versionMessage.setBorder(border);
+
+                    add(versionMessage, BorderLayout.EAST);
+                }
+            } catch (IOException e) {
+                logger.info("Failed to connect to monitor", e);
+            }
+        }
     }
 
     public JComponent getButtonPanel() {

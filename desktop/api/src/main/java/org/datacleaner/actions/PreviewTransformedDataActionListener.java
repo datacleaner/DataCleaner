@@ -202,7 +202,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                                         .getComponentRequirement();
                                 if (existingRequirement != null) {
                                     componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
-                                            CompoundComponentRequirement.CompundingType.ALL,
+                                            CompoundComponentRequirement.CompoundingType.ALL,
                                             existingRequirement, maxRowFilter.getFilterOutcome(
                                             MaxRowsFilter.Category.VALID)));
                                 } else {

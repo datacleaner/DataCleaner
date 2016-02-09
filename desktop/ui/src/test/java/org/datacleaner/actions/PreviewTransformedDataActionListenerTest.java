@@ -254,7 +254,6 @@ public class PreviewTransformedDataActionListenerTest {
     }
 
     @Test
-    @Ignore
     public void testFilterWithCoalesce() throws Exception {
         analysisJobBuilder.removeAllComponents();
         analysisJobBuilder.removeAllSourceColumns();

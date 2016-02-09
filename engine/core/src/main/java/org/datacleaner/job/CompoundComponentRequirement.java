@@ -35,12 +35,12 @@ import org.datacleaner.api.InputRow;
 public class CompoundComponentRequirement implements ComponentRequirement {
     private static final long serialVersionUID = 1L;
 
-    public enum CompundingType implements HasName {
+    public enum CompoundingType implements HasName {
         ANY("OR"), ALL("AND");
 
         private final String _name;
 
-        CompundingType(String name) {
+        CompoundingType(String name) {
             _name = name;
         }
 
@@ -54,28 +54,28 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     }
 
     private final Set<FilterOutcome> _outcomes;
-    private final CompundingType _compoundingType;
+    private final CompoundingType _compoundingType;
 
-    public CompoundComponentRequirement(CompundingType compoundingType, Collection<? extends FilterOutcome> outcomes) {
+    public CompoundComponentRequirement(CompoundingType compoundingType, Collection<? extends FilterOutcome> outcomes) {
         _outcomes = new LinkedHashSet<>(outcomes);
         _compoundingType = compoundingType;
     }
 
     public CompoundComponentRequirement(Collection<? extends FilterOutcome> outcomes) {
-        this(CompundingType.ANY, outcomes);
+        this(CompoundingType.ANY, outcomes);
     }
 
-    public CompoundComponentRequirement(CompundingType compoundingType, FilterOutcome... outcomes) {
+    public CompoundComponentRequirement(CompoundingType compoundingType, FilterOutcome... outcomes) {
         _outcomes = new LinkedHashSet<>();
         Collections.addAll(_outcomes, outcomes);
         _compoundingType = compoundingType;
     }
 
     public CompoundComponentRequirement(FilterOutcome... outcomes) {
-        this(CompundingType.ANY, outcomes);
+        this(CompoundingType.ANY, outcomes);
     }
 
-    public CompoundComponentRequirement(CompundingType compoundingType, ComponentRequirement existingRequirement,
+    public CompoundComponentRequirement(CompoundingType compoundingType, ComponentRequirement existingRequirement,
             FilterOutcome filterOutcome) {
         _outcomes = new LinkedHashSet<>();
         _outcomes.addAll(existingRequirement.getProcessingDependencies());
@@ -84,7 +84,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     }
 
     public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
-        this(CompundingType.ANY, existingRequirement, filterOutcome);
+        this(CompoundingType.ANY, existingRequirement, filterOutcome);
     }
 
     /**
@@ -97,7 +97,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         return _outcomes;
     }
 
-    public CompundingType getCompoundingType() {
+    public CompoundingType getCompoundingType() {
         return _compoundingType;
     }
 
@@ -130,7 +130,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
-        if(_compoundingType == CompundingType.ANY || row == null) {
+        if(_compoundingType == CompoundingType.ANY || row == null) {
             for (FilterOutcome outcome : outcomes.getOutcomes()) {
                 if (_outcomes.contains(outcome)) {
                     return true;
@@ -186,7 +186,6 @@ public class CompoundComponentRequirement implements ComponentRequirement {
             return false;
         final CompoundComponentRequirement other = (CompoundComponentRequirement) obj;
 
-        // TODO: This wasn't anything equivalent to deepEquals before... But should it have been?
         return Objects.equals(_outcomes, other._outcomes) && _compoundingType == other._compoundingType;
     }
 }

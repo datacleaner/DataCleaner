@@ -19,10 +19,14 @@
  */
 package org.datacleaner.test;
 
+import java.io.File;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.connection.Datastore;
+import org.junit.Assert;
 
 public class TestHelper {
 
@@ -39,4 +43,21 @@ public class TestHelper {
         return new TestDatastore(name, createSampleDatabaseDataSource());
     }
 
+    public static void assertXmlFilesEquals(File benchmarkFile, File outputFile) {
+        final String output = FileHelper.readFileAsString(outputFile);
+
+        if (!benchmarkFile.exists()) {
+            Assert.assertEquals("No benchmark file '" + benchmarkFile + "' exists!", output);
+        }
+
+        final String benchmark = FileHelper.readFileAsString(benchmarkFile);
+        Assert.assertEquals(trimXmlForComparison(benchmark), trimXmlForComparison(output));
+    }
+
+    public static String trimXmlForComparison(String xml) {
+        if (xml == null) {
+            return null;
+        }
+        return xml.trim().replace("\r\n", "\n");
+    }
 }

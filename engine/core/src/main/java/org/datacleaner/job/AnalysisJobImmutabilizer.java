@@ -103,7 +103,7 @@ public final class AnalysisJobImmutabilizer {
                 loadedOutcomes.add(loadedOutcome);
             }
             if (changed) {
-                return new CompoundComponentRequirement(componentRequirement.getCompoundingType(), loadedOutcomes);
+                return new CompoundComponentRequirement(loadedOutcomes);
             }
         }
         return req;

@@ -25,7 +25,6 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputRow;
 
 /**
@@ -35,56 +34,21 @@ import org.datacleaner.api.InputRow;
 public class CompoundComponentRequirement implements ComponentRequirement {
     private static final long serialVersionUID = 1L;
 
-    public enum CompoundingType implements HasName {
-        ANY("OR"), ALL("AND");
-
-        private final String _name;
-
-        CompoundingType(String name) {
-            _name = name;
-        }
-
-        public String getName() {
-            return _name;
-        }
-
-        public String toString() {
-            return " " + getName() + " ";
-        }
-    }
-
     private final Set<FilterOutcome> _outcomes;
-    private final CompoundingType _compoundingType;
-
-    public CompoundComponentRequirement(CompoundingType compoundingType, Collection<? extends FilterOutcome> outcomes) {
-        _outcomes = new LinkedHashSet<>(outcomes);
-        _compoundingType = compoundingType;
-    }
 
     public CompoundComponentRequirement(Collection<? extends FilterOutcome> outcomes) {
-        this(CompoundingType.ANY, outcomes);
-    }
-
-    public CompoundComponentRequirement(CompoundingType compoundingType, FilterOutcome... outcomes) {
-        _outcomes = new LinkedHashSet<>();
-        Collections.addAll(_outcomes, outcomes);
-        _compoundingType = compoundingType;
+        _outcomes = new LinkedHashSet<>(outcomes);
     }
 
     public CompoundComponentRequirement(FilterOutcome... outcomes) {
-        this(CompoundingType.ANY, outcomes);
-    }
-
-    public CompoundComponentRequirement(CompoundingType compoundingType, ComponentRequirement existingRequirement,
-            FilterOutcome filterOutcome) {
         _outcomes = new LinkedHashSet<>();
-        _outcomes.addAll(existingRequirement.getProcessingDependencies());
-        _outcomes.add(filterOutcome);
-        _compoundingType = compoundingType;
+        Collections.addAll(_outcomes, outcomes);
     }
 
     public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
-        this(CompoundingType.ANY, existingRequirement, filterOutcome);
+        _outcomes = new LinkedHashSet<>();
+        _outcomes.addAll(existingRequirement.getProcessingDependencies());
+        _outcomes.add(filterOutcome);
     }
 
     /**
@@ -95,10 +59,6 @@ public class CompoundComponentRequirement implements ComponentRequirement {
      */
     public Set<FilterOutcome> getOutcomes() {
         return _outcomes;
-    }
-
-    public CompoundingType getCompoundingType() {
-        return _compoundingType;
     }
 
     public Set<FilterOutcome> getOutcomesFrom(HasFilterOutcomes producingComponent) {
@@ -130,21 +90,12 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
-        if(_compoundingType == CompoundingType.ANY || row == null) {
-            for (FilterOutcome outcome : outcomes.getOutcomes()) {
-                if (_outcomes.contains(outcome)) {
-                    return true;
-                }
+        for (FilterOutcome outcome : outcomes.getOutcomes()) {
+            if (_outcomes.contains(outcome)) {
+                return true;
             }
-            return false;
-        } else {
-            for (FilterOutcome outcome : outcomes.getOutcomes()) {
-                if (!_outcomes.contains(outcome)) {
-                    return false;
-                }
-            }
-            return true;
         }
+        return false;
     }
 
     @Override
@@ -152,7 +103,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         final StringBuilder sb = new StringBuilder();
         for (FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
-                sb.append(_compoundingType);
+                sb.append(" OR ");
             }
             sb.append(outcome.getSimpleName());
         }
@@ -164,7 +115,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         final StringBuilder sb = new StringBuilder();
         for (FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
-                sb.append(_compoundingType);
+                sb.append(" OR ");
             }
             sb.append(outcome.toString());
         }
@@ -173,7 +124,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_outcomes, _compoundingType);
+        return Objects.hash(_outcomes);
     }
 
     @Override
@@ -186,6 +137,6 @@ public class CompoundComponentRequirement implements ComponentRequirement {
             return false;
         final CompoundComponentRequirement other = (CompoundComponentRequirement) obj;
 
-        return Objects.equals(_outcomes, other._outcomes) && _compoundingType == other._compoundingType;
+        return Objects.equals(_outcomes, other._outcomes);
     }
 }

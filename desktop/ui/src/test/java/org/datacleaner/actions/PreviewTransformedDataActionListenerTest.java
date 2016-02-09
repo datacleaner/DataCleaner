@@ -52,6 +52,9 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.job.EmptyJaxbJobMetadataFactory;
+import org.datacleaner.job.JaxbJobMetadataFactory;
+import org.datacleaner.job.JaxbJobMetadataFactoryImpl;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -363,7 +366,6 @@ public class PreviewTransformedDataActionListenerTest {
         assertEquals("classicmodelcars.com", tableModel.getValueAt(1, 2).toString());
 
     }
-    
 
     private void compareWithBenchmark(PreviewTransformedDataActionListener action) throws IOException {
         final String baseFilename = getClass().getSimpleName() + "-" + testName
@@ -374,7 +376,7 @@ public class PreviewTransformedDataActionListenerTest {
         final AnalysisJobBuilder ajb = action.createPreviewJob().analysisJobBuilder;
         ajb.getAnalysisJobMetadata().getProperties().put(PreviewTransformedDataActionListener.METADATA_PROPERTY_MARKER, "test");
         
-        final JaxbJobWriter writer = new JaxbJobWriter(ajb.getConfiguration());
+        final JaxbJobWriter writer = new JaxbJobWriter(ajb.getConfiguration(), new EmptyJaxbJobMetadataFactory());
         
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             writer.write(ajb.toAnalysisJob(), out);

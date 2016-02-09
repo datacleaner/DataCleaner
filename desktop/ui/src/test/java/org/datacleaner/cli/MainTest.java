@@ -147,7 +147,7 @@ public class MainTest extends TestCase {
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         assertEquals(
-                "Tables:\n-------\nCUSTOMERS\nCUSTOMER_W_TER\nDEPARTMENT_MANAGERS\nDIM_TIME\nEMPLOYEES\nOFFICES\nORDERDETAILS\nORDERFACT\nORDERS\nPAYMENTS\nPRODUCTS\nQUADRANT_ACTUALS\nTRIAL_BALANCE\n",
+                "Tables:\n-------\nCUSTOMERS\nEMPLOYEES\nOFFICES\nORDERDETAILS\nORDERFACT\nORDERS\nPAYMENTS\nPRODUCTS\n",
                 out);
     }
 

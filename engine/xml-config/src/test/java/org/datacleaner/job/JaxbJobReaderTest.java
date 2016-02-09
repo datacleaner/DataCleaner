@@ -331,10 +331,10 @@ public class JaxbJobReaderTest extends TestCase {
                 "                                              username           domain CONTACTFIRSTNAME  CONTACTLASTNAME ",
                 resultLines[0]);
         assertEquals(
-                "Row count                                          122              122              122              122 ",
+                "Row count                                          214              214              214              214 ",
                 resultLines[1]);
         assertEquals(
-                "Null count                                         122              122                0                0 ",
+                "Null count                                         214              214                1                0 ",
                 resultLines[2]);
     }
 

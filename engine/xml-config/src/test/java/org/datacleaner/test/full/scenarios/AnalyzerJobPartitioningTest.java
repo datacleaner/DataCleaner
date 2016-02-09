@@ -98,7 +98,7 @@ public class AnalyzerJobPartitioningTest extends TestCase {
 
         String[] resultLines1 = new CrosstabTextRenderer().render(saResults.get(0)).split("\n");
         assertEquals("                                      CUSTOMERNAME ", resultLines1[0]);
-        assertEquals("Row count                                      122 ", resultLines1[1]);
+        assertEquals("Row count                                      214 ", resultLines1[1]);
 
         String[] resultLines2 = new CrosstabTextRenderer().render(saResults.get(1)).split("\n");
         assertEquals("                                      FIRSTNAME  LASTNAME     EMAIL ", resultLines2[0]);

@@ -64,7 +64,7 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
-    private final int recordsInTable = 122;
+    private final int recordsInTable = 214;
 
     public void testScenario() throws Throwable {
         final AnalysisJob job;

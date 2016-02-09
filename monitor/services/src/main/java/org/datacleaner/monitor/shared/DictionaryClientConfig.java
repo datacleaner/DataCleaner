@@ -75,6 +75,11 @@ public class DictionaryClientConfig implements ClientConfig {
     public boolean isDashboardEditor() {
         return getBoolean("role_dashboard_editor", false);
     }
+    
+    @Override
+    public boolean isWebstartAvailable() {
+        return getBoolean("webstart_available", false);
+    }
 
     private String getString(String key) {
         try {

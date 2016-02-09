@@ -21,16 +21,20 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputStream.GetField;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -46,10 +50,11 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     private static final long serialVersionUID = 1L;
 
     private final Map<String, String> _synonymMap;
+
     private final boolean _caseSensitive;
 
     public SimpleSynonymCatalog(String name) {
-        this(name, new HashMap<String, String>());
+        this(name, new HashMap<>());
     }
 
     public SimpleSynonymCatalog(String name, Map<String, String> synonyms) {
@@ -58,17 +63,22 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
 
     public SimpleSynonymCatalog(String name, Map<String, String> synonyms, boolean caseSensitive) {
         super(name);
-        if (caseSensitive) {
-            _synonymMap = synonyms;
+        _caseSensitive = caseSensitive;
+        _synonymMap = synonyms;
+    }
+
+    private SortedMap<String, String> createSortedSynonymMap() {
+        SortedMap<String, String> synonymMap = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+        if (_caseSensitive) {
+            synonymMap.putAll(_synonymMap);
         } else {
-            _synonymMap = new HashMap<String, String>();
-            final Set<Entry<String, String>> entries = synonyms.entrySet();
+            final Set<Entry<String, String>> entries = _synonymMap.entrySet();
             for (Entry<String, String> entry : entries) {
                 final String key = entry.getKey().toLowerCase();
-                _synonymMap.put(key, entry.getValue());
+                synonymMap.put(key, entry.getValue());
             }
         }
-        _caseSensitive = caseSensitive;
+        return synonymMap;
     }
 
     public SimpleSynonymCatalog(String name, Synonym... synonyms) {
@@ -88,7 +98,7 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         Adaptor adaptor = new Adaptor() {
             @Override
-            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+            public void deserialize(ObjectInputStream.GetField getField, Serializable serializable) throws Exception {
                 final boolean caseSensitive = getField.get("_caseSensitive", true);
                 Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
                 field.setAccessible(true);
@@ -124,10 +134,13 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
         return new SynonymCatalogConnection() {
 
+
+            SortedMap<String, String> _sortedSynonymMap = createSortedSynonymMap();
+
             @Override
             public Collection<Synonym> getSynonyms() {
-                final Map<String, Synonym> synonyms = new TreeMap<String, Synonym>();
-                for (Entry<String, String> synonymEntry : _synonymMap.entrySet()) {
+                final Map<String, Synonym> synonyms = new TreeMap<>();
+                for (Entry<String, String> synonymEntry : _sortedSynonymMap.entrySet()) {
                     final String masterTerm = synonymEntry.getValue();
                     final String synonymValue = synonymEntry.getKey();
 
@@ -148,8 +161,50 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
                     return null;
                 }
                 final String key = _caseSensitive ? term : term.toLowerCase();
-                final String masterTerm = _synonymMap.get(key);
-                return masterTerm;
+                return _sortedSynonymMap.get(key);
+            }
+
+            @Override
+            public Replacement replaceInline(String sentence) {
+                final List<String> synonyms = new ArrayList<>();
+                final List<String> masterTerms = new ArrayList<>();
+
+                if(!_caseSensitive){
+                    sentence = sentence.toLowerCase();
+                }
+
+                for(String synonym : _sortedSynonymMap.keySet()) {
+                    if(masterTerms.contains(synonym)){
+                        continue;
+                    }
+
+                    final Matcher matcher = Pattern.compile("\\b" + synonym + "\\b").matcher(sentence);
+                    while(matcher.find()){
+                        final String masterTerm = _sortedSynonymMap.get(synonym);
+                        sentence =
+                                sentence.substring(0, matcher.start()) + masterTerm + sentence.substring(matcher.end());
+                        synonyms.add(synonym);
+                        masterTerms.add(masterTerm);
+                    }
+                }
+
+                final String finalSentence = sentence;
+                return new Replacement() {
+                    @Override
+                    public String getReplacedString() {
+                        return finalSentence;
+                    }
+
+                    @Override
+                    public List<String> getSynonyms() {
+                        return synonyms;
+                    }
+
+                    @Override
+                    public List<String> getMasterTerms() {
+                        return masterTerms;
+                    }
+                };
             }
 
             @Override

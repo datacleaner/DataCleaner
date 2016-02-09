@@ -105,7 +105,6 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
     public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
-
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
     private StringConverter _stringConverter;
@@ -240,12 +239,13 @@ public class ComponentHandler {
         return ((Transformer) component).getOutputColumns();
     }
 
-    public Collection<List<Object[]>> runComponent(JsonNode data) {
+    public Collection<List<Object[]>> runComponent(JsonNode data, int maxBatchSize) {
         if (data == null) {
             return null;
         }
-
-        if (component instanceof Transformer) {
+        if(data.size() > maxBatchSize){
+            throw new BatchMaxSizeException(data.size(), maxBatchSize);
+        }else if (component instanceof Transformer) {
             return runTransformer(data);
         } else if (component instanceof Analyzer) {
             throw new RuntimeException("NOT YET IMPLEMENTED");

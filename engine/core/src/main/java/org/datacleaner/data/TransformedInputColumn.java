@@ -144,7 +144,7 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     public boolean equals(Object obj) {
         // transformed input columns should always rely on identity equality -
         // other transformed columns with the same name, id etc. are NOT
-        // necesarily equal (may come from another job, or even a copy of the
+        // necessarily equal (may come from another job, or even a copy of the
         // job).
         return this == obj;
     }

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 .DashboardGroupSelectionPanel {
-	width: 160px;
+	width: 20%;
 	float: left;
 }
 
@@ -36,7 +36,6 @@
 
 .DashboardGroupSelectionPanel .AnchorPanel a {
 	display: block;
-	width: 150px;
 	line-height: 2em;
 	padding-left: 30px;
 	background-color: #f0f0f0;
@@ -64,12 +63,8 @@
 }
 
 .DashboardGroupPanel {
-	width: 720px;
+	width: 78%;
 	float: right;
-}
-
-.DashboardGroupPanel .RemoveButton {
-	background-image: url("delete.png");
 }
 
 .DashboardGroupPanel .NewDashboardWidgetButton {
@@ -121,22 +116,6 @@
 
 .TimelinePanel .TimelineButtonPanel .HeadingLabel {
 	float: left;
-}
-
-.TimelinePanel .SaveButton {
-	background-image: url("save.png");
-}
-
-.TimelinePanel .CustomizeButton {
-	background-image: url("customize.png");
-}
-
-.TimelinePanel .CopyButton {
-	background-image: url("copy.png");
-}
-
-.TimelinePanel .DeleteButton {
-	background-image: url("delete.png");
 }
 
 .TimelinePanel  {
@@ -202,7 +181,6 @@
 }
 
 .CustomizeMetricsPanel .MetricFormulaButton {
-	background-image: url("formula.png");
 	float: right;
 }
 

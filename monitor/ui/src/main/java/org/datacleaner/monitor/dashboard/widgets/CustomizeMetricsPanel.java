@@ -31,6 +31,7 @@ import org.datacleaner.monitor.shared.model.JobMetrics;
 import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DefineMetricPopup;
 import org.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
@@ -78,9 +79,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
     private void setJobMetrics(final JobMetrics jobMetrics) {
         clear();
 
-        final Button formulaMetricButton = new Button("Add metric formula");
+        final Button formulaMetricButton = DCButtons.defaultButton("glyphicon-scale", "Add metric formula");
         formulaMetricButton.setTitle("Add a formula of metrics, comprising multiple child metrics in a calculation?");
-        formulaMetricButton.addStyleDependentName("ImageTextButton");
         formulaMetricButton.addStyleName("MetricFormulaButton");
         formulaMetricButton.addClickHandler(new ClickHandler() {
             @Override

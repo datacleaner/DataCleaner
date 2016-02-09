@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.trigger")
+@RequestMapping(value = "/{tenant}/jobs/{job:.+}.trigger")
 public class JobTriggeringController {
 
     private static final int POLL_INCREMENT_MILLIS = 1000;

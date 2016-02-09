@@ -1,0 +1,101 @@
+a.buttonLink {
+	background-color: #ccc;
+	padding: 2px;
+	border: 2px ridge #aaa;
+	border-radius: 4px;
+	white-space: nowrap;
+	text-decoration: none;
+	color: black
+}
+
+.orange, .orange a, a.orange {
+	color: #ffa800;
+}
+
+.blue, .blue a, a.blue {
+	color: #67A2E7;
+}
+
+.red, .red a {
+	color: red;
+}
+
+.white, .white a {
+	color: white;
+}
+
+.black, .black a {
+	color: black;
+}
+
+.indented {
+	margin: 1em;
+}
+
+.normal {
+	color: #333;
+	text-transform: none;
+	font-weight: normal;
+}
+
+.nowrap {
+	white-space: nowrap;
+}
+
+/*
+ * Common containers
+ */
+.right {
+	float: right;
+	margin-right: 0px;
+}
+
+.left {
+	float: left;
+	margin-left: 0px;
+}
+
+.center {
+	text-align: center;
+}
+
+.clearBoth {
+	clear: both;
+}
+
+.even, .even td, .even th, .row.even, .listTable .row.even {
+	background-color: #f0f0f0;
+}
+
+.odd, .odd td, .odd th, .row.odd {
+	background-color: #f9f9f9;
+}
+
+div.spacer, div.spacer-md {
+	clear: both;
+	padding: 0;
+	margin: 0;
+	height: 30px;
+}
+
+div.spacer-sm {
+	clear: both;
+	padding: 0;
+	margin: 0;
+	height: 20px;
+}
+
+div.spacer-xs {
+	clear: both;
+	padding: 0;
+	margin: 0;
+	height: 10px;
+}
+
+.userAtOtherSiteLink {
+	margin: 10px;
+}
+
+.img-center {
+	margin: 0 auto;
+}

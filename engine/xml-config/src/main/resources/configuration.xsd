@@ -662,6 +662,8 @@
 							</sequence>
 						</complexType>
 					</element>
+					<element name="client-type" minOccurs="0" maxOccurs="1"
+						type="string" />
 					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
@@ -960,6 +962,8 @@
 		<sequence>
 			<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
 			<element name="encoding" minOccurs="0" maxOccurs="1" type="token" />
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -969,6 +973,8 @@
 		<sequence>
 			<element name="value" minOccurs="1" maxOccurs="unbounded"
 				type="string" />
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -999,7 +1005,7 @@
 			</annotation>
 		</attribute>
 		<attribute name="max-sets-threshold" type="int" use="optional"
-			default="250">
+			default="150">
 			<annotation>
 				<documentation>
 					Sets a threshold upon the number of sample sets with

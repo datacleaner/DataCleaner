@@ -73,7 +73,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
         // TODO: Dirty way of obtaining the user bean - ideally we would be able
         // to just inject it, but SpringInjectionManager does not support
         // session scoped beans.
-        final UserBean user = new UserBean(_tenantResolver);
+        final UserBean user = new UserBean();
         user.updateUser();
 
         final WriteDataResultHtmlRenderer delegateRenderer = new WriteDataResultHtmlRenderer();
@@ -98,7 +98,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
                     }
 
                     if (user.isQueryAllowed()) {
-                        frag.addBodyElement("<button onclick=\"window.open('../../../query.jsf?ds="
+                        frag.addBodyElement("<button onclick=\"window.open('../../../query?ds="
                                 + encodedName
                                 + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
                     }

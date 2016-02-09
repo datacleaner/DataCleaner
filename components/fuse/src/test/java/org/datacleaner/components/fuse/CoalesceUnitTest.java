@@ -19,14 +19,22 @@
  */
 package org.datacleaner.components.fuse;
 
-import junit.framework.TestCase;
-
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-public class CoalesceUnitTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
+public class CoalesceUnitTest {
+    @Rule
+    public final ExpectedException expectedException = ExpectedException.none();
+
+    @Test
     public void testGetOutputDataType() throws Exception {
         MockInputColumn<?> numberCol1 = new MockInputColumn<>("num1", Number.class);
         MockInputColumn<?> numberCol2 = new MockInputColumn<>("num1", Number.class);
@@ -57,6 +65,7 @@ public class CoalesceUnitTest extends TestCase {
         assertEquals(Object.class, new CoalesceUnit(objCol1).updateInputColumns(allColumns).getOutputDataType());
     }
 
+    @Test
     public void testRefreshInputColumns() throws Exception {
         // original columns - col1 and col2
         InputColumn<?> col1 = new MockInputColumn<>("foo1", String.class);
@@ -73,5 +82,39 @@ public class CoalesceUnitTest extends TestCase {
 
         unit = unit.updateInputColumns(allInputColumns2);
         Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns());
+    }
+
+    private <E> MockInputColumn<? extends E> createColumn(String columnName, Class<E> clazz){
+        return createColumn(null, columnName, clazz);
+    }
+    private <E> MockInputColumn<? extends E> createColumn(String tableName, String columnName, Class<E> clazz){
+        return new MockInputColumn<>(columnName, clazz, new MutableColumn(columnName, new MutableTable(tableName)));
+    }
+
+    @Test
+    public void testPathsVsNames() throws Exception {
+        InputColumn<?>[] colsA =
+                { createColumn("a", "foo1", String.class), createColumn("a", "foo2", String.class) };
+        InputColumn<?>[] colsB =
+                { createColumn("b", "foo1", String.class), createColumn("b", "foo2", String.class) };
+        InputColumn<?>[] mixedCols = { colsA[0], colsA[1], colsB[0], colsB[1]};
+
+        CoalesceUnit namesCoalesceUnit = new CoalesceUnit("foo1", "foo2");
+        CoalesceUnit pathsCoalesceUnit = new CoalesceUnit("b.foo1", "b.foo2");
+
+        // Pure legacy.
+        Assert.assertArrayEquals(colsA, namesCoalesceUnit.updateInputColumns(colsA).getInputColumns());
+
+        // Pure path-based.
+        Assert.assertArrayEquals(colsB, pathsCoalesceUnit.updateInputColumns(colsB).getInputColumns());
+
+        // Path columns on legacy names.
+        Assert.assertArrayEquals(colsB, namesCoalesceUnit.updateInputColumns(colsB).getInputColumns());
+
+        // Mixed columns with correct path as well as incorrect path. Makes sure that the correct path is found.
+        Assert.assertArrayEquals(colsB, namesCoalesceUnit.updateInputColumns(mixedCols).getInputColumns());
+
+        expectedException.expect(IllegalStateException.class);
+        pathsCoalesceUnit.updateInputColumns(colsA);
     }
 }

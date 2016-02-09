@@ -5,7 +5,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Maven plugin versions -->
-		<javadoc.version>2.9.1</javadoc.version>
+		<javadoc.version>2.10.3</javadoc.version>
 
 		<!-- Dependency versions -->
 		<scala.version>2.11.4</scala.version>
@@ -20,18 +20,19 @@
 		<metamodel.version>4.5.0</metamodel.version>
 		<metamodel.extras.version>4.4.0</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
-		<spring.core.version>4.1.7.RELEASE</spring.core.version>
-		<spring.security.version>3.2.7.RELEASE</spring.security.version>
+		<spring.core.version>4.1.9.RELEASE</spring.core.version>
+		<spring.security.version>3.2.9.RELEASE</spring.security.version>
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
 		<jackson.version>2.4.6</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
-		<javax.jsp.version>2.0</javax.jsp.version>
+		<javax.jsp.version>2.3.1</javax.jsp.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
 		<commons.collection.version>3.2.1</commons.collection.version>
+		<ocpsoft.rewrite.version>2.0.12.Final</ocpsoft.rewrite.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -279,8 +280,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>utf-8</encoding>
 				</configuration>
 			</plugin>
@@ -387,7 +388,11 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
-										<exclude>javax.servlet:jsp-api:*:jar:compile</exclude>
+										
+										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
+										<exclude>javax.servlet:jsp-api:*</exclude>
+										<exclude>javax.servlet.jsp:jsp-api:*</exclude>
+										
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
@@ -424,6 +429,14 @@
 
 										<!-- jcip-annotations is overlapping with annotations -->
 										<exclude>net.jcip:jcip-annotations</exclude>
+										
+										<!-- xml-apis is shipped with the JRE -->
+										<exclude>xml-apis:xml-apis:*</exclude>
+										
+										<!-- Xerces is an implementation of xml-apis, so should also be provided by the JRE -->
+										<exclude>xerces:xercesImpl:*</exclude>
+										<exclude>xerces:xerces:*</exclude>
+										<exclude>xerces:xmlParserAPIs:*</exclude>
 
 										<!-- stax-api is overlapping with xml-apis -->
 										<exclude>stax:stax-api:*</exclude>
@@ -662,6 +675,10 @@
 						<groupId>stax</groupId>
 						<artifactId>stax-api</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -757,6 +774,12 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-common</artifactId>
 				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet.jsp</groupId>
+						<artifactId>jsp-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -904,6 +927,10 @@
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -959,8 +986,8 @@
 				<version>${httpcomponents.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>jsp-api</artifactId>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>javax.servlet.jsp-api</artifactId>
 				<version>${javax.jsp.version}</version>
 			</dependency>
 			<dependency>
@@ -978,10 +1005,11 @@
 				<artifactId>javax.servlet-api</artifactId>
 				<version>${javax.servlet.version}</version>
 			</dependency>
+			<!-- Pretty faces - URL rewriting for JSF 2.x -->
 			<dependency>
-				<artifactId>xml-apis</artifactId>
-				<groupId>xml-apis</groupId>
-				<version>1.4.01</version>
+				<groupId>org.ocpsoft.rewrite</groupId>
+				<artifactId>rewrite-servlet</artifactId>
+				<version>${ocpsoft.rewrite.version}</version>
 			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>
@@ -1288,6 +1316,115 @@
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.core.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-cas</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-aop</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-aop</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
 
 			<!-- Test dependencies -->
 			<dependency>
@@ -1334,6 +1471,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 </project>

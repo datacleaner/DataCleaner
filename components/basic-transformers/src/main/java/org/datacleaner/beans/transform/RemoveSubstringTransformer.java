@@ -74,7 +74,10 @@ public class RemoveSubstringTransformer implements Transformer {
     }
 
     private String subtract(final String subtractedString, final Object element) {
-        String stringElement = ConvertToStringTransformer.transformValue(element);
+        if (element == null || subtractedString == null) {
+            return subtractedString;
+        }
+        final String stringElement = ConvertToStringTransformer.transformValue(element);
         if (wholeWordsOnly) {
             return subtractedString.replaceAll("\\b" + Pattern.quote(stringElement) + "\\b", "");
         } else {

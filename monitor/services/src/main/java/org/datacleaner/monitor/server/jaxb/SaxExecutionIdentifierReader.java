@@ -51,16 +51,27 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
         private static final long serialVersionUID = 1L;
     }
 
+    private final String _name;
     private final Map<String, String> _valueMap;
     private final StringBuilder _valueBuilder;
 
     private boolean _readChars;
 
+    @Deprecated
     public static ExecutionIdentifier read(InputStream in) {
         return new SaxExecutionIdentifierReader().parse(in);
     }
-
+    
+    public static ExecutionIdentifier read(InputStream in, String name) {
+        return new SaxExecutionIdentifierReader(name).parse(in);
+    }
+    
     private SaxExecutionIdentifierReader() {
+        this("<unknown>");
+    }
+
+    private SaxExecutionIdentifierReader(String name) {
+        _name = name;
         _valueMap = new HashMap<String, String>();
         _valueBuilder = new StringBuilder();
 
@@ -86,7 +97,7 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
             if (e instanceof StopParsingException) {
                 // parsing was stopped intentionally
             } else {
-                throw new IllegalStateException("Failed to parse ExecutionIdentifier document", e);
+                throw new IllegalStateException("Failed to parse ExecutionIdentifier document: " + _name, e);
             }
         }
         return createExecutionIdentifier();

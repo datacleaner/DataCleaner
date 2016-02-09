@@ -146,7 +146,7 @@ public class ComponentHandlerTest {
 
     @Test
     public void testComponent() throws Exception {
-        componentHandler.runComponent(jsonData);
+        componentHandler.runComponent(jsonData, Integer.MAX_VALUE);
         componentHandler.closeComponent();
     }
 }

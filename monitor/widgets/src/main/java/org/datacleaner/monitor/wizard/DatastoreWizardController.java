@@ -26,6 +26,7 @@ import org.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.datacleaner.monitor.shared.WizardServiceAsync;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 import org.datacleaner.monitor.util.Urls;
 
@@ -140,12 +141,12 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
     protected void wizardFinished(final String datastoreName) {
         final String encodedDatastoreName = URL.encodeQueryString(datastoreName);
 
-        final Button button = new Button("Close");
+        final Button button = DCButtons.primaryButton(null, "Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
-                closeWizardAfterFinishing(datastoreName, "datastores.jsf");
+                closeWizardAfterFinishing(datastoreName, "datastores");
             }
         });
 
@@ -166,7 +167,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         queryAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final String url = Urls.createRelativeUrl("query.jsf?ds=" + encodedDatastoreName);
+                final String url = Urls.createRelativeUrl("query?ds=" + encodedDatastoreName);
                 Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
             }
         });

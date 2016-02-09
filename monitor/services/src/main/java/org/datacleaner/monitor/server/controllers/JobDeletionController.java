@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.delete")
+@RequestMapping(value = "/{tenant}/jobs/{job:.+}.delete")
 public class JobDeletionController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobDeletionController.class);

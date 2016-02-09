@@ -35,6 +35,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.CompositionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,14 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
         _initializedUnits = new CoalesceUnit[_units.length];
         for (int i = 0; i < _units.length; i++) {
             _initializedUnits[i] = _units[i].updateInputColumns(_input);
+        }
+    }
+
+    @Validate
+    public void validate() {
+        for (final CoalesceUnit _unit : _units) {
+            // Ensure that initialization is actually possible.
+            _unit.updateInputColumns(_input);
         }
     }
 

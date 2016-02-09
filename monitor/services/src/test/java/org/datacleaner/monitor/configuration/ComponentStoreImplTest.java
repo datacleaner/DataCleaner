@@ -47,7 +47,7 @@ public class ComponentStoreImplTest {
 
     private RepositoryFolder getRepositoryFolderMock() {
         RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
-        expect(repositoryFolder.getFolder(ComponentStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock()).anyTimes();
+        expect(repositoryFolder.getOrCreateFolder(ComponentStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock()).anyTimes();
         replay(repositoryFolder);
 
         return repositoryFolder;

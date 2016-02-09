@@ -101,7 +101,7 @@ public class LaunchDataCleanerController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp", method = RequestMethod.GET)
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.launch.jnlp", method = RequestMethod.GET)
     @ResponseBody
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {

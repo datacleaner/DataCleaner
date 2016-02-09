@@ -33,14 +33,24 @@ public class MockInputColumn<E> extends AbstractInputColumn<E> {
 
     private String _name;
     private final Class<? extends E> _clazz;
+    private final Column _physicalColumn;
+
+    public MockInputColumn(Column physicalColumn, Class<? extends E> clazz) {
+        this(physicalColumn.getName(), clazz, physicalColumn);
+    }
 
     public MockInputColumn(String name) {
         this(name, null);
     }
 
     public MockInputColumn(String name, Class<? extends E> clazz) {
+        this(name, clazz, null);
+    }
+
+    public MockInputColumn(String name, Class<? extends E> clazz, Column physicalColumn) {
         _name = name;
         _clazz = clazz;
+        _physicalColumn = physicalColumn;
     }
 
     public void setName(String name) {
@@ -59,7 +69,7 @@ public class MockInputColumn<E> extends AbstractInputColumn<E> {
 
     @Override
     protected Column getPhysicalColumnInternal() {
-        return null;
+        return _physicalColumn;
     }
 
     @Override

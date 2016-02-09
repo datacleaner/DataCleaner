@@ -33,7 +33,9 @@ public interface DatastoreCatalog extends Serializable {
      * @param name
      * @return
      */
-    public boolean containsDatastore(String name);
+    public default boolean containsDatastore(String name) {
+        return getDatastore(name) != null;
+    };
 
     /**
      * Gets all the names of the datastores in this datastore catalog.

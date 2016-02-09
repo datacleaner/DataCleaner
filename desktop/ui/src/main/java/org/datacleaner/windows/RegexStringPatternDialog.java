@@ -98,12 +98,6 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         _expressionNameString = expressionName;
         _expressionNameField.setText(expressionName);
         _expressionField.setText(expression);
-        if (!_catalog.isStringPatternMutable(_expressionNameString)) {
-            _expressionField.setEnabled(false);
-            _expressionNameField.setEnabled(false);
-            _resetButton.setEnabled(false);
-            _saveButton.setEnabled(false);
-        }
         _regexStringPattern = _catalog.getStringPattern(_expressionNameString);
 
     }

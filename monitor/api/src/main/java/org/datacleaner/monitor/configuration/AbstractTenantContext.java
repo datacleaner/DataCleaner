@@ -86,30 +86,21 @@ public abstract class AbstractTenantContext implements TenantContext {
     @Override
     public final RepositoryFolder getJobFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
-        if (jobsFolder == null) {
-            throw new IllegalArgumentException("No job folder for tenant: " + getTenantId());
-        }
+        final RepositoryFolder jobsFolder = tenantFolder.getOrCreateFolder(PATH_JOBS);
         return jobsFolder;
     }
 
     @Override
     public final RepositoryFolder getResultFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
-        if (resultsFolder == null) {
-            throw new IllegalArgumentException("No result folder for tenant: " + getTenantId());
-        }
+        final RepositoryFolder resultsFolder = tenantFolder.getOrCreateFolder(PATH_RESULTS);
         return resultsFolder;
     }
 
     @Override
     public final RepositoryFolder getTimelineFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
-        if (timelinesFolder == null) {
-            throw new IllegalArgumentException("No timeline folder for tenant: " + getTenantId());
-        }
+        final RepositoryFolder timelinesFolder = tenantFolder.getOrCreateFolder(PATH_TIMELINES);
         return timelinesFolder;
     }
 

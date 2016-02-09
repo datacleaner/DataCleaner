@@ -58,6 +58,11 @@ final class DatastoreDictionaryConnection implements DictionaryConnection {
     }
 
     @Override
+    public Iterator<String> getLengthSortedValues() {
+        return _dictionary.loadIntoMemory(_datastoreConnection).openConnection(null).getLengthSortedValues();
+    }
+
+    @Override
     public void close() {
         _datastoreConnection.close();
     }

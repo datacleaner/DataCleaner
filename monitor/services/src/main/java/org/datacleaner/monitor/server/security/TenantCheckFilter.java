@@ -70,8 +70,8 @@ public class TenantCheckFilter extends GenericFilterBean {
                     logger.warn("Could not perform tenant check because Authentication is null");
                 } else {
 
-                    final UserBean user = new UserBean(_tenantResolver);
-                    user.updateUser(authentication);
+                    final UserBean user = new UserBean();
+                    user.updateUser(authentication, _tenantResolver);
 
                     final String userTenantId = user.getTenant();
 

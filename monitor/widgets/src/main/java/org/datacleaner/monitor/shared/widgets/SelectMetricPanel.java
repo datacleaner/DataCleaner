@@ -59,7 +59,8 @@ public class SelectMetricPanel extends FlowPanel {
         _tenant = tenant;
         _displayNameLabel = new Label("Name:");
         _displayNameBox = new TextBox();
-        _displayNameBox.setStyleName("DisplayNameBox");
+        _displayNameBox.setStyleName("form-control");
+        _displayNameBox.addStyleName("DisplayNameBox");
         _jobMetrics = jobMetrics;
 
         setDisplayNameVisible(displayNameVisible);
@@ -68,13 +69,16 @@ public class SelectMetricPanel extends FlowPanel {
         add(_displayNameBox);
 
         _metricGroupSelectionBox = new ListBox();
+        _metricGroupSelectionBox.setStyleName("form-control");
         add(_metricGroupSelectionBox);
 
         _metricSelectionBox = new ListBox();
+        _metricSelectionBox.setStyleName("form-control");
         _metricSelectionBox.setVisible(false);
         add(_metricSelectionBox);
 
         _columnParameterSelectionBox = new ListBox();
+        _columnParameterSelectionBox.setStyleName("form-control");
         _columnParameterSelectionBox.setVisible(false);
         add(_columnParameterSelectionBox);
 

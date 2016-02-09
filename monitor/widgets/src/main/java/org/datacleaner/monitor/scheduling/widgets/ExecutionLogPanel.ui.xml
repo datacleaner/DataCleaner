@@ -22,44 +22,44 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:dc="urn:import:org.datacleaner.monitor.shared.widgets">
 
-	<g:HTMLPanel styleName="ExecutionLogPanel">
+	<g:HTMLPanel styleName="ExecutionLogPanel" addStyleNames="container-fluid">
 
-		<div class="FormRow">
-			<span class="FormKey">Status:</span>
-			<g:Label styleName="FormValue" ui:field="statusLabel" />
+		<div class="row">
+			<span class="col-xs-3">Status:</span>
+			<g:Label styleName="col-xs-9" ui:field="statusLabel" />
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">Begin time:</span>
-			<g:Label styleName="FormValue" ui:field="beginTimeLabel" />
+		<div class="row">
+			<span class="col-xs-3">Begin time:</span>
+			<g:Label styleName="col-xs-9" ui:field="beginTimeLabel" />
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">End time:</span>
-			<g:Label styleName="FormValue" ui:field="endTimeLabel" />
+		<div class="row">
+			<span class="col-xs-3">End time:</span>
+			<g:Label styleName="col-xs-9" ui:field="endTimeLabel" />
 		</div>
 
 
-		<div class="FormRow">
-			<span class="FormKey">Trigger:</span>
-			<g:Label styleName="FormValue" ui:field="triggerLabel" />
+		<div class="row">
+			<span class="col-xs-3">Trigger:</span>
+			<g:Label styleName="col-xs-9" ui:field="triggerLabel" />
 		</div>
 		
-		<div class="FormRow">
-			<span class="FormKey">Triggered by:</span>
-			<g:Label styleName="FormValue" ui:field="triggeredByLabel" />
+		<div class="row">
+			<span class="col-xs-3">Triggered by:</span>
+			<g:Label styleName="col-xs-9" ui:field="triggeredByLabel" />
 		</div>
 
-		<div class="FormRow" style="margin-top: 25px;">
-			<span>Log output:</span>
-			<div class="LogOutputPanel">
+		<div class="row" style="margin-top: 25px;">
+			<span class="col-xs-12">Log output:</span>
+			<div class="col-xs-12 LogOutputPanel">
 				<g:Label styleName="LogOutputLabel" ui:field="logOutputLabel" />
 			</div>
 		</div>
 		
-		<div class="FormRow" style="margin-top: 10px;">
-			<span class="FormKey">Result:</span>
-			<div class="FormValue">
+		<div class="row" style="margin-top: 10px;">
+			<span class="col-xs-3">Result:</span>
+			<div class="col-xs-9">
 				<dc:LoadingIndicator ui:field="loadingIndicator" />
 				<g:Anchor styleName="FormValue" ui:field="resultAnchor" />
 			</div>

@@ -42,13 +42,15 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Panel that presents and edits a single {@link CoalesceUnit}.
  */
 public class CoalesceUnitPanel extends DCPanel {
-
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(CoalesceUnitPanel.class);
 
     private final ColumnListMultipleCoalesceUnitPropertyWidget _parent;
     private final DCComboBox<InputColumn<?>> _comboBox;
@@ -95,10 +97,14 @@ public class CoalesceUnitPanel extends DCPanel {
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            InputColumn<?>[] inputColumns = unit.updateInputColumns(availableInputColumns
-                    .toArray(new InputColumn[availableInputColumns.size()])).getInputColumns();
-            for (InputColumn<?> inputColumn : inputColumns) {
-                addInputColumn(inputColumn);
+            try  {
+                InputColumn<?>[] inputColumns = unit.updateInputColumns(availableInputColumns
+                        .toArray(new InputColumn[availableInputColumns.size()])).getInputColumns();
+                for (InputColumn<?> inputColumn : inputColumns) {
+                    addInputColumn(inputColumn);
+                }
+            } catch (IllegalStateException e){
+                logger.warn("Could not update columns on component {}", parent.getComponentBuilder().getName(), e);
             }
         }
     }

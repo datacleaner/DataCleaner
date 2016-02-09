@@ -26,7 +26,13 @@ import org.datacleaner.monitor.shared.model.SecurityRoles;
  */
 public interface User {
 
+    /**
+     * @deprecated use {@link #isAuthenticated()} instead.
+     */
+    @Deprecated
     public boolean isLoggedIn();
+    
+    public boolean isAuthenticated();
 
     public String getUsername();
 

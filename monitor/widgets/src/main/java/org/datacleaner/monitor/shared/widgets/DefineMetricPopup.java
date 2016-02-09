@@ -47,7 +47,7 @@ public class DefineMetricPopup extends DCPopupPanel {
 
         final DefineMetricPanel panel = new DefineMetricPanel(tenant, jobMetrics, metric, formulaOnly);
 
-        final Button saveButton = new Button("Save");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -59,8 +59,8 @@ public class DefineMetricPopup extends DCPopupPanel {
 
         setWidget(panel);
 
-        getButtonPanel().add(saveButton);
-        getButtonPanel().add(new CancelPopupButton(this));
+        addButton(saveButton);
+        addButton(new CancelPopupButton(this));
 
         center();
         show();

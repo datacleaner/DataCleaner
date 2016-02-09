@@ -103,8 +103,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
 
         final Authentication authentication = (Authentication) principal;
 
-        final UserBean user = new UserBean(getTenantResolver());
-        user.updateUser(authentication);
+        final UserBean user = new UserBean();
+        user.updateUser(authentication, getTenantResolver());
 
         return user.hasRole(roleName);
     }
@@ -122,8 +122,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
 
         final Authentication authentication = (Authentication) principal;
 
-        final UserBean user = new UserBean(getTenantResolver());
-        user.updateUser(authentication);
+        final UserBean user = new UserBean();
+        user.updateUser(authentication, getTenantResolver());
 
         final Method method = request.getMethod();
 

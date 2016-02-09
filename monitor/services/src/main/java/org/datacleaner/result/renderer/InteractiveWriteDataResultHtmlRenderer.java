@@ -73,7 +73,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
         // TODO: Dirty way of obtaining the user bean - ideally we would be able
         // to just inject it, but SpringInjectionManager does not support
         // session scoped beans.
-        final UserBean user = new UserBean(_tenantResolver);
+        final UserBean user = new UserBean();
         user.updateUser();
 
         final WriteDataResultHtmlRenderer delegateRenderer = new WriteDataResultHtmlRenderer();

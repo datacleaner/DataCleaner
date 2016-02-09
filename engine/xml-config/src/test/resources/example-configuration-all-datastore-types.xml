@@ -68,6 +68,7 @@
 			<index-name>my_index</index-name>
 		</elasticsearch-datastore>
 		
+		
 		<cassandra-datastore name="my cassandra db" description="Apache Cassandra rocks">
 			<keyspace>my_keyspace</keyspace>
 			<hostname>localhost</hostname>

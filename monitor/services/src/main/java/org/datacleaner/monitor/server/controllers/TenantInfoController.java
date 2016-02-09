@@ -19,9 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import org.datacleaner.monitor.server.security.TenantResolver;
 import org.datacleaner.monitor.server.security.UserBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,14 +33,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/_user")
 public class TenantInfoController {
 
-    @Autowired
-    private TenantResolver _tenantResolver;
-
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserInfo getUserInfo() {
         UserInfo userInfo = new UserInfo();
-        final UserBean user = new UserBean(_tenantResolver);
+        final UserBean user = new UserBean();
         user.updateUser();
         userInfo.tenant = user.getTenant();
         userInfo.username= user.getUsername();

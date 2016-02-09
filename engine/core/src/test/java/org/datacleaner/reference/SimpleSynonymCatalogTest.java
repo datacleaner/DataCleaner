@@ -41,6 +41,24 @@ public class SimpleSynonymCatalogTest extends TestCase {
         }
     }
 
+    public void testReplaceInline() {
+        final SimpleSynonymCatalog sc =
+                new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] { new SimpleSynonym("Test", "land"),
+                        new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));
+
+        final SynonymCatalogConnection connection = sc.openConnection(null);
+        final SynonymCatalogConnection.Replacement replacement =
+                connection.replaceInline("The netherlands, Denmark, Holland, land");
+        assertEquals("NLD, DNK, Holland, Test", replacement.getReplacedString());
+        assertEquals("The netherlands", replacement.getSynonyms().get(0));
+        assertEquals("Denmark", replacement.getSynonyms().get(1));
+        assertEquals("land", replacement.getSynonyms().get(2));
+        assertEquals("NLD", replacement.getMasterTerms().get(0));
+        assertEquals("DNK", replacement.getMasterTerms().get(1));
+        assertEquals("Test", replacement.getMasterTerms().get(2));
+
+    }
+
     public void testGetSynonyms() throws Exception {
         final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));

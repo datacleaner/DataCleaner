@@ -264,6 +264,46 @@ public class PreviewTransformedDataActionListenerTest {
     }
 
     @Test
+    public void testChainedFilters() throws Exception {
+        analysisJobBuilder.removeAllComponents();
+        analysisJobBuilder.removeAllSourceColumns();
+        analysisJobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER");
+        analysisJobBuilder.addSourceColumns("CUSTOMERS.COUNTRY");
+        analysisJobBuilder.addSourceColumns("CUSTOMERS.SALESREPEMPLOYEENUMBER");
+
+        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> countryEqualsFilter =
+                analysisJobBuilder.addFilter(
+                        EqualsFilter.class);
+        countryEqualsFilter.getComponentInstance().setValues(new String[] { "France" });
+        countryEqualsFilter.addInputColumn(analysisJobBuilder.getSourceColumnByName("COUNTRY"));
+        assertTrue(countryEqualsFilter.isConfigured());
+
+        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> salesEmployeeNumberEqualsFilter =
+                analysisJobBuilder.addFilter(
+                        EqualsFilter.class);
+        salesEmployeeNumberEqualsFilter.getComponentInstance().setValues(new String[] { "1370" });
+        salesEmployeeNumberEqualsFilter.addInputColumn(analysisJobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER"));
+        salesEmployeeNumberEqualsFilter
+                .setRequirement(countryEqualsFilter.getFilterOutcome(EqualsFilter.Category.EQUALS));
+        assertTrue(salesEmployeeNumberEqualsFilter.isConfigured());
+
+        final TransformerComponentBuilder<ConvertToStringTransformer> convertToStringBuilder = analysisJobBuilder
+                .addTransformer(ConvertToStringTransformer.class);
+        convertToStringBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
+        convertToStringBuilder.getComponentInstance().setNullReplacement("<null>");
+        convertToStringBuilder
+                .setRequirement(salesEmployeeNumberEqualsFilter.getFilterOutcome(EqualsFilter.Category.EQUALS));
+        convertToStringBuilder.getOutputColumns().get(0).setName("CUSTOMERNUMBER (English)");
+        assertTrue(convertToStringBuilder.isConfigured());
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                convertToStringBuilder);
+
+        final TableModel tableModel = action.call();
+        assertEquals(6, tableModel.getRowCount());
+    }
+
+    @Test
     public void testFilterWithCoalesce() throws Exception {
         analysisJobBuilder.removeAllComponents();
         analysisJobBuilder.removeAllSourceColumns();
@@ -363,7 +403,6 @@ public class PreviewTransformedDataActionListenerTest {
         assertEquals("classicmodelcars.com", tableModel.getValueAt(1, 2).toString());
 
     }
-    
 
     private void compareWithBenchmark(PreviewTransformedDataActionListener action) throws IOException {
         final String baseFilename = getClass().getSimpleName() + "-" + testName
@@ -371,7 +410,9 @@ public class PreviewTransformedDataActionListenerTest {
         final File benchmarkFile = new File("src/test/resources/benchmark/" + baseFilename);
         final File outputFile = new File("target/" + baseFilename);
 
-        final AnalysisJobBuilder ajb = action.createPreviewJob().analysisJobBuilder;
+        final PreviewTransformedDataActionListener.PreviewJob previewJob = action.createPreviewJob();
+        assertNotNull(previewJob);
+        final AnalysisJobBuilder ajb = previewJob.analysisJobBuilder;
         ajb.getAnalysisJobMetadata().getProperties().put(PreviewTransformedDataActionListener.METADATA_PROPERTY_MARKER, "test");
         
         final JaxbJobWriter writer = new JaxbJobWriter(ajb.getConfiguration());

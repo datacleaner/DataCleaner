@@ -63,7 +63,20 @@ import org.slf4j.LoggerFactory;
  */
 public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
 
-    private static final String METADATA_PROPERTY_MARKER = "org.datacleaner.preview.targetcomponent";
+    public static class PreviewJob {
+        public final AnalysisJobBuilder analysisJobBuilder;
+        public final AnalyzerComponentBuilder<?> rowCollectorAnalyzer;
+        public final TransformerComponentBuilder<?> previewedTransformer;
+
+        public PreviewJob(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> rowCollectorAnalyzer,
+                TransformerComponentBuilder<?> previewedTransformer) {
+            this.analysisJobBuilder = analysisJobBuilder;
+            this.rowCollectorAnalyzer = rowCollectorAnalyzer;
+            this.previewedTransformer = previewedTransformer;
+        }
+    }
+
+    public static final String METADATA_PROPERTY_MARKER = "org.datacleaner.preview.targetcomponent";
 
     private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
 
@@ -108,8 +121,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         _latestWindow = window;
     }
 
-    @Override
-    public TableModel call() throws Exception {
+    protected PreviewJob createPreviewJob() {
         if (_transformerJobBuilderPresenter != null) {
             _transformerJobBuilderPresenter.applyPropertyValues();
         }
@@ -156,7 +168,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         if (sourceColumns.isEmpty()) {
             logger.error("No source columns left after removing irrelevant source tables. Component: {}",
                     _transformerJobBuilder);
-            return new DefaultTableModel(0, 0);
+            return null;
         }
 
         // add the result collector (a dummy analyzer)
@@ -201,9 +213,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                                 final ComponentRequirement existingRequirement = componentBuilder
                                         .getComponentRequirement();
                                 if (existingRequirement != null) {
-                                    componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
-                                            existingRequirement, maxRowFilter.getFilterOutcome(
-                                                    MaxRowsFilter.Category.VALID)));
+                                    if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
+                                        componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
+                                                existingRequirement, maxRowFilter.getFilterOutcome(
+                                                        MaxRowsFilter.Category.VALID)));
+                                    }
                                 } else {
                                     componentBuilder.setComponentRequirement(new SimpleComponentRequirement(maxRowFilter
                                             .getFilterOutcome(MaxRowsFilter.Category.VALID)));
@@ -215,13 +229,26 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             }
         }
 
+        return new PreviewJob(rootJobBuilder, rowCollector, tjb);
+    }
+
+    @Override
+    public TableModel call() throws Exception {
+        final PreviewJob previewJob = createPreviewJob();
+
+        if (previewJob == null) {
+            return new DefaultTableModel(0, 0);
+        }
+
+        final AnalyzerComponentBuilder<?> rowCollector = previewJob.rowCollectorAnalyzer;
+
         final String[] columnNames = new String[rowCollector.getInputColumns().size()];
         for (int i = 0; i < columnNames.length; i++) {
             columnNames[i] = rowCollector.getInputColumns().get(i).getName();
         }
 
-        final AnalysisRunner runner = new AnalysisRunnerImpl(ajb.getConfiguration());
-        final AnalysisResultFuture resultFuture = runner.run(rootJobBuilder.toAnalysisJob());
+        final AnalysisRunner runner = new AnalysisRunnerImpl(previewJob.analysisJobBuilder.getConfiguration());
+        final AnalysisResultFuture resultFuture = runner.run(previewJob.analysisJobBuilder.toAnalysisJob());
 
         resultFuture.await();
 

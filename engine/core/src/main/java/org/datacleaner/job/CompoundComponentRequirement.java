@@ -20,7 +20,9 @@
 package org.datacleaner.job;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.datacleaner.api.InputRow;
@@ -30,28 +32,21 @@ import org.datacleaner.api.InputRow;
  * requires just any of the provided outcomes.
  */
 public class CompoundComponentRequirement implements ComponentRequirement {
-
     private static final long serialVersionUID = 1L;
 
     private final Set<FilterOutcome> _outcomes;
 
     public CompoundComponentRequirement(Collection<? extends FilterOutcome> outcomes) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-        for (FilterOutcome outcome : outcomes) {
-            _outcomes.add(outcome);
-        }
+        _outcomes = new LinkedHashSet<>(outcomes);
     }
 
     public CompoundComponentRequirement(FilterOutcome... outcomes) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-        for (FilterOutcome outcome : outcomes) {
-            _outcomes.add(outcome);
-        }
+        _outcomes = new LinkedHashSet<>();
+        Collections.addAll(_outcomes, outcomes);
     }
 
     public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
-        _outcomes = new LinkedHashSet<FilterOutcome>();
-
+        _outcomes = new LinkedHashSet<>();
         _outcomes.addAll(existingRequirement.getProcessingDependencies());
         _outcomes.add(filterOutcome);
     }
@@ -59,7 +54,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     /**
      * Gets the {@link FilterOutcome} that this
      * {@link CompoundComponentRequirement} represents.
-     * 
+     *
      * @return
      */
     public Set<FilterOutcome> getOutcomes() {
@@ -129,10 +124,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_outcomes == null) ? 0 : _outcomes.hashCode());
-        return result;
+        return Objects.hash(_outcomes);
     }
 
     @Override
@@ -144,11 +136,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         if (getClass() != obj.getClass())
             return false;
         final CompoundComponentRequirement other = (CompoundComponentRequirement) obj;
-        if (_outcomes == null) {
-            if (other._outcomes != null)
-                return false;
-        } else if (!_outcomes.equals(other._outcomes))
-            return false;
-        return true;
+
+        return Objects.equals(_outcomes, other._outcomes);
     }
 }

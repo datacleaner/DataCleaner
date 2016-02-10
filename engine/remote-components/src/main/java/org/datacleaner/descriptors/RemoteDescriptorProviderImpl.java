@@ -100,7 +100,11 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         Socket socket = new Socket();
         try {
             URL siteURL = new URL(remoteServerData.getUrl());
-            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
+            int port = siteURL.getPort();
+            if(port <= 0) {
+                port = siteURL.getDefaultPort();
+            }
+            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), port);
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             lastConnectionCheckResult = socket.isConnected();
         } catch (IOException e) {

@@ -31,11 +31,8 @@ import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzer;
@@ -69,6 +66,8 @@ import org.datacleaner.job.jaxb.JobMetadataType;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
+
+import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
 public class JaxbJobWriterTest extends TestCase {
@@ -444,15 +443,8 @@ public class JaxbJobWriterTest extends TestCase {
             _writer.write(analysisJob, bos);
             bos.flush();
         }
-
-        String output = FileHelper.readFileAsString(outputFile);
-        File benchmarkFile = new File(benchmarkFolder, filename);
-
-        if (!benchmarkFile.exists()) {
-            assertEquals("No benchmark file '" + filename + "' exists!", output);
-        }
-
-        String benchmark = FileHelper.readFileAsString(benchmarkFile);
-        assertEquals(benchmark, output);
+        
+        final File benchmarkFile = new File(benchmarkFolder, filename);
+        TestHelper.assertXmlFilesEquals(benchmarkFile, outputFile);
     }
 }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata/>
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
+            <column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer requires="outcome_0">
+            <descriptor ref="Email standardizer"/>
+            <properties/>
+            <input ref="col_email"/>
+            <output id="col_username" name="Username"/>
+            <output id="col_domain" name="Domain"/>
+        </transformer>
+        <transformer requires="outcome_0 OR outcome_1">
+            <descriptor ref="Union"/>
+            <properties>
+                <property name="Units" value="[&amp;#91;PUBLIC.EMPLOYEES.EMAIL&amp;#44;PUBLIC.CUSTOMERS.PHONE&amp;#93;]"/>
+            </properties>
+            <input ref="col_email"/>
+            <input ref="col_phone"/>
+            <output-data-stream name="output">
+                <job>
+                    <source>
+                        <columns>
+                            <column id="col_email2" path="EMAIL" type="VARCHAR"/>
+                        </columns>
+                    </source>
+                    <transformation>
+                        <transformer>
+                            <descriptor ref="Mock transformer"/>
+                            <properties/>
+                            <input ref="col_email2"/>
+                            <output id="col_mockoutput" name="mock output"/>
+                        </transformer>
+                    </transformation>
+                    <analysis>
+                        <analyzer>
+                            <descriptor ref="Preview transformed data analyzer"/>
+                            <properties/>
+                            <input ref="col_email2"/>
+                            <input ref="col_mockoutput"/>
+                        </analyzer>
+                    </analysis>
+                </job>
+            </output-data-stream>
+        </transformer>
+        <filter name="org.datacleaner.actions.PreviewTransformedDataActionListener-EMPLOYEES-MaxRows">
+            <descriptor ref="Max rows"/>
+            <properties>
+                <property name="Apply ordering" value="false"/>
+                <property name="First row" value="1"/>
+                <property name="Max rows" value="5"/>
+            </properties>
+            <input ref="col_email"/>
+            <outcome id="outcome_0" category="VALID"/>
+        </filter>
+        <filter name="org.datacleaner.actions.PreviewTransformedDataActionListener-CUSTOMERS-MaxRows">
+            <descriptor ref="Max rows"/>
+            <properties>
+                <property name="Apply ordering" value="false"/>
+                <property name="First row" value="1"/>
+                <property name="Max rows" value="5"/>
+            </properties>
+            <input ref="col_phone"/>
+            <outcome id="outcome_1" category="VALID"/>
+        </filter>
+    </transformation>
+    <analysis/>
+</job>

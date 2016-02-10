@@ -94,8 +94,8 @@ public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
         }
 
         CompletenessAnalyzerResult result = (CompletenessAnalyzerResult) resultFuture.getResult(analyzerJob);
-        assertEquals(122, result.getTotalRowCount());
-        assertEquals(0, result.getInvalidRowCount());
-        assertEquals(122, result.getValidRowCount());
+        assertEquals(214, result.getTotalRowCount());
+        assertEquals(73, result.getInvalidRowCount());
+        assertEquals(214 - 73, result.getValidRowCount());
     }
 }

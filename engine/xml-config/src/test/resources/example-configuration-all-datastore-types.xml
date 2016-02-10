@@ -8,7 +8,7 @@
 
 	<datastore-catalog>
 		<jdbc-datastore name="my_jdbc_connection" description="jdbc_con">
-			<url>jdbc:hsqldb:file:../../desktop/ui/src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>

@@ -98,7 +98,7 @@ public class InvokeChildAnalysisJobTransformerTest {
         final ListResult<InputRow> result = (ListResult<InputRow>) resultFuture.getResults().get(0);
         final List<InputRow> list = result.getValues();
 
-        assertEquals(122, list.size());
+        assertEquals(214, list.size());
         
         final InputColumn<?>[] outputColumns = job.getTransformerJobs().get(0).getOutput();
         

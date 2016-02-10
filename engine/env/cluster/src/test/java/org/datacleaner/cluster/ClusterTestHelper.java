@@ -19,6 +19,9 @@
  */
 package org.datacleaner.cluster;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +96,7 @@ public class ClusterTestHelper {
                 if (schema.getTableByName("testtable") != null) {
                     return;
                 }
-                callback.createTable(schema, "testtable").withColumn("id").ofType(ColumnType.INTEGER).asPrimaryKey()
+                callback.createTable(schema, "testtable").withColumn("id").ofType(ColumnType.INTEGER)
                         .withColumn("name").ofType(ColumnType.VARCHAR).execute();
             }
         });
@@ -234,11 +237,11 @@ public class ClusterTestHelper {
 
                 // test reduction: various ways of aggregating crosstab metrics
                 // - min, max, avg, sum
-                Assert.assertEquals(122, stringAnalyzerResult.getRowCount(column));
-                Assert.assertEquals(1, stringAnalyzerResult.getMinWords(column));
+                Assert.assertEquals(214, stringAnalyzerResult.getRowCount(column));
+                Assert.assertEquals(0, stringAnalyzerResult.getMinWords(column));
                 Assert.assertEquals(2, stringAnalyzerResult.getMaxWords(column));
-                Assert.assertEquals(5.71, stringAnalyzerResult.getAvgChars(column), 0.1d);
-                Assert.assertEquals(697, stringAnalyzerResult.getTotalCharCount(column));
+                Assert.assertEquals(5.34, stringAnalyzerResult.getAvgChars(column), 0.1d);
+                Assert.assertEquals(1091, stringAnalyzerResult.getTotalCharCount(column));
 
             } else if (analyzerResult instanceof NumberAnalyzerResult) {
                 final NumberAnalyzerResult numberAnalyzerResult = (NumberAnalyzerResult) analyzerResult;
@@ -249,12 +252,12 @@ public class ClusterTestHelper {
                 final InputColumn<? extends Number> column = columns[0];
                 Assert.assertEquals("CUSTOMERNUMBER", column.getName());
 
-                Assert.assertEquals(122, numberAnalyzerResult.getRowCount(column));
-                Assert.assertEquals(36161.0, numberAnalyzerResult.getSum(column).doubleValue(), 0.1);
-                Assert.assertEquals(296.4, numberAnalyzerResult.getMean(column).doubleValue(), 0.1);
-                Assert.assertEquals(496, numberAnalyzerResult.getHighestValue(column).doubleValue(), 0.1);
+                Assert.assertEquals(214, numberAnalyzerResult.getRowCount(column));
+                Assert.assertEquals(298175.0, numberAnalyzerResult.getSum(column).doubleValue(), 0.1);
+                Assert.assertEquals(1393.34, numberAnalyzerResult.getMean(column).doubleValue(), 0.1);
+                Assert.assertEquals(5106, numberAnalyzerResult.getHighestValue(column).doubleValue(), 0.1);
                 Assert.assertEquals(103.0, numberAnalyzerResult.getLowestValue(column).doubleValue(), 0.1);
-                Assert.assertEquals(117.0, numberAnalyzerResult.getStandardDeviation(column).doubleValue(), 0.8);
+                Assert.assertEquals(1646.7, numberAnalyzerResult.getStandardDeviation(column).doubleValue(), 0.8);
                 Assert.assertEquals(null, numberAnalyzerResult.getMedian(column));
             } else {
                 Assert.fail("Unexpected analyzer result found: " + analyzerResult);
@@ -315,7 +318,7 @@ public class ClusterTestHelper {
 
                 CompletenessAnalyzerResult completenessAnalyzerResult = (CompletenessAnalyzerResult) analyzerResult;
 
-                Assert.assertEquals(109, completenessAnalyzerResult.getInvalidRowCount());
+                Assert.assertEquals(193, completenessAnalyzerResult.getInvalidRowCount());
 
                 List<InputRow> rows = completenessAnalyzerResult.getSampleRows();
                 Assert.assertNotNull(rows);
@@ -325,25 +328,26 @@ public class ClusterTestHelper {
             } else if (analyzerResult instanceof ValueMatchAnalyzerResult) {
 
                 ValueMatchAnalyzerResult valueMatchAnalyzerResult = (ValueMatchAnalyzerResult) analyzerResult;
-                Assert.assertEquals(0, valueMatchAnalyzerResult.getNullCount());
+                Assert.assertEquals(10, valueMatchAnalyzerResult.getNullCount());
 
-                Assert.assertEquals(83, valueMatchAnalyzerResult.getUnexpectedValueCount().intValue());
+                Assert.assertEquals(150, valueMatchAnalyzerResult.getUnexpectedValueCount().intValue());
                 List<InputRow> rows = valueMatchAnalyzerResult.getAnnotatedRowsForUnexpectedValues().getSampleRows();
                 Assert.assertTrue(rows.size() > 0);
-                Assert.assertTrue(rows.size() <= 83);
+                Assert.assertTrue(rows.size() <= 150);
 
-                Assert.assertEquals(2, valueMatchAnalyzerResult.getCount("Denmark").intValue());
-                rows = valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getSampleRows();
-                Assert.assertEquals(2, rows.size());
-                for (InputRow row : rows) {
-                    String rowString = row.toString();
-                    boolean assert1 = rowString
-                            .equals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]");
-                    boolean assert2 = rowString
-                            .equals("MetaModelInputRow[Row[values=[227, Palle, Ibsen, Denmark, null]]]");
-
-                    Assert.assertTrue("Unexpected 'Denmark' row: " + rowString, assert1 || assert2);
-                }
+                Assert.assertEquals(8, valueMatchAnalyzerResult.getCount("Denmark").intValue());
+                rows = new ArrayList<>(valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getSampleRows());
+                Assert.assertEquals(8, rows.size());
+                
+                Collections.sort(rows, new Comparator<InputRow>() {
+                    @Override
+                    public int compare(InputRow o1, InputRow o2) {
+                        return (int) (o1.getId() - o2.getId());
+                    }
+                });
+                
+                Assert.assertEquals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]", rows.get(0).toString());
+                Assert.assertEquals("MetaModelInputRow[Row[values=[287, Jytte, Pedersen, Denmark, 1734 Kbh]]]", rows.get(2).toString());
             } else {
                 Assert.fail("Unexpected analyzer result found: " + analyzerResult);
             }
@@ -469,7 +473,7 @@ public class ClusterTestHelper {
             // check that the analysis result elements are there...
             final Map<ComponentJob, AnalyzerResult> resultMap = resultFuture.getResultMap();
             Assert.assertEquals(1, resultMap.size());
-            Assert.assertEquals("{ImmutableAnalyzerJob[name=null,analyzer=Insert into table]=122 inserts executed}",
+            Assert.assertEquals("{ImmutableAnalyzerJob[name=null,analyzer=Insert into table]=214 inserts executed}",
                     resultMap.toString());
 
         } finally {
@@ -591,3 +595,4 @@ public class ClusterTestHelper {
         }
     }
 }
+

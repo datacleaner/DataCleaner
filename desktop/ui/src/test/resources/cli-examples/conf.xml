@@ -7,8 +7,9 @@
 	</configuration-metadata>
 
 	<datastore-catalog>
-		<jdbc-datastore name="orderdb" description="our normal testdatabase">
-			<url>jdbc:hsqldb:file:src/test/resources/cli-examples/orderdb;readonly=true</url>
+		<jdbc-datastore name="orderdb"
+			description="Example database for use with DataCleaner">
+			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>

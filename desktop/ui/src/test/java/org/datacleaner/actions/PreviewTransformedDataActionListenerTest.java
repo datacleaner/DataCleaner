@@ -53,8 +53,6 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.EmptyJaxbJobMetadataFactory;
-import org.datacleaner.job.JaxbJobMetadataFactory;
-import org.datacleaner.job.JaxbJobMetadataFactoryImpl;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -349,13 +347,13 @@ public class PreviewTransformedDataActionListenerTest {
         assertTrue(coalesceMultipleFieldsTransformerComponentBuilder.isConfigured());
 
         final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                coalesceMultipleFieldsTransformerComponentBuilder);
+                coalesceMultipleFieldsTransformerComponentBuilder, 500);
 
         compareWithBenchmark(action);
 
         final TableModel tableModel = action.call();
 
-        assertEquals(122, tableModel.getRowCount());
+        assertEquals(214, tableModel.getRowCount());
 
         for (int i = 0; i < tableModel.getRowCount(); i++) {
             assertTrue(printRow(tableModel, i), tableModel.getValueAt(i, 0) == null || tableModel.getValueAt(i,

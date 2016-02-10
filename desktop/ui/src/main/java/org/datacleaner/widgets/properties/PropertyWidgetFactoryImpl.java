@@ -99,8 +99,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(
                         getComponentBuilder(), mappedToProperty, mappedProperty);
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
-                mapping.putMapping(mappedProperty, propertyWidget);
-                mapping.putMapping(mappedToProperty, propertyWidget.getMappedStringsPropertyWidget());
+                mapping.putMapping(mappedProperty, propertyWidget.getMappedStringsPropertyWidget());
+                mapping.putMapping(mappedToProperty, propertyWidget);
                 return mapping;
             }
 
@@ -109,8 +109,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 final MultipleMappedEnumsPropertyWidget propertyWidget = new MultipleMappedEnumsPropertyWidget(
                         getComponentBuilder(), mappedToProperty, mappedProperty);
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
-                mapping.putMapping(mappedProperty, propertyWidget);
-                mapping.putMapping(mappedToProperty, propertyWidget.getMappedEnumsPropertyWidget());
+                mapping.putMapping(mappedProperty, propertyWidget.getMappedEnumsPropertyWidget());
+                mapping.putMapping(mappedToProperty, propertyWidget);
                 return mapping;
             }
         }

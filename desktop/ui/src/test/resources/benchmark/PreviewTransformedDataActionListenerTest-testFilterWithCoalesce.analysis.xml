@@ -53,7 +53,7 @@
             <properties>
                 <property name="Apply ordering" value="false"/>
                 <property name="First row" value="1"/>
-                <property name="Max rows" value="200"/>
+                <property name="Max rows" value="500"/>
             </properties>
             <input ref="col_customernumber"/>
             <outcome id="outcome_2" category="VALID"/>

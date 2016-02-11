@@ -37,7 +37,7 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
+                            <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="STRING"/>
                             <column id="col_reportsto2" path="REPORTSTO" type="INTEGER"/>
                         </columns>
                     </source>
@@ -62,7 +62,7 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_concatoffirstnamelastname2" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
+                            <column id="col_concatoffirstnamelastname2" path="Concat of FIRSTNAME,LASTNAME" type="STRING"/>
                             <column id="col_reportsto3" path="REPORTSTO" type="INTEGER"/>
                         </columns>
                     </source>

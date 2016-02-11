@@ -1474,7 +1474,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 }
 
                 Object configuredValue = stringConverter.deserialize(propertyValue, configuredProperty.getType(),
-                        configuredProperty.getCustomConverter());
+                        configuredProperty.createCustomConverter());
 
                 configuredProperty.setValue(result, configuredValue);
             }

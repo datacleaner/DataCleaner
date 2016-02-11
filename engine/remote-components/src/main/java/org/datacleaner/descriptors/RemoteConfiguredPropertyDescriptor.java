@@ -69,7 +69,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     }
 
     @Override
-    public Class<? extends Converter<?>> getCustomConverter() {
+    public Converter<?> createCustomConverter() {
         return null;
     }
 
@@ -91,7 +91,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     public void setDefaultValue(Object component) {
         if (defaultValue != null) {
-            ((RemoteTransformer) component).setPropertyValue(getName(), createDefaultValue());
+            setValue(component, createDefaultValue());
         }
     }
 

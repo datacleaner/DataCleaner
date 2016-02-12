@@ -27,7 +27,7 @@
                 <job>
                     <source>
                         <columns>
-                            <column id="col_email2" path="EMAIL" type="VARCHAR"/>
+                            <column id="col_email2" path="EMAIL" type="STRING"/>
                         </columns>
                     </source>
                     <transformation>

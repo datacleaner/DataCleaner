@@ -52,19 +52,6 @@
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	
-	<repositories>
-		<repository>
-        <id>metamodel-staging</id>
-        <url>https://repository.apache.org/content/repositories/orgapachemetamodel-1016/</url>
-        <releases>
-           <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-     </repository>
-	</repositories>
-	
 	<profiles>
 		<profile>
 			<!-- Default profile -->

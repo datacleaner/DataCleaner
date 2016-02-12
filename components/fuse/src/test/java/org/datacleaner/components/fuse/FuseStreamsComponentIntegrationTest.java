@@ -55,7 +55,7 @@ import org.junit.rules.Timeout;
 public class FuseStreamsComponentIntegrationTest {
 
     private static final int COUNT_EMPLOYEES = 23;
-    private static final int COUNT_CUSTOMERS = 122;
+    private static final int COUNT_CUSTOMERS = 214;
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private final DataCleanerConfigurationImpl singleThreadedConfiguration = new DataCleanerConfigurationImpl()

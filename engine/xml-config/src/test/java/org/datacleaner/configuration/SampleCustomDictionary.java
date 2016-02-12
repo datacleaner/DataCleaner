@@ -27,6 +27,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
+import org.datacleaner.reference.SimpleDictionary;
 import org.junit.Ignore;
 
 @Ignore
@@ -63,11 +64,16 @@ public class SampleCustomDictionary implements Dictionary {
 
     @Override
     public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
-        final List<String> valueList = new ArrayList<String>();
+        final List<String> valueList = new ArrayList<>();
         for (int i = 0; i < SampleCustomDictionary.this.values; i++) {
             valueList.add("value" + i);
         }
+
         return new DictionaryConnection() {
+            @Override
+            public Iterator<String> getLengthSortedValues() {
+                return new SimpleDictionary("test", valueList).openConnection(null).getLengthSortedValues();
+            }
 
             @Override
             public Iterator<String> getAllValues() {

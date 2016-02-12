@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
+import org.datacleaner.api.Converter;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
@@ -156,4 +158,48 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
         return enumValues;
     }
 
+    @Override
+    public Converter<?> createCustomConverter() {
+        return isEnum() ? new EnumerationValueConverter() : null;
+    }
+
+    private class EnumerationValueConverter implements Converter<Object> {
+
+        @Override
+        public Object fromString(Class type, String serializedForm) {
+            for(EnumerationValue valueCandidate: enumValues) {
+                if(valueCandidate.getValue().equals(serializedForm)) {
+                    return valueCandidate;
+                } else if(valueCandidate.getName().equals(serializedForm)) {
+                    return valueCandidate;
+                } else {
+                    for(String alias: valueCandidate.getAliases()) {
+                        if(alias.equals(serializedForm)) {
+                            return valueCandidate;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString(Object instance) {
+            if(instance == null) {
+                return null;
+            }
+            if(instance instanceof EnumerationValue) {
+                return ((EnumerationValue)instance).getValue();
+            }
+            if(instance instanceof Enum) {
+                return ((Enum)instance).name();
+            }
+            throw new IllegalArgumentException("Cannot serialize value of type " + instance.getClass());
+        }
+
+        @Override
+        public boolean isConvertable(Class type) {
+            return type.isAssignableFrom(EnumerationValue.class) && isEnum();
+        }
+    }
 }

@@ -26,6 +26,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.JobMetrics;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -68,7 +69,7 @@ public class CustomizeAlertClickHandler implements ClickHandler {
                     @Override
                     public void onSuccess(JobMetrics jobMetrics) {
                         final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, jobMetrics);
-                        final Button button = new Button("Save alert");
+                        final Button button = DCButtons.primaryButton("glyphicon-save", "Save alert");
                         button.addClickHandler(new ClickHandler() {
                             @Override
                             public void onClick(ClickEvent event) {

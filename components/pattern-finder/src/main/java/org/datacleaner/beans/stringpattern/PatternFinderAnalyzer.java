@@ -56,7 +56,8 @@ import org.slf4j.LoggerFactory;
 
 @Named("Pattern finder")
 @Description("The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.")
-@ExternalDocumentation(value = { @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0", url = "http://kasper.eobjects.org/2010/09/pattern-finder-20-latest-feature-in.html", type = DocumentationType.TECH, version = "2.0") })
+@ExternalDocumentation(value = {
+        @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0", url = "http://kasper.eobjects.org/2010/09/pattern-finder-20-latest-feature-in.html", type = DocumentationType.TECH, version = "2.0") })
 @Concurrent(true)
 public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
@@ -85,23 +86,23 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
     @Configured(required = false, order = 3, value = PROPERTY_DISCRIMINATE_TEXT_CASE)
     @Description("Separate text tokens based on case")
-    Boolean discriminateTextCase = true;
+    boolean discriminateTextCase = true;
 
     @Configured(required = false, order = 4, value = PROPERTY_DISCRIMINATE_NEGATIVE_NUMBERS)
     @Description("Separate number tokens based on negativity")
-    Boolean discriminateNegativeNumbers = false;
+    boolean discriminateNegativeNumbers = false;
 
     @Configured(required = false, order = 5, value = PROPERTY_DISCRIMINATE_DECIMALS)
     @Description("Separate number tokens for decimals")
-    Boolean discriminateDecimals = true;
+    boolean discriminateDecimals = true;
 
     @Configured(required = false, order = 6, value = PROPERTY_ENABLE_MIXED_TOKENS)
     @Description("Use '?'-tokens for mixed text and numbers")
-    Boolean enableMixedTokens = true;
+    boolean enableMixedTokens = true;
 
     @Configured(required = false, order = 7, value = PROPERTY_IGNORE_REPEATED_SPACES)
     @Description("Ignore whitespace differences")
-    Boolean ignoreRepeatedSpaces = false;
+    boolean ignoreRepeatedSpaces = false;
 
     @Configured(required = false, value = "Upper case patterns expand in size", order = 8)
     @Description("Auto-adjust/expand uppercase text tokens")
@@ -134,31 +135,15 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
     @Initialize
     public void init() {
-        if (enableMixedTokens != null) {
-            _configuration = new TokenizerConfiguration(enableMixedTokens);
-        } else {
-            _configuration = new TokenizerConfiguration();
-        }
+        _configuration = new TokenizerConfiguration(enableMixedTokens);
 
         _configuration.setUpperCaseExpandable(upperCaseExpandable);
         _configuration.setLowerCaseExpandable(lowerCaseExpandable);
 
-        if (discriminateNegativeNumbers != null) {
-            _configuration.setDiscriminateNegativeNumbers(discriminateNegativeNumbers);
-        }
-
-        if (discriminateDecimals != null) {
-            _configuration.setDiscriminateDecimalNumbers(discriminateDecimals);
-        }
-
-        if (discriminateTextCase != null) {
-            _configuration.setDiscriminateTextCase(discriminateTextCase);
-        }
-
-        if (ignoreRepeatedSpaces != null) {
-            boolean ignoreSpacesLength = ignoreRepeatedSpaces.booleanValue();
-            _configuration.setDistriminateTokenLength(TokenType.WHITESPACE, !ignoreSpacesLength);
-        }
+        _configuration.setDiscriminateNegativeNumbers(discriminateNegativeNumbers);
+        _configuration.setDiscriminateDecimalNumbers(discriminateDecimals);
+        _configuration.setDiscriminateTextCase(discriminateTextCase);
+        _configuration.setDistriminateTokenLength(TokenType.WHITESPACE, !ignoreRepeatedSpaces);
 
         if (decimalSeparator != null) {
             _configuration.setDecimalSeparator(decimalSeparator);
@@ -221,8 +206,8 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
             Crosstab<?> crosstab = createCrosstab(getPatternFinderForGroup(null));
             return new PatternFinderResult(column, crosstab, _configuration);
         } else {
-            final Map<String, Crosstab<?>> crosstabs = new TreeMap<String, Crosstab<?>>(
-                    NullTolerableComparator.get(String.class));
+            final Map<String, Crosstab<?>> crosstabs = new TreeMap<String, Crosstab<?>>(NullTolerableComparator.get(
+                    String.class));
             final Set<Entry<String, DefaultPatternFinder>> patternFinderEntries = _patternFinders.entrySet();
             for (Entry<String, DefaultPatternFinder> entry : patternFinderEntries) {
                 final DefaultPatternFinder patternFinder = entry.getValue();
@@ -299,19 +284,19 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         this.predefinedTokenPatterns = predefinedTokenPatterns;
     }
 
-    public void setDiscriminateTextCase(Boolean discriminateTextCase) {
+    public void setDiscriminateTextCase(boolean discriminateTextCase) {
         this.discriminateTextCase = discriminateTextCase;
     }
 
-    public void setDiscriminateNegativeNumbers(Boolean discriminateNegativeNumbers) {
+    public void setDiscriminateNegativeNumbers(boolean discriminateNegativeNumbers) {
         this.discriminateNegativeNumbers = discriminateNegativeNumbers;
     }
 
-    public void setDiscriminateDecimals(Boolean discriminateDecimals) {
+    public void setDiscriminateDecimals(boolean discriminateDecimals) {
         this.discriminateDecimals = discriminateDecimals;
     }
 
-    public void setEnableMixedTokens(Boolean enableMixedTokens) {
+    public void setEnableMixedTokens(boolean enableMixedTokens) {
         this.enableMixedTokens = enableMixedTokens;
     }
 
@@ -327,7 +312,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         this.decimalSeparator = decimalSeparator;
     }
 
-    public void setIgnoreRepeatedSpaces(Boolean ignoreRepeatedSpaces) {
+    public void setIgnoreRepeatedSpaces(boolean ignoreRepeatedSpaces) {
         this.ignoreRepeatedSpaces = ignoreRepeatedSpaces;
     }
 

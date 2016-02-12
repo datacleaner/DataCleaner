@@ -22,40 +22,40 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:shared='urn:import:org.datacleaner.monitor.shared.widgets'>
 
-	<g:HTMLPanel styleName="CustomizeAlertPanel">
+	<g:HTMLPanel styleName="CustomizeAlertPanel" addStyleNames="container-fluid">
 
-		<div class="FormRow">
-			<span class="FormKey">Metric:</span>
-			<div class="FormValue">
+		<div class="row">
+			<span class="col-xs-3">Metric:</span>
+			<div class="col-xs-9">
 				<shared:MetricAnchor ui:field="metricAnchor" />
 			</div>
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">Description:</span>
-			<div class="FormValue">
-				<g:TextBox ui:field="descriptionTextBox" />
+		<div class="row">
+			<span class="col-xs-3">Description:</span>
+			<div class="col-xs-9">
+				<g:TextBox ui:field="descriptionTextBox" styleName="form-control" />
 			</div>
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">Severity:</span>
-			<div class="FormValue">
+		<div class="row">
+			<span class="col-xs-3">Severity:</span>
+			<div class="col-xs-9">
 				<g:FlowPanel ui:field="severityPanel" />
 			</div>
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">Maximum value:</span>
-			<div class="FormValue">
-				<shared:NumberTextBox ui:field="maximumValueTextBox" />
+		<div class="row">
+			<span class="col-xs-3">Maximum value:</span>
+			<div class="col-xs-9">
+				<shared:NumberTextBox ui:field="maximumValueTextBox" styleName="form-control" />
 			</div>
 		</div>
 
-		<div class="FormRow">
-			<span class="FormKey">Minimum value:</span>
-			<div class="FormValue">
-				<shared:NumberTextBox ui:field="minimumValueTextBox" />
+		<div class="row">
+			<span class="col-xs-3">Minimum value:</span>
+			<div class="col-xs-9">
+				<shared:NumberTextBox ui:field="minimumValueTextBox" styleName="form-control" />
 			</div>
 		</div>
 

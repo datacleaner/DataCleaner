@@ -88,8 +88,8 @@ public class MultipleChainsOfOutputDataStreamsTest extends TestCase {
         final List<ListResult<?>> results = (List<ListResult<?>>) resultFuture.getResults(ListResult.class);
 
         // for every result we expect a drop-off of 1/3 values
-        assertEquals(40, results.get(0).getValues().size());
-        assertEquals(27, results.get(1).getValues().size());
-        assertEquals(19, results.get(2).getValues().size());
+        assertEquals(71, results.get(0).getValues().size());
+        assertEquals(48, results.get(1).getValues().size());
+        assertEquals(32, results.get(2).getValues().size());
     }
 }

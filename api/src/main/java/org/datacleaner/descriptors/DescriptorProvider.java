@@ -52,9 +52,7 @@ public interface DescriptorProvider {
     public Collection<DescriptorProviderStatus> getStatus();
 
     /**
-     * It refreshes the descriptor list.
-     *
-     * @return
+     * Refreshes the descriptor list.
      */
     public void refresh();
 

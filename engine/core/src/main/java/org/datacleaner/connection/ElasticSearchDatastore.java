@@ -23,7 +23,10 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.util.List;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.elasticsearch.nativeclient.ElasticSearchDataContext;
+import org.apache.metamodel.elasticsearch.rest.ElasticSearchRestDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.StringUtils;
 import org.elasticsearch.client.Client;
@@ -36,14 +39,17 @@ import org.elasticsearch.node.Node;
 
 import com.google.common.base.Strings;
 
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
+
 /**
  * Datastore providing access to an ElasticSearch index.
  */
-public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDataContext> implements
-        UpdateableDatastore {
+public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore {
 
     public enum ClientType {
-        NODE("Join cluster as a node"), TRANSPORT("Connect via Transport protocol");
+        NODE("Join cluster as a node"), TRANSPORT("Connect via Transport protocol"), REST("Connect via REST protocol");
 
         private String _humanReadableName;
 
@@ -59,7 +65,8 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     private static final long serialVersionUID = 1L;
 
-    public static final int DEFAULT_PORT = 9300;
+    public static final int DEFAULT_PORT = 9200;
+    public static final int TRANSPORT_PORT = 9300;
 
     private final SimpleTableDef[] _tableDefs;
     private final ClientType _clientType;
@@ -73,21 +80,21 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _keystorePath;
     private final String _keystorePassword;
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
-            String clusterName, String indexName) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
+            String indexName) {
         this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
-            String clusterName, String indexName, String username, String password, boolean ssl, String keystorePath,
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
+            String indexName, String username, String password, boolean ssl, String keystorePath,
             String keystorePassword) {
         this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath,
                 keystorePassword);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
-            String clusterName, String indexName, SimpleTableDef[] tableDefs, String username, String password,
-            boolean ssl, String keystorePath, String keystorePassword) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
+            String indexName, SimpleTableDef[] tableDefs, String username, String password, boolean ssl,
+            String keystorePath, String keystorePassword) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -108,46 +115,99 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     }
 
     @Override
-    protected UsageAwareDatastoreConnection<ElasticSearchDataContext> createDatastoreConnection() {
-
-        final Client client;
-        if (ClientType.TRANSPORT.equals(_clientType)) {
-            final Builder settingsBuilder = ImmutableSettings.builder();
-            settingsBuilder.put("name", "DataCleaner");
-            settingsBuilder.put("cluster.name", _clusterName);
-            if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
-                settingsBuilder.put("shield.user", _username + ":" + _password);
-                if (_ssl) {
-                    if (!Strings.isNullOrEmpty(_keystorePath)) {
-                        settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
-                        settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
-                    }
-                    settingsBuilder.put("shield.transport.ssl", "true");
-                }
-            }
-            final Settings settings = settingsBuilder.build();
-
-            client = new TransportClient(settings);
-            ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
-        } else {
-            final Builder settingsBuilder = ImmutableSettings.builder();
-            settingsBuilder.put("name", "DataCleaner");
-            settingsBuilder.put("shield.enabled", false);
-            final Settings settings = settingsBuilder.build();
-
-            // .client(true) means no shards are stored on this node
-            final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
-            client = node.client();
-        }
-
-        final ElasticSearchDataContext dataContext;
+    protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
+        final DataContext dataContext;
         if (_tableDefs == null || _tableDefs.length == 0) {
-            dataContext = new ElasticSearchDataContext(client, _indexName);
+            if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
+                final Client client = getClientForNodeAndTransportProtocol();
+                dataContext = new ElasticSearchDataContext(client, _indexName);
+                return createConnection(dataContext, client);
+            } else {
+                dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName);
+                return createConnection(dataContext, null);
+            }
         } else {
-            dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
+            if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
+                final Client client = getClientForNodeAndTransportProtocol();
+                dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
+                return createConnection(dataContext, client);
+            } else {
+                dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName, _tableDefs);
+                return createConnection(dataContext, null);
+            }
         }
 
-        return new UpdateableDatastoreConnectionImpl<ElasticSearchDataContext>(dataContext, this, client);
+    }
+
+    private final UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(DataContext dataContext,
+            Client simpleclient) {
+        switch (_clientType) {
+        case NODE:
+        case TRANSPORT:
+            return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>((ElasticSearchDataContext) dataContext,
+                    this, simpleclient);
+        case REST:
+            return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(
+                    (ElasticSearchRestDataContext) dataContext, this);
+        default:
+            //do nothing
+        }
+        return null;
+    }
+
+    private Client getClientForNodeAndTransportProtocol() {
+        switch (_clientType) {
+        case NODE:
+            return getClientForJoiningClusterAsNode();
+        case TRANSPORT:
+            return getClientForTransportProtocol();
+        default:
+            //do nothing
+        }
+        return null;
+    }
+
+    private JestClient getClientForRestProtocol() {
+        final JestClientFactory factory = new JestClientFactory();
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
+                true).build());
+        final JestClient client = factory.getObject();
+        return client;
+    }
+
+    private Client getClientForJoiningClusterAsNode() {
+        final Client client;
+        final Builder settingsBuilder = ImmutableSettings.builder();
+        settingsBuilder.put("name", "DataCleaner");
+        settingsBuilder.put("shield.enabled", false);
+        final Settings settings = settingsBuilder.build();
+
+        // .client(true) means no shards are stored on this node
+        final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
+        client = node.client();
+        return client;
+    }
+
+    private Client getClientForTransportProtocol() {
+        final Client client;
+        final Builder settingsBuilder = ImmutableSettings.builder();
+        settingsBuilder.put("name", "DataCleaner");
+        settingsBuilder.put("cluster.name", _clusterName);
+        if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
+            settingsBuilder.put("shield.user", _username + ":" + _password);
+            if (_ssl) {
+                if (!Strings.isNullOrEmpty(_keystorePath)) {
+                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
+                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                }
+                settingsBuilder.put("shield.transport.ssl", "true");
+            }
+        }
+        final Settings settings = settingsBuilder.build();
+
+        client = new TransportClient(settings);
+        ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
+        return client;
     }
 
     @Override

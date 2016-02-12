@@ -39,9 +39,6 @@ class CopyDataWizardTest extends AssertionsForJUnit {
     <select name="tableName">
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
-                    <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>
-                    <option value="PUBLIC.DEPARTMENT_MANAGERS">DEPARTMENT_MANAGERS</option>
-                    <option value="PUBLIC.DIM_TIME">DIM_TIME</option>
                     <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
                     <option value="PUBLIC.OFFICES">OFFICES</option>
                     <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
@@ -49,8 +46,6 @@ class CopyDataWizardTest extends AssertionsForJUnit {
                     <option value="PUBLIC.ORDERS">ORDERS</option>
                     <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
                     <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
-                    <option value="PUBLIC.QUADRANT_ACTUALS">QUADRANT_ACTUALS</option>
-                    <option value="PUBLIC.TRIAL_BALANCE">TRIAL_BALANCE</option>
             </optgroup>
     </select>
 </div>"""), normalize(page1.getFormInnerHtml()));
@@ -75,9 +70,6 @@ class CopyDataWizardTest extends AssertionsForJUnit {
     <select name="tableName">
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
-                    <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>
-                    <option value="PUBLIC.DEPARTMENT_MANAGERS">DEPARTMENT_MANAGERS</option>
-                    <option value="PUBLIC.DIM_TIME">DIM_TIME</option>
                     <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
                     <option value="PUBLIC.OFFICES">OFFICES</option>
                     <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
@@ -85,8 +77,6 @@ class CopyDataWizardTest extends AssertionsForJUnit {
                     <option value="PUBLIC.ORDERS">ORDERS</option>
                     <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
                     <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
-                    <option value="PUBLIC.QUADRANT_ACTUALS">QUADRANT_ACTUALS</option>
-                    <option value="PUBLIC.TRIAL_BALANCE">TRIAL_BALANCE</option>
             </optgroup>
     </select>
 </div>"""), normalize(page3.getFormInnerHtml()));
@@ -337,6 +327,24 @@ class CopyDataWizardTest extends AssertionsForJUnit {
                 </select>
             </td>
         </tr>
+        <tr>
+            <td>
+                <label for="checkbox_input_id_13">JOBTITLE</label>
+            </td>
+            <td>
+                <select name="mapping_13">
+                    <option label="- not copied -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
+                </select>
+            </td>
+        </tr>
     </table>
 </div>"""), normalize(page4.getFormInnerHtml()));
 
@@ -398,7 +406,7 @@ class CopyDataWizardTest extends AssertionsForJUnit {
 	<div>
 		<label>Please provide a name for the new job </label>
 		<div>
-			<input type="text" maxlength="64" size="30" value="Copy data" name="name" />
+			<input type="text" maxlength="64" size="30" value="Copy data" name="name" class="form-control" />
 		</div>
 	</div>
 </div>"""), normalize(page6.getFormInnerHtml()));

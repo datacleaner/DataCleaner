@@ -40,4 +40,6 @@ public interface ClientConfig {
     public boolean isInformercialDisplayed();
     
     public boolean isDashboardEditor();
+    
+    public boolean isWebstartAvailable();
 }

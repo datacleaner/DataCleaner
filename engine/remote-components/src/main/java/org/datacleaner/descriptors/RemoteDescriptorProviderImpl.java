@@ -58,7 +58,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
     /* for all remote transformer descriptors together */
     private long lastConnectionCheckTime = 0L;
-    private boolean lastConnectionCheckResult = false;
+    private boolean lastConnectionCheckResult = true;
     private boolean checkInProgress = false;
 
     public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
@@ -100,7 +100,11 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         Socket socket = new Socket();
         try {
             URL siteURL = new URL(remoteServerData.getUrl());
-            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), siteURL.getPort());
+            int port = siteURL.getPort();
+            if(port <= 0) {
+                port = siteURL.getDefaultPort();
+            }
+            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), port);
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             lastConnectionCheckResult = socket.isConnected();
         } catch (IOException e) {
@@ -202,6 +206,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                         logger.error("Cannot create remote component representation for: " + component.getName(), e);
                     }
                 }
+                //Load actual status of remote server.
+                isServerUp();
             } catch (Exception e) {
                 logger.error("Cannot get list of remote components on " + remoteServerData.getUrl(), e);
                 // TODO: plan a task to try again after somw while. And then

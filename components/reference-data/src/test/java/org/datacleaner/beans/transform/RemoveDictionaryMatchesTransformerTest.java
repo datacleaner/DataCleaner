@@ -74,31 +74,30 @@ public class RemoveDictionaryMatchesTransformerTest extends TestCase {
         assertEquals("Software Engineer", transformer.transform("Senior Software Engineer")[0]);
         assertEquals("Senior", transformer.transform("Senior Software Engineer")[1]);
         
-        assertEquals("Designer", transformer.transform("  Lead   Designer  ")[0]);
+        assertEquals("    Designer  ", transformer.transform("  Lead   Designer  ")[0]);
         assertEquals("Lead", transformer.transform("  Lead   Designer  ")[1]);
         
-        assertEquals("Software Engineer", transformer.transform("Software  Engineer")[0]);
+        assertEquals("Software  Engineer", transformer.transform("Software  Engineer")[0]);
         assertEquals("", transformer.transform("Software  Engineer")[1]);
         
         assertEquals("Guru of employees", transformer.transform("Principal Senior Lead Guru of Junior employees")[0]);
-        assertEquals("Principal Senior Lead Junior", transformer.transform("Principal Senior Lead Guru of Junior employees")[1]);
+        assertEquals("Principal Junior Senior Lead", transformer.transform("Principal Senior Lead Guru of Junior employees")[1]);
    
     }
     public void testJobTitleScenarioRemovedMatchesAsList() throws Throwable {
-    
         transformer._removedMatchesType= RemovedMatchesType.LIST;
         
         assertEquals("Software Engineer", transformer.transform("Senior Software Engineer")[0]);
         assertEquals("[Senior]", transformer.transform("Senior Software Engineer")[1].toString());
         
-        assertEquals("Designer", transformer.transform("  Lead   Designer  ")[0]);
+        assertEquals("    Designer  ", transformer.transform("  Lead   Designer  ")[0]);
         assertEquals("[Lead]", transformer.transform("  Lead   Designer  ")[1].toString());
         
-        assertEquals("Software Engineer", transformer.transform("Software  Engineer")[0]);
+        assertEquals("Software  Engineer", transformer.transform("Software  Engineer")[0]);
         assertEquals("[]", transformer.transform("Software  Engineer")[1].toString());
         
         assertEquals("Guru of employees", transformer.transform("Principal Senior Lead Guru of Junior employees")[0]);
-        assertEquals("[Principal, Senior, Lead, Junior]", transformer.transform("Principal Senior Lead Guru of Junior employees")[1].toString());
+        assertEquals("[Principal, Junior, Senior, Lead]", transformer.transform("Principal Senior Lead Guru of Junior employees")[1].toString());
         
         assertEquals("", transformer.transform("")[0]);
         assertEquals("[]", transformer.transform("")[1].toString()); 

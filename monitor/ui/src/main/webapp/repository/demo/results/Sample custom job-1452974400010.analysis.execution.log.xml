@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns5:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns5:result-id>Sample custom job-1452974400010</ns5:result-id>
+    <ns5:job-begin-date>2016-01-16T21:00:00.011+01:00</ns5:job-begin-date>
+    <ns5:job-end-date>2016-01-16T21:00:05.327+01:00</ns5:job-end-date>
+    <ns5:execution-status>SUCCESS</ns5:execution-status>
+    <ns5:trigger-type>PERIODIC</ns5:trigger-type>
+    <schedule>
+        <cron-expression>@hourly</cron-expression>
+        <distributed-execution>false</distributed-execution>
+        <alerts/>
+    </schedule>
+    <ns5:log-output>21:00:00 - Job execution BEGIN
+21:00:00 - Succesfully loaded a job instance of type: org.datacleaner.monitor.server.job.SampleCustomJob
+21:00:00 - Succesfully initialized job instance, executing
+21:00:00 - Starting count to 40...
+21:00:00 - Counted to 1
+21:00:00 - Counted to 2
+21:00:00 - Counted to 3
+21:00:00 - Counted to 4
+21:00:01 - Counted to 5
+21:00:01 - Counted to 6
+21:00:01 - Counted to 7
+21:00:01 - Counted to 8
+21:00:01 - Counted to 9
+21:00:01 - Counted to 10
+21:00:01 - Counted to 11
+21:00:01 - Counted to 12
+21:00:01 - Counted to 13
+21:00:02 - Counted to 14
+21:00:02 - Counted to 15
+21:00:02 - Counted to 16
+21:00:02 - Counted to 17
+21:00:02 - Counted to 18
+21:00:02 - Counted to 19
+21:00:02 - Counted to 20
+21:00:02 - Counted to 21
+21:00:03 - Counted to 22
+21:00:03 - Counted to 23
+21:00:03 - Counted to 24
+21:00:03 - Counted to 25
+21:00:03 - Counted to 26
+21:00:03 - Counted to 27
+21:00:03 - Counted to 28
+21:00:03 - Counted to 29
+21:00:04 - Counted to 30
+21:00:04 - Counted to 31
+21:00:04 - Counted to 32
+21:00:04 - Counted to 33
+21:00:04 - Counted to 34
+21:00:04 - Counted to 35
+21:00:04 - Counted to 36
+21:00:04 - Counted to 37
+21:00:05 - Counted to 38
+21:00:05 - Counted to 39
+21:00:05 - Counted to 40
+21:00:05 - Done!
+21:00:05 - Succesfully executed job instance, closing
+21:00:05 - Saving job result.
+21:00:05 - Job execution SUCCESS</ns5:log-output>
+    <ns5:result-persisted>true</ns5:result-persisted>
+</ns5:execution-log>

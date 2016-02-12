@@ -8,7 +8,7 @@
 
 	<datastore-catalog>
 		<jdbc-datastore name="my_jdbc_connection" description="jdbc_con">
-			<url>jdbc:hsqldb:file:../../desktop/ui/src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
@@ -67,6 +67,7 @@
 			<cluster-name>my_es_cluster</cluster-name>
 			<index-name>my_index</index-name>
 		</elasticsearch-datastore>
+		
 		
 		<cassandra-datastore name="my cassandra db" description="Apache Cassandra rocks">
 			<keyspace>my_keyspace</keyspace>

@@ -84,6 +84,7 @@ import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -104,7 +105,6 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
     public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
-
     private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
     private StringConverter _stringConverter;
@@ -239,12 +239,13 @@ public class ComponentHandler {
         return ((Transformer) component).getOutputColumns();
     }
 
-    public Collection<List<Object[]>> runComponent(JsonNode data) {
+    public Collection<List<Object[]>> runComponent(JsonNode data, int maxBatchSize) {
         if (data == null) {
             return null;
         }
-
-        if (component instanceof Transformer) {
+        if(data.size() > maxBatchSize){
+            throw new BatchMaxSizeException(data.size(), maxBatchSize);
+        }else if (component instanceof Transformer) {
             return runTransformer(data);
         } else if (component instanceof Analyzer) {
             throw new RuntimeException("NOT YET IMPLEMENTED");
@@ -284,21 +285,31 @@ public class ComponentHandler {
             if(!errors.isEmpty()) {
                 break;
             }
+
+            final Map<String, String> mdcCopy = MDC.getCopyOfContextMap();
+
             taskRunner.run(new Task() {
                 @Override
                 public void execute() throws Exception {
-                    if(!errors.isEmpty()) {
-                        LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
-                        return;
-                    }
                     try {
-                        SecurityContextHolder.setContext(securityContext);
-                        transform(inputRow, results);
-                    } catch(Throwable t) {
-                        errors.add(t);
+                        MDC.setContextMap(mdcCopy);
+                        if (!errors.isEmpty()) {
+                            LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
+                            return;
+                        }
+                        try {
+                            SecurityContextHolder.setContext(securityContext);
+                            transform(inputRow, results);
+                        } catch (Throwable t) {
+                            synchronized (errors) {
+                                errors.add(t);
+                            }
+                        } finally {
+                            SecurityContextHolder.clearContext();
+                        }
                     } finally {
                         tasksPending.decrementAndGet();
-                        SecurityContextHolder.clearContext();
+                        MDC.clear();
                     }
                 }
             }, null);
@@ -310,7 +321,9 @@ public class ComponentHandler {
             try {
                 taskRunner.assistExecution();
             } catch(Throwable t) {
-                errors.add(t);
+                synchronized (errors) {
+                    errors.add(t);
+                }
             }
         }
 

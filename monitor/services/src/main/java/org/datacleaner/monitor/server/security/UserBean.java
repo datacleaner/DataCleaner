@@ -27,14 +27,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.datacleaner.monitor.shared.model.SecurityRoles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.google.common.base.Strings;
 
 @Component("user")
 @Scope(WebApplicationContext.SCOPE_SESSION)
@@ -42,14 +44,21 @@ public class UserBean implements User, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final transient TenantResolver _tenantResolver;
     private final Set<String> _roles;
     private String _username;
     private String _tenant;
-
-    @Autowired
+    
+    /**
+     * 
+     * @param tenantResolver
+     * @deprecated use {@link #UserBean()} instead
+     */
+    @Deprecated
     public UserBean(TenantResolver tenantResolver) {
-        _tenantResolver = tenantResolver;
+        this();
+    }
+
+    public UserBean() {
         _roles = new HashSet<String>();
     }
 
@@ -59,6 +68,12 @@ public class UserBean implements User, Serializable {
     }
 
     public void updateUser(final Authentication authentication) {
+        final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+        final TenantResolver tenantResolver = applicationContext.getBean(TenantResolver.class);
+        updateUser(authentication, tenantResolver);
+    }
+
+    public void updateUser(final Authentication authentication, final TenantResolver tenantResolver) {
         _roles.clear();
 
         if (authentication == null || !authentication.isAuthenticated()
@@ -67,7 +82,14 @@ public class UserBean implements User, Serializable {
             _tenant = null;
         } else {
             _username = authentication.getName();
-            _tenant = (_tenantResolver == null ? null : _tenantResolver.getTenantId(_username));
+            if (tenantResolver == null) {
+                // can happen in deserialized object cases
+                if (Strings.isNullOrEmpty(_tenant)) {
+                    throw new IllegalArgumentException("TenantResolver cannot be null when tenant is also null");
+                }
+            } else {
+                _tenant = tenantResolver.getTenantId(_username);
+            }
 
             final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             for (GrantedAuthority authority : authorities) {
@@ -107,7 +129,7 @@ public class UserBean implements User, Serializable {
 
     @Override
     public String getTenant() {
-        if (_tenant == null) {
+        if (Strings.isNullOrEmpty(_tenant)) {
             updateUser();
         }
         return _tenant;
@@ -122,6 +144,11 @@ public class UserBean implements User, Serializable {
 
     @Override
     public boolean isLoggedIn() {
+        return isAuthenticated();
+    }
+    
+    @Override
+    public boolean isAuthenticated() {
         return getUsername() != null;
     }
 

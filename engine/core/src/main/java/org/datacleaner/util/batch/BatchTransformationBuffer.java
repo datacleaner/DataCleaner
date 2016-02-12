@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.Transformer;
+import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,7 +169,7 @@ public class BatchTransformationBuffer<I, O> {
             if(_threadPool.isShutdown()) {
                 // Re-check the exception from background thread - it is preferred
                 rethrowException();
-                throw new RuntimeException("Transformer closed");
+                throw new PreviousErrorsExistException("Transformer closed");
             }
             final long waitTime = (attemptIndex < AWAIT_TIMES.length ? AWAIT_TIMES[attemptIndex]
                     : AWAIT_TIMES[AWAIT_TIMES.length - 1]);

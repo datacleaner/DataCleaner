@@ -235,7 +235,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                     final ComponentJob componentJob = entry.getKey();
                     final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
                     if (!descriptor.equals(lastDescriptor)) {
-                        final  ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor); 
+                        final ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor); 
                         final String iconSrc = wrapper.getIconSrc(IconUtils.ICON_SIZE_MEDIUM);
                         final String styleName = toStyleName(descriptor.getDisplayName());
                         writer.write("<li style=\"background-image: url(" + iconSrc + ")\"><a href=\"#analysisResultDescriptorGroup_"

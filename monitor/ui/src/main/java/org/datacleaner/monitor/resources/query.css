@@ -30,14 +30,12 @@
 	width: 350px;
 	height: 80px;
 	font-size: 1.4em;
-	font-family: Ubuntu, sans-serif;
 	vertical-align: bottom;
 }
 
 .QueryPanel .ExecuteQueryButton {
 	vertical-align: bottom;
 	font-size: 1.4em;
-	font-family: Ubuntu, sans-serif;
 }
 
 .QueryPanel .SchemaTree {

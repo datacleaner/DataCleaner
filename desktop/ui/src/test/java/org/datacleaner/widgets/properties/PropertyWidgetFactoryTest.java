@@ -24,6 +24,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.ValidationCategory;
@@ -46,6 +47,8 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.util.VFSUtils;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -61,6 +64,17 @@ public class PropertyWidgetFactoryTest extends TestCase {
     private SimpleStringPattern stringPattern1 = new SimpleStringPattern("sp1", "");
     private SimpleStringPattern stringPattern2 = new SimpleStringPattern("sp2", "");
     private SimpleStringPattern stringPattern3 = new SimpleStringPattern("sp3", "");
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
+
+        if (file != null) {
+            file.delete();
+        }
+    }
 
     public void testCreateAllPropertyTypes() throws Exception {
         final DCModule dcModule = new DCModuleImpl();

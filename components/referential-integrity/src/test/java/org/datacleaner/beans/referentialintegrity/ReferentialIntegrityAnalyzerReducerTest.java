@@ -49,9 +49,9 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         final AnalysisJobBuilder jobBuilder2 = getAnalysisJobBuilder();
         final AnalysisJobBuilder jobBuilder3 = getAnalysisJobBuilder();
         
-        final ReferentialIntegrityAnalyzerResult partialResult1 = getPartialResult(jobBuilder1, 1, 22);
-        final ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 23, 1);
-        final ReferentialIntegrityAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 24, null);
+        final ReferentialIntegrityAnalyzerResult partialResult1 = getPartialResult(jobBuilder1, 1, 100);
+        final ReferentialIntegrityAnalyzerResult partialResult2 = getPartialResult(jobBuilder2, 101, 1);
+        final ReferentialIntegrityAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 102, null);
         
         // Assert what we have in the first partial result
         {
@@ -61,7 +61,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             
             final List<InputRow> rows = partialResult1.getSampleRows();
             assertEquals(1, rows.size());
-            assertEquals(-1000, rows.get(0).getValue(salesRepEmployeeNumber));
+            assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         // Assert what we have in the second partial result
         {
@@ -81,7 +81,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             
             final List<InputRow> rows = partialResult3.getSampleRows();
             assertEquals(1, rows.size());
-            assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
+            assertEquals(0, rows.get(0).getValue(salesRepEmployeeNumber));
         }
         
         final Collection<ReferentialIntegrityAnalyzerResult> partialResults = new ArrayList<>();
@@ -100,9 +100,9 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             
             final List<InputRow> rows = reducedResult.getSampleRows();
             assertEquals(3, rows.size());
-            assertEquals(-1000, rows.get(0).getValue(salesRepEmployeeNumber));
+            assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
             assertEquals(-1, rows.get(1).getValue(salesRepEmployeeNumber));
-            assertEquals(-1, rows.get(2).getValue(salesRepEmployeeNumber));
+            assertEquals(0, rows.get(2).getValue(salesRepEmployeeNumber));
         }
     }
     

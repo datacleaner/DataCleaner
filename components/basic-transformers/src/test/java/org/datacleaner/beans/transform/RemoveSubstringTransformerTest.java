@@ -71,6 +71,21 @@ public class RemoveSubstringTransformerTest {
     }
 
     @Test
+    public void testTransformNullBaseColumn() {
+        String[] result = _t.transform(new MockInputRow().put(_t.baseColumn, null));
+        Assert.assertEquals(1, result.length);
+        Assert.assertEquals(null, result[0]);
+    }
+    
+
+    @Test
+    public void testTransformNullReplacementColumn() {
+        String[] result = _t.transform(new MockInputRow().put(_t.baseColumn, "foo"));
+        Assert.assertEquals(1, result.length);
+        Assert.assertEquals("foo", result[0]);
+    }
+
+    @Test
     public void testTransformWholeWords() {
         _t.wholeWordsOnly = true;
         String[] result = _t.transform(_inputRow);

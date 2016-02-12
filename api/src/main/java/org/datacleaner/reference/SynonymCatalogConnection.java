@@ -21,8 +21,14 @@ package org.datacleaner.reference;
 
 import java.io.Closeable;
 import java.util.Collection;
+import java.util.List;
 
 public interface SynonymCatalogConnection extends Closeable {
+    interface Replacement {
+        String getReplacedString();
+        List<String> getSynonyms();
+        List<String> getMasterTerms();
+    }
 
     /**
      * @return all synonyms contained within this catalog
@@ -37,7 +43,14 @@ public interface SynonymCatalogConnection extends Closeable {
      * @return the master term found, or null if none is found
      */
     public String getMasterTerm(String term);
-    
+
+    /**
+     * Replaces all synonyms with master terms in a sentence.
+     *
+     * @param sentence The sentence to run the replacement on.
+     */
+    public Replacement replaceInline(String sentence);
+
     @Override
     public void close();
 }

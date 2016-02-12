@@ -140,13 +140,21 @@ public final class StringConverter {
      * @return a String representation of the Java object
      */
     public final String serialize(final Object o) {
-        return serialize(o, new ArrayList<Class<? extends Converter<?>>>(0));
+        return serialize(o, new ArrayList<Converter<?>>(0));
     }
 
+    /**
+     * @deprecated by {@link #serialize(Object, Converter)}
+     */
     public final String serialize(final Object o, final Class<? extends Converter<?>> converterClass) {
-        final Collection<Class<? extends Converter<?>>> col = new ArrayList<Class<? extends Converter<?>>>();
-        if (converterClass != null) {
-            col.add(converterClass);
+        Converter<?> converter = converterClass == null ? null : createConverter(converterClass);
+        return serialize(o, converter);
+    }
+
+    public final String serialize(final Object o, final Converter<?> converter) {
+        final Collection<Converter<?>> col = new ArrayList<Converter<?>>();
+        if (converter != null) {
+            col.add(converter);
         }
         return serialize(o, col);
     }
@@ -156,16 +164,16 @@ public final class StringConverter {
      * 
      * @param o
      *            the object to serialize
-     * @param converterClasses
+     * @param converters
      *            an optional collection of custom converter classes
      * @return a String representation of the Java object
      */
-    public final String serialize(final Object o, final Collection<Class<? extends Converter<?>>> converterClasses) {
+    public final String serialize(final Object o, final Collection<Converter<?>> converters) {
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
-        if (converterClasses != null) {
-            for (Class<? extends Converter<?>> converterClass : converterClasses) {
-                delegatingConverter.addConverter(createConverter(converterClass));
+        if (converters != null) {
+            for (Converter<?> converter : converters) {
+                delegatingConverter.addConverter(converter);
             }
         }
 
@@ -205,7 +213,7 @@ public final class StringConverter {
 
     /**
      * Deserializes a String into a Java object of the particular type.
-     * 
+     *
      * @param str
      *            the serialized string representation
      * @param type
@@ -213,13 +221,23 @@ public final class StringConverter {
      * @return a Java object matching the String representation
      */
     public final <E> E deserialize(String str, Class<E> type) {
-        return deserialize(str, type, new ArrayList<Class<? extends Converter<?>>>(0));
+        return deserialize(str, type, new ArrayList<Converter<?>>(0));
     }
 
+    /**
+     * @deprecated by {@link #deserialize(String, Class, Converter)}
+     */
     public final <E> E deserialize(String str, Class<E> type, Class<? extends Converter<?>> converterClass) {
-        Collection<Class<? extends Converter<?>>> col = new ArrayList<Class<? extends Converter<?>>>();
-        if (converterClass != null) {
-            col.add(converterClass);
+        if(converterClass == null) {
+            return deserialize(str, type);
+        }
+        return deserialize(str, type, createConverter(converterClass));
+    }
+
+    public final <E> E deserialize(String str, Class<E> type, Converter<?> converter) {
+        Collection<Converter<?>> col = new ArrayList<Converter<?>>();
+        if (converter != null) {
+            col.add(converter);
         }
         return deserialize(str, type, col);
     }
@@ -231,15 +249,15 @@ public final class StringConverter {
      *            the serialized string representation
      * @param type
      *            the requested type
-     * @param converterClasses
+     * @param converters
      *            an optional collection of custom converters to apply when
      *            deserializing
      * @return a Java object matching the String representation
      */
-    public final <E> E deserialize(String str, Class<E> type, Collection<Class<? extends Converter<?>>> converterClasses) {
+    public final <E> E deserialize(String str, Class<E> type, Collection<Converter<?>> converters) {
         logger.debug("deserialize(\"{}\", {})", str, type);
 
-        if (converterClasses == null || converterClasses.isEmpty()) {
+        if (converters == null || converters.isEmpty()) {
             // when possible, just reuse the base converter
             @SuppressWarnings("unchecked")
             final E result = (E) _baseConverter.fromString(type, str);
@@ -248,16 +266,15 @@ public final class StringConverter {
 
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
-        if (converterClasses != null) {
-            for (Class<? extends Converter<?>> converterClass : converterClasses) {
-                final Converter<?> converter = createConverter(converterClass);
+        if (converters != null) {
+            for (Converter<?> converter : converters) {
                 delegatingConverter.addConverter(converter);
                 delegatingConverter.initialize(converter, _injectionManager);
             }
         }
 
-        final List<Converter<?>> converters = _baseConverter.getConverters();
-        for (Converter<?> converter : converters) {
+        final List<Converter<?>> baseconverters = _baseConverter.getConverters();
+        for (Converter<?> converter : baseconverters) {
             delegatingConverter.addConverter(converter);
         }
 

@@ -34,10 +34,8 @@ public class TestHelperTest extends TestCase {
 
         DatastoreConnection con = ds.openConnection();
         String[] tableNames = con.getSchemaNavigator().getDefaultSchema().getTableNames();
-        assertEquals(
-                "[CUSTOMERS, CUSTOMER_W_TER, DEPARTMENT_MANAGERS, DIM_TIME, EMPLOYEES, "
-                        + "OFFICES, ORDERDETAILS, ORDERFACT, ORDERS, PAYMENTS, PRODUCTS, "
-                        + "QUADRANT_ACTUALS, TRIAL_BALANCE]", Arrays.toString(tableNames));
+        assertEquals("[CUSTOMERS, EMPLOYEES, OFFICES, ORDERDETAILS, ORDERFACT, ORDERS, PAYMENTS, PRODUCTS]", Arrays
+                .toString(tableNames));
 
         con.close();
     }

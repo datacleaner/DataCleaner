@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.base.Strings;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.invoke")
+@RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke")
 public class JobInvocationController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobInvocationController.class);

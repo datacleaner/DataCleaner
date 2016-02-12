@@ -54,7 +54,7 @@ public class TriggerJobClickHandler implements ClickHandler {
         
         popupPanel.setAutoHideEnabled(false);
         popupPanel.setWidget(panel);
-        popupPanel.addButton(new CancelPopupButton(popupPanel, "Close") {
+        popupPanel.addButton(new CancelPopupButton(popupPanel, "Close", true) {
             @Override
             public void onClick(ClickEvent event) {
                 super.onClick(event);

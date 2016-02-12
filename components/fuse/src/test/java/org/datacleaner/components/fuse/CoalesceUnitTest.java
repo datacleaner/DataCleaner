@@ -84,9 +84,6 @@ public class CoalesceUnitTest {
         Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns());
     }
 
-    private <E> MockInputColumn<? extends E> createColumn(String columnName, Class<E> clazz){
-        return createColumn(null, columnName, clazz);
-    }
     private <E> MockInputColumn<? extends E> createColumn(String tableName, String columnName, Class<E> clazz){
         return new MockInputColumn<>(columnName, clazz, new MutableColumn(columnName, new MutableTable(tableName)));
     }

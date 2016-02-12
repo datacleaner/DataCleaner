@@ -77,8 +77,8 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
         assertEquals(3, annotatedRowCount);
 
         List<InputRow> rows = result.getSampleRows();
-        assertEquals(-1, rows.get(0).getValue(salesRepEmployeeNumber));
-        assertEquals(-1000, rows.get(1).getValue(salesRepEmployeeNumber));
+        assertEquals(0, rows.get(0).getValue(salesRepEmployeeNumber));
+        assertEquals(-1, rows.get(1).getValue(salesRepEmployeeNumber));
         assertEquals(-1, rows.get(2).getValue(salesRepEmployeeNumber));
     }
 

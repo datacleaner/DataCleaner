@@ -66,6 +66,11 @@ public class MockMonitoredDictionary extends AbstractReferenceData implements Di
     public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
         return new DictionaryConnection() {
             @Override
+            public Iterator<String> getLengthSortedValues() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public Iterator<String> getAllValues() {
                 throw new UnsupportedOperationException();
             }

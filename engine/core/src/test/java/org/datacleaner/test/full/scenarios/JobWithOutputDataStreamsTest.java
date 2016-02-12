@@ -156,12 +156,12 @@ public class JobWithOutputDataStreamsTest {
         // #224
         final ListResult<?> result1 = (ListResult<?>) deSerializedResult.getResult(analyzerJob1);
         assertNotNull(result1);
-        assertEquals(40, result1.getValues().size());
+        assertEquals(71, result1.getValues().size());
 
         // this result is the "new part" of issue #224
         final ListResult<?> result2 = (ListResult<?>) deSerializedResult.getResult(analyzerJob2);
         assertNotNull(result2);
-        assertEquals(83, result2.getValues().size());
+        assertEquals(144, result2.getValues().size());
         final Object lastElement = result2.getValues().get(result2.getValues().size() - 1);
         assertEquals("MetaModelInputRow[Row[values=[baz, null]]]", lastElement.toString());
     }

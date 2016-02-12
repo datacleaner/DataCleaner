@@ -321,16 +321,27 @@ public class ComponentControllerV1 implements ComponentController {
         try {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
-            BufferedImage icon = ImageIO.read(iconStream);
+            Image icon = ImageIO.read(iconStream);
             BufferedImage mark = getRemoteMark();
+            int iconW = icon.getWidth(null);
+            int iconH = icon.getHeight(null);
+            if(iconW > 32 || iconW > 32) {
+                double scaleX = 32.0/icon.getWidth(null);
+                double scaleY = 32.0/icon.getWidth(null);
+                double scale = Math.min(scaleX, scaleY);
+                iconH = (int)((double)iconH * scale);
+                iconW = (int)((double)iconW * scale);
+                icon = icon.getScaledInstance(iconW, iconH, Image.SCALE_SMOOTH);
+            }
 
-            Graphics graphics = icon.getGraphics();
-            graphics.drawImage(icon, 0, 0, null);
-            graphics.drawImage(mark, icon.getWidth() - mark.getWidth(), 0, null);
+            BufferedImage resultImg = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics graphics = resultImg.getGraphics();
+            graphics.drawImage(icon, (32-iconW)/2, (32-iconH)/2, null);
+            graphics.drawImage(mark, 32 - mark.getWidth(), 0, null);
             graphics.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(icon, "png", outputStream);
+            ImageIO.write(resultImg, "png", outputStream);
             outputStream.flush();
             byte[] iconBytes = outputStream.toByteArray();
             outputStream.close();

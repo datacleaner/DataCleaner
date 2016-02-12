@@ -20,26 +20,6 @@
 package org.datacleaner.configuration;
 
 import org.apache.metamodel.util.Resource;
-<<<<<<< HEAD
-import org.apache.metamodel.util.SimpleTableDef;
-import org.apache.metamodel.xml.XmlDomDataContext;
-import org.datacleaner.connection.CouchDbDatastore;
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DataHubDatastore;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.ElasticSearchDatastore;
-import org.datacleaner.connection.ExcelDatastore;
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.Neo4jDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.util.SecurityUtils;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.xml.XmlUtils;
-import org.w3c.dom.Attr;
-=======
->>>>>>> refs/remotes/origin/master
 import org.w3c.dom.Document;
 
 /**

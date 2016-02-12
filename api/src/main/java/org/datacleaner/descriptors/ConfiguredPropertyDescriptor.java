@@ -58,12 +58,12 @@ public interface ConfiguredPropertyDescriptor extends PropertyDescriptor, HasAli
     public boolean isRequired();
 
     /**
-     * Gets an optional custom {@link Converter} class, in case the configured
+     * Gets an optional custom {@link Converter} instance, in case the configured
      * property should be converted using custom rules.
      * 
      * @see Convertable
      * 
      * @return a custom converter, or null
      */
-    public Class<? extends Converter<?>> getCustomConverter();
+    public Converter<?> createCustomConverter();
 }

@@ -102,7 +102,20 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
     }
 
     @Override
-    public Class<? extends Converter<?>> getCustomConverter() {
+    public Converter<?> createCustomConverter() {
+        Class<? extends Converter<?>> converterClass = getCustomConverterClass();
+        if(converterClass != null) {
+            try {
+                return converterClass.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private Class<? extends Converter<?>> getCustomConverterClass() {
         Convertable convertable = getAnnotation(Convertable.class);
         if (convertable != null) {
             return convertable.value();

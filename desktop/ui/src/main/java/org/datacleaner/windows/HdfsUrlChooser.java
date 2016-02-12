@@ -26,8 +26,6 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -35,13 +33,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -57,10 +59,12 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.HdfsUtils;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
@@ -71,6 +75,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HdfsUrlChooser extends JComponent {
+    public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
+    public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
+    private static final String[] CONFIGURATION_DIRECTORIES = { HADOOP_CONF_DIR, YARN_CONF_DIR};
 
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
@@ -345,6 +352,7 @@ public class HdfsUrlChooser extends JComponent {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_WIDTH = 600;
     private static final int SPACE = 10;
+    public static final String FS_DEFAULT_FS = "fs.defaultFS";
     public static String HDFS_SCHEME = "hdfs";
     private final OpenType _openType;
     private final JList<FileStatus> _fileList;
@@ -375,7 +383,9 @@ public class HdfsUrlChooser extends JComponent {
         pathsComboBox.addListener(new DCComboBox.Listener<Path>() {
             @Override
             public void onItemSelected(final Path directory) {
-                _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
+                if(!directory.isAbsoluteAndSchemeAuthorityNull()) {
+                    _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
+                }
                 _currentDirectory = directory;
                 ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
             }
@@ -408,22 +418,12 @@ public class HdfsUrlChooser extends JComponent {
                     final JPopupMenu popupMenu = new JPopupMenu();
                     if (_fileList.getModel().getElementAt(_fileList.getSelectedIndex()).isDirectory()) {
                         final JMenuItem browseMenuItem = new JMenuItem("Browse");
-                        browseMenuItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                selectOrBrowsePath(false);
-                            }
-                        });
+                        browseMenuItem.addActionListener(e1 -> selectOrBrowsePath(false));
                         popupMenu.add(browseMenuItem);
                     }
 
                     final JMenuItem selectMenuItem = new JMenuItem("Select");
-                    selectMenuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                            selectOrBrowsePath(true);
-                        }
-                    });
+                    selectMenuItem.addActionListener(e1 -> selectOrBrowsePath(true));
                     popupMenu.add(selectMenuItem);
                     popupMenu.show(_fileList, e.getX(), e.getY());
                 }
@@ -456,11 +456,15 @@ public class HdfsUrlChooser extends JComponent {
             @Override
             public void componentShown(final ComponentEvent e) {
                 if (chooser._currentDirectory == null) {
-                    final URI uri = HdfsServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
-                    if (uri != null) {
-                        chooser.updateCurrentDirectory(new Path(uri));
-                    } else {
-                        chooser._dialog.setVisible(false);
+                    final boolean configured = chooser.scanHadoopConfigFiles();
+
+                    if (!configured) {
+                        final URI uri = HdfsServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
+                        if (uri != null) {
+                            chooser.updateCurrentDirectory(new Path(uri));
+                        } else {
+                            chooser._dialog.setVisible(false);
+                        }
                     }
                 }
             }
@@ -500,6 +504,45 @@ public class HdfsUrlChooser extends JComponent {
             _currentDirectory = element.getPath();
         }
         ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
+    }
+
+    /**
+     * This scans Hadoop environment variables for a directory with configuration files
+     *
+     * @return True if a configuration was yielded.
+     */
+    private boolean scanHadoopConfigFiles() {
+        final Configuration configuration = new Configuration(true);
+        final Map<String, File> configurationFiles = new HashMap<>();
+
+        Arrays.stream(CONFIGURATION_DIRECTORIES).map(System::getenv).filter(Objects::nonNull).map(File::new)
+                .filter(File::isDirectory).forEach(c -> {
+            final File[] array = c.listFiles();
+            assert (array != null);
+            Arrays.stream(array).filter(File::isFile).filter(f -> !configurationFiles.containsKey(f.getName()))
+                    .forEach(f -> configurationFiles.put(f.getName(), f));
+        });
+
+        if(configurationFiles.size() == 0) {
+            return false;
+        }
+
+        for (File file : configurationFiles.values()) {
+            configuration.addResource(new Path(file.toURI()));
+        }
+
+        configuration.reloadConfiguration();
+        final URI uri = URI.create(configuration.get(FS_DEFAULT_FS));
+
+        // TODO: This will sooner or later need to support a preexisting URL.
+        HadoopResource resource = new HadoopResource(uri.resolve("/"), configuration);
+
+        _currentDirectory = resource.getHadoopPath();
+        _fileSystem = resource.getHadoopFileSystem();
+        final HdfsDirectoryModel model = (HdfsDirectoryModel) _fileList.getModel();
+        model.updateFileList();
+        _directoryComboBoxModel.updateDirectories();
+        return model._files.length > 0;
     }
 
     private void updateCurrentDirectory(final Path directory) {

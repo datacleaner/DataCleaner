@@ -100,4 +100,12 @@ public class PlainSearchReplaceTransformer implements Transformer {
 
         return result;
     }
+    
+    public void setReplacements(Map<String, String> replacements) {
+        this.replacements = replacements;
+    }
+    
+    public void setReplaceEntireString(boolean replaceEntireString) {
+        this.replaceEntireString = replaceEntireString;
+    }
 }

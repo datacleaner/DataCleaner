@@ -67,6 +67,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
@@ -96,6 +97,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.RemoteServersConfigRW;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -280,6 +282,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCModule _dcModule;
     private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
+    private final DataCloudLogInWindow _dataCloudLogInWindow;
     private final AnalyzerChangeListener _analyzerChangeListener = new WindowAnalyzerChangeListener();
     private final TransformerChangeListener _transformerChangeListener = new WindowTransformerChangeListener();
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
@@ -345,6 +348,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
                 _dcModule);
 
+        _dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, windowContext);
+        boolean isDataCloudInConfig = new RemoteServersConfigRW(_configuration)
+                .isServerInConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
+
+
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
@@ -363,6 +371,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+
+        if (!isDataCloudInConfig) {
+            _dataCloudLogInWindow.open();
+        }
+
     }
 
     @Override

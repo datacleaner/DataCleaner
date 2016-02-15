@@ -27,9 +27,12 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Class for updating values (content of tags) in the XML configuration file
@@ -84,6 +87,51 @@ public class DataCleanerConfigurationUpdater {
             node.setTextContent(newValue);
             write();
         }
+    }
+
+    public void createElement(String nodePathElements, String text) {
+        createElement(nodePathElements.split(":"), text);
+    }
+
+    public void createElement(String[] nodePathElements, String text) {
+        if (document == null) {
+            load();
+        }
+        int i = 0;
+        NodeList nodeList = document.getElementsByTagName(nodePathElements[i]);
+        i++;
+        Node node = (nodeList.getLength() > 0) ? nodeList.item(0) : null;
+        if (node == null) {
+            return;
+        }
+        Node prevNode;
+        while (true){
+            prevNode = node;
+            node = getNodeChild(node, nodePathElements[i]);
+            i++;
+            if(node == null){
+                node = prevNode;
+                i--;
+                break;
+            }
+
+            if(i >= nodePathElements.length){
+                return; // element is there
+            }
+        }
+
+        for (int j = i; j < nodePathElements.length; j++) {
+            Element element = document.createElement(nodePathElements[j]);
+            node.appendChild(element);
+            node = element;
+            if(j == nodePathElements.length -1){
+                if(text != null){
+                    Text textDate = document.createTextNode(text);
+                    node.appendChild(textDate);
+                }
+            }
+        }
+        write();
     }
 
     private Node findElementToUpdate(String[] nodePath) {

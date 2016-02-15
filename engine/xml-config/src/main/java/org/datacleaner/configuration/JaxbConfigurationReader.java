@@ -378,11 +378,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         if (!foundNonRemote) {
             providers.add(0, environment.getDescriptorProvider());
         }
-        
-        if (providers.size() == 1) {
-            return providers.get(0);
-        }
-        
+
+        //Always must be composite. I can add new provider after start.
         return new CompositeDescriptorProvider(providers);
     }
 
@@ -445,7 +442,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         for (RemoteComponentServerType server : providerElement.getServer()) {
             final String serverName = (server.getName() == null
                     ? "server" + remoteServerConfiguration.getServerList().size() : server.getName());
-            RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(server.getUrl(), serverName,
+            final String serverUrl;
+            if(serverName.equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)){
+                serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
+            }else {
+                serverUrl = server.getUrl();
+            }
+            RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
                     serverPriority, server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
             serverPriority--;
             remoteServerConfiguration.getServerList().add(remoteServerData);

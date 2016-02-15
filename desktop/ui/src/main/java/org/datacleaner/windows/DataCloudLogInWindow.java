@@ -1,3 +1,22 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
@@ -18,6 +37,7 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.util.IconUtils;
@@ -151,9 +171,12 @@ public class DataCloudLogInWindow extends AbstractWindow{
                 return;
             }
             logger.debug("Sign in DataCloud. User name: {}", userName);
-            button.setBackground(Color.GREEN);
-            new RemoteServersConfigRW(_configuration)
+
+            RemoteServersConfigRW remoteServersConfigRW = new RemoteServersConfigRW(_configuration);
+            remoteServersConfigRW
                     .writeCredentialsToConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
+            remoteServersConfigRW.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+            button.setBackground(Color.GREEN);
         }
     }
 }

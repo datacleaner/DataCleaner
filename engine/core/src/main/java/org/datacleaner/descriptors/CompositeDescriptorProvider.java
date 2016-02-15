@@ -42,12 +42,21 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     private final List<DescriptorProvider> delegates;
 
+    private final Set<DescriptorProviderListener> activeListeners = new HashSet<>();
+
     public CompositeDescriptorProvider(DescriptorProvider delegate1, DescriptorProvider delegate2) {
         this(Arrays.asList(delegate1, delegate2));
     }
 
     public CompositeDescriptorProvider(List<DescriptorProvider> delegates) {
         this.delegates = delegates;
+    }
+
+    public void addDelegate(DescriptorProvider descriptorProvider) {
+        for (DescriptorProviderListener activeListener : activeListeners) {
+            descriptorProvider.addListener(activeListener);
+        }
+        delegates.add(descriptorProvider);
     }
 
     public void refresh() {
@@ -214,6 +223,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public void addListener(DescriptorProviderListener listener) {
+        activeListeners.add(listener);
         for (DescriptorProvider provider : delegates) {
             provider.addListener(listener);
         }
@@ -221,6 +231,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public void removeListener(DescriptorProviderListener listener) {
+        activeListeners.remove(listener);
         for (DescriptorProvider provider : delegates) {
             provider.removeListener(listener);
         }

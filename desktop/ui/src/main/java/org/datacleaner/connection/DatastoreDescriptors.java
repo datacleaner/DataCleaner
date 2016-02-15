@@ -201,6 +201,7 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        availableCloudBasedDatabaseDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR); 
        
 
         return availableCloudBasedDatabaseDescriptors;

@@ -384,7 +384,7 @@ public class DatastorePanel extends DCPanel {
                     dialog.open();
                 }
             });
-        } else if (datastore instanceof Neo4jDatastore){
+        } else if (datastore instanceof Neo4jDatastore) {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -434,10 +434,10 @@ public class DatastorePanel extends DCPanel {
             final MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
             return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - " + mongoDbDatastore
                     .getDatabaseName();
-        }else if (datastore instanceof Neo4jDatastore) {
+        } else if (datastore instanceof Neo4jDatastore) {
             final Neo4jDatastore neo4jDbDatastore = (Neo4jDatastore) datastore;
             return neo4jDbDatastore.getHostname() + ":" + neo4jDbDatastore.getPort();
-        }   else if (datastore instanceof CouchDbDatastore) {
+        } else if (datastore instanceof CouchDbDatastore) {
             final CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
             return (couchDbDatastore.isSslEnabled() ? "https://" : "http://") + couchDbDatastore.getHostname() + ":"
                     + couchDbDatastore.getPort();

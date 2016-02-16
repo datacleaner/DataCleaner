@@ -103,4 +103,14 @@ public class StringUtilsTest extends TestCase {
         assertEquals("HelloWorld", StringUtils.toCamelCase("Hello World"));
         assertEquals("HelloWorld", StringUtils.toCamelCase("HelloWorld"));
     }
+    
+    public void testIsSingleWord() throws Exception {
+        assertTrue(StringUtils.isSingleWord("foo"));
+        assertTrue(StringUtils.isSingleWord("foo12"));
+        assertTrue(StringUtils.isSingleWord("foo "));
+        assertTrue(StringUtils.isSingleWord("\n foo \t"));
+        
+        assertFalse(StringUtils.isSingleWord("foo bar"));
+        assertFalse(StringUtils.isSingleWord("\n foo \tbar baz lorem ipsum"));
+    }
 }

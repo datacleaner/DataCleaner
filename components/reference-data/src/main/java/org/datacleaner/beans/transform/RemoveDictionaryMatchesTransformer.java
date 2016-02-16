@@ -22,6 +22,7 @@ package org.datacleaner.beans.transform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +48,7 @@ import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
+import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -93,7 +95,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     DataCleanerConfiguration _configuration;
 
     private DictionaryConnection _dictionaryConnection;
-    private List<String> dictionaryValues;
+    private List<String> multiWordDictionaryValues;
 
     public RemoveDictionaryMatchesTransformer() {
     }
@@ -133,11 +135,14 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Initialize
     public void init() {
         _dictionaryConnection = _dictionary.openConnection(_configuration);
-        dictionaryValues = new ArrayList<>();
+        multiWordDictionaryValues = new ArrayList<>();
 
         final Iterator<String> allValues = _dictionaryConnection.getLengthSortedValues();
         while (allValues.hasNext()) {
-            dictionaryValues.add(allValues.next());
+            final String value = allValues.next();
+            if (!StringUtils.isSingleWord(value)) {
+                multiWordDictionaryValues.add(value);
+            }
         }
     }
 
@@ -158,7 +163,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public Object[] transform(String value) {
         final List<String> removedParts = new ArrayList<>(2);
         if (!Strings.isNullOrEmpty(value)) {
-            for(String entry : dictionaryValues) {
+            for (String entry : multiWordDictionaryValues) {
                 final Matcher matcher = Pattern.compile("\\b" + Pattern.quote(entry) + "\\b").matcher(value);
                 while(matcher.find()){
                     final int start;
@@ -178,6 +183,24 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                     removedParts.add(entry);
                 }
             }
+            
+            // do word-by-word dictionary lookups
+            final StringBuilder sb = new StringBuilder();
+            final StringTokenizer st = new StringTokenizer(value, StringUtils.WHITESPACE_CHARACTERS, true);
+            while (st.hasMoreTokens()) {
+                final String token = st.nextToken();
+                if (token.trim().isEmpty()) {
+                    // this is a delim - just add it
+                    sb.append(token);
+                } else {
+                    if (_dictionaryConnection.containsValue(token)) {
+                        removedParts.add(token);
+                    } else {
+                        sb.append(token);
+                    }
+                }
+            }
+            value = sb.toString();
         }
 
         switch (_removedMatchesType) {

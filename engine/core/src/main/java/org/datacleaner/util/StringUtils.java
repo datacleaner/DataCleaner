@@ -36,6 +36,11 @@ public final class StringUtils {
 
     public static final String LATIN_CHARACTERS = "";
 
+    /**
+     * A String containing the default white space characters - space, tab, newline, carriage-return, form-feed. 
+     */
+    public static final String WHITESPACE_CHARACTERS = " \t\n\r\f";
+
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
@@ -158,5 +163,17 @@ public final class StringUtils {
         }
         v = v.replace(searchToken, replacement);
         return v;
+    }
+
+    /**
+     * Determines if a String represents a single word. A single word is defined as a non-null string containing one token with no white spaces after trimming.
+     * @param value
+     * @return
+     */
+    public static boolean isSingleWord(String value) {
+        if (value == null) {
+            return false;
+        }
+        return !WHITESPACE_PATTERN.matcher(value.trim()).find();
     }
 }

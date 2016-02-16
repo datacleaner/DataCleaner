@@ -348,9 +348,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
                 _dcModule);
 
-        _dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, windowContext);
-        boolean isDataCloudInConfig = new RemoteServersConfigRW(_configuration)
-                .isServerInConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
+        _dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, windowContext);
 
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
@@ -372,7 +370,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
 
-        if (!isDataCloudInConfig) {
+        if (_dataCloudLogInWindow.mayIShowIt()) {
             _dataCloudLogInWindow.open();
         }
 

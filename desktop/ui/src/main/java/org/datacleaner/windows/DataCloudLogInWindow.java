@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.border.CompoundBorder;
@@ -37,9 +38,9 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
-import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.RemoteServersConfigRW;
@@ -56,19 +57,32 @@ import org.slf4j.LoggerFactory;
  */
 public class DataCloudLogInWindow extends AbstractWindow{
     private static final Logger logger = LoggerFactory.getLogger(DataCloudLogInWindow.class);
+    public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
 
 
     final private DataCleanerConfiguration _configuration;
+    final private UserPreferences _userPreferences;
     final private JComponent _contentPanel;
 
     @Inject
-    public DataCloudLogInWindow(final DataCleanerConfiguration configuration,  WindowContext windowContext) {
+    public DataCloudLogInWindow(final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, WindowContext windowContext) {
         super(windowContext);
-        this._configuration = configuration;
-         _contentPanel = createContentPanel();
+        _configuration = configuration;
+        _userPreferences = userPreferences;
+        _contentPanel = createContentPanel();
 
         setLayout(new BorderLayout());
         add(_contentPanel, BorderLayout.CENTER);
+    }
+
+    public boolean mayIShowIt(){
+        boolean isDataCloudInConfig = new RemoteServersConfigRW(_configuration)
+                .isServerInConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
+        String showDataCloudDialog = _userPreferences.getAdditionalProperties()
+                .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "true");
+        Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
+        return !isDataCloudInConfig && showDataCloudDialogBool;
     }
 
 
@@ -83,6 +97,10 @@ public class DataCloudLogInWindow extends AbstractWindow{
 
         final JButton signInButton = WidgetFactory.createDefaultButton("Sign in", IconUtils.APPLICATION_ICON);
         signInButton.addActionListener(new SingInDataCloudListener(usernameTextField, passwordTextField, signInButton));
+
+        final JCheckBox disableShowCheckBox = new JCheckBox("Don't show again.", false);
+        disableShowCheckBox.addActionListener(new DisableShowDialog(disableShowCheckBox));
+
 
         final DCPanel result = new DCPanel();
 
@@ -101,6 +119,8 @@ public class DataCloudLogInWindow extends AbstractWindow{
         innerPanel.add(passwordTextField);
         innerPanel.add(Box.createVerticalStrut(5));
         innerPanel.add(signInButton);
+        innerPanel.add(Box.createVerticalStrut(5));
+        innerPanel.add(disableShowCheckBox);
         return result;
     }
 
@@ -177,6 +197,22 @@ public class DataCloudLogInWindow extends AbstractWindow{
                     .writeCredentialsToConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
             remoteServersConfigRW.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             button.setBackground(Color.GREEN);
+        }
+    }
+
+
+    private class DisableShowDialog implements ActionListener {
+        private final JCheckBox _jCheckBox;
+
+        private DisableShowDialog(final JCheckBox jCheckBox) {
+            _jCheckBox = jCheckBox;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Boolean selectedNeg = !_jCheckBox.isSelected();
+            _userPreferences.getAdditionalProperties().put(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, selectedNeg.toString());
+            _userPreferences.save();
         }
     }
 }

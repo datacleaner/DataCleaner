@@ -49,6 +49,8 @@ public class SynonymLookupTransformerTest {
 
         assertEquals("Hello DK DK DK!", transformer.transform(new MockInputRow().put(col, "Hello denmark danmark dk!"))[0]);
         
+        assertEquals("Hello DK DK DK!", transformer.transform(new MockInputRow().put(col, "Hello United KINGDOM danmark uk."))[0]);
+        
         transformer.close();
     }
     

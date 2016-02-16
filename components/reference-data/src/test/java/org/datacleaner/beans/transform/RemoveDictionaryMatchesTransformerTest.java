@@ -84,6 +84,17 @@ public class RemoveDictionaryMatchesTransformerTest {
                 .getOutputColumns().toString());
         assertEquals(List.class, transformer.getOutputColumns().getColumnType(1));
     }
+    
+    @Test
+    public void testWordBoundarySplitting() throws Throwable {
+        transformer._removedMatchesType = RemovedMatchesType.STRING;
+
+        assertEquals("", transformer.transform("")[0]);
+        assertEquals("", transformer.transform("")[1]);
+
+        assertEquals("., Software Engineer", transformer.transform(".Senior, Software Engineer")[0]);
+        assertEquals("Senior", transformer.transform("Senior Software Engineer")[1]);
+    }
 
     @Test
     public void testJobTitleScenarioRemovedMatchesAsString() throws Throwable {
@@ -106,7 +117,6 @@ public class RemoveDictionaryMatchesTransformerTest {
                 "Principal Senior Lead Guru of Junior employees")[0]);
         assertEquals("Principal Senior Lead Junior", transformer.transform(
                 "Principal Senior Lead Guru of Junior employees")[1]);
-
     }
 
     @Test

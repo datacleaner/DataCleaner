@@ -19,7 +19,10 @@
  */
 package org.datacleaner.util;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,11 +38,6 @@ public final class StringUtils {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("[\\s\\p{Zs}\\p{javaWhitespace}]+");
 
     public static final String LATIN_CHARACTERS = "";
-
-    /**
-     * A String containing the default white space characters - space, tab, newline, carriage-return, form-feed. 
-     */
-    public static final String WHITESPACE_CHARACTERS = " \t\n\r\f";
 
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
@@ -166,7 +164,9 @@ public final class StringUtils {
     }
 
     /**
-     * Determines if a String represents a single word. A single word is defined as a non-null string containing one token with no white spaces after trimming.
+     * Determines if a String represents a single word. A single word is defined
+     * as a non-null string containing no word boundaries after trimming.
+     * 
      * @param value
      * @return
      */
@@ -174,6 +174,29 @@ public final class StringUtils {
         if (value == null) {
             return false;
         }
-        return !WHITESPACE_PATTERN.matcher(value.trim()).find();
+        value = value.trim();
+        if (value.isEmpty()) {
+            return false;
+        }
+        return !value.matches(".+\\b.+");
+    }
+
+    /**
+     * Splits a String on word boundaries, yielding tokens that are all
+     * "single words" (see {@link #isSingleWord(String)}) or delimitors (if
+     * includeDelims is set to true)
+     * 
+     * @param value
+     *            the String to split
+     * @param includeDelims
+     *            whether or not to include the delimitors in the returned list
+     * @return a list containing words and delimitors.
+     */
+    public static List<String> splitOnWordBoundaries(String value, boolean includeDelims) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.asList(value.split("\\b"));
     }
 }

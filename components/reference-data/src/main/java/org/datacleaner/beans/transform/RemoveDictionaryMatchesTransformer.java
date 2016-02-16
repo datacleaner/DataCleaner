@@ -56,6 +56,8 @@ import org.datacleaner.util.StringUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
+import freemarker.template.utility.StringUtil;
+
 @Named("Remove dictionary matches")
 @Description("Removes any part of a string that is matched against a dictionary. Use it to standardize or prepare values, for instance by removing adjectives that make comparison of similar terms difficult.")
 @ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
@@ -201,18 +203,17 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
             
             // do word-by-word dictionary lookups
             final StringBuilder sb = new StringBuilder();
-            final StringTokenizer st = new StringTokenizer(value, StringUtils.WHITESPACE_CHARACTERS, true);
-            while (st.hasMoreTokens()) {
-                final String token = st.nextToken();
-                if (token.trim().isEmpty()) {
-                    // this is a delim - just add it
-                    sb.append(token);
-                } else {
+            final List<String> tokens = StringUtils.splitOnWordBoundaries(value, true);
+            for (String token : tokens) {
+                if (StringUtils.isSingleWord(token))  {
                     if (_dictionaryConnection.containsValue(token)) {
                         removedParts.add(token);
                     } else {
                         sb.append(token);
                     }
+                } else {
+                    // this is a delim - just add it
+                    sb.append(token);
                 }
             }
             value = sb.toString();

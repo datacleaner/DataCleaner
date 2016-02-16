@@ -229,8 +229,10 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
                             sb.append(token);
                         } else {
                             // match - add the master term
-                            synonyms.add(token);
-                            masterTerms.add(masterTerm);
+                            if (!masterTerm.equals(token)) {
+                                synonyms.add(token);
+                                masterTerms.add(masterTerm);
+                            }
                             sb.append(masterTerm);
                         }
                     } else {

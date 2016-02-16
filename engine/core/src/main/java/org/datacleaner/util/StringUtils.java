@@ -36,6 +36,8 @@ import com.google.common.base.Strings;
 public final class StringUtils {
 
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("[\\s\\p{Zs}\\p{javaWhitespace}]+");
+    private static final Pattern SINGLE_WORD_PATTERN = Pattern.compile(".+\\b.+");
+    private static final Pattern WORD_BOUNDARY_PATTERN = Pattern.compile("\\b");
 
     public static final String LATIN_CHARACTERS = "";
 
@@ -178,7 +180,7 @@ public final class StringUtils {
         if (value.isEmpty()) {
             return false;
         }
-        return !value.matches(".+\\b.+");
+        return !SINGLE_WORD_PATTERN.matcher(value).matches();
     }
 
     /**
@@ -196,7 +198,7 @@ public final class StringUtils {
         if (value == null) {
             return Collections.emptyList();
         }
-
-        return Arrays.asList(value.split("\\b"));
+        
+        return Arrays.asList(WORD_BOUNDARY_PATTERN.split(value));
     }
 }

@@ -75,10 +75,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HdfsUrlChooser extends JComponent {
-    public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
-    public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
-    private static final String[] CONFIGURATION_DIRECTORIES = { HADOOP_CONF_DIR, YARN_CONF_DIR};
-
     public enum OpenType {
         LOAD("Open"), SAVE("Save");
 
@@ -353,6 +349,9 @@ public class HdfsUrlChooser extends JComponent {
     private static final int DEFAULT_WIDTH = 600;
     private static final int SPACE = 10;
     public static final String FS_DEFAULT_FS = "fs.defaultFS";
+    public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
+    public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
+    private static final String[] CONFIGURATION_DIRECTORIES = { HADOOP_CONF_DIR, YARN_CONF_DIR};
     public static String HDFS_SCHEME = "hdfs";
     private final OpenType _openType;
     private final JList<FileStatus> _fileList;

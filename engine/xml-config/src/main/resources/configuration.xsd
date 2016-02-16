@@ -54,6 +54,8 @@
 					minOccurs="0" maxOccurs="1" />
 				<element name="descriptor-providers" type="ab:descriptorProvidersType" minOccurs="0" maxOccurs="1" />
 
+				<element name="servers" type="ab:serversType" minOccurs="0" maxOccurs="1" />
+
 				<!-- Deprecated - for backward compatibility -->
 				<choice minOccurs="0" maxOccurs="1">
 					<element name="classpath-scanner" minOccurs="1" maxOccurs="1"
@@ -962,7 +964,7 @@
 		<sequence>
 			<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
 			<element name="encoding" minOccurs="0" maxOccurs="1" type="token" />
-			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1"
 				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
@@ -973,7 +975,7 @@
 		<sequence>
 			<element name="value" minOccurs="1" maxOccurs="unbounded"
 				type="string" />
-			<element name="case-sensitive" minOccurs="0" maxOccurs="1" 
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1"
 				type="boolean" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
@@ -1078,6 +1080,31 @@
 	</complexType>
 
 	<complexType name="singlethreadedTaskrunnerType">
+	</complexType>
+
+	<complexType name="serversType">
+		<sequence>
+			<element name="hadoop-clusters" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<sequence minOccurs="0" maxOccurs="unbounded">
+						<element name="hadoop-cluster" type="ab:hadoopClusterType" />
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="hadoopClusterType">
+		<choice>
+			<element name="environment-configured">
+				<complexType/>
+			</element>
+			<element name="directory" type="string">
+			</element>
+			<element name="namenode-url" type="anyURI" />
+		</choice>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
 	</complexType>
 
 	<complexType name="customElementType">

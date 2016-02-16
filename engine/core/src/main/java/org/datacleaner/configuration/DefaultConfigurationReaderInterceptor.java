@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
@@ -99,6 +100,11 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
                 ResourceConverter.getConfiguredDefaultScheme());
         final Resource resource = converter.fromString(Resource.class, resourceUrl);
         return resource;
+    }
+
+    @Override
+    public Resource createResource(final URI resourceUri, final ServerInformation selectedServer) {
+        throw new RuntimeException("Not implemented");
     }
 
     /**

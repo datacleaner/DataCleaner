@@ -19,6 +19,9 @@
  */
 package org.datacleaner.configuration;
 
+import java.util.List;
+
+import org.apache.commons.httpclient.URI;
 import org.apache.metamodel.util.Resource;
 
 /**
@@ -40,13 +43,19 @@ public interface ConfigurationReaderInterceptor {
     public String createFilename(String filename);
 
     /**
-     * Intercepts a filename, allowing for eg. replacing variables or changing
-     * relative paths to absolute paths.
+     * Intercepts a resource creation, allowing for eg. limiting types or do
+     * special processing.
      * 
-     * @param filename
+     * @param resourceUrl
      * @return
      */
     public Resource createResource(String resourceUrl);
+
+    /**
+     * Intercepts a templated resource creation, allowing for using the
+     * correct server configuration.
+     */
+    public Resource createResource(URI resourceUri, ServerInformation selectedServer);
 
     /**
      * Gets a temporary storage directory

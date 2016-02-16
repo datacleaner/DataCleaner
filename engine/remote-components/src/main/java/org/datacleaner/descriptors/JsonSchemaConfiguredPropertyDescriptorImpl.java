@@ -166,7 +166,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     private class EnumerationValueConverter implements Converter<Object> {
 
         @Override
-        public Object fromString(Class type, String serializedForm) {
+        public Object fromString(Class<?> type, String serializedForm) {
             for(EnumerationValue valueCandidate: enumValues) {
                 if(valueCandidate.getValue().equals(serializedForm)) {
                     return valueCandidate;
@@ -192,13 +192,13 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
                 return ((EnumerationValue)instance).getValue();
             }
             if(instance instanceof Enum) {
-                return ((Enum)instance).name();
+                return ((Enum<?>)instance).name();
             }
             throw new IllegalArgumentException("Cannot serialize value of type " + instance.getClass());
         }
 
         @Override
-        public boolean isConvertable(Class type) {
+        public boolean isConvertable(Class<?> type) {
             return type.isAssignableFrom(EnumerationValue.class) && isEnum();
         }
     }

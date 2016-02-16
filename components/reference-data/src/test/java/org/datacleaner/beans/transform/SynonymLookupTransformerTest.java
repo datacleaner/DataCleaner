@@ -45,11 +45,12 @@ public class SynonymLookupTransformerTest {
         MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
+        transformer.lookUpEveryToken = true;
         transformer.init();
 
-        assertEquals("Hello DK DK DK!", transformer.transform(new MockInputRow().put(col, "Hello denmark danmark dk!"))[0]);
+        assertEquals("Hello DNK DNK DNK!", transformer.transform(new MockInputRow().put(col, "Hello denmark dnk dk!"))[0]);
         
-        assertEquals("Hello DK DK DK!", transformer.transform(new MockInputRow().put(col, "Hello United KINGDOM danmark uk."))[0]);
+        assertEquals("Hello GBR DNK GBR.", transformer.transform(new MockInputRow().put(col, "Hello United KINGDOM danmark uk."))[0]);
         
         transformer.close();
     }

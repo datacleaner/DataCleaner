@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,8 +54,6 @@ import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-
-import freemarker.template.utility.StringUtil;
 
 @Named("Remove dictionary matches")
 @Description("Removes any part of a string that is matched against a dictionary. Use it to standardize or prepare values, for instance by removing adjectives that make comparison of similar terms difficult.")

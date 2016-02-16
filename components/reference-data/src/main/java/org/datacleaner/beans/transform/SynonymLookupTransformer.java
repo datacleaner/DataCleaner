@@ -156,7 +156,11 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         final String originalValue = inputRow.getValue(column);
 
         if (originalValue == null) {
-            return new String[1];
+            if (lookUpEveryToken) {
+                return new String[3];
+            } else {
+                return new String[1];
+            }
         }
 
         if (lookUpEveryToken) {

@@ -301,8 +301,8 @@
 		<!-- Jetty used for dev mode testing -->
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>
-			<artifactId>jetty-all</artifactId>
-			<version>7.2.0.v20101020</version>
+			<artifactId>jetty-all-server</artifactId>
+			<version>8.1.18.v20150929</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>

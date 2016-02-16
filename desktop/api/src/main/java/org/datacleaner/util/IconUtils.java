@@ -47,6 +47,7 @@ import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
@@ -194,6 +195,7 @@ public final class IconUtils {
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
     public static final String DATAHUB_IMAGEPATH = "images/datastore-types/datahub.png";
+    public static final String NEO4J_IMAGEPATH = "images/datastore-types/neo4j.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
@@ -535,7 +537,10 @@ public final class IconUtils {
             imagePath = COMPOSITE_IMAGEPATH;
         } else if (datastore instanceof DataHubDatastore) {
             imagePath = DATAHUB_IMAGEPATH;
+        } else if (datastore instanceof Neo4jDatastore){
+            imagePath = NEO4J_IMAGEPATH;
         }
+        
         return imagePath;
     }
 }

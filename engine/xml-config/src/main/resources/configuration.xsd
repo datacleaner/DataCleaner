@@ -281,6 +281,14 @@
 						</documentation>
 					</annotation>
 				</element>
+				<element name="neo4j-datastore" type="ab:neo4jDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a Neo4j graph
+							database.
+						</documentation>
+					</annotation>
+				</element>
 				<element name="fixed-width-datastore" type="ab:fixedWidthDatastoreType">
 					<annotation>
 						<documentation>
@@ -505,6 +513,19 @@
 				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
 						maxOccurs="1" />
 				</all>
+			</extension>
+		</complexContent>
+		
+	</complexType>
+		<complexType name="neo4jDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>

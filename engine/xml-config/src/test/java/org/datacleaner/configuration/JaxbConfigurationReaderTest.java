@@ -202,7 +202,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-valid.xml"));
 
         DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
-        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
+        assertEquals("[composite_datastore, my database, mydb_jndi, mydb_neo4j, persons_csv]",
                 Arrays.toString(datastoreCatalog.getDatastoreNames()));
 
         assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);

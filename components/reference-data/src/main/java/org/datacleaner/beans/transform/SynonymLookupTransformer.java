@@ -114,7 +114,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     @Override
     public OutputColumns getOutputColumns() {
         if (lookUpEveryToken) {
-            final Class[] columnTypes;
+            final Class<?>[] columnTypes;
             if( replacedSynonymsType == ReplacedSynonymsType.STRING) {
                 columnTypes = new Class[] { String.class, String.class, String.class };
             } else {

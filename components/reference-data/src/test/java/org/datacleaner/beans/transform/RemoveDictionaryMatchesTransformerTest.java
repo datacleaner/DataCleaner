@@ -38,7 +38,7 @@ public class RemoveDictionaryMatchesTransformerTest {
 
     private final InputColumn<String> col = new MockInputColumn<>("Job title");
     private final Dictionary dictionary = new SimpleDictionary("Title adjectives", "Junior", "Senior", "Lead",
-            "Principal", "Assistant to");
+            "Principal", "Assistant to", "Assistant to the");
     private RemoveDictionaryMatchesTransformer transformer;
 
     @Before
@@ -49,6 +49,26 @@ public class RemoveDictionaryMatchesTransformerTest {
 
     @After
     public void tearDown() {
+        transformer.close();
+    }
+
+    @Test
+    public void testCaseInsensitiveRemoval() throws Exception {
+        final Dictionary dictionary = new SimpleDictionary("Title adjectives", false, "Junior", "Senior", "Lead",
+                "Principal", "Assistant to", "Assistant to the");
+
+        transformer = new RemoveDictionaryMatchesTransformer(col, dictionary, new DataCleanerConfigurationImpl());
+        transformer.init();
+
+        assertEquals(" GURU OF  EMPLOYEES", transformer.transform("ASSISTANT TO THE LEAD GURU OF JUNIOR EMPLOYEES")[0]);
+
+        // because of the two approaches to matching (multi-word and
+        // single-word) the result will vary a bit here. Multi-word matches will
+        // represent the sentence as it is in the dictionary. Single-word
+        // matches will represent the match found in the string.
+        assertEquals("assistant to the LEAD JUNIOR", transformer.transform(
+                "ASSISTANT TO THE LEAD GURU OF JUNIOR EMPLOYEES")[1]);
+
         transformer.close();
     }
 
@@ -82,7 +102,8 @@ public class RemoveDictionaryMatchesTransformerTest {
         assertEquals("Software  Engineer", transformer.transform("Software  Engineer")[0]);
         assertEquals("", transformer.transform("Software  Engineer")[1]);
 
-        assertEquals("   Guru of  employees", transformer.transform("Principal Senior Lead Guru of Junior employees")[0]);
+        assertEquals("   Guru of  employees", transformer.transform(
+                "Principal Senior Lead Guru of Junior employees")[0]);
         assertEquals("Principal Senior Lead Junior", transformer.transform(
                 "Principal Senior Lead Guru of Junior employees")[1]);
 
@@ -108,12 +129,5 @@ public class RemoveDictionaryMatchesTransformerTest {
 
         assertEquals("", transformer.transform("")[0]);
         assertEquals("[]", transformer.transform("")[1].toString());
-    }
-
-    @Test
-    public void testRemoveMultiTokenPart() throws Exception {
-        // we currently do not support this...
-
-        // assertEquals("CEO", transformer.transform("Assistant to the CEO"));
     }
 }

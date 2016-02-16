@@ -169,12 +169,12 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
                 final List<String> synonyms = new ArrayList<>();
                 final List<String> masterTerms = new ArrayList<>();
 
-                if(!_caseSensitive){
+                if (!_caseSensitive){
                     sentence = sentence.toLowerCase();
                 }
 
-                for(String synonym : _sortedSynonymMap.keySet()) {
-                    if(masterTerms.contains(synonym)){
+                for (String synonym : _sortedSynonymMap.keySet()) {
+                    if (masterTerms.contains(synonym)){
                         continue;
                     }
 

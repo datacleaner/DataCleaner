@@ -19,9 +19,9 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.List;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -29,13 +29,30 @@ import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.junit.Test;
 
-public class SynonymLookupTransformerTest extends TestCase {
+public class SynonymLookupTransformerTest {
 
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
     private final SynonymCatalog sc = new TextFileSynonymCatalog("my synonyms",
             "src/test/resources/synonym-countries.txt", true, "UTF8");
 
+    @Test
+    public void testCaseInsensitiveMathing() throws Exception {
+        final SynonymCatalog sc = new TextFileSynonymCatalog("my synonyms",
+                "src/test/resources/synonym-countries.txt", false, "UTF8");
+        
+        MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
+
+        SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
+        transformer.init();
+
+        assertEquals("Hello DK DK DK!", transformer.transform(new MockInputRow().put(col, "Hello denmark danmark dk!"))[0]);
+        
+        transformer.close();
+    }
+    
+    @Test
     public void testTransformWithCompleteInput() throws Exception {
         MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
@@ -63,7 +80,8 @@ public class SynonymLookupTransformerTest extends TestCase {
         assertEquals("ALB", transformer.transform(new MockInputRow().put(col, "Albania"))[0]);
         transformer.close();
     }
-
+    
+    @Test
     public void testTransformWithEveryToken() throws Exception {
         MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 

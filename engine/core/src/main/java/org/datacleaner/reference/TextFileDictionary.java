@@ -133,6 +133,7 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
         return _encoding;
     }
 
+    @Override
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

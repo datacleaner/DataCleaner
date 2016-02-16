@@ -171,6 +171,8 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     public Set<String> getValueSet() {
         return _valueSet;
     }
+    
+    @Override
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

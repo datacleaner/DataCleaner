@@ -91,7 +91,8 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Inject
     @Configured
-    @Description("How should the synonyms and the master terms that replaced them be returned?" +" As a concatenated String or as a List.")
+    @Description("How should the synonyms and the master terms that replaced them be returned?"
+            + " As a concatenated String or as a List.")
     ReplacedSynonymsType replacedSynonymsType = ReplacedSynonymsType.STRING;
 
     @Provided
@@ -113,21 +114,15 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Override
     public OutputColumns getOutputColumns() {
-        if (lookUpEveryToken) {
-            final Class[] columnTypes;
-            if( replacedSynonymsType == ReplacedSynonymsType.STRING) {
-                columnTypes = new Class[] { String.class, String.class, String.class };
-            } else {
-                columnTypes = new Class[] { String.class, List.class, List.class };
-            }
-
-            return new OutputColumns(
-                    new String[] { column.getName() + " (synonyms replaced)", column.getName() + " (synonyms found)",
-                            column.getName() + " (master terms found)" }, columnTypes);
+        final Class<?>[] columnTypes;
+        if (replacedSynonymsType == ReplacedSynonymsType.STRING) {
+            columnTypes = new Class[] { String.class, String.class, String.class };
         } else {
-            return new OutputColumns(String.class,
-                    new String[] { column.getName() + " (synonyms replaced)" });
+            columnTypes = new Class[] { String.class, List.class, List.class };
         }
+
+        return new OutputColumns(new String[] { column.getName() + " (synonyms replaced)", column.getName()
+                + " (synonyms found)", column.getName() + " (master terms found)" }, columnTypes);
     }
 
     @Override
@@ -156,29 +151,25 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         final String originalValue = inputRow.getValue(column);
 
         if (originalValue == null) {
-            return new String[1];
+            return new String[3];
         }
 
         if (lookUpEveryToken) {
-            final SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(originalValue);
+            final SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(
+                    originalValue);
             if (replacedSynonymsType == ReplacedSynonymsType.STRING) {
                 return new Object[] { replacement.getReplacedString(), Joiner.on(' ').join(replacement.getSynonyms()),
                         Joiner.on(' ').join(replacement.getMasterTerms()) };
             } else {
-                return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(),
-                        replacement.getMasterTerms() };
+                return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(), replacement
+                        .getMasterTerms() };
             }
         } else {
-            final String replacedValue = lookup(originalValue);
-            return new String[] { replacedValue };
-        }
-    }
+            final String masterTerm = synonymCatalogConnection.getMasterTerm(originalValue);
+            final Object lookupResult = masterTerm != null ? masterTerm : (retainOriginalValue ? originalValue : null);
+            final Object synonym = masterTerm != null ? originalValue : null;
 
-    private String lookup(String originalValue) {
-        final String replacedValue = synonymCatalogConnection.getMasterTerm(originalValue);
-        if (retainOriginalValue && replacedValue == null) {
-            return originalValue;
+            return new Object[] { lookupResult, synonym, masterTerm };
         }
-        return replacedValue;
     }
 }

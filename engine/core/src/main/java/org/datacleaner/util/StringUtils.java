@@ -19,7 +19,10 @@
  */
 package org.datacleaner.util;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +36,8 @@ import com.google.common.base.Strings;
 public final class StringUtils {
 
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("[\\s\\p{Zs}\\p{javaWhitespace}]+");
+    private static final Pattern SINGLE_WORD_PATTERN = Pattern.compile(".+\\b.+");
+    private static final Pattern WORD_BOUNDARY_PATTERN = Pattern.compile("\\b");
 
     public static final String LATIN_CHARACTERS = "";
 
@@ -158,5 +163,42 @@ public final class StringUtils {
         }
         v = v.replace(searchToken, replacement);
         return v;
+    }
+
+    /**
+     * Determines if a String represents a single word. A single word is defined
+     * as a non-null string containing no word boundaries after trimming.
+     * 
+     * @param value
+     * @return
+     */
+    public static boolean isSingleWord(String value) {
+        if (value == null) {
+            return false;
+        }
+        value = value.trim();
+        if (value.isEmpty()) {
+            return false;
+        }
+        return !SINGLE_WORD_PATTERN.matcher(value).matches();
+    }
+
+    /**
+     * Splits a String on word boundaries, yielding tokens that are all
+     * "single words" (see {@link #isSingleWord(String)}) or delimitors (if
+     * includeDelims is set to true)
+     * 
+     * @param value
+     *            the String to split
+     * @param includeDelims
+     *            whether or not to include the delimitors in the returned list
+     * @return a list containing words and delimitors.
+     */
+    public static List<String> splitOnWordBoundaries(String value, boolean includeDelims) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        
+        return Arrays.asList(WORD_BOUNDARY_PATTERN.split(value));
     }
 }

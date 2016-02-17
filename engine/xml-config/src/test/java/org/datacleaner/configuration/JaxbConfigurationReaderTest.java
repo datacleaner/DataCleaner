@@ -584,9 +584,17 @@ public class JaxbConfigurationReaderTest extends TestCase {
         TextFileDictionary dictionary = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
                 "dictionary");
         assertEquals("C:/absolute/path/to/dictionary.txt", dictionary.getFilename());
+        
+        TextFileDictionary dictionary2 = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
+                "dictionary2");
+        assertEquals("C:/absolute/path/to/dictionary.txt", dictionary2.getFilename());
 
         TextFileSynonymCatalog synonyms = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
                 .getSynonymCatalog("synonyms");
         assertEquals("relative/path/to/synonyms.txt", synonyms.getFilename());
+        
+        TextFileSynonymCatalog synonyms2 = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
+                .getSynonymCatalog("synonyms2");
+        assertEquals("relative/path/to/synonyms.txt", synonyms2.getFilename());
     }
 }

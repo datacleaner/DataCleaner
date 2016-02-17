@@ -8,11 +8,23 @@
 				<encoding>UTF-8</encoding>
 				<case-sensitive>false</case-sensitive>
 			</text-file-dictionary>
+			
+			<text-file-dictionary name="dictionary2">
+				<filename>C:/absolute/path/to/dictionary.txt</filename>
+				<encoding>UTF-8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
 
 			<text-file-synonym-catalog name="synonyms">
 				<filename>file://relative/path/to/synonyms.txt</filename>
+				<encoding>UTF8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-synonym-catalog>
+			
+			<text-file-synonym-catalog name="synonyms2">
+				<filename>relative/path/to/synonyms.txt</filename>
 				<encoding>UTF8</encoding>
 				<case-sensitive>false</case-sensitive>
 			</text-file-synonym-catalog>

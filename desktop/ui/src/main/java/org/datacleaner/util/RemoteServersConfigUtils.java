@@ -38,6 +38,7 @@ import org.w3c.dom.NodeList;
  * Utils for work with information about remote servers in configuration file
  */
 public class RemoteServersConfigUtils {
+    private static final String DESCRIPTOR_PROVIDER_XPATH = "configuration/descriptor-providers";
     private static final String REMOTE_COMPONENTS_XPATH = "configuration/descriptor-providers/remote-components";
     private static final String REMOTE_SERVER_XPATH = "configuration/descriptor-providers/remote-components/server";
 
@@ -50,7 +51,12 @@ public class RemoteServersConfigUtils {
     }
 
     public void writeCredentialsToConfig(String serverName, String serverUrl, String userName, String password) {
-        final String serverXPath = _configurationUpdate.createChild(REMOTE_COMPONENTS_XPATH, "server");
+        String serverXPath = _configurationUpdate.createChild(REMOTE_COMPONENTS_XPATH, "server");
+        if(serverXPath == null){
+            //remote-components is not in xml
+            _configurationUpdate.createChild(DESCRIPTOR_PROVIDER_XPATH, "remote-components");
+            serverXPath = _configurationUpdate.createChild(REMOTE_COMPONENTS_XPATH, "server");
+        }
         if (serverName != null) {
             final String nameXpath = _configurationUpdate.createChild(serverXPath, "name");
             _configurationUpdate.update(nameXpath, serverName);

@@ -70,7 +70,7 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
 						if (_numTokensPropertyWidget == null) {
 							logger.warn("No property widget for 'num tokens' found!");
 						} else if (!_numTokensPropertyWidget.isSet()) {
-							_numTokensPropertyWidget.onValueTouched(10000);
+							_numTokensPropertyWidget.onValueTouched(10);
 						}
 					}
 				}

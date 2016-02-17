@@ -1,16 +1,16 @@
 /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
- *
+ * <p>
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
  * Lesser General Public License, as published by the Free Software Foundation.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
  * for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to:
  * Free Software Foundation, Inc.
@@ -32,11 +32,11 @@ import org.apache.hadoop.fs.Path;
  */
 public class DirectoryBasedHadoopClusterInformation extends AbstractServerInformation
         implements HadoopClusterInformation {
-    private final String[] _paths;
+    private final String[] _directories;
 
-    public DirectoryBasedHadoopClusterInformation(final String name, final String description, String ... paths) {
+    public DirectoryBasedHadoopClusterInformation(final String name, final String description, String... paths) {
         super(name, description);
-        _paths = paths;
+        _directories = paths;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
         final Configuration configuration = new Configuration(true);
         final Map<String, File> configurationFiles = new HashMap<>();
 
-        Arrays.stream(_paths).map(File::new).filter(File::isDirectory).forEach(c -> {
+        Arrays.stream(getDirectories()).map(File::new).filter(File::isDirectory).forEach(c -> {
             final File[] array = c.listFiles();
             assert (array != null);
             Arrays.stream(array).filter(File::isFile).filter(f -> !configurationFiles.containsKey(f.getName()))
@@ -59,5 +59,9 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
         configurationFiles.values().stream().map(File::toURI).map(Path::new).forEach(configuration::addResource);
 
         return configuration;
+    }
+
+    public String[] getDirectories() {
+        return _directories;
     }
 }

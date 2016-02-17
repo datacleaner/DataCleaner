@@ -19,6 +19,9 @@
  */
 package org.datacleaner.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.hadoop.conf.Configuration;
 
 /**
@@ -28,11 +31,25 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         implements HadoopClusterInformation {
     public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
     public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
-    private static final String[] CONFIGURATION_DIRECTORIES =
-            { System.getenv(HADOOP_CONF_DIR), System.getenv(YARN_CONF_DIR) };
+    private static final String[] CONFIGURATION_VARIABLES = { HADOOP_CONF_DIR, YARN_CONF_DIR };
 
     public EnvironmentBasedHadoopClusterInformation(final String name, final String description) {
-        super(name, description, CONFIGURATION_DIRECTORIES);
+        super(name, description, getConfigurationDirectories());
+    }
+
+    private static String[] getConfigurationDirectories() {
+        List<String> configDirectories = new ArrayList<>();
+        for (String configVariable : CONFIGURATION_VARIABLES) {
+            final String propertyValues = System.getProperty(configVariable);
+            final String environmentValue = System.getenv(configVariable);
+            if(propertyValues != null){
+                configDirectories.add(propertyValues);
+            } else if(environmentValue != null) {
+                configDirectories.add(environmentValue);
+            }
+        }
+
+        return configDirectories.toArray(new String[configDirectories.size()]);
     }
 
     @Override

@@ -809,9 +809,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             serverInformation = new EnvironmentBasedHadoopClusterInformation(name, description);
         } else if (hadoopClusterType.getDirectories() != null) {
             final List<String> directoryList = hadoopClusterType.getDirectories().getDirectory();
-            final String[] directories =
-                    directoryList.stream().map(d -> getStringVariable(d, null)).toArray(String[]::new);
-
+            // TODO: Variable-thingy
+            final String[] directories = directoryList.toArray(new String[directoryList.size()]);
             serverInformation = new DirectoryBasedHadoopClusterInformation(name, description, directories);
         } else if (hadoopClusterType.getNamenodeUrl() != null) {
             serverInformation = new DirectConnectionHadoopClusterInformation(name, description,

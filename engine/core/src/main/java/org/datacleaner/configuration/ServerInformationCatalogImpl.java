@@ -27,23 +27,35 @@ import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.util.HadoopResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerInformationCatalogImpl implements ServerInformationCatalog {
+    private static final Logger logger = LoggerFactory.getLogger(ServerInformationCatalogImpl.class);
     private static final long serialVersionUID = 1L;
 
     private final Collection<ServerInformation> _servers;
 
     public ServerInformationCatalogImpl(Collection<ServerInformation> servers) {
         if (servers == null) {
-            throw new IllegalArgumentException("datastores cannot be null");
+            throw new IllegalArgumentException("servers cannot be null");
         }
         _servers = servers;
     }
 
     public ServerInformationCatalogImpl(ServerInformation... servers) {
         _servers = new ArrayList<>();
-        for (ServerInformation datastore : servers) {
-            _servers.add(datastore);
+        Collections.addAll(_servers, servers);
+
+        try {
+            if(!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+                _servers.add(new EnvironmentBasedHadoopClusterInformation(
+                        HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
+            }
+        } catch (IllegalStateException e) {
+            logger.info("No Hadoop environment variables, skipping default server");
         }
     }
 

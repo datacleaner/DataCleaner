@@ -51,4 +51,8 @@ public class DirectConnectionHadoopClusterInformation extends EnvironmentBasedHa
 
         return configuration;
     }
+
+    public URI getNameNodeUri() {
+        return _nameNodeUri;
+    }
 }

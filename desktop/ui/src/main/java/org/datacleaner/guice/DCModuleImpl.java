@@ -60,6 +60,7 @@ import org.datacleaner.user.DataCleanerConfigurationReader;
 import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -279,6 +280,9 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), true));
+                    final MutableServerInformationCatalog serverInformationCatalog =
+                            new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter,
+                                    userPreferences);
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
@@ -300,7 +304,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                             c.getEnvironment().getRemoteServerConfiguration());
 
                     _configuration = new DataCleanerConfigurationImpl(environment,
-                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);
+                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog,
+                            serverInformationCatalog);
                 }
             }
         }

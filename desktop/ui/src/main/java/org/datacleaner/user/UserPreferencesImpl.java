@@ -46,6 +46,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
+import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -74,13 +75,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private transient FileObject _userPreferencesFile;
 
-    private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
-    private List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
-    private List<Datastore> userDatastores = new ArrayList<Datastore>();
-    private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
-    private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
-    private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
-    private Map<String, String> additionalProperties = new HashMap<String, String>();
+    private List<UserDatabaseDriver> databaseDrivers = new ArrayList<>();
+    private List<ExtensionPackage> extensionPackages = new ArrayList<>();
+    private List<ServerInformation> userServers = new ArrayList<>();
+    private List<Datastore> userDatastores = new ArrayList<>();
+    private List<Dictionary> userDictionaries = new ArrayList<>();
+    private List<StringPattern> userStringPatterns = new ArrayList<>();
+    private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<>();
+    private Map<String, String> additionalProperties = new HashMap<>();
 
     private boolean proxyEnabled = false;
     private boolean proxyAuthenticationEnabled = false;
@@ -89,7 +91,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private String proxyUsername;
     private String proxyPassword;
 
-    private List<File> recentJobFiles = new ArrayList<File>();
+    private List<File> recentJobFiles = new ArrayList<>();
     private File openDatastoreDirectory;
     private File configuredFileDirectory;
     private File analysisJobDirectory;
@@ -275,6 +277,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             }
         });
         return fileObjectList;
+    }
+
+    @Override
+    public List<ServerInformation> getUserServers() {
+        if (userServers == null) {
+            userServers = new ArrayList<>();
+        }
+        return userServers;
     }
 
     @Override

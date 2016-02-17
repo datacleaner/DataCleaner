@@ -144,13 +144,6 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         return htmlBox;
     }
 
-    private Resource getDataCleanerConfigurationFileResource() {
-        final RepositoryFile configurationFile = _configuration.getHomeFolder().toRepositoryFolder()
-                .getFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
-        final Resource resource = configurationFile.toResource();
-        return resource;
-    }
-
     private void updateDcConfiguration() {
         final RemoteServerData existingServerData = _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
         final String username = usernameTextField.getText();

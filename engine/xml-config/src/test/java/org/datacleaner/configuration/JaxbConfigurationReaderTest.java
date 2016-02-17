@@ -74,6 +74,7 @@ import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.SynonymCatalogConnection;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
@@ -575,5 +576,22 @@ public class JaxbConfigurationReaderTest extends TestCase {
         Assert.assertEquals(true, remoteConf.getServerList().isEmpty());
         Assert.assertEquals(false, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(0, remoteConf.getServerList().size());
+    }
+
+    public void testServerConfigurations(){
+        DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
+        ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
+        Assert.assertTrue(serverInformationCatalog.containsServer("environment"));
+        Assert.assertTrue(serverInformationCatalog.containsServer("directories"));
+        Assert.assertTrue(serverInformationCatalog.containsServer("namenode"));
+
+        final HadoopClusterInformation environment =
+                (HadoopClusterInformation) serverInformationCatalog.getServer("environment");
+        Assert.assertEquals("environment", environment.getName());
+
+        final HadoopClusterInformation namenode =
+                (HadoopClusterInformation) serverInformationCatalog.getServer("namenode");
+        Assert.assertEquals("namenode", namenode.getName());
+        Assert.assertEquals("hdfs://localhost:8020/", namenode.getConfiguration().get("fs.defaultFS"));
     }
 }

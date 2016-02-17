@@ -79,4 +79,20 @@
 		</string-patterns>
 	</reference-data-catalog>
 
+	<servers>
+		<hadoop-clusters>
+			<hadoop-cluster name="environment">
+				<environment-configured/>
+			</hadoop-cluster>
+			<hadoop-cluster name="directories">
+				<directories>
+					<directory>C:\Users\A User\hadoop</directory>
+					<directory>file:///c:/Users/A%20User/hadoop2</directory>
+				</directories>
+			</hadoop-cluster>
+			<hadoop-cluster name="namenode">
+				<namenode-url>hdfs://localhost:8020/</namenode-url>
+			</hadoop-cluster>
+		</hadoop-clusters>
+	</servers>
 </configuration>

@@ -17,30 +17,36 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.server;
+package org.datacleaner.configuration;
 
 
-import org.datacleaner.configuration.ServerInformation;
+import java.io.Serializable;
 
-/**
- * Base class for all ServerInformation implementations.
- */
-public abstract class AbstractServerInformation implements ServerInformation {
-    private final String _name;
-    private final String _description;
+public interface ServerInformationCatalog extends Serializable{
+    /**
+     * Determines if a server by a specific name is contained in the
+     * {@link ServerInformationCatalog}.
+     *
+     * @param name
+     * @return
+     */
+    public default boolean containsServer(String name) {
+        return getServer(name) != null;
+    };
 
-    public AbstractServerInformation(String name, String description) {
-        _name = name;
-        _description = description;
-    }
+    /**
+     * Gets all the names of the servers in this datastore catalog.
+     *
+     * @return
+     */
+    public String[] getServerNames();
 
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public String getDescription() {
-        return _description;
-    }
+    /**
+     * Gets a server by it's name. If no such server is found, null will
+     * be returned.
+     *
+     * @param name
+     * @return
+     */
+    public ServerInformation getServer(String name);
 }

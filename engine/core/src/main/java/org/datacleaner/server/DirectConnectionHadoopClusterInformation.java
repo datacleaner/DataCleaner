@@ -19,29 +19,36 @@
  */
 package org.datacleaner.server;
 
+import java.net.URI;
+
 import org.apache.hadoop.conf.Configuration;
+import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.util.SystemProperties;
 
 /**
  * Environment based configuration
  */
-public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation
+public class DirectConnectionHadoopClusterInformation extends EnvironmentBasedHadoopClusterInformation
         implements HadoopClusterInformation {
-    public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
-    public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
-    private static final String[] CONFIGURATION_DIRECTORIES =
-            { System.getenv(HADOOP_CONF_DIR), System.getenv(YARN_CONF_DIR) };
+    private final URI _nameNodeUri;
 
-    public EnvironmentBasedHadoopClusterInformation(final String name, final String description) {
-        super(name, description, CONFIGURATION_DIRECTORIES);
+    public DirectConnectionHadoopClusterInformation(final String name, final String description, final URI nameNodeUri) {
+        super(name, description);
+
+        _nameNodeUri = nameNodeUri;
     }
 
     @Override
     public Configuration getConfiguration() {
-        try {
-            return super.getConfiguration();
-        } catch (IllegalStateException e) {
-            throw new IllegalStateException(
-                    "None of the standard Hadoop environment variables has been set.", e);
+        final Configuration configuration;
+        if(SystemProperties.getBoolean(HdfsResource.SYSTEM_PROPERTY_HADOOP_CONF_DIR_ENABLED, false)){
+            configuration = super.getConfiguration();
+        } else {
+            configuration = new Configuration();
         }
+
+        configuration.set("fs.defaultFS", _nameNodeUri.toString());
+
+        return configuration;
     }
 }

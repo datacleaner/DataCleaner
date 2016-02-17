@@ -26,19 +26,23 @@ import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 
 public class HadoopResource extends HdfsResource {
+    public static final String DEFAULT_CLUSTERREFERENCE = "org.datacleaner.hadoop.environment";
 
     private static final long serialVersionUID = 1L;
 
     private final Configuration _configuration;
+    private final String _clusterReferenceName;
 
-    public HadoopResource(URI uri, Configuration configuration) {
+    public HadoopResource(URI uri, Configuration configuration, String clusterReferenceName) {
         super(uri.toString());
         _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
     }
 
-    public HadoopResource(Resource resource, Configuration configuration) {
+    public HadoopResource(Resource resource, Configuration configuration, String clusterReferenceName) {
         super(resource.getQualifiedPath());
         _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
     }
 
     @Override
@@ -49,5 +53,13 @@ public class HadoopResource extends HdfsResource {
     @Override
     public String toString() {
         return "HadoopResource[" + getQualifiedPath() + "]";
+    }
+
+    public String getClusterReferenceName() {
+        return _clusterReferenceName;
+    }
+
+    public String getTemplatedPath() {
+        return getScheme() + "://{" + _clusterReferenceName + "}" + getFilepath();
     }
 }

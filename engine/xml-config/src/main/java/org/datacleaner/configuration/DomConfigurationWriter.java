@@ -53,6 +53,7 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
@@ -486,6 +487,9 @@ public class DomConfigurationWriter {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
         }
+        if(resource instanceof HadoopResource) {
+            return ((HadoopResource) resource).getTemplatedPath();
+        }
         if (resource instanceof HdfsResource) {
             return ((HdfsResource) resource).getQualifiedPath();
         }
@@ -748,6 +752,14 @@ public class DomConfigurationWriter {
             throw new IllegalStateException("Could not find <datastore-catalog> element in configuration file");
         }
         return datastoreCatalogElement;
+    }
+
+    public Element getServerInformationCatalogElement() {
+        final Element configurationFileDocumentElement = getDocumentElement();
+
+        final Element serverInformationCatalogElement = getOrCreateChildElementByTagName(configurationFileDocumentElement, "servers");
+
+
     }
 
     /**

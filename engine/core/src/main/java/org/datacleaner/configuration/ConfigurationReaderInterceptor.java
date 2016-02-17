@@ -47,15 +47,10 @@ public interface ConfigurationReaderInterceptor {
      * special processing.
      * 
      * @param resourceUrl
+     * @param tempDataCleanerConfiguration The temporary/partially built configuration. Do _not_ store
      * @return
      */
-    public Resource createResource(String resourceUrl);
-
-    /**
-     * Intercepts a templated resource creation, allowing for using the
-     * correct server configuration.
-     */
-    public Resource createResource(URI resourceUri, ServerInformation selectedServer);
+    public Resource createResource(String resourceUrl, DataCleanerConfiguration tempDataCleanerConfiguration);
 
     /**
      * Gets a temporary storage directory

@@ -20,6 +20,7 @@
 package org.datacleaner.guice;
 
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -67,7 +68,6 @@ import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.xml.XmlUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
@@ -391,12 +391,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     public ResourceConverter getResourceConverter() {
-        final List<ResourceTypeHandler<?>> handlers = ResourceConverter.createDefaultHandlers(DataCleanerHome.getAsDataCleanerHomeFolder());
-        handlers.add(new DummyRepositoryResourceFileTypeHandler());
-
-        final ResourceConverter resourceConverter = new ResourceConverter(handlers,
-                ResourceConverter.getConfiguredDefaultScheme());
-        return resourceConverter;
+        return new ResourceConverter(_configuration)
+                .withExtraHandlers(Collections.singletonList(new DummyRepositoryResourceFileTypeHandler()));
     }
 
     @Override

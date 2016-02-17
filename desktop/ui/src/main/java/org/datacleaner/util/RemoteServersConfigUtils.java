@@ -63,14 +63,14 @@ public class RemoteServersConfigUtils {
         _configurationUpdate.update(usernameXpath, userName);
 
         final String passwordXpath = _configurationUpdate.createChild(serverXPath, "password");
-        _configurationUpdate.update(passwordXpath, password);
+        _configurationUpdate.update(passwordXpath, SecurityUtils.encodePasswordWithPrefix(password));
         _configurationUpdate.write();
     }
 
     public void updateCredentials(String serverName, String userName, String password) {
         String xpathForRemoteServer = getXpathForRemoteServer(serverName);
         _configurationUpdate.update(xpathForRemoteServer + "/username", userName);
-        _configurationUpdate.update(xpathForRemoteServer + "/password", password);
+        _configurationUpdate.update(xpathForRemoteServer + "/password", SecurityUtils.encodePasswordWithPrefix(password));
         _configurationUpdate.write();
 
     }

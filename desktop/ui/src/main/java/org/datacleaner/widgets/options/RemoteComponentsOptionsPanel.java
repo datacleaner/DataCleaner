@@ -40,6 +40,7 @@ import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
+import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;

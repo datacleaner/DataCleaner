@@ -66,10 +66,8 @@ public class RemoteServersUtils {
     public void createRemoteServer(String serverName, String serverUrl, String userName, String password) {
         List<RemoteServerData> serverList =
                 _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        int priority = serverList.size() == 0 ? 1 : serverList.get(serverList.size() - 1).getServerPriority();
-
         RemoteServerData remoteServerData =
-                new RemoteServerDataImpl(serverUrl, serverName, priority, userName, password);
+                new RemoteServerDataImpl(serverUrl, serverName, userName, password);
         serverList.add(remoteServerData);
 
         final CompositeDescriptorProvider descriptorProvider =

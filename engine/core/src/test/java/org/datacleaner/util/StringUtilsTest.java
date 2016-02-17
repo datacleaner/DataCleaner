@@ -32,6 +32,13 @@ public class StringUtilsTest extends TestCase {
         assertEquals("", StringUtils.rightTrim(""));
     }
     
+    public void testSplitOnWordBoundaries() throws Exception {
+        assertEquals("[]", StringUtils.splitOnWordBoundaries("", true).toString());
+        assertEquals("[]", StringUtils.splitOnWordBoundaries(null, true).toString());
+        assertEquals("[foo,  , bar]", StringUtils.splitOnWordBoundaries("foo bar", true).toString());
+        assertEquals("[foo, ! , bar]", StringUtils.splitOnWordBoundaries("foo! bar", true).toString());
+    }
+    
     public void testReplaceAll() throws Exception {
         assertNull(StringUtils.replaceAll(null, "foo", "bar"));
         assertEquals("foo foo baz foo baz", StringUtils.replaceAll("foo bar baz bar baz", "bar", "foo"));
@@ -102,5 +109,24 @@ public class StringUtilsTest extends TestCase {
         assertEquals("helloWorld", StringUtils.toCamelCase("helloWorld"));
         assertEquals("HelloWorld", StringUtils.toCamelCase("Hello World"));
         assertEquals("HelloWorld", StringUtils.toCamelCase("HelloWorld"));
+    }
+    
+    public void testIsSingleWord() throws Exception {
+        assertFalse(StringUtils.isSingleWord(null));
+        assertFalse(StringUtils.isSingleWord(""));
+        assertFalse(StringUtils.isSingleWord(" "));
+        assertFalse(StringUtils.isSingleWord("    "));
+        
+        assertTrue(StringUtils.isSingleWord("foo"));
+        assertTrue(StringUtils.isSingleWord("foo12"));
+        assertTrue(StringUtils.isSingleWord("foo "));
+        assertTrue(StringUtils.isSingleWord("\n foo \t"));
+        
+        assertFalse(StringUtils.isSingleWord("foo bar"));
+        assertFalse(StringUtils.isSingleWord("\n foo \tbar baz lorem ipsum"));
+        
+        assertTrue(StringUtils.isSingleWord("foo1234"));
+        assertTrue(StringUtils.isSingleWord("foo1234abc"));
+        assertFalse(StringUtils.isSingleWord("foo!"));
     }
 }

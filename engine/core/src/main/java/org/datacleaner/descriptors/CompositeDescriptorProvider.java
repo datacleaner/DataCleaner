@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -64,6 +65,17 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
             provider.refresh();
         }
     }
+    
+    private void removeDuplicateComponents(Collection<? extends ComponentDescriptor<?>> col) {
+        final Set<String> names = new HashSet<>();
+        for (Iterator<? extends ComponentDescriptor<?>> it = col.iterator(); it.hasNext();) {
+            final ComponentDescriptor<?> componentDescriptor = it.next();
+            final boolean newName = names.add(componentDescriptor.getDisplayName());
+            if (!newName) {
+                it.remove();
+            }
+        }
+    }
 
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
@@ -71,6 +83,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getAnalyzerDescriptors());
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -102,6 +115,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getTransformerDescriptors());
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -134,6 +148,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getFilterDescriptors());
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -177,6 +192,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getComponentDescriptors());
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -187,6 +203,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getComponentDescriptorsOfSuperCategory(category));
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -196,6 +213,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getRendererBeanDescriptors());
         }
+        removeDuplicateComponents(col);
         return col;
     }
 
@@ -218,6 +236,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         for (DescriptorProvider provider : delegates) {
             col.addAll(provider.getRendererBeanDescriptorsForRenderingFormat(renderingFormat));
         }
+        removeDuplicateComponents(col);
         return col;
     }
 

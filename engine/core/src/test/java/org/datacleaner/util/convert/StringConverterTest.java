@@ -75,7 +75,7 @@ public class StringConverterTest extends TestCase {
 
         String serializedForm1 = stringConverter.serialize(convertable);
         assertEquals("foo:bar", serializedForm1);
-        String serializedForm2 = stringConverter.serialize(convertable, SecondaryConverter.class);
+        String serializedForm2 = stringConverter.serialize(convertable, SecondaryConverter.class.newInstance());
         assertEquals("foo|bar", serializedForm2);
 
         {
@@ -87,7 +87,7 @@ public class StringConverterTest extends TestCase {
 
         {
             MyConvertable copy2 = stringConverter.deserialize(serializedForm2, MyConvertable.class,
-                    SecondaryConverter.class);
+                    new SecondaryConverter());
             assertTrue(convertable != copy2);
             assertEquals("foo", copy2.getName());
             assertEquals("bar", copy2.getDescription());

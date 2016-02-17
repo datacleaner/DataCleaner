@@ -203,7 +203,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-valid.xml"));
 
         DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
-        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
+        assertEquals("[composite_datastore, my database, mydb_jndi, mydb_neo4j, persons_csv]",
                 Arrays.toString(datastoreCatalog.getDatastoreNames()));
 
         assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);
@@ -547,7 +547,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-remote-servers.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
         Assert.assertEquals(false, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(true, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(3, remoteConf.getServerList().size());
 
         RemoteServerData server0 = remoteConf.getServerList().get(0);
@@ -574,7 +573,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-remote-servers-empty.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
         Assert.assertEquals(true, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(false, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 }

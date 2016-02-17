@@ -92,7 +92,7 @@ public class IndexDocumentationBuilder {
             }
 
         };
-        DescriptorMenuBuilder.createMenuStructure(callback, _descriptorProvider.getComponentDescriptors(), false);
+        DescriptorMenuBuilder.createMenuStructure(callback, _descriptorProvider.getComponentDescriptors());
 
         final Map<String, Object> data = new HashMap<>();
 

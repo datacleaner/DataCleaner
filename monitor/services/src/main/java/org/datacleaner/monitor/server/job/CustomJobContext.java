@@ -80,7 +80,7 @@ public class CustomJobContext implements XmlJobContext {
         final String filename = _file.getName();
         return filename.substring(0, filename.length() - extensionLength);
     }
-    
+
     @Override
     public TenantContext getTenantContext() {
         return _tenantContext;
@@ -108,7 +108,7 @@ public class CustomJobContext implements XmlJobContext {
             Object value = beanConfiguration.getProperty(configuredProperty);
             String valueString = null;
             try {
-                final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();
+                final Converter<?> customConverter = configuredProperty.createCustomConverter();
                 valueString = stringConverter.serialize(value, customConverter);
             } catch (Exception e) {
                 if (logger.isWarnEnabled()) {
@@ -125,7 +125,7 @@ public class CustomJobContext implements XmlJobContext {
     /**
      * Gets a {@link ComponentDescriptor} for the {@link CustomJob}
      * component that this {@link JobContext} represents.
-     * 
+     *
      * @return
      */
     public ComponentDescriptor<?> getDescriptor() {
@@ -172,7 +172,7 @@ public class CustomJobContext implements XmlJobContext {
         final Map<ConfiguredPropertyDescriptor, Object> propertyMap = new HashMap<ConfiguredPropertyDescriptor, Object>();
         final PropertiesType propertiesType = getCustomJavaComponentJob().getProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
-        
+
         // build initial map based on default values from the customJob instance
         if (customJavaJob != null) {
             final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
@@ -181,7 +181,7 @@ public class CustomJobContext implements XmlJobContext {
                 propertyMap.put(property, value);
             }
         }
-        
+
         // then build/override map based upon specified <property> elements in the XML file
         if (propertiesType != null) {
             final List<Property> propertyTypes = propertiesType.getProperty();
@@ -191,18 +191,18 @@ public class CustomJobContext implements XmlJobContext {
                 setProperty(descriptor, propertyMap, name, value, stringConverter);
             }
         }
-        
+
         return new ImmutableComponentConfiguration(propertyMap);
     }
 
     private void setProperty(ComponentDescriptor<?> descriptor, Map<ConfiguredPropertyDescriptor, Object> propertyMap,
-            String name, String valueString, StringConverter stringConverter) {
+                             String name, String valueString, StringConverter stringConverter) {
         final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);
         if (configuredProperty == null) {
             throw new ComponentConfigurationException("No such configured property in class '"
                     + getDescriptor().getComponentClass().getName() + "': " + name);
         }
-        final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();
+        final Converter<?> customConverter = configuredProperty.createCustomConverter();
         final Object value = stringConverter.deserialize(valueString, configuredProperty.getType(), customConverter);
         propertyMap.put(configuredProperty, value);
     }

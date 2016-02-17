@@ -353,7 +353,8 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         if (o == null) {
             return 1;
         }
-        Class<?> otherComponentClass = o.getComponentClass();
+        
+        final Class<?> otherComponentClass = o.getComponentClass();
         if (otherComponentClass == null) {
             return 1;
         }

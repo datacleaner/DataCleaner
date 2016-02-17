@@ -26,8 +26,6 @@ package org.datacleaner.configuration;
  */
 public interface RemoteServerData {
 
-    public int getServerPriority();
-
     public String getServerName();
 
     public String getUrl();

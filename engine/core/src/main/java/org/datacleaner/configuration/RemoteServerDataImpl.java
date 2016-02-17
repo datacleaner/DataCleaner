@@ -24,29 +24,22 @@ package org.datacleaner.configuration;
  */
 public class RemoteServerDataImpl implements RemoteServerData {
 
-    private static final RemoteServerData NO_SERVER = new RemoteServerDataImpl(null, null, -1, null, null);
+    private static final RemoteServerData NO_SERVER = new RemoteServerDataImpl(null, null, null, null);
 
     public static RemoteServerData noServer() {
         return NO_SERVER;
     }
 
     private final String serverName;
-    private final int serverPriority;
     private final String url;
     private String username;
     private String password;
 
-    public RemoteServerDataImpl(String url, String serverName, int serverPriority, String username, String password) {
+    public RemoteServerDataImpl(String url, String serverName, String username, String password) {
         this.url = url == null ? null : url.replaceAll("/+$", "");
         this.serverName = serverName == null ? null : serverName;
-        this.serverPriority = serverPriority;
         this.username = username;
         this.password = password;
-    }
-
-    @Override
-    public int getServerPriority() {
-        return serverPriority;
     }
 
     @Override

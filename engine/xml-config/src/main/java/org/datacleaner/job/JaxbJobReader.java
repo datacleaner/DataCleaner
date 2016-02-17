@@ -950,7 +950,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                             DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                 }
 
-                final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();
+                final Converter<?> customConverter = configuredProperty.createCustomConverter();
                 final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
                         customConverter);
 

@@ -24,6 +24,11 @@
 			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-orderdb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- DataCleaner components -->
 		<dependency>

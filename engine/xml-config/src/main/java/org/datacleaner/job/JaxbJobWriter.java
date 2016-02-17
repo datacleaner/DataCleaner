@@ -394,7 +394,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                                 ExpressionBasedInputColumn<?> expressionBasedInputColumn = (ExpressionBasedInputColumn<?>) inputColumn;
                                 Object columnValue = expressionBasedInputColumn.getExpression();
                                 inputType.setValue(stringConverter.serialize(columnValue, property
-                                        .getCustomConverter()));
+                                        .createCustomConverter()));
                             } else {
                                 inputType.setRef(getColumnId(inputColumn, columnMappings));
                             }
@@ -429,7 +429,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
                 } else {
                     Object value = configuration.getProperty(property);
-                    String stringValue = stringConverter.serialize(value, property.getCustomConverter());
+                    String stringValue = stringConverter.serialize(value, property.createCustomConverter());
 
                     if (stringValue != null && stringValue.indexOf('\n') != -1) {
                         // multi-line values are put as simple content of the

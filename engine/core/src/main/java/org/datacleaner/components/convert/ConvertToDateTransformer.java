@@ -65,14 +65,17 @@ public class ConvertToDateTransformer implements Transformer {
 
     @Inject
     @Configured(order = 2)
+    @Description("Default time zone to use if the date mask does not itself specify the time zone.")
     String timeZone = TimeZone.getDefault().getID();
 
     @Inject
-    @Configured(required = false, order = 2)
+    @Configured(required = false, order = 3)
+    @Description("What value to return when the string cannot be parsed using any of the date masks.")
     Date nullReplacement;
 
     @Inject
-    @Configured(required = false, order = 3)
+    @Configured(required = false, order = 4)
+    @Description("A sequence of date masks that will be tested from first to last until a match is found.")
     String[] dateMasks;
 
     private DateTimeFormatter[] _dateTimeFormatters;

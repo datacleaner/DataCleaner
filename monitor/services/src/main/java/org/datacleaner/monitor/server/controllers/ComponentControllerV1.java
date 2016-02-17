@@ -323,21 +323,22 @@ public class ComponentControllerV1 implements ComponentController {
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
             Image icon = ImageIO.read(iconStream);
             BufferedImage mark = getRemoteMark();
+            int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
             int iconH = icon.getHeight(null);
-            if(iconW > 32 || iconW > 32) {
-                double scaleX = 32.0/icon.getWidth(null);
-                double scaleY = 32.0/icon.getWidth(null);
+            if(iconW > maxSize || iconW > maxSize) {
+                double scaleX = ((double)maxSize)/(double)icon.getWidth(null);
+                double scaleY = ((double)maxSize)/(double)icon.getWidth(null);
                 double scale = Math.min(scaleX, scaleY);
                 iconH = (int)((double)iconH * scale);
                 iconW = (int)((double)iconW * scale);
                 icon = icon.getScaledInstance(iconW, iconH, Image.SCALE_SMOOTH);
             }
 
-            BufferedImage resultImg = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage resultImg = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = resultImg.getGraphics();
-            graphics.drawImage(icon, (32-iconW)/2, (32-iconH)/2, null);
-            graphics.drawImage(mark, 32 - mark.getWidth(), 0, null);
+            graphics.drawImage(icon, (maxSize-iconW)/2, (maxSize-iconH)/2, null);
+            graphics.drawImage(mark, maxSize - mark.getWidth(), 0, null);
             graphics.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

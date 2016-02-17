@@ -64,7 +64,7 @@ public class TokenizerTransformer implements Transformer {
     @Configured("Number of tokens")
     @Description("Defines the max amount of tokens to expect")
     @NumberProperty(zero = false, negative = false)
-    Integer numTokens;
+    Integer numTokens = 2;
 
     @Inject
     @Configured

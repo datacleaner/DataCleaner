@@ -21,7 +21,15 @@ package org.datacleaner.configuration;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.xml.XmlUtils;
@@ -49,103 +57,68 @@ public class DataCleanerConfigurationUpdater {
         this.configurationFileResource = configurationFileResource;
     }
 
-    /**
-     * Short-hand version of {@link #update(String[], String)} which allows to
-     * pass a colon-separated string with the node path elements in it, for
-     * instance: "descriptor-providers:remote-components:server:username" to
-     * update the username element in that path.
-     * 
-     * @param nodePath
-     *            a colon-separated path to an element
-     * @param newValue
-     *            the new value to set
-     */
-    public void update(String nodePath, String newValue) {
-        update(nodePath.split(":"), newValue);
-    }
 
     /**
      * Updates an element value at the location of the nodePathElements.
      * 
-     * @param nodePathElements
-     *            a String array describing the path to an element
+     * @param xPath
+     *            a String xpath describing the path to an element
      * @param newValue
      *            the new value to set
      */
-    public void update(String[] nodePathElements, String newValue) {
-        if (nodePathElements.length <= 0) {
-            return;
-        }
-
+    public void update(String xPath, String newValue) {
         if (document == null) {
             load();
         }
-
-        final Node node = findElementToUpdate(nodePathElements);
-
-        if (node != null) {
-            node.setTextContent(newValue);
-            write();
-        }
-    }
-
-    public void createElement(String nodePathElements, String text) {
-        createElement(nodePathElements.split(":"), text);
-    }
-
-    public void createElement(String[] nodePathElements, String text) {
-        if (document == null) {
-            load();
-        }
-        int i = 0;
-        NodeList nodeList = document.getElementsByTagName(nodePathElements[i]);
-        i++;
-        Node node = (nodeList.getLength() > 0) ? nodeList.item(0) : null;
-        if (node == null) {
+        final NodeList  elementToUpdate = findElementToUpdate(xPath);
+        if(elementToUpdate == null || elementToUpdate.getLength() ==0){
             return;
         }
-        Node prevNode;
-        while (true){
-            prevNode = node;
-            node = getNodeChild(node, nodePathElements[i]);
-            i++;
-            if(node == null){
-                node = prevNode;
-                i--;
-                break;
-            }
-
-            if(i >= nodePathElements.length){
-                return; // element is there
-            }
-        }
-
-        for (int j = i; j < nodePathElements.length; j++) {
-            Element element = document.createElement(nodePathElements[j]);
-            node.appendChild(element);
-            node = element;
-            if(j == nodePathElements.length -1){
-                if(text != null){
-                    Text textDate = document.createTextNode(text);
-                    node.appendChild(textDate);
-                }
-            }
-        }
+        elementToUpdate.item(0).setTextContent(newValue);
         write();
     }
 
-    private Node findElementToUpdate(String[] nodePath) {
-        int i = 0;
-        NodeList nodeList = document.getElementsByTagName(nodePath[i]);
-        i++;
-        Node node = (nodeList.getLength() > 0) ? nodeList.item(0) : null;
-
-        while (node != null && i < nodePath.length) {
-            node = getNodeChild(node, nodePath[i]);
-            i++;
+    /**
+     * Creates the new child to element
+     *
+     * @param parentXpath
+     *                      is Xpath to parent
+     * @param elementName
+     *                      name of new element
+     * @return XPath of new child
+     */
+    public String createChild(String parentXpath, String elementName){
+        if (document == null) {
+            load();
+        }
+        final NodeList parentNodes = findElementToUpdate(parentXpath);
+        if(parentNodes == null || parentNodes.getLength() ==0) {
+            return null;
         }
 
-        return node;
+        Element newElement = document.createElement(elementName);
+        parentNodes.item(0).appendChild(newElement);
+
+        final NodeList createdNodes = findElementToUpdate(parentXpath + "/" + elementName);
+
+        return parentXpath + "/" + elementName + "[" +createdNodes.getLength()+"]";
+    }
+
+    public NodeList findElementToUpdate(String xPath) {
+        if (document == null) {
+            load();
+        }
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xPathObj = xPathFactory.newXPath();
+        NodeList nodes = null;
+        try {
+            XPathExpression compile = xPathObj.compile(xPath);
+            Object result = compile.evaluate(document, XPathConstants.NODESET);
+            nodes = (NodeList ) result;
+        } catch (XPathExpressionException e) {
+            logger.error("Problem with xpath {}.", xPath, e);
+        }
+        return nodes;
     }
 
     private void load() {
@@ -157,20 +130,6 @@ public class DataCleanerConfigurationUpdater {
         } finally {
             FileHelper.safeClose(in);
         }
-    }
-
-    private static Node getNodeChild(Node parentNode, String childNodeName) {
-        NodeList nodeList = parentNode.getChildNodes();
-
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node childNode = nodeList.item(i);
-
-            if (childNode.getNodeName().equals(childNodeName)) {
-                return childNode;
-            }
-        }
-
-        return null;
     }
 
     public void write() {

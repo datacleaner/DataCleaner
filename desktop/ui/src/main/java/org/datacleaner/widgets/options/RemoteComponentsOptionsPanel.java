@@ -34,20 +34,20 @@ import javax.swing.event.DocumentEvent;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
-import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
-import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.RemoteServersConfigRW;
+import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.windows.OptionsDialog;
 
 import com.google.common.base.Strings;
+
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
 
 /**
  * The "Remote components" panel found in the {@link OptionsDialog}
@@ -57,6 +57,8 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private final DataCleanerConfiguration _configuration;
+    private final RemoteServersConfigRW _remoteServersConfigRW;
+    private final RemoteServersUtils _remoteServersUtils;
     private final JTextField usernameTextField;
     private final JPasswordField passwordTextField;
     private final JButton applyButton;
@@ -71,7 +73,8 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     public RemoteComponentsOptionsPanel(DataCleanerConfiguration configuration) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
-
+        _remoteServersConfigRW = new RemoteServersConfigRW(_configuration);
+        _remoteServersUtils = new RemoteServersUtils(_configuration);
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -105,18 +108,12 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     }
 
     private void setupFields() {
-        final RemoteServerData serverData = getServerData();
-        usernameTextField.setText(Strings.nullToEmpty(serverData.getUsername()));
-        passwordTextField.setText(Strings.nullToEmpty(serverData.getPassword()));
-    }
-
-    private RemoteServerData getServerData() {
-        final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                .getRemoteServerConfiguration();
-        if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
-            return RemoteServerDataImpl.noServer();
+        final RemoteServerData serverData =
+                _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
+        if (serverData != null) {
+            usernameTextField.setText(Strings.nullToEmpty(serverData.getUsername()));
+            passwordTextField.setText(Strings.nullToEmpty(serverData.getPassword()));
         }
-        return remoteServerConfiguration.getServerList().get(0);
     }
 
     private void addAllFields() {
@@ -155,25 +152,15 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     }
 
     private void updateDcConfiguration() {
-        final RemoteServerData existingServerData = getServerData();
+        final RemoteServerData existingServerData = _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
         final String username = usernameTextField.getText();
         final String password = new String(passwordTextField.getPassword());
-
-        final RemoteServerDataImpl newServerData = new RemoteServerDataImpl(existingServerData.getUrl(),
-                existingServerData.getServerName(), existingServerData.getServerPriority(), username, password);
-        final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                .getRemoteServerConfiguration();
-        if (remoteServerConfiguration.getServerList().isEmpty()) {
-            remoteServerConfiguration.getServerList().add(newServerData);
-        } else {
-            remoteServerConfiguration.getServerList().remove(0);
-            remoteServerConfiguration.getServerList().add(0, newServerData);
+        if(existingServerData == null){
+            _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
+            _remoteServersConfigRW.writeCredentialsToConfig(DATACLOUD_SERVER_NAME, null, username, password);
+        }else {
+            _remoteServersUtils.updateRemoteServerCredentials(DATACLOUD_SERVER_NAME, username, password);
+            _remoteServersConfigRW.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
         }
-
-        final DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
-                getDataCleanerConfigurationFileResource());
-        configurationUpdater.update("descriptor-providers:remote-components:server:username", username);
-        configurationUpdater.update("descriptor-providers:remote-components:server:password",
-                SecurityUtils.encodePasswordWithPrefix(password));
     }
 }

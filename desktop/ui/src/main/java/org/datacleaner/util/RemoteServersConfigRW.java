@@ -31,67 +31,67 @@ import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.repository.RepositoryFile;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utils for work with information about remote servers in configuration file
  */
 public class RemoteServersConfigRW {
-    private static final String SERVER_XML_PATH = "descriptor-providers:remote-components:server";
+    private static final String REMOTE_COMPONENTS_XPATH = "configuration/descriptor-providers/remote-components";
+    private static final String REMOTE_SERVER_XPATH = "configuration/descriptor-providers/remote-components/server";
 
-    final private DataCleanerConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
+    private final DataCleanerConfigurationUpdater _configurationUpdate;
 
     public RemoteServersConfigRW(final DataCleanerConfiguration configuration) {
         _configuration = configuration;
+        _configurationUpdate = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileResource());
     }
-
-    public boolean isServerInConfig(String serverName) {
-        if (serverName == null) {
-            return false;
-        }
-        List<RemoteServerData> serverList =
-                _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        for (RemoteServerData remoteServerData : serverList) {
-            String configServerName = remoteServerData.getServerName();
-            if (configServerName == null) {
-                continue;
-            }
-            if (configServerName.toLowerCase().equals(serverName.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public void writeCredentialsToConfig(String serverName, String serverUrl, String userName, String password) {
-        final DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
-                getDataCleanerConfigurationFileResource());
+        final String serverXPath = _configurationUpdate.createChild(REMOTE_COMPONENTS_XPATH, "server");
         if (serverName != null) {
-            configurationUpdater.createElement(SERVER_XML_PATH + ":name", serverName);
+            final String nameXpath = _configurationUpdate.createChild(serverXPath, "name");
+            _configurationUpdate.update(nameXpath, serverName);
         }
         if (serverUrl != null) {
-            configurationUpdater.createElement(SERVER_XML_PATH + ":url", serverUrl);
+            final String urlXpath = _configurationUpdate.createChild(serverXPath, "url");
+            _configurationUpdate.update(urlXpath, serverUrl);
         }
-        configurationUpdater.createElement(SERVER_XML_PATH + ":username", userName);
-        configurationUpdater.createElement(SERVER_XML_PATH + ":password", password);
+        final String usernameXpath = _configurationUpdate.createChild(serverXPath, "username");
+        _configurationUpdate.update(usernameXpath, userName);
+
+        final String passwordXpath = _configurationUpdate.createChild(serverXPath, "password");
+        _configurationUpdate.update(passwordXpath, password);
+        _configurationUpdate.write();
     }
 
-    public void createRemoteServer(String serverName, String serverUrl, String userName, String password) {
-        List<RemoteServerData> serverList =
-                _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        int priority = serverList.size() == 0 ? 1 : serverList.get(serverList.size() - 1).getServerPriority();
+    public void updateCredentials(String serverName, String userName, String password) {
+        String xpathForRemoteServer = getXpathForRemoteServer(serverName);
+        _configurationUpdate.update(xpathForRemoteServer + "/username", userName);
+        _configurationUpdate.update(xpathForRemoteServer + "/password", password);
+        _configurationUpdate.write();
 
-        RemoteServerData remoteServerData =
-                new RemoteServerDataImpl(serverUrl, serverName, priority, userName, password);
-        serverList.add(remoteServerData);
-
-        final CompositeDescriptorProvider descriptorProvider =
-                (CompositeDescriptorProvider) _configuration.getEnvironment().getDescriptorProvider();
-
-        descriptorProvider.addDelegate(new RemoteDescriptorProviderImpl(remoteServerData));
     }
 
-    private Resource getDataCleanerConfigurationFileResource() {
+    private String getXpathForRemoteServer(String serverName) {
+        NodeList servers = _configurationUpdate.findElementToUpdate(REMOTE_SERVER_XPATH);
+        for (int i = 0; i < servers.getLength(); i++) {
+            Node server = servers.item(i);
+            NodeList childNodes = server.getChildNodes();
+            for (int j = 0; j < childNodes.getLength(); j++) {
+                if (childNodes.item(j).getNodeName().equals("name") && serverName
+                        .equals(childNodes.item(j).getTextContent())) {
+                    int indexOfServer = i + 1;
+                    return REMOTE_COMPONENTS_XPATH + "/server[" + indexOfServer + "]";
+                }
+            }
+        }
+        return null;
+    }
+
+    Resource getDataCleanerConfigurationFileResource() {
         final RepositoryFile configurationFile = _configuration.getHomeFolder().toRepositoryFolder()
                 .getFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
         final Resource resource = configurationFile.toResource();

@@ -37,6 +37,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.restclient.ComponentRESTClient;
@@ -44,6 +45,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.RemoteServersConfigRW;
+import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXEditorPane;
@@ -77,12 +79,12 @@ public class DataCloudLogInWindow extends AbstractWindow{
     }
 
     public boolean mayIShowIt(){
-        boolean isDataCloudInConfig = new RemoteServersConfigRW(_configuration)
-                .isServerInConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
+        final RemoteServerData datacloudConfig = new RemoteServersUtils(_configuration)
+                .getServerConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
         String showDataCloudDialog = _userPreferences.getAdditionalProperties()
                 .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "true");
         Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
-        return !isDataCloudInConfig && showDataCloudDialogBool;
+        return datacloudConfig == null && showDataCloudDialogBool;
     }
 
 
@@ -193,9 +195,10 @@ public class DataCloudLogInWindow extends AbstractWindow{
             logger.debug("Sign in DataCloud. User name: {}", userName);
 
             RemoteServersConfigRW remoteServersConfigRW = new RemoteServersConfigRW(_configuration);
+            RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
             remoteServersConfigRW
                     .writeCredentialsToConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
-            remoteServersConfigRW.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+            remoteServersUtils.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             button.setBackground(Color.GREEN);
         }
     }

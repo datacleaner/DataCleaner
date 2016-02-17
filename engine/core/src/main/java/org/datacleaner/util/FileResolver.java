@@ -61,6 +61,11 @@ public class FileResolver {
         if (filename == null) {
             return null;
         }
+        
+        filename = filename.trim();
+        if (filename.toLowerCase().startsWith("file://")) {
+            filename = filename.substring("file://".length());
+        }
 
         final File file;
         final File nonParentCandidate = new File(filename);

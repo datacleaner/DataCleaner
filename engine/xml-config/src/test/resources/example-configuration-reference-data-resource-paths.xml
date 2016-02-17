@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<reference-data-catalog>
+		<dictionaries>
+			<text-file-dictionary name="dictionary">
+				<filename>file://C:/absolute/path/to/dictionary.txt</filename>
+				<encoding>UTF-8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-dictionary>
+			
+			<text-file-dictionary name="dictionary2">
+				<filename>C:/absolute/path/to/dictionary.txt</filename>
+				<encoding>UTF-8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-dictionary>
+		</dictionaries>
+		<synonym-catalogs>
+
+			<text-file-synonym-catalog name="synonyms">
+				<filename>file://relative/path/to/synonyms.txt</filename>
+				<encoding>UTF8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-synonym-catalog>
+			
+			<text-file-synonym-catalog name="synonyms2">
+				<filename>relative/path/to/synonyms.txt</filename>
+				<encoding>UTF8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-synonym-catalog>
+		</synonym-catalogs>
+	</reference-data-catalog>
+
+</configuration>

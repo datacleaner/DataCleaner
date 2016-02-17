@@ -512,7 +512,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return environment.getStorageProvider();
     }
 
-    @SuppressWarnings("deprecation")
+    @Deprecated
     private String createFilename(String filename) {
         return _interceptor.createFilename(filename);
     }
@@ -559,8 +559,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         addVariablePath(name);
 
-                        String filenamePath = getStringVariable("filename", tfdt.getFilename());
-                        String filename = createFilename(filenamePath);
+                        final String filenamePath = getStringVariable("filename", tfdt.getFilename());
+                        final String filename = createFilename(filenamePath);
                         String encoding = getStringVariable("encoding", tfdt.getEncoding());
                         if (encoding == null) {
                             encoding = FileHelper.UTF_8_ENCODING;

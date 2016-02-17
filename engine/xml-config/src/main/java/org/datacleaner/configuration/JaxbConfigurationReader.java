@@ -347,19 +347,22 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providersElement = new DescriptorProvidersType();
         }
 
-        // for backward compatibility
-        if (configuration.getClasspathScanner() != null) {
-            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration
-                    .getClasspathScanner());
-        }
-        if (configuration.getCustomDescriptorProvider() != null) {
-            providersElement.getCustomClassOrClasspathScannerOrRemoteComponents().add(configuration
-                    .getCustomDescriptorProvider());
+        // for backward compatibility - support descriptor providers that are
+        // not defined within the <descriptor-providers> element.
+        {
+            if (configuration.getClasspathScanner() != null) {
+                providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()
+                .add(configuration.getClasspathScanner());
+            }
+            if (configuration.getCustomDescriptorProvider() != null) {
+                providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()
+                .add(configuration.getCustomDescriptorProvider());
+            }
         }
 
         // now go through providers specification and create them
         for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
-            List<DescriptorProvider> newProviders = createDescriptorProvider(provider, environment,
+            final List<DescriptorProvider> newProviders = createDescriptorProvider(provider, environment,
                     temporaryConfiguration);
             providers.addAll(newProviders);
         }
@@ -391,16 +394,16 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private List<DescriptorProvider> createDescriptorProvider(Object providerElement,
             DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
-        ArrayList<DescriptorProvider> providerList = new ArrayList<>();
+        final List<DescriptorProvider> providerList = new ArrayList<>();
         if (providerElement instanceof CustomElementType) {
             providerList.add(createCustomElement(((CustomElementType) providerElement), DescriptorProvider.class,
                     temporaryConfiguration, true));
         } else if (providerElement instanceof ClasspathScannerType) {
-            DescriptorProvider classPathProvider = createClasspathScanDescriptorProvider(
+            final DescriptorProvider classPathProvider = createClasspathScanDescriptorProvider(
                     (ClasspathScannerType) providerElement, environment);
             providerList.add(classPathProvider);
         } else if (providerElement instanceof RemoteComponentsType) {
-            List<DescriptorProvider> remoteProviders = createRemoteDescriptorProvider(
+            final List<DescriptorProvider> remoteProviders = createRemoteDescriptorProvider(
                     (RemoteComponentsType) providerElement, environment);
             providerList.addAll(remoteProviders);
         } else {
@@ -440,17 +443,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private List<DescriptorProvider> createRemoteDescriptorProvider(RemoteComponentsType providerElement,
             DataCleanerEnvironment dataCleanerEnvironment) {
-        ArrayList<DescriptorProvider> descriptorProviders = new ArrayList<>();
-        RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
-        remoteServerConfiguration.setShowComponentsFromAllServers(providerElement.isShowAll());
-        Integer serverPriority = providerElement.getServer().size();
+        final List<DescriptorProvider> descriptorProviders = new ArrayList<>();
+        final RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
 
         for (RemoteComponentServerType server : providerElement.getServer()) {
-            final String serverName = (server.getName() == null ? "server" + remoteServerConfiguration.getServerList()
-                    .size() : server.getName());
-            RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(server.getUrl(), serverName,
-                    serverPriority, server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-            serverPriority--;
+            final String serverName = (server.getName() == null
+                    ? "server" + remoteServerConfiguration.getServerList().size() : server.getName());
+            final RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(server.getUrl(), serverName,
+                    server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
             remoteServerConfiguration.getServerList().add(remoteServerData);
             descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData));
         }

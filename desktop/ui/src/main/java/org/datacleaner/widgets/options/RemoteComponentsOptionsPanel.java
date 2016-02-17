@@ -160,7 +160,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         final String password = new String(passwordTextField.getPassword());
 
         final RemoteServerDataImpl newServerData = new RemoteServerDataImpl(existingServerData.getUrl(),
-                existingServerData.getServerName(), existingServerData.getServerPriority(), username, password);
+                existingServerData.getServerName(), username, password);
         final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
                 .getRemoteServerConfiguration();
         if (remoteServerConfiguration.getServerList().isEmpty()) {

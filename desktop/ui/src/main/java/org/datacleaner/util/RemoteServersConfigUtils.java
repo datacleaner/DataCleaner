@@ -37,14 +37,14 @@ import org.w3c.dom.NodeList;
 /**
  * Utils for work with information about remote servers in configuration file
  */
-public class RemoteServersConfigRW {
+public class RemoteServersConfigUtils {
     private static final String REMOTE_COMPONENTS_XPATH = "configuration/descriptor-providers/remote-components";
     private static final String REMOTE_SERVER_XPATH = "configuration/descriptor-providers/remote-components/server";
 
     private final DataCleanerConfiguration _configuration;
     private final DataCleanerConfigurationUpdater _configurationUpdate;
 
-    public RemoteServersConfigRW(final DataCleanerConfiguration configuration) {
+    public RemoteServersConfigUtils(final DataCleanerConfiguration configuration) {
         _configuration = configuration;
         _configurationUpdate = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileResource());
     }

@@ -44,7 +44,7 @@ import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.RemoteServersConfigRW;
+import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -194,9 +194,9 @@ public class DataCloudLogInWindow extends AbstractWindow{
             }
             logger.debug("Sign in DataCloud. User name: {}", userName);
 
-            RemoteServersConfigRW remoteServersConfigRW = new RemoteServersConfigRW(_configuration);
+            RemoteServersConfigUtils remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
             RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
-            remoteServersConfigRW
+            remoteServersConfigUtils
                     .writeCredentialsToConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
             remoteServersUtils.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             button.setBackground(Color.GREEN);

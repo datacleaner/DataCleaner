@@ -38,7 +38,7 @@ import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.RemoteServersConfigRW;
+import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -57,7 +57,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private final DataCleanerConfiguration _configuration;
-    private final RemoteServersConfigRW _remoteServersConfigRW;
+    private final RemoteServersConfigUtils _remoteServersConfigUtils;
     private final RemoteServersUtils _remoteServersUtils;
     private final JTextField usernameTextField;
     private final JPasswordField passwordTextField;
@@ -73,7 +73,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     public RemoteComponentsOptionsPanel(DataCleanerConfiguration configuration) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
-        _remoteServersConfigRW = new RemoteServersConfigRW(_configuration);
+        _remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
         _remoteServersUtils = new RemoteServersUtils(_configuration);
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
@@ -157,10 +157,10 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         final String password = new String(passwordTextField.getPassword());
         if(existingServerData == null){
             _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
-            _remoteServersConfigRW.writeCredentialsToConfig(DATACLOUD_SERVER_NAME, null, username, password);
+            _remoteServersConfigUtils.writeCredentialsToConfig(DATACLOUD_SERVER_NAME, null, username, password);
         }else {
             _remoteServersUtils.updateRemoteServerCredentials(DATACLOUD_SERVER_NAME, username, password);
-            _remoteServersConfigRW.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
+            _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
         }
     }
 }

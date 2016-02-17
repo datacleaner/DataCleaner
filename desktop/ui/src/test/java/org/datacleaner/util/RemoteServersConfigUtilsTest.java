@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class RemoteServersConfigRWTest {
+public class RemoteServersConfigUtilsTest {
     private final Resource originalConfigurationResource = new FileResource("src/test/resources/conf.xml");
     private final Resource configurationResource = new FileResource(
             "target/DataCleanerConfigurationUpdaterTest-conf.xml");
@@ -37,7 +37,7 @@ public class RemoteServersConfigRWTest {
     @Test
     public void testAddNewServer() throws Exception {
         FileHelper.copy(originalConfigurationResource, configurationResource);
-        MyRemoteServersConfigRW remoteServersConfigRW = new MyRemoteServersConfigRW();
+        MyRemoteServersConfigUtils remoteServersConfigRW = new MyRemoteServersConfigUtils();
         remoteServersConfigRW.writeCredentialsToConfig("newServer", "URLserver", "user", "pass");
         remoteServersConfigRW.writeCredentialsToConfig("newServer2", "URLserver2", "user2", "pass2");
 
@@ -52,7 +52,7 @@ public class RemoteServersConfigRWTest {
     @Test
     public void testUpdate() throws Exception {
         testAddNewServer();
-        MyRemoteServersConfigRW remoteServersConfigRW = new MyRemoteServersConfigRW();
+        MyRemoteServersConfigUtils remoteServersConfigRW = new MyRemoteServersConfigUtils();
         remoteServersConfigRW.updateCredentials("newServer", "newUser", "newPassword");
 
         //check
@@ -77,9 +77,9 @@ public class RemoteServersConfigRWTest {
         }
     }
 
-    private class MyRemoteServersConfigRW extends RemoteServersConfigRW{
+    private class MyRemoteServersConfigUtils extends RemoteServersConfigUtils {
 
-        public MyRemoteServersConfigRW() {
+        public MyRemoteServersConfigUtils() {
             super(null);
         }
 

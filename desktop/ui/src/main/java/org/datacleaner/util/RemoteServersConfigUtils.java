@@ -19,17 +19,10 @@
  */
 package org.datacleaner.util;
 
-import java.util.List;
-
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
-import org.datacleaner.configuration.RemoteServerData;
-import org.datacleaner.configuration.RemoteServerDataImpl;
-import org.datacleaner.descriptors.CompositeDescriptorProvider;
-import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 import org.datacleaner.repository.RepositoryFile;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

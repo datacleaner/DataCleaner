@@ -161,14 +161,14 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
                 }
 
                 final String encoding = (String) _encodingComboBox.getSelectedItem();
-                if (StringUtils.isNullOrEmpty(path)) {
+                if (StringUtils.isNullOrEmpty(encoding)) {
                     JOptionPane.showMessageDialog(TextFileDictionaryDialog.this, "Please select a character encoding");
                     return;
                 }
 
                 final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
 
-                TextFileDictionary dict = new TextFileDictionary(name, path, encoding, caseSensitive);
+                final TextFileDictionary dict = new TextFileDictionary(name, path, encoding, caseSensitive);
 
                 if (_originalDictionary != null) {
                     _catalog.removeDictionary(_originalDictionary);

@@ -87,7 +87,7 @@ public class StringConverterTest extends TestCase {
 
         {
             MyConvertable copy2 = stringConverter.deserialize(serializedForm2, MyConvertable.class,
-                    SecondaryConverter.class);
+                    new SecondaryConverter());
             assertTrue(convertable != copy2);
             assertEquals("foo", copy2.getName());
             assertEquals("bar", copy2.getDescription());

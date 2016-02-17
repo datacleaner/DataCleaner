@@ -44,26 +44,27 @@ import org.slf4j.LoggerFactory;
  */
 class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(TokenizerJobBuilderPresenter.class);
+    private static final Logger logger = LoggerFactory.getLogger(TokenizerJobBuilderPresenter.class);
 
-	private SingleNumberPropertyWidget _numTokensPropertyWidget;
-	private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
+    private SingleNumberPropertyWidget _numTokensPropertyWidget;
+    private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
 
-	public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, DataCleanerConfiguration configuration) {
-		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
-	}
+    public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder,
+            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
+            DataCleanerConfiguration configuration) {
+        super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
+    }
 
-	@Override
-	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		final PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
-		final String propertyName = propertyDescriptor.getName();
-		if ("Token target".equals(propertyName)) {
-			_tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;
-			_tokenTargetPropertyWidget.addComboListener(new Listener<Enum<?>>() {
+    @Override
+    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        final PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
+        final String propertyName = propertyDescriptor.getName();
+        if ("Token target".equals(propertyName)) {
+            _tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;
+            _tokenTargetPropertyWidget.addComboListener(new Listener<Enum<?>>() {
                 @Override
                 public void onItemSelected(Enum<?> item) {
                     if (_numTokensPropertyWidget == null) {
@@ -79,10 +80,10 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
                         _numTokensPropertyWidget.setEnabled(true);
                     }
                 }
-			});
-		} else if ("Number of tokens".equals(propertyName)) {
-			_numTokensPropertyWidget = (SingleNumberPropertyWidget) propertyWidget;
-		}
-		return propertyWidget;
-	}
+            });
+        } else if ("Number of tokens".equals(propertyName)) {
+            _numTokensPropertyWidget = (SingleNumberPropertyWidget) propertyWidget;
+        }
+        return propertyWidget;
+    }
 }

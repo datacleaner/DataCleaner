@@ -59,21 +59,26 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
 	@Override
 	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
-		String propertyName = propertyDescriptor.getName();
+		final PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
+		final String propertyName = propertyDescriptor.getName();
 		if ("Token target".equals(propertyName)) {
 			_tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;
 			_tokenTargetPropertyWidget.addComboListener(new Listener<Enum<?>>() {
-				@Override
-				public void onItemSelected(Enum<?> item) {
-					if (item == TokenTarget.ROWS) {
-						if (_numTokensPropertyWidget == null) {
-							logger.warn("No property widget for 'num tokens' found!");
-						} else if (!_numTokensPropertyWidget.isSet()) {
-							_numTokensPropertyWidget.onValueTouched(10);
-						}
-					}
-				}
+                @Override
+                public void onItemSelected(Enum<?> item) {
+                    if (_numTokensPropertyWidget == null) {
+                        logger.warn("No property widget for 'num tokens' found!");
+                        return;
+                    }
+                    if (item == TokenTarget.ROWS) {
+                        if (!_numTokensPropertyWidget.isSet()) {
+                            _numTokensPropertyWidget.onValueTouched(2);
+                        }
+                        _numTokensPropertyWidget.setEnabled(false);
+                    } else {
+                        _numTokensPropertyWidget.setEnabled(true);
+                    }
+                }
 			});
 		} else if ("Number of tokens".equals(propertyName)) {
 			_numTokensPropertyWidget = (SingleNumberPropertyWidget) propertyWidget;

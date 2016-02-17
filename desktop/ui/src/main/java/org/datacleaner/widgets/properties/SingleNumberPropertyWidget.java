@@ -127,4 +127,8 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
         }
         _textField.setText(value.toString());
     }
+
+    public void setEnabled(boolean b) {
+        _textField.setEnabled(b);
+    }
 }

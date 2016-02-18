@@ -143,13 +143,13 @@ public final class WidgetUtils {
 
     public static final int SCROLL_UNIT_INCREMENT = 20;
 
-    // blue base color of DC styling (#3b76bc)
-    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
+    // blue base color of DC styling (#16c2f4)
+    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(22, 194, 244);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
     public static final Color BG_COLOR_BLUE_DARK = slightlyDarker(BG_COLOR_BLUE_MEDIUM);
 
-    // orange base color of DC styling (#ffa800)
-    public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 168, 0);
+    // orange base color of DC styling (#f58132)
+    public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(245, 129, 50);
     public static final Color BG_COLOR_ORANGE_BRIGHT = slightlyBrighter(BG_COLOR_ORANGE_MEDIUM);
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
@@ -158,6 +158,7 @@ public final class WidgetUtils {
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
+    @Deprecated
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
 
     // white
@@ -184,7 +185,9 @@ public final class WidgetUtils {
 
     // additional colors, only intended for special widget coloring such as
     // charts etc.
-    public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(123, 207, 38);
+    
+    // Green: #70be44
+    public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(122, 190, 68);
 
     // Red: #d32424
     public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);

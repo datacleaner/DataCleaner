@@ -43,7 +43,7 @@ public class RemoteServersConfigUtils {
         _configurationUpdate = new DataCleanerConfigurationUpdater(getDataCleanerConfigurationFileResource());
     }
 
-    public void writeCredentialsToConfig(String serverName, String serverUrl, String userName, String password) {
+    public void createCredentials(String serverName, String serverUrl, String userName, String password) {
         String serverXPath = _configurationUpdate.createChild(REMOTE_COMPONENTS_XPATH, "server");
         if(serverXPath == null){
             //remote-components is not in xml
@@ -75,7 +75,7 @@ public class RemoteServersConfigUtils {
     }
 
     private String getXpathForRemoteServer(String serverName) {
-        NodeList servers = _configurationUpdate.findElementToUpdate(REMOTE_SERVER_XPATH);
+        NodeList servers = _configurationUpdate.find(REMOTE_SERVER_XPATH);
         for (int i = 0; i < servers.getLength(); i++) {
             Node server = servers.item(i);
             NodeList childNodes = server.getChildNodes();

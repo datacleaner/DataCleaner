@@ -46,12 +46,13 @@ public class DataCleanerConfigurationUpdater {
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationUpdater.class);
 
     private final Resource configurationFileResource;
-    private Document document = null;
+    private final Document document;
 
     public DataCleanerConfigurationUpdater(Resource configurationFileResource) {
         this.configurationFileResource = configurationFileResource;
-    }
+        document = load();
 
+    }
 
     /**
      * Updates an element value at the location of the nodePathElements.
@@ -62,15 +63,10 @@ public class DataCleanerConfigurationUpdater {
      *            the new value to set
      */
     public void update(String xPath, String newValue) {
-        if (document == null) {
-            load();
+        final NodeList  elementToUpdate = find(xPath);
+        for (int i = 0; i < elementToUpdate.getLength(); i++) {
+            elementToUpdate.item(i).setTextContent(newValue);
         }
-        final NodeList  elementToUpdate = findElementToUpdate(xPath);
-        if(elementToUpdate == null || elementToUpdate.getLength() ==0){
-            return;
-        }
-        elementToUpdate.item(0).setTextContent(newValue);
-        write();
     }
 
     /**
@@ -80,50 +76,30 @@ public class DataCleanerConfigurationUpdater {
      *                      is Xpath to parent
      * @param elementName
      *                      name of new element
-     * @return XPath of new child
+     * @return XPath of new child or null if parent doesn't exist
      */
     public String createChild(String parentXpath, String elementName){
-        if (document == null) {
-            load();
-        }
-        final NodeList parentNodes = findElementToUpdate(parentXpath);
-        if(parentNodes == null || parentNodes.getLength() ==0) {
+        final NodeList parentNodes = find(parentXpath);
+        if(parentNodes.getLength() == 0) {
             return null;
         }
 
         Element newElement = document.createElement(elementName);
         parentNodes.item(0).appendChild(newElement);
 
-        final NodeList createdNodes = findElementToUpdate(parentXpath + "/" + elementName);
+        final NodeList createdNodes = find(parentXpath + "/" + elementName);
 
-        return parentXpath + "/" + elementName + "[" +createdNodes.getLength()+"]";
+        return parentXpath + "/" + elementName + "[" +createdNodes.getLength() + "]";
     }
 
-    public NodeList findElementToUpdate(String xPath) {
-        if (document == null) {
-            load();
-        }
+    public NodeList find(String xPath) {
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPathObj = xPathFactory.newXPath();
-        NodeList nodes = null;
         try {
             XPathExpression compile = xPathObj.compile(xPath);
-            Object result = compile.evaluate(document, XPathConstants.NODESET);
-            nodes = (NodeList ) result;
+            return (NodeList) compile.evaluate(document, XPathConstants.NODESET);
         } catch (XPathExpressionException e) {
-            logger.error("Problem with xpath {}.", xPath, e);
-        }
-        return nodes;
-    }
-
-    private void load() {
-        final InputStream in = configurationFileResource.read();
-        try {
-            document = XmlUtils.parseDocument(in);
-        } catch (Exception e) {
-            logger.warn("XML configuration was not loaded: " + e.getMessage(), e);
-        } finally {
-            FileHelper.safeClose(in);
+            throw new RuntimeException(e);
         }
     }
 
@@ -137,9 +113,17 @@ public class DataCleanerConfigurationUpdater {
     }
 
     public Document getDocument() {
-        if (document == null) {
-            load();
-        }
         return document;
+    }
+
+    private Document load() {
+        final InputStream in = configurationFileResource.read();
+        try {
+            return XmlUtils.parseDocument(in);
+        } catch (Exception e) {
+            throw new RuntimeException("Configuration file " + configurationFileResource + " cannot be loaded: " + e.getMessage(), e);
+        } finally {
+            FileHelper.safeClose(in);
+        }
     }
 }

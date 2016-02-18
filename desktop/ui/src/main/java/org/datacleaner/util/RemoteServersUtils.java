@@ -96,5 +96,6 @@ public class RemoteServersUtils {
         }
         serverConfig.setUsername(userName);
         serverConfig.setPassword(password);
+        _configuration.getEnvironment().getDescriptorProvider().refresh();
     }
 }

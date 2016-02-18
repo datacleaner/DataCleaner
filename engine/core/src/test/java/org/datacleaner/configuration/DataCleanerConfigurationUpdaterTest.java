@@ -116,5 +116,6 @@ public class DataCleanerConfigurationUpdaterTest {
         DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
                 configurationResource);
         configurationUpdater.update(nodePathString, newValue);
+        configurationUpdater.write();
     }
 }

@@ -38,8 +38,8 @@ public class RemoteServersConfigUtilsTest {
     public void testAddNewServer() throws Exception {
         FileHelper.copy(originalConfigurationResource, configurationResource);
         MyRemoteServersConfigUtils remoteServersConfigRW = new MyRemoteServersConfigUtils();
-        remoteServersConfigRW.writeCredentialsToConfig("newServer", "URLserver", "user", "pass");
-        remoteServersConfigRW.writeCredentialsToConfig("newServer2", "URLserver2", "user2", "pass2");
+        remoteServersConfigRW.createCredentials("newServer", "URLserver", "user", "pass");
+        remoteServersConfigRW.createCredentials("newServer2", "URLserver2", "user2", "pass2");
 
         //check
         DataCleanerConfigurationUpdater dataCleanerConfigurationUpdater = new DataCleanerConfigurationUpdater(configurationResource);

@@ -334,7 +334,6 @@ public class OptionsDialog extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 _userPreferences.save();
-                _configuration.getEnvironment().getDescriptorProvider().refresh();
                 OptionsDialog.this.dispose();
             }
         });

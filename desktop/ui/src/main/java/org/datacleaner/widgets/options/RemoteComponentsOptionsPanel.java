@@ -147,7 +147,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         final String password = new String(passwordTextField.getPassword());
         if(existingServerData == null){
             _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
-            _remoteServersConfigUtils.writeCredentialsToConfig(DATACLOUD_SERVER_NAME, null, username, password);
+            _remoteServersConfigUtils.createCredentials(DATACLOUD_SERVER_NAME, null, username, password);
         }else {
             _remoteServersUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
             _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);

@@ -227,7 +227,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
             RemoteServersConfigUtils remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
             RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
             remoteServersConfigUtils
-                    .writeCredentialsToConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
+                    .createCredentials(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
             remoteServersUtils.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             button.setBackground(Color.GREEN);
         }

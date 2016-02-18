@@ -79,10 +79,20 @@ public final class WidgetUtils {
 
     private static final Map<String, Font> fonts;
 
+    @Deprecated
     public static final Font FONT_UBUNTU_PLAIN;
+    @Deprecated
     public static final Font FONT_UBUNTU_BOLD;
+    @Deprecated
     public static final Font FONT_UBUNTU_ITALIC;
+    @Deprecated
     public static final Font FONT_UBUNTU_BOLD_ITALIC;
+    
+    public static final Font FONT_MULI_REGULAR;
+    public static final Font FONT_MULI_LIGHT;
+    public static final Font FONT_MULI_LIGHT_ITALIC;
+    public static final Font FONT_LATO_BOLD;
+    public static final Font FONT_LATO_BOLD_ITALIC;
 
     public static final Font FONT_OPENSANS_PLAIN;
     public static final Font FONT_OPENSANS_BOLD;
@@ -100,11 +110,17 @@ public final class WidgetUtils {
                 fonts.put(font.getName(), font);
             }
         }
+        
+        FONT_MULI_REGULAR = createFont("fonts/Muli-Regular.ttf");
+        FONT_MULI_LIGHT = createFont("fonts/Muli-Light.ttf");
+        FONT_MULI_LIGHT_ITALIC = createFont("fonts/Muli-Light.ttf");
+        FONT_LATO_BOLD = createFont("fonts/Lato-Bold.ttf");
+        FONT_LATO_BOLD_ITALIC = createFont("fonts/Lato-BoldItalic.ttf");
 
-        FONT_UBUNTU_PLAIN = createFont("fonts/Ubuntu-R.ttf");
-        FONT_UBUNTU_ITALIC = createFont("fonts/Ubuntu-RI.ttf");
-        FONT_UBUNTU_BOLD = createFont("fonts/Ubuntu-B.ttf");
-        FONT_UBUNTU_BOLD_ITALIC = createFont("fonts/Ubuntu-BI.ttf");
+        FONT_UBUNTU_PLAIN = FONT_MULI_REGULAR;
+        FONT_UBUNTU_ITALIC = FONT_MULI_LIGHT_ITALIC;
+        FONT_UBUNTU_BOLD = FONT_LATO_BOLD;
+        FONT_UBUNTU_BOLD_ITALIC = FONT_LATO_BOLD_ITALIC;
 
         FONT_OPENSANS_PLAIN = createFont("fonts/OpenSans-Regular.ttf");
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
@@ -117,9 +133,9 @@ public final class WidgetUtils {
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(20f);
-    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(17f);
-    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(15f);
+    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(21f);
+    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(18f);
+    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(16f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);

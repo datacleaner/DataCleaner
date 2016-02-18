@@ -86,15 +86,15 @@ button span.glyphicon + span {
 }
 
 .alert-info {
-	color: #333;
-	background-color: #9dc7f6;
+	color: black;
+	background-color: #16c2f4;
 	border-color: #16c2f4;
 	border-width: 0;
 }
 
 .alert-warning {
-	color: #333;
-	background-color: #ffd392;
+	color: black;
+	background-color: #ffa800;
 	border-color: #ffa800;
 	border-width: 0;
 }

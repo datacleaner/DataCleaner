@@ -111,9 +111,9 @@ public final class WidgetUtils {
             }
         }
         
-        FONT_MULI_REGULAR = createFont("fonts/Muli-Regular.ttf");
+        FONT_MULI_REGULAR = createFont("fonts/Muli.ttf");
         FONT_MULI_LIGHT = createFont("fonts/Muli-Light.ttf");
-        FONT_MULI_LIGHT_ITALIC = createFont("fonts/Muli-Light.ttf");
+        FONT_MULI_LIGHT_ITALIC = createFont("fonts/Muli-LightItalic.ttf");
         FONT_LATO_BOLD = createFont("fonts/Lato-Bold.ttf");
         FONT_LATO_BOLD_ITALIC = createFont("fonts/Lato-BoldItalic.ttf");
 
@@ -143,8 +143,8 @@ public final class WidgetUtils {
 
     public static final int SCROLL_UNIT_INCREMENT = 20;
 
-    // blue base color of DC styling (#16c2f4)
-    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(22, 194, 244);
+    // blue base color of DC styling (#05b9f0)
+    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
     public static final Color BG_COLOR_BLUE_DARK = slightlyDarker(BG_COLOR_BLUE_MEDIUM);
 

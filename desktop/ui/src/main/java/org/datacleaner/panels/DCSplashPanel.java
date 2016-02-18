@@ -194,13 +194,6 @@ public class DCSplashPanel extends DCPanel {
     }
 
     private static Image getBackgroundImage() {
-        final Calendar now = Calendar.getInstance();
-        final int hourOfDay = now.get(Calendar.HOUR_OF_DAY);
-        if (hourOfDay >= 5 && hourOfDay < 7) {
-            // only people with kids will be working at this hour ...
-            return ImageManager.get().getImage("images/window/welcome-panel-background-early.jpg");
-        }
-
         return ImageManager.get().getImage("images/window/welcome-panel-background.jpg");
     }
 }

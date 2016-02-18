@@ -47,7 +47,7 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
         private final String _clusterReferenceName;
         private final Configuration _configuration;
 
-        Pattern _pattern = Pattern.compile("\\{([\\w\\.]*)\\}(.*)");
+        Pattern _pattern = Pattern.compile("(?:[\\w\\+\\-\\.]+://)?\\{([\\w\\.]*)\\}(.*)");
 
         Builder(ServerInformationCatalog catalog, String templatedUri) {
             final Matcher matcher = _pattern.matcher(templatedUri);
@@ -107,12 +107,13 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
 
     @Override
     public HdfsResource parsePath(String path) {
-        Builder builder = new Builder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
-
         final String prefix = getScheme() + "://";
         if (!path.startsWith(prefix)) {
             path = prefix + path;
         }
+
+        Builder builder = new Builder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
+
         return new HadoopResource(builder._uri, builder._configuration, builder._clusterReferenceName);
     }
 

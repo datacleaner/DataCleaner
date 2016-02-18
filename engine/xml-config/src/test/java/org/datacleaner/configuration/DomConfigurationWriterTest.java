@@ -19,11 +19,7 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -53,8 +49,8 @@ import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.test.MockHadoopConfigHelper;
 import org.datacleaner.util.HadoopResource;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -338,46 +334,32 @@ public class DomConfigurationWriterTest {
         assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
     }
 
-    private void generateCoreFile(File hadoopConfDir, String path) throws IOException {
-        final File coreSiteFile = new File(hadoopConfDir, "conf-site.xml");
-
-        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("core-site-template.xml")) {
-            final BufferedReader reader = FileHelper.getBufferedReader(inputStream, FileHelper.UTF_8_ENCODING);
-            try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
-                String line = reader.readLine();
-                while (line != null) {
-                    line = StringUtils.replaceAll(line, "${PATH}", path);
-                    writer.write(line);
-                    line = reader.readLine();
-                }
-                writer.flush();
-            }
-        }
-    }
-
     @Test
     public void testWriteAndReadHadoopResourceDatastore() throws Exception {
+        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+
+        helper.generateCoreFile();
         // Prepare "environment"
-        final File confFolder = _temporaryFolder.newFolder();
-        final File resourcesFolder = new File("src/test/resources");
-        final String path = resourcesFolder.toURI().toString();
-        generateCoreFile(confFolder, path);
-        System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR, confFolder.getAbsolutePath());
+        try {
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR, helper.getConfFolder().getAbsolutePath());
 
-        final HadoopResource hadoopResource = new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
-                HadoopResource.DEFAULT_CLUSTERREFERENCE);
-        configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
-        final String str = transform(configurationWriter.getDocument());
-        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
-        FileHelper.writeStringAsFile(file, str);
+            final HadoopResource hadoopResource = new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
+                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
+            final String str = transform(configurationWriter.getDocument());
+            final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+            FileHelper.writeStringAsFile(file, str);
 
-        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+            final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
 
-        CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
-        HadoopResource resource = (HadoopResource) csvDatastore.getResource();
-        assertNotNull(resource);
-        assertEquals("example-dates.csv", resource.getFilepath());
-        assertEquals(path, resource.getHadoopConfiguration().get("fs.defaultFS"));
+            CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
+            HadoopResource resource = (HadoopResource) csvDatastore.getResource();
+            assertNotNull(resource);
+            assertEquals("example-dates.csv", resource.getFilepath());
+            assertEquals(helper.getPath(), resource.getHadoopConfiguration().get("fs.defaultFS"));
+        } finally {
+            System.clearProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
+        }
     }
 
     @Test

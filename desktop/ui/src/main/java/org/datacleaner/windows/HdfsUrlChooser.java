@@ -63,7 +63,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.HdfsUtils;
 import org.datacleaner.util.LookAndFeelManager;
@@ -443,7 +446,8 @@ public class HdfsUrlChooser extends JComponent {
         add(panel, BorderLayout.CENTER);
     }
 
-    public static URI showDialog(Component parent, URI currentUri, OpenType openType) throws HeadlessException {
+    public static URI showDialog(Component parent, final ServerInformationCatalog serverInformationCatalog,
+            URI currentUri, OpenType openType) throws HeadlessException {
         final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
             // Prevent to show second instance of _dialog if the previous one
@@ -455,7 +459,7 @@ public class HdfsUrlChooser extends JComponent {
             @Override
             public void componentShown(final ComponentEvent e) {
                 if (chooser._currentDirectory == null) {
-                    final boolean configured = chooser.scanHadoopConfigFiles();
+                    final boolean configured = chooser.scanHadoopConfigFiles(serverInformationCatalog);
 
                     if (!configured) {
                         final URI uri = HdfsServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
@@ -477,11 +481,7 @@ public class HdfsUrlChooser extends JComponent {
 
         final Path selectedFile = chooser.getSelectedFile();
         if (selectedFile != null) {
-            try {
-                return new URI(selectedFile.toString());
-            } catch (URISyntaxException e1) {
-                throw new IllegalStateException(e1);
-            }
+            return selectedFile.toUri();
         }
         return null;
     }
@@ -509,32 +509,18 @@ public class HdfsUrlChooser extends JComponent {
      * This scans Hadoop environment variables for a directory with configuration files
      *
      * @return True if a configuration was yielded.
+     * @param serverInformationCatalog
      */
-    private boolean scanHadoopConfigFiles() {
-        final Configuration configuration = new Configuration(true);
-        final Map<String, File> configurationFiles = new HashMap<>();
+    private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog) {
+        final HadoopClusterInformation clusterInformation =
+                (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
 
-        Arrays.stream(CONFIGURATION_DIRECTORIES).map(System::getenv).filter(Objects::nonNull).map(File::new)
-                .filter(File::isDirectory).forEach(c -> {
-            final File[] array = c.listFiles();
-            assert (array != null);
-            Arrays.stream(array).filter(File::isFile).filter(f -> !configurationFiles.containsKey(f.getName()))
-                    .forEach(f -> configurationFiles.put(f.getName(), f));
-        });
-
-        if(configurationFiles.size() == 0) {
-            return false;
-        }
-
-        for (File file : configurationFiles.values()) {
-            configuration.addResource(new Path(file.toURI()));
-        }
-
-        configuration.reloadConfiguration();
-        final URI uri = URI.create(configuration.get(FS_DEFAULT_FS));
+        final Configuration configuration = clusterInformation.getConfiguration();
+        URI uri = URI.create(configuration.get("fs.defaultFS"));
 
         // TODO: This will sooner or later need to support a preexisting URL.
-        HadoopResource resource = new HadoopResource(uri.resolve("/"), configuration);
+        final HadoopResource resource = new HadoopResource(uri, configuration,
+                EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
 
         _currentDirectory = resource.getHadoopPath();
         _fileSystem = resource.getHadoopFileSystem();
@@ -604,7 +590,7 @@ public class HdfsUrlChooser extends JComponent {
         frame.setVisible(true);
 
         try {
-            URI selectedFile = HdfsUrlChooser.showDialog(frame, null, OpenType.LOAD);
+            URI selectedFile = HdfsUrlChooser.showDialog(frame, null, null, OpenType.LOAD);
             System.out.println("Normal exit, selected file: " + selectedFile);
             System.exit(0);
         } catch (Exception e) {

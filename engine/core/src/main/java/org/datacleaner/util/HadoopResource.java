@@ -19,7 +19,10 @@
  */
 package org.datacleaner.util;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URI;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.HdfsResource;
@@ -30,7 +33,7 @@ public class HadoopResource extends HdfsResource {
 
     private static final long serialVersionUID = 1L;
 
-    private final Configuration _configuration;
+    private final transient Configuration _configuration;
     private final String _clusterReferenceName;
 
     public HadoopResource(URI uri, Configuration configuration, String clusterReferenceName) {

@@ -57,8 +57,12 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         try {
             return super.getConfiguration();
         } catch (IllegalStateException e) {
-            throw new IllegalStateException(
-                    "None of the standard Hadoop environment variables has been set.", e);
+            if(getDirectories().length == 0) {
+                throw new IllegalStateException(
+                        "None of the standard Hadoop environment variables has been set.", e);
+            } else {
+                throw e;
+            }
         }
     }
 }

@@ -1,6 +1,0 @@
-<configuration>
-    <property>
-        <name>fs.defaultFS</name>
-        <value>${PATH}</value>
-    </property>
-</configuration>

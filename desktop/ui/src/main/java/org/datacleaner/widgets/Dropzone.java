@@ -43,6 +43,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -71,7 +72,8 @@ public class Dropzone extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectListener;
     private final UserPreferences _userPreferences;
 
-    public Dropzone(final DatastoreCatalog datastoreCatalog, final DatastoreSelectedListener datastoreSelectListener,
+    public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
+            final DatastoreSelectedListener datastoreSelectListener,
             final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
@@ -113,7 +115,7 @@ public class Dropzone extends DCPanel {
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                URI selectedFile = HdfsUrlChooser.showDialog(dropZone, null, OpenType.LOAD);
+                URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, null, OpenType.LOAD);
                 logger.info("Selected HDFS file: " + selectedFile);
 
                 if (selectedFile != null) {

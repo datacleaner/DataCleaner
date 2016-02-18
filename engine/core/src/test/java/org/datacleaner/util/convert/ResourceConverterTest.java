@@ -31,15 +31,26 @@ import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.UrlResource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.test.MockHadoopConfigHelper;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-public class ResourceConverterTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class ResourceConverterTest {
 
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
+    @Rule
+    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
+
+    @Test
     public void testParse() throws Exception {
         ResourceConverter resourceConverter = new ResourceConverter(configuration);
         assertEquals("url", resourceConverter.parseStructure("url://foobar").getScheme());
@@ -49,6 +60,7 @@ public class ResourceConverterTest extends TestCase {
         assertEquals("/c:/blabla", resourceConverter.parseStructure("file:///c:/blabla").getPath());
     }
 
+    @Test
     public void testConvertFileResource() throws Exception {
         List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new FileResourceTypeHandler(configuration));
         ResourceConverter converter = new ResourceConverter(handlers, "foo");
@@ -65,6 +77,7 @@ public class ResourceConverterTest extends TestCase {
         assertEquals("foo/bar.txt", ((FileResource) resource2).getFile().getPath().replace('\\', '/'));
     }
 
+    @Test
     public void testConvertUrlResource() throws Exception {
         List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new UrlResourceTypeHandler());
         ResourceConverter converter = new ResourceConverter(handlers, "foo");
@@ -81,6 +94,7 @@ public class ResourceConverterTest extends TestCase {
         assertEquals("localhost", resource2.getName());
     }
 
+    @Test
     public void testConvertVfsResource() throws Exception {
         List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new VfsResourceTypeHandler());
         ResourceConverter converter = new ResourceConverter(handlers, "foo");
@@ -103,18 +117,27 @@ public class ResourceConverterTest extends TestCase {
     }
     @Test
     public void testConvertHdfsResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler("hdfs"));
-        ResourceConverter converter = new ResourceConverter(handlers, "foo");
+        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+        helper.generateCoreFile();
+        try {
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
+                    helper.getConfFolder().getAbsolutePath());
 
-        HdfsResource resource1 = new  HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");
+            List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler("hdfs"));
+            ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
-        String str = converter.toString(resource1);
+            HdfsResource resource1 = new HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");
 
-        assertEquals("hdfs://localhost:9000/user/vagrant/file.csv", str);
+            String str = converter.toString(resource1);
 
-        Resource resource2 = converter.fromString(Resource.class, str);
+            assertEquals("hdfs://localhost:9000/user/vagrant/file.csv", str);
 
-        assertTrue(resource2 instanceof  HdfsResource);
-        assertEquals("file.csv", resource2.getName());
+            Resource resource2 = converter.fromString(Resource.class, str);
+
+            assertTrue(resource2 instanceof HdfsResource);
+            assertEquals("file.csv", resource2.getName());
+        } finally {
+            System.clearProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
+        }
     }
 }

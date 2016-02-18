@@ -27,6 +27,7 @@ import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
+import org.datacleaner.restclient.ComponentRESTClient;
 
 /**
  * Utilities for better work with remote servers.
@@ -97,5 +98,9 @@ public class RemoteServersUtils {
         serverConfig.setUsername(userName);
         serverConfig.setPassword(password);
         _configuration.getEnvironment().getDescriptorProvider().refresh();
+    }
+
+    public void checkServerWithCredentials(String url, String username, String password) throws Exception{
+        new ComponentRESTClient(url, username, password);
     }
 }

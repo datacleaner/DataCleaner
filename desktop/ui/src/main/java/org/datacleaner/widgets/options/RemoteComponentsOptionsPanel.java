@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.options;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -45,6 +47,7 @@ import org.datacleaner.windows.OptionsDialog;
 import com.google.common.base.Strings;
 
 import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
 
 /**
  * The "Remote components" panel found in the {@link OptionsDialog}
@@ -59,6 +62,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private final JTextField usernameTextField;
     private final JPasswordField passwordTextField;
     private final JButton applyButton;
+    private final JEditorPane invalidCredentialsLabel;
 
     private final int wholeLineSpan = 4;
     private final int rowSpan = 1;
@@ -85,8 +89,8 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateDcConfiguration();
-                applyButton.setEnabled(false);
+                final boolean isOk = updateDcConfiguration();
+                applyButton.setEnabled(!isOk);
             }
         });
 
@@ -97,6 +101,11 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         passwordTextField.getDocument().addDocumentListener(documentListener);
+
+        invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
+        invalidCredentialsLabel.setSize(500-30, Integer.MAX_VALUE);
+        invalidCredentialsLabel.setForeground(new Color(170,10,10));
+        invalidCredentialsLabel.setOpaque(false);
 
         setTitledBorder("Credentials");
         setupFields();
@@ -119,6 +128,10 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
 
         addField("Username", usernameTextField);
         addField("Password", passwordTextField, applyButton);
+
+        row++;
+        WidgetUtils.addToGridBag(invalidCredentialsLabel, this, 0, row, 3, 1, GridBagConstraints.LINE_START, padding,
+                0, weighty, GridBagConstraints.HORIZONTAL);
     }
 
     private void addField(String labelText, JComponent... fields) {
@@ -141,10 +154,22 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
         return htmlBox;
     }
 
-    private void updateDcConfiguration() {
+    /**
+     * Update configuration
+     *
+     * @return True - everything is ok. False - problem, do not nothing.
+     */
+    private boolean updateDcConfiguration() {
         final RemoteServerData existingServerData = _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
         final String username = usernameTextField.getText();
         final String password = new String(passwordTextField.getPassword());
+        try {
+            _remoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
+        } catch (Exception ex) {
+            invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
+            return false;
+        }
+        invalidCredentialsLabel.setText("");
         if(existingServerData == null){
             _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
             _remoteServersConfigUtils.createCredentials(DATACLOUD_SERVER_NAME, null, username, password);
@@ -152,5 +177,6 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
             _remoteServersUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
             _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
         }
+        return true;
     }
 }

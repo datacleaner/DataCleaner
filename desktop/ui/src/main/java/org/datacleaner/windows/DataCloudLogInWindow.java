@@ -218,8 +218,9 @@ public class DataCloudLogInWindow extends AbstractDialog {
         public void actionPerformed(final ActionEvent e) {
             String userName = userNameField.getText();
             String pass = new String(passwordField.getPassword());
+            RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
             try {
-                new ComponentRESTClient(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+                remoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             } catch (Exception ex) {
                 invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
                 logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
@@ -228,7 +229,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
             logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
             RemoteServersConfigUtils remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
-            RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
             remoteServersConfigUtils
                     .createCredentials(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
             remoteServersUtils.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);

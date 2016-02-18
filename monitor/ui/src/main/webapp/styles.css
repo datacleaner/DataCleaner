@@ -80,7 +80,7 @@ div.popupPageContent {
 	font-family: 'Muli';
 	font-weight: normal;
 	font-size: 26px;
-	color: #5594DD;
+	color: #16c2f4;
 	margin: 0px;
 	margin-top: 60px;
 }
@@ -124,14 +124,6 @@ div.loader {
 	min-width: 32px;
 	background: url("images/loader.gif") no-repeat center center;
 	height: 32px;
-}
-
-.blue {
-	color: #5594dd;
-}
-
-.orange {
-	color: #ffa800;
 }
 
 .discrete {

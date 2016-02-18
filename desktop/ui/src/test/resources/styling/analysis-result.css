@@ -58,18 +58,18 @@ p,div,span,ul,ol,li,table,td,a {
 
 h1,h2,h3,h4,h5 {
 	font-family: 'Ubuntu', sans-serif;
-	color: #377FCF;
+	color: #16c2f4;
 	font-weight: normal;
 	font-style: normal;
 }
 
 a {
-	color: #377FCF;
+	color: #16c2f4;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #377FCF;
+	color: #16c2f4;
 	text-decoration: underline;
 }
 
@@ -298,7 +298,7 @@ a.drillToDetailsLink {
 }
 
 a.drillToDetailsLink:hover {
-	color: #377FCF;
+	color: #16c2f4;
 	text-decoration: underline;
 }
 
@@ -366,6 +366,6 @@ table.annotatedRowsTable {
 }
 
 table.annotatedRowsTable td.highlighted {
-	background-color: #377FCF;
+	background-color: #16c2f4;
 	color: white;
 }

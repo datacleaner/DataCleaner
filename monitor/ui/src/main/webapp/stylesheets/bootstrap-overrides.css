@@ -57,8 +57,8 @@ label {
 .btn-primary {
 	border-radius: 2px;
 	border-width: 1px;
-	border-color: #3b76bc;
-	background-color: #3b76bc;
+	border-color: #16c2f4;
+	background-color: #16c2f4;
 	background-repeat: repeat-x;
 }
 
@@ -88,7 +88,7 @@ button span.glyphicon + span {
 .alert-info {
 	color: #333;
 	background-color: #9dc7f6;
-	border-color: #67A2E7;
+	border-color: #16c2f4;
 	border-width: 0;
 }
 

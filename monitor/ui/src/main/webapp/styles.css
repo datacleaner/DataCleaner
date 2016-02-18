@@ -59,7 +59,7 @@ div.popupPageContent {
 }
 
 .InfographicIntro .ScrollDownTeaser {
-	font-family: 'Ubuntu';
+	font-family: 'Muli';
 	font-weight: normal;
 	font-size: 22px;
 	color: white;
@@ -77,7 +77,7 @@ div.popupPageContent {
 }
 
 .InfographicPart h2 {
-	font-family: 'Ubuntu';
+	font-family: 'Muli';
 	font-weight: normal;
 	font-size: 26px;
 	color: #5594DD;
@@ -257,7 +257,7 @@ div.loader {
 
 .datastoreList .datastore .warning {
 	margin-left: 10px;
-	color: red;
+	color: #ef3e6c;
 }
 
 input.RemoveButton {

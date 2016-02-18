@@ -280,7 +280,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCModule _dcModule;
     private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
-    private final DataCloudLogInWindow _dataCloudLogInWindow;
     private final AnalyzerChangeListener _analyzerChangeListener = new WindowAnalyzerChangeListener();
     private final TransformerChangeListener _transformerChangeListener = new WindowTransformerChangeListener();
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
@@ -346,7 +345,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
                 _dcModule);
 
-        _dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, windowContext);
 
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
@@ -368,8 +366,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
 
-        if (_dataCloudLogInWindow.mayIShowIt()) {
-            _dataCloudLogInWindow.open();
+        if (DataCloudLogInWindow.mayIShowIt(_userPreferences, _configuration)) {
+            DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, windowContext, this);
+            dataCloudLogInWindow.open();
         }
 
     }

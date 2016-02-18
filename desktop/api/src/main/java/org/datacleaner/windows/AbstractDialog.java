@@ -55,7 +55,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     public AbstractDialog(WindowContext windowContext, Image bannerImage) {
-        super();
+        this(windowContext, bannerImage, null);
+    }
+
+    public AbstractDialog(WindowContext windowContext, Image bannerImage, AbstractWindow owner) {
+        super(owner);
         // modal dialogs are turned off because they prevent use of default
         // uncaught exception handlers(!)
         setModal(false);

@@ -19,20 +19,12 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPasswordField;
-import javax.swing.border.CompoundBorder;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.bootstrap.WindowContext;
@@ -47,111 +39,138 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXEditorPane;
+import org.datacleaner.widgets.DCHtmlBox;
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by k.houzvicka on 12. 2. 2016.
- */
-public class DataCloudLogInWindow extends AbstractWindow{
+public class DataCloudLogInWindow extends AbstractDialog {
     private static final Logger logger = LoggerFactory.getLogger(DataCloudLogInWindow.class);
     public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
-
 
     final private DataCleanerConfiguration _configuration;
     final private UserPreferences _userPreferences;
     final private JComponent _contentPanel;
+    private JEditorPane invalidCredentialsLabel;
 
     @Inject
     public DataCloudLogInWindow(final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, WindowContext windowContext) {
-        super(windowContext);
+                                final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
+        super(windowContext, ImageManager.get().getImage("images/window/banner-logo.png"), owner);
         _configuration = configuration;
         _userPreferences = userPreferences;
         _contentPanel = createContentPanel();
-
-        setLayout(new BorderLayout());
-        add(_contentPanel, BorderLayout.CENTER);
     }
 
-    public boolean mayIShowIt(){
-        final RemoteServerData datacloudConfig = new RemoteServersUtils(_configuration)
+    public static boolean mayIShowIt(UserPreferences userPreferences, DataCleanerConfiguration configuration){
+        final RemoteServerData datacloudConfig = new RemoteServersUtils(configuration)
                 .getServerConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
-        String showDataCloudDialog = _userPreferences.getAdditionalProperties()
+        String showDataCloudDialog = userPreferences.getAdditionalProperties()
                 .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "true");
         Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
         return datacloudConfig == null && showDataCloudDialogBool;
     }
 
-
     private JComponent createContentPanel() {
-        JXEditorPane dataCloudInformationText = createDataCloudInformationText();
 
+        // 1. Create components
+        final JEditorPane informationText = createDataCloudInformationText();
+        invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
+        invalidCredentialsLabel.setSize(500, Integer.MAX_VALUE);
+        invalidCredentialsLabel.setForeground(new Color(170,10,10));
+        final JXLabel usernameLabel = new JXLabel("Name:");
+        final JXLabel passwordLabel = new JXLabel("Password:");
         final JXTextField usernameTextField = WidgetFactory.createTextField("username");
         usernameTextField.setName("username");
-
         final JPasswordField passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
-
         final JButton signInButton = WidgetFactory.createDefaultButton("Sign in", IconUtils.APPLICATION_ICON);
+        final JCheckBox dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
+        final DCPanel result = new DCPanel();
+        result.setOpaque(true);
+
+        // 2. Layout
+        GroupLayout layout = new GroupLayout(result);
+        result.setLayout(layout);
+        result.setBorder(new EmptyBorder(15,15,15,15));
+
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addComponent(informationText, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(usernameTextField, GroupLayout.PREFERRED_SIZE, usernameTextField.getPreferredSize().height+5, usernameTextField.getPreferredSize().height+5)
+                    .addComponent(usernameLabel)
+                )
+                .addGap(3)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, passwordTextField.getPreferredSize().height+5, passwordTextField.getPreferredSize().height+5)
+                    .addComponent(passwordLabel)
+                )
+                .addGap(5)
+                .addComponent(invalidCredentialsLabel)
+                .addGap(20, 20, Integer.MAX_VALUE)
+                .addComponent(dontShowAgainCheckBox)
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(signInButton)
+                )
+        );
+
+        layout.setHorizontalGroup(layout.createParallelGroup()
+            .addComponent(informationText)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20)
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(usernameLabel)
+                        .addComponent(passwordLabel)
+                )
+                .addGap(5)
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(usernameTextField)
+                    .addComponent(passwordTextField)
+                )
+                .addGap(20)
+            )
+            .addComponent(invalidCredentialsLabel)
+            .addComponent(dontShowAgainCheckBox)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Integer.MAX_VALUE)
+                .addComponent(signInButton)
+                .addGap(0, 0, Integer.MAX_VALUE)
+            )
+        );
+
+        // 3. Add listeners
+        // TODO: don't remember on click the checkbox, but on dialog close.
+        dontShowAgainCheckBox.addActionListener(new DisableShowDialog(dontShowAgainCheckBox));
         signInButton.addActionListener(new SingInDataCloudListener(usernameTextField, passwordTextField, signInButton));
 
-        final JCheckBox disableShowCheckBox = new JCheckBox("Don't show again.", false);
-        disableShowCheckBox.addActionListener(new DisableShowDialog(disableShowCheckBox));
-
-
-        final DCPanel result = new DCPanel();
-
-        final DCPanel innerPanel = new DCPanel();
-        innerPanel.setLayout(new VerticalLayout());
-        innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20,
-                0, 0)));
-        innerPanel.add(dataCloudInformationText);
-
-        result.setLayout(new VerticalLayout());
-        result.add(Box.createVerticalStrut(100));
-        result.add(innerPanel);
-        innerPanel.add(Box.createVerticalStrut(5));
-        innerPanel.add(usernameTextField);
-        innerPanel.add(Box.createVerticalStrut(5));
-        innerPanel.add(passwordTextField);
-        innerPanel.add(Box.createVerticalStrut(5));
-        innerPanel.add(signInButton);
-        innerPanel.add(Box.createVerticalStrut(5));
-        innerPanel.add(disableShowCheckBox);
         return result;
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return false;
+    protected String getBannerTitle() {
+        return "Sign In / Register";
     }
 
     @Override
-    protected boolean isCentered() {
+    protected int getDialogWidth() {
+        return 500;
+    }
+
+    @Override
+    protected JComponent getDialogContent() {
+        return _contentPanel;
+    }
+
+
+    protected boolean isWindowResizable() {
         return true;
     }
 
     @Override
-    protected JComponent getWindowContent() {
-        DCPanel outerPanel = new DCPanel();
-        outerPanel.setLayout(new BorderLayout());
-
-        outerPanel.add(_contentPanel, BorderLayout.CENTER);
-
-        outerPanel.setPreferredSize(new Dimension(500, 300));
-
-        return outerPanel;
-    }
-
-
-    @Override
     public String getWindowTitle() {
-        return "DataCloud";
+        return "DataCloud Sign In";
     }
 
     @Override
@@ -159,13 +178,24 @@ public class DataCloudLogInWindow extends AbstractWindow{
         return ImageManager.get().getImageFromCache(IconUtils.APPLICATION_ICON);
     }
 
-
-    private JXEditorPane createDataCloudInformationText(){
-        final JXEditorPane editorPane = new JXEditorPane("text/html",
-                "Text");
+    private JEditorPane createDataCloudInformationText(){
+        final DCHtmlBox editorPane = new DCHtmlBox("");
+        editorPane.setSize(500, Integer.MAX_VALUE);
+        editorPane.setText(
+                "<html>HI! Thank you for using DataCleaner." +
+                " Are you aware that there are many cool features available online?" +
+                " Just register on our <a href=\"http://datacleaner.org\">website</a> and you can immediately use" +
+                " them to improve your data quality." +
+                " (You will get free credits to spend.) Enter your credentials to:" +
+                "<ul>" +
+                "   <li>Validate your contacts addresses/emails." +
+                "   <li>Parse names, phones, emails." +
+                "   <li>Ensure you have recent addresses of your contacts." +
+                "</ul>" +
+                "<b>Your <a href=\"http://datacleaner.org\">datacleaner.org</a> credentials:</b>");
         editorPane.setEditable(false);
         editorPane.setOpaque(false);
-        editorPane.setFont(WidgetUtils.FONT_HEADER2);
+        //editorPane.setFont(WidgetUtils.FONT_HEADER2);
         return editorPane;
     }
 
@@ -188,11 +218,11 @@ public class DataCloudLogInWindow extends AbstractWindow{
             try {
                 new ComponentRESTClient(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
             } catch (Exception ex) {
-                logger.error("Sign in DataCloud failed. " + ex.getMessage());
-                button.setBackground(Color.RED);
+                invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
+                logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
                 return;
             }
-            logger.debug("Sign in DataCloud. User name: {}", userName);
+            logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
             RemoteServersConfigUtils remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
             RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
@@ -202,7 +232,6 @@ public class DataCloudLogInWindow extends AbstractWindow{
             button.setBackground(Color.GREEN);
         }
     }
-
 
     private class DisableShowDialog implements ActionListener {
         private final JCheckBox _jCheckBox;

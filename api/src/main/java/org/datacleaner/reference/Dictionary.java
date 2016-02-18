@@ -54,4 +54,15 @@ public interface Dictionary extends ReferenceData, Serializable {
      * @return
      */
     public DictionaryConnection openConnection(DataCleanerConfiguration configuration);
+    
+    /**
+     * Determines if the {@link Dictionary} is defined as "case sensitive"
+     * meaning that the dictionary terms can be matched to regardless of text
+     * casing.
+     * 
+     * @return
+     */
+    public default boolean isCaseSensitive() {
+        return true;
+    }
 }

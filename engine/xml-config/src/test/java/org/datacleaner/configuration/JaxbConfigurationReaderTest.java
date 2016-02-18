@@ -72,6 +72,8 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.StringPatternConnection;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.SynonymCatalogConnection;
+import org.datacleaner.reference.TextFileDictionary;
+import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.server.HadoopClusterInformation;
@@ -203,7 +205,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-valid.xml"));
 
         DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
-        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
+        assertEquals("[composite_datastore, my database, mydb_jndi, mydb_neo4j, persons_csv]",
                 Arrays.toString(datastoreCatalog.getDatastoreNames()));
 
         assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);
@@ -547,7 +549,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-remote-servers.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
         Assert.assertEquals(false, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(true, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(3, remoteConf.getServerList().size());
 
         RemoteServerData server0 = remoteConf.getServerList().get(0);
@@ -574,7 +575,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-remote-servers-empty.xml"));
         RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
         Assert.assertEquals(true, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(false, remoteConf.isShowComponentsFromAllServers());
         Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 
@@ -593,5 +593,27 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 (HadoopClusterInformation) serverInformationCatalog.getServer("namenode");
         Assert.assertEquals("namenode", namenode.getName());
         Assert.assertEquals("hdfs://localhost:8020/", namenode.getConfiguration().get("fs.defaultFS"));
+    }
+
+
+    public void testReadReferenceDataWithResources() throws Exception {
+        DataCleanerConfiguration configuration = reader.create(new File(
+                "src/test/resources/example-configuration-reference-data-resource-paths.xml"));
+
+        TextFileDictionary dictionary = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
+                "dictionary");
+        assertEquals("C:/absolute/path/to/dictionary.txt", dictionary.getFilename());
+
+        TextFileDictionary dictionary2 = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
+                "dictionary2");
+        assertEquals("C:/absolute/path/to/dictionary.txt", dictionary2.getFilename());
+
+        TextFileSynonymCatalog synonyms = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
+                .getSynonymCatalog("synonyms");
+        assertEquals("relative/path/to/synonyms.txt", synonyms.getFilename());
+
+        TextFileSynonymCatalog synonyms2 = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
+                .getSynonymCatalog("synonyms2");
+        assertEquals("relative/path/to/synonyms.txt", synonyms2.getFilename());
     }
 }

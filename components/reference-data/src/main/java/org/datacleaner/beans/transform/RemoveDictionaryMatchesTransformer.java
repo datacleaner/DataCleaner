@@ -21,7 +21,10 @@ package org.datacleaner.beans.transform;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +50,7 @@ import org.datacleaner.components.categories.ReferenceDataCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
+import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -93,7 +97,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     DataCleanerConfiguration _configuration;
 
     private DictionaryConnection _dictionaryConnection;
-    private List<String> dictionaryValues;
+    private Map<String, Pattern> multiWordDictionaryPatterns;
 
     public RemoveDictionaryMatchesTransformer() {
     }
@@ -133,11 +137,20 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Initialize
     public void init() {
         _dictionaryConnection = _dictionary.openConnection(_configuration);
-        dictionaryValues = new ArrayList<>();
-
+        multiWordDictionaryPatterns = new LinkedHashMap<>();
+        
         final Iterator<String> allValues = _dictionaryConnection.getLengthSortedValues();
         while (allValues.hasNext()) {
-            dictionaryValues.add(allValues.next());
+            final String value = allValues.next();
+            if (!StringUtils.isSingleWord(value)) {
+                final Pattern pattern;
+                if (_dictionary.isCaseSensitive()) {
+                    pattern = Pattern.compile("\\b" + Pattern.quote(value) + "\\b");
+                } else {
+                    pattern = Pattern.compile("\\b" + Pattern.quote(value.toLowerCase()) + "\\b");
+                }
+                multiWordDictionaryPatterns.put(value, pattern);
+            }
         }
     }
 
@@ -158,8 +171,14 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public Object[] transform(String value) {
         final List<String> removedParts = new ArrayList<>(2);
         if (!Strings.isNullOrEmpty(value)) {
-            for(String entry : dictionaryValues) {
-                final Matcher matcher = Pattern.compile("\\b" + Pattern.quote(entry) + "\\b").matcher(value);
+            for (Entry<String, Pattern> entry : multiWordDictionaryPatterns.entrySet()) {
+                final Pattern pattern = entry.getValue();
+                final Matcher matcher;
+                if (_dictionary.isCaseSensitive()) {
+                    matcher = pattern.matcher(value);
+                } else {
+                    matcher = pattern.matcher(value.toLowerCase());
+                }
                 while(matcher.find()){
                     final int start;
                     final int end;
@@ -175,9 +194,26 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                     }
 
                     value = value.substring(0, start) + value.substring(end);
-                    removedParts.add(entry);
+                    removedParts.add(entry.getKey());
                 }
             }
+            
+            // do word-by-word dictionary lookups
+            final StringBuilder sb = new StringBuilder();
+            final List<String> tokens = StringUtils.splitOnWordBoundaries(value, true);
+            for (String token : tokens) {
+                if (StringUtils.isSingleWord(token))  {
+                    if (_dictionaryConnection.containsValue(token)) {
+                        removedParts.add(token);
+                    } else {
+                        sb.append(token);
+                    }
+                } else {
+                    // this is a delim - just add it
+                    sb.append(token);
+                }
+            }
+            value = sb.toString();
         }
 
         switch (_removedMatchesType) {

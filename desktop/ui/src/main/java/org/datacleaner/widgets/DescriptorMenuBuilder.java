@@ -44,7 +44,6 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.CollectionUtils2;
-import org.datacleaner.util.ComponentDescriptorComparator;
 import org.datacleaner.util.DeprecatedComponentPredicate;
 import org.datacleaner.util.DisplayNameComparator;
 import org.slf4j.Logger;
@@ -121,14 +120,15 @@ public final class DescriptorMenuBuilder {
     }
 
     public static void createMenuStructure(final MenuCallback callback,
-            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean showAllRemoteComponents) {
-        final Collection<? extends ComponentDescriptor<?>> finalComponentDescriptors = getFinalComponentDescriptors(
-                componentDescriptors, showAllRemoteComponents);
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors) {
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
+                componentDescriptors, new DeprecatedComponentPredicate());
+        
         final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
-        buildSubMenus(categories, finalComponentDescriptors);
+        buildSubMenus(categories, filteredDescriptors);
         placeSubMenus(categories, callback);
 
-        for (ComponentDescriptor<?> descriptor : finalComponentDescriptors) {
+        for (ComponentDescriptor<?> descriptor : filteredDescriptors) {
             callback.addComponentDescriptor(descriptor);
         }
     }
@@ -171,32 +171,6 @@ public final class DescriptorMenuBuilder {
         }
     }
 
-    private static Collection<? extends ComponentDescriptor<?>> getFinalComponentDescriptors(
-            Collection<? extends ComponentDescriptor<?>> allComponentDescriptors, boolean showAllRemoteComponents) {
-        allComponentDescriptors = CollectionUtils2.sorted(allComponentDescriptors, new ComponentDescriptorComparator());
-        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
-                allComponentDescriptors, new DeprecatedComponentPredicate());
-
-        if (showAllRemoteComponents) {
-            return filteredDescriptors;
-        }
-
-        String lastName = "";
-        Collection<ComponentDescriptor<?>> componentDescriptorsWithoutDuplicates = new ArrayList<>();
-
-        for (ComponentDescriptor<?> componentDescriptor : filteredDescriptors) {
-            String displayName = componentDescriptor.getDisplayName();
-
-            if (!lastName.equals(displayName)) {
-                componentDescriptorsWithoutDuplicates.add(componentDescriptor);
-            }
-
-            lastName = displayName;
-        }
-
-        return componentDescriptorsWithoutDuplicates;
-    }
-
     private void initialize(final JComponent outerMenu) {
         final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
 
@@ -225,9 +199,7 @@ public final class DescriptorMenuBuilder {
             }
         };
 
-        boolean showAllRemoteComponents = _analysisJobBuilder.getConfiguration().getEnvironment()
-                .getRemoteServerConfiguration().isShowComponentsFromAllServers();
-        createMenuStructure(callback, _componentDescriptors, showAllRemoteComponents);
+        createMenuStructure(callback, _componentDescriptors);
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {

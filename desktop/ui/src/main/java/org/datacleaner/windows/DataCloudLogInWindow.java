@@ -79,6 +79,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
         invalidCredentialsLabel.setSize(500, Integer.MAX_VALUE);
         invalidCredentialsLabel.setForeground(new Color(170,10,10));
+        invalidCredentialsLabel.setOpaque(false);
         final JXLabel usernameLabel = new JXLabel("Name:");
         final JXLabel passwordLabel = new JXLabel("Password:");
         final JXTextField usernameTextField = WidgetFactory.createTextField("username");
@@ -87,6 +88,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordTextField.setName("password");
         final JButton signInButton = WidgetFactory.createDefaultButton("Sign in", IconUtils.APPLICATION_ICON);
         final JCheckBox dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
+        dontShowAgainCheckBox.setOpaque(false);
         final DCPanel result = new DCPanel();
         result.setOpaque(true);
 

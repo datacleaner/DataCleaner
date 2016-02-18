@@ -25,6 +25,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CompositeDescriptorProvider;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteDescriptorProviderImpl;
 
 /**
@@ -64,16 +65,21 @@ public class RemoteServersUtils {
      * @param password
      */
     public void createRemoteServer(String serverName, String serverUrl, String userName, String password) {
+        String url = serverUrl;
+        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName) && url == null) {
+            url = RemoteDescriptorProvider.DATACLOUD_URL;
+        }
         List<RemoteServerData> serverList =
                 _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
         RemoteServerData remoteServerData =
-                new RemoteServerDataImpl(serverUrl, serverName, userName, password);
+                new RemoteServerDataImpl(url, serverName, userName, password);
         serverList.add(remoteServerData);
 
         final CompositeDescriptorProvider descriptorProvider =
                 (CompositeDescriptorProvider) _configuration.getEnvironment().getDescriptorProvider();
 
         descriptorProvider.addDelegate(new RemoteDescriptorProviderImpl(remoteServerData));
+        descriptorProvider.refresh();
     }
 
     /**
@@ -83,7 +89,7 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public void updateRemoteServerCredentials(String serverName, String userName, String password){
+    public void updateCredentials(String serverName, String userName, String password){
         RemoteServerData serverConfig = getServerConfig(serverName);
         if(serverConfig == null){
             return;

@@ -45,8 +45,8 @@ public class RemoteServersConfigUtilsTest {
         DataCleanerConfigurationUpdater dataCleanerConfigurationUpdater = new DataCleanerConfigurationUpdater(configurationResource);
         NodeList server = dataCleanerConfigurationUpdater.getDocument().getElementsByTagName("server");
         Assert.assertEquals(3, server.getLength());
-        checkServerNode(server.item(1), "newServer", "URLserver", "user", "pass");
-        checkServerNode(server.item(2), "newServer2", "URLserver2", "user2", "pass2");
+        checkServerNode(server.item(1), "newServer", "URLserver", "user", SecurityUtils.encodePasswordWithPrefix("pass"));
+        checkServerNode(server.item(2), "newServer2", "URLserver2", "user2", SecurityUtils.encodePasswordWithPrefix("pass2"));
    }
 
     @Test
@@ -59,8 +59,8 @@ public class RemoteServersConfigUtilsTest {
         DataCleanerConfigurationUpdater dataCleanerConfigurationUpdater = new DataCleanerConfigurationUpdater(configurationResource);
         NodeList server = dataCleanerConfigurationUpdater.getDocument().getElementsByTagName("server");
         Assert.assertEquals(3, server.getLength());
-        checkServerNode(server.item(1), "newServer", "URLserver", "newUser", "newPassword");
-        checkServerNode(server.item(2), "newServer2", "URLserver2", "user2", "pass2");
+        checkServerNode(server.item(1), "newServer", "URLserver", "newUser", SecurityUtils.encodePasswordWithPrefix("newPassword"));
+        checkServerNode(server.item(2), "newServer2", "URLserver2", "user2", SecurityUtils.encodePasswordWithPrefix("pass2"));
     }
 
     private void checkServerNode(Node serverNode, String serverName, String serverUrl, String userName, String password){

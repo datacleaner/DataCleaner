@@ -31,12 +31,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
@@ -152,7 +149,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
             _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
             _remoteServersConfigUtils.writeCredentialsToConfig(DATACLOUD_SERVER_NAME, null, username, password);
         }else {
-            _remoteServersUtils.updateRemoteServerCredentials(DATACLOUD_SERVER_NAME, username, password);
+            _remoteServersUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
             _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
         }
     }

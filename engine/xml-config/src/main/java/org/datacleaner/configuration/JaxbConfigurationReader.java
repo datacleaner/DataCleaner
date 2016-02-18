@@ -446,11 +446,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         for (RemoteComponentServerType server : providerElement.getServer()) {
             final String serverName = (server.getName() == null
                     ? "server" + remoteServerConfiguration.getServerList().size() : server.getName());
-            final String serverUrl;
-            if(serverName.equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)){
+            String serverUrl = server.getUrl();
+            if(StringUtils.isNullOrEmpty(serverUrl) && serverName.equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)){
                 serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
-            }else {
-                serverUrl = server.getUrl();
             }
             RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
                     server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));

@@ -363,12 +363,20 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+    }
 
-        if (DataCloudLogInWindow.mayIShowIt(_userPreferences, _configuration)) {
-            DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, windowContext, this);
-            dataCloudLogInWindow.open();
-        }
-
+    @Override
+    public void open() {
+        super.open();
+        WidgetUtils.invokeSwingAction(new Runnable() {
+            @Override
+            public void run() {
+                if (DataCloudLogInWindow.mayIShowIt(_userPreferences, _configuration)) {
+                    DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, getWindowContext(), AnalysisJobBuilderWindowImpl.this);
+                    dataCloudLogInWindow.open();
+                }
+            }
+        });
     }
 
     @Override

@@ -77,7 +77,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         // 1. Create components
         final JEditorPane informationText = createDataCloudInformationText();
         invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
-        invalidCredentialsLabel.setSize(500, Integer.MAX_VALUE);
+        invalidCredentialsLabel.setSize(500-30, Integer.MAX_VALUE);
         invalidCredentialsLabel.setForeground(new Color(170,10,10));
         invalidCredentialsLabel.setOpaque(false);
         final JXLabel usernameLabel = new JXLabel("Name:");
@@ -121,17 +121,17 @@ public class DataCloudLogInWindow extends AbstractDialog {
         layout.setHorizontalGroup(layout.createParallelGroup()
             .addComponent(informationText)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20)
+                .addGap(0,0,Integer.MAX_VALUE)
                 .addGroup(layout.createParallelGroup()
                         .addComponent(usernameLabel)
                         .addComponent(passwordLabel)
                 )
                 .addGap(5)
                 .addGroup(layout.createParallelGroup()
-                    .addComponent(usernameTextField)
-                    .addComponent(passwordTextField)
+                    .addComponent(usernameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, 250)
+                    .addComponent(passwordTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, 250)
                 )
-                .addGap(20)
+                .addGap(0,0,Integer.MAX_VALUE)
             )
             .addComponent(invalidCredentialsLabel)
             .addComponent(dontShowAgainCheckBox)
@@ -167,7 +167,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
 
     protected boolean isWindowResizable() {
-        return true;
+        return false;
     }
 
     @Override
@@ -182,17 +182,18 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     private JEditorPane createDataCloudInformationText(){
         final DCHtmlBox editorPane = new DCHtmlBox("");
-        editorPane.setSize(500, Integer.MAX_VALUE);
+        editorPane.setSize(500-30, Integer.MAX_VALUE);
         editorPane.setText(
                 "<html>HI! Thank you for using DataCleaner." +
                 " Are you aware that there are many cool features available online?" +
                 " Just register on our <a href=\"http://datacleaner.org\">website</a> and you can immediately use" +
                 " them to improve your data quality." +
-                " (You will get free credits to spend.) Enter your credentials to:" +
-                "<ul>" +
-                "   <li>Validate your contacts addresses/emails." +
-                "   <li>Parse names, phones, emails." +
-                "   <li>Ensure you have recent addresses of your contacts." +
+                " (You will get free credits to spend.)" +
+                "<p>Enter your credentials to:" +
+                "<ul style=\"list-style-type:none\">" +
+                "   <li>\u2022 Validate your contacts addresses/emails." +
+                "   <li>\u2022 Parse names, phones, emails." +
+                "   <li>\u2022 Ensure you have recent addresses of your contacts." +
                 "</ul>" +
                 "<b>Your <a href=\"http://datacleaner.org\">datacleaner.org</a> credentials:</b>");
         editorPane.setEditable(false);

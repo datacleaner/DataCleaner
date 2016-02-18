@@ -313,7 +313,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         } catch (RuntimeException e) {
             boolean alreadyFailed = failed.getAndSet(true);
             if (!alreadyFailed) {
-                throw e;
+                throw new RuntimeException("Remote transformer failed: " + e.getMessage(), e);
             } else {
                 throw new PreviousErrorsExistException();
             }

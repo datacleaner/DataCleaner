@@ -105,7 +105,7 @@ public class RESTClientImpl implements RESTClient {
         }
 
         if (response.getStatus() != HttpCode.OK.getCode() && response.getStatus() != HttpCode.CREATED.getCode()) {
-            throw new RuntimeException("Remote transformer failed: " + response.getStatusInfo().getReasonPhrase() + " (error code: " + response.getStatus() +")");
+            throw new RuntimeException(response.getStatusInfo().getReasonPhrase() + " (error code: " + response.getStatus() +")");
         }
 
         String output = response.getEntity(String.class);

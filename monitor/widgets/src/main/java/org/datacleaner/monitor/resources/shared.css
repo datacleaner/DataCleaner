@@ -215,7 +215,7 @@ div.center {
 	padding-left: 36px;
 	background-repeat: no-repeat;
 	background-position: left center;
-	min-height: 22px;
+	line-height: 32px;
 }
 
 .JobWizardPanel .HeadingLabel {

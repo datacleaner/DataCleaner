@@ -206,6 +206,9 @@ public final class IconUtils {
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
     public static final String FILE_SEARCH = "images/filetypes/search-folder.png";
 
+    public static final String REMOTE_ICON_OVERLAY = "images/remote-icon-overlay.png";
+    public static final String REMOTE_ICON_OVERLAY_SMALL = "images/remote-icon-overlay-small.png";
+
     public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
 
     private static final ImageManager _imageManager = ImageManager.get();
@@ -297,19 +300,25 @@ public final class IconUtils {
     private static ImageIcon getIconFromData(ComponentDescriptor<?> componentDescriptor, int width) {
         String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
         Image image = _imageManager.getImageFromCache(cacheKey);
-        ImageIcon imageIcon = null;
+        ImageIcon imageIcon;
 
         if (image == null) {
             HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
-
             if (descriptorWithIcon.getIconData() == null || descriptorWithIcon.getIconData().length == 0) {
-                return null;
+                // If no data from server, use generic icon. (Then it will be possible to overlay it)
+                ClassLoader classLoader = componentDescriptor.getComponentClass().getClassLoader();
+                final String imagePath = getDescriptorImagePath(componentDescriptor, classLoader, true);
+                if (imagePath == null) {
+                    return null;
+                }
+                imageIcon = _imageManager.getImageIcon(imagePath, width, classLoader);
+            } else {
+                imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
             }
-
-            imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
             BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
+            imageIcon = addRemoteOverlay(imageIcon);
             _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
         } else {
             imageIcon = new ImageIcon(image);
@@ -317,6 +326,25 @@ public final class IconUtils {
 
         return imageIcon;
     }
+
+    public static ImageIcon addRemoteOverlay(ImageIcon imageIcon) {
+        BufferedImage bufferedImage;
+        int offset;
+        Image remoteIndicatorImage;
+        final int iconWidth = imageIcon.getIconWidth();
+        if(iconWidth >= ICON_SIZE_LARGE) {
+            offset = 8;
+            remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY);
+        } else {
+            offset = 3;
+            remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY_SMALL);
+        }
+        bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, offset, null);
+        bufferedImage.getGraphics().drawImage(remoteIndicatorImage, iconWidth - remoteIndicatorImage.getWidth(null) + offset, 0, null);
+        return new ImageIcon(bufferedImage);
+    }
+
 
     public static ImageIcon getTransparentIcon(int width) {
         switch (width) {

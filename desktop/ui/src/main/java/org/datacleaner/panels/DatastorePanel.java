@@ -415,7 +415,7 @@ public class DatastorePanel extends DCPanel {
             return datastore.getDescription();
         }
         if (datastore instanceof FileDatastore) {
-            return ((FileDatastore) datastore).getFilename();
+            return ((FileDatastore) datastore).getFilename().replaceAll("\\{[^\\}]*\\}","");
         } else if (datastore instanceof JdbcDatastore) {
             final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
             final String jdbcUrl = jdbcDatastore.getJdbcUrl();

@@ -37,13 +37,15 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceStructure;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A widget which allows the user to select/enter a {@link Resource} to use for
  * some file-like operation.
  */
 public class ResourceSelector extends DCPanel implements ResourceTypePresenter<Resource> {
-
+    private static final Logger logger = LoggerFactory.getLogger(ResourceSelector.class);
     private static final long serialVersionUID = 1L;
 
     private final DCComboBox<String> _resourceTypeComboBox;
@@ -99,7 +101,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
             presenter = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
             break;
         case "hdfs":
-            presenter = new HdfsResourceTypePresenter();
+            presenter = new HdfsResourceTypePresenter(_userPreferences.getUserServers());
             break;
         default:
             presenter = new TextFieldResourceTypePresenter(resourceTypeHandler);

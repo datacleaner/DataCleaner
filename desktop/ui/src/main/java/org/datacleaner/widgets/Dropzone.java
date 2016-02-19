@@ -48,10 +48,12 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -119,7 +121,10 @@ public class Dropzone extends DCPanel {
                 logger.info("Selected HDFS file: " + selectedFile);
 
                 if (selectedFile != null) {
-                    final HdfsResource resource = new HdfsResource(selectedFile.toString());
+                    final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
+                                    .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
+                    final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
+                            HadoopResource.DEFAULT_CLUSTERREFERENCE);
                     final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
                             _datastoreCatalog, resource);
                     _datastoreSelectListener.datastoreSelected(datastore);

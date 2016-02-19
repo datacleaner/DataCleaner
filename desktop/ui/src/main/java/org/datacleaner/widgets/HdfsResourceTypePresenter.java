@@ -20,7 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,36 +28,30 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
-
-import com.google.common.base.Strings;
 
 /**
  * {@link ResourceTypePresenter} for {@link HdfsResource}s.
  */
 public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsResource> {
-
-    private final JXTextField _hostnameField;
-    private final JXTextField _portField;
     private final JXTextField _pathTextField;
 
     private final DCPanel _panel;
     private final List<ResourceTypePresenter.Listener> _listeners = new ArrayList<>(1);
     private final List<FileFilter> _fileFilters = new ArrayList<>();
+    private final HadoopClusterInformation _defaultCluster;
 
-    public HdfsResourceTypePresenter() {
-        _hostnameField = WidgetFactory.createTextField("hostname", 10);
-        _hostnameField.setText("localhost");
-        _portField = WidgetFactory.createTextField("port", 4);
-        _portField.setDocument(new NumberDocument(false, false));
-        _portField.setText("9000");
+    public HdfsResourceTypePresenter(final List<ServerInformation> servers) {
+        _defaultCluster = getDefaultEnvironmentCluster(servers);
+
         _pathTextField = WidgetFactory.createTextField("path", 12);
         _pathTextField.setText("/");
-
 
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
@@ -66,11 +59,19 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
                 onInputChanged();
             }
         };
-        _hostnameField.getDocument().addDocumentListener(documentListener);
-        _portField.getDocument().addDocumentListener(documentListener);
         _pathTextField.getDocument().addDocumentListener(documentListener);
 
-        _panel = DCPanel.flow(Alignment.LEFT, 2, 0, _hostnameField, _portField, _pathTextField);
+        _panel = DCPanel.flow(Alignment.LEFT, 2, 0, _pathTextField);
+    }
+
+    private HadoopClusterInformation getDefaultEnvironmentCluster(List<ServerInformation> serverInformationList) {
+        for (ServerInformation serverInformation : serverInformationList) {
+            if(serverInformation.getName().equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)){
+                return (HadoopClusterInformation) serverInformation;
+            }
+        }
+
+        return null;
     }
 
     private void onInputChanged() {
@@ -91,12 +92,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
             return null;
         }
 
-        final String hostname = _hostnameField.getText();
-        if (Strings.isNullOrEmpty(hostname)) {
-            return null;
-        }
-        final Integer port = Integer.parseInt(_portField.getText());
-        return new HdfsResource(hostname, port, path);
+        return new HadoopResource(URI.create(path.replace(" ", "%20")), _defaultCluster);
     }
 
     @Override
@@ -106,15 +102,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
         }
 
         final String qualifiedPath = resource.getQualifiedPath();
-
-        try {
-            URI uri = new URI(qualifiedPath);
-            _hostnameField.setText(uri.getHost());
-            _portField.setText(Integer.toString(uri.getPort()));
-            _pathTextField.setText(uri.getPath());
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Not a valid URI", e);
-        }
+        _pathTextField.setText(URI.create(qualifiedPath.replace(" ", "%20")).getPath());
     }
 
     @Override

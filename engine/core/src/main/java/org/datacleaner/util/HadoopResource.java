@@ -19,14 +19,12 @@
  */
 package org.datacleaner.util;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.URI;
-import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.server.HadoopClusterInformation;
 
 public class HadoopResource extends HdfsResource {
     public static final String DEFAULT_CLUSTERREFERENCE = "org.datacleaner.hadoop.environment";
@@ -48,6 +46,16 @@ public class HadoopResource extends HdfsResource {
         _clusterReferenceName = clusterReferenceName;
     }
 
+    public HadoopResource(final URI uri, final HadoopClusterInformation defaultCluster) {
+        this(uri, defaultCluster.getConfiguration(), defaultCluster.getName());
+    }
+
+    public HadoopResource(String uri, Configuration configuration, String clusterReferenceName) {
+        super(uri);
+        _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
+    }
+
     @Override
     public Configuration getHadoopConfiguration() {
         return _configuration;
@@ -63,6 +71,7 @@ public class HadoopResource extends HdfsResource {
     }
 
     public String getTemplatedPath() {
-        return getScheme() + "://{" + _clusterReferenceName + "}" + getFilepath();
+        return "hdfs://{" + _clusterReferenceName + "}" + getFilepath();
     }
+
 }

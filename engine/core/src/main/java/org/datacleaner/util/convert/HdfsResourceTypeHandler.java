@@ -33,12 +33,15 @@ import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link ResourceTypeHandler} for {@link HdfsResource} aka files on Hadoop
  * HDFS.
  */
 public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource> {
+    private static final Logger logger = LoggerFactory.getLogger(HdfsResourceTypeHandler.class);
     private final String _scheme;
     private final DataCleanerConfiguration _dataCleanerConfiguration;
 
@@ -64,7 +67,7 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
                 final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation) catalog.getServer(
                         _clusterReferenceName);
                 _configuration = hadoopClusterInformation.getConfiguration();
-                _uri = URI.create(matcher.group(2));
+                _uri = URI.create(matcher.group(2).replace(" ", "%20"));
             }
         }
     }

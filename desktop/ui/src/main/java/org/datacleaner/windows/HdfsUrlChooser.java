@@ -33,17 +33,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -65,7 +60,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.HdfsUtils;
@@ -518,12 +512,17 @@ public class HdfsUrlChooser extends JComponent {
         final Configuration configuration = clusterInformation.getConfiguration();
         URI uri = URI.create(configuration.get("fs.defaultFS"));
 
-        // TODO: This will sooner or later need to support a preexisting URL.
-        final HadoopResource resource = new HadoopResource(uri, configuration,
-                EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
+        // Make sure that there is a path to grab (the /)
+        if(uri.getPath().equals("")) {
+            uri = uri.resolve("/");
+        }
 
-        _currentDirectory = resource.getHadoopPath();
-        _fileSystem = resource.getHadoopFileSystem();
+        _currentDirectory = new Path(uri.getPath());
+        try {
+            _fileSystem = FileSystem.newInstance(configuration);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Illegal URI when showing HDFS chooser", e);
+        }
         final HdfsDirectoryModel model = (HdfsDirectoryModel) _fileList.getModel();
         model.updateFileList();
         _directoryComboBoxModel.updateDirectories();

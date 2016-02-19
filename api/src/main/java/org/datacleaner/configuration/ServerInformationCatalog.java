@@ -22,7 +22,7 @@ package org.datacleaner.configuration;
 
 import java.io.Serializable;
 
-public interface ServerInformationCatalog extends Serializable{
+public interface ServerInformationCatalog extends Serializable {
     /**
      * Determines if a server by a specific name is contained in the
      * {@link ServerInformationCatalog}.
@@ -32,7 +32,7 @@ public interface ServerInformationCatalog extends Serializable{
      */
     public default boolean containsServer(String name) {
         return getServer(name) != null;
-    };
+    }
 
     /**
      * Gets all the names of the servers in this datastore catalog.

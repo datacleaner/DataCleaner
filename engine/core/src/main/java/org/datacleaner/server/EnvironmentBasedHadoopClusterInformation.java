@@ -29,6 +29,7 @@ import org.apache.hadoop.conf.Configuration;
  */
 public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation
         implements HadoopClusterInformation {
+    private static final long serialVersionUID = 1L;
     public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
     public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
     private static final String[] CONFIGURATION_VARIABLES = { HADOOP_CONF_DIR, YARN_CONF_DIR };

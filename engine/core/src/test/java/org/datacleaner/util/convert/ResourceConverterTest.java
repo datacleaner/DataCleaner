@@ -23,8 +23,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;

@@ -19,13 +19,14 @@
  */
 package org.datacleaner.user;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.util.StringUtils;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Mutable/modifyable implementation of the {@link ServerInformationCatalog} interface. Used to
@@ -35,25 +36,20 @@ import java.util.List;
  */
 
 public class MutableServerInformationCatalog implements ServerInformationCatalog {
+    private static final long serialVersionUID = 1L;
     private final DomConfigurationWriter _configurationWriter;
     private final List<ServerInformationChangeListener> _listeners = new LinkedList<>();
+    private final List<ServerInformation> _updatedServerInformationList;
 
-    private final UserPreferences _userPreferences;
-
-    public MutableServerInformationCatalog(ServerInformationCatalog immutableDelegate, DomConfigurationWriter configurationWriter, UserPreferences userPreferences) {
+    public MutableServerInformationCatalog(ServerInformationCatalog immutableDelegate, DomConfigurationWriter configurationWriter) {
         _configurationWriter = configurationWriter;
-        _userPreferences = userPreferences;
+        _updatedServerInformationList = new ArrayList<>();
+
         String[] serverNames = immutableDelegate.getServerNames();
 
         for (String name : serverNames) {
-            if (containsServer(name)) {
-                // remove any copies of the server - the immutable (XML)
-                // version should always win
-                removeServer(getServer(name), false);
-            }
             addServerInformation(immutableDelegate.getServer(name), false);
         }
-
     }
 
     public void removeServer(ServerInformation ds) {
@@ -61,15 +57,13 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
     }
 
     private synchronized void removeServer(ServerInformation serverInformation, boolean externalize) {
-        final List<ServerInformation> userServers = _userPreferences.getUserServers();
-        if (userServers.remove(serverInformation)) {
+        if (_updatedServerInformationList.remove(serverInformation)) {
             for (ServerInformationChangeListener listener : _listeners) {
                 listener.onRemove(serverInformation);
             }
         }
         if (externalize) {
             _configurationWriter.removeServerInformation(serverInformation.getName());
-            _userPreferences.save();
         }
     }
 
@@ -82,14 +76,13 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
         if (StringUtils.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Server has no name!");
         }
-        final List<ServerInformation> serverInformations = _userPreferences.getUserServers();
-        for (ServerInformation serverInformation : serverInformations) {
+        for (ServerInformation serverInformation : _updatedServerInformationList) {
             if (name.equals(serverInformation.getName())) {
                 throw new IllegalArgumentException("A server with the name '" + name + "' already exists!");
             }
         }
 
-        serverInformations.add(sI);
+        _updatedServerInformationList.add(sI);
         for (ServerInformationChangeListener listener : _listeners) {
             listener.onAdd(sI);
         }
@@ -98,16 +91,14 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
             if (_configurationWriter.isExternalizable(sI)) {
                 _configurationWriter.externalize(sI);
             }
-            _userPreferences.save();
         }
     }
 
     @Override
     public String[] getServerNames() {
-        final List<ServerInformation> serverInformations = _userPreferences.getUserServers();
-        String[] names = new String[serverInformations.size()];
+        String[] names = new String[_updatedServerInformationList.size()];
         for (int i = 0; i < names.length; i++) {
-            names[i] = serverInformations.get(i).getName();
+            names[i] = _updatedServerInformationList.get(i).getName();
         }
         return names;
     }
@@ -117,8 +108,8 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
         if (name == null) {
             return null;
         }
-        final List<ServerInformation> serverInformations = _userPreferences.getUserServers();
-        for (ServerInformation serverInformation : serverInformations) {
+
+        for (ServerInformation serverInformation : _updatedServerInformationList) {
             if (name.equals(serverInformation.getName())) {
                 return serverInformation;
             }

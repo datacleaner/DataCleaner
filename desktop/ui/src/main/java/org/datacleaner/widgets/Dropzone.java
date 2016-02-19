@@ -117,7 +117,7 @@ public class Dropzone extends DCPanel {
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, null, OpenType.LOAD);
+                final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, null, OpenType.LOAD);
                 logger.info("Selected HDFS file: " + selectedFile);
 
                 if (selectedFile != null) {

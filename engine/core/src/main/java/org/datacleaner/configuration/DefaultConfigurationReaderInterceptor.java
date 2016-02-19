@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.URI;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;

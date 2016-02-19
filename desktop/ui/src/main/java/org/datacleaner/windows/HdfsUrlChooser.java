@@ -345,10 +345,6 @@ public class HdfsUrlChooser extends JComponent {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_WIDTH = 600;
     private static final int SPACE = 10;
-    public static final String FS_DEFAULT_FS = "fs.defaultFS";
-    public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
-    public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
-    private static final String[] CONFIGURATION_DIRECTORIES = { HADOOP_CONF_DIR, YARN_CONF_DIR};
     public static String HDFS_SCHEME = "hdfs";
     private final OpenType _openType;
     private final JList<FileStatus> _fileList;
@@ -379,7 +375,7 @@ public class HdfsUrlChooser extends JComponent {
         pathsComboBox.addListener(new DCComboBox.Listener<Path>() {
             @Override
             public void onItemSelected(final Path directory) {
-                if(!directory.isAbsoluteAndSchemeAuthorityNull()) {
+                if (!directory.isAbsoluteAndSchemeAuthorityNull()) {
                     _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
                 }
                 _currentDirectory = directory;
@@ -510,14 +506,9 @@ public class HdfsUrlChooser extends JComponent {
                 (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
 
         final Configuration configuration = clusterInformation.getConfiguration();
-        URI uri = URI.create(configuration.get("fs.defaultFS"));
 
-        // Make sure that there is a path to grab (the /)
-        if(uri.getPath().equals("")) {
-            uri = uri.resolve("/");
-        }
+        _currentDirectory = new Path("/");
 
-        _currentDirectory = new Path(uri.getPath());
         try {
             _fileSystem = FileSystem.newInstance(configuration);
         } catch (IOException e) {

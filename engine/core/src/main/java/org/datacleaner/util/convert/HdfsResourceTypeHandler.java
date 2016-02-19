@@ -52,13 +52,14 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
         Builder(ServerInformationCatalog catalog, String templatedUri) {
             final Matcher matcher = _pattern.matcher(templatedUri);
             if(!matcher.matches()){
+                final String fixedUri = templatedUri.replace(" ", "%20");
                 _clusterReferenceName = HadoopResource.DEFAULT_CLUSTERREFERENCE;
                 final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation)
                         catalog.getServer(_clusterReferenceName);
 
                 _configuration = hadoopClusterInformation.getConfiguration();
-                _configuration.set("fs.defaultFS", templatedUri);
-                _uri = URI.create(templatedUri);
+                _configuration.set("fs.defaultFS", fixedUri);
+                _uri = URI.create(fixedUri);
             } else {
                _clusterReferenceName = matcher.group(1);
                 final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation) catalog.getServer(

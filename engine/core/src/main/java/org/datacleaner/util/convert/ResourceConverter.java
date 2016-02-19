@@ -34,7 +34,6 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;

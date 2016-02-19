@@ -30,6 +30,7 @@ import org.datacleaner.util.SystemProperties;
  */
 public class DirectConnectionHadoopClusterInformation extends EnvironmentBasedHadoopClusterInformation
         implements HadoopClusterInformation {
+    private static final long serialVersionUID = 1L;
     private final URI _nameNodeUri;
 
     public DirectConnectionHadoopClusterInformation(final String name, final String description, final URI nameNodeUri) {

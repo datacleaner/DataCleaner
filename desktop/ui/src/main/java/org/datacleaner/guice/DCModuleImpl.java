@@ -281,8 +281,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                             c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), true));
                     final MutableServerInformationCatalog serverInformationCatalog =
-                            new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter,
-                                    userPreferences);
+                            new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter);
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();

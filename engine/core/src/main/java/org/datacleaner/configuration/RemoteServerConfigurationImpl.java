@@ -37,4 +37,24 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     public List<RemoteServerData> getServerList() {
         return remoteServerDataList;
     }
+
+    @Override
+    public RemoteServerData getServerConfig(String serverName) {
+        if (serverName == null) {
+            return null;
+        }
+
+        for (RemoteServerData remoteServerData : remoteServerDataList) {
+            String configServerName = remoteServerData.getServerName();
+            if (configServerName == null) {
+                continue;
+            }
+            if (configServerName.toLowerCase().equals(serverName.toLowerCase())) {
+                return remoteServerData;
+            }
+        }
+        return null;
+    }
+
+
 }

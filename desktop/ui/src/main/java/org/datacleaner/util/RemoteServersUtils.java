@@ -39,24 +39,6 @@ public class RemoteServersUtils {
         _configuration = configuration;
     }
 
-    public RemoteServerData getServerConfig(String serverName) {
-        if (serverName == null) {
-            return null;
-        }
-        List<RemoteServerData> serverList =
-                _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        for (RemoteServerData remoteServerData : serverList) {
-            String configServerName = remoteServerData.getServerName();
-            if (configServerName == null) {
-                continue;
-            }
-            if (configServerName.toLowerCase().equals(serverName.toLowerCase())) {
-                return remoteServerData;
-            }
-        }
-        return null;
-    }
-
     /**
      * It creates new RemoteServerData and Remote server provider
      *
@@ -91,7 +73,7 @@ public class RemoteServersUtils {
      * @param password
      */
     public void updateCredentials(String serverName, String userName, String password){
-        RemoteServerData serverConfig = getServerConfig(serverName);
+        RemoteServerData serverConfig = _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(serverName);
         if(serverConfig == null){
             return;
         }

@@ -35,7 +35,6 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -77,7 +76,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
     }
 
     public static boolean mayIShowIt(UserPreferences userPreferences, DataCleanerConfiguration configuration) {
-        final RemoteServerData datacloudConfig = new RemoteServersUtils(configuration)
+        final RemoteServerData datacloudConfig = configuration.getEnvironment().getRemoteServerConfiguration()
                 .getServerConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
         String showDataCloudDialog = userPreferences.getAdditionalProperties()
                 .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "true");

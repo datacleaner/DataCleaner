@@ -115,7 +115,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
 
     private void setupFields() {
         final RemoteServerData serverData =
-                _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
+                _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(DATACLOUD_SERVER_NAME);
         if (serverData != null) {
             usernameTextField.setText(Strings.nullToEmpty(serverData.getUsername()));
             passwordTextField.setText(Strings.nullToEmpty(serverData.getPassword()));
@@ -160,7 +160,8 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
      * @return True - everything is ok. False - problem, do not nothing.
      */
     private boolean updateDcConfiguration() {
-        final RemoteServerData existingServerData = _remoteServersUtils.getServerConfig(DATACLOUD_SERVER_NAME);
+        final RemoteServerData existingServerData =
+                _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(DATACLOUD_SERVER_NAME);
         final String username = usernameTextField.getText();
         final String password = new String(passwordTextField.getPassword());
         try {
@@ -170,10 +171,10 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
             return false;
         }
         invalidCredentialsLabel.setText("");
-        if(existingServerData == null){
+        if (existingServerData == null) {
             _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
             _remoteServersConfigUtils.createCredentials(DATACLOUD_SERVER_NAME, null, username, password);
-        }else {
+        } else {
             _remoteServersUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
             _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
         }

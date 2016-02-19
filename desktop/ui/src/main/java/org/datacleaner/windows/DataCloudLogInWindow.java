@@ -210,7 +210,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return "DataCloud Sign In";
+        return "Sign in to DataCloud";
     }
 
     @Override

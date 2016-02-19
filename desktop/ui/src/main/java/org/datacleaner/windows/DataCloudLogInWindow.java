@@ -51,9 +51,9 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private static final Logger logger = LoggerFactory.getLogger(DataCloudLogInWindow.class);
     public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
 
-    final private DataCleanerConfiguration _configuration;
-    final private UserPreferences _userPreferences;
-    final private JComponent _contentPanel;
+    private final DataCleanerConfiguration _configuration;
+    private final UserPreferences _userPreferences;
+    private final JComponent _contentPanel;
     private JEditorPane invalidCredentialsLabel;
     private JXTextField usernameTextField;
     private JPasswordField passwordTextField;

@@ -77,8 +77,14 @@ public class RemoteServersUtils {
         if(serverConfig == null){
             return;
         }
-        serverConfig.setUsername(userName);
-        serverConfig.setPassword(password);
+        if (serverConfig instanceof UnsupportedOperationException) {
+            RemoteServerDataImpl remoteServerDataImpl = (RemoteServerDataImpl) serverConfig;
+            remoteServerDataImpl.setUsername(userName);
+            remoteServerDataImpl.setPassword(password);
+        } else {
+            throw new UnsupportedOperationException(
+                    "Update credentials failed. RemoteServerData is not instance of RemoteServerDataImpl");
+        }
         _configuration.getEnvironment().getDescriptorProvider().refresh();
     }
 

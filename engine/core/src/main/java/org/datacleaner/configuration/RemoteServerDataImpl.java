@@ -62,12 +62,10 @@ public class RemoteServerDataImpl implements RemoteServerData {
         return password;
     }
 
-    @Override
     public void setUsername(final String username) {
         this.username = username;
     }
 
-    @Override
     public void setPassword(final String password) {
         this.password = password;
     }

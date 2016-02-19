@@ -139,7 +139,7 @@ public final class LookAndFeelManager {
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("Menu.border", WidgetUtils.BORDER_MENU_ITEM);
         UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_BLUE_DARK);
         UIManager.put("MenuItem.background", menuBackground);
         UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("MenuItem.border", WidgetUtils.BORDER_MENU_ITEM);

@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -99,7 +98,7 @@ public class DCSplashPanel extends DCPanel {
      * @return
      */
     public static JComponent createTitleLabel(final String text, final ActionListener backButtonActionListener) {
-        final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
+        final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_DARK, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
 
         final EmptyBorder border = new EmptyBorder(20, MARGIN_LEFT, 10, 0);

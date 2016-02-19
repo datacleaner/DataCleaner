@@ -88,16 +88,21 @@ public final class WidgetUtils {
     @Deprecated
     public static final Font FONT_UBUNTU_BOLD_ITALIC;
     
-    public static final Font FONT_MULI_REGULAR;
-    public static final Font FONT_MULI_LIGHT;
-    public static final Font FONT_MULI_LIGHT_ITALIC;
-    public static final Font FONT_LATO_BOLD;
-    public static final Font FONT_LATO_BOLD_ITALIC;
-
+    @Deprecated
     public static final Font FONT_OPENSANS_PLAIN;
+    @Deprecated
     public static final Font FONT_OPENSANS_BOLD;
+    @Deprecated
     public static final Font FONT_OPENSANS_ITALIC;
+    @Deprecated
     public static final Font FONT_OPENSANS_BOLD_ITALIC;
+    
+    private static final Font FONT_MULI_PLAIN;
+    private static final Font FONT_MULI_BOLD;
+    private static final Font FONT_MULI_LIGHT;
+    private static final Font FONT_MULI_LIGHT_ITALIC;
+    private static final Font FONT_LATO_BOLD;
+    private static final Font FONT_LATO_BOLD_ITALIC;
 
     public static final Font FONT_FONTAWESOME;
 
@@ -111,34 +116,36 @@ public final class WidgetUtils {
             }
         }
         
-        FONT_MULI_REGULAR = createFont("fonts/Muli.ttf");
+        FONT_MULI_PLAIN = createFont("fonts/Muli.ttf");
+        FONT_MULI_BOLD = createFont("fonts/Muli-Bold.ttf");
         FONT_MULI_LIGHT = createFont("fonts/Muli-Light.ttf");
         FONT_MULI_LIGHT_ITALIC = createFont("fonts/Muli-LightItalic.ttf");
         FONT_LATO_BOLD = createFont("fonts/Lato-Bold.ttf");
         FONT_LATO_BOLD_ITALIC = createFont("fonts/Lato-BoldItalic.ttf");
 
-        FONT_UBUNTU_PLAIN = FONT_MULI_REGULAR;
+        FONT_UBUNTU_PLAIN = FONT_MULI_PLAIN;
         FONT_UBUNTU_ITALIC = FONT_MULI_LIGHT_ITALIC;
         FONT_UBUNTU_BOLD = FONT_LATO_BOLD;
         FONT_UBUNTU_BOLD_ITALIC = FONT_LATO_BOLD_ITALIC;
 
-        FONT_OPENSANS_PLAIN = createFont("fonts/OpenSans-Regular.ttf");
-        FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
-        FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
-        FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
+        FONT_OPENSANS_PLAIN = FONT_MULI_PLAIN;
+        FONT_OPENSANS_ITALIC = FONT_MULI_LIGHT_ITALIC;
+        FONT_OPENSANS_BOLD = FONT_LATO_BOLD;
+        FONT_OPENSANS_BOLD_ITALIC = FONT_LATO_BOLD_ITALIC;
 
         FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
-        fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
-        fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
+        fonts.put(FONT_MULI_PLAIN.getName(), FONT_MULI_PLAIN);
     }
 
     public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(21f);
     public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(18f);
     public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(16f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
-    public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
-    public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
+    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(14f);
+    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(13f);
+    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(13f);
+    public static final Font FONT_SMALL = FONT_MULI_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
     public static final int SCROLL_UNIT_INCREMENT = 20;
@@ -147,6 +154,11 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
     public static final Color BG_COLOR_BLUE_DARK = slightlyDarker(BG_COLOR_BLUE_MEDIUM);
+    
+    // green base color of DC styling (#70be44)
+    public static final Color BG_COLOR_GREEN_MEDIUM = new ColorUIResource(122, 190, 68);
+    public static final Color BG_COLOR_GREEN_BRIGHT = slightlyBrighter(BG_COLOR_GREEN_MEDIUM);
+    public static final Color BG_COLOR_GREEN_DARK = slightlyDarker(BG_COLOR_GREEN_MEDIUM);
 
     // orange base color of DC styling (#f58132)
     public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(245, 129, 50);
@@ -187,7 +199,8 @@ public final class WidgetUtils {
     // charts etc.
     
     // Green: #70be44
-    public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(122, 190, 68);
+    @Deprecated
+    public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = BG_COLOR_GREEN_MEDIUM;
 
     // Red: #d32424
     public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);

@@ -54,6 +54,7 @@ import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -871,5 +872,52 @@ public class DomConfigurationWriter {
         final Element element = getDocument().createElement(elementName);
         element.setTextContent(stringValue);
         parent.appendChild(element);
+    }
+
+
+    public void writeRemoteServer(String serverName, String url, String username, String password){
+        Element descriptorProviderElement =
+                getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
+        Element remoteComponentsElement =
+                getOrCreateChildElementByTagName(descriptorProviderElement, "remote-components");
+
+        Element serverElement = getDocument().createElement("server");
+        remoteComponentsElement.appendChild(serverElement);
+
+        if(!StringUtils.isNullOrEmpty(serverName)){
+            createElement(serverElement, "name", serverName);
+        }
+
+        if(!StringUtils.isNullOrEmpty(url)){
+            createElement(serverElement, "url", url);
+        }
+        createElement(serverElement, "username", username);
+        createElement(serverElement, "password", SecurityUtils.encodePasswordWithPrefix(password));
+        onDocumentChanged(getDocument());
+    }
+
+    private void createElement(Element parent, String elementName, String textContext){
+        Element nameElement = getDocument().createElement(elementName);
+        parent.appendChild(nameElement);
+        nameElement.setTextContent(textContext);
+    }
+
+    public void updateRemoteServerCredentials(String serverName, String username, String password) {
+        Element remoteComponents = getChildElementByTagName(getDocumentElement(), "remote-components");
+        NodeList servers = remoteComponents.getElementsByTagName("server");
+        for (int i = 0; i < servers.getLength(); i++) {
+            if(servers.item(i) instanceof Element){
+                Element server = (Element) servers.item(i);
+                Element name = getChildElementByTagName(server, "name");
+                if(name!= null && name.equals(serverName)){
+                    Element usernameElemet = getChildElementByTagName(server, "username");
+                    usernameElemet.setTextContent(username);
+                    Element passwordElement = getChildElementByTagName(server, "password");
+                    passwordElement.setTextContent(SecurityUtils.encodePasswordWithPrefix(password));
+                    return;
+                }
+            }
+        }
+        onDocumentChanged(getDocument());
     }
 }

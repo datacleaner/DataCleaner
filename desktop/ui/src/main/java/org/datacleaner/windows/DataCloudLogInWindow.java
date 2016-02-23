@@ -74,7 +74,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     }
 
-    public static boolean mayIShowIt(UserPreferences userPreferences, DataCleanerConfiguration configuration) {
+    public static boolean isRelevantToShow(UserPreferences userPreferences, DataCleanerConfiguration configuration) {
         final RemoteServerData datacloudConfig = configuration.getEnvironment().getRemoteServerConfiguration()
                 .getServerConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
         String showDataCloudDialog = userPreferences.getAdditionalProperties()
@@ -189,7 +189,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     @Override
     protected String getBannerTitle() {
-        return "Sign In / Register";
+        return getWindowTitle();
     }
 
     @Override

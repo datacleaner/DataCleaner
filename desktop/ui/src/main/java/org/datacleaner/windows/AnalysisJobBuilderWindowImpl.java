@@ -371,7 +371,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         WidgetUtils.invokeSwingAction(new Runnable() {
             @Override
             public void run() {
-                if (DataCloudLogInWindow.mayIShowIt(_userPreferences, _configuration)) {
+                if (DataCloudLogInWindow.isRelevantToShow(_userPreferences, _configuration)) {
                     DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, getWindowContext(), AnalysisJobBuilderWindowImpl.this);
                     dataCloudLogInWindow.open();
                 }

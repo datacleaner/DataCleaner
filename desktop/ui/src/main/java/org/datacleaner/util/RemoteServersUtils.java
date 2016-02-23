@@ -22,6 +22,8 @@ package org.datacleaner.util;
 import java.util.List;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.descriptors.CompositeDescriptorProvider;
@@ -33,11 +35,6 @@ import org.datacleaner.restclient.ComponentRESTClient;
  * Utilities for better work with remote servers.
  */
 public class RemoteServersUtils {
-    final private DataCleanerConfiguration _configuration;
-
-    public RemoteServersUtils(final DataCleanerConfiguration configuration) {
-        _configuration = configuration;
-    }
 
     /**
      * It creates new RemoteServerData and Remote server provider
@@ -47,20 +44,15 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public void createRemoteServer(String serverName, String serverUrl, String userName, String password) {
-        String url = serverUrl;
-        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName) && url == null) {
-            url = RemoteDescriptorProvider.DATACLOUD_URL;
+    public static void addRemoteServer(
+            DataCleanerEnvironment env, String serverName, String serverUrl, String userName, String password) {
+        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName) && serverUrl == null) {
+            serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
         }
-        List<RemoteServerData> serverList =
-                _configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        RemoteServerData remoteServerData =
-                new RemoteServerDataImpl(url, serverName, userName, password);
-        serverList.add(remoteServerData);
+        getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
 
-        final CompositeDescriptorProvider descriptorProvider =
-                (CompositeDescriptorProvider) _configuration.getEnvironment().getDescriptorProvider();
-
+        RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
+        final CompositeDescriptorProvider descriptorProvider = (CompositeDescriptorProvider) env.getDescriptorProvider();
         descriptorProvider.addDelegate(new RemoteDescriptorProviderImpl(remoteServerData));
         descriptorProvider.refresh();
     }
@@ -72,23 +64,20 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public void updateCredentials(String serverName, String userName, String password){
-        RemoteServerData serverConfig = _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(serverName);
-        if(serverConfig == null){
-            return;
-        }
-        if (serverConfig instanceof UnsupportedOperationException) {
-            RemoteServerDataImpl remoteServerDataImpl = (RemoteServerDataImpl) serverConfig;
-            remoteServerDataImpl.setUsername(userName);
-            remoteServerDataImpl.setPassword(password);
-        } else {
-            throw new UnsupportedOperationException(
-                    "Update credentials failed. RemoteServerData is not instance of RemoteServerDataImpl");
-        }
-        _configuration.getEnvironment().getDescriptorProvider().refresh();
+    public static void updateRemoteServerCredentials(DataCleanerEnvironment env, String serverName, String userName, String password){
+        getMutableServerConfig(env).updateServerCredentials(serverName, userName, password);
+        env.getDescriptorProvider().refresh();
     }
 
-    public void checkServerWithCredentials(String url, String username, String password) throws Exception{
+    public static void checkServerWithCredentials(String url, String username, String password) throws Exception{
         new ComponentRESTClient(url, username, password);
+    }
+
+    private static MutableRemoteServerConfigurationImpl getMutableServerConfig(DataCleanerEnvironment env) {
+        RemoteServerConfiguration remServerConfig = env.getRemoteServerConfiguration();
+        if(! (remServerConfig instanceof MutableRemoteServerConfigurationImpl)) {
+            throw new UnsupportedOperationException("Remote server config is not instance of class " + MutableRemoteServerConfigurationImpl.class);
+        }
+        return (MutableRemoteServerConfigurationImpl)remServerConfig;
     }
 }

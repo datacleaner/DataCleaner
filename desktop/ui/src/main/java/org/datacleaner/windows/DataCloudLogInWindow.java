@@ -38,7 +38,6 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCHtmlBox;
@@ -249,22 +248,20 @@ public class DataCloudLogInWindow extends AbstractDialog {
             public void run() {
                 String userName = usernameTextField.getText();
                 String pass = new String(passwordTextField.getPassword());
-                RemoteServersUtils remoteServersUtils = new RemoteServersUtils(_configuration);
                 try {
-                    remoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+                    RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
                 } catch (Exception ex) {
                     invalidCredentialsLabel.setForeground(new Color(170, 10, 10));
                     invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
                     logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
                     return;
                 }
+
                 invalidCredentialsLabel.setText("");
                 logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
-                RemoteServersConfigUtils remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
-                remoteServersConfigUtils
-                        .createCredentials(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, null, userName, pass);
-                remoteServersUtils.createRemoteServer(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+                RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+
                 // close dialog
                 close();
             }

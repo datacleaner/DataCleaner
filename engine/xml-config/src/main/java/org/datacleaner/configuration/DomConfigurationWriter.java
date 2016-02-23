@@ -875,7 +875,7 @@ public class DomConfigurationWriter {
     }
 
 
-    public void writeRemoteServer(String serverName, String url, String username, String password){
+    public void addRemoteServer(String serverName, String url, String username, String password){
         Element descriptorProviderElement =
                 getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
         Element remoteComponentsElement =
@@ -896,10 +896,10 @@ public class DomConfigurationWriter {
         onDocumentChanged(getDocument());
     }
 
-    private void createElement(Element parent, String elementName, String textContext){
-        Element nameElement = getDocument().createElement(elementName);
-        parent.appendChild(nameElement);
-        nameElement.setTextContent(textContext);
+    private void createElement(Element parent, String elementName, String textContext) {
+        Element element = getDocument().createElement(elementName);
+        parent.appendChild(element);
+        element.setTextContent(textContext);
     }
 
     public void updateRemoteServerCredentials(String serverName, String username, String password) {
@@ -909,12 +909,12 @@ public class DomConfigurationWriter {
             if(servers.item(i) instanceof Element){
                 Element server = (Element) servers.item(i);
                 Element name = getChildElementByTagName(server, "name");
-                if(name!= null && name.equals(serverName)){
-                    Element usernameElemet = getChildElementByTagName(server, "username");
+                if(name!= null && serverName.equals(name.getTextContent())){
+                    Element usernameElemet = getOrCreateChildElementByTagName(server, "username");
                     usernameElemet.setTextContent(username);
-                    Element passwordElement = getChildElementByTagName(server, "password");
+                    Element passwordElement = getOrCreateChildElementByTagName(server, "password");
                     passwordElement.setTextContent(SecurityUtils.encodePasswordWithPrefix(password));
-                    return;
+                    break;
                 }
             }
         }

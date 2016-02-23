@@ -19,25 +19,18 @@
  */
 package org.datacleaner.widgets.options;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.RemoteServersConfigUtils;
 import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -57,8 +50,6 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private final DataCleanerConfiguration _configuration;
-    private final RemoteServersConfigUtils _remoteServersConfigUtils;
-    private final RemoteServersUtils _remoteServersUtils;
     private final JTextField usernameTextField;
     private final JPasswordField passwordTextField;
     private final JButton applyButton;
@@ -74,8 +65,6 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     public RemoteComponentsOptionsPanel(DataCleanerConfiguration configuration) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
-        _remoteServersConfigUtils = new RemoteServersConfigUtils(_configuration);
-        _remoteServersUtils = new RemoteServersUtils(_configuration);
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -160,23 +149,22 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
      * @return True - everything is ok. False - problem, do not nothing.
      */
     private boolean updateDcConfiguration() {
-        final RemoteServerData existingServerData =
-                _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(DATACLOUD_SERVER_NAME);
         final String username = usernameTextField.getText();
         final String password = new String(passwordTextField.getPassword());
         try {
-            _remoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
+            RemoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
         } catch (Exception ex) {
             invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
             return false;
         }
+
         invalidCredentialsLabel.setText("");
+        final RemoteServerConfiguration remoteServerConfig = _configuration.getEnvironment().getRemoteServerConfiguration();
+        final RemoteServerData existingServerData = remoteServerConfig.getServerConfig(DATACLOUD_SERVER_NAME);
         if (existingServerData == null) {
-            _remoteServersUtils.createRemoteServer(DATACLOUD_SERVER_NAME, null, username, password);
-            _remoteServersConfigUtils.createCredentials(DATACLOUD_SERVER_NAME, null, username, password);
+            RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, null, username, password);
         } else {
-            _remoteServersUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
-            _remoteServersConfigUtils.updateCredentials(DATACLOUD_SERVER_NAME, username, password);
+            RemoteServersUtils.updateRemoteServerCredentials(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, username, password);
         }
         return true;
     }

@@ -36,7 +36,7 @@ public class DataCleanerConfigurationUpdaterTest {
     private String tagName = "password";
     private String nodePathString = "configuration/descriptor-providers/remote-components/server/" + tagName;
 
-    private final Resource originalConfigurationResource = new FileResource("src/test/resources/conf.xml");
+    private final Resource originalConfigurationResource = new FileResource("src/test/resources/conf-configurationUpdaterTest.xml");
     private final Resource configurationResource = new FileResource(
             "target/DataCleanerConfigurationUpdaterTest-conf.xml");
 

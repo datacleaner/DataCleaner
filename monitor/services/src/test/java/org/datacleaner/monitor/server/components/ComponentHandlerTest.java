@@ -56,7 +56,10 @@ public class ComponentHandlerTest {
     @Before
     public void setUp() {
         componentConfiguration = getComponentConfiguration();
-        componentHandler = new ComponentHandler(getDCConfigurationMock(), componentName, componentConfiguration, new SimpleRemoteComponentsConfigurationImpl(), null);
+        DataCleanerConfiguration dcConfigMock = getDCConfigurationMock();
+        componentHandler = new ComponentHandler(
+                dcConfigMock,
+                dcConfigMock.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName), componentConfiguration, new SimpleRemoteComponentsConfigurationImpl(), null);
         jsonData = getJsonDataMock();
     }
 

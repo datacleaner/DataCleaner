@@ -214,6 +214,10 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+
+        // try to enhance the input in case the client uses simplified input format
+        componentHandlerFactory.enrichStatelessInput(tenantContext.getConfiguration().getEnvironment(), decodedName, processStatelessInput);
+
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));

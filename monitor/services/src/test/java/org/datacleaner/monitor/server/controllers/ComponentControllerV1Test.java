@@ -207,15 +207,6 @@ public class ComponentControllerV1Test {
         return componentSuperCategory;
     }
 
-    private JsonNode getJsonNodeMock() {
-        JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set<JsonNode> set = new HashSet<>();
-        expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
-        replay(jsonNode);
-
-        return jsonNode;
-    }
-
     @Test
     public void testGetAllComponents() throws Exception {
         ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
@@ -224,16 +215,32 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testProcessStateless() throws Exception {
-        ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
-        processStatelessInput.configuration = new ComponentConfiguration();
-        processStatelessInput.data = getJsonNodeMock();
-        componentControllerV1.processStateless(tenant, componentName, null, processStatelessInput);
+        ProcessStatelessInput input = createSampleInput();
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, input);
+        JsonNode rows = output.rows;
+        Assert.assertEquals("Output should have one row group", 1, rows.size());
+        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
+        JsonNode row1 = rows.get(0).get(0);
+        Assert.assertEquals("Wrong output value", "HelloWorld", row1.get(0).asText());
     }
 
     @Test
     public void testProcessStatelessOutputFormatColumnMap() throws Exception {
-        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
 
+        ProcessStatelessInput input = createSampleInput();
+
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "columnMap", input);
+        JsonNode rows = output.rows;
+        Assert.assertEquals("Output should have one row group", 1, rows.size());
+        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
+        JsonNode row1 = rows.get(0).get(0);
+        JsonNode value = row1.get("Concat of c1,c2");
+        Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
+        Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
+    }
+
+    private ProcessStatelessInput createSampleInput() {
+        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
         ProcessStatelessInput input = new ProcessStatelessInput();
         input.configuration = new ComponentConfiguration();
         ArrayNode cols = json.arrayNode().add("c1").add("c2");
@@ -246,15 +253,7 @@ public class ComponentControllerV1Test {
         row.add(json.textNode("Hello"));
         row.add(json.textNode("World"));
         ((ArrayNode)input.data).add(row);
-
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "columnMap", input);
-        JsonNode rows = output.rows;
-        Assert.assertEquals("Output should have one row group", 1, rows.size());
-        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
-        JsonNode row1 = rows.get(0).get(0);
-        JsonNode value = row1.get("Concat of c1,c2");
-        Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
-        Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
+        return input;
     }
 
 
@@ -267,8 +266,9 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testProcessComponent() throws Exception {
+        ProcessStatelessInput input = createSampleInput();
         ProcessInput processInput = new ProcessInput();
-        processInput.data = getJsonNodeMock();
+        processInput.data = input.data;
 
         componentControllerV1.processComponent(tenant, id, processInput);
     }

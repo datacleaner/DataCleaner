@@ -65,7 +65,8 @@ public class ComponentHandlerFactory {
     }
 
     private InputEnricher[] enrichers = new InputEnricher[]{
-            new OneInputColumnEnrichment()
+            new OneInputFieldEnricher(),
+            new MappedPropertyInputEnricher()
     };
 
     /**

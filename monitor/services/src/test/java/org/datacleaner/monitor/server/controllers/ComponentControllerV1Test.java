@@ -24,7 +24,6 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -118,20 +117,12 @@ public class ComponentControllerV1Test {
 
     private ComponentStoreHolder getComponentsStoreHolder() {
         CreateInput createInput = new CreateInput();
-        createInput.configuration = getComponentConfigurationMock();
+        ProcessStatelessInput input = createSampleInput();
+        createInput.configuration =  input.configuration;
         long timeoutMs = 1000L;
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
 
         return componentStoreHolder;
-    }
-
-    private ComponentConfiguration getComponentConfigurationMock() {
-        ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
-        expect(componentConfiguration.getColumns()).andReturn(Collections.<JsonNode> emptyList()).anyTimes();
-        expect(componentConfiguration.getProperties()).andReturn(Collections.<String, JsonNode> emptyMap()).anyTimes();
-        replay(componentConfiguration);
-
-        return componentConfiguration;
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
@@ -168,11 +159,11 @@ public class ComponentControllerV1Test {
         DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
         Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
         @SuppressWarnings("rawtypes")
-        TransformerDescriptor transformerDescriptorMock = Descriptors.ofTransformer(ConcatenatorTransformer.class);
-        transformerDescriptorSet.add(transformerDescriptorMock);
+        TransformerDescriptor transformerDescriptor = Descriptors.ofTransformer(ConcatenatorTransformer.class);
+        transformerDescriptorSet.add(transformerDescriptor);
         expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
         expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
-                transformerDescriptorMock).anyTimes();
+                transformerDescriptor).anyTimes();
         replay(descriptorProvider);
 
         return descriptorProvider;
@@ -207,6 +198,23 @@ public class ComponentControllerV1Test {
         return componentSuperCategory;
     }
 
+    private ProcessStatelessInput createSampleInput() {
+        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
+        ProcessStatelessInput input = new ProcessStatelessInput();
+        input.configuration = new ComponentConfiguration();
+        ArrayNode cols = json.arrayNode().add("c1").add("c2");
+        input.configuration.getProperties().put("Columns", cols);
+        input.configuration.getColumns().add(json.textNode("c1"));
+        input.configuration.getColumns().add(json.textNode("c2"));
+
+        input.data = json.arrayNode();
+        ArrayNode row = json.arrayNode();
+        row.add(json.textNode("Hello"));
+        row.add(json.textNode("World"));
+        ((ArrayNode)input.data).add(row);
+        return input;
+    }
+
     @Test
     public void testGetAllComponents() throws Exception {
         ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
@@ -238,24 +246,6 @@ public class ComponentControllerV1Test {
         Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
         Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
     }
-
-    private ProcessStatelessInput createSampleInput() {
-        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
-        ProcessStatelessInput input = new ProcessStatelessInput();
-        input.configuration = new ComponentConfiguration();
-        ArrayNode cols = json.arrayNode().add("c1").add("c2");
-        input.configuration.getProperties().put("Columns", cols);
-        input.configuration.getColumns().add(json.textNode("c1"));
-        input.configuration.getColumns().add(json.textNode("c2"));
-
-        input.data = json.arrayNode();
-        ArrayNode row = json.arrayNode();
-        row.add(json.textNode("Hello"));
-        row.add(json.textNode("World"));
-        ((ArrayNode)input.data).add(row);
-        return input;
-    }
-
 
     @Test
     public void testCreateComponent() throws Exception {

@@ -29,12 +29,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -102,6 +98,7 @@ public class ComponentControllerV1 implements ComponentController {
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
+    private static final String PARAMETER_NAME_OUTPUT_FORMAT = "outputFormat";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
@@ -210,16 +207,39 @@ public class ComponentControllerV1 implements ComponentController {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_FORMAT, required = false, defaultValue = "") String outputFormat,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));
+        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputFormat);
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
+    }
+
+    private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, String outputFormat) {
+        if("columnMap".equals(outputFormat)) {
+            org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
+            int columnCount = columns.getColumnCount();
+            List<List<Map<String, Object>>> columnMapOutput = new ArrayList<>(data.size());
+            for(List<Object[]> rowGroup: data) {
+                List<Map<String, Object>> columnMapRowGroup = new ArrayList<>(rowGroup.size());
+                for(Object[] row: rowGroup) {
+                    Map<String, Object> columMapRow = new HashMap<>(columnCount);
+                    for(int i = 0; i < columnCount; i++) {
+                        columMapRow.put(columns.getColumnName(i), row[i]);
+                    }
+                    columnMapRowGroup.add(columMapRow);
+                }
+                columnMapOutput.add(columnMapRowGroup);
+            }
+            return getJsonNode(columnMapOutput);
+        } else {
+            return getJsonNode(data);
+        }
     }
 
     private JsonNode getJsonNode(Object value) {

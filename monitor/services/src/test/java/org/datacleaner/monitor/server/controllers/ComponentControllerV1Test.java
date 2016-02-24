@@ -35,7 +35,10 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
@@ -50,11 +53,16 @@ import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -63,9 +71,11 @@ public class ComponentControllerV1Test {
     private String timeout = "42";
     private ComponentControllerV1 componentControllerV1 = new ComponentControllerV1();
     private ComponentCache componentCache;
+    private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        taskRunner = new SingleThreadedTaskRunner();
         RemoteComponentsConfiguration remoteCfg = new SimpleRemoteComponentsConfigurationImpl();
         ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(remoteCfg);
         TenantContextFactory tenantCtxFac = getTenantContextFactoryMock();
@@ -139,6 +149,7 @@ public class ComponentControllerV1Test {
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
         expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
                 .anyTimes();
+        expect(dataCleanerEnvironment.getTaskRunner()).andReturn(taskRunner).anyTimes();
         replay(dataCleanerEnvironment);
 
         return dataCleanerEnvironment;
@@ -157,7 +168,7 @@ public class ComponentControllerV1Test {
         DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
         Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
         @SuppressWarnings("rawtypes")
-        TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
+        TransformerDescriptor transformerDescriptorMock = Descriptors.ofTransformer(ConcatenatorTransformer.class);
         transformerDescriptorSet.add(transformerDescriptorMock);
         expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
         expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
@@ -165,23 +176,6 @@ public class ComponentControllerV1Test {
         replay(descriptorProvider);
 
         return descriptorProvider;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private TransformerDescriptor<?> getTransformerDescriptorMock() {
-        TransformerDescriptor transformerDescriptor = createNiceMock(TransformerDescriptor.class);
-        expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
-        expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
-        expect(transformerDescriptor.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
-        expect(transformerDescriptor.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
-        replay(transformerDescriptor);
-
-        return transformerDescriptor;
     }
 
     private ComponentSuperCategory getComponentSuperCategoryMock() {
@@ -233,8 +227,36 @@ public class ComponentControllerV1Test {
         ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
         processStatelessInput.configuration = new ComponentConfiguration();
         processStatelessInput.data = getJsonNodeMock();
-        componentControllerV1.processStateless(tenant, componentName, processStatelessInput);
+        componentControllerV1.processStateless(tenant, componentName, null, processStatelessInput);
     }
+
+    @Test
+    public void testProcessStatelessOutputFormatColumnMap() throws Exception {
+        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
+
+        ProcessStatelessInput input = new ProcessStatelessInput();
+        input.configuration = new ComponentConfiguration();
+        ArrayNode cols = json.arrayNode().add("c1").add("c2");
+        input.configuration.getProperties().put("Columns", cols);
+        input.configuration.getColumns().add(json.textNode("c1"));
+        input.configuration.getColumns().add(json.textNode("c2"));
+
+        input.data = json.arrayNode();
+        ArrayNode row = json.arrayNode();
+        row.add(json.textNode("Hello"));
+        row.add(json.textNode("World"));
+        ((ArrayNode)input.data).add(row);
+
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "columnMap", input);
+        JsonNode rows = output.rows;
+        Assert.assertEquals("Output should have one row group", 1, rows.size());
+        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
+        JsonNode row1 = rows.get(0).get(0);
+        JsonNode value = row1.get("Concat of c1,c2");
+        Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
+        Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
+    }
+
 
     @Test
     public void testCreateComponent() throws Exception {

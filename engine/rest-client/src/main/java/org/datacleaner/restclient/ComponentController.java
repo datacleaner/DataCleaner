@@ -47,12 +47,8 @@ public interface ComponentController {
 
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
-     * @param tenant
-     * @param name
-     * @param processStatelessInput
-     * @return
      */
-    public ProcessStatelessOutput processStateless(final String tenant, final String name,
+    public ProcessStatelessOutput processStateless(final String tenant, final String name, String outputFormat,
         final ProcessStatelessInput processStatelessInput);
 
     /**

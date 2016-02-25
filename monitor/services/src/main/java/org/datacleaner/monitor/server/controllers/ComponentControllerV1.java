@@ -213,24 +213,25 @@ public class ComponentControllerV1 {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = "tabular") OutputStyle outputStyle,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = "tabular") String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyle);
+        OutputStyle outputStyleEnum = OutputStyle.forString(outputStyle);
+        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
     }
 
     private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
-        if("columnMap".equals(outputFormat)) {
+        if(outputFormat == OutputStyle.map) {
             org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
             int columnCount = columns.getColumnCount();
-            List<List<Map<String, Object>>> columnMapOutput = new ArrayList<>(data.size());
+            List<List<Map<String, Object>>> mapStyleOutput = new ArrayList<>(data.size());
             for(List<Object[]> rowGroup: data) {
                 List<Map<String, Object>> columnMapRowGroup = new ArrayList<>(rowGroup.size());
                 for(Object[] row: rowGroup) {
@@ -240,9 +241,9 @@ public class ComponentControllerV1 {
                     }
                     columnMapRowGroup.add(columMapRow);
                 }
-                columnMapOutput.add(columnMapRowGroup);
+                mapStyleOutput.add(columnMapRowGroup);
             }
-            return getJsonNode(columnMapOutput);
+            return getJsonNode(mapStyleOutput);
         } else {
             return getJsonNode(data);
         }
@@ -503,6 +504,21 @@ public class ComponentControllerV1 {
 
     public enum OutputStyle {
         tabular,
-        map
+        map;
+
+        public static OutputStyle forString(String outputStyle) {
+            if(outputStyle == null) {
+                return tabular;
+            }
+            switch(outputStyle) {
+                case "tabular":
+                    return tabular;
+                case "document":
+                case "map":
+                    return map;
+                default:
+                    throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
+            }
+        }
     }
 }

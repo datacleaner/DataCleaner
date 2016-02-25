@@ -237,7 +237,7 @@ public class ComponentControllerV1Test {
 
         ProcessStatelessInput input = createSampleInput();
 
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "columnMap", input);
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", input);
         JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());

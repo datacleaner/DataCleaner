@@ -19,13 +19,8 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.MappedProperty;
@@ -39,19 +34,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
-/**
- * Added by jakub on 24.2.16
- */
-public class MappedPropertyInputEnricher implements InputEnricher {
+public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
 
-    public boolean enrichStatelessInputForTransformer(TransformerDescriptor transformer, ProcessStatelessInput input) {
+    public boolean rewriteInput(TransformerDescriptor transformer, ProcessStatelessInput input) {
+
+        // If columns specification is int the input, we do not rewrite
+        if(input.configuration != null && input.configuration.getColumns() != null && !input.configuration.getColumns().isEmpty()) {
+            return false;
+        }
+
         ConfiguredPropertyDescriptor inputColumnProp = null;
         ConfiguredPropertyDescriptor mappedProp = null;
+
         Set<ConfiguredPropertyDescriptor> props = transformer.getConfiguredProperties();
         for(ConfiguredPropertyDescriptor prop : props) {
             if(prop.isInputColumn()) {
                 if(prop.isRequired()) {
-                    // we have the second input column property - not supported by this enricher
+                    // we have the second required input column property - this not supported by this enricher
                     if (inputColumnProp != null) {
                         return false;
                     }
@@ -60,8 +59,11 @@ public class MappedPropertyInputEnricher implements InputEnricher {
             }
         }
         if(inputColumnProp == null) {
+            // The transformer has no input column property
             return false;
         }
+
+        // Check if there is a mapped property for the input column.
         for(ConfiguredPropertyDescriptor prop : props) {
             MappedProperty mappedPropAnnot = prop.getAnnotation(MappedProperty.class);
             if(mappedPropAnnot != null) {
@@ -76,7 +78,63 @@ public class MappedPropertyInputEnricher implements InputEnricher {
             }
         }
 
-        return enrichMappedProperty(inputColumnProp, mappedProp, input);
+        // If mapped property exists and is not configured => let do the MappedPropertyInputEnricher the enrichment
+        if(mappedProp != null) {
+            if(input.configuration == null || !input.configuration.getProperties().containsKey(mappedProp.getName())) {
+                return enrichMappedProperty(inputColumnProp, mappedProp, input);
+            }
+        }
+
+        enrichWithSingleInputProperty(inputColumnProp, input);
+        return true;
+    }
+
+    private void enrichWithSingleInputProperty(ConfiguredPropertyDescriptor inputColumnProp, ProcessStatelessInput input) {
+        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
+
+        // first repair the input data
+        if(input.data.isArray()) {
+            if(inputColumnProp.isArray()) {
+                // create single row containing the original data
+                // If all items are already array, do nothing.
+                if(!allItemsAreArray((ArrayNode)input.data)) {
+                    input.data = json.arrayNode().add(input.data);
+                }
+            } else {
+                // check if also the values are array. If not,
+                // change them to an array. It means
+                // create more rows, each having single column with original data.
+                int i = 0;
+                for (JsonNode row : input.data) {
+                    if (!row.isArray()) {
+                        ArrayNode columnsArray = json.arrayNode();
+                        columnsArray.add(row);
+                        ((ArrayNode) input.data).set(i, columnsArray);
+                    }
+                    i++;
+                }
+            }
+        } else {
+            ArrayNode columnsArray = json.arrayNode();
+            columnsArray.add(input.data);
+            ArrayNode rowsArray = json.arrayNode();
+            rowsArray.add(columnsArray);
+            input.data = rowsArray;
+        }
+
+        // get number of columns from the first row
+        int numColumns = input.data.get(0).size();
+
+        if(input.configuration == null) {
+            input.configuration = new ComponentConfiguration();
+        }
+        ArrayNode inputColPropertyValue = json.arrayNode();
+        for(int i = 0; i < numColumns; i++) {
+            String colName = "c" + i;
+            input.configuration.getColumns().add(json.textNode(colName));
+            inputColPropertyValue.add(json.textNode(colName));
+        }
+        input.configuration.getProperties().put(inputColumnProp.getName(), inputColPropertyValue);
     }
 
     private boolean enrichMappedProperty(ConfiguredPropertyDescriptor inputColumnProp, ConfiguredPropertyDescriptor mappedProp, ProcessStatelessInput input) {
@@ -151,4 +209,5 @@ public class MappedPropertyInputEnricher implements InputEnricher {
         }
         return true;
     }
+
 }

@@ -64,9 +64,8 @@ public class ComponentHandlerFactory {
         this._remoteComponentsConfiguration = remoteComponentsConfiguration;
     }
 
-    private InputEnricher[] enrichers = new InputEnricher[]{
-            new OneInputFieldEnricher(),
-            new MappedPropertyInputEnricher()
+    private InputRewriter[] inputRewriters = new InputRewriter[]{
+            new InputColumnAndMappedPropertyRewriter()
     };
 
     /**
@@ -107,12 +106,8 @@ public class ComponentHandlerFactory {
     }
 
     private void enrichStatelessInputForTransformer(TransformerDescriptor compDesc, ProcessStatelessInput input) {
-        // If columns specification is int the input, we have nothing to do
-        if(input.configuration != null && input.configuration.getColumns() != null && !input.configuration.getColumns().isEmpty()) {
-            return;
-        }
-        for(InputEnricher enricher: enrichers) {
-            if(enricher.enrichStatelessInputForTransformer(compDesc, input)) {
+        for(InputRewriter rewriter: inputRewriters) {
+            if(rewriter.rewriteInput(compDesc, input)) {
                 return;
             }
         }

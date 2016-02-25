@@ -55,7 +55,6 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
-import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
@@ -96,7 +95,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
  */
 @Controller
 @RequestMapping("/{tenant}/components")
-public class ComponentControllerV1 implements ComponentController {
+public class ComponentControllerV1 {
     private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 

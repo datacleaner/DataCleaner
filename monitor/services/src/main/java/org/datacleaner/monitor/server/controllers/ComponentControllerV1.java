@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
 import org.datacleaner.api.ComponentCategory;

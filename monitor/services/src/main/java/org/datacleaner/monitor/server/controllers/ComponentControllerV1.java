@@ -58,7 +58,6 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
-import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
@@ -99,13 +98,13 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
  */
 @Controller
 @RequestMapping("/{tenant}/components")
-public class ComponentControllerV1 implements ComponentController {
+public class ComponentControllerV1 {
     private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
-    private static final String PARAMETER_NAME_OUTPUT_FORMAT = "outputFormat";
+    private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
@@ -214,20 +213,20 @@ public class ComponentControllerV1 implements ComponentController {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_FORMAT, required = false, defaultValue = "") String outputFormat,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = "tabular") OutputStyle outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputFormat);
+        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyle);
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
     }
 
-    private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, String outputFormat) {
+    private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
         if("columnMap".equals(outputFormat)) {
             org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
             int columnCount = columns.getColumnCount();
@@ -500,5 +499,10 @@ public class ComponentControllerV1 implements ComponentController {
         if (!propertyDescriptor.isInputColumn()) {
             propInfo.setSchema(visitor.finalSchema());
         }
+    }
+
+    public enum OutputStyle {
+        tabular,
+        map
     }
 }

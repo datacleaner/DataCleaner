@@ -213,7 +213,7 @@ public class ComponentControllerV1 {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = "tabular") String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = OutputStyle.HTTP_PARAM_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
@@ -228,7 +228,7 @@ public class ComponentControllerV1 {
     }
 
     private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
-        if(outputFormat == OutputStyle.map) {
+        if(outputFormat == OutputStyle.MAP) {
             org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
             int columnCount = columns.getColumnCount();
             List<List<Map<String, Object>>> mapStyleOutput = new ArrayList<>(data.size());
@@ -503,19 +503,25 @@ public class ComponentControllerV1 {
     }
 
     public enum OutputStyle {
-        tabular,
-        map;
+
+        TABULAR,
+        MAP;
+
+        public static final String HTTP_PARAM_TABULAR = "tabular";
+        public static final String HTTP_PARAM_MAP = "map";
+        public static final String HTTP_PARAM_DOCUMENT = "document";
 
         public static OutputStyle forString(String outputStyle) {
+
             if(outputStyle == null) {
-                return tabular;
+                return TABULAR;
             }
             switch(outputStyle) {
-                case "tabular":
-                    return tabular;
-                case "document":
-                case "map":
-                    return map;
+                case HTTP_PARAM_TABULAR:
+                    return TABULAR;
+                case HTTP_PARAM_DOCUMENT:
+                case HTTP_PARAM_MAP:
+                    return MAP;
                 default:
                     throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
             }

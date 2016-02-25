@@ -25,7 +25,6 @@ import javax.annotation.PostConstruct;
 
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
@@ -33,7 +32,6 @@ import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
-import org.datacleaner.restclient.ProcessStatelessInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -64,10 +62,6 @@ public class ComponentHandlerFactory {
         this._remoteComponentsConfiguration = remoteComponentsConfiguration;
     }
 
-    private InputRewriter[] inputRewriters = new InputRewriter[]{
-            new InputColumnAndMappedPropertyRewriter()
-    };
-
     /**
      * Creates new Handler from configuration
      * 
@@ -85,16 +79,6 @@ public class ComponentHandlerFactory {
                 configuration, _remoteComponentsConfiguration, analysisListener);
     }
 
-    /**
-     * Enrich the input data in case the client uses simplified input format
-     */
-    public void enrichStatelessInput(DataCleanerEnvironment env, String componentName, ProcessStatelessInput processStatelessInput) {
-        ComponentDescriptor<?> compDesc = resolveDescriptor(env, componentName);
-        if(compDesc instanceof TransformerDescriptor) {
-            enrichStatelessInputForTransformer((TransformerDescriptor)compDesc, processStatelessInput);
-        }
-    }
-
     @PostConstruct
     private void initialize() {
         Collection<AnalysisListener> listeners = BeanFactoryUtils.beansOfTypeIncludingAncestors(appCtx, AnalysisListener.class).values();
@@ -105,15 +89,7 @@ public class ComponentHandlerFactory {
         }
     }
 
-    private void enrichStatelessInputForTransformer(TransformerDescriptor compDesc, ProcessStatelessInput input) {
-        for(InputRewriter rewriter: inputRewriters) {
-            if(rewriter.rewriteInput(compDesc, input)) {
-                return;
-            }
-        }
-    }
-
-    private ComponentDescriptor<?> resolveDescriptor(DataCleanerEnvironment env, String componentName) {
+    public ComponentDescriptor<?> resolveDescriptor(DataCleanerEnvironment env, String componentName) {
         ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
                 .getTransformerDescriptorByDisplayName(componentName);
         if (descriptor == null) {

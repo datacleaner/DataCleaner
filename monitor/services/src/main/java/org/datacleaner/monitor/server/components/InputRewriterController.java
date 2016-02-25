@@ -19,22 +19,30 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.restclient.ProcessStatelessInput;
 
-/**
- * Implementors of this interface are used to rewrite input of the REST API.
- * Can be used to support more input styles and rewriters transform the input
- * to one canonical representation.
- */
-public interface InputRewriter {
+public class InputRewriterController {
+
+    private InputRewriter[] inputRewriters = new InputRewriter[]{
+            new InputColumnAndMappedPropertyRewriter()
+    };
 
     /**
-     * (Possibly) rewrites the input of
-     * @link org.datacleaner.monitor.server.controllers.ComponentControllerV1#processStateless(java.lang.String, java.lang.String, org.datacleaner.restclient.ProcessStatelessInput)}
-     * method.
-     *
-     * @return true if the input rewriting should stop here (NO other rewriters will be processed).
+     * Enrich the input data in case the client uses simplified input format
      */
-    boolean rewriteInput(TransformerDescriptor transformer, ProcessStatelessInput input);
+    public void rewriteStatelessInput(ComponentDescriptor<?> compDesc, ProcessStatelessInput processStatelessInput) {
+        if(compDesc instanceof TransformerDescriptor) {
+            rewriteStatelessInputForTransformer((TransformerDescriptor)compDesc, processStatelessInput);
+        }
+    }
+
+    private void rewriteStatelessInputForTransformer(TransformerDescriptor compDesc, ProcessStatelessInput input) {
+        for(InputRewriter rewriter: inputRewriters) {
+            if(rewriter.rewriteInput(compDesc, input)) {
+                return;
+            }
+        }
+    }
 }

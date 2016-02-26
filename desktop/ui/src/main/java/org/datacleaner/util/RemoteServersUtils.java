@@ -46,10 +46,12 @@ public class RemoteServersUtils {
      */
     public static void addRemoteServer(
             DataCleanerEnvironment env, String serverName, String serverUrl, String userName, String password) {
-        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName) && serverUrl == null) {
+        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)) {
             serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
+            getMutableServerConfig(env).addServer(serverName, null, userName, password);
+        } else {
+            getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
         }
-        getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
 
         RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
         final CompositeDescriptorProvider descriptorProvider = (CompositeDescriptorProvider) env.getDescriptorProvider();

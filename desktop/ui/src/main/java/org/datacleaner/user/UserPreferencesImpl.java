@@ -46,7 +46,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -77,7 +76,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private List<UserDatabaseDriver> databaseDrivers = new ArrayList<>();
     private List<ExtensionPackage> extensionPackages = new ArrayList<>();
-    private List<ServerInformation> userServers = new ArrayList<>();
     private List<Datastore> userDatastores = new ArrayList<>();
     private List<Dictionary> userDictionaries = new ArrayList<>();
     private List<StringPattern> userStringPatterns = new ArrayList<>();
@@ -277,14 +275,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             }
         });
         return fileObjectList;
-    }
-
-    @Override
-    public List<ServerInformation> getUserServers() {
-        if (userServers == null) {
-            userServers = new ArrayList<>();
-        }
-        return userServers;
     }
 
     @Override

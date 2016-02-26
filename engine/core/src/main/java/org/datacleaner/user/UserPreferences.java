@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -63,8 +62,6 @@ public interface UserPreferences {
     public void addRecentJobFile(FileObject file);
 
     public List<FileObject> getRecentJobFiles();
-
-    public List<ServerInformation> getUserServers();
 
     public List<Datastore> getUserDatastores();
 

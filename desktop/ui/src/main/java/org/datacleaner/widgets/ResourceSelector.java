@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -51,19 +52,22 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     private final Map<String, ResourceTypePresenter<?>> _resourceTypePresenters;
     private boolean _openMode;
     private ResourceTypePresenter<?> _currentPresenter;
+    private ServerInformationCatalog _serverInformationCatalog;
 
     public ResourceSelector(DataCleanerConfiguration configuration, UserPreferences userPreferences, boolean openMode) {
-        this(new ResourceConverter(configuration), userPreferences, openMode);
+        this(configuration, new ResourceConverter(configuration), userPreferences, openMode);
     }
 
-    public ResourceSelector(ResourceConverter resourceConverter, UserPreferences userPreferences, boolean openMode) {
+    public ResourceSelector(DataCleanerConfiguration configuration, ResourceConverter resourceConverter,
+            UserPreferences userPreferences, boolean openMode) {
         _resourceConverter = resourceConverter;
         _userPreferences = userPreferences;
         _openMode = openMode;
         _resourceTypePresenters = new HashMap<>();
+        _serverInformationCatalog = configuration.getServerInformationCatalog();
 
         final List<String> schemes = new ArrayList<>();
-        final Collection<ResourceTypeHandler<?>> resourceTypeHandlers = resourceConverter.getResourceTypeHandlers();
+        final Collection<ResourceTypeHandler<?>> resourceTypeHandlers = _resourceConverter.getResourceTypeHandlers();
         for (ResourceTypeHandler<?> resourceTypeHandler : resourceTypeHandlers) {
             final String scheme = resourceTypeHandler.getScheme();
             schemes.add(scheme);
@@ -98,7 +102,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
             presenter = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
             break;
         case "hdfs":
-            presenter = new HdfsResourceTypePresenter(_userPreferences.getUserServers());
+            presenter = new HdfsResourceTypePresenter(_serverInformationCatalog);
             break;
         default:
             presenter = new TextFieldResourceTypePresenter(resourceTypeHandler);

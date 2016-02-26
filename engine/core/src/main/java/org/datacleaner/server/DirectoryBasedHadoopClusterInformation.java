@@ -42,7 +42,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
 
     @Override
     public Configuration getConfiguration() {
-        final Configuration configuration = new Configuration(true);
+        final Configuration configuration = new Configuration();
         final Map<String, File> configurationFiles = new HashMap<>();
 
         Arrays.stream(getDirectories()).map(File::new).filter(File::isDirectory).forEach(c -> {

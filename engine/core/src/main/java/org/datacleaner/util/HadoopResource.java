@@ -71,6 +71,10 @@ public class HadoopResource extends HdfsResource {
     }
 
     public String getTemplatedPath() {
+        // Legacy support.
+        if(_clusterReferenceName == null){
+            return getQualifiedPath();
+        }
         return "hdfs://{" + _clusterReferenceName + "}" + getFilepath();
     }
 

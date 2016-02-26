@@ -42,11 +42,10 @@ public interface ServerInformationCatalog extends Serializable {
     public String[] getServerNames();
 
     /**
-     * Gets a server by it's name. If no such server is found, null will
-     * be returned.
+     * Gets a server by its name.
      *
      * @param name
-     * @return
+     * @return ServerInformation requested, or if no such server, null
      */
     public ServerInformation getServer(String name);
 }

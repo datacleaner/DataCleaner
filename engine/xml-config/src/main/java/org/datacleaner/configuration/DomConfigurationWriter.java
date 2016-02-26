@@ -546,7 +546,7 @@ public class DomConfigurationWriter {
             return ((HadoopResource) resource).getTemplatedPath();
         }
         if (resource instanceof HdfsResource) {
-            return ((HdfsResource) resource).getQualifiedPath();
+            return resource.getQualifiedPath();
         }
 
         throw new UnsupportedOperationException("Unsupported resource type: " + resource);
@@ -634,9 +634,7 @@ public class DomConfigurationWriter {
             Element directoriesElement = getDocument().createElement("directories");
             hadoopClusterElement.appendChild(directoriesElement);
             for (String directory : directoryBasedHadoopClusterInformation.getDirectories()) {
-                if(!HadoopResource.DEFAULT_CLUSTERREFERENCE.equals(directory)) {
-                    appendElement(directoriesElement, "directory", directory);
-                }
+                appendElement(directoriesElement, "directory", directory);
             }
         } else {
             throw new UnsupportedOperationException("Unknown Hadoop cluster configuration");

@@ -51,8 +51,11 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
 
         try {
             if(!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
-                _servers.add(new EnvironmentBasedHadoopClusterInformation(
-                        HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
+                final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation = new EnvironmentBasedHadoopClusterInformation(
+                        HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
+                if(environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
+                    _servers.add(environmentBasedHadoopClusterInformation);
+                }
             }
         } catch (IllegalStateException e) {
             logger.info("No Hadoop environment variables, skipping default server");

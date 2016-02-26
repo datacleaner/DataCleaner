@@ -28,27 +28,30 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.HdfsResource;
-import org.datacleaner.configuration.ServerInformation;
+import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.convert.HadoopResourceBuilder;
 import org.jdesktop.swingx.JXTextField;
 
 /**
  * {@link ResourceTypePresenter} for {@link HdfsResource}s.
  */
-public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsResource> {
+public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopResource> {
     private final JXTextField _pathTextField;
 
     private final DCPanel _panel;
     private final List<ResourceTypePresenter.Listener> _listeners = new ArrayList<>(1);
     private final List<FileFilter> _fileFilters = new ArrayList<>();
     private final HadoopClusterInformation _defaultCluster;
+    private final ServerInformationCatalog _serverInformationCatalog;
 
-    public HdfsResourceTypePresenter(final List<ServerInformation> servers) {
-        _defaultCluster = getDefaultEnvironmentCluster(servers);
+    public HdfsResourceTypePresenter(final ServerInformationCatalog serverInformationCatalog) {
+        _serverInformationCatalog = serverInformationCatalog;
+        _defaultCluster = getDefaultEnvironmentCluster(_serverInformationCatalog);
 
         _pathTextField = WidgetFactory.createTextField("path", 12);
         _pathTextField.setText("/");
@@ -64,11 +67,9 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
         _panel = DCPanel.flow(Alignment.LEFT, 2, 0, _pathTextField);
     }
 
-    private HadoopClusterInformation getDefaultEnvironmentCluster(List<ServerInformation> serverInformationList) {
-        for (ServerInformation serverInformation : serverInformationList) {
-            if(serverInformation.getName().equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)){
-                return (HadoopClusterInformation) serverInformation;
-            }
+    private HadoopClusterInformation getDefaultEnvironmentCluster(ServerInformationCatalog serverInformationCatalog) {
+        if(serverInformationCatalog.containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)){
+            return (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         }
 
         return null;
@@ -86,23 +87,32 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HdfsReso
     }
 
     @Override
-    public HdfsResource getResource() {
+    public HadoopResource getResource() {
         final String path = _pathTextField.getText();
         if (path.length() < 2) {
             return null;
         }
 
-        return new HadoopResource(URI.create(path.replace(" ", "%20")), _defaultCluster);
+        final URI uri = URI.create(path.replace(" ", "%20"));
+        if(_defaultCluster == null || uri.isAbsolute()) {
+            HadoopResourceBuilder builder = new HadoopResourceBuilder(_serverInformationCatalog, path);
+            return builder.build();
+        }
+        return new HadoopResource(uri, _defaultCluster);
     }
 
     @Override
-    public void setResource(HdfsResource resource) {
+    public void setResource(final HadoopResource resource) {
         if (resource == null) {
             return;
         }
 
         final String qualifiedPath = resource.getQualifiedPath();
-        _pathTextField.setText(URI.create(qualifiedPath.replace(" ", "%20")).getPath());
+        if(resource.getClusterReferenceName() == null){
+            _pathTextField.setText(qualifiedPath);
+        } else {
+            _pathTextField.setText(URI.create(qualifiedPath.replace(" ", "%20")).getPath());
+        }
     }
 
     @Override

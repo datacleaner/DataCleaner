@@ -233,7 +233,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         "   <li>\u2022 Ensure you have recent addresses of your contacts." +
                         "</ul>" +
                         "<b>Your <a href=\"http://datacleaner.org\">datacleaner.org</a> credentials:</b>");
-        editorPane.setEditable(false);
         editorPane.setOpaque(false);
         //editorPane.setFont(WidgetUtils.FONT_HEADER2);
         return editorPane;

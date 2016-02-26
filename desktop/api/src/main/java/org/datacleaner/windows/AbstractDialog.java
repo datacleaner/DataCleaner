@@ -24,12 +24,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.KeyStroke;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCBannerPanel;
@@ -80,6 +83,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     protected Action createEscapeAction() {
         return new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 close();

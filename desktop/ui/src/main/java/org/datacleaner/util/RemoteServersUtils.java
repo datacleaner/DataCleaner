@@ -19,9 +19,6 @@
  */
 package org.datacleaner.util;
 
-import java.util.List;
-
-import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;

@@ -47,7 +47,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DataCloudLogInWindow extends AbstractDialog {
+    
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DataCloudLogInWindow.class);
+    
     public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
 
     private final DataCleanerConfiguration _configuration;
@@ -66,6 +69,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         _contentPanel = createContentPanel();
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "EnterAction");
         getRootPane().getActionMap().put("EnterAction", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 signIn();

@@ -885,21 +885,15 @@ public class DomConfigurationWriter {
         remoteComponentsElement.appendChild(serverElement);
 
         if(!StringUtils.isNullOrEmpty(serverName)){
-            createElement(serverElement, "name", serverName);
+            appendElement(serverElement, "name", serverName);
         }
 
         if(!StringUtils.isNullOrEmpty(url)){
-            createElement(serverElement, "url", url);
+            appendElement(serverElement, "url", url);
         }
-        createElement(serverElement, "username", username);
-        createElement(serverElement, "password", SecurityUtils.encodePasswordWithPrefix(password));
+        appendElement(serverElement, "username", username);
+        appendElement(serverElement, "password", SecurityUtils.encodePasswordWithPrefix(password));
         onDocumentChanged(getDocument());
-    }
-
-    private void createElement(Element parent, String elementName, String textContext) {
-        Element element = getDocument().createElement(elementName);
-        parent.appendChild(element);
-        element.setTextContent(textContext);
     }
 
     public void updateRemoteServerCredentials(String serverName, String username, String password) {

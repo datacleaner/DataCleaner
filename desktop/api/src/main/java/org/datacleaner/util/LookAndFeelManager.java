@@ -21,6 +21,7 @@ package org.datacleaner.util;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -138,7 +139,7 @@ public final class LookAndFeelManager {
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("Menu.border", WidgetUtils.BORDER_MENU_ITEM);
         UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_BLUE_DARK);
         UIManager.put("MenuItem.background", menuBackground);
         UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("MenuItem.border", WidgetUtils.BORDER_MENU_ITEM);
@@ -251,6 +252,9 @@ public final class LookAndFeelManager {
         UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
+        
+        // sets the default font to use in Swing html elements
+        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(WidgetUtils.FONT_NORMAL);
 
         // tool tip tweaks
         ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);

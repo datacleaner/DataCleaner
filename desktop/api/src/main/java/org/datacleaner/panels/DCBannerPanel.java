@@ -172,9 +172,9 @@ public class DCBannerPanel extends JPanel {
             g.drawString(_title1, titleX, titleY);
 
             if (_title2 != null) {
-                titleY += g.getFontMetrics().getHeight();
+                titleY += 26;
                 g.setFont(WidgetUtils.FONT_HEADER1);
-                g.setColor(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+                g.setColor(WidgetUtils.BG_COLOR_GREEN_MEDIUM);
                 g.drawString(_title2, titleX, titleY);
             }
         }

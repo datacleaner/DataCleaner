@@ -13,11 +13,19 @@ a.buttonLink {
 }
 
 .blue, .blue a, a.blue {
-	color: #67A2E7;
+	color: #16c2f4;
+}
+
+.green, .green a, a.green {
+	color: #71bf45
+}
+
+.purple, .purple a, a.purple {
+	color: #2b2d66;
 }
 
 .red, .red a {
-	color: red;
+	color: #ef3e6c;
 }
 
 .white, .white a {

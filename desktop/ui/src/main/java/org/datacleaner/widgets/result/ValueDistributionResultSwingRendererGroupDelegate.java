@@ -126,7 +126,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _valueColorMap.put(LabelUtils.UNEXPECTED_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_LESS_DARK);
         _valueColorMap.put("RED", WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
         _valueColorMap.put("ORANGE", WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
-        _valueColorMap.put("GREEN", WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT);
+        _valueColorMap.put("GREEN", WidgetUtils.BG_COLOR_GREEN_BRIGHT);
         _valueColorMap.put("PURPLE", WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
         _valueColorMap.put("CYAN", WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT);
         _valueColorMap.put("BLUE", WidgetUtils.BG_COLOR_BLUE_BRIGHT);

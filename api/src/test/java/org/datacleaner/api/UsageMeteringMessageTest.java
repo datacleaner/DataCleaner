@@ -46,4 +46,23 @@ public class UsageMeteringMessageTest {
         Assert.assertEquals("myType", msg.getType());
         Assert.assertEquals("\"ab,cd\",\"ef\\\"g\",\"h\\\\i\"", msg.getDetails());
     }
+
+    @Test
+    public void testEmptyDetailFields() {
+        // empty strings
+        UsageMeteringMessage msg = new UsageMeteringMessage("myType", "abcd", "");
+        Assert.assertEquals("myType", msg.getType());
+        Assert.assertEquals("\"abcd\",\"\"", msg.getDetails());
+        msg = new UsageMeteringMessage("myType", "", "abcd");
+        Assert.assertEquals("myType", msg.getType());
+        Assert.assertEquals("\"\",\"abcd\"", msg.getDetails());
+
+        // null values
+        msg = new UsageMeteringMessage("myType", "abcd", null);
+        Assert.assertEquals("myType", msg.getType());
+        Assert.assertEquals("\"abcd\",\"\"", msg.getDetails());
+        msg = new UsageMeteringMessage("myType", null, "abcd");
+        Assert.assertEquals("myType", msg.getType());
+        Assert.assertEquals("\"\",\"abcd\"", msg.getDetails());
+    }
 }

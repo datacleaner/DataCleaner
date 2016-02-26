@@ -52,6 +52,7 @@ public class RESTClientImpl implements RESTClient {
 
         if (client == null) {
             client = Client.create();
+            client.setConnectTimeout(30000);
 
             if (username != null && password != null) {
                 client.addFilter(new HTTPBasicAuthFilter(username, password));
@@ -104,7 +105,7 @@ public class RESTClientImpl implements RESTClient {
         }
 
         if (response.getStatus() != HttpCode.OK.getCode() && response.getStatus() != HttpCode.CREATED.getCode()) {
-            throw new RuntimeException("Remote transformer failed: " + response.getStatusInfo().getReasonPhrase() + " (HTTP error code: " + response.getStatus() +"}");
+            throw new RuntimeException(response.getStatusInfo().getReasonPhrase() + " (error code: " + response.getStatus() +")");
         }
 
         String output = response.getEntity(String.class);

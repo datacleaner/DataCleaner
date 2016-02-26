@@ -57,6 +57,7 @@ import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
@@ -113,9 +114,9 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .create(new File("src/test/resources/example-configuration-classpath-scanner-with-exclusions.xml"));
 
         DescriptorProvider descriptorProvider = configuration.getEnvironment().getDescriptorProvider();
-        assertTrue(descriptorProvider instanceof ClasspathScanDescriptorProvider);
 
-        ClasspathScanDescriptorProvider scanner = (ClasspathScanDescriptorProvider) descriptorProvider;
+        assertTrue(descriptorProvider instanceof CompositeDescriptorProvider);
+        ClasspathScanDescriptorProvider scanner = ((CompositeDescriptorProvider)descriptorProvider).findClasspathScanProvider();
 
         Predicate<Class<? extends RenderingFormat<?>>> predicate = scanner.getRenderingFormatPredicate();
         assertNotNull(predicate);
@@ -551,7 +552,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         Assert.assertEquals(3, remoteConf.getServerList().size());
 
         RemoteServerData server0 = remoteConf.getServerList().get(0);
-        Assert.assertEquals("server0", server0.getServerName());
+        Assert.assertEquals("server1", server0.getServerName());
         Assert.assertEquals("http://host1:8888", server0.getUrl());
         Assert.assertEquals("totoro", server0.getUsername());
         Assert.assertEquals("admin", server0.getPassword());

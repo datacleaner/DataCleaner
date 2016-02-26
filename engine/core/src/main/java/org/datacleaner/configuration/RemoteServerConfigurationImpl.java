@@ -20,9 +20,8 @@
 package org.datacleaner.configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.collections.list.UnmodifiableList;
 
 /**
  * Implementation of {@link RemoteServerConfiguration}.
@@ -36,7 +35,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     }
     @Override
     public List<RemoteServerData> getServerList() {
-        return UnmodifiableList.decorate(remoteServerDataList);
+        return Collections.unmodifiableList(remoteServerDataList);
     }
 
     @Override

@@ -71,6 +71,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private JEditorPane invalidCredentialsLabel;
     private JXTextField usernameTextField;
     private JPasswordField passwordTextField;
+    private JCheckBox dontShowAgainCheckBox;
 
     @Inject
     public DataCloudLogInWindow(final DataCleanerConfiguration configuration,
@@ -115,8 +116,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         final JButton signInButton = WidgetFactory.createPrimaryButton("Sign in", IconUtils.ACTION_SAVE_BRIGHT);
-        final JButton cancelButton = WidgetFactory.createDefaultButton("Skip for now", IconUtils.ACTION_CANCEL);
-        final JCheckBox dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
+        final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
+        dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
         dontShowAgainCheckBox.setOpaque(false);
         final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         result.setOpaque(true);
@@ -146,7 +147,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addComponent(invalidCredentialsLabel)
                         .addGap(PADDING)
                         .addGroup(layout.createParallelGroup().addComponent(dontShowAgainCheckBox)
-                                .addComponent(signInButton).addComponent(cancelButton)
+                                .addComponent(signInButton).addComponent(closeButton)
                         )
                         .addGap(PADDING)
         );
@@ -169,15 +170,16 @@ public class DataCloudLogInWindow extends AbstractDialog {
                 )
                 .addComponent(invalidCredentialsLabel)
                 .addGroup(layout.createSequentialGroup().addGap(PADDING).addComponent(dontShowAgainCheckBox).addGap(PADDING, PADDING, Integer.MAX_VALUE)
-                        .addComponent(signInButton).addGap(PADDING).addComponent(cancelButton).addGap(PADDING)
+                        .addComponent(signInButton).addGap(PADDING).addComponent(closeButton).addGap(PADDING)
                 )
         );
 
         // 3. Add listeners
-        // TODO: don't remember on click the checkbox, but on dialog close.
-        dontShowAgainCheckBox.addActionListener(new DisableShowDialog(dontShowAgainCheckBox));
         signInButton.addActionListener(e -> signIn());
-        cancelButton.addActionListener(e -> close());
+        closeButton.addActionListener(e -> {
+            saveDontShowFlag();
+            close();
+        });
         ClearErrorLabelDocumentListener clearErrorListener = new ClearErrorLabelDocumentListener();
         usernameTextField.getDocument().addDocumentListener(clearErrorListener);
         passwordTextField.getDocument().addDocumentListener(clearErrorListener);
@@ -279,19 +281,10 @@ public class DataCloudLogInWindow extends AbstractDialog {
         });
     }
 
-    private class DisableShowDialog implements ActionListener {
-        private final JCheckBox _jCheckBox;
-
-        private DisableShowDialog(final JCheckBox jCheckBox) {
-            _jCheckBox = jCheckBox;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            Boolean selectedNeg = !_jCheckBox.isSelected();
-            _userPreferences.getAdditionalProperties().put(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, selectedNeg.toString());
-            _userPreferences.save();
-        }
+    private void saveDontShowFlag(){
+        Boolean selectedNeg = !dontShowAgainCheckBox.isSelected();
+        _userPreferences.getAdditionalProperties().put(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, selectedNeg.toString());
+        _userPreferences.save();
     }
 
     public void open() {

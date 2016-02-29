@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -125,12 +126,14 @@ public class DataCloudLogInWindow extends AbstractDialog {
         // 2. Layout
         final GroupLayout layout = new GroupLayout(result);
         result.setLayout(layout);
+        result.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addComponent(banner, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(PADDING * 2)
                         .addComponent(informationText, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(PADDING, PADDING, Integer.MAX_VALUE)
+                        .addGap(PADDING * 2)
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(usernameTextField, GroupLayout.PREFERRED_SIZE, usernameTextField.getPreferredSize().height + 5, usernameTextField.getPreferredSize().height + 5)
                                 .addComponent(usernameLabel)
@@ -207,7 +210,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 700;
+        return 730;
     }
 
     @Override
@@ -217,7 +220,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
 
     protected boolean isWindowResizable() {
-        return true;
+        return false;
     }
 
     @Override
@@ -232,11 +235,11 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     private JEditorPane createDataCloudInformationText() {
         final DCHtmlBox editorPane = new DCHtmlBox("");
-        editorPane.setSize(500 - 30, Integer.MAX_VALUE);
+        editorPane.setSize(getDialogWidth() - 30, Integer.MAX_VALUE);
         editorPane.setText(
                 "<html>Thank you for using DataCleaner." +
                         " If you're a registered user on <a href=\"http://datacleaner.org\">datacleaner.org</a> then you can immediately access" +
-                        " our cloud data services (there are free credits with your registration). DataCloud contains services such as:" +
+                        " our cloud data services (there are free credits with your registration). DataCloud contains services such&nbsp;as:" +
                         "<ul style=\"list-style-type:none\">" +
                         "   <li>\u2022 Address correction using postal data from all over the world." +
                         "   <li>\u2022 Check the validity and standardize formatting of Email addresses and Phone numbers." +

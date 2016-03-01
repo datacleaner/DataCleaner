@@ -158,7 +158,7 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
             return false;
         }
 
-        invalidCredentialsLabel.setText("");
+        invalidCredentialsLabel.setText("&nbsp;<br>&nbsp;");
         final RemoteServerConfiguration remoteServerConfig = _configuration.getEnvironment().getRemoteServerConfiguration();
         final RemoteServerData existingServerData = remoteServerConfig.getServerConfig(DATACLOUD_SERVER_NAME);
         if (existingServerData == null) {

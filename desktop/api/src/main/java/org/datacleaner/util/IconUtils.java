@@ -207,6 +207,9 @@ public final class IconUtils {
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
     public static final String FILE_SEARCH = "images/filetypes/search-folder.png";
 
+    public static final String PASSWORD_INPUT = "images/widgets/PasswordInput.png";
+    public static final String USERNAME_INPUT = "images/widgets/UsernameInput.png";
+
     public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
 
     private static final ImageManager _imageManager = ImageManager.get();

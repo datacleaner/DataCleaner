@@ -110,8 +110,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
         invalidCredentialsLabel.setBorder(WidgetUtils.BORDER_EMPTY);
         invalidCredentialsLabel.setOpaque(false);
-        final JXLabel usernameLabel = new JXLabel("Email address:");
-        final JXLabel passwordLabel = new JXLabel("Password:");
+        final JLabel usernameLabel = new JLabel();
+        final JLabel passwordLabel = new JLabel();
         usernameTextField = WidgetFactory.createTextField("email address");
         usernameTextField.setName("email address");
         passwordTextField = WidgetFactory.createPasswordField();
@@ -124,13 +124,26 @@ public class DataCloudLogInWindow extends AbstractDialog {
         result.setOpaque(true);
         Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
                 .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
-
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
+        final ImageIcon usernameIcon = ImageManager.get().getImageIcon(IconUtils.USERNAME_INPUT);
+        final ImageIcon passwordIcon = ImageManager.get().getImageIcon(IconUtils.PASSWORD_INPUT);
+        usernameLabel.setIcon(usernameIcon);
+        usernameLabel.setVerticalTextPosition(JLabel.CENTER);
+        usernameLabel.setHorizontalAlignment(JLabel.CENTER);
+        usernameLabel.setBackground(new Color(225,225,225));
+        usernameLabel.setOpaque(true);
+        passwordLabel.setIcon(passwordIcon);
+        passwordLabel.setVerticalTextPosition(JLabel.CENTER);
+        passwordLabel.setHorizontalAlignment(JLabel.CENTER);
+        passwordLabel.setBackground(new Color(225,225,225));
+        passwordLabel.setOpaque(true);
 
         // 2. Layout
         final GroupLayout layout = new GroupLayout(result);
         result.setLayout(layout);
         result.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        int textFieldHeight = signInButton.getPreferredSize().height;
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -138,19 +151,19 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING * 2)
                         .addComponent(informationText, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(PADDING * 2)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(usernameTextField, GroupLayout.PREFERRED_SIZE, usernameTextField.getPreferredSize().height + 5, usernameTextField.getPreferredSize().height + 5)
-                                .addComponent(usernameLabel)
-                        )
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, passwordTextField.getPreferredSize().height + 5, passwordTextField.getPreferredSize().height + 5)
-                                .addComponent(passwordLabel)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                .addComponent(usernameTextField, GroupLayout.PREFERRED_SIZE, textFieldHeight, textFieldHeight)
+                                .addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, textFieldHeight, textFieldHeight)
+                                .addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, textFieldHeight, textFieldHeight)
+                                .addComponent(passwordLabel, GroupLayout.DEFAULT_SIZE, textFieldHeight, textFieldHeight)
+                                .addComponent(signInButton, GroupLayout.DEFAULT_SIZE, textFieldHeight, textFieldHeight)
                         )
                         .addGap(PADDING)
                         .addComponent(invalidCredentialsLabel)
                         .addGap(PADDING)
-                        .addGroup(layout.createParallelGroup().addComponent(dontShowAgainCheckBox)
-                                .addComponent(signInButton).addComponent(closeButton)
+                        .addGroup(layout.createParallelGroup()
+                                .addComponent(dontShowAgainCheckBox)
+                                .addComponent(closeButton)
                         )
                         .addGap(PADDING)
         );
@@ -160,20 +173,22 @@ public class DataCloudLogInWindow extends AbstractDialog {
                 .addComponent(informationText)
                 .addGroup(layout.createSequentialGroup()
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup()
-                                .addComponent(usernameLabel)
-                                .addComponent(passwordLabel)
-                        )
+                        .addComponent(usernameLabel, textFieldHeight, textFieldHeight, textFieldHeight)
+                        .addComponent(usernameTextField, GroupLayout.DEFAULT_SIZE, 140, 140)
                         .addGap(PADDING)
-                        .addGroup(layout.createParallelGroup()
-                                .addComponent(usernameTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, 250)
-                                .addComponent(passwordTextField, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, 250)
-                        )
+                        .addComponent(passwordLabel, textFieldHeight, textFieldHeight, textFieldHeight)
+                        .addComponent(passwordTextField, GroupLayout.DEFAULT_SIZE, 100,100)
+                        .addGap(PADDING)
+                        .addComponent(signInButton)
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                 )
                 .addComponent(invalidCredentialsLabel)
-                .addGroup(layout.createSequentialGroup().addGap(PADDING).addComponent(dontShowAgainCheckBox).addGap(PADDING, PADDING, Integer.MAX_VALUE)
-                        .addComponent(signInButton).addGap(PADDING).addComponent(closeButton).addGap(PADDING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGap(PADDING)
+                        .addComponent(dontShowAgainCheckBox)
+                        .addGap(PADDING, PADDING, Integer.MAX_VALUE)
+                        .addComponent(closeButton)
+                        .addGap(PADDING)
                 )
         );
 
@@ -293,5 +308,10 @@ public class DataCloudLogInWindow extends AbstractDialog {
     public void open() {
         super.open();
         usernameTextField.requestFocusInWindow();
+    }
+
+    public static void main(String[] args) {
+        DataCloudLogInWindow w = new DataCloudLogInWindow(null, null, null, null);
+        w.open();
     }
 }

@@ -43,9 +43,9 @@
     </filter>
     <filter-mapping>
         <filter-name>cors</filter-name>
-        <url-pattern>/repository/swagger.json</url-pattern>
+        <url-pattern>/repository/*</url-pattern>
     </filter-mapping>
-	
+
 	<!-- JSF listeners -->
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>

@@ -28,6 +28,7 @@ import java.awt.event.KeyEvent;
 import javax.inject.Inject;
 import javax.swing.AbstractAction;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -121,9 +122,11 @@ public class DataCloudLogInWindow extends AbstractDialog {
         dontShowAgainCheckBox.setOpaque(false);
         final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         result.setOpaque(true);
-        
-        final JLabel banner = new JLabel(ImageManager.get().getImageIcon("images/datacloud_banner.png"));
-        
+        Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
+                .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
+
+        final JLabel banner = new JLabel(new ImageIcon(bannerImage));
+
         // 2. Layout
         final GroupLayout layout = new GroupLayout(result);
         result.setLayout(layout);
@@ -212,7 +215,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 730;
+        return 560;
     }
 
     @Override
@@ -241,11 +244,11 @@ public class DataCloudLogInWindow extends AbstractDialog {
         editorPane.setText(
                 "<html>Thank you for using DataCleaner." +
                         " If you're a registered user on <a href=\"http://datacleaner.org\">datacleaner.org</a> then you can immediately access" +
-                        " our cloud data services (there are free credits with your registration). DataCloud contains services such&nbsp;as:" +
+                        " our cloud data services (there are free credits with your registration). DataCloud contains services such as:" +
                         "<ul style=\"list-style-type:none\">" +
                         "   <li>\u2022 Address correction using postal data from all over the world." +
                         "   <li>\u2022 Check the validity and standardize formatting of Email addresses and Phone numbers." +
-                        "   <li>\u2022 Enrichment of contact information using mover's registries, deceased lists and more." +
+                        "   <li>\u2022 Enrichment of contact information using mover's registries, deceased lists&nbsp;and more." +
                         "</ul>");
         editorPane.setOpaque(false);
         //editorPane.setFont(WidgetUtils.FONT_HEADER2);

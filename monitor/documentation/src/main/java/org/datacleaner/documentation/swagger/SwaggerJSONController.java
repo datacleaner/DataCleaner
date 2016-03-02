@@ -22,8 +22,6 @@ package org.datacleaner.documentation.swagger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +54,7 @@ public class SwaggerJSONController {
     private static final Logger logger = LoggerFactory.getLogger(SwaggerJSONController.class);
 
     static final String SWAGGER_JSON_PATH="/swagger.json";
+    static final String ORIGINAL_URL_HEADER="X-Original-Url";
 
     @Autowired
     private ApplicationContext ctx;
@@ -65,8 +64,27 @@ public class SwaggerJSONController {
     public SwaggerConfiguration generateSwaggerJSON(HttpServletRequest httpServletRequest) {
         String host;
         String basePath;
+        String scheme;
         try {
-            URL url = new URL(httpServletRequest.getRequestURL().toString());
+
+            // If The DC MOnitor is running behind a reverse-proxy like NGINX, it is necessary to
+            // configure it to provide the original url of the reverse proxy, not the url of the backend server where
+            // the DC monitor is actually running on. The original url must be provided in this HTTP header.
+            // Nginx configuration snippet:
+            // proxy_set_header X-Original-Url $scheme://$http_host:$server_port$request_uri;
+            final String originalUrl = httpServletRequest.getHeader(ORIGINAL_URL_HEADER);
+            final String servletUrl = httpServletRequest.getRequestURL().toString();
+
+            final String serviceUrl = (originalUrl != null && !originalUrl.isEmpty()) ?
+                    originalUrl : httpServletRequest.getRequestURL().toString();
+            URL url;
+            try {
+                url = new URL(serviceUrl);
+            } catch(MalformedURLException e) {
+                logger.warn("Malformed X-Original-Url header: " + e.toString());
+                url = new URL(servletUrl);
+            }
+
             host = url.getHost();
             if(url.getPort() != -1) {
                 host = host + ":" + url.getPort();
@@ -75,10 +93,12 @@ public class SwaggerJSONController {
             if(basePath.endsWith(SWAGGER_JSON_PATH)) {
                 basePath = basePath.substring(0, basePath.length() - SWAGGER_JSON_PATH.length());
             }
+
+            scheme = url.getProtocol();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        SwaggerBuilder swagger = new SwaggerBuilder(host, basePath);
+        SwaggerBuilder swagger = new SwaggerBuilder(host, basePath, scheme);
         for(Object controller: getControllers()) {
             swagger.addClass(controller.getClass());
         }
@@ -96,10 +116,11 @@ public class SwaggerJSONController {
         private String serviceUrlPrefix = null;
         private SwaggerConfiguration swaggerConfiguration = null;
 
-        public SwaggerBuilder(String host, String basePath) {
+        public SwaggerBuilder(String host, String basePath, String scheme) {
             swaggerConfiguration = new SwaggerConfiguration();
             swaggerConfiguration.setHost(host);
             swaggerConfiguration.setBasePath(basePath);
+            swaggerConfiguration.setSchemes(new String[] {scheme});
             SecurityDefinitionObject basicSec = new SecurityDefinitionObject();
             basicSec.put("type", "basic");
             swaggerConfiguration.addSecurityDefinition("basicAuth", basicSec);

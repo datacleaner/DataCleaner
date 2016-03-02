@@ -36,7 +36,7 @@
 		<servlet-name>repository-browser</servlet-name>
 	</filter-mapping>
 
-    <!-- REST API Documentation, allow CORS -->
+    <!-- REST API allows CORS -->
     <filter>
         <filter-name>cors</filter-name>
         <filter-class>org.datacleaner.documentation.SimpleCORSFilter</filter-class>

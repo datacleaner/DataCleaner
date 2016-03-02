@@ -19,17 +19,10 @@
  */
 package org.datacleaner.documentation.swagger;
 
+import java.util.HashMap;
+
 /**
  * @since 23. 09. 2015
  */
-public class SwaggerDefinitions {
-    private String[] list = new String[] { "" };
-
-    public String[] getList() {
-        return list;
-    }
-
-    public void setList(String[] list) {
-        this.list = list;
-    }
+public class SwaggerDefinitions extends HashMap<String, SwaggerSchema> {
 }

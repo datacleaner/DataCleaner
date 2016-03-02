@@ -133,15 +133,15 @@ public class SwaggerParameter {
         if (clazz.getName().equals(String.class.getName())) {
             setType(Type.STRING.getValue());
         }
-        else if (clazz.getName().equals(Integer.class.getName())) {
+        else if (clazz.getName().equals(Integer.class.getName()) || clazz.getName().equals(int.class.getName())) {
             setType(Type.INTEGER.getValue());
         }
-        else if (clazz.getName().equals(Boolean.class.getName())) {
+        else if (clazz.getName().equals(Boolean.class.getName()) || clazz.getName().equals(boolean.class.getName())) {
             setType(Type.BOOLEAN.getValue());
         }
         else {
-            setType(Type.OBJECT.getValue());
-            schema.put("$ref", "#/definitions/JSON object");
+            setType(null);
+            schema.put("$ref", "#/definitions/GenericObject");
         }
     }
 }

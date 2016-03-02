@@ -36,7 +36,6 @@ public class SwaggerMethod {
     private String[] produces = new String[] { };
     private SwaggerParameter[] parameters = new SwaggerParameter[] { };
     private Map<String, SwaggerResponse> responses = new HashMap<>();
-    private String[] security = new String[] { };
 
     public List<String> getTags() {
         return tags;
@@ -100,13 +99,5 @@ public class SwaggerMethod {
 
     public void setResponses(Map<String, SwaggerResponse> responses) {
         this.responses = responses;
-    }
-
-    public String[] getSecurity() {
-        return security;
-    }
-
-    public void setSecurity(String[] security) {
-        this.security = security;
     }
 }

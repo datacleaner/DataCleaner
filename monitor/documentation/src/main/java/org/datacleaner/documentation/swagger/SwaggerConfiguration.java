@@ -35,9 +35,14 @@ public class SwaggerConfiguration {
     private String[] schemes = new String[] { "http" };
     private List<SwaggerTag> tags = new ArrayList<>();
     private Map<String, Map<String, SwaggerMethod>> paths = new HashMap<>();
-    private Map<String, SecurityDefinitionObject> securityDefinitions = new HashMap<>();
+    private Map<String, SecuritySchemeObject> securityDefinitions = new HashMap<>();
     private SwaggerDefinitions definitions = new SwaggerDefinitions();
     private SwaggerExternalDocs externalDocs = new SwaggerExternalDocs();
+    private List<Map<String, String[]>> security = new ArrayList<>();
+
+    public List<Map<String, String[]>> getSecurity() {
+        return security;
+    }
 
     public String getSwagger() {
         return swagger;
@@ -95,11 +100,11 @@ public class SwaggerConfiguration {
         this.paths = paths;
     }
 
-    public Map<String, SecurityDefinitionObject> getSecurityDefinitions() {
+    public Map<String, SecuritySchemeObject> getSecurityDefinitions() {
         return securityDefinitions;
     }
 
-    public void addSecurityDefinition(String key, SecurityDefinitionObject obj) {
+    public void addSecurityDefinition(String key, SecuritySchemeObject obj) {
         securityDefinitions.put(key, obj);
     }
 

@@ -121,9 +121,17 @@ public class SwaggerJSONController {
             swaggerConfiguration.setHost(host);
             swaggerConfiguration.setBasePath(basePath);
             swaggerConfiguration.setSchemes(new String[] {scheme});
-            SecurityDefinitionObject basicSec = new SecurityDefinitionObject();
+            SecuritySchemeObject basicSec = new SecuritySchemeObject();
             basicSec.put("type", "basic");
             swaggerConfiguration.addSecurityDefinition("basicAuth", basicSec);
+
+            Map<String, String[]> securityRequirement = new HashMap<>();
+            securityRequirement.put("basicAuth", new String[0]);
+            swaggerConfiguration.getSecurity().add(securityRequirement);
+
+            SwaggerSchema genericObjSchema = new SwaggerSchema("object");
+            genericObjSchema.put("properties", new HashMap<>());
+            swaggerConfiguration.getDefinitions().put("GenericObject", genericObjSchema);
         }
 
         public void addClass(Class<?> controllerClass) {
@@ -211,7 +219,9 @@ public class SwaggerJSONController {
             swaggerMethod.setProduces(methodRequestMapping.produces());
             swaggerMethod.setParameters(createSwaggerParameterArray(method));
             swaggerMethod.getTags().add(serviceClass.getSimpleName());
-            swaggerMethod.setSecurity(new String[] {"basicAuth"});
+            SwaggerResponse responseOk = new SwaggerResponse();
+            responseOk.setDescription("Unknown Description");
+            swaggerMethod.getResponses().put("200", responseOk);
 
             return swaggerMethod;
         }

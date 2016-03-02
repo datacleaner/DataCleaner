@@ -105,7 +105,6 @@ public class ComponentControllerV1 implements ComponentController {
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
-    private static BufferedImage remoteMark = null;
     private int _maxBatchSize = Integer.MAX_VALUE;
 
     @Autowired
@@ -322,7 +321,6 @@ public class ComponentControllerV1 implements ComponentController {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
             Image icon = ImageIO.read(iconStream);
-            BufferedImage mark = getRemoteMark();
             int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
             int iconH = icon.getHeight(null);
@@ -338,7 +336,6 @@ public class ComponentControllerV1 implements ComponentController {
             BufferedImage resultImg = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = resultImg.getGraphics();
             graphics.drawImage(icon, (maxSize-iconW)/2, (maxSize-iconH)/2, null);
-            graphics.drawImage(mark, maxSize - mark.getWidth(), 0, null);
             graphics.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -353,15 +350,6 @@ public class ComponentControllerV1 implements ComponentController {
 
             return new byte[0];
         }
-    }
-
-    private static BufferedImage getRemoteMark() throws IOException {
-        if (remoteMark == null) {
-            InputStream markStream = ComponentControllerV1.class.getClassLoader().getResourceAsStream(REMOTE_MARK);
-            remoteMark = ImageIO.read(markStream);
-        }
-
-        return remoteMark;
     }
 
     private static Set<String> getCategoryNames(ComponentDescriptor<?> componentDescriptor) {

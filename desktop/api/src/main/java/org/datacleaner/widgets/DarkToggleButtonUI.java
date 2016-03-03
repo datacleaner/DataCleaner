@@ -48,6 +48,7 @@ public class DarkToggleButtonUI extends MetalToggleButtonUI {
     @Override
     public void installDefaults(AbstractButton b) {
         super.installDefaults(b);
+        b.setFont(WidgetUtils.FONT_BUTTON);
         b.setBackground(COLOR_BG_DEFAULT);
         b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setFocusPainted(false);

@@ -34,7 +34,7 @@ import org.datacleaner.util.CharIterator;
 @Named("Remove unwanted characters")
 @Description("Removes characters from strings that are not wanted. Use it to cleanse codes and identifiers that may have additional dashes, punctuations, unwanted letters etc.")
 @Categorized(TextCategory.class)
-class RemoveUnwantedCharsTransformer implements Transformer {
+public class RemoveUnwantedCharsTransformer implements Transformer {
 
     @Configured
     InputColumn<String> column;

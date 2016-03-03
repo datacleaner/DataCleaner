@@ -20,6 +20,7 @@
 package org.datacleaner.configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,14 +28,33 @@ import java.util.List;
  */
 public class RemoteServerConfigurationImpl implements RemoteServerConfiguration {
 
-    private final List<RemoteServerData> remoteServerDataList;
+    protected final List<RemoteServerData> remoteServerDataList;
 
-    public RemoteServerConfigurationImpl() {
-        remoteServerDataList = new ArrayList<>();
+    public RemoteServerConfigurationImpl(List<RemoteServerData> serverData) {
+        remoteServerDataList = new ArrayList<>(serverData);
+    }
+    @Override
+    public List<RemoteServerData> getServerList() {
+        return Collections.unmodifiableList(remoteServerDataList);
     }
 
     @Override
-    public List<RemoteServerData> getServerList() {
-        return remoteServerDataList;
+    public RemoteServerData getServerConfig(String serverName) {
+        if (serverName == null) {
+            return null;
+        }
+
+        for (RemoteServerData remoteServerData : remoteServerDataList) {
+            String configServerName = remoteServerData.getServerName();
+            if (configServerName == null) {
+                continue;
+            }
+            if (configServerName.toLowerCase().equals(serverName.toLowerCase())) {
+                return remoteServerData;
+            }
+        }
+        return null;
     }
+
+
 }

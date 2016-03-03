@@ -25,7 +25,6 @@ public class WidgetUtilsTest extends TestCase {
 
     public void testLoadFonts() throws Exception {
     	// One space on Windows, no spaces on Mac, ? spaces on Linux
-        assertTrue(WidgetUtils.FONT_NORMAL.getName().matches("Open( *)Sans"));
-        assertEquals("Ubuntu",WidgetUtils.FONT_HEADER1.getName());
+        assertTrue(WidgetUtils.FONT_HEADER1.getName().matches("Muli( *)Light"));
     }
 }

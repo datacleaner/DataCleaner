@@ -180,7 +180,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         {
             final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 
-            plot.setDrawingSupplier(new DCDrawingSupplier(WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT,
+            plot.setDrawingSupplier(new DCDrawingSupplier(WidgetUtils.BG_COLOR_GREEN_BRIGHT,
                     WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT));
         }
 

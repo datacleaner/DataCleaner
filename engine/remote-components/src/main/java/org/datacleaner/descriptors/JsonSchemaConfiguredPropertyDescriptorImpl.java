@@ -159,6 +159,24 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     }
 
     @Override
+    public EnumerationValue forString(String value) {
+        if(enumValues == null) {
+            return null;
+        }
+        for(EnumerationValue candidate: enumValues) {
+            if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+                return candidate;
+            }
+            for(String alias: candidate.getAliases()) {
+                if(value.equals(alias)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Converter<?> createCustomConverter() {
         return isEnum() ? new EnumerationValueConverter() : null;
     }

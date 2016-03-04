@@ -152,6 +152,20 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
             public EnumerationValue[] values() {
                 return values;
             }
+            @Override
+            public EnumerationValue forString(String value) {
+                for(EnumerationValue candidate: values) {
+                    if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+                        return candidate;
+                    }
+                    for(String alias: candidate.getAliases()) {
+                        if(value.equals(alias)) {
+                            return candidate;
+                        }
+                    }
+                }
+                return null;
+            }
         };
     }
 

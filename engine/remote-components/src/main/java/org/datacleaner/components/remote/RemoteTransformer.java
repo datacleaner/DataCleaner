@@ -28,11 +28,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.Close;
@@ -55,6 +50,12 @@ import org.datacleaner.util.batch.BatchSource;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 
 /**
  * Transformer that is actually a proxy to a remote transformer sitting at DataCleaner Monitor server.
@@ -149,7 +150,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             }
             return outCols;
         } catch(Exception e) {
-            return new OutputColumns(String.class, "Unknown");
+            logger.debug("Error retrieving columns of transformer '" + componentDisplayName + "': " + e.toString());
+            return OutputColumns.NO_OUTPUT_COLUMNS;
         }
     }
 

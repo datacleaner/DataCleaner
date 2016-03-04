@@ -505,6 +505,10 @@ public class HdfsUrlChooser extends JComponent {
         final HadoopClusterInformation clusterInformation =
                 (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
 
+        if(clusterInformation == null) {
+            return false;
+        }
+
         final Configuration configuration = clusterInformation.getConfiguration();
 
         _currentDirectory = new Path("/");

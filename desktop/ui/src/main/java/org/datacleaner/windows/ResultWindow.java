@@ -105,7 +105,7 @@ import org.slf4j.LoggerFactory;
  * Window in which the result (and running progress information) of job
  * execution is shown.
  */
-public final class ResultWindow extends AbstractWindow implements WindowListener {
+public class ResultWindow extends AbstractWindow implements WindowListener {
     private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
 
     public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(0);
@@ -237,7 +237,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         if (running) {
             // run the job in a swing worker
             _result = null;
-            _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this);
+            _worker = getAnalysisRunnerSwingWorker();
 
             _cancelButton.addActionListener(new ActionListener() {
                 @Override
@@ -271,6 +271,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         }
 
         updateButtonVisibility(running);
+    }
+
+    protected AnalysisRunnerSwingWorker getAnalysisRunnerSwingWorker() {
+        return new AnalysisRunnerSwingWorker(_configuration, _job, this);
     }
 
     public void startAnalysis() {

@@ -22,7 +22,6 @@ package org.datacleaner.windows;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.inject.Inject;
@@ -53,7 +52,6 @@ import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
-import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

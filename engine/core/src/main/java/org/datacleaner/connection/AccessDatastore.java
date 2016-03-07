@@ -38,7 +38,7 @@ public final class AccessDatastore extends UsageAwareDatastore<DataContext> impl
 	public AccessDatastore(String name, String filename) {
 		super(name);
 		if(filename == null){
-			throw new NullPointerException("dilename cannot be null");
+			throw new NullPointerException("Filename cannot be null");
 		}
 		_filename = filename;
 	}

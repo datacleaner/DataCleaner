@@ -369,8 +369,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void open() {
         super.open();
-        /* We make sure the DataCloudLogIn appears only at the start up.
-         Otherwise, the banner will appear when the user tries to open a job,
+        /* We make sure the DataCloudLogIn banner appears only at the start up.
+         Otherwise, this banner will appear when the user tries to open a job,
          or when he chooses to open a new window. */
         if (NR_OF_WINDOWS_OPENED < 1) {
             WidgetUtils.invokeSwingAction(new Runnable() {

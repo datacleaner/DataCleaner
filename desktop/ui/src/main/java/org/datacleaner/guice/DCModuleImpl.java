@@ -40,6 +40,7 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -62,6 +63,7 @@ import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.util.MutableRemoteServerConfigurationImpl;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
@@ -295,9 +297,10 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
+                    final RemoteServerConfiguration remoteServerConfiguration = new MutableRemoteServerConfigurationImpl(c.getEnvironment().getRemoteServerConfiguration().getServerList(), configurationWriter);
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory,
-                            c.getEnvironment().getRemoteServerConfiguration());
+                            remoteServerConfiguration);
 
                     _configuration = new DataCleanerConfigurationImpl(environment,
                             DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);

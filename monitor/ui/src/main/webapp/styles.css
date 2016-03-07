@@ -59,7 +59,7 @@ div.popupPageContent {
 }
 
 .InfographicIntro .ScrollDownTeaser {
-	font-family: 'Ubuntu';
+	font-family: 'Muli';
 	font-weight: normal;
 	font-size: 22px;
 	color: white;
@@ -77,10 +77,10 @@ div.popupPageContent {
 }
 
 .InfographicPart h2 {
-	font-family: 'Ubuntu';
+	font-family: 'Muli';
 	font-weight: normal;
 	font-size: 26px;
-	color: #5594DD;
+	color: #16c2f4;
 	margin: 0px;
 	margin-top: 60px;
 }
@@ -124,14 +124,6 @@ div.loader {
 	min-width: 32px;
 	background: url("images/loader.gif") no-repeat center center;
 	height: 32px;
-}
-
-.blue {
-	color: #5594dd;
-}
-
-.orange {
-	color: #ffa800;
 }
 
 .discrete {
@@ -257,7 +249,7 @@ div.loader {
 
 .datastoreList .datastore .warning {
 	margin-left: 10px;
-	color: red;
+	color: #ef3e6c;
 }
 
 input.RemoveButton {

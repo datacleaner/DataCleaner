@@ -48,6 +48,7 @@ public class DefaultToggleButtonUI extends MetalToggleButtonUI {
     public void installDefaults(AbstractButton b) {
         super.installDefaults(b);
         b.setFocusPainted(false);
+        b.setFont(WidgetUtils.FONT_BUTTON);
         b.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
         b.setForeground(WidgetUtils.BG_COLOR_DARK);
         b.setBorder(WidgetUtils.BORDER_BUTTON_DEFAULT);

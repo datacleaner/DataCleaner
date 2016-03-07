@@ -132,6 +132,7 @@ public class AddDatastorePanel extends DCPanel {
     private PopupButton createCloudButton() {
         final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
                 IconUtils.CLOUD_IMAGEPATH);
+        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
         List<DatastoreDescriptor> cloudDatastores = new DatastoreDescriptors(_databaseDriverCatalog)
                 .getAvailableCloudBasedDatastoreDescriptors();
 

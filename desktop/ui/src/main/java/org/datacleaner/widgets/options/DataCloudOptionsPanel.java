@@ -19,6 +19,10 @@
  */
 package org.datacleaner.widgets.options;
 
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
+
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -26,22 +30,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerConfigurationUpdater;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
-import org.datacleaner.configuration.RemoteServerDataImpl;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
@@ -52,14 +52,15 @@ import com.google.common.base.Strings;
 /**
  * The "Remote components" panel found in the {@link OptionsDialog}
  */
-public class RemoteComponentsOptionsPanel extends DCPanel {
+public class DataCloudOptionsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
     private final DataCleanerConfiguration _configuration;
-    private final JTextField usernameTextField;
+    private final JTextField emailAddressTextField;
     private final JPasswordField passwordTextField;
     private final JButton applyButton;
+    private final JEditorPane invalidCredentialsLabel;
 
     private final int wholeLineSpan = 4;
     private final int rowSpan = 1;
@@ -68,10 +69,9 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     private final int weighty = 0;
     private int row = 0;
 
-    public RemoteComponentsOptionsPanel(DataCleanerConfiguration configuration) {
+    public DataCloudOptionsPanel(DataCleanerConfiguration configuration) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
-
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -85,18 +85,23 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateDcConfiguration();
-                applyButton.setEnabled(false);
+                final boolean isOk = updateDcConfiguration();
+                applyButton.setEnabled(!isOk);
             }
         });
 
-        usernameTextField = WidgetFactory.createTextField("username");
-        usernameTextField.setName("username");
-        usernameTextField.getDocument().addDocumentListener(documentListener);
+        emailAddressTextField = WidgetFactory.createTextField("Email address");
+        emailAddressTextField.setName("email address");
+        emailAddressTextField.getDocument().addDocumentListener(documentListener);
 
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         passwordTextField.getDocument().addDocumentListener(documentListener);
+
+        invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
+        invalidCredentialsLabel.setSize(500-30, Integer.MAX_VALUE);
+        invalidCredentialsLabel.setForeground(new Color(170,10,10));
+        invalidCredentialsLabel.setOpaque(false);
 
         setTitledBorder("Credentials");
         setupFields();
@@ -105,26 +110,24 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     }
 
     private void setupFields() {
-        final RemoteServerData serverData = getServerData();
-        usernameTextField.setText(Strings.nullToEmpty(serverData.getUsername()));
-        passwordTextField.setText(Strings.nullToEmpty(serverData.getPassword()));
-    }
-
-    private RemoteServerData getServerData() {
-        final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                .getRemoteServerConfiguration();
-        if (remoteServerConfiguration == null || remoteServerConfiguration.getServerList().isEmpty()) {
-            return RemoteServerDataImpl.noServer();
+        final RemoteServerData serverData =
+                _configuration.getEnvironment().getRemoteServerConfiguration().getServerConfig(DATACLOUD_SERVER_NAME);
+        if (serverData != null) {
+            emailAddressTextField.setText(Strings.nullToEmpty(serverData.getUsername()));
+            passwordTextField.setText(Strings.nullToEmpty(serverData.getPassword()));
         }
-        return remoteServerConfiguration.getServerList().get(0);
     }
 
     private void addAllFields() {
         WidgetUtils.addToGridBag(getDescriptionComponent(), this, 0, row, wholeLineSpan, rowSpan,
                 GridBagConstraints.LINE_START, padding, weightx, weighty, GridBagConstraints.BOTH);
 
-        addField("Username", usernameTextField);
+        addField("Email address", emailAddressTextField);
         addField("Password", passwordTextField, applyButton);
+
+        row++;
+        WidgetUtils.addToGridBag(invalidCredentialsLabel, this, 0, row, 3, 1, GridBagConstraints.LINE_START, padding,
+                0, weighty, GridBagConstraints.HORIZONTAL);
     }
 
     private void addField(String labelText, JComponent... fields) {
@@ -139,41 +142,36 @@ public class RemoteComponentsOptionsPanel extends DCPanel {
     }
 
     private Component getDescriptionComponent() {
-        DCHtmlBox htmlBox = new DCHtmlBox("This dialog is for credentials setting of users registered at "
-                + "<a href=\"http://datacleaner.org\">datacleaner.org</a>. <br><br>"
-                + "Remote components are a cloud service providing new functions. "
-                + "These remote components run at the server, consume provided input data and return the results. ");
+        final DCHtmlBox htmlBox = new DCHtmlBox("When registered at "
+                + "<a href=\"http://datacleaner.org\">datacleaner.org</a> you can get access to DataCloud. <br><br>"
+                + "DataCloud is an online service platform providing new functions to DataCleaner users and more. Sign in to the service using the form below.");
 
         return htmlBox;
     }
 
-    private Resource getDataCleanerConfigurationFileResource() {
-        final RepositoryFile configurationFile = _configuration.getHomeFolder().toRepositoryFolder()
-                .getFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
-        final Resource resource = configurationFile.toResource();
-        return resource;
-    }
-
-    private void updateDcConfiguration() {
-        final RemoteServerData existingServerData = getServerData();
-        final String username = usernameTextField.getText();
+    /**
+     * Update configuration
+     *
+     * @return True - everything is ok. False - problem, do not nothing.
+     */
+    private boolean updateDcConfiguration() {
+        final String username = emailAddressTextField.getText();
         final String password = new String(passwordTextField.getPassword());
-
-        final RemoteServerDataImpl newServerData = new RemoteServerDataImpl(existingServerData.getUrl(),
-                existingServerData.getServerName(), username, password);
-        final RemoteServerConfiguration remoteServerConfiguration = _configuration.getEnvironment()
-                .getRemoteServerConfiguration();
-        if (remoteServerConfiguration.getServerList().isEmpty()) {
-            remoteServerConfiguration.getServerList().add(newServerData);
-        } else {
-            remoteServerConfiguration.getServerList().remove(0);
-            remoteServerConfiguration.getServerList().add(0, newServerData);
+        try {
+            RemoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
+        } catch (Exception ex) {
+            invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
+            return false;
         }
 
-        final DataCleanerConfigurationUpdater configurationUpdater = new DataCleanerConfigurationUpdater(
-                getDataCleanerConfigurationFileResource());
-        configurationUpdater.update("descriptor-providers:remote-components:server:username", username);
-        configurationUpdater.update("descriptor-providers:remote-components:server:password",
-                SecurityUtils.encodePasswordWithPrefix(password));
+        invalidCredentialsLabel.setText("&nbsp;<br>&nbsp;");
+        final RemoteServerConfiguration remoteServerConfig = _configuration.getEnvironment().getRemoteServerConfiguration();
+        final RemoteServerData existingServerData = remoteServerConfig.getServerConfig(DATACLOUD_SERVER_NAME);
+        if (existingServerData == null) {
+            RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, null, username, password);
+        } else {
+            RemoteServersUtils.updateRemoteServerCredentials(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, username, password);
+        }
+        return true;
     }
 }

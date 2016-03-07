@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.util.HasAliases;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,11 +251,25 @@ public class Serializator {
         }
 
         protected String enumValueToSchemaString(Enum<?> value) {
+            StringBuilder serialized = new StringBuilder();
+            serialized.append(value.name());
+            serialized.append("::");
             if(value instanceof  HasName) {
-                return value.name() + "::" + ((HasName)value).getName();
+                serialized.append(((HasName)value).getName());
             } else {
-                return value.name() + "::" + String.valueOf(value);
+                serialized.append(String.valueOf(value));
             }
+            if(value instanceof HasAliases) {
+                String[] aliases = ((HasAliases)value).getAliases();
+                if(aliases != null) {
+                    for(String alias: aliases) {
+                        if(alias != null && !alias.isEmpty()) {
+                            serialized.append("::").append(alias);
+                        }
+                    }
+                }
+            }
+            return serialized.toString();
         }
     }
 }

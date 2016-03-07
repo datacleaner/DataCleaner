@@ -40,13 +40,15 @@ import org.slf4j.LoggerFactory;
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer>
         implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon {
+    
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
-    private String remoteDisplayName;
-    private String superCategoryName;
-    private Set<String> categoryNames;
-    private byte[] iconData;
-    private RemoteDescriptorProvider remoteDescriptorProvider;
+    
+    private final String remoteDisplayName;
+    private final String superCategoryName;
+    private final Set<String> categoryNames;
+    private final byte[] iconData;
+    private final RemoteDescriptorProvider remoteDescriptorProvider;
 
     public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
             String superCategoryName, Set<String> categoryNames, byte[] iconData) {

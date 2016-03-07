@@ -21,12 +21,12 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
-import org.elasticsearch.common.base.Objects;
 
 /**
  * Represents a string pattern which is based on a regular expression (regex).
@@ -53,8 +53,8 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final RegexStringPattern other = (RegexStringPattern) obj;
-            return Objects.equal(_expression, other._expression)
-                    && Objects.equal(_matchEntireString, other._matchEntireString);
+            return Objects.equals(_expression, other._expression)
+                    && Objects.equals(_matchEntireString, other._matchEntireString);
         }
         return false;
     }

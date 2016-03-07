@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import java.util.ArrayList;
+
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
@@ -174,6 +176,6 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     }
 
     public static RemoteServerConfiguration defaultRemoteServerConfiguration() {
-        return new RemoteServerConfigurationImpl();
+        return new RemoteServerConfigurationImpl(new ArrayList<>());
     }
 }

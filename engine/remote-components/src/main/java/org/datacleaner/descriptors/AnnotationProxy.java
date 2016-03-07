@@ -54,7 +54,7 @@ public class AnnotationProxy {
      *         methods.
      */
     public static <A extends Annotation> A newAnnotation(Class<A> anClass, Map<String, Object> properties) {
-        final InvHandler handler = new InvHandler(properties);
+        final InvHandler handler = new InvHandler(anClass, properties);
         ClassLoader classLoader = AnnotationProxy.class.getClassLoader();
         @SuppressWarnings("unchecked")
         final A proxy = (A) Proxy.newProxyInstance(classLoader, new Class[] { anClass }, handler);
@@ -63,13 +63,26 @@ public class AnnotationProxy {
 
     private static class InvHandler implements InvocationHandler {
         Map<String, Object> properties;
+        Class<?> annotationClass;
 
-        public InvHandler(Map<String, Object> properties) {
+        public InvHandler(Class<?> anClass, Map<String, Object> properties) {
             this.properties = properties;
+            this.annotationClass = anClass;
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+            if("hashCode".equals(method.getName())) {
+                return annotationClass.hashCode();
+            }
+            if("toString".equals(method.getName())) {
+                return annotationClass.getName() + ": " + properties.toString();
+            }
+            if("annotationType".equals(method.getName())) {
+                return annotationClass;
+            }
+
             Object result = properties.get(method.getName());
             if (result != null) {
                 Class<?> retType = method.getReturnType();

@@ -57,6 +57,7 @@ import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -985,5 +986,46 @@ public class DomConfigurationWriter {
         final Element element = getDocument().createElement(elementName);
         element.setTextContent(stringValue);
         parent.appendChild(element);
+    }
+
+
+    public void addRemoteServer(String serverName, String url, String username, String password){
+        Element descriptorProviderElement =
+                getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
+        Element remoteComponentsElement =
+                getOrCreateChildElementByTagName(descriptorProviderElement, "remote-components");
+
+        Element serverElement = getDocument().createElement("server");
+        remoteComponentsElement.appendChild(serverElement);
+
+        if(!StringUtils.isNullOrEmpty(serverName)){
+            appendElement(serverElement, "name", serverName);
+        }
+
+        if(!StringUtils.isNullOrEmpty(url)){
+            appendElement(serverElement, "url", url);
+        }
+        appendElement(serverElement, "username", username);
+        appendElement(serverElement, "password", SecurityUtils.encodePasswordWithPrefix(password));
+        onDocumentChanged(getDocument());
+    }
+
+    public void updateRemoteServerCredentials(String serverName, String username, String password) {
+        Element remoteComponents = getChildElementByTagName(getDocumentElement(), "remote-components");
+        NodeList servers = remoteComponents.getElementsByTagName("server");
+        for (int i = 0; i < servers.getLength(); i++) {
+            if(servers.item(i) instanceof Element){
+                Element server = (Element) servers.item(i);
+                Element name = getChildElementByTagName(server, "name");
+                if(name!= null && serverName.equals(name.getTextContent())){
+                    Element usernameElemet = getOrCreateChildElementByTagName(server, "username");
+                    usernameElemet.setTextContent(username);
+                    Element passwordElement = getOrCreateChildElementByTagName(server, "password");
+                    passwordElement.setTextContent(SecurityUtils.encodePasswordWithPrefix(password));
+                    break;
+                }
+            }
+        }
+        onDocumentChanged(getDocument());
     }
 }

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -40,7 +41,6 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.ReadObjectBuilder.Adaptor;
 import org.datacleaner.util.StringUtils;
-import org.elasticsearch.common.base.Objects;
 
 /**
  * The simplest implementation of {@link SynonymCatalog}. Based on an in-memory
@@ -148,7 +148,7 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             SimpleSynonymCatalog other = (SimpleSynonymCatalog) obj;
-            return Objects.equal(_synonymMap, other._synonymMap) && Objects.equal(_caseSensitive, other._caseSensitive);
+            return Objects.equals(_synonymMap, other._synonymMap) && Objects.equals(_caseSensitive, other._caseSensitive);
         }
         return false;
     }

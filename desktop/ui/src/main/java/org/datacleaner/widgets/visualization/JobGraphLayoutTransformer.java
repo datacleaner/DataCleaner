@@ -38,9 +38,10 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
 import org.datacleaner.util.IconUtils;
-import org.elasticsearch.common.collect.IdentityHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
 
@@ -238,7 +239,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     private int getAccumulatedPrerequisiteCount(Object obj) {
-        final Set<JobGraphLink> visitedEdges = new IdentityHashSet<>();
+        final Set<JobGraphLink> visitedEdges = Sets.newSetFromMap(new IdentityHashMap<>());
         return getAccumulatedPrerequisiteCount(obj, visitedEdges);
     }
 

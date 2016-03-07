@@ -306,17 +306,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return dataCleanerConfiguration;
     }
 
-    private void updateDescriptorProviderIfSpecified(Configuration jaxbConfiguration,
+    private void updateDescriptorProviderIfSpecified(Configuration configuration,
             TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
-        final DescriptorProvider descriptorProvider = createDescriptorProvider(jaxbConfiguration, environment,
-                temporaryConfiguration);
-        if (descriptorProvider != null) {
-            environment.setDescriptorProvider(descriptorProvider);
-        }
-    }
-
-    private DescriptorProvider createDescriptorProvider(Configuration configuration, DataCleanerEnvironment environment,
-            DataCleanerConfiguration temporaryConfiguration) {
         final List<DescriptorProvider> providers = new ArrayList<>();
 
         DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
@@ -338,14 +329,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         // now go through providers specification and create them
+        List<RemoteServerData> remoteServerData = new ArrayList<>();
         for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
-            final List<DescriptorProvider> newProviders = createDescriptorProvider(provider, environment,
-                    temporaryConfiguration);
-            providers.addAll(newProviders);
+            createDescriptorProvider(provider, environment,
+                    temporaryConfiguration, providers, remoteServerData);
         }
 
         if (providers.isEmpty()) {
-            return null;
+            return;
         }
 
         // check if there are only remote descriptor providers - add then also
@@ -362,16 +353,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providers.add(0, environment.getDescriptorProvider());
         }
 
-        if (providers.size() == 1) {
-            return providers.get(0);
-        }
-
-        return new CompositeDescriptorProvider(providers);
+        //Always must be composite. I can add new provider after start.
+        DescriptorProvider descriptorProvider = new CompositeDescriptorProvider(providers);
+        environment.setDescriptorProvider(descriptorProvider);
+        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
     }
 
-    private List<DescriptorProvider> createDescriptorProvider(Object providerElement,
-            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
-        final List<DescriptorProvider> providerList = new ArrayList<>();
+    private void createDescriptorProvider(Object providerElement,
+            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration, List<DescriptorProvider> providerList, List<RemoteServerData> remoteServerData) {
         if (providerElement instanceof CustomElementType) {
             providerList.add(createCustomElement(((CustomElementType) providerElement), DescriptorProvider.class,
                     temporaryConfiguration, true));
@@ -380,13 +369,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                     (ClasspathScannerType) providerElement, environment);
             providerList.add(classPathProvider);
         } else if (providerElement instanceof RemoteComponentsType) {
-            final List<DescriptorProvider> remoteProviders = createRemoteDescriptorProvider(
-                    (RemoteComponentsType) providerElement, environment);
-            providerList.addAll(remoteProviders);
+            createRemoteDescriptorProvider(
+                    (RemoteComponentsType) providerElement, environment, providerList, remoteServerData);
         } else {
             throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
-        return providerList;
+
     }
 
     private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(
@@ -418,20 +406,24 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private List<DescriptorProvider> createRemoteDescriptorProvider(RemoteComponentsType providerElement,
-            DataCleanerEnvironment dataCleanerEnvironment) {
-        final List<DescriptorProvider> descriptorProviders = new ArrayList<>();
-        final RemoteServerConfiguration remoteServerConfiguration = dataCleanerEnvironment.getRemoteServerConfiguration();
+    private void createRemoteDescriptorProvider(RemoteComponentsType providerElement,
+                DataCleanerEnvironment dataCleanerEnvironment, List<DescriptorProvider> descriptorProviders ,
+                List<RemoteServerData> remoteServersConfig) {
 
+        int i = 0;
         for (RemoteComponentServerType server : providerElement.getServer()) {
+            i++;
             final String serverName = (server.getName() == null
-                    ? "server" + remoteServerConfiguration.getServerList().size() : server.getName());
-            final RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(server.getUrl(), serverName,
+                    ? ("server" + i) : server.getName());
+            String serverUrl = server.getUrl();
+            if(StringUtils.isNullOrEmpty(serverUrl) && serverName.equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)){
+                serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
+            }
+            RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
                     server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-            remoteServerConfiguration.getServerList().add(remoteServerData);
+            remoteServersConfig.add(remoteServerData);
             descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData));
         }
-        return descriptorProviders;
     }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,

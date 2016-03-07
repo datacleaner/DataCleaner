@@ -321,16 +321,28 @@ public class ComponentControllerV1 implements ComponentController {
         try {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
-            BufferedImage icon = ImageIO.read(iconStream);
+            Image icon = ImageIO.read(iconStream);
             BufferedImage mark = getRemoteMark();
+            int maxSize = IconUtils.ICON_SIZE_LARGE;
+            int iconW = icon.getWidth(null);
+            int iconH = icon.getHeight(null);
+            if(iconW > maxSize || iconW > maxSize) {
+                double scaleX = ((double)maxSize)/(double)icon.getWidth(null);
+                double scaleY = ((double)maxSize)/(double)icon.getWidth(null);
+                double scale = Math.min(scaleX, scaleY);
+                iconH = (int)((double)iconH * scale);
+                iconW = (int)((double)iconW * scale);
+                icon = icon.getScaledInstance(iconW, iconH, Image.SCALE_SMOOTH);
+            }
 
-            Graphics graphics = icon.getGraphics();
-            graphics.drawImage(icon, 0, 0, null);
-            graphics.drawImage(mark, icon.getWidth() - mark.getWidth(), 0, null);
+            BufferedImage resultImg = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_INT_ARGB);
+            Graphics graphics = resultImg.getGraphics();
+            graphics.drawImage(icon, (maxSize-iconW)/2, (maxSize-iconH)/2, null);
+            graphics.drawImage(mark, maxSize - mark.getWidth(), 0, null);
             graphics.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(icon, "png", outputStream);
+            ImageIO.write(resultImg, "png", outputStream);
             outputStream.flush();
             byte[] iconBytes = outputStream.toByteArray();
             outputStream.close();

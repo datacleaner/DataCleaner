@@ -52,7 +52,7 @@
 }
 
 .DashboardGroupSelectionPanel .AnchorPanel a.selected {
-	background-color: #377FCF;
+	background-color: #16c2f4;
 	color: white;
 	background-image: url("folder_hover.png");
 }

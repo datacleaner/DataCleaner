@@ -292,7 +292,9 @@ public class ComponentHandler {
                 @Override
                 public void execute() throws Exception {
                     try {
-                        MDC.setContextMap(mdcCopy);
+                        if(mdcCopy != null) {
+                            MDC.setContextMap(mdcCopy);
+                        }
                         if (!errors.isEmpty()) {
                             LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
                             return;

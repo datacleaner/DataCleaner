@@ -21,6 +21,8 @@ package org.datacleaner.widgets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -38,11 +40,21 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ExecuteButtonOptions.ExecutionMenuItem;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A builder for the "Execute" button in the job builder window of DataCleaner
  */
 public class ExecuteButtonBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(ExecuteButtonBuilder.class);
+    
+    /**
+     * Property which may contain a comma separated vector of class names
+     * implementing the ExecutionMenuItem interface, which are added as extra
+     * execute buttons to the job builder window of DataCleaner.
+     */
+    public static final String EXTRA_BUTTON_CLASSES = "datacleaner.ui.desktop.extra.execute.buttons";
 
     private final JButton _mainButton;
     private final JButton _alternativesButton;
@@ -75,7 +87,22 @@ public class ExecuteButtonBuilder {
                         execute(jobBuilder);
                     }
                 };
-                final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
+
+                List<ExecutionMenuItem> menuItems = new ArrayList<ExecutionMenuItem>(ExecuteButtonOptions
+                        .getMenuItems());
+
+                String extraButtonClasses = System.getProperty(EXTRA_BUTTON_CLASSES);
+
+                if (extraButtonClasses != null) {
+                    for (String extraButtonClass : extraButtonClasses.split(",")) {
+                        final ExecutionMenuItem extraExecuteButton = constructExecuteButton(extraButtonClass);
+
+                        if (extraExecuteButton != null) { 
+                            menuItems.add(extraExecuteButton);
+                        }
+                    }
+                }
+                    
                 for (ExecutionMenuItem item : menuItems) {
                     if (item instanceof ExecuteButtonOptions.Separator) {
                         menu.addSeparator();
@@ -126,4 +153,15 @@ public class ExecuteButtonBuilder {
         runAnalysis.run();
     }
 
+    private ExecutionMenuItem constructExecuteButton(String executeButtonClass) {
+        try {
+            Constructor<?> constructor = Class.forName(executeButtonClass).getConstructor(
+                    AnalysisJobBuilderWindow.class);
+
+            return (ExecutionMenuItem) constructor.newInstance(_window);
+        } catch (Exception e) {
+            LOG.warn("Failed to construct ExecutionMenuItem for class \"" + executeButtonClass + "\".", e);
+        }
+        return null;
+    }
 }

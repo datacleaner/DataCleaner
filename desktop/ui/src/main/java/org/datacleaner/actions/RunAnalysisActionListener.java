@@ -39,9 +39,16 @@ public class RunAnalysisActionListener implements ActionListener {
     private final DCModule _dcModule;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private long _lastClickTime = 0;
+    private Class<? extends ResultWindow> _windowType;
 
     @Inject
     public RunAnalysisActionListener(DCModule dcModule, AnalysisJobBuilder analysisJobBuilder) {
+        this(dcModule, analysisJobBuilder, ResultWindow.class);
+    }
+
+    public RunAnalysisActionListener(DCModule dcModule, AnalysisJobBuilder analysisJobBuilder,
+            Class<? extends ResultWindow> windowType) {
+        _windowType = windowType;
         _dcModule = dcModule;
         _analysisJobBuilder = analysisJobBuilder;
     }
@@ -66,7 +73,7 @@ public class RunAnalysisActionListener implements ActionListener {
         injectorBuilder.with(DataCleanerConfiguration.class, _analysisJobBuilder.getConfiguration());
         injectorBuilder.with(AnalysisJob.class, _analysisJobBuilder.toAnalysisJob(false));
 
-        final ResultWindow window = injectorBuilder.getInstance(ResultWindow.class);
+        final ResultWindow window = injectorBuilder.getInstance(_windowType);
         window.open();
         window.startAnalysis();
     }

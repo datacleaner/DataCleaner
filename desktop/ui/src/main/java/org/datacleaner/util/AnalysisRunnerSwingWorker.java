@@ -25,7 +25,6 @@ import javax.swing.SwingWorker;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -45,8 +44,11 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     private final ResultWindow _resultWindow;
 
     public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job, ResultWindow resultWindow) {
-        final AnalysisListener analysisListener = resultWindow.createAnalysisListener();
-        _analysisRunner = new AnalysisRunnerImpl(configuration, analysisListener);
+        this(new AnalysisRunnerImpl(configuration, resultWindow.createAnalysisListener()), job, resultWindow);
+    }
+
+    public AnalysisRunnerSwingWorker(AnalysisRunner analysisRunner, AnalysisJob job, ResultWindow resultWindow) {
+        _analysisRunner = analysisRunner;
         _job = job;
         _resultWindow = resultWindow;
     }

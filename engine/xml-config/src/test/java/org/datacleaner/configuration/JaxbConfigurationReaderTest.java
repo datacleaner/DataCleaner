@@ -77,6 +77,7 @@ import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
@@ -578,6 +579,24 @@ public class JaxbConfigurationReaderTest extends TestCase {
         Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 
+    public void testServerConfigurations(){
+        DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
+        ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
+        Assert.assertTrue(serverInformationCatalog.containsServer("environment"));
+        Assert.assertTrue(serverInformationCatalog.containsServer("directories"));
+        Assert.assertTrue(serverInformationCatalog.containsServer("namenode"));
+
+        final HadoopClusterInformation environment =
+                (HadoopClusterInformation) serverInformationCatalog.getServer("environment");
+        Assert.assertEquals("environment", environment.getName());
+
+        final HadoopClusterInformation namenode =
+                (HadoopClusterInformation) serverInformationCatalog.getServer("namenode");
+        Assert.assertEquals("namenode", namenode.getName());
+        Assert.assertEquals("hdfs://localhost:8020/", namenode.getConfiguration().get("fs.defaultFS"));
+    }
+
+
     public void testReadReferenceDataWithResources() throws Exception {
         DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-reference-data-resource-paths.xml"));
@@ -585,7 +604,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         TextFileDictionary dictionary = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
                 "dictionary");
         assertEquals("C:/absolute/path/to/dictionary.txt", dictionary.getFilename());
-        
+
         TextFileDictionary dictionary2 = (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary(
                 "dictionary2");
         assertEquals("C:/absolute/path/to/dictionary.txt", dictionary2.getFilename());
@@ -593,7 +612,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         TextFileSynonymCatalog synonyms = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
                 .getSynonymCatalog("synonyms");
         assertEquals("relative/path/to/synonyms.txt", synonyms.getFilename());
-        
+
         TextFileSynonymCatalog synonyms2 = (TextFileSynonymCatalog) configuration.getReferenceDataCatalog()
                 .getSynonymCatalog("synonyms2");
         assertEquals("relative/path/to/synonyms.txt", synonyms2.getFilename());

@@ -34,7 +34,6 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
@@ -60,6 +59,7 @@ public class ResourceConverter implements Converter<Resource> {
     public static final String DEFAULT_DEFAULT_SCHEME = FileResourceTypeHandler.DEFAULT_SCHEME;
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("\\b([a-zA-Z]+)://(.+)");
+    private final DataCleanerConfiguration _configuration;
 
     /**
      * Gets the "default scheme" (see {@link #DEFAULT_DEFAULT_SCHEME}) while
@@ -72,30 +72,32 @@ public class ResourceConverter implements Converter<Resource> {
         return SystemProperties.getString(SystemProperties.DEFAULT_RESOURCE_SCHEME, DEFAULT_DEFAULT_SCHEME);
     }
 
-    public static Collection<? extends ResourceTypeHandler<?>> createDefaultHandlers(
-            DataCleanerConfiguration configuration) {
-        return createDefaultHandlers(configuration.getHomeFolder());
-    }
-
-    public static List<ResourceTypeHandler<?>> createDefaultHandlers(DataCleanerHomeFolder homeFolder) {
+    private static List<ResourceTypeHandler<?>> createDefaultHandlers(DataCleanerConfiguration configuration) {
         final List<ResourceTypeHandler<?>> result = new ArrayList<>();
-        result.add(new FileResourceTypeHandler(homeFolder));
+        result.add(new FileResourceTypeHandler(configuration.getHomeFolder()));
         result.add(new UrlResourceTypeHandler());
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_HDFS));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_EMRFS));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_MAPRFS));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_S3));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_SWIFT));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_HDFS, configuration));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_EMRFS, configuration));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_MAPRFS, configuration));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_S3, configuration));
+        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_SWIFT, configuration));
         result.add(new ClasspathResourceTypeHandler());
         result.add(new VfsResourceTypeHandler());
         return result;
+    }
+
+    public ResourceConverter withExtraHandlers(Collection<? extends ResourceTypeHandler<?>> extraHandlers) {
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>(_parsers.values());
+        handlers.addAll(extraHandlers);
+
+        return new ResourceConverter(_configuration, handlers);
     }
 
     /**
      * Represents a component capable of handling the parsing and serializing of
      * a single type of resource.
      */
-    public static interface ResourceTypeHandler<E extends Resource> {
+    public interface ResourceTypeHandler<E extends Resource> {
         public boolean isParserFor(Class<? extends Resource> resourceType);
 
         public String getScheme();
@@ -109,7 +111,6 @@ public class ResourceConverter implements Converter<Resource> {
      * Represents the parsed structure of a serialized resource
      */
     public static class ResourceStructure {
-
         private final String scheme;
         private final String path;
 
@@ -130,39 +131,34 @@ public class ResourceConverter implements Converter<Resource> {
     private final Map<String, ResourceTypeHandler<?>> _parsers;
     private final String _defaultScheme;
 
-    /**
-     * Constructs a {@link ResourceConverter} using a default set of handlers
-     * 
-     * @deprecated use {@link #ResourceConverter(DataCleanerConfiguration)},
-     *             {@link #ResourceConverter(Collection)} or
-     *             {@link #ResourceConverter(ResourceTypeHandler...)} instead.
-     */
-    @Deprecated
-    public ResourceConverter() {
-        this(new DataCleanerConfigurationImpl());
-    }
-
     public ResourceConverter(DataCleanerConfiguration configuration) {
         this(configuration, getConfiguredDefaultScheme());
     }
 
-    public ResourceConverter(Collection<? extends ResourceTypeHandler<?>> handlers) {
-        this(handlers, getConfiguredDefaultScheme());
+    public ResourceConverter(DataCleanerConfiguration configuration, String defaultScheme) {
+        this(configuration, createDefaultHandlers(configuration), defaultScheme);
     }
 
-    public ResourceConverter(DataCleanerConfiguration configuration, String defaultScheme) {
-        this(createDefaultHandlers(configuration), defaultScheme);
+    public ResourceConverter(DataCleanerConfiguration configuration, Collection<? extends ResourceTypeHandler<?>> handlers) {
+        this(configuration, handlers, getConfiguredDefaultScheme());
+    }
+
+    public ResourceConverter(Collection<? extends ResourceTypeHandler<?>> handlers, String defaultScheme) {
+        this(new DataCleanerConfigurationImpl(), handlers, defaultScheme);
     }
 
     /**
      * Constructs a {@link ResourceConverter} using a set of handlers.
-     * 
+     *
+     * @param configuration
      * @param handlers
      * @param defaultScheme
      */
-    public ResourceConverter(Collection<? extends ResourceTypeHandler<?>> handlers, String defaultScheme) {
+    public ResourceConverter(DataCleanerConfiguration configuration, Collection<? extends ResourceTypeHandler<?>> handlers, String defaultScheme) {
         _defaultScheme = defaultScheme;
-        _parsers = new ConcurrentHashMap<String, ResourceConverter.ResourceTypeHandler<?>>();
+        _parsers = new ConcurrentHashMap<>();
+        _configuration = configuration;
+
         for (ResourceTypeHandler<?> handler : handlers) {
             String scheme = handler.getScheme();
             _parsers.put(scheme, handler);
@@ -170,7 +166,7 @@ public class ResourceConverter implements Converter<Resource> {
     }
 
     public ResourceConverter(ResourceTypeHandler<?>... handlers) {
-        this(Arrays.asList(handlers), getConfiguredDefaultScheme());
+        this(new DataCleanerConfigurationImpl(), Arrays.asList(handlers), getConfiguredDefaultScheme());
     }
     
     @Override

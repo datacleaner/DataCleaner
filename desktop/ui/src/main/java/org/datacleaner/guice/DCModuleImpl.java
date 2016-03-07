@@ -20,6 +20,7 @@
 package org.datacleaner.guice;
 
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -60,6 +61,7 @@ import org.datacleaner.user.DataCleanerConfigurationReader;
 import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -69,7 +71,6 @@ import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.xml.XmlUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
@@ -281,6 +282,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), true));
+                    final MutableServerInformationCatalog serverInformationCatalog =
+                            new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter);
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
@@ -303,7 +306,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                             remoteServerConfiguration);
 
                     _configuration = new DataCleanerConfigurationImpl(environment,
-                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);
+                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog,
+                            serverInformationCatalog);
                 }
             }
         }
@@ -394,12 +398,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     public ResourceConverter getResourceConverter() {
-        final List<ResourceTypeHandler<?>> handlers = ResourceConverter.createDefaultHandlers(DataCleanerHome.getAsDataCleanerHomeFolder());
-        handlers.add(new DummyRepositoryResourceFileTypeHandler());
-
-        final ResourceConverter resourceConverter = new ResourceConverter(handlers,
-                ResourceConverter.getConfiguredDefaultScheme());
-        return resourceConverter;
+        return new ResourceConverter(_configuration)
+                .withExtraHandlers(Collections.singletonList(new DummyRepositoryResourceFileTypeHandler()));
     }
 
     @Override

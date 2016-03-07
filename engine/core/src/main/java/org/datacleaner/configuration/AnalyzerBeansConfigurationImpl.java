@@ -213,4 +213,9 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     public DataCleanerHomeFolder getHomeFolder() {
         return _homeFolder;
     }
+
+    @Override
+    public ServerInformationCatalog getServerInformationCatalog() {
+        return null;
+    }
 }

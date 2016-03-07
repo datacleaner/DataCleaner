@@ -40,13 +40,14 @@ public interface ConfigurationReaderInterceptor {
     public String createFilename(String filename);
 
     /**
-     * Intercepts a filename, allowing for eg. replacing variables or changing
-     * relative paths to absolute paths.
+     * Intercepts a resource creation, allowing for eg. limiting types or do
+     * special processing.
      * 
-     * @param filename
+     * @param resourceUrl
+     * @param tempDataCleanerConfiguration The temporary/partially built configuration. Do _not_ store
      * @return
      */
-    public Resource createResource(String resourceUrl);
+    public Resource createResource(String resourceUrl, DataCleanerConfiguration tempDataCleanerConfiguration);
 
     /**
      * Gets a temporary storage directory

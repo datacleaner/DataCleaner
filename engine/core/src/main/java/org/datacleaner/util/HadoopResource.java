@@ -24,21 +24,36 @@ import java.net.URI;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.server.HadoopClusterInformation;
 
 public class HadoopResource extends HdfsResource {
+    public static final String DEFAULT_CLUSTERREFERENCE = "org.datacleaner.hadoop.environment";
 
     private static final long serialVersionUID = 1L;
 
-    private final Configuration _configuration;
+    private final transient Configuration _configuration;
+    private final String _clusterReferenceName;
 
-    public HadoopResource(URI uri, Configuration configuration) {
+    public HadoopResource(URI uri, Configuration configuration, String clusterReferenceName) {
         super(uri.toString());
         _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
     }
 
-    public HadoopResource(Resource resource, Configuration configuration) {
+    public HadoopResource(Resource resource, Configuration configuration, String clusterReferenceName) {
         super(resource.getQualifiedPath());
         _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
+    }
+
+    public HadoopResource(final URI uri, final HadoopClusterInformation defaultCluster) {
+        this(uri, defaultCluster.getConfiguration(), defaultCluster.getName());
+    }
+
+    public HadoopResource(String uri, Configuration configuration, String clusterReferenceName) {
+        super(uri);
+        _configuration = configuration;
+        _clusterReferenceName = clusterReferenceName;
     }
 
     @Override
@@ -50,4 +65,17 @@ public class HadoopResource extends HdfsResource {
     public String toString() {
         return "HadoopResource[" + getQualifiedPath() + "]";
     }
+
+    public String getClusterReferenceName() {
+        return _clusterReferenceName;
+    }
+
+    public String getTemplatedPath() {
+        // Legacy support.
+        if(_clusterReferenceName == null){
+            return getQualifiedPath();
+        }
+        return "hdfs://{" + _clusterReferenceName + "}" + getFilepath();
+    }
+
 }

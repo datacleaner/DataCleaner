@@ -44,6 +44,11 @@ public interface DataCleanerConfiguration extends Serializable {
     public ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
+     * @return the server informtation catalog defined in this configuration
+     */
+    public ServerInformationCatalog getServerInformationCatalog();
+
+    /**
      * Gets the home folder of this configuration.
      * 
      * @return

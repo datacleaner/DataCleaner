@@ -255,6 +255,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
+    private static int NR_OF_WINDOWS_OPENED = 0; 
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -368,15 +369,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void open() {
         super.open();
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                if (DataCloudLogInWindow.isRelevantToShow(_userPreferences, _configuration)) {
-                    DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration, _userPreferences, getWindowContext(), AnalysisJobBuilderWindowImpl.this);
-                    dataCloudLogInWindow.open();
+        /* We make sure the DataCloudLogIn appears only at the start up.
+         Otherwise, the banner will appear when the user tries to open a job,
+         or when he chooses to open a new window. */
+        if (NR_OF_WINDOWS_OPENED < 1) {
+            WidgetUtils.invokeSwingAction(new Runnable() {
+                @Override
+                public void run() {
+                    if (DataCloudLogInWindow.isRelevantToShow(_userPreferences, _configuration)) {
+                        DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(_configuration,
+                                _userPreferences, getWindowContext(), AnalysisJobBuilderWindowImpl.this);
+                        dataCloudLogInWindow.open();
+                        NR_OF_WINDOWS_OPENED++;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override

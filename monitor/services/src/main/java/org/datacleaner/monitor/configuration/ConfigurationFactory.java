@@ -92,6 +92,10 @@ public class ConfigurationFactory {
         _numThreads = numThreads;
     }
 
+    /**
+     * Adds additional component descriptor provider. For remote components it is possible to use
+     * the {@link RemoteDescriptorProviderFactory} factory.
+     */
     public void setAdditionalDescriptorProvider(DescriptorProvider descriptorProvider) {
         this.additionalDescriptorProvider = descriptorProvider;
     }

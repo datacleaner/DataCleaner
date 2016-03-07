@@ -545,7 +545,7 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     private void rescanServer() {
-        if (getUri() != null) {
+        if (_fileSystem != null && getUri() != null) {
             try {
                 _fileSystem.listStatus(new Path(getUri()));
             } catch (IOException e) {

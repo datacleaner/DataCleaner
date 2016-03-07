@@ -39,14 +39,24 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
     }
 
     private static String[] getConfigurationDirectories() {
-        List<String> configDirectories = new ArrayList<>();
+        final List<String> configDirectories = new ArrayList<>();
+        
+        // first read system properties
         for (String configVariable : CONFIGURATION_VARIABLES) {
             final String propertyValues = System.getProperty(configVariable);
-            final String environmentValue = System.getenv(configVariable);
-            if(propertyValues != null){
+            if (propertyValues != null) {
                 configDirectories.add(propertyValues);
-            } else if(environmentValue != null) {
-                configDirectories.add(environmentValue);
+            }
+        }
+
+        // if no system properties defined, then check environment variables
+        // (don't mix the two)
+        if (configDirectories.isEmpty()) {
+            for (String configVariable : CONFIGURATION_VARIABLES) {
+                final String environmentValue = System.getenv(configVariable);
+                if (environmentValue != null) {
+                    configDirectories.add(environmentValue);
+                }
             }
         }
 

@@ -336,7 +336,7 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testWriteAndReadHadoopResourceDatastore() throws Exception {
-        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+        final MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
 
         helper.generateCoreFile();
         // Prepare "environment"
@@ -352,8 +352,8 @@ public class DomConfigurationWriterTest {
 
             final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
 
-            CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
-            HadoopResource resource = (HadoopResource) csvDatastore.getResource();
+            final CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
+            final HadoopResource resource = (HadoopResource) csvDatastore.getResource();
             assertNotNull(resource);
             assertEquals("example-dates.csv", resource.getFilepath());
             assertEquals(helper.getPath(), resource.getHadoopConfiguration().get("fs.defaultFS"));

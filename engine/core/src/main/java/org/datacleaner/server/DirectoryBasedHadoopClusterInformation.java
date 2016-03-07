@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
@@ -49,6 +50,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
             final File[] array = c.listFiles();
             assert (array != null);
             Arrays.stream(array).filter(File::isFile).filter(f -> !configurationFiles.containsKey(f.getName()))
+                    .filter(f -> FilenameUtils.getExtension(f.getName()).equalsIgnoreCase("xml"))
                     .forEach(f -> configurationFiles.put(f.getName(), f));
         });
 

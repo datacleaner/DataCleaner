@@ -22,6 +22,7 @@ package org.datacleaner.reference;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.metamodel.DataContext;
@@ -34,7 +35,6 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.NoSuchColumnException;
 import org.datacleaner.job.NoSuchDatastoreException;
 import org.datacleaner.util.ReadObjectBuilder;
-import org.elasticsearch.common.base.Objects;
 
 /**
  * A dictionary backed by a column in a datastore.
@@ -72,9 +72,9 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final DatastoreDictionary other = (DatastoreDictionary) obj;
-            return Objects.equal(_datastoreName, other._datastoreName)
-                    && Objects.equal(_qualifiedColumnName, other._qualifiedColumnName)
-                    && Objects.equal(_loadIntoMemory, other._loadIntoMemory);
+            return Objects.equals(_datastoreName, other._datastoreName)
+                    && Objects.equals(_qualifiedColumnName, other._qualifiedColumnName)
+                    && Objects.equals(_loadIntoMemory, other._loadIntoMemory);
         }
         return false;
     }

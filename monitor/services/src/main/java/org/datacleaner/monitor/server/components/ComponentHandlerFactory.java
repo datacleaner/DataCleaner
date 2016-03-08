@@ -91,11 +91,7 @@ public class ComponentHandlerFactory {
 
     public ComponentDescriptor<?> resolveDescriptor(DataCleanerEnvironment env, String componentName) {
         ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(componentName);
-        if (descriptor == null) {
-            descriptor = env.getDescriptorProvider()
-                    .getAnalyzerDescriptorByDisplayName(componentName);
-        }
+                .getComponentDescriptorByDisplayName(componentName);
         if (descriptor == null) {
             logger.info("Component {} not found.", componentName);
             throw ComponentNotFoundException.createTypeNotFound(componentName);

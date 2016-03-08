@@ -84,11 +84,19 @@ public class SimpleDescriptorProviderTest extends TestCase {
         SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TransformerMock.class));
 
-        TransformerDescriptor<?> descriptor1 = descriptorProvider
-                .getTransformerDescriptorByDisplayName("Transformer mock");
-        TransformerDescriptor<?> descriptor2 = descriptorProvider
-                .getTransformerDescriptorByDisplayName("Mock transformer");
+        TransformerDescriptor<?> descriptor1 = descriptorProvider.getTransformerDescriptorByDisplayName(
+                "Transformer mock");
+        TransformerDescriptor<?> descriptor2 = descriptorProvider.getTransformerDescriptorByDisplayName(
+                "Mock transformer");
 
         assertSame(descriptor1, descriptor2);
+
+        ComponentDescriptor<?> descriptor3 = descriptorProvider.getComponentDescriptorByDisplayName("Transformer mock");
+
+        assertSame(descriptor3, descriptor2);
+
+        ComponentDescriptor<?> descriptor4 = descriptorProvider.getComponentDescriptorByDisplayName("Mock transformer");
+
+        assertSame(descriptor3, descriptor4);
     }
 }

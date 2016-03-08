@@ -35,6 +35,7 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
@@ -152,18 +153,10 @@ public class ComponentControllerV1Test {
         return injectionManagerFactory;
     }
 
-    @SuppressWarnings("unchecked")
     private DescriptorProvider getDescriptorProviderMock() {
-        DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
-        Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
-        @SuppressWarnings("rawtypes")
-        TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
-        transformerDescriptorSet.add(transformerDescriptorMock);
-        expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
-                transformerDescriptorMock).anyTimes();
-        replay(descriptorProvider);
-
+        final TransformerDescriptor<?> transformerDescriptorMock = getTransformerDescriptorMock();
+        final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
+        descriptorProvider.addTransformerBeanDescriptor(transformerDescriptorMock);
         return descriptorProvider;
     }
 

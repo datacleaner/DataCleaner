@@ -247,7 +247,7 @@ public class JaxbJobReaderTest extends TestCase {
             factory.create(new File("src/test/resources/example-job-missing-descriptor.xml"));
             fail("Exception expected");
         } catch (NoSuchComponentException e) {
-            assertEquals("No such Transformer descriptor: tokenizerDescriptor", e.getMessage());
+            assertEquals("No such TransformerType descriptor: tokenizerDescriptor", e.getMessage());
         }
     }
 

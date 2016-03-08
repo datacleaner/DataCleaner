@@ -132,7 +132,7 @@ public class WelcomePanel extends DCSplashPanel {
             result = new DCPanel();
             if (Version.isCommunityEdition()) {
                 final JXEditorPane editorPane = new JXEditorPane("text/html",
-                        "You're now using the <b>Community Edition</b> of DataCleaner.<br/><br/>"
+                        "You're now using the <i>Community Edition</i> of DataCleaner.<br/><br/>"
                                 + "We hope that you enjoy this free product. We encourage you to also check out the "
                                 + "commercial DataCleaner editions which feature added functionality, "
                                 + "helpful getting started wizards and commercial support. "

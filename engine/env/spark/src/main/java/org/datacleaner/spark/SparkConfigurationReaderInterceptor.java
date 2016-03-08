@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
@@ -57,7 +58,7 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
     }
 
     @Override
-    public Resource createResource(String resourceUrl) {
+    public Resource createResource(String resourceUrl, DataCleanerConfiguration tempConfiguration) {
         final URI uri = URI.create(resourceUrl);
         return _hdfsHelper.getResourceToUse(uri);
     }

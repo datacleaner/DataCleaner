@@ -101,8 +101,6 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
         _previewButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton = WidgetFactory.createDefaultButton(WidgetUtils.CHAR_CARET_DOWN);
-        _previewAlternativesButton.setBorder(WidgetUtils.BORDER_EMPTY);
-        _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME.deriveFont(12f));
         final int defaultPreviewRows = getPreviewRows();
         final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
                 _windowContext, this, _componentBuilder, defaultPreviewRows);
@@ -185,6 +183,8 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         previewButtonPanel.addButton(_previewButton);
         previewButtonPanel.add(new JLabel("|"));
         previewButtonPanel.addButton(_previewAlternativesButton);
+        
+        _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
         bottomButtonPanel.add(previewButtonPanel);
 

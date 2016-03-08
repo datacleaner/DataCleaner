@@ -19,15 +19,12 @@
  */
 package org.datacleaner.configuration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.FileHelper;
@@ -49,16 +46,27 @@ import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
+import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.test.MockHadoopConfigHelper;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.xml.XmlUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static org.junit.Assert.*;
+
 public class DomConfigurationWriterTest {
+
+    @Rule
+    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
 
     private DomConfigurationWriter configurationWriter;
 
@@ -288,6 +296,70 @@ public class DomConfigurationWriterTest {
         assertEquals("products.productname", datastoreSynonymCatalog.getMasterTermColumnPath());
         assertEquals("[products.productline, product.producttype]", Arrays.toString(datastoreSynonymCatalog
                 .getSynonymColumnPaths()));
+    }
+
+    @Test
+    public void testWriteAndReadAllServers() throws Exception {
+        configurationWriter
+                .externalize(new EnvironmentBasedHadoopClusterInformation("environment", "Environment-based cluster"));
+        configurationWriter.externalize(
+                new DirectoryBasedHadoopClusterInformation("directory", "Directory-based cluster", "C:\\Users\\Test",
+                        "file:///C:/Users/Test2"));
+        configurationWriter
+                .externalize(new DirectConnectionHadoopClusterInformation("namenode", "Namenode-based cluster",
+                        URI.create("hdfs://localhost:8020/")));
+
+        final String str = transform(configurationWriter.getDocument());
+
+        // "Default" hadoop cluster reference should never be written
+        assertFalse(str.contains(HadoopResource.DEFAULT_CLUSTERREFERENCE));
+
+        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+        FileHelper.writeStringAsFile(file, str);
+
+        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+        ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
+        assertEquals("[directory, environment, namenode, org.datacleaner.hadoop.environment]",
+                Arrays.toString(serverInformationCatalog.getServerNames()));
+
+        assertNotNull(serverInformationCatalog.getServer("environment"));
+
+        DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
+                (DirectoryBasedHadoopClusterInformation) serverInformationCatalog.getServer("directory");
+        assertArrayEquals(new String[] { "C:\\Users\\Test", "file:///C:/Users/Test2" },
+                directoryBasedHadoopClusterInformation.getDirectories());
+
+        DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
+                (DirectConnectionHadoopClusterInformation) serverInformationCatalog.getServer("namenode");
+        assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
+    }
+
+    @Test
+    public void testWriteAndReadHadoopResourceDatastore() throws Exception {
+        final MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+
+        helper.generateCoreFile();
+        // Prepare "environment"
+        try {
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR, helper.getConfFolder().getAbsolutePath());
+
+            final HadoopResource hadoopResource = new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
+                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
+            final String str = transform(configurationWriter.getDocument());
+            final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+            FileHelper.writeStringAsFile(file, str);
+
+            final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
+
+            final CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
+            final HadoopResource resource = (HadoopResource) csvDatastore.getResource();
+            assertNotNull(resource);
+            assertEquals("example-dates.csv", resource.getFilepath());
+            assertEquals(helper.getPath(), resource.getHadoopConfiguration().get("fs.defaultFS"));
+        } finally {
+            System.clearProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
+        }
     }
 
     @Test

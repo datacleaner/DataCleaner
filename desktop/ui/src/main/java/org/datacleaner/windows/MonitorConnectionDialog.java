@@ -348,7 +348,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         panel.add(formPanel, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        panel.setPreferredSize(getDialogWidth(), 400);
+        panel.setPreferredSize(getDialogWidth(), 460);
 
         return panel;
     }

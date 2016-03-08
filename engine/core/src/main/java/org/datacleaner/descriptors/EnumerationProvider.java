@@ -24,4 +24,5 @@ package org.datacleaner.descriptors;
  */
 public interface EnumerationProvider {
     EnumerationValue[] values();
+    EnumerationValue forString(String value);
 }

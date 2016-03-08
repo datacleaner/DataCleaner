@@ -82,6 +82,8 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
     /** Escapes value for a CSV line and appends it to the 'target'. */
     private void escapeValueTo(String field, StringBuilder target) {
         if(field == null) {
+            target.append(DETAILS_QUOTE_CHAR);
+            target.append(DETAILS_QUOTE_CHAR);
             return;
         }
         target.append(DETAILS_QUOTE_CHAR);

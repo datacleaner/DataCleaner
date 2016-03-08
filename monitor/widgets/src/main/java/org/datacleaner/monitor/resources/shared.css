@@ -132,7 +132,7 @@
 }
 
 .HeadingLabel {
-	color: #377FCF;
+	color: #16c2f4;
 	font-size: 1.2em;
 	margin-bottom: 10px;
 }
@@ -181,7 +181,7 @@ div.center {
 }
 
 .WizardPanel table th {
-	background-color: #5594DD;
+	background-color: #16c2f4;
 	color: white;
 	font-weight: normal;
 	padding: 4px;
@@ -199,7 +199,7 @@ div.center {
 
 .WizardPanel .gwt-RadioButton label {
 	padding-left: 6px;
-	color: #5594DD;
+	color: #16c2f4;
 }
 
 .WizardPanel .NameLabel {
@@ -215,7 +215,7 @@ div.center {
 	padding-left: 36px;
 	background-repeat: no-repeat;
 	background-position: left center;
-	min-height: 22px;
+	line-height: 32px;
 }
 
 .JobWizardPanel .HeadingLabel {
@@ -278,7 +278,7 @@ div.center {
 	font-size: 11px;
 }
 .WizardProgressBar .WizardProgressItem.current {
-	background-color: #5594DD;
+	background-color: #16c2f4;
 }
 .WizardProgressBar .MetaItem.before {
 }
@@ -369,11 +369,11 @@ div.center {
 	width: 90%;
 	margin-top: 10px;
 	padding: 10px;
-	border-left: 2px solid #5594DD;
+	border-left: 2px solid #16c2f4;
 }
 
 .SelectMetricPanel .DisplayNameBox {
-	color: #5594DD;
+	color: #16c2f4;
 }
 
 .SelectMetricPanel select {

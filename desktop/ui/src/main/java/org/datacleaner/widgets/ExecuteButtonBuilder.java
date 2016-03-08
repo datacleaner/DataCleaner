@@ -82,7 +82,7 @@ public class ExecuteButtonBuilder {
                     } else {
                         final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
                         final ActionListener actionListener = item.createActionListener(_analysisJobBuilder,
-                                executeAction);
+                                executeAction, _window);
                         if (actionListener == null) {
                             menuItem.setEnabled(false);
                         } else {

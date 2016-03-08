@@ -21,6 +21,9 @@ package org.datacleaner.util.convert;
 
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
@@ -28,30 +31,36 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  * {@link ResourceTypeHandler} for {@link HdfsResource} aka files on Hadoop
  * HDFS.
  */
-public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource> {
-
+public class HdfsResourceTypeHandler implements ResourceTypeHandler<HadoopResource> {
     private final String _scheme;
+    private final DataCleanerConfiguration _dataCleanerConfiguration;
 
     /**
      * Default constructor for the "hdfs" scheme. Use of this constructor is
      * discouraged since we support now many other schemes.
-     * 
-     * @deprecated use {@link #HdfsResourceTypeHandler(String)} instead
+     *
+     * @deprecated use {@link #HdfsResourceTypeHandler(String, DataCleanerConfiguration)} instead
      */
     public HdfsResourceTypeHandler() {
         this("hdfs");
     }
 
-    /**
-     * Creates a {@link HdfsResourceTypeHandler} for a particular scheme.
-     * 
-     * @param scheme
-     *            a scheme such as "hdfs", "emrfs", "maprfs" etc.
-     */
     public HdfsResourceTypeHandler(String scheme) {
-        _scheme = scheme;
+        this(scheme, new DataCleanerConfigurationImpl());
     }
-    
+
+
+        /**
+         * Creates a {@link HdfsResourceTypeHandler} for a particular scheme.
+         *
+         * @param scheme
+         *            a scheme such as "hdfs", "emrfs", "maprfs" etc.
+         */
+    public HdfsResourceTypeHandler(String scheme, DataCleanerConfiguration dataCleanerConfiguration) {
+        _scheme = scheme;
+        _dataCleanerConfiguration = dataCleanerConfiguration;
+    }
+
     @Override
     public boolean isParserFor(Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, HdfsResource.class);
@@ -63,12 +72,16 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
     }
 
     @Override
-    public HdfsResource parsePath(String path) {
+    public HadoopResource parsePath(String path) {
         final String prefix = getScheme() + "://";
         if (!path.startsWith(prefix)) {
             path = prefix + path;
         }
-        return new HdfsResource(path);
+
+        HadoopResourceBuilder
+                builder = new HadoopResourceBuilder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
+
+        return builder.build();
     }
 
     @Override
@@ -78,6 +91,7 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
         if (path.startsWith(prefix)) {
             path = path.substring(prefix.length());
         }
+
         return path;
     }
 

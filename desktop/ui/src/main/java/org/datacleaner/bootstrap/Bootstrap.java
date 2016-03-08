@@ -255,7 +255,7 @@ public final class Bootstrap {
                 @Override
                 public void run() {
                     if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
-                        DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
+                        final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
                                 userPreferences, windowContext, (AbstractWindow) analysisJobBuilderWindow);
                         dataCloudLogInWindow.open();
                     }

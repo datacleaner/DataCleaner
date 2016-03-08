@@ -38,9 +38,11 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
  * @since 03. 09. 2015
  */
 public class RESTClientImpl implements RESTClient {
+
     private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
+    private static final Map<String, Client> clientCache = new ConcurrentHashMap<>();
+    
     private Client client = null;
-    private static Map<String, Client> clientCache = new ConcurrentHashMap<>();
 
     public RESTClientImpl(String username, String password) {
         if (username == null) {
@@ -52,6 +54,7 @@ public class RESTClientImpl implements RESTClient {
 
         if (client == null) {
             client = Client.create();
+            client.setConnectTimeout(30000);
 
             if (username != null && password != null) {
                 client.addFilter(new HTTPBasicAuthFilter(username, password));
@@ -104,7 +107,7 @@ public class RESTClientImpl implements RESTClient {
         }
 
         if (response.getStatus() != HttpCode.OK.getCode() && response.getStatus() != HttpCode.CREATED.getCode()) {
-            throw new RuntimeException("Remote transformer failed: " + response.getStatusInfo().getReasonPhrase() + " (HTTP error code: " + response.getStatus() +"}");
+            throw new RuntimeException(response.getStatusInfo().getReasonPhrase() + " (error code: " + response.getStatus() +")");
         }
 
         String output = response.getEntity(String.class);

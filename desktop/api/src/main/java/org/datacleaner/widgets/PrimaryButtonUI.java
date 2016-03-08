@@ -52,7 +52,8 @@ public class PrimaryButtonUI extends PlasticButtonUI {
     public void installDefaults(AbstractButton b) {
         super.installDefaults(b);
         b.setFocusPainted(false);
-        b.setBackground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        b.setFont(WidgetUtils.FONT_BUTTON);
+        b.setBackground(WidgetUtils.BG_COLOR_BLUE_DARK);
         b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setBorder(WidgetUtils.BORDER_BUTTON_PRIMARY);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -65,7 +66,7 @@ public class PrimaryButtonUI extends PlasticButtonUI {
 
     @Override
     protected Color getSelectColor() {
-        return WidgetUtils.BG_COLOR_BLUE_DARK;
+        return WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_DARK);
     }
 
 }

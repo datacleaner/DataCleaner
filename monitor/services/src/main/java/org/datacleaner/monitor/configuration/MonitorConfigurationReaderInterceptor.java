@@ -89,8 +89,8 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
-        List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
+    protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
+        List<ResourceTypeHandler<?>> handlers = super.getExtraResourceTypeHandlers();
         handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
         return handlers;
     }

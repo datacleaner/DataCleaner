@@ -32,8 +32,8 @@ public class RemoteServerDataImpl implements RemoteServerData {
 
     private final String serverName;
     private final String url;
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
     public RemoteServerDataImpl(String url, String serverName, String username, String password) {
         this.url = url == null ? null : url.replaceAll("/+$", "");
@@ -60,5 +60,13 @@ public class RemoteServerDataImpl implements RemoteServerData {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
     }
 }

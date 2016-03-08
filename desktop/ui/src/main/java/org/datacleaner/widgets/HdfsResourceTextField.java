@@ -37,7 +37,7 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
         getBrowseButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, openType);
+                HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, null, openType);
             }
         });
     }

@@ -42,6 +42,7 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 /**
  * This class provides an API for hooking in "Execute" button options.
@@ -73,7 +74,7 @@ public class ExecuteButtonOptions {
          * @return
          */
         public ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,
-                Action<AnalysisJobBuilder> executeAction);
+                Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow);
 
     }
 
@@ -99,12 +100,12 @@ public class ExecuteButtonOptions {
 
         @Override
         public final ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
-                final Action<AnalysisJobBuilder> executeAction) {
+                final Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     try {
-                        run(analysisJobBuilder, executeAction);
+                        run(analysisJobBuilder, executeAction, analysisJobBuilderWindow);
                     } catch (Exception e) {
                         WidgetUtils.showErrorMessage("Unexpected error",
                                 "An error occurred while executing job in mode '" + getText() + "'", e);
@@ -113,8 +114,8 @@ public class ExecuteButtonOptions {
             };
         }
 
-        protected abstract void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction)
-                throws Exception;
+        protected abstract void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
+                AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception;
     }
 
     /**
@@ -134,7 +135,7 @@ public class ExecuteButtonOptions {
 
         @Override
         public ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,
-                Action<AnalysisJobBuilder> executeAction) {
+                Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return null;
         }
     }
@@ -145,16 +146,16 @@ public class ExecuteButtonOptions {
         // initialize the default menu items
         addMenuItem(new SimpleExecutionMenuItem("Run normally", IconUtils.ACTION_EXECUTE) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction)
-                    throws Exception {
+            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
+                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 executeAction.run(analysisJobBuilder);
             }
         });
 
         addMenuItem(new SimpleExecutionMenuItem("Run first N records", IconUtils.ACTION_PREVIEW) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction)
-                    throws Exception {
+            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
+                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
 
                 if (maxRows != null) {
@@ -180,8 +181,8 @@ public class ExecuteButtonOptions {
 
         addMenuItem(new SimpleExecutionMenuItem("Run single-threaded", IconUtils.MODEL_ROW) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction)
-                    throws Exception {
+            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
+                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final DataCleanerConfiguration baseConfiguration = analysisJobBuilder.getConfiguration();
                 final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(baseConfiguration)
                         .withEnvironment(new DataCleanerEnvironmentImpl(baseConfiguration.getEnvironment())

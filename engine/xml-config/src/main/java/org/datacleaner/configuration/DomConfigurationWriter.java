@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Set;
@@ -53,7 +51,13 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
+import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.server.HadoopClusterInformation;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -62,6 +66,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Strings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Utility class for writing configuration elements to the XML format of
@@ -95,7 +101,25 @@ public class DomConfigurationWriter {
 
     /**
      * Determines if the given datastore is externalizable by this object.
-     * 
+     *
+     * @param serverInformation
+     * @return
+     */
+    public boolean isExternalizable(final ServerInformation serverInformation) {
+        if(serverInformation == null) {
+            return false;
+        }
+
+        if (serverInformation instanceof HadoopClusterInformation) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determines if the given datastore is externalizable by this object.
+     *
      * @param datastore
      * @return
      */
@@ -168,6 +192,18 @@ public class DomConfigurationWriter {
 
     public boolean isExternalizable(StringPattern sp) {
         return sp instanceof SimpleStringPattern || sp instanceof RegexStringPattern;
+    }
+
+    /**
+     * Removes a server by its name, if it exists and is recognizeable by the
+     * externalizer.
+     *
+     * @param serverName
+     * @return true if a server information element was removed from the XML document.
+     */
+    public boolean removeServerInformation(final String serverName) {
+        final Element serverInformationCatalogElement = getServerInformationCatalogElement();
+        return removeChildElementByNameAttribute(serverName, serverInformationCatalogElement);
     }
 
     /**
@@ -245,9 +281,30 @@ public class DomConfigurationWriter {
         return false;
     }
 
+    public Element externalize(ServerInformation serverInformation) throws UnsupportedOperationException {
+        if (serverInformation == null) {
+            throw new IllegalArgumentException("ServerInformation cannot be null");
+        }
+
+        final Element elem;
+
+        if (serverInformation instanceof HadoopClusterInformation) {
+            elem = toElement((HadoopClusterInformation) serverInformation);
+        } else {
+            throw new UnsupportedOperationException("Non-supported serverInformation: " + serverInformation);
+        }
+
+        final Element serverInformationCatalogElement = getHadoopClustersElement();
+        serverInformationCatalogElement.appendChild(elem);
+
+        onDocumentChanged(getDocument());
+
+        return elem;
+    }
+
     /**
      * Externalizes the given datastore
-     * 
+     *
      * @param datastore
      * @return
      * @throws UnsupportedOperationException
@@ -486,8 +543,11 @@ public class DomConfigurationWriter {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
         }
+        if(resource instanceof HadoopResource) {
+            return ((HadoopResource) resource).getTemplatedPath();
+        }
         if (resource instanceof HdfsResource) {
-            return ((HdfsResource) resource).getQualifiedPath();
+            return resource.getQualifiedPath();
         }
 
         throw new UnsupportedOperationException("Unsupported resource type: " + resource);
@@ -545,6 +605,43 @@ public class DomConfigurationWriter {
 
     private String encodePassword(char[] password) {
         return encodePassword(new String(password));
+    }
+
+    /**
+     * Externalizes a {@link HadoopClusterInformation} to a XML element.
+     *
+     * @param hadoopClusterInformation the hadoopClusterInformation to externalize
+     * @return a XML element representing the datastore.
+     */
+    public Element toElement(HadoopClusterInformation hadoopClusterInformation) {
+        final Element hadoopClusterElement = getDocument().createElement("hadoop-cluster");
+
+        hadoopClusterElement.setAttribute("name", hadoopClusterInformation.getName());
+
+        final String description = hadoopClusterInformation.getDescription();
+        if (!Strings.isNullOrEmpty(description)) {
+            hadoopClusterElement.setAttribute("description", description);
+        }
+
+        // These inherit each other, so order is important
+        if (hadoopClusterInformation instanceof DirectConnectionHadoopClusterInformation) {
+            appendElement(hadoopClusterElement, "namenode-url",
+                    ((DirectConnectionHadoopClusterInformation) hadoopClusterInformation).getNameNodeUri().toString());
+        } else if (hadoopClusterInformation instanceof EnvironmentBasedHadoopClusterInformation) {
+            appendElement(hadoopClusterElement, "environment-configured", "");
+        } else if (hadoopClusterInformation instanceof DirectoryBasedHadoopClusterInformation) {
+            DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
+                    (DirectoryBasedHadoopClusterInformation) hadoopClusterInformation;
+            Element directoriesElement = getDocument().createElement("directories");
+            hadoopClusterElement.appendChild(directoriesElement);
+            for (String directory : directoryBasedHadoopClusterInformation.getDirectories()) {
+                appendElement(directoriesElement, "directory", directory);
+            }
+        } else {
+            throw new UnsupportedOperationException("Unknown Hadoop cluster configuration");
+        }
+
+        return hadoopClusterElement;
     }
 
     /**
@@ -751,6 +848,24 @@ public class DomConfigurationWriter {
     }
 
     /**
+     * Get the XML element that represents the {@link ServerInformationCatalog}.
+     */
+    public Element getServerInformationCatalogElement() {
+        final Element configurationFileDocumentElement = getDocumentElement();
+        return getOrCreateChildElementByTagName(configurationFileDocumentElement, "servers");
+    }
+
+    /**
+     * Get the XML element that represents the hadoop cluster subset of {@link ServerInformationCatalog}.
+     */
+    public Element getHadoopClustersElement() {
+        final Element hadoopClustersElement = getServerInformationCatalogElement();
+
+        return getOrCreateChildElementByTagName(hadoopClustersElement, "hadoop-clusters");
+    }
+
+
+    /**
      * Gets the XML element that represents the dictionaries
      * 
      * @return
@@ -871,5 +986,46 @@ public class DomConfigurationWriter {
         final Element element = getDocument().createElement(elementName);
         element.setTextContent(stringValue);
         parent.appendChild(element);
+    }
+
+
+    public void addRemoteServer(String serverName, String url, String username, String password){
+        Element descriptorProviderElement =
+                getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
+        Element remoteComponentsElement =
+                getOrCreateChildElementByTagName(descriptorProviderElement, "remote-components");
+
+        Element serverElement = getDocument().createElement("server");
+        remoteComponentsElement.appendChild(serverElement);
+
+        if(!StringUtils.isNullOrEmpty(serverName)){
+            appendElement(serverElement, "name", serverName);
+        }
+
+        if(!StringUtils.isNullOrEmpty(url)){
+            appendElement(serverElement, "url", url);
+        }
+        appendElement(serverElement, "username", username);
+        appendElement(serverElement, "password", SecurityUtils.encodePasswordWithPrefix(password));
+        onDocumentChanged(getDocument());
+    }
+
+    public void updateRemoteServerCredentials(String serverName, String username, String password) {
+        Element remoteComponents = getChildElementByTagName(getDocumentElement(), "remote-components");
+        NodeList servers = remoteComponents.getElementsByTagName("server");
+        for (int i = 0; i < servers.getLength(); i++) {
+            if(servers.item(i) instanceof Element){
+                Element server = (Element) servers.item(i);
+                Element name = getChildElementByTagName(server, "name");
+                if(name!= null && serverName.equals(name.getTextContent())){
+                    Element usernameElemet = getOrCreateChildElementByTagName(server, "username");
+                    usernameElemet.setTextContent(username);
+                    Element passwordElement = getOrCreateChildElementByTagName(server, "password");
+                    passwordElement.setTextContent(SecurityUtils.encodePasswordWithPrefix(password));
+                    break;
+                }
+            }
+        }
+        onDocumentChanged(getDocument());
     }
 }

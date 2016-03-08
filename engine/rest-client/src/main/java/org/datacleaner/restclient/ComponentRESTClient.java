@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ComponentRESTClient {
 
     private final RESTClient restClient;
+    private final String url;
     private String tenantName;
-    private String url;
 
     public ComponentRESTClient(String url, String username, String password) {
         this.url = url;

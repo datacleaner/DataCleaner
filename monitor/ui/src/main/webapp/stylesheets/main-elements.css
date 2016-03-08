@@ -7,7 +7,7 @@ body {
 	background-repeat: no-repeat;
 	background-color: #fff;
 	color: #111;
-	font-family: 'Ubuntu', sans-serif;
+	font-family: 'Muli', Arial, sans-serif;
 	font-size: 14px;
 	font-weight: 400;
 	margin: 0px;
@@ -26,7 +26,8 @@ div, span, p, td, th, li, h1, h2 {
 }
 
 b, strong {
-	font-weight: 700;
+	font-family: 'Lato', Arial, sans-serif;
+	font-weight: bold;
 }
 
 a {
@@ -35,7 +36,7 @@ a {
 }
 
 a:hover, a:focus {
-	color: #67A2E7;
+	color: #16c2f4;
 }
 
 a img {
@@ -108,6 +109,7 @@ h3 {
 h1 span, h2 span, h3 span {
 	color: #ffa800;
 	text-transform: uppercase;
+	font-family: 'Lato', Arial, sans-serif;
 	font-weight: bold;
 }
 

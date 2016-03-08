@@ -69,7 +69,9 @@ import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
+import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.DataCloudLogInWindow;
 import org.datacleaner.windows.MonitorConnectionDialog;
 import org.datacleaner.windows.WelcomeDialog;
 import org.slf4j.Logger;
@@ -205,7 +207,7 @@ public final class Bootstrap {
             }
 
             final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-
+            final WindowContext windowContext = injector.getInstance(WindowContext.class);
             analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
             final Datastore singleDatastore;
@@ -249,8 +251,17 @@ public final class Bootstrap {
                 });
             }
 
-            final WindowContext windowContext = injector.getInstance(WindowContext.class);
-
+            WidgetUtils.invokeSwingAction(new Runnable() {
+                @Override
+                public void run() {
+                    if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
+                        DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
+                                userPreferences, windowContext, (AbstractWindow) analysisJobBuilderWindow);
+                        dataCloudLogInWindow.open();
+                    }
+                }
+            });
+            
             // set up HTTP service for ExtensionSwap installation
             loadExtensionSwapService(userPreferences, windowContext, configuration, usageLogger);
 

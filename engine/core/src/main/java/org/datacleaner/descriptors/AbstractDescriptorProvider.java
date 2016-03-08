@@ -27,13 +27,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Abstract descriptor provider implementation that implements most trivial
@@ -66,7 +67,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     
     @Override
     public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
-        final List<ComponentDescriptor<?>> allComponentDescriptors = CollectionUtils.concat(false, getAnalyzerDescriptors(), getTransformerDescriptors(), getFilterDescriptors());
+        final Iterable<ComponentDescriptor<?>> allComponentDescriptors = Iterables.concat(getAnalyzerDescriptors(), getTransformerDescriptors(), getFilterDescriptors());
         ComponentDescriptor<?> match = getComponentDescriptorByDisplayName(name, allComponentDescriptors, true, false);
         if (match == null) {
             match = getComponentDescriptorByDisplayName(name, allComponentDescriptors, false, true);
@@ -164,7 +165,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     private <D extends ComponentDescriptor<?>> D getComponentDescriptorByDisplayName(String name,
-            Collection<D> descriptors, boolean searchPrimaryNames, boolean searchAliases) {
+            Iterable<D> descriptors, boolean searchPrimaryNames, boolean searchAliases) {
         if (name == null) {
             return null;
         }

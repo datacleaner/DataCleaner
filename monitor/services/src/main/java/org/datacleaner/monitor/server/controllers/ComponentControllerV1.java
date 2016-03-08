@@ -107,6 +107,11 @@ public class ComponentControllerV1 {
     private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
+    
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_TABULAR = "tabular";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_MAP = "map";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT = "document";
+    
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private static BufferedImage remoteMark = null;
     private int _maxBatchSize = Integer.MAX_VALUE;
@@ -213,7 +218,7 @@ public class ComponentControllerV1 {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = OutputStyle.HTTP_PARAM_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
@@ -507,23 +512,20 @@ public class ComponentControllerV1 {
         TABULAR,
         MAP;
 
-        public static final String HTTP_PARAM_TABULAR = "tabular";
-        public static final String HTTP_PARAM_MAP = "map";
-        public static final String HTTP_PARAM_DOCUMENT = "document";
-
         public static OutputStyle forString(String outputStyle) {
-
-            if(outputStyle == null) {
+            if (outputStyle == null) {
                 return TABULAR;
             }
-            switch(outputStyle) {
-                case HTTP_PARAM_TABULAR:
-                    return TABULAR;
-                case HTTP_PARAM_DOCUMENT:
-                case HTTP_PARAM_MAP:
-                    return MAP;
-                default:
-                    throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
+            outputStyle = outputStyle.trim().toLowerCase();
+            switch (outputStyle) {
+            case "":
+            case PARAMETER_VALUE_OUTPUT_STYLE_TABULAR:
+                return TABULAR;
+            case PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT:
+            case PARAMETER_VALUE_OUTPUT_STYLE_MAP:
+                return MAP;
+            default:
+                throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
             }
         }
     }

@@ -27,7 +27,6 @@ import static org.easymock.EasyMock.replay;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -167,35 +166,6 @@ public class ComponentControllerV1Test {
         replay(descriptorProvider);
 
         return descriptorProvider;
-    }
-
-    private ComponentSuperCategory getComponentSuperCategoryMock() {
-        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getName() {
-                return "superCategory";
-            }
-
-            @Override
-            public String getDescription() {
-                return getName();
-            }
-
-            @Override
-            public int getSortIndex() {
-                return 0;
-            }
-
-            @Override
-            public int compareTo(ComponentSuperCategory o) {
-                return 0;
-            }
-        };
-
-        return componentSuperCategory;
     }
 
     private ProcessStatelessInput createSampleInput() {

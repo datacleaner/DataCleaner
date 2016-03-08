@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,6 +61,10 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.reference.ReferenceDataCatalog;
+import org.datacleaner.reference.ReferenceDataCatalogImpl;
+import org.datacleaner.reference.SimpleSynonymCatalog;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
@@ -70,9 +75,22 @@ public class JaxbJobReaderTest extends TestCase {
             "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
-    private final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(
+    private final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(
             datastoreCatalog).withEnvironment(
             new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+    
+    // see #1196 - Synonym lookup changes has broken old jobs
+    public void testReadJobWhereOutputColumnsHasBeenAddedToComponent() throws Exception {
+        SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("Job titles");
+        Collection<SynonymCatalog> synonyms = Arrays.asList(synonymCatalog);
+        ReferenceDataCatalog referenceDataCatalog = new ReferenceDataCatalogImpl(Collections.emptyList(), synonyms, Collections.emptyList());
+        DataCleanerConfigurationImpl conf = this.conf.withReferenceDataCatalog(referenceDataCatalog);
+        
+        JobReader<InputStream> reader = new JaxbJobReader(conf);
+        AnalysisJob job = reader.read(new FileInputStream(
+                new File("src/test/resources/example-job-job-title-analytics.analysis.xml")));
+        assertNotNull(job);
+    }
 
     public void testReadComponentNames() throws Exception {
         JobReader<InputStream> reader = new JaxbJobReader(conf);

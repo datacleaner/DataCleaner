@@ -36,7 +36,7 @@ public class SwaggerConfiguration {
     private List<SwaggerTag> tags = new ArrayList<>();
     private Map<String, Map<String, SwaggerMethod>> paths = new HashMap<>();
     private Map<String, Map<String, Object>> securityDefinitions = new HashMap<>();
-    private SwaggerDefinitions definitions = new SwaggerDefinitions();
+    private Map<String, SwaggerSchema> definitions = new HashMap<>();
     private SwaggerExternalDocs externalDocs = new SwaggerExternalDocs();
     private List<Map<String, String[]>> security = new ArrayList<>();
 
@@ -108,12 +108,12 @@ public class SwaggerConfiguration {
         securityDefinitions.put(key, securityDef);
     }
 
-    public SwaggerDefinitions getDefinitions() {
+    public Map<String, SwaggerSchema> getDefinitions() {
         return definitions;
     }
 
-    public void setDefinitions(SwaggerDefinitions definitions) {
-        this.definitions = definitions;
+    public void addDefinition(String typeName, SwaggerSchema schema) {
+        definitions.put(typeName, schema);
     }
 
     public SwaggerExternalDocs getExternalDocs() {

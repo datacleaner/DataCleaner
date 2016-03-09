@@ -129,7 +129,7 @@ public class SwaggerParameter {
         this.schema = schema;
     }
 
-    public void setTypeByClass(Class clazz) {
+    public void setTypeByClass(Class<?> clazz) {
         if (clazz.getName().equals(String.class.getName())) {
             setType(Type.STRING.getValue());
         }

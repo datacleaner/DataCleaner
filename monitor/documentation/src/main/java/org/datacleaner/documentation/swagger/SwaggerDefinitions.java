@@ -25,4 +25,5 @@ import java.util.HashMap;
  * @since 23. 09. 2015
  */
 public class SwaggerDefinitions extends HashMap<String, SwaggerSchema> {
+    public static final long serialVersionUID = 1L;
 }

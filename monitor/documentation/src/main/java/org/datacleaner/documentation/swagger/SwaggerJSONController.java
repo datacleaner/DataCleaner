@@ -112,7 +112,7 @@ public class SwaggerJSONController {
 
     private static class SwaggerBuilder {
 
-        private Class serviceClass = null;
+        private Class<?> serviceClass = null;
         private String serviceUrlPrefix = null;
         private SwaggerConfiguration swaggerConfiguration = null;
 
@@ -121,9 +121,9 @@ public class SwaggerJSONController {
             swaggerConfiguration.setHost(host);
             swaggerConfiguration.setBasePath(basePath);
             swaggerConfiguration.setSchemes(new String[] {scheme});
-            SecuritySchemeObject basicSec = new SecuritySchemeObject();
-            basicSec.put("type", "basic");
-            swaggerConfiguration.addSecurityDefinition("basicAuth", basicSec);
+            Map<String, Object> basicSecDefinition = new HashMap<>();
+            basicSecDefinition.put("type", "basic");
+            swaggerConfiguration.addSecurityDefinition("basicAuth", basicSecDefinition);
 
             Map<String, String[]> securityRequirement = new HashMap<>();
             securityRequirement.put("basicAuth", new String[0]);
@@ -176,8 +176,7 @@ public class SwaggerJSONController {
             String url = getMethodURL(methodRequestMapping.value());
 
             if (!swaggerConfiguration.getPaths().containsKey(url)) {
-                Map<String, SwaggerMethod> swaggerMethods = new HashMap<>();
-                swaggerConfiguration.getPaths().put(url, swaggerMethods);
+                swaggerConfiguration.getPaths().put(url, new HashMap<>());
             }
 
             addHTTPMethods(url, method);
@@ -229,7 +228,7 @@ public class SwaggerJSONController {
         private SwaggerParameter[] createSwaggerParameterArray(Method method) {
             List<SwaggerParameter> swaggerParameterList = new ArrayList<>();
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-            Class[] parameterTypes = method.getParameterTypes();
+            Class<?>[] parameterTypes = method.getParameterTypes();
 
             for (int i = 0; i < parameterTypes.length; i++) {
                 SwaggerParameter swaggerParameter = getSwaggerParameter(parameterTypes[i], parameterAnnotations[i]);
@@ -242,7 +241,7 @@ public class SwaggerJSONController {
             return swaggerParameterList.toArray(new SwaggerParameter[swaggerParameterList.size()]);
         }
 
-        private SwaggerParameter getSwaggerParameter(Class parameterType, Annotation[] parameterAnnotations) {
+        private SwaggerParameter getSwaggerParameter(Class<?> parameterType, Annotation[] parameterAnnotations) {
             SwaggerParameter swaggerParameter = null;
             RequestBody requestBody = (RequestBody) findAnnotation(parameterAnnotations, RequestBody.class);
             RequestParam requestParam = (RequestParam) findAnnotation(parameterAnnotations, RequestParam.class);
@@ -274,7 +273,7 @@ public class SwaggerJSONController {
             return swaggerParameter;
         }
 
-        private Annotation findAnnotation(Annotation[] allAnnotations, Class requiredType) {
+        private Annotation findAnnotation(Annotation[] allAnnotations, Class<?> requiredType) {
             for (Annotation annotation : allAnnotations) {
                 if (annotation.annotationType().equals(requiredType)) {
                     return annotation;

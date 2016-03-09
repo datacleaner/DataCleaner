@@ -68,7 +68,7 @@ public class TextCaseTransformer implements Transformer {
     InputColumn<String> valueColumn;
 
     @Configured
-    TransformationMode mode;
+    TransformationMode mode = TransformationMode.UPPER_CASE;
 
     @Override
     public OutputColumns getOutputColumns() {
@@ -103,7 +103,7 @@ public class TextCaseTransformer implements Transformer {
 
     private String capitalizeWords(String value) {
         final StringBuilder sb = new StringBuilder();
-        final StringTokenizer tokenizer = new StringTokenizer(value, " \t\n\r\f", true);
+        final StringTokenizer tokenizer = new StringTokenizer(value, " -\t\n\r\f", true);
         boolean capitalizeNext = true;
         while (tokenizer.hasMoreTokens()) {
             final String nextToken = tokenizer.nextToken();

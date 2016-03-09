@@ -26,9 +26,8 @@ public class SwaggerInfo {
     private String title = "DataCleaner REST API";
     private String description = title;
     private String version = "1.0";
-    private String termsOfService = "http://www.gnu.org/licenses/lgpl-3.0.html";
+    private String termsOfService = "http://www.humaninference.com/";
     private SwaggerContact contact = new SwaggerContact();
-    private SwaggerLicense license = new SwaggerLicense();
 
     public String getDescription() {
         return description;
@@ -70,11 +69,4 @@ public class SwaggerInfo {
         this.contact = contact;
     }
 
-    public SwaggerLicense getLicense() {
-        return license;
-    }
-
-    public void setLicense(SwaggerLicense license) {
-        this.license = license;
-    }
 }

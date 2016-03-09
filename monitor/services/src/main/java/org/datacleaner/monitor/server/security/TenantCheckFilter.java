@@ -59,39 +59,44 @@ public class TenantCheckFilter extends GenericFilterBean {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
             ServletException {
         if (req instanceof HttpServletRequest) {
-            final String path = ((HttpServletRequest) req).getRequestURI();
-            final Matcher matcher = _pattern.matcher(path);
-            if (matcher != null && matcher.find()) {
-                final String urlTenantId = matcher.group(1);
-                logger.debug("Matched tenant id: '{}' in servlet path: {}", urlTenantId, path);
+            if("OPTIONS".equals(((HttpServletRequest) req).getMethod())) {
+                // OPTIONS should succeed even without authentication
+                // DO NOTHING.
+            } else {
+                final String path = ((HttpServletRequest) req).getRequestURI();
+                final Matcher matcher = _pattern.matcher(path);
+                if (matcher != null && matcher.find()) {
+                    final String urlTenantId = matcher.group(1);
+                    logger.debug("Matched tenant id: '{}' in servlet path: {}", urlTenantId, path);
 
-                final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (authentication == null) {
-                    logger.warn("Could not perform tenant check because Authentication is null");
-                } else {
-
-                    final UserBean user = new UserBean();
-                    user.updateUser(authentication, _tenantResolver);
-
-                    final String userTenantId = user.getTenant();
-
-                    if (user.isGod() || userTenantId.equalsIgnoreCase(urlTenantId)) {
-                        logger.debug("Tenant check passed");
+                    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    if (authentication == null) {
+                        logger.warn("Could not perform tenant check because Authentication is null");
                     } else {
-                        final String username = user.getUsername();
-                        final String message = "User " + username + " (" + userTenantId
-                                + ") is not authorized to access tenant: " + urlTenantId;
-                        if (resp instanceof HttpServletResponse) {
-                            HttpServletResponse response = (HttpServletResponse) resp;
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
-                            return;
+
+                        final UserBean user = new UserBean();
+                        user.updateUser(authentication, _tenantResolver);
+
+                        final String userTenantId = user.getTenant();
+
+                        if (user.isGod() || userTenantId.equalsIgnoreCase(urlTenantId)) {
+                            logger.debug("Tenant check passed");
                         } else {
-                            throw new DCSecurityException(message);
+                            final String username = user.getUsername();
+                            final String message = "User " + username + " (" + userTenantId
+                                    + ") is not authorized to access tenant: " + urlTenantId;
+                            if (resp instanceof HttpServletResponse) {
+                                HttpServletResponse response = (HttpServletResponse) resp;
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+                                return;
+                            } else {
+                                throw new DCSecurityException(message);
+                            }
                         }
                     }
+                } else {
+                    logger.debug("Could not match any tenant id in servlet path: {}", path);
                 }
-            } else {
-                logger.debug("Could not match any tenant id in servlet path: {}", path);
             }
         }
 

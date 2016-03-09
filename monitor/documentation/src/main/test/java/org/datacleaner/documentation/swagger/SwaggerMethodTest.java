@@ -103,12 +103,4 @@ public class SwaggerMethodTest {
         swaggerMethod.setResponses(responseMap);
         Assert.assertEquals(description, swaggerMethod.getResponses().get(key).getDescription());
     }
-
-    @Test
-    public void testSetAndGetSecurity() throws Exception {
-        Assert.assertNotNull(swaggerMethod.getSecurity());
-        final String[] security = new String[] { "security" };
-        swaggerMethod.setSecurity(security);
-        Assert.assertEquals(security[0], swaggerMethod.getSecurity()[0]);
-    }
 }

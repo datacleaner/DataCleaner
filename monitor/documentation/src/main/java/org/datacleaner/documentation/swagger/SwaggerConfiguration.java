@@ -35,9 +35,14 @@ public class SwaggerConfiguration {
     private String[] schemes = new String[] { "http" };
     private List<SwaggerTag> tags = new ArrayList<>();
     private Map<String, Map<String, SwaggerMethod>> paths = new HashMap<>();
-    private SwaggerSecurityDefinitions securityDefinitions = new SwaggerSecurityDefinitions();
-    private SwaggerDefinitions definitions = new SwaggerDefinitions();
+    private Map<String, Map<String, Object>> securityDefinitions = new HashMap<>();
+    private Map<String, SwaggerSchema> definitions = new HashMap<>();
     private SwaggerExternalDocs externalDocs = new SwaggerExternalDocs();
+    private List<Map<String, String[]>> security = new ArrayList<>();
+
+    public List<Map<String, String[]>> getSecurity() {
+        return security;
+    }
 
     public String getSwagger() {
         return swagger;
@@ -95,20 +100,20 @@ public class SwaggerConfiguration {
         this.paths = paths;
     }
 
-    public SwaggerSecurityDefinitions getSecurityDefinitions() {
+    public Map<String, Map<String, Object>> getSecurityDefinitions() {
         return securityDefinitions;
     }
 
-    public void setSecurityDefinitions(SwaggerSecurityDefinitions securityDefinitions) {
-        this.securityDefinitions = securityDefinitions;
+    public void addSecurityDefinition(String key, Map<String, Object> securityDef) {
+        securityDefinitions.put(key, securityDef);
     }
 
-    public SwaggerDefinitions getDefinitions() {
+    public Map<String, SwaggerSchema> getDefinitions() {
         return definitions;
     }
 
-    public void setDefinitions(SwaggerDefinitions definitions) {
-        this.definitions = definitions;
+    public void addDefinition(String typeName, SwaggerSchema schema) {
+        definitions.put(typeName, schema);
     }
 
     public SwaggerExternalDocs getExternalDocs() {

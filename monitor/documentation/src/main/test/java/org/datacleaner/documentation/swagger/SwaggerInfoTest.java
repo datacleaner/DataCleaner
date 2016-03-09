@@ -66,14 +66,4 @@ public class SwaggerInfoTest {
         swaggerInfo.setContact(swaggerContact);
         Assert.assertEquals(email, swaggerInfo.getContact().getEmail());
     }
-
-    @Test
-    public void testSetAndGetLicense() throws Exception {
-        Assert.assertNotNull(swaggerInfo.getLicense());
-        final SwaggerLicense swaggerLicense = new SwaggerLicense();
-        final String name = "GNU GPL";
-        swaggerLicense.setName(name);
-        swaggerInfo.setLicense(swaggerLicense);
-        Assert.assertEquals(name, swaggerInfo.getLicense().getName());
-    }
 }

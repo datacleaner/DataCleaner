@@ -52,15 +52,21 @@ public class SharedDescriptorProvider implements DescriptorProvider {
         _delegate = delegate;
     }
 
+    @Override
     public void refresh() {
         if (_delegate != null) {
             _delegate.refresh();
         }
     }
+    
+    @Override
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
+        return getDelegate().getComponentDescriptorByDisplayName(name);
+    }
 
     public DescriptorProvider getDelegate() {
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             if (applicationContext == null) {
                 // use a hard-coded descriptor provider (will only occur in test
                 // scenarios)

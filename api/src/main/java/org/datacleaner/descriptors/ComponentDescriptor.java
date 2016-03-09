@@ -35,13 +35,14 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
+import org.datacleaner.util.HasAliases;
 
 /**
  * Defines an interface for descriptors of {@link Component}s that support
  * initialization, closing and configuration properties. See {@link Component}
  * for a general description.
  */
-public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable {
+public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable, HasAliases {
     /**
      * @return a humanly readable display name for this bean.
      */
@@ -228,5 +229,6 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      * 
      * @return an array of aliases as strings
      */
+    @Override
     public String[] getAliases();
 }

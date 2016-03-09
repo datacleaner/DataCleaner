@@ -77,8 +77,6 @@ import org.datacleaner.job.runner.ComponentContextImpl;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
-import org.datacleaner.monitor.shared.ComponentNotAllowed;
-import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.convert.StringConverter;
@@ -105,7 +103,6 @@ public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
     public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
-    private final String _componentName;
     private final DataCleanerConfiguration _dcConfiguration;
     private StringConverter _stringConverter;
     private final ComponentDescriptor<?> descriptor;
@@ -120,15 +117,14 @@ public class ComponentHandler {
     private final org.datacleaner.job.ComponentConfiguration config;
     private final ComponentContext componentContext;
 
-    public ComponentHandler(DataCleanerConfiguration dcConfiguration, String componentName, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration, AnalysisListener analysisListener) {
+    public ComponentHandler(DataCleanerConfiguration dcConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentConfiguration componentConfiguration, RemoteComponentsConfiguration remoteComponentsConfiguration, AnalysisListener analysisListener) {
         Objects.requireNonNull(componentConfiguration, "Component configuration cannot be null");
         
         _remoteComponentsConfiguration = remoteComponentsConfiguration;
         _dcConfiguration = dcConfiguration;
-        _componentName = componentName;
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
-        descriptor = resolveDescriptor(_componentName);
+        descriptor = componentDescriptor;
         table = new MutableTable("inputData");
         component = (Component) descriptor.newInstance();
 
@@ -477,24 +473,6 @@ public class ComponentHandler {
             _stringConverter = new StringConverter(_dcConfiguration);
         }
         return _stringConverter;
-    }
-
-    private ComponentDescriptor<?> resolveDescriptor(String componentName) {
-        ComponentDescriptor<?> descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptorByDisplayName(componentName);
-        if (descriptor == null) {
-            descriptor = _dcConfiguration.getEnvironment().getDescriptorProvider()
-                    .getAnalyzerDescriptorByDisplayName(componentName);
-        }
-        if (descriptor == null) {
-            LOGGER.info("Component {} not found.", _componentName);
-            throw ComponentNotFoundException.createTypeNotFound(componentName);
-        }
-        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
-            LOGGER.info("Component {} is not allowed.", _componentName);
-            throw ComponentNotAllowed.createInstanceNotAllowed(_componentName);
-        }
-        return descriptor;
     }
 
     private static class ThreadLocalOutputListener implements ThreadLocalOutputRowCollector.Listener {

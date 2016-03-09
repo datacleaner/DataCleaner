@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,9 +54,9 @@ import org.datacleaner.monitor.server.components.ComponentCache;
 import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 import org.datacleaner.monitor.server.components.ComponentHandlerFactory;
+import org.datacleaner.monitor.server.components.InputRewriterController;
 import org.datacleaner.monitor.shared.ComponentNotAllowed;
 import org.datacleaner.monitor.shared.ComponentNotFoundException;
-import org.datacleaner.restclient.ComponentController;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
@@ -96,7 +97,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
  */
 @Controller
 @RequestMapping("/{tenant}/components")
-public class ComponentControllerV1 implements ComponentController {
+public class ComponentControllerV1 {
     private static final String REMOTE_MARK = "remote-icon-overlay.png";
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
@@ -107,6 +108,8 @@ public class ComponentControllerV1 implements ComponentController {
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private static BufferedImage remoteMark = null;
     private int _maxBatchSize = Integer.MAX_VALUE;
+
+    private InputRewriterController inputRewriterController = new InputRewriterController();
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -214,6 +217,11 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+
+        // try to enhance the input in case the client uses simplified input format\
+        ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
+        inputRewriterController.rewriteStatelessInput(compDesc, processStatelessInput);
+
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));

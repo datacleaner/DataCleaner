@@ -676,7 +676,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         final List<MutableInputColumn<?>> outputColumns = transformerBuilder.getOutputColumns();
                         final List<OutputType> output = transformerType.getOutput();
 
-                        if (outputColumns.size() != output.size()) {
+                        if (outputColumns.size() < output.size()) {
                             final String message = "Expected " + outputColumns.size() + " output column(s), but found "
                                     + output.size() + " (" + transformerBuilder + ")";
                             if (outputColumns.isEmpty()) {

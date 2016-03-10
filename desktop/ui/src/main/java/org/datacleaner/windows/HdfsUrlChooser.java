@@ -162,7 +162,8 @@ public class HdfsUrlChooser extends JComponent {
             Path directory = (Path) value;
             final String directoryName = directory.getName();
             if (directoryName.isEmpty()) {
-                setText(directory.toUri().toString());
+                final URI uri = directory.toUri();
+                setText(uri.toString());
             } else {
                 setText(directoryName);
             }
@@ -482,6 +483,7 @@ public class HdfsUrlChooser extends JComponent {
         if (element.isSymlink()) {
             try {
                 _currentDirectory = element.getSymlink();
+                _directoryComboBoxModel.updateDirectories();
             } catch (IOException e) {
                 logger.warn("Could not get the symlink value for element {}", element, e);
             }
@@ -491,6 +493,7 @@ public class HdfsUrlChooser extends JComponent {
             _dialog.dispose();
         } else if (element.isDirectory()) {
             _currentDirectory = element.getPath();
+            _directoryComboBoxModel.updateDirectories();
         }
         ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
     }

@@ -45,12 +45,9 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Converter;
-import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
@@ -59,19 +56,15 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.FilterDescriptor;
-import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.MutableAnalysisJobMetadata;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
-import org.datacleaner.job.jaxb.AnalyzerType;
 import org.datacleaner.job.jaxb.ColumnType;
 import org.datacleaner.job.jaxb.ColumnsType;
 import org.datacleaner.job.jaxb.ComponentType;
@@ -563,57 +556,17 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private ComponentBuilder createComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
             final DescriptorProvider descriptorProvider, ComponentType componentType) {
-        String ref;
-        final ComponentBuilder componentBuilder;
-
-        if (componentType instanceof TransformerType) {
-            // special instantiation of transformers
-            final TransformerType transformer = (TransformerType) componentType;
-            ref = transformer.getDescriptor().getRef();
-            if (StringUtils.isNullOrEmpty(ref)) {
-                throw new IllegalStateException("Transformer descriptor ref cannot be null");
-            }
-            final TransformerDescriptor<?> descriptor = descriptorProvider.getTransformerDescriptorByDisplayName(ref);
-            if (descriptor == null) {
-                throw new NoSuchComponentException(Transformer.class, ref);
-            }
-            componentBuilder = analysisJobBuilder.addTransformer(descriptor);
-        } else if (componentType instanceof FilterType) {
-            // special instantiation of filters
-            final FilterType filter = (FilterType) componentType;
-
-            ref = filter.getDescriptor().getRef();
-
-            if (StringUtils.isNullOrEmpty(ref)) {
-                throw new IllegalStateException("Filter descriptor ref cannot be null");
-            }
-            final FilterDescriptor<?, ?> descriptor = descriptorProvider.getFilterDescriptorByDisplayName(ref);
-            if (descriptor == null) {
-                throw new NoSuchComponentException(Filter.class, ref);
-            }
-            componentBuilder = analysisJobBuilder.addFilter(descriptor);
-        } else if (componentType instanceof AnalyzerType) {
-            // special instantiation of analyzers
-            final AnalyzerType analyzer = (AnalyzerType) componentType;
-
-            ref = analyzer.getDescriptor().getRef();
-
-            if (StringUtils.isNullOrEmpty(ref)) {
-                throw new IllegalStateException("Analyzer descriptor ref cannot be null");
-            }
-
-            final AnalyzerDescriptor<?> descriptor = descriptorProvider.getAnalyzerDescriptorByDisplayName(ref);
-
-            if (descriptor == null) {
-                throw new NoSuchComponentException(Analyzer.class, ref);
-            }
-
-            final Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
-            componentBuilder = analysisJobBuilder.addAnalyzer(analyzerClass);
-        } else {
-            throw new UnsupportedOperationException("Unexpected transformation component type: " + componentType);
+        final String ref = componentType.getDescriptor().getRef();
+        if (StringUtils.isNullOrEmpty(ref)) {
+            throw new IllegalStateException(componentType.getClass().getSimpleName() + " descriptor ref cannot be null");
         }
-        return componentBuilder;
+        
+        final ComponentDescriptor<?> descriptor = descriptorProvider.getComponentDescriptorByDisplayName(ref);
+        if (descriptor == null) {
+            throw new NoSuchComponentException(componentType.getClass(), ref);
+        }
+        
+        return analysisJobBuilder.addComponent(descriptor);
     }
 
     private List<ComponentType> getAllComponentTypes(JobType job) {
@@ -676,7 +629,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         final List<MutableInputColumn<?>> outputColumns = transformerBuilder.getOutputColumns();
                         final List<OutputType> output = transformerType.getOutput();
 
-                        if (outputColumns.size() != output.size()) {
+                        if (outputColumns.size() < output.size()) {
                             final String message = "Expected " + outputColumns.size() + " output column(s), but found "
                                     + output.size() + " (" + transformerBuilder + ")";
                             if (outputColumns.isEmpty()) {

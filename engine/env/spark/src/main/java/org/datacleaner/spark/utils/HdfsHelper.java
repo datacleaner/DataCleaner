@@ -33,7 +33,6 @@ import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.deploy.SparkHadoopUtil;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,11 +23,17 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.shared.ComponentNotAllowed;
+import org.datacleaner.monitor.shared.ComponentNotFoundException;
 import org.datacleaner.restclient.ComponentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +47,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ComponentHandlerFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(ComponentHandlerFactory.class);
 
     private RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
@@ -65,7 +73,10 @@ public class ComponentHandlerFactory {
      */
     public ComponentHandler createComponent(TenantContext tenantContext, String componentName,
             ComponentConfiguration configuration) throws RuntimeException {
-        return new ComponentHandler(tenantContext.getConfiguration(), componentName, configuration, _remoteComponentsConfiguration, analysisListener);
+        return new ComponentHandler(
+                tenantContext.getConfiguration(),
+                resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), componentName),
+                configuration, _remoteComponentsConfiguration, analysisListener);
     }
 
     @PostConstruct
@@ -77,4 +88,19 @@ public class ComponentHandlerFactory {
             analysisListener = new CompositeAnalysisListener(listeners.toArray(new AnalysisListener[listeners.size()]));
         }
     }
+
+    public ComponentDescriptor<?> resolveDescriptor(DataCleanerEnvironment env, String componentName) {
+        ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
+                .getComponentDescriptorByDisplayName(componentName);
+        if (descriptor == null) {
+            logger.info("Component {} not found.", componentName);
+            throw ComponentNotFoundException.createTypeNotFound(componentName);
+        }
+        if (!_remoteComponentsConfiguration.isAllowed(descriptor)) {
+            logger.info("Component {} is not allowed.", componentName);
+            throw ComponentNotAllowed.createInstanceNotAllowed(componentName);
+        }
+        return descriptor;
+    }
+
 }

@@ -189,8 +189,8 @@ public class ApplicationDriver {
             properties.setProperty("datacleaner.result.hdfs.path", resultHdfsPath);
             File tempFile = File.createTempFile("job-", ".properties");
             properties.store(new FileWriter(tempFile), "DataCleaner Spark runner properties");
-            final URI uri = copyFileToHdfs(tempFile,
-                    _fileSystem.getHomeDirectory().toUri().resolve("temp/" + tempFile).toString());
+            final URI uri = copyFileToHdfs(tempFile, _fileSystem.getHomeDirectory().toUri().resolve("temp/" + tempFile
+                    .getName()).toString());
             sparkLauncher.addAppArgs(uri.toString());
         }
 

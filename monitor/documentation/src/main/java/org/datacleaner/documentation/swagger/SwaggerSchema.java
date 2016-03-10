@@ -19,17 +19,15 @@
  */
 package org.datacleaner.documentation.swagger;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.HashMap;
 
-public class SwaggerDefinitionsTest {
-    private final SwaggerDefinitions swaggerDefinitions = new SwaggerDefinitions();
+/**
+ * Added by jakub on 2.3.16
+ */
+public class SwaggerSchema extends HashMap<String, Object> {
+    public static final long serialVersionUID = 1;
 
-    @Test
-    public void testSetAndGetList() throws Exception {
-        Assert.assertNotNull(swaggerDefinitions.getList());
-        final String[] list = new String[] { "item1", "item2" };
-        swaggerDefinitions.setList(list);
-        Assert.assertEquals(list[0], swaggerDefinitions.getList()[0]);
+    public SwaggerSchema(String type) {
+        this.put("type", type);
     }
 }

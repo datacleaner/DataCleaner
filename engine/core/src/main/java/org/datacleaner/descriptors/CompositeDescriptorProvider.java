@@ -60,6 +60,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         delegates.add(descriptorProvider);
     }
 
+    @Override
     public void refresh() {
         for (DescriptorProvider provider : delegates) {
             provider.refresh();
@@ -102,6 +103,17 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String name) {
         for (DescriptorProvider provider : delegates) {
             final AnalyzerDescriptor<?> descriptor = provider.getAnalyzerDescriptorByDisplayName(name);
+            if (descriptor != null) {
+                return descriptor;
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
+        for (DescriptorProvider provider : delegates) {
+            final ComponentDescriptor<?> descriptor = provider.getComponentDescriptorByDisplayName(name);
             if (descriptor != null) {
                 return descriptor;
             }
@@ -265,6 +277,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         return null;
     }
 
+    @Override
     public Set<DescriptorProviderStatus> getStatus() {
         final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
         for (DescriptorProvider provider : delegates) {

@@ -24,9 +24,6 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -34,6 +31,7 @@ import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
@@ -153,18 +151,10 @@ public class ComponentControllerV1Test {
         return injectionManagerFactory;
     }
 
-    @SuppressWarnings("unchecked")
     private DescriptorProvider getDescriptorProviderMock() {
-        DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
-        Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
-        @SuppressWarnings("rawtypes")
-        TransformerDescriptor transformerDescriptor = Descriptors.ofTransformer(ConcatenatorTransformer.class);
-        transformerDescriptorSet.add(transformerDescriptor);
-        expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
-                transformerDescriptor).anyTimes();
-        replay(descriptorProvider);
-
+        final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
+        final TransformerDescriptor<?> transformerDescriptor = Descriptors.ofTransformer(ConcatenatorTransformer.class);
+        descriptorProvider.addTransformerBeanDescriptor(transformerDescriptor);
         return descriptorProvider;
     }
 

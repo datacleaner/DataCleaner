@@ -103,21 +103,18 @@ public class SwaggerConfigurationTest {
     @Test
     public void testSetAndGetSecurityDefinitions() throws Exception {
         Assert.assertNotNull(swaggerConfiguration.getSecurityDefinitions());
-        final SwaggerSecurityDefinitions swaggerSecurityDefinitions = new SwaggerSecurityDefinitions();
-        final String[] list = new String[] { "securityDefinition1", "securityDefinition2" };
-        swaggerSecurityDefinitions.setList(list);
-        swaggerConfiguration.setSecurityDefinitions(swaggerSecurityDefinitions);
-        Assert.assertEquals(list[0], swaggerConfiguration.getSecurityDefinitions().getList()[0]);
+        Map<String, Object> def = new HashMap<>();
+        def.put("a", "b");
+        swaggerConfiguration.addSecurityDefinition("x", def);
+        Assert.assertEquals(def, swaggerConfiguration.getSecurityDefinitions().get("x"));
     }
 
     @Test
     public void testSetAndGetDefinitions() throws Exception {
         Assert.assertNotNull(swaggerConfiguration.getDefinitions());
-        final SwaggerDefinitions swaggerDefinitions = new SwaggerDefinitions();
-        final String[] list = new String[] { "definition1", "definition2" };
-        swaggerDefinitions.setList(list);
-        swaggerConfiguration.setDefinitions(swaggerDefinitions);
-        Assert.assertEquals(list[0], swaggerConfiguration.getDefinitions().getList()[0]);
+        SwaggerSchema schema = new SwaggerSchema("typeX");
+        swaggerConfiguration.addDefinition("def1", schema);
+        Assert.assertEquals(schema, swaggerConfiguration.getDefinitions().get("def1"));
     }
 
     @Test

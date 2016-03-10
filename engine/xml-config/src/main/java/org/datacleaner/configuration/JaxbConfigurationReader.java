@@ -335,6 +335,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                     temporaryConfiguration, providers, remoteServerData);
         }
 
+        if(!(environment.getDescriptorProvider() instanceof  CompositeDescriptorProvider)){
+            CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+            compositeDescriptorProvider.addDelegate(environment.getDescriptorProvider());
+            environment.setDescriptorProvider(compositeDescriptorProvider);
+        }
+
         if (providers.isEmpty()) {
             return;
         }
@@ -353,10 +359,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providers.add(0, environment.getDescriptorProvider());
         }
 
-        //Always must be composite. I can add new provider after start.
-        DescriptorProvider descriptorProvider = new CompositeDescriptorProvider(providers);
-        environment.setDescriptorProvider(descriptorProvider);
-        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
+         ((CompositeDescriptorProvider) environment.getDescriptorProvider()).addDelegates(providers);
+         environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
     }
 
     private void createDescriptorProvider(Object providerElement,

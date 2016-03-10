@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,15 +41,17 @@ import org.datacleaner.api.Transformer;
 public class CompositeDescriptorProvider implements DescriptorProvider {
 
     private final List<DescriptorProvider> delegates;
+    private final Set<DescriptorProviderListener> activeListeners;
 
-    private final Set<DescriptorProviderListener> activeListeners = new HashSet<>();
-
-    public CompositeDescriptorProvider(DescriptorProvider delegate1, DescriptorProvider delegate2) {
-        this(Arrays.asList(delegate1, delegate2));
+    public CompositeDescriptorProvider(){
+        delegates = new ArrayList<>();
+        activeListeners = new HashSet<>();
     }
 
-    public CompositeDescriptorProvider(List<DescriptorProvider> delegates) {
-        this.delegates = delegates;
+    public void addDelegates(List<DescriptorProvider> descriptorProviders) {
+        for (DescriptorProvider descriptorProvider : descriptorProviders) {
+            addDelegate(descriptorProvider);
+        }
     }
 
     public void addDelegate(DescriptorProvider descriptorProvider) {

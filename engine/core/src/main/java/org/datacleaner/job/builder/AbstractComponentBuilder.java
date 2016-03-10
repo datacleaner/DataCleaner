@@ -52,7 +52,6 @@ import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.AnalysisJob;

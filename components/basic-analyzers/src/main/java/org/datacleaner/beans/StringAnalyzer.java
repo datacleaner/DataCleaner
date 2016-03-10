@@ -84,7 +84,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
     private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates = new HashMap<InputColumn<String>, StringAnalyzerColumnDelegate>();
 
     @Configured
-    @ColumnProperty(escalateToMultipleJobs = true)
+    @ColumnProperty
     InputColumn<String>[] _columns;
 
     @Provided

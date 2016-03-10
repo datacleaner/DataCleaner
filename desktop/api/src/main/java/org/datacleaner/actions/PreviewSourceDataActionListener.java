@@ -80,8 +80,8 @@ public class PreviewSourceDataActionListener implements ActionListener {
 		}
 
 		try (final DatastoreConnection con = _datastore.openConnection()) {
-			DataContext dc = con.getDataContext();
-			Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
+		    final DataContext dc = con.getDataContext();
+			final Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
 			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
 			window.open();

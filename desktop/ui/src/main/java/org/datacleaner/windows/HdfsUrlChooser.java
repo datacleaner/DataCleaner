@@ -483,7 +483,6 @@ public class HdfsUrlChooser extends JComponent {
         if (element.isSymlink()) {
             try {
                 _currentDirectory = element.getSymlink();
-                _directoryComboBoxModel.updateDirectories();
             } catch (IOException e) {
                 logger.warn("Could not get the symlink value for element {}", element, e);
             }

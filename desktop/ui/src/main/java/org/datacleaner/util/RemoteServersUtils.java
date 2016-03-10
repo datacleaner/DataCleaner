@@ -51,6 +51,10 @@ public class RemoteServersUtils {
         }
 
         RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
+
+        if(!(env.getDescriptorProvider() instanceof CompositeDescriptorProvider)){
+            throw new IllegalStateException("DescriptorProvider is not instance of CompositeDescriptorProvider class.");
+        }
         final CompositeDescriptorProvider descriptorProvider = (CompositeDescriptorProvider) env.getDescriptorProvider();
         descriptorProvider.addDelegate(new RemoteDescriptorProviderImpl(remoteServerData));
         descriptorProvider.refresh();

@@ -19,14 +19,14 @@
  */
 package org.datacleaner.descriptors;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.datacleaner.components.mock.AnalyzerMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * @Since 9/8/15
@@ -44,7 +44,8 @@ public class CompositeDescriptorProviderTest {
         ad2 = Descriptors.ofAnalyzer(AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class);
         p1.addAnalyzerBeanDescriptor(ad1);
         p2.addAnalyzerBeanDescriptor(ad2);
-        dp = new CompositeDescriptorProvider(p1, p2);
+        dp = new CompositeDescriptorProvider();
+        dp.addDelegates(Arrays.asList(p1, p2));
     }
 
     @Test

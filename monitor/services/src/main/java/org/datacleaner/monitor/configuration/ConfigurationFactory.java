@@ -137,7 +137,9 @@ public class ConfigurationFactory {
         }
 
         if(additionalDescriptorProvider != null) {
-            return new CompositeDescriptorProvider(descriptorProvider, additionalDescriptorProvider);
+            CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+            compositeDescriptorProvider.addDelegates(Arrays.asList(descriptorProvider, additionalDescriptorProvider));
+            return compositeDescriptorProvider;
         }
         return descriptorProvider;
     }

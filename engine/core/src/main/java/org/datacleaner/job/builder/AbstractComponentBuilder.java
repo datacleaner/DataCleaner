@@ -52,6 +52,7 @@ import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.AnalysisJob;
@@ -389,10 +390,10 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     @Override
     public Map<ConfiguredPropertyDescriptor, Object> getConfiguredProperties() {
-        Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<ConfiguredPropertyDescriptor, Object>();
-        Set<ConfiguredPropertyDescriptor> configuredProperties = getDescriptor().getConfiguredProperties();
+        final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = getDescriptor().getConfiguredProperties();
         for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
-            Object value = getConfiguredProperty(propertyDescriptor);
+            final Object value = getConfiguredProperty(propertyDescriptor);
             if (value != null) {
                 map.put(propertyDescriptor, value);
             }
@@ -755,9 +756,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 .getInjectionManager(configuration);
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
-
+        
         // mimic the configuration of a real component instance
-        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());
+        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredPropertiesForQuestioning());
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
 
@@ -765,6 +766,10 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         lifeCycleHelper.validate(descriptor, component);
 
         return component;
+    }
+
+    protected Map<ConfiguredPropertyDescriptor, Object> getConfiguredPropertiesForQuestioning() {
+        return getConfiguredProperties();
     }
 
     @Override

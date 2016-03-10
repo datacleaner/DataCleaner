@@ -389,6 +389,28 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
         return super.getOutputDataStreams();
     }
+    
+    @Override
+    protected Map<ConfiguredPropertyDescriptor, Object> getConfiguredPropertiesForQuestioning() {
+        final Map<ConfiguredPropertyDescriptor, Object> properties = super.getConfiguredPropertiesForQuestioning();
+        if (!isMultipleJobsSupported()) {
+            return properties;
+        }
+        
+        // create a mutable copy and replace the property values that are 
+        final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<>(properties);
+        for (Entry<ConfiguredPropertyDescriptor, Object> entry : map.entrySet()) {
+            if (isMultipleJobsDeterminedBy(entry.getKey())) {
+                final Object value = entry.getValue();
+                if (Array.getLength(value) > 1) {
+                    // pick the first element
+                    final Object element = Array.get(value, 0);
+                    entry.setValue(element);
+                }
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
 
     /**
      * Notification method invoked when transformer is removed.

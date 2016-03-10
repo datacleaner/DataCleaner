@@ -20,6 +20,7 @@
 package org.datacleaner.lifecycle;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -47,8 +48,8 @@ final class AssignConfiguredPropertiesHelper {
                         if (Array.getLength(configuredValue) == 1) {
                             configuredValue = Array.get(configuredValue, 0);
                         } else if (Array.getLength(configuredValue) > 1) {
-                            throw new IllegalStateException("Cannot assign an array-value (" + configuredValue
-                                    + ") to a non-array property (" + property + ")");
+                            throw new IllegalStateException("Cannot assign an array-value (" + Arrays.toString(
+                                    (Object[]) configuredValue) + ") to a non-array property (" + property + ")");
                         } else {
                             configuredValue = null;
                         }

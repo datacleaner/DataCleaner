@@ -79,7 +79,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (inputProperties.size() == 1) {
             _inputProperty = inputProperties.iterator().next();
             final ColumnProperty columnProperty = _inputProperty.getAnnotation(ColumnProperty.class);
-            _multipleJobsSupported = columnProperty != null && columnProperty.escalateToMultipleJobs();
+            _multipleJobsSupported = columnProperty != null && !_inputProperty.isArray() && columnProperty
+                    .escalateToMultipleJobs();
             _inputColumns = new ArrayList<InputColumn<?>>();
         } else {
             _multipleJobsSupported = false;
@@ -106,7 +107,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     public boolean isMultipleJobsDeterminedBy(ConfiguredPropertyDescriptor propertyDescriptor) {
-        return _multipleJobsSupported && propertyDescriptor.isInputColumn() && propertyDescriptor.isRequired();
+        return _multipleJobsSupported && !propertyDescriptor.isArray() && propertyDescriptor.isInputColumn()
+                && propertyDescriptor.isRequired();
     }
 
     public AnalyzerJob toAnalyzerJob() throws IllegalStateException {

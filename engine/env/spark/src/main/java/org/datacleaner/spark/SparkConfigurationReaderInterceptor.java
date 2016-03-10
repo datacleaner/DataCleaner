@@ -21,6 +21,8 @@ package org.datacleaner.spark;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
@@ -45,6 +47,9 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
     private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER)
             .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
     private static final StorageProvider STORAGE_PROVIDER = new InMemoryStorageProvider(500, 20);
+    
+    // used to strip e.g. {org.datacleaner.hadoop.environment} out of HDFS URIs
+    private static final Pattern STRIP_SERVER_PATTERN = Pattern.compile("(.+)://\\{.+\\}/(.+)");
 
     private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
             .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER)
@@ -59,6 +64,10 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
 
     @Override
     public Resource createResource(String resourceUrl, DataCleanerConfiguration tempConfiguration) {
+        final Matcher matcher = STRIP_SERVER_PATTERN.matcher(resourceUrl);
+        if (matcher.find()) {
+            resourceUrl = matcher.group(1) + ":///" + matcher.group(2);
+        }
         final URI uri = URI.create(resourceUrl);
         return _hdfsHelper.getResourceToUse(uri);
     }

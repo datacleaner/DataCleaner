@@ -33,7 +33,7 @@ public class HadoopResourceBuilder {
     private final String _clusterReferenceName;
     private final Configuration _configuration;
 
-    Pattern _pattern = Pattern.compile("(?:[\\w\\+\\-\\.]+://)?\\{([\\w\\.]*)\\}(.*)");
+    private final Pattern _pattern = Pattern.compile("(?:[\\w\\+\\-\\.]+://)?\\{([\\w\\.]*)\\}(.*)");
 
     public HadoopResourceBuilder(ServerInformationCatalog catalog, String templatedUri) {
         final Matcher matcher = _pattern.matcher(templatedUri);

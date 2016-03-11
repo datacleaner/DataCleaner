@@ -149,7 +149,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
-        final List<InputColumn<?>> inputColumns = getInputColumns();
+        final List<InputColumn<?>> inputColumns;
+        if (_escalatingInputProperty != null && !_escalatingInputColumns.isEmpty()) {
+            inputColumns = _escalatingInputColumns;
+        } else {
+            inputColumns = getInputColumns();
+        }
         if (validate && inputColumns.isEmpty()) {
             throw new IllegalStateException("No input column(s) configured");
         }
@@ -201,12 +206,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
         for (Entry<Table, List<InputColumn<?>>> entry : entrySet) {
-            final List<InputColumn<?>> columns = entry.getValue();
+            final List<InputColumn<?>> columnsOfTable = entry.getValue();
             if (_escalatingInputProperty == null || _escalatingInputProperty.isArray()) {
-                jobs.add(createPartitionedJob(columns, configuredProperties));
+                // escalation will happen only for multi-table input
+                jobs.add(createPartitionedJob(null, columnsOfTable, configuredProperties));
             } else {
-                for (InputColumn<?> column : columns) {
-                    jobs.add(createPartitionedJob(Collections.singleton(column), configuredProperties));
+                for (InputColumn<?> escalatingColumn : columnsOfTable) {
+                    // escalation happens for each column
+                    jobs.add(createPartitionedJob(escalatingColumn, columnsOfTable, configuredProperties));
                 }
             }
         }
@@ -270,14 +277,20 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return super.isConfigured(configuredProperty, throwException);
     }
 
-    private AnalyzerJob createPartitionedJob(Collection<InputColumn<?>> availableColumns,
+    private AnalyzerJob createPartitionedJob(InputColumn<?> escalatingColumnValue, Collection<InputColumn<?>> availableColumns,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
         final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
                 configuredProperties);
         for (Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
-            if (jobProperty.getKey().isInputColumn()) {
-                final Object unpartitionedValue = jobProperty.getValue();
-                final Object partitionedValue = partitionValue(jobProperty.getKey(), unpartitionedValue, availableColumns);
+            final ConfiguredPropertyDescriptor propertyDescriptor = jobProperty.getKey();
+            if (propertyDescriptor.isInputColumn()) {
+                final Object unpartitionedValue;
+                if (escalatingColumnValue != null && _escalatingInputProperty == propertyDescriptor) {
+                    unpartitionedValue = escalatingColumnValue;
+                } else {
+                    unpartitionedValue = jobProperty.getValue();
+                }
+                final Object partitionedValue = partitionValue(propertyDescriptor, unpartitionedValue, availableColumns);
                 jobProperty.setValue(partitionedValue);
             }
         }

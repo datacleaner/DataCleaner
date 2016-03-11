@@ -30,9 +30,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -103,8 +105,14 @@ public class ComponentControllerV1 {
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
+    private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
+    
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_TABULAR = "tabular";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_MAP = "map";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT = "document";
+    
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private static BufferedImage remoteMark = null;
     private int _maxBatchSize = Integer.MAX_VALUE;
@@ -213,6 +221,7 @@ public class ComponentControllerV1 {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
@@ -224,10 +233,33 @@ public class ComponentControllerV1 {
 
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));
+        OutputStyle outputStyleEnum = OutputStyle.forString(outputStyle);
+        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
+    }
+
+    private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
+        if(outputFormat == OutputStyle.MAP) {
+            org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
+            int columnCount = columns.getColumnCount();
+            List<List<Map<String, Object>>> mapStyleOutput = new ArrayList<>(data.size());
+            for(List<Object[]> rowGroup: data) {
+                List<Map<String, Object>> columnMapRowGroup = new ArrayList<>(rowGroup.size());
+                for(Object[] row: rowGroup) {
+                    Map<String, Object> columMapRow = new HashMap<>(columnCount);
+                    for(int i = 0; i < columnCount; i++) {
+                        columMapRow.put(columns.getColumnName(i), row[i]);
+                    }
+                    columnMapRowGroup.add(columMapRow);
+                }
+                mapStyleOutput.add(columnMapRowGroup);
+            }
+            return getJsonNode(mapStyleOutput);
+        } else {
+            return getJsonNode(data);
+        }
     }
 
     private JsonNode getJsonNode(Object value) {
@@ -480,6 +512,29 @@ public class ComponentControllerV1 {
         propInfo.setClassName(propertyDescriptor.getType().getName());
         if (!propertyDescriptor.isInputColumn()) {
             propInfo.setSchema(visitor.finalSchema());
+        }
+    }
+
+    public enum OutputStyle {
+
+        TABULAR,
+        MAP;
+
+        public static OutputStyle forString(String outputStyle) {
+            if (outputStyle == null) {
+                return TABULAR;
+            }
+            outputStyle = outputStyle.trim().toLowerCase();
+            switch (outputStyle) {
+            case "":
+            case PARAMETER_VALUE_OUTPUT_STYLE_TABULAR:
+                return TABULAR;
+            case PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT:
+            case PARAMETER_VALUE_OUTPUT_STYLE_MAP:
+                return MAP;
+            default:
+                throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
+            }
         }
     }
 }

@@ -184,7 +184,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             }
         }
 
-        if (originatingTables.size() == 1) {
+        if (!isMultipleJobsSupported() && originatingTables.size() == 1) {
             // there's only a single table involved - leave the input columns
             // untouched and keep the output data stream
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);

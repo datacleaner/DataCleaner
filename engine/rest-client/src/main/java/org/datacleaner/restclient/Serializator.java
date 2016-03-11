@@ -57,6 +57,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 public class Serializator {
     private static final Logger logger = LoggerFactory.getLogger(Serializator.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static final String ENUM_ALIAS_SEPARATOR = "::";
     static {
         SimpleModule myModule = new SimpleModule("RemoteTransformersModule", new Version(1, 0, 0, null, "org.datacleaner", "DataCleaner-remote-transformers"));
         // our custom serializers
@@ -253,7 +254,7 @@ public class Serializator {
         protected String enumValueToSchemaString(Enum<?> value) {
             StringBuilder serialized = new StringBuilder();
             serialized.append(value.name());
-            serialized.append("::");
+            serialized.append(ENUM_ALIAS_SEPARATOR);
             if(value instanceof  HasName) {
                 serialized.append(((HasName)value).getName());
             } else {
@@ -264,7 +265,7 @@ public class Serializator {
                 if(aliases != null) {
                     for(String alias: aliases) {
                         if(alias != null && !alias.isEmpty()) {
-                            serialized.append("::").append(alias);
+                            serialized.append(ENUM_ALIAS_SEPARATOR).append(alias);
                         }
                     }
                 }

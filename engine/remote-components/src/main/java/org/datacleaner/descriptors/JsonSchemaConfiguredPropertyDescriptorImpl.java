@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.Converter;
+import org.datacleaner.restclient.Serializator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
@@ -85,7 +86,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
 
                     String enumValue, enumName;
                     String[] enumAliases;
-                    String[] tokens = value.split("::");
+                    String[] tokens = value.split(Serializator.ENUM_ALIAS_SEPARATOR);
                     if(tokens.length == 0) {
                         continue;
                     }

@@ -21,9 +21,9 @@ package org.datacleaner.job.builder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,24 +68,25 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
      * input size (single or multiple) and originating table
      */
     private final boolean _multipleJobsSupported;
-    private final List<InputColumn<?>> _inputColumns;
-    private final ConfiguredPropertyDescriptor _inputProperty;
+    private final List<InputColumn<?>> _escalatingInputColumns;
+    private final ConfiguredPropertyDescriptor _escalatingInputProperty;
     private final List<AnalyzerChangeListener> _localChangeListeners;
 
     public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
-        final Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
-        if (inputProperties.size() == 1) {
-            _inputProperty = inputProperties.iterator().next();
-            final ColumnProperty columnProperty = _inputProperty.getAnnotation(ColumnProperty.class);
-            _multipleJobsSupported = columnProperty != null && !_inputProperty.isArray() && columnProperty
+        final Set<ConfiguredPropertyDescriptor> requiredInputProperties = descriptor.getConfiguredPropertiesForInput(
+                false);
+        if (requiredInputProperties.size() == 1) {
+            _escalatingInputProperty = requiredInputProperties.iterator().next();
+            final ColumnProperty columnProperty = _escalatingInputProperty.getAnnotation(ColumnProperty.class);
+            _multipleJobsSupported = columnProperty != null && !_escalatingInputProperty.isArray() && columnProperty
                     .escalateToMultipleJobs();
-            _inputColumns = new ArrayList<InputColumn<?>>();
+            _escalatingInputColumns = new ArrayList<InputColumn<?>>();
         } else {
             _multipleJobsSupported = false;
-            _inputColumns = null;
-            _inputProperty = null;
+            _escalatingInputProperty = null;
+            _escalatingInputColumns = Collections.emptyList();
         }
 
         _localChangeListeners = new ArrayList<AnalyzerChangeListener>(0);
@@ -150,13 +151,13 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final List<InputColumn<?>> inputColumns = getInputColumns();
         if (validate && inputColumns.isEmpty()) {
-            throw new IllegalStateException("No input column configured");
+            throw new IllegalStateException("No input column(s) configured");
         }
 
         final List<InputColumn<?>> tableLessColumns = new ArrayList<InputColumn<?>>();
         final Map<Table, List<InputColumn<?>>> originatingTables = new LinkedHashMap<Table, List<InputColumn<?>>>();
         for (InputColumn<?> inputColumn : inputColumns) {
-            final Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
+            Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
             if (table == null) {
                 // some columns (such as those based on an expression) don't
                 // originate from a table. They should be applied to all jobs.
@@ -176,18 +177,18 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             if (sourceTables.size() == 1) {
                 logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred",
                         this);
-                final Table table = sourceTables.get(0);
+                Table table = sourceTables.get(0);
                 originatingTables.put(table, new ArrayList<InputColumn<?>>());
             } else {
                 throw new IllegalStateException("Could not determine source for analyzer '" + this + "'");
             }
         }
 
-        if (originatingTables.size() == 1 && _inputProperty.isArray()) {
+        if (originatingTables.size() == 1) {
             // there's only a single table involved - leave the input columns
-            // untouched
+            // untouched and keep the output data stream
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
-            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
                     getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
@@ -197,32 +198,23 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             entry.getValue().addAll(tableLessColumns);
         }
 
-        final List<AnalyzerJob> jobInstances = new ArrayList<AnalyzerJob>();
+        final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
-        for (Iterator<Entry<Table, List<InputColumn<?>>>> iterator = entrySet.iterator(); iterator.hasNext();) {
-            final Entry<Table, List<InputColumn<?>>> entry = (Entry<Table, List<InputColumn<?>>>) iterator.next();
+        for (Entry<Table, List<InputColumn<?>>> entry : entrySet) {
             final List<InputColumn<?>> columns = entry.getValue();
-            if (_inputProperty.isArray()) {
-                jobInstances.add(createPartitionedJob(columns.toArray(new InputColumn[columns.size()]), configuredProperties));
+            if (_escalatingInputProperty == null || _escalatingInputProperty.isArray()) {
+                jobs.add(createPartitionedJob(columns, configuredProperties));
             } else {
                 for (InputColumn<?> column : columns) {
-                    jobInstances.add(createPartitionedJob(column, configuredProperties));
+                    jobs.add(createPartitionedJob(Collections.singleton(column), configuredProperties));
                 }
             }
         }
         if (validate && !isConfigured()) {
             throw new IllegalStateException("Row processing Analyzer job is not correctly configured");
         }
-        
-        if (jobInstances.size() == 1 && !isMultipleJobsSupported()) {
-            final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
-            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
-                    getMetadataProperties(), outputDataStreamJobs);
-            return new AnalyzerJob[] { job };
-        }
 
-        return jobInstances.toArray(new AnalyzerJob[jobInstances.size()]);
+        return jobs.toArray(new AnalyzerJob[jobs.size()]);
     }
 
     @Override
@@ -233,7 +225,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             throw new IllegalArgumentException("InputColumn cannot be null");
         }
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
-            _inputColumns.add(inputColumn);
+            _escalatingInputColumns.add(inputColumn);
             return this;
         } else {
             return super.addInputColumn(inputColumn, propertyDescriptor);
@@ -248,7 +240,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             throw new IllegalArgumentException("InputColumn cannot be null");
         }
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
-            _inputColumns.remove(inputColumn);
+            _escalatingInputColumns.remove(inputColumn);
             return this;
         } else {
             return super.removeInputColumn(inputColumn, propertyDescriptor);
@@ -257,8 +249,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     @Override
     public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
-        if (isMultipleJobsSupported() && configuredProperty == _inputProperty) {
-            if (_inputColumns.isEmpty()) {
+        if (isMultipleJobsSupported() && configuredProperty == _escalatingInputProperty) {
+            if (_escalatingInputColumns.isEmpty()) {
                 Object propertyValue = super.getConfiguredProperty(configuredProperty);
                 if (propertyValue != null) {
                     if (propertyValue.getClass().isArray() && Array.getLength(propertyValue) > 0) {
@@ -278,11 +270,17 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return super.isConfigured(configuredProperty, throwException);
     }
 
-    private AnalyzerJob createPartitionedJob(Object columnValue,
+    private AnalyzerJob createPartitionedJob(Collection<InputColumn<?>> availableColumns,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
         final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
                 configuredProperties);
-        jobProperties.put(_inputProperty, columnValue);
+        for (Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
+            if (jobProperty.getKey().isInputColumn()) {
+                final Object unpartitionedValue = jobProperty.getValue();
+                final Object partitionedValue = partitionValue(jobProperty.getKey(), unpartitionedValue, availableColumns);
+                jobProperty.setValue(partitionedValue);
+            }
+        }
 
         // set the component builder ID property to allow correlating partion
         // jobs back to their builder
@@ -301,6 +299,21 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return job;
     }
 
+    private Object partitionValue(ConfiguredPropertyDescriptor key, Object unpartitionedValue,
+            Collection<InputColumn<?>> availableColumns) {
+        if (unpartitionedValue instanceof InputColumn[]) {
+            final InputColumn<?>[] array = (InputColumn<?>[]) unpartitionedValue;
+            final List<InputColumn<?>> result = new ArrayList<>();
+            for (InputColumn<?> inputColumn : array) {
+                if (availableColumns.contains(inputColumn)) {
+                    result.add(inputColumn);
+                }
+            }
+            return result.toArray(new InputColumn<?>[result.size()]);
+        }
+        return unpartitionedValue;
+    }
+
     @Override
     public String toString() {
         return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns="
@@ -316,23 +329,23 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             // prototype bean.
             final InputColumn<?> dummyValue;
 
-            _inputColumns.clear();
+            _escalatingInputColumns.clear();
             if (value == null) {
                 dummyValue = null;
             } else if (ReflectionUtils.isArray(value)) {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
                     final InputColumn<?> inputColumn = (InputColumn<?>) Array.get(value, i);
-                    _inputColumns.add(inputColumn);
+                    _escalatingInputColumns.add(inputColumn);
                 }
-                if (_inputColumns.isEmpty()) {
+                if (_escalatingInputColumns.isEmpty()) {
                     dummyValue = null;
                 } else {
-                    dummyValue = _inputColumns.iterator().next();
+                    dummyValue = _escalatingInputColumns.iterator().next();
                 }
             } else {
                 final InputColumn<?> col = (InputColumn<?>) value;
-                _inputColumns.add(col);
+                _escalatingInputColumns.add(col);
                 dummyValue = col;
             }
 
@@ -356,7 +369,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     @Override
     public Object getConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor) {
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
-            return _inputColumns.toArray(new InputColumn[_inputColumns.size()]);
+            return _escalatingInputColumns.toArray(new InputColumn[_escalatingInputColumns.size()]);
         } else {
             return super.getConfiguredProperty(propertyDescriptor);
         }
@@ -391,15 +404,15 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
         return super.getOutputDataStreams();
     }
-    
+
     @Override
     protected Map<ConfiguredPropertyDescriptor, Object> getConfiguredPropertiesForQuestioning() {
         final Map<ConfiguredPropertyDescriptor, Object> properties = super.getConfiguredPropertiesForQuestioning();
         if (!isMultipleJobsSupported()) {
             return properties;
         }
-        
-        // create a mutable copy and replace the property values that are 
+
+        // create a mutable copy and replace the property values that are
         final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<>(properties);
         for (Entry<ConfiguredPropertyDescriptor, Object> entry : map.entrySet()) {
             if (isMultipleJobsDeterminedBy(entry.getKey())) {

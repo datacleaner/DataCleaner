@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.inject.Named;
 
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -84,7 +83,6 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
     private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates = new HashMap<InputColumn<String>, StringAnalyzerColumnDelegate>();
 
     @Configured
-    @ColumnProperty
     InputColumn<String>[] _columns;
 
     @Provided

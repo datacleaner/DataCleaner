@@ -64,7 +64,7 @@ public class DCTable extends JXTable implements MouseListener {
     public static final int EDITABLE_TABLE_ROW_HEIGHT = 30;
 
     private final transient DCTableCellRenderer _tableCellRenderer;
-    protected final transient List<JMenuItem> _rightClickMenuItems;
+    protected transient List<JMenuItem> _rightClickMenuItems;
     protected transient DCPanel _panel;
 
     public DCTable(String... columnNames) {
@@ -84,7 +84,6 @@ public class DCTable extends JXTable implements MouseListener {
         setEditable(true);
 
         addMouseListener(this);
-        _rightClickMenuItems = getCopyMenuItems();
         _tableCellRenderer = new DCTableCellRenderer(this);
     }
 
@@ -210,7 +209,7 @@ public class DCTable extends JXTable implements MouseListener {
         if (e.getClickCount() == 1) {
             int button = e.getButton();
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                if (_rightClickMenuItems != null && _rightClickMenuItems.size() > 0) {
+                if (rightClickMenuHasItems()) {
                     JPopupMenu popup = new JPopupMenu();
                     for (JMenuItem item : _rightClickMenuItems) {
                         popup.add(item);
@@ -220,6 +219,16 @@ public class DCTable extends JXTable implements MouseListener {
                 }
             }
         }
+    }
+
+    private boolean rightClickMenuHasItems() {
+        if(_rightClickMenuItems==null) {
+            _rightClickMenuItems = getCopyMenuItems();
+            if(_rightClickMenuItems==null) {
+                _rightClickMenuItems = new ArrayList<>();
+            }
+        }
+        return !_rightClickMenuItems.isEmpty();
     }
 
     private boolean forwardMouseEvent(MouseEvent e) {

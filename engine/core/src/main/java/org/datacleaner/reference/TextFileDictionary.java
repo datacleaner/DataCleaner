@@ -23,10 +23,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.io.ObjectInputStream.GetField;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.metamodel.util.FileHelper;
@@ -36,7 +37,6 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.ReadObjectBuilder.Adaptor;
 import org.datacleaner.util.convert.ResourceConverter;
-import org.elasticsearch.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +83,8 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final TextFileDictionary other = (TextFileDictionary) obj;
-            return Objects.equal(_filename, other._filename) && Objects.equal(_encoding, other._encoding)
-                    && Objects.equal(_caseSensitive, other._caseSensitive);
+            return Objects.equals(_filename, other._filename) && Objects.equals(_encoding, other._encoding)
+                    && Objects.equals(_caseSensitive, other._caseSensitive);
         }
         return false;
     }

@@ -17,19 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation.swagger;
+package org.datacleaner.user;
 
-/**
- * @since 23. 09. 2015
- */
-public class SwaggerDefinitions {
-    private String[] list = new String[] { "" };
+import org.datacleaner.configuration.ServerInformation;
 
-    public String[] getList() {
-        return list;
-    }
+public interface ServerInformationChangeListener {
+    void onAdd(ServerInformation serverInformation);
 
-    public void setList(String[] list) {
-        this.list = list;
-    }
+    void onRemove(ServerInformation serverInformation);
 }

@@ -34,6 +34,8 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Abstract descriptor provider implementation that implements most trivial
  * methods.
@@ -60,7 +62,17 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @Override
     public final AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getAnalyzerDescriptors());
+        return getComponentDescriptorByDisplayName(name, getAnalyzerDescriptors(), true, true);
+    }
+    
+    @Override
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
+        final Iterable<ComponentDescriptor<?>> allComponentDescriptors = Iterables.concat(getAnalyzerDescriptors(), getTransformerDescriptors(), getFilterDescriptors());
+        ComponentDescriptor<?> match = getComponentDescriptorByDisplayName(name, allComponentDescriptors, true, false);
+        if (match == null) {
+            match = getComponentDescriptorByDisplayName(name, allComponentDescriptors, false, true);
+        }
+        return match;
     }
 
     @SuppressWarnings("unchecked")
@@ -77,7 +89,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @Override
     public final FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getFilterDescriptors());
+        return getComponentDescriptorByDisplayName(name, getFilterDescriptors(), true, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -123,7 +135,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @Override
     public final TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getTransformerDescriptors());
+        return getComponentDescriptorByDisplayName(name, getTransformerDescriptors(), true, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -152,8 +164,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    private <E extends ComponentDescriptor<?>> E getBeanDescriptorByDisplayName(String name,
-            Collection<E> descriptors) {
+    private <D extends ComponentDescriptor<?>> D getComponentDescriptorByDisplayName(String name,
+            Iterable<D> descriptors, boolean searchPrimaryNames, boolean searchAliases) {
         if (name == null) {
             return null;
         }
@@ -165,17 +177,21 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
             return null;
         }
 
-        for (E descriptor : descriptors) {
-            String displayName = descriptor.getDisplayName();
-            if (name.equals(displayName)) {
-                return descriptor;
+        if (searchPrimaryNames) {
+            for (D descriptor : descriptors) {
+                String displayName = descriptor.getDisplayName();
+                if (name.equals(displayName)) {
+                    return descriptor;
+                }
             }
         }
 
-        for (E descriptor : descriptors) {
-            String[] aliases = descriptor.getAliases();
-            if (ArrayUtils.contains(aliases, name)) {
-                return descriptor;
+        if (searchAliases) {
+            for (D descriptor : descriptors) {
+                String[] aliases = descriptor.getAliases();
+                if (ArrayUtils.contains(aliases, name)) {
+                    return descriptor;
+                }
             }
         }
         return null;

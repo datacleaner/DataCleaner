@@ -62,7 +62,9 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
         }
 
         final ResourceConverter resourceConverter = getResourceConverter();
-        _resourceTextField = new ResourceSelector(resourceConverter, userPreferences, openMode);
+        _resourceTextField =
+                new ResourceSelector(getAnalysisJobBuilder().getConfiguration(), resourceConverter, userPreferences,
+                        openMode);
 
         if (extensions != null && extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);

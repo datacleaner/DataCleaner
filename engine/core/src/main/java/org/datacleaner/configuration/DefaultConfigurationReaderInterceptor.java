@@ -20,6 +20,7 @@
 package org.datacleaner.configuration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,7 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  * not intercept or perform any special treatment when invoked.
  */
 public class DefaultConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
-
-    private final Map<String, String> _propertyOverrides;
+private final Map<String, String> _propertyOverrides;
     private final DataCleanerEnvironment _baseEnvironment;
 
     public DefaultConfigurationReaderInterceptor() {
@@ -94,9 +94,10 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     }
 
     @Override
-    public Resource createResource(String resourceUrl) {
-        final ResourceConverter converter = new ResourceConverter(getResourceTypeHandlers(),
-                ResourceConverter.getConfiguredDefaultScheme());
+    public Resource createResource(String resourceUrl, DataCleanerConfiguration temporaryConfiguration) {
+        final ResourceConverter converter = new ResourceConverter(temporaryConfiguration,
+                ResourceConverter.getConfiguredDefaultScheme()).withExtraHandlers(getExtraResourceTypeHandlers());
+
         final Resource resource = converter.fromString(Resource.class, resourceUrl);
         return resource;
     }
@@ -107,8 +108,8 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * 
      * @return
      */
-    protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
-        return ResourceConverter.createDefaultHandlers(getHomeFolder());
+    protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
+        return new ArrayList<>();
     }
 
     /**

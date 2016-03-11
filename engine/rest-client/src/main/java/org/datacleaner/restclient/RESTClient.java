@@ -24,6 +24,7 @@ package org.datacleaner.restclient;
  * @since 03. 09. 2015
  */
 public interface RESTClient {
+    
     public static enum HttpMethod {
         POST,
         GET,

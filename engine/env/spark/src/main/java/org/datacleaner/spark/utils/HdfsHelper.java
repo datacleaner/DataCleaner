@@ -129,13 +129,13 @@ public class HdfsHelper {
         }
         if (resource instanceof HdfsResource) {
             // wrap the resource with our known configuration
-            return new HadoopResource(resource, _hadoopConfiguration);
+            return new HadoopResource(resource, _hadoopConfiguration, HadoopResource.DEFAULT_CLUSTERREFERENCE);
         }
         if (resource instanceof FileResource) {
             // this may very well be a path that was mis-interpreted as a local
             // file because no scheme was defined
             if (resource.getQualifiedPath().startsWith("/")) {
-                return new HadoopResource(resource, _hadoopConfiguration);
+                return new HadoopResource(resource, _hadoopConfiguration, HadoopResource.DEFAULT_CLUSTERREFERENCE);
             }
         }
 
@@ -152,7 +152,7 @@ public class HdfsHelper {
             }
             return new FileResource(path.toString());
         }
-        return new HadoopResource(path, _hadoopConfiguration);
+        return new HadoopResource(path, _hadoopConfiguration, HadoopResource.DEFAULT_CLUSTERREFERENCE);
     }
 
     public boolean isDirectory(URI path) {

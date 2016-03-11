@@ -23,7 +23,7 @@ package org.datacleaner.documentation.swagger;
  * @since 23. 09. 2015
  */
 public class SwaggerContact {
-    private String email = "";
+    private String email = "info@humaninference.com";
 
     public String getEmail() {
         return email;

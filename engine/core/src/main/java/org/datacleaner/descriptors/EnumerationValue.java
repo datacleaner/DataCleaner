@@ -41,13 +41,20 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
 
     private static final long serialVersionUID = 1L;
 
-    private String value;
-    private String name;
-    private Enum<?> enumValue;
+    private final String value;
+    private final String name;
+    private final String[] aliases;
+    private final Enum<?> enumValue;
 
     public EnumerationValue(String value, String name) {
-        this.value = value;
-        this.name = name == null ? "" : name;
+        this(value, name, null);
+    }
+
+    public EnumerationValue(String enumValue, String enumName, String[] enumAliases){
+        this.value = enumValue;
+        this.name = enumName == null ? "" : enumName;
+        this.aliases = enumAliases == null ? new String[0]: enumAliases;
+        this.enumValue = null;
     }
 
     public EnumerationValue(String value) {
@@ -58,13 +65,22 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         this.enumValue = value;
         this.value = enumValue.name();
         if (enumValue instanceof HasName) {
-            name = ((HasName) enumValue).getName();
-            if (name == null) {
+            String nameCandidate = ((HasName) enumValue).getName();
+            if (nameCandidate == null) {
                 name = "";
+            } else {
+                name = nameCandidate;
             }
         } else {
             name = value.toString();
         }
+
+        if (enumValue instanceof HasAliases) {
+            aliases = ((HasAliases) enumValue).getAliases();
+        } else {
+            aliases = new String[0];
+        }
+
     }
 
     /** Available only if this object represents a Java enum value */
@@ -139,10 +155,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     public String[] getAliases() {
-        if (enumValue instanceof HasAliases) {
-            return ((HasAliases) enumValue).getAliases();
-        }
-        return new String[0];
+        return aliases;
     }
 
     public static EnumerationProvider providerFromEnumClass(Class<? extends Enum<?>> enumClass) {
@@ -151,6 +164,20 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
             @Override
             public EnumerationValue[] values() {
                 return values;
+            }
+            @Override
+            public EnumerationValue forString(String value) {
+                for(EnumerationValue candidate: values) {
+                    if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+                        return candidate;
+                    }
+                    for(String alias: candidate.getAliases()) {
+                        if(value.equals(alias)) {
+                            return candidate;
+                        }
+                    }
+                }
+                return null;
             }
         };
     }

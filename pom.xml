@@ -31,7 +31,7 @@
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jersey.version>1.19</jersey.version>
-		<commons.collection.version>3.2.1</commons.collection.version>
+		<commons.collection.version>3.2.2</commons.collection.version>
 		<ocpsoft.rewrite.version>2.0.12.Final</ocpsoft.rewrite.version>
 	</properties>
 	<parent>

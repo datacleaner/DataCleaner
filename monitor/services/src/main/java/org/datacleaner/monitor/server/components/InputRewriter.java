@@ -17,19 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation.swagger;
+package org.datacleaner.monitor.server.components;
+
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.restclient.ProcessStatelessInput;
 
 /**
- * @since 23. 09. 2015
+ * Implementors of this interface are used to rewrite input of the REST API.
+ * Can be used to support more input styles and rewriters transform the input
+ * to one canonical representation.
  */
-public class SwaggerSecurityDefinitions {
-    private String[] list = new String[] { "" };
+public interface InputRewriter {
 
-    public String[] getList() {
-        return list;
-    }
-
-    public void setList(String[] list) {
-        this.list = list;
-    }
+    /**
+     * (Possibly) rewrites the input of
+     * @link org.datacleaner.monitor.server.controllers.ComponentControllerV1#processStateless(java.lang.String, java.lang.String, org.datacleaner.restclient.ProcessStatelessInput)}
+     * method.
+     *
+     * @return true if the input rewriting should stop here (NO other rewriters will be processed).
+     */
+    boolean rewriteInput(TransformerDescriptor transformer, ProcessStatelessInput input);
 }

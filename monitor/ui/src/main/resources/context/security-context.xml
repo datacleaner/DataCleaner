@@ -17,11 +17,17 @@
 	<http pattern="/javascripts/**" security="none" />
 	<http pattern="/fonts/**" security="none" />
 	<http pattern="/*.css" security="none" />
+	<http pattern="/repository/swagger.json" security="none" />
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner monitor">
-		<intercept-url pattern="/repository/**" access="ROLE_USER" />
-
+		<!-- We don't want to secure OPTIONS requests - this is why we need to name all other methods -->
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="GET"/>
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="POST"/>
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="PUT"/>
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="DELETE"/>
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="HEAD"/>
+		<intercept-url pattern="/repository/**" access="ROLE_USER" method="TRACE"/>
 		<http-basic />
 	</http>
 

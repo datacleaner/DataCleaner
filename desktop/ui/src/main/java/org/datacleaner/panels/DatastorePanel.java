@@ -54,6 +54,7 @@ import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.PojoDatastore;
+import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
@@ -414,7 +415,9 @@ public class DatastorePanel extends DCPanel {
         if (datastore.getDescription() != null) {
             return datastore.getDescription();
         }
-        if (datastore instanceof FileDatastore) {
+        if (datastore instanceof ResourceDatastore) {
+            return ((ResourceDatastore) datastore).getResource().getQualifiedPath();
+        } else if (datastore instanceof FileDatastore) {
             return ((FileDatastore) datastore).getFilename();
         } else if (datastore instanceof JdbcDatastore) {
             final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;

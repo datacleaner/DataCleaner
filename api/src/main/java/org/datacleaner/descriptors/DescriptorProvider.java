@@ -55,6 +55,15 @@ public interface DescriptorProvider {
      * Refreshes the descriptor list.
      */
     public void refresh();
+    
+    /**
+     * Gets a {@link ComponentDescriptor} by it's display name (or secondly by
+     * searching using {@link Alias}es).
+     * 
+     * @param name
+     * @return
+     */
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name);
 
     /**
      * Gets all the {@link AnalyzerDescriptor}s currently registered.

@@ -32,6 +32,7 @@ import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
@@ -50,7 +51,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Bean factory for {@link AnalyzerBeansConfiguration} elements in the DC
+ * Bean factory for {@link org.datacleaner.configuration.DataCleanerConfiguration} elements in the DC
  * monitor application, like the {@link TaskRunner} and
  * {@link DescriptorProvider}.
  * 
@@ -65,6 +66,7 @@ public class ConfigurationFactory {
     private List<String> _scannedPackages;
     private Integer _numThreads;
     private boolean scanWebInfFolder = true;
+    private DescriptorProvider additionalDescriptorProvider;
 
     public boolean isScanWebInfFolder() {
         return scanWebInfFolder;
@@ -88,6 +90,14 @@ public class ConfigurationFactory {
 
     public void setNumThreads(Integer numThreads) {
         _numThreads = numThreads;
+    }
+
+    /**
+     * Adds additional component descriptor provider. For remote components it is possible to use
+     * the {@link RemoteDescriptorProviderFactory} factory.
+     */
+    public void setAdditionalDescriptorProvider(DescriptorProvider descriptorProvider) {
+        this.additionalDescriptorProvider = descriptorProvider;
     }
 
     @Bean(name = "published-components")
@@ -124,6 +134,12 @@ public class ConfigurationFactory {
 
         for (String packageName : _scannedPackages) {
             descriptorProvider.scanPackage(packageName, true, classLoader, false, files);
+        }
+
+        if(additionalDescriptorProvider != null) {
+            CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+            compositeDescriptorProvider.addDelegates(Arrays.asList(descriptorProvider, additionalDescriptorProvider));
+            return compositeDescriptorProvider;
         }
         return descriptorProvider;
     }

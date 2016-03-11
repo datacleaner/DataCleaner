@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.util.HasAliases;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 public class Serializator {
     private static final Logger logger = LoggerFactory.getLogger(Serializator.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static final String ENUM_ALIAS_SEPARATOR = "::";
     static {
         SimpleModule myModule = new SimpleModule("RemoteTransformersModule", new Version(1, 0, 0, null, "org.datacleaner", "DataCleaner-remote-transformers"));
         // our custom serializers
@@ -250,11 +252,25 @@ public class Serializator {
         }
 
         protected String enumValueToSchemaString(Enum<?> value) {
+            StringBuilder serialized = new StringBuilder();
+            serialized.append(value.name());
+            serialized.append(ENUM_ALIAS_SEPARATOR);
             if(value instanceof  HasName) {
-                return value.name() + "::" + ((HasName)value).getName();
+                serialized.append(((HasName)value).getName());
             } else {
-                return value.name() + "::" + String.valueOf(value);
+                serialized.append(String.valueOf(value));
             }
+            if(value instanceof HasAliases) {
+                String[] aliases = ((HasAliases)value).getAliases();
+                if(aliases != null) {
+                    for(String alias: aliases) {
+                        if(alias != null && !alias.isEmpty()) {
+                            serialized.append(ENUM_ALIAS_SEPARATOR).append(alias);
+                        }
+                    }
+                }
+            }
+            return serialized.toString();
         }
     }
 }

@@ -17,19 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation.swagger;
+package org.datacleaner.server;
 
-import org.junit.Assert;
-import org.junit.Test;
 
-public class SwaggerDefinitionsTest {
-    private final SwaggerDefinitions swaggerDefinitions = new SwaggerDefinitions();
+import org.datacleaner.configuration.ServerInformation;
 
-    @Test
-    public void testSetAndGetList() throws Exception {
-        Assert.assertNotNull(swaggerDefinitions.getList());
-        final String[] list = new String[] { "item1", "item2" };
-        swaggerDefinitions.setList(list);
-        Assert.assertEquals(list[0], swaggerDefinitions.getList()[0]);
+/**
+ * Base class for all ServerInformation implementations.
+ */
+public abstract class AbstractServerInformation implements ServerInformation {
+    private static final long serialVersionUID = 1L;
+    private final String _name;
+    private final String _description;
+
+    public AbstractServerInformation(String name, String description) {
+        _name = name;
+        _description = description;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    @Override
+    public String getDescription() {
+        return _description;
     }
 }

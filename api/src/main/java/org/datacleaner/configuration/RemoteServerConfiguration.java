@@ -30,4 +30,12 @@ public interface RemoteServerConfiguration {
      * @return list of all remote server configurations.
      */
     public List<RemoteServerData> getServerList();
+
+    /**
+     * Returns RemoteServerData by server name
+     *
+     * @param serverName - NULL - is not exists
+     * @return
+     */
+    public RemoteServerData getServerConfig(String serverName);
 }

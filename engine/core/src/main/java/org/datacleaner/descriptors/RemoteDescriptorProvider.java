@@ -25,8 +25,11 @@ import org.datacleaner.configuration.RemoteServerData;
  * Descriptor provider for remote components.
  */
 public interface RemoteDescriptorProvider extends DescriptorProvider {
-    
+
+    String DATACLOUD_URL = "https://services.datacleaner.org";
+    String DATACLOUD_SERVER_NAME = "DataCloud";
+
     public RemoteServerData getServerData();
-    
+
     public boolean isServerUp();
 }

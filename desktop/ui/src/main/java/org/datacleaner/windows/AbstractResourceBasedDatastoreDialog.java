@@ -57,7 +57,6 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.LoadingIcon;
@@ -103,9 +102,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
             DataCleanerConfiguration configuration, UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-        final ResourceConverter resourceConverter = new ResourceConverter(configuration);
         _statusLabel.setText("Please select source");
-        _resourceSelector = new ResourceSelector(resourceConverter, getUserPreferences(), true);
+        _resourceSelector = new ResourceSelector(configuration, getUserPreferences(), true);
 
         if (originalDatastore != null) {
             if (originalDatastore instanceof ResourceDatastore) {

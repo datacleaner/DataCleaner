@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.Converter;
+import org.datacleaner.restclient.Serializator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
@@ -82,20 +83,23 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
                 enumValues = new EnumerationValue[enums.size()];
                 int i = 0;
                 for (String value : enums) {
-                    String enumValue, enumName;
-                    int idx = value.indexOf("::");
-                    if (idx >= 0) {
-                        enumValue = value.substring(0, idx);
-                        enumName = value.substring(idx + 2);
-                    } else {
-                        enumValue = value;
-                        enumName = value;
-                    }
-                    if (enumName.trim().isEmpty()) {
-                        enumName = value;
-                    }
 
-                    enumValues[i++] = new EnumerationValue(enumValue, enumName);
+                    String enumValue, enumName;
+                    String[] enumAliases;
+                    String[] tokens = value.split(Serializator.ENUM_ALIAS_SEPARATOR);
+                    if(tokens.length == 0) {
+                        continue;
+                    }
+                    if(tokens.length == 1) {
+                        enumValue = tokens[0];
+                        enumName = tokens[0];
+                        enumAliases = new String[0];
+                    } else {
+                        enumValue = tokens[0];
+                        enumName = tokens[1];
+                        enumAliases = Arrays.copyOfRange(tokens, 2, tokens.length);
+                    }
+                    enumValues[i++] = new EnumerationValue(enumValue, enumName, enumAliases);
                 }
                 Arrays.sort(enumValues);
             }
@@ -156,6 +160,24 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     @Override
     public EnumerationValue[] values() {
         return enumValues;
+    }
+
+    @Override
+    public EnumerationValue forString(String value) {
+        if(enumValues == null) {
+            return null;
+        }
+        for(EnumerationValue candidate: enumValues) {
+            if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+                return candidate;
+            }
+            for(String alias: candidate.getAliases()) {
+                if(value.equals(alias)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -60,7 +60,7 @@ import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.options.MemoryOptionsPanel;
-import org.datacleaner.widgets.options.RemoteComponentsOptionsPanel;
+import org.datacleaner.widgets.options.DataCloudOptionsPanel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -93,9 +93,9 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
-        _tabbedPane.addTab("Remote components",
-                imageManager.getImageIcon("images/menu/remote-components.png", IconUtils.ICON_SIZE_TAB),
-                new RemoteComponentsOptionsPanel(configuration));
+        _tabbedPane.addTab("DataCloud",
+                imageManager.getImageIcon(IconUtils.MENU_DATACLOUD, IconUtils.ICON_SIZE_TAB),
+                new DataCloudOptionsPanel(configuration));
         _tabbedPane.addTab("Performance",
                 imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
@@ -334,7 +334,6 @@ public class OptionsDialog extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 _userPreferences.save();
-                _configuration.getEnvironment().getDescriptorProvider().refresh();
                 OptionsDialog.this.dispose();
             }
         });

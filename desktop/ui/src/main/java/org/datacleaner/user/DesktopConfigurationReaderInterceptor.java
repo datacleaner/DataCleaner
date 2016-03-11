@@ -20,6 +20,7 @@
 package org.datacleaner.user;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -97,8 +98,8 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
-        final List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
+    protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
         if (ClassLoaderUtils.IS_WEB_START) {
             handlers.add(new DummyRepositoryResourceFileTypeHandler());
         } else {

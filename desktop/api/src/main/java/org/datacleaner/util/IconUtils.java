@@ -108,6 +108,7 @@ public final class IconUtils {
     public static final String MENU_REFRESH = "images/menu/refresh.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
+    public static final String MENU_DATACLOUD = "images/menu/datacloud.png";
     public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";
 
     public static final String ACTION_EXECUTE = "images/menu/execute.png";
@@ -208,6 +209,9 @@ public final class IconUtils {
 
     public static final String REMOTE_ICON_OVERLAY = "images/remote-icon-overlay.png";
     public static final String REMOTE_ICON_OVERLAY_SMALL = "images/remote-icon-overlay-small.png";
+
+    public static final String PASSWORD_INPUT = "images/widgets/PasswordInput.png";
+    public static final String USERNAME_INPUT = "images/widgets/UsernameInput.png";
 
     public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
 

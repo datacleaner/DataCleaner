@@ -22,6 +22,7 @@ package org.datacleaner.panels;
 import javax.swing.Box;
 import javax.swing.JComponent;
 
+import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
@@ -35,7 +36,9 @@ public class SelectDatastorePanel extends DCPanel {
 
     private final ExistingDatastorePanel _existingDatastoresPanel;
 
-    public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog, DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences,
+    public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog,
+            final ServerInformationCatalog serverInformationCatalog, DatabaseDriverCatalog databaseDriverCatalog,
+            UserPreferences userPreferences,
             DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
@@ -49,7 +52,7 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
+        add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
                 !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {

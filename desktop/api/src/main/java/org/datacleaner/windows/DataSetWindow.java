@@ -50,6 +50,8 @@ import org.datacleaner.widgets.table.DCTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * A window that presents a tabular dataset to the end user. The dataset may be
  * based on queried data, transformed data, a record sample or other such
@@ -83,7 +85,7 @@ public class DataSetWindow extends AbstractWindow {
         _tableModelCallable = new Callable<TableModel>() {
             @Override
             public TableModel call() throws Exception {
-                DataSet dataSet = dataContext.executeQuery(_query);
+                final DataSet dataSet = dataContext.executeQuery(_query);
                 return new DataSetTableModel(dataSet);
             }
         };
@@ -152,12 +154,14 @@ public class DataSetWindow extends AbstractWindow {
 
         new SwingWorker<TableModel, Void>() {
             protected TableModel doInBackground() throws Exception {
-                return _tableModelCallable.call();
+                final TableModel tableModel = _tableModelCallable.call();
+                touchTableModel(tableModel);
+                return tableModel;
             };
 
             protected void done() {
                 try {
-                    TableModel tableModel = get();
+                    final TableModel tableModel = get();
                     _table.setModel(tableModel);
 
                     final int columnCount = _table.getColumnCount();
@@ -173,12 +177,36 @@ public class DataSetWindow extends AbstractWindow {
                     e = ErrorUtils.unwrapForPresentation(e);
                     logger.error("Unexpected error occurred while building DataSetWindow contents", e);
                     DataSetWindow.this.dispose();
-                    WidgetUtils.showErrorMessage("Unexpected error",
-                            "An unexpected error occurred while building data set. See logs for details.");
+                    
+                    final String exceptionMessage = e.getMessage();
+                    if (Strings.isNullOrEmpty(exceptionMessage)) {
+                        WidgetUtils.showErrorMessage("Unexpected error",
+                                "An unexpected error occurred while building data set.\n\nSee logs for details.");
+                    } else {
+                        WidgetUtils.showErrorMessage("Unexpected error",
+                                "An unexpected error occurred while building data set:\n" + exceptionMessage + "\n\nSee logs for details.");
+                    }
                 }
             };
         }.execute();
 
+    }
+
+    /**
+     * Touches the table model values in order to ensure that it will be able to
+     * retrieve values. This is a bit of a silly thing to do, but it ensures
+     * that errors during {@link TableModel#getValueAt(int, int)} will not
+     * affect the user at rendering time. If errors occur, we encounter them
+     * early by invoking this method
+     * 
+     * @param tableModel
+     */
+    private void touchTableModel(TableModel tableModel) {
+        for (int row = 0; row < tableModel.getRowCount(); row++) {
+            for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                tableModel.getValueAt(row, col);
+            }
+        }
     }
 
     private DCPanel createPagingButtonPanel() {

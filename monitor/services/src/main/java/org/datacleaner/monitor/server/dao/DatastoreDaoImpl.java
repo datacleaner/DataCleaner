@@ -35,7 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.configuration.DatastoreXmlExternalizer;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.Configuration;
@@ -124,7 +124,7 @@ public class DatastoreDaoImpl implements DatastoreDao {
 
     @Override
     public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException {
-        final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
+        final DomConfigurationWriter externalizer = new DomConfigurationWriter();
         final Element element = externalizer.externalize(datastore);
         final String result = addDatastore(tenantContext, element);
         return result;

@@ -22,24 +22,39 @@ package org.datacleaner.util.convert;
 import static org.junit.Assert.*;
 
 import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
+import org.datacleaner.test.MockHadoopConfigHelper;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class HdfsResourceTypeHandlerTest {
+    @Rule
+    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testToAndFromString() throws Exception {
-        final HdfsResourceTypeHandler typeHandler = new HdfsResourceTypeHandler("hdfs");
+        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+        helper.generateCoreFile();
+        try {
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
+                    helper.getConfFolder().getAbsolutePath());
 
-        final HdfsResource resource1 = new HdfsResource("hdfs", "localhost", 9000, "/foo.bar.txt", null);
-        assertTrue(typeHandler.isParserFor(resource1.getClass()));
-        
-        final String path = typeHandler.createPath(resource1);
-        assertEquals("localhost:9000/foo.bar.txt", path);
-        
-        final HdfsResource resource2 = typeHandler.parsePath(path);
-        
-        // they should now be equal, but not the same instance
-        assertEquals(resource2, resource1);
-        assertNotSame(resource2, resource1);
+            final HdfsResourceTypeHandler typeHandler = new HdfsResourceTypeHandler("hdfs");
+
+            final HdfsResource resource1 = new HdfsResource("hdfs", "localhost", 9000, "/foo.bar.txt", null);
+            assertTrue(typeHandler.isParserFor(resource1.getClass()));
+
+            final String path = typeHandler.createPath(resource1);
+            assertEquals("localhost:9000/foo.bar.txt", path);
+
+            final HdfsResource resource2 = typeHandler.parsePath(path);
+
+            // they should now be equal, but not the same instance
+            assertEquals(resource2, resource1);
+            assertNotSame(resource2, resource1);
+        } finally {
+            System.clearProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
+        }
     }
 }

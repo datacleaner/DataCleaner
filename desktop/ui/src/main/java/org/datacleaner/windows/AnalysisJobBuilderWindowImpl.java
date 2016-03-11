@@ -348,7 +348,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), configuration.getServerInformationCatalog(), _userPreferences);
 
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new CardLayout());
@@ -365,6 +365,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _schemaTreePanel.setUpdatePanel(_leftPanel);
     }
 
+    @Override
+    public void open() {
+        super.open();
+    }
+    
     @Override
     public void changePanel(AnalysisWindowPanelType panel) {
         if (_datastore == null) {

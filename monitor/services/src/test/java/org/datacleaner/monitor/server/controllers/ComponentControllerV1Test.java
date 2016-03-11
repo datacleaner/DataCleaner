@@ -24,18 +24,17 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
@@ -50,11 +49,16 @@ import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
+import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.Serializator;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -63,9 +67,11 @@ public class ComponentControllerV1Test {
     private String timeout = "42";
     private ComponentControllerV1 componentControllerV1 = new ComponentControllerV1();
     private ComponentCache componentCache;
+    private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        taskRunner = new SingleThreadedTaskRunner();
         RemoteComponentsConfiguration remoteCfg = new SimpleRemoteComponentsConfigurationImpl();
         ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(remoteCfg);
         TenantContextFactory tenantCtxFac = getTenantContextFactoryMock();
@@ -108,20 +114,12 @@ public class ComponentControllerV1Test {
 
     private ComponentStoreHolder getComponentsStoreHolder() {
         CreateInput createInput = new CreateInput();
-        createInput.configuration = getComponentConfigurationMock();
+        ProcessStatelessInput input = createSampleInput();
+        createInput.configuration =  input.configuration;
         long timeoutMs = 1000L;
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
 
         return componentStoreHolder;
-    }
-
-    private ComponentConfiguration getComponentConfigurationMock() {
-        ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
-        expect(componentConfiguration.getColumns()).andReturn(Collections.<JsonNode> emptyList()).anyTimes();
-        expect(componentConfiguration.getProperties()).andReturn(Collections.<String, JsonNode> emptyMap()).anyTimes();
-        replay(componentConfiguration);
-
-        return componentConfiguration;
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
@@ -139,6 +137,7 @@ public class ComponentControllerV1Test {
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
         expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
                 .anyTimes();
+        expect(dataCleanerEnvironment.getTaskRunner()).andReturn(taskRunner).anyTimes();
         replay(dataCleanerEnvironment);
 
         return dataCleanerEnvironment;
@@ -152,74 +151,28 @@ public class ComponentControllerV1Test {
         return injectionManagerFactory;
     }
 
-    @SuppressWarnings("unchecked")
     private DescriptorProvider getDescriptorProviderMock() {
-        DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
-        Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
-        @SuppressWarnings("rawtypes")
-        TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
-        transformerDescriptorSet.add(transformerDescriptorMock);
-        expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(
-                transformerDescriptorMock).anyTimes();
-        replay(descriptorProvider);
-
+        final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
+        final TransformerDescriptor<?> transformerDescriptor = Descriptors.ofTransformer(ConcatenatorTransformer.class);
+        descriptorProvider.addTransformerBeanDescriptor(transformerDescriptor);
         return descriptorProvider;
     }
 
-    @SuppressWarnings("rawtypes")
-    private TransformerDescriptor<?> getTransformerDescriptorMock() {
-        TransformerDescriptor transformerDescriptor = createNiceMock(TransformerDescriptor.class);
-        expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
-        expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
-        expect(transformerDescriptor.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
-        expect(transformerDescriptor.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
-        replay(transformerDescriptor);
+    private ProcessStatelessInput createSampleInput() {
+        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
+        ProcessStatelessInput input = new ProcessStatelessInput();
+        input.configuration = new ComponentConfiguration();
+        ArrayNode cols = json.arrayNode().add("c1").add("c2");
+        input.configuration.getProperties().put("Columns", cols);
+        input.configuration.getColumns().add(json.textNode("c1"));
+        input.configuration.getColumns().add(json.textNode("c2"));
 
-        return transformerDescriptor;
-    }
-
-    private ComponentSuperCategory getComponentSuperCategoryMock() {
-        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getName() {
-                return "superCategory";
-            }
-
-            @Override
-            public String getDescription() {
-                return getName();
-            }
-
-            @Override
-            public int getSortIndex() {
-                return 0;
-            }
-
-            @Override
-            public int compareTo(ComponentSuperCategory o) {
-                return 0;
-            }
-        };
-
-        return componentSuperCategory;
-    }
-
-    private JsonNode getJsonNodeMock() {
-        JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set<JsonNode> set = new HashSet<>();
-        expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
-        replay(jsonNode);
-
-        return jsonNode;
+        input.data = json.arrayNode();
+        ArrayNode row = json.arrayNode();
+        row.add(json.textNode("Hello"));
+        row.add(json.textNode("World"));
+        ((ArrayNode)input.data).add(row);
+        return input;
     }
 
     @Test
@@ -230,10 +183,28 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testProcessStateless() throws Exception {
-        ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
-        processStatelessInput.configuration = new ComponentConfiguration();
-        processStatelessInput.data = getJsonNodeMock();
-        componentControllerV1.processStateless(tenant, componentName, processStatelessInput);
+        ProcessStatelessInput input = createSampleInput();
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, input);
+        JsonNode rows = output.rows;
+        Assert.assertEquals("Output should have one row group", 1, rows.size());
+        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
+        JsonNode row1 = rows.get(0).get(0);
+        Assert.assertEquals("Wrong output value", "HelloWorld", row1.get(0).asText());
+    }
+
+    @Test
+    public void testProcessStatelessOutputFormatColumnMap() throws Exception {
+
+        ProcessStatelessInput input = createSampleInput();
+
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", input);
+        JsonNode rows = output.rows;
+        Assert.assertEquals("Output should have one row group", 1, rows.size());
+        Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
+        JsonNode row1 = rows.get(0).get(0);
+        JsonNode value = row1.get("Concat of c1,c2");
+        Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
+        Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
     }
 
     @Test
@@ -245,8 +216,9 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testProcessComponent() throws Exception {
+        ProcessStatelessInput input = createSampleInput();
         ProcessInput processInput = new ProcessInput();
-        processInput.data = getJsonNodeMock();
+        processInput.data = input.data;
 
         componentControllerV1.processComponent(tenant, id, processInput);
     }

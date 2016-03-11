@@ -17,20 +17,35 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation.swagger;
+package org.datacleaner.configuration;
 
-import org.junit.Assert;
-import org.junit.Test;
 
-public class SwaggerSecurityDefinitionsTest {
-    private final SwaggerSecurityDefinitions swaggerSecurityDefinitions = new SwaggerSecurityDefinitions();
+import java.io.Serializable;
 
-    @Test
-    public void testSetAndGetList() throws Exception {
-        Assert.assertNotNull(swaggerSecurityDefinitions.getList());
-        final String name = "security-definition";
-        final String[] list = new String[] { name };
-        swaggerSecurityDefinitions.setList(list);
-        Assert.assertEquals(name, swaggerSecurityDefinitions.getList()[0]);
+public interface ServerInformationCatalog extends Serializable {
+    /**
+     * Determines if a server by a specific name is contained in the
+     * {@link ServerInformationCatalog}.
+     *
+     * @param name
+     * @return
+     */
+    public default boolean containsServer(String name) {
+        return getServer(name) != null;
     }
+
+    /**
+     * Gets all the names of the servers in this datastore catalog.
+     *
+     * @return
+     */
+    public String[] getServerNames();
+
+    /**
+     * Gets a server by its name.
+     *
+     * @param name
+     * @return ServerInformation requested, or if no such server, null
+     */
+    public ServerInformation getServer(String name);
 }

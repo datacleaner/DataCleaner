@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
@@ -146,7 +147,7 @@ public class SparkJobContext implements Serializable {
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         if (_analysisJobBuilder == null) {
             // set HDFS as default scheme to avoid file resources
-            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, "hdfs");
+            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, HdfsResource.SCHEME_HDFS);
 
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);

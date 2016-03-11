@@ -57,15 +57,15 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     }
 
     public void testBuildMultipleJobsForEachTable() throws Exception {
-        AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
 
-        Table table1 = new MutableTable("table1");
+        final Table table1 = new MutableTable("table1");
         jobBuilder.addInputColumn(new MetaModelInputColumn(
                 new MutableColumn("foo", ColumnType.VARCHAR, table1, 0, true)));
         jobBuilder.addInputColumn(new MetaModelInputColumn(
                 new MutableColumn("bar", ColumnType.VARCHAR, table1, 1, true)));
 
-        Table table2 = new MutableTable("table2");
+        final Table table2 = new MutableTable("table2");
         jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("w00p", ColumnType.VARCHAR, table2, 0,
                 true)));
         jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("weee", ColumnType.VARCHAR, table2, 1,

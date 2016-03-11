@@ -75,7 +75,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
-        Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
+        final Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
         if (inputProperties.size() == 1) {
             _inputProperty = inputProperties.iterator().next();
             final ColumnProperty columnProperty = _inputProperty.getAnnotation(ColumnProperty.class);
@@ -148,23 +148,15 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
-        if (!isMultipleJobsSupported()) {
-
-            final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
-            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
-                    getMetadataProperties(), outputDataStreamJobs);
-            return new AnalyzerJob[] { job };
-        }
-
-        if (validate && _inputColumns.isEmpty()) {
+        final List<InputColumn<?>> inputColumns = getInputColumns();
+        if (validate && inputColumns.isEmpty()) {
             throw new IllegalStateException("No input column configured");
         }
 
         final List<InputColumn<?>> tableLessColumns = new ArrayList<InputColumn<?>>();
         final Map<Table, List<InputColumn<?>>> originatingTables = new LinkedHashMap<Table, List<InputColumn<?>>>();
-        for (InputColumn<?> inputColumn : _inputColumns) {
-            Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
+        for (InputColumn<?> inputColumn : inputColumns) {
+            final Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
             if (table == null) {
                 // some columns (such as those based on an expression) don't
                 // originate from a table. They should be applied to all jobs.
@@ -184,7 +176,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             if (sourceTables.size() == 1) {
                 logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred",
                         this);
-                Table table = sourceTables.get(0);
+                final Table table = sourceTables.get(0);
                 originatingTables.put(table, new ArrayList<InputColumn<?>>());
             } else {
                 throw new IllegalStateException("Could not determine source for analyzer '" + this + "'");
@@ -195,7 +187,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             // there's only a single table involved - leave the input columns
             // untouched
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
                     getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
@@ -205,24 +197,32 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             entry.getValue().addAll(tableLessColumns);
         }
 
-        final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
+        final List<AnalyzerJob> jobInstances = new ArrayList<AnalyzerJob>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
         for (Iterator<Entry<Table, List<InputColumn<?>>>> iterator = entrySet.iterator(); iterator.hasNext();) {
-            Entry<Table, List<InputColumn<?>>> entry = (Entry<Table, List<InputColumn<?>>>) iterator.next();
-            List<InputColumn<?>> columns = entry.getValue();
+            final Entry<Table, List<InputColumn<?>>> entry = (Entry<Table, List<InputColumn<?>>>) iterator.next();
+            final List<InputColumn<?>> columns = entry.getValue();
             if (_inputProperty.isArray()) {
-                jobs.add(createPartitionedJob(columns.toArray(new InputColumn[columns.size()]), configuredProperties));
+                jobInstances.add(createPartitionedJob(columns.toArray(new InputColumn[columns.size()]), configuredProperties));
             } else {
                 for (InputColumn<?> column : columns) {
-                    jobs.add(createPartitionedJob(column, configuredProperties));
+                    jobInstances.add(createPartitionedJob(column, configuredProperties));
                 }
             }
         }
         if (validate && !isConfigured()) {
             throw new IllegalStateException("Row processing Analyzer job is not correctly configured");
         }
+        
+        if (jobInstances.size() == 1 && !isMultipleJobsSupported()) {
+            final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
+            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
+            return new AnalyzerJob[] { job };
+        }
 
-        return jobs.toArray(new AnalyzerJob[jobs.size()]);
+        return jobInstances.toArray(new AnalyzerJob[jobInstances.size()]);
     }
 
     @Override

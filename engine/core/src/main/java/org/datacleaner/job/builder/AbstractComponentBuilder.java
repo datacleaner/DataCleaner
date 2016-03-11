@@ -686,12 +686,12 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         Set<ConfiguredPropertyDescriptor> configuredPropertiesForInput = getDescriptor()
                 .getConfiguredPropertiesForInput();
         for (ConfiguredPropertyDescriptor configuredProperty : configuredPropertiesForInput) {
-            Object inputColumns = getConfiguredProperty(configuredProperty);
+            final Object inputColumns = getConfiguredProperty(configuredProperty);
             if (inputColumns != null) {
                 if (inputColumns.getClass().isArray()) {
-                    int length = Array.getLength(inputColumns);
+                    final int length = Array.getLength(inputColumns);
                     for (int i = 0; i < length; i++) {
-                        InputColumn<?> column = (InputColumn<?>) Array.get(inputColumns, i);
+                        final InputColumn<?> column = (InputColumn<?>) Array.get(inputColumns, i);
                         if (column == null) {
                             logger.warn("Element no. {} in array (size {}) is null! Value read from {}", new Object[] {
                                     i, length, configuredProperty });

@@ -209,7 +209,7 @@ public class DCTable extends JXTable implements MouseListener {
         if (e.getClickCount() == 1) {
             int button = e.getButton();
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                if (rightClickMenuHasItems()) {
+                if (initializeRightClickMenuItems()) {
                     JPopupMenu popup = new JPopupMenu();
                     for (JMenuItem item : _rightClickMenuItems) {
                         popup.add(item);
@@ -221,7 +221,7 @@ public class DCTable extends JXTable implements MouseListener {
         }
     }
 
-    private boolean rightClickMenuHasItems() {
+    private boolean initializeRightClickMenuItems() {
         if(_rightClickMenuItems==null) {
             _rightClickMenuItems = getCopyMenuItems();
             if(_rightClickMenuItems==null) {

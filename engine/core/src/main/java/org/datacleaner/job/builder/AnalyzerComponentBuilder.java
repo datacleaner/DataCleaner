@@ -309,6 +309,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                     result.add(inputColumn);
                 }
             }
+            if (!key.isArray()) {
+                if (result.isEmpty()) {
+                    return null;
+                }
+                return result.get(0);
+            }
             return result.toArray(new InputColumn<?>[result.size()]);
         }
         return unpartitionedValue;

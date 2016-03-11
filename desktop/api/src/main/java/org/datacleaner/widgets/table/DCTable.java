@@ -307,17 +307,11 @@ public class DCTable extends JXTable implements MouseListener {
 
     @Override
     public Object getValueAt(int row, int column) {
-        try {
-            Object value = super.getValueAt(row, column);
-            if (value == null) {
-                value = LabelUtils.NULL_LABEL;
-            }
-            return value;
-        } catch (Exception e) {
-            // TODO
-            System.out.println("!!! " + e.getMessage());
-            return null;
+        Object value = super.getValueAt(row, column);
+        if (value == null) {
+            value = LabelUtils.NULL_LABEL;
         }
+        return value;
     }
 
     public void setVisibleColumns(int min, int max) {

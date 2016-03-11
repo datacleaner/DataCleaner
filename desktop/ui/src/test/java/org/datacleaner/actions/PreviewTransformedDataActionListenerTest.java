@@ -19,11 +19,8 @@
  */
 package org.datacleaner.actions;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +34,8 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
+import org.datacleaner.beans.transform.WhitespaceTrimmerTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.components.fuse.CoalesceUnit;
@@ -52,7 +51,9 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.job.EmptyJaxbJobMetadataFactory;
+import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -68,6 +69,10 @@ import org.junit.rules.TestName;
 
 import com.google.common.base.Joiner;
 
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest {
 
@@ -82,10 +87,18 @@ public class PreviewTransformedDataActionListenerTest {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
         final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CreateCsvFileAnalyzer.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(EmailStandardizerTransformer.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
-        descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConvertToNumberTransformer.class));
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(WhitespaceTrimmerTransformer.class));
+        descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
+        descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(EqualsFilter.class));
+
+
+
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
                 datastoreCatalog).withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(
                         descriptorProvider));
@@ -403,6 +416,33 @@ public class PreviewTransformedDataActionListenerTest {
         assertEquals("mpatterso", tableModel.getValueAt(1, 1).toString());
         assertEquals("classicmodelcars.com", tableModel.getValueAt(1, 2).toString());
 
+    }
+
+    @Test
+    public void testCompleteConcatJob() throws Exception {
+        final String baseFilename = getClass().getSimpleName() + "-" + testName
+                .getMethodName() + ".analysis.xml";
+        final File analysisFile = new File("src/test/resources/previewfiles/" + baseFilename);
+
+        JaxbJobReader reader = new JaxbJobReader(analysisJobBuilder.getConfiguration());
+
+        final AnalysisJobBuilder readAnalysisJobBuilder = reader.create(new FileInputStream(analysisFile));
+        final List<TransformerComponentBuilder<?>> transformerComponentBuilders =
+                readAnalysisJobBuilder.getTransformerComponentBuilders();
+
+        TransformerComponentBuilder<?> whitespaceTransformerComponentBuilder = transformerComponentBuilders.get(2);
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
+                whitespaceTransformerComponentBuilder, 500);
+
+        final TableModel tableModel = action.call();
+
+        assertEquals(1, tableModel.getRowCount());
+
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            assertTrue(printRow(tableModel, i), tableModel.getValueAt(i, 0) == null || tableModel.getValueAt(i,
+                    1) == null);
+        }
     }
 
     private void compareWithBenchmark(PreviewTransformedDataActionListener action) throws IOException {

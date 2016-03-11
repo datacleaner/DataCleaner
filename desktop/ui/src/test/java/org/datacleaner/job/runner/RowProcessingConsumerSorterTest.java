@@ -46,6 +46,7 @@ import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.test.MockTransformer;
 
 public class RowProcessingConsumerSorterTest extends TestCase {
 
@@ -76,7 +77,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         fjb1.setName("fjb1");
 
         // 2: trim (depends on filter)
-        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
+        TransformerComponentBuilder<MockTransformer> tjb1 = ajb.addTransformer(MockTransformer.class);
         tjb1.addInputColumn(inputColumn);
         tjb1.setRequirement(fjb1, MockFilter.Category.VALID);
         tjb1.setName("tjb1");
@@ -108,7 +109,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         assertEquals(5, consumers.size());
 
         assertEquals("ImmutableFilterJob[name=fjb1,filter=Mock filter]", consumers.get(0).getComponentJob().toString());
-        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Transformer mock]", consumers.get(1)
+        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Mock transformer]", consumers.get(1)
                 .getComponentJob().toString());
         assertEquals("ImmutableTransformerJob[name=null,transformer=Fuse / Coalesce fields]", consumers.get(2)
                 .getComponentJob().toString());

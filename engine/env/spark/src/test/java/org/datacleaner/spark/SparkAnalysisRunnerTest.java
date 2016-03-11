@@ -292,10 +292,10 @@ public class SparkAnalysisRunnerTest {
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
                 ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
-        GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
-        Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
-        ReducedSingleValueDistributionResult group1 = (ReducedSingleValueDistributionResult) iterator.next();
-        ReducedSingleValueDistributionResult group2 = (ReducedSingleValueDistributionResult) iterator.next();
+        final GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
+        final Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
+        final ReducedSingleValueDistributionResult group1 = (ReducedSingleValueDistributionResult) iterator.next();
+        final ReducedSingleValueDistributionResult group2 = (ReducedSingleValueDistributionResult) iterator.next();
 
         if (group1.getName().equals("Denmark")) {
             checkGroup(group1, "Denmark", 4, 4, 4, 0);

@@ -340,7 +340,7 @@ public final class IconUtils {
             offset = 8;
             remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY);
         } else {
-            offset = 3;
+            offset = 4;
             remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY_SMALL);
         }
         bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);

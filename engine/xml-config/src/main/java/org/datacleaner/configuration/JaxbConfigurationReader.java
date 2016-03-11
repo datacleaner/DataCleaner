@@ -53,12 +53,37 @@ import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.jaxb.*;
+import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
+import org.datacleaner.configuration.jaxb.AccessDatastoreType;
+import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;
+import org.datacleaner.configuration.jaxb.CassandraDatastoreType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
+import org.datacleaner.configuration.jaxb.CombinedStorageProviderType;
+import org.datacleaner.configuration.jaxb.CompositeDatastoreType;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
+import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
+import org.datacleaner.configuration.jaxb.CsvDatastoreType;
+import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatahubDatastoreType;
+import org.datacleaner.configuration.jaxb.DatahubsecuritymodeEnum;
+import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
+import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
+import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
+import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
+import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
+import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
+import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
+import org.datacleaner.configuration.jaxb.HadoopClusterType;
+import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
+import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
+import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
 import org.datacleaner.configuration.jaxb.JsonDatastoreType;
 import org.datacleaner.configuration.jaxb.MongodbDatastoreType;
@@ -71,6 +96,21 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
+import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
+import org.datacleaner.configuration.jaxb.RemoteComponentsType;
+import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
+import org.datacleaner.configuration.jaxb.SasDatastoreType;
+import org.datacleaner.configuration.jaxb.ServersType;
+import org.datacleaner.configuration.jaxb.SimplePatternType;
+import org.datacleaner.configuration.jaxb.SinglethreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.StorageProviderType;
+import org.datacleaner.configuration.jaxb.SugarCrmDatastoreType;
+import org.datacleaner.configuration.jaxb.TableTypeEnum;
+import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
+import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
+import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
@@ -335,13 +375,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                     temporaryConfiguration, providers, remoteServerData);
         }
 
-        if(!(environment.getDescriptorProvider() instanceof  CompositeDescriptorProvider)){
-            CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
-            compositeDescriptorProvider.addDelegate(environment.getDescriptorProvider());
-            environment.setDescriptorProvider(compositeDescriptorProvider);
-        }
-
         if (providers.isEmpty()) {
+            if(!(environment.getDescriptorProvider() instanceof  CompositeDescriptorProvider)){
+                CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+                compositeDescriptorProvider.addDelegate(environment.getDescriptorProvider());
+                environment.setDescriptorProvider(compositeDescriptorProvider);
+            }
             return;
         }
 
@@ -359,8 +398,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providers.add(0, environment.getDescriptorProvider());
         }
 
-         ((CompositeDescriptorProvider) environment.getDescriptorProvider()).addDelegates(providers);
-         environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
+        CompositeDescriptorProvider descriptorProvider = new CompositeDescriptorProvider();
+        descriptorProvider.addDelegates(providers);
+        environment.setDescriptorProvider(descriptorProvider);
+        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
     }
 
     private void createDescriptorProvider(Object providerElement,

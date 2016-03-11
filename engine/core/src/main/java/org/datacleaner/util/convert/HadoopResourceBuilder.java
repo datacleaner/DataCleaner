@@ -33,10 +33,22 @@ public class HadoopResourceBuilder {
     private final String _clusterReferenceName;
     private final Configuration _configuration;
 
-    private final Pattern _pattern = Pattern.compile("(?:[\\w\\+\\-\\.]+://)?\\{([\\w\\.]*)\\}(.*)");
+    /**
+     * A regular expression {@link Pattern} that matches resource URIs
+     * containing template items for the server definition, for instance:
+     * 
+     * hdfs://{myserver}/foo/bar.txt
+     * 
+     * <ul>
+     * <li>Group 1: The scheme (example 'hdfs')</li>
+     * <li>Group 2: The template name (example 'myserver')</li>
+     * <li>Group 3: The path (example '/foo/bar.txt')</li>
+     * </ul>
+     */
+    public static final Pattern RESOURCE_SCHEME_PATTERN = Pattern.compile("([\\w\\+\\-\\.]+)://\\{([\\w\\.]*)\\}(.*)");
 
     public HadoopResourceBuilder(ServerInformationCatalog catalog, String templatedUri) {
-        final Matcher matcher = _pattern.matcher(templatedUri);
+        final Matcher matcher = RESOURCE_SCHEME_PATTERN.matcher(templatedUri);
         if (!matcher.matches()) {
             _clusterReferenceName = null;
             final String fixedUri = templatedUri.replace(" ", "%20");
@@ -51,11 +63,11 @@ public class HadoopResourceBuilder {
             _configuration.set("fs.defaultFS", fixedUri);
             _uri = URI.create(fixedUri);
         } else {
-            _clusterReferenceName = matcher.group(1);
+            _clusterReferenceName = matcher.group(2);
             final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation) catalog.getServer(
                     _clusterReferenceName);
             _configuration = hadoopClusterInformation.getConfiguration();
-            _uri = URI.create(matcher.group(2).replace(" ", "%20"));
+            _uri = URI.create(matcher.group(3).replace(" ", "%20"));
         }
     }
 

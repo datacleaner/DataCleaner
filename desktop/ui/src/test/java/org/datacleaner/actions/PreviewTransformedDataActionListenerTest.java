@@ -97,6 +97,31 @@ public class PreviewTransformedDataActionListenerTest {
         emailTransformerBuilder = analysisJobBuilder.addTransformer(EmailStandardizerTransformer.class);
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
     }
+    
+    @Test
+    public void PreviewTransformationAfterFilteredTransformation() throws Exception {
+        analysisJobBuilder.addSourceColumns("employees.lastname");
+
+        // add a "lastname=Patterson" filter on the email transformer - only 3
+        // records will pass through that filter
+        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> filter = analysisJobBuilder.addFilter(
+                EqualsFilter.class);
+        filter.getComponentInstance().setValues(new String[] { "Patterson" });
+        filter.addInputColumn(analysisJobBuilder.getSourceColumnByName("lastname"));
+        emailTransformerBuilder.setRequirement(filter, EqualsFilter.Category.EQUALS);
+
+        // add a transformer that consumes the email output
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = analysisJobBuilder.addTransformer(
+                ConcatenatorTransformer.class);
+        concatenator.addInputColumns(emailTransformerBuilder.getOutputColumns());
+
+        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null,
+                concatenator);
+        final TableModel tableModel = action.call();
+
+        assertEquals(3, tableModel.getRowCount());
+        assertEquals("mpatterso", tableModel.getValueAt(0, 0));
+    }
 
     @Test
     public void testPreviewTransformationInOutputDataStream() throws Exception {
@@ -162,8 +187,9 @@ public class PreviewTransformedDataActionListenerTest {
 
         final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
                 emailTransformerBuilder, 10);
+        
         final TableModel tableModel = action.call();
-        assertEquals(10, tableModel.getRowCount());
+        assertEquals(5, tableModel.getRowCount());
     }
 
     @Test

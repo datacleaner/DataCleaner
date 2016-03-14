@@ -19,42 +19,26 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.inject.Inject;
-import javax.swing.AbstractAction;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.RemoteServersUtils;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.util.*;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class DataCloudLogInWindow extends AbstractDialog {
     
@@ -114,6 +98,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         usernameTextField.setName("email address");
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
+        final JEditorPane resetPasswordText = new DCHtmlBox("Forgot your password? " +
+                "<a href='http://datacleaner.org/reset_password'>Reset it here</a>.");
         final JButton signInButton = WidgetFactory.createPrimaryButton("Sign in", IconUtils.ACTION_SAVE_BRIGHT);
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
         dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
@@ -159,6 +145,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING)
                         .addComponent(invalidCredentialsLabel)
                         .addGap(PADDING)
+                        .addComponent(resetPasswordText)
+                        .addGap(PADDING)
                         .addGroup(layout.createParallelGroup()
                                 .addComponent(dontShowAgainCheckBox)
                                 .addComponent(closeButton)
@@ -181,6 +169,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                 )
                 .addComponent(invalidCredentialsLabel)
+                .addComponent(resetPasswordText)
                 .addGroup(layout.createSequentialGroup()
                         .addGap(PADDING)
                         .addComponent(dontShowAgainCheckBox)
@@ -205,19 +194,21 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     class ClearErrorLabelDocumentListener implements DocumentListener {
 
+        String emptyLabel = "&nbsp;<br>&nbsp;";
+
         @Override
         public void insertUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText("");
+            invalidCredentialsLabel.setText(emptyLabel);
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText("");
+            invalidCredentialsLabel.setText(emptyLabel);
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText("");
+            invalidCredentialsLabel.setText(emptyLabel);
         }
     }
 
@@ -270,7 +261,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     private void signIn() {
 
-        invalidCredentialsLabel.setText("Verifying credentials...");
+        String br = "<br>&nbsp;";
+        invalidCredentialsLabel.setText("Verifying credentials..." + br);
         invalidCredentialsLabel.setForeground(null);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -281,12 +273,12 @@ public class DataCloudLogInWindow extends AbstractDialog {
                     RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
                 } catch (Exception ex) {
                     invalidCredentialsLabel.setForeground(new Color(170, 10, 10));
-                    invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
+                    invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage() + br);
                     logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
                     return;
                 }
 
-                invalidCredentialsLabel.setText("");
+                invalidCredentialsLabel.setText("&nbsp;" + br);
                 logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
                 RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);

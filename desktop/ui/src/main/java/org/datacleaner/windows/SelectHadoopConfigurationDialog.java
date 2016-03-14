@@ -24,7 +24,6 @@ import org.datacleaner.configuration.ServerInformationCatalogImpl;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -38,6 +37,7 @@ public class SelectHadoopConfigurationDialog extends JComponent {
     private final ServerInformationCatalog _serverInformationCatalog;
     private final JList<String> _serverList;
     private final JButton _okButton;
+    private final JButton _cancelButton;
     private final JButton _optionsButton;
     private String _hadoopConfiguration;
 
@@ -56,26 +56,26 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         _serverList.setVisibleRowCount(-1);
         _serverList.setSelectedIndex(0);
         final JScrollPane listScroller = new JScrollPane(_serverList);
-
-        _optionsButton = new JButton("Options");
-
         _serverList.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING));
 
         listScroller.setEnabled(true);
+        
         _okButton = new JButton("OK");
+        _optionsButton = new JButton("Options");
+        _cancelButton = new JButton("Cancel"); 
 
         WidgetUtils.addToGridBag(label, panel, 0, 0); // , 0,1);
         WidgetUtils.addToGridBag(_serverList, panel, 0, 1);
         WidgetUtils.addToGridBag(_optionsButton, panel, 1, 1, GridBagConstraints.PAGE_START);
-        WidgetUtils.addToGridBag(_okButton, panel, 1, 1, GridBagConstraints.PAGE_END);
+        WidgetUtils.addToGridBag(_okButton, panel, 1, 2, GridBagConstraints.PAGE_END);
 
         setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING));
         add(panel);
     }
 
-    public static String selectServer(Component parent, ServerInformationCatalog serverInformationCatalog) {
+    public String selectServer(Component parent, ServerInformationCatalog serverInformationCatalog) {
 
         final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(
                 serverInformationCatalog);
@@ -87,11 +87,11 @@ public class SelectHadoopConfigurationDialog extends JComponent {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                selectHadoopConfigurationDialog._hadoopConfiguration = selectHadoopConfigurationDialog._serverList
-                        .getSelectedValue();
+                selectHadoopConfigurationDialog._hadoopConfiguration = selectHadoopConfigurationDialog._serverList.getSelectedValue();
                 dialog.dispose();
             }
         });
+        
         dialog.setVisible(true);
         dialog.dispose();
         return selectHadoopConfigurationDialog._hadoopConfiguration;
@@ -104,7 +104,7 @@ public class SelectHadoopConfigurationDialog extends JComponent {
     public static void main(String[] args) throws Exception {
         LookAndFeelManager.get().init();
         final List<ServerInformation> servers = new ArrayList<>();
-        servers.add(new EnvironmentBasedHadoopClusterInformation("default", "hadoop conf dir"));
+        //servers.add(new EnvironmentBasedHadoopClusterInformation("default", "hadoop conf dir"));
         servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
                 "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client"));
         servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
@@ -115,7 +115,9 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         frame.pack();
         frame.dispose();
 
-        System.out.println(SelectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog));
+        SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(serverInformationCatalog); 
+        
+        System.out.println(selectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog));
 
     }
 }

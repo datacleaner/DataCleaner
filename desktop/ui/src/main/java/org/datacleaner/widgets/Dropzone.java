@@ -76,8 +76,7 @@ public class Dropzone extends DCPanel {
     private final UserPreferences _userPreferences;
 
     public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
-            final DatastoreSelectedListener datastoreSelectListener,
-            final UserPreferences userPreferences) {
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -118,20 +117,33 @@ public class Dropzone extends DCPanel {
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                
-                final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(serverInformationCatalog);
-                final String selectedServer = SelectHadoopConfigurationDialog.selectServer(dropZone, serverInformationCatalog); 
-                final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
-                logger.info("Selected HDFS file: " + selectedFile);
 
-                if (selectedFile != null) {
-                    final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
-                                    .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
-                    final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
-                            HadoopResource.DEFAULT_CLUSTERREFERENCE);
-                    final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
-                            _datastoreCatalog, resource);
-                    _datastoreSelectListener.datastoreSelected(datastore);
+                final String selectedServer;
+                final String[] serverNames = serverInformationCatalog.getServerNames();
+                // If there is only one configuration, it doesn't make sense to
+                // show the selection of configuration dialog
+                if (serverNames.length > 1) {
+                    final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(
+                            serverInformationCatalog);
+                    selectedServer = selectHadoopConfigurationDialog.selectServer(dropZone, serverInformationCatalog);
+                } else {
+                    selectedServer = serverNames[0];
+                }
+
+                if (selectedServer != null) {
+                    final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog,
+                            selectedServer, null, OpenType.LOAD);
+                    logger.info("Selected HDFS file: " + selectedFile);
+
+                    if (selectedFile != null) {
+                        final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
+                                .getServer(selectedServer);
+                        final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
+                                HadoopResource.DEFAULT_CLUSTERREFERENCE);
+                        final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
+                                _datastoreCatalog, resource);
+                        _datastoreSelectListener.datastoreSelected(datastore);
+                    }
                 }
             }
 

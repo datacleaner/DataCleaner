@@ -609,10 +609,10 @@ public class HdfsUrlChooser extends JComponent {
         frame.pack();
         frame.setVisible(true);
         
+        SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(serverInformationCatalog); 
         
-
         try {
-            final String selectServer = SelectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog);
+            final String selectServer = selectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog);
             URI selectedFile = HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectServer, null, OpenType.LOAD);
             System.out.println("Normal exit, selected file: " + selectedFile);
             System.exit(0);

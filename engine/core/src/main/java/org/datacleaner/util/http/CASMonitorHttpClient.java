@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -133,6 +134,9 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         final HttpGet cookieRequest = new HttpGet(_requestedService + "?ticket=" + ticket);
         addSecurityHeaders(cookieRequest);
         final HttpResponse cookieResponse = executeHttpRequest(cookieRequest, context);
+        if (HttpStatus.SC_OK != cookieResponse.getStatusLine().getStatusCode()) {
+            logger.warn("Unable to retrieve authentication cookies from CAS server.");
+        }
         EntityUtils.consume(cookieResponse.getEntity());
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());

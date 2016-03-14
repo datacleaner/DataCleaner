@@ -131,13 +131,13 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         // now we request the spring security CAS check service, this will set
         // cookies on the client.
         final HttpGet cookieRequest = new HttpGet(_requestedService + "?ticket=" + ticket);
+        addSecurityHeaders(cookieRequest);
         final HttpResponse cookieResponse = executeHttpRequest(cookieRequest, context);
         EntityUtils.consume(cookieResponse.getEntity());
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());
 
         addSecurityHeaders(request);
-        
         final HttpResponse result = executeHttpRequest(request, context);
         logger.debug("Cookies 4: {}", cookieStore.getCookies());
 

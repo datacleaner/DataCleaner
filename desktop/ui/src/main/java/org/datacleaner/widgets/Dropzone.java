@@ -59,6 +59,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.HdfsUrlChooser;
 import org.datacleaner.windows.HdfsUrlChooser.OpenType;
+import org.datacleaner.windows.SelectHadoopConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,10 @@ public class Dropzone extends DCPanel {
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, null, OpenType.LOAD);
+                
+                final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(serverInformationCatalog);
+                final String selectedServer = SelectHadoopConfigurationDialog.selectServer(dropZone, serverInformationCatalog); 
+                final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
                 logger.info("Selected HDFS file: " + selectedFile);
 
                 if (selectedFile != null) {

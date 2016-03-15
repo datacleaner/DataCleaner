@@ -89,7 +89,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         informationText.setBorder(WidgetUtils.BORDER_EMPTY);
         
         // Set initially two lines of empty text for preferred size enough for 2-lines error message.
-        invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
+        invalidCredentialsLabel = new DCHtmlBox("&nbsp;");
         invalidCredentialsLabel.setBorder(WidgetUtils.BORDER_EMPTY);
         invalidCredentialsLabel.setOpaque(false);
         final JLabel usernameLabel = new JLabel();
@@ -194,7 +194,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     class ClearErrorLabelDocumentListener implements DocumentListener {
 
-        String emptyLabel = "&nbsp;<br>&nbsp;";
+        String emptyLabel = "&nbsp;";
 
         @Override
         public void insertUpdate(DocumentEvent e) {
@@ -261,8 +261,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     private void signIn() {
 
-        String br = "<br>&nbsp;";
-        invalidCredentialsLabel.setText("Verifying credentials..." + br);
+        invalidCredentialsLabel.setText("Verifying credentials...");
         invalidCredentialsLabel.setForeground(null);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -273,12 +272,12 @@ public class DataCloudLogInWindow extends AbstractDialog {
                     RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
                 } catch (Exception ex) {
                     invalidCredentialsLabel.setForeground(new Color(170, 10, 10));
-                    invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage() + br);
+                    invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
                     logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
                     return;
                 }
 
-                invalidCredentialsLabel.setText("&nbsp;" + br);
+                invalidCredentialsLabel.setText("&nbsp;");
                 logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
                 RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);

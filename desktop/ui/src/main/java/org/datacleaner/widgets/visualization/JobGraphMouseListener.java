@@ -19,10 +19,6 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
-import edu.uci.ics.jung.visualization.control.GraphMouseListener;
-import edu.uci.ics.jung.visualization.picking.PickedState;
-
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +62,10 @@ import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.windows.MetadataDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
+import edu.uci.ics.jung.visualization.control.GraphMouseListener;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 
 /**
  * Listener for mouse events on the {@link JobGraph}.

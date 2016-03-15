@@ -44,6 +44,7 @@ import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.RESTClientException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.batch.BatchRowCollectingTransformer;
 import org.datacleaner.util.batch.BatchSink;
@@ -110,7 +111,14 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     public void validate() throws Exception {
         CreateInput createInput = new CreateInput();
         createInput.configuration = getConfiguration(getUsedInputColumns());
-        cachedOutputColumns.getCachedValue(createInput);
+        try {
+            cachedOutputColumns.getCachedValue(createInput);
+        } catch(RESTClientException e) {
+            if(e.getCode() == 422) {
+                // Validation failed - simplify the error message
+                throw new RuntimeException(e.getReason());
+            }
+        }
     }
 
     @Override

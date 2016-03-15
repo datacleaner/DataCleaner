@@ -92,7 +92,7 @@ public class RESTClientImpl implements RESTClient {
      * @return
      */
     @Override
-    public String getResponse(HttpMethod httpMethod, String url, String requestBody) {
+    public String getResponse(HttpMethod httpMethod, String url, String requestBody) throws RESTClientException {
         WebResource webResource = client.resource(url);
         WebResource.Builder builder = webResource
                 .accept(MediaType.APPLICATION_JSON)
@@ -106,8 +106,8 @@ public class RESTClientImpl implements RESTClient {
             response = builder.method(httpMethod.name(), ClientResponse.class);
         }
 
-        if (response.getStatus() != HttpCode.OK.getCode() && response.getStatus() != HttpCode.CREATED.getCode()) {
-            throw new RuntimeException(response.getStatusInfo().getReasonPhrase() + " (error code: " + response.getStatus() +")");
+        if (response.getStatus() != ClientResponse.Status.OK.getStatusCode() && response.getStatus() != ClientResponse.Status.CREATED.getStatusCode()) {
+            throw new RESTClientException(response.getStatus(), response.getStatusInfo().getReasonPhrase());
         }
 
         String output = response.getEntity(String.class);

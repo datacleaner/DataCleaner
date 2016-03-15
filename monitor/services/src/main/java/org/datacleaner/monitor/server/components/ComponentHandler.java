@@ -66,6 +66,7 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -227,7 +228,14 @@ public class ComponentHandler {
         lifeCycleHelper = new LifeCycleHelper(injMan, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        lifeCycleHelper.validate(descriptor, component);
+        try {
+            lifeCycleHelper.validate(descriptor, component);
+        } catch(Exception e) {
+            if(e instanceof ComponentValidationException) {
+                throw (ComponentValidationException)e;
+            }
+            throw new ComponentValidationException(descriptor, component, e);
+        }
         lifeCycleHelper.initialize(descriptor, component);
     }
 

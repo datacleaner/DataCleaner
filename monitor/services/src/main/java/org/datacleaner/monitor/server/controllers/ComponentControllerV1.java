@@ -19,8 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,6 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
@@ -48,6 +48,7 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -76,6 +77,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,7 +102,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 {
-    private static final String REMOTE_MARK = "remote-icon-overlay.png";
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
@@ -360,7 +362,12 @@ public class ComponentControllerV1 {
         try {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
-            Image icon = ImageIO.read(iconStream);
+            Image icon;
+            try {
+                icon = ImageIO.read(iconStream);
+            } finally {
+                iconStream.close();
+            }
             int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
             int iconH = icon.getHeight(null);
@@ -524,5 +531,11 @@ public class ComponentControllerV1 {
                 throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
             }
         }
+    }
+
+    @ExceptionHandler
+    public String handleException(ComponentValidationException ex, HttpServletResponse response) throws IOException {
+        response.sendError(422, ex.getMessage());
+        return "";
     }
 }

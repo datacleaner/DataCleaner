@@ -19,23 +19,12 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.Color;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.inject.Inject;
-import javax.swing.AbstractAction;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -63,6 +52,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private static final int PADDING = WidgetUtils.BORDER_WIDE_WIDTH;
     
     public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
+    private final static String LOGIN_CARD = "Card with login form";
+    private final static String SUCCESS_CARD = "Card with information about successful login";
 
     private final DataCleanerConfiguration _configuration;
     private final UserPreferences _userPreferences;
@@ -100,10 +91,27 @@ public class DataCloudLogInWindow extends AbstractDialog {
     }
     
     private JComponent createContentPanel() {
+
+        final CardLayout cardLayout = new CardLayout();
+        final JPanel result = new JPanel(cardLayout);
+        result.setOpaque(true);
+
+        final DCPanel loginCard = createLoginPanel();
+        result.add(loginCard, LOGIN_CARD);
+
+        final DCPanel successCard = new DCPanel();
+        result.add(successCard, SUCCESS_CARD);
+
+        cardLayout.show(result, LOGIN_CARD);
+        return result;
+    }
+
+    private DCPanel createLoginPanel() {
+
         // 1. Create components
         final JEditorPane informationText = createDataCloudInformationText();
         informationText.setBorder(WidgetUtils.BORDER_EMPTY);
-        
+
         // Set initially two lines of empty text for preferred size enough for 2-lines error message.
         invalidCredentialsLabel = new DCHtmlBox("&nbsp;<br>&nbsp;");
         invalidCredentialsLabel.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -118,8 +126,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
         dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
         dontShowAgainCheckBox.setOpaque(false);
-        final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        result.setOpaque(true);
+
         Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
                 .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
@@ -136,20 +143,22 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordLabel.setBackground(new Color(225,225,225));
         passwordLabel.setOpaque(true);
 
-        // 2. Layout
-        final GroupLayout layout = new GroupLayout(result);
-        result.setLayout(layout);
-        result.setBorder(new EmptyBorder(15, 15, 15, 15));
+        // 2. Layouts
+        final DCPanel loginCard = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        loginCard.setOpaque(true);
+        loginCard.setBorder(new EmptyBorder(15, 15, 15, 15));
+        final GroupLayout loginLayout = new GroupLayout(loginCard);
+        loginCard.setLayout(loginLayout);
 
         int textFieldHeight = signInButton.getPreferredSize().height;
 
-        layout.setVerticalGroup(
-                layout.createSequentialGroup()
+        loginLayout.setVerticalGroup(
+                loginLayout.createSequentialGroup()
                         .addComponent(banner, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(PADDING * 2)
                         .addComponent(informationText, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(PADDING * 2)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addGroup(loginLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                                 .addComponent(usernameTextField, GroupLayout.PREFERRED_SIZE, textFieldHeight, textFieldHeight)
                                 .addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, textFieldHeight, textFieldHeight)
                                 .addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, textFieldHeight, textFieldHeight)
@@ -159,17 +168,17 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING)
                         .addComponent(invalidCredentialsLabel)
                         .addGap(PADDING)
-                        .addGroup(layout.createParallelGroup()
+                        .addGroup(loginLayout.createParallelGroup()
                                 .addComponent(dontShowAgainCheckBox)
                                 .addComponent(closeButton)
                         )
                         .addGap(PADDING)
         );
 
-        layout.setHorizontalGroup(layout.createParallelGroup()
+        loginLayout.setHorizontalGroup(loginLayout.createParallelGroup()
                 .addComponent(banner)
                 .addComponent(informationText)
-                .addGroup(layout.createSequentialGroup()
+                .addGroup(loginLayout.createSequentialGroup()
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                         .addComponent(usernameLabel, textFieldHeight, textFieldHeight, textFieldHeight)
                         .addComponent(usernameTextField, GroupLayout.DEFAULT_SIZE, 150, 150)
@@ -181,7 +190,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                 )
                 .addComponent(invalidCredentialsLabel)
-                .addGroup(layout.createSequentialGroup()
+                .addGroup(loginLayout.createSequentialGroup()
                         .addGap(PADDING)
                         .addComponent(dontShowAgainCheckBox)
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
@@ -200,7 +209,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         usernameTextField.getDocument().addDocumentListener(clearErrorListener);
         passwordTextField.getDocument().addDocumentListener(clearErrorListener);
 
-        return result;
+        return loginCard;
     }
 
     class ClearErrorLabelDocumentListener implements DocumentListener {
@@ -291,8 +300,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
                 RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
 
-                // close dialog
-                close();
+                CardLayout cardLayout = (CardLayout) _contentPanel.getLayout();
+                cardLayout.show(_contentPanel, SUCCESS_CARD);
             }
         });
     }

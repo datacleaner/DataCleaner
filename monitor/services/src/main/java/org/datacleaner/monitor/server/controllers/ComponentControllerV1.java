@@ -37,9 +37,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
@@ -76,6 +79,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,8 +89,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -534,8 +540,41 @@ public class ComponentControllerV1 {
     }
 
     @ExceptionHandler
-    public String handleException(ComponentValidationException ex, HttpServletResponse response) throws IOException {
-        response.sendError(422, ex.getMessage());
-        return "";
+    @ResponseBody
+    public Object handleException(HttpServletRequest request, final HttpServletResponse response, Object handler, Exception ex) throws IOException {
+        logger.debug("Error in controller", ex);
+
+        final AtomicInteger errorCode = new AtomicInteger(500);
+        if(ex instanceof ComponentValidationException || ex instanceof IllegalArgumentException) {
+            errorCode.set(422);
+        } else {
+            // Using DefaultHandlerExceptionResolver to map standard Spring exception
+            // like NoSuchRequestHandlingMethodException (HTTP 404) etc...
+            HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
+                public void sendError(int sc, String msg) throws IOException {
+                    errorCode.set(sc);
+                }
+                public void sendError(int sc) throws IOException {
+                    errorCode.set(sc);
+                }
+            };
+            new DefaultHandlerExceptionResolver().resolveException(request, responseWrapper, handler, ex);
+        }
+        return ResponseEntity.status(errorCode.get()).body(new ErrorResponse(ex));
+    }
+
+    public static class ErrorResponse {
+        @JsonProperty ErrorDetails error;
+        public ErrorResponse(Exception e) {
+            error = new ErrorDetails();
+            error.message = e.getMessage();
+            error.exceptionClass = e.getClass().getName();
+        }
+        public static class ErrorDetails {
+            @JsonProperty
+            private String message;
+            @JsonProperty
+            private String exceptionClass;
+        }
     }
 }

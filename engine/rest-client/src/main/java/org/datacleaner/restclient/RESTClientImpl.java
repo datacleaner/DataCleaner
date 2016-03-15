@@ -24,11 +24,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -107,7 +109,30 @@ public class RESTClientImpl implements RESTClient {
         }
 
         if (response.getStatus() != ClientResponse.Status.OK.getStatusCode() && response.getStatus() != ClientResponse.Status.CREATED.getStatusCode()) {
-            throw new RESTClientException(response.getStatus(), response.getStatusInfo().getReasonPhrase());
+            String msg = "";
+
+            try {
+                String output = response.getEntity(String.class);
+                String contentType = response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
+                if(contentType != null && contentType.contains("json") && output != null && !output.isEmpty()) {
+                    JsonNode respJson = Serializator.getJacksonObjectMapper().readValue(output, JsonNode.class);
+                    JsonNode error = respJson.get("error");
+                    if(error != null) {
+                        JsonNode msgNode = error.get("message");
+                        if(msgNode != null) {
+                            msg = msgNode.asText();
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                // DO NOTHING
+            }
+            if(msg.isEmpty()) {
+                msg = response.getStatusInfo().getReasonPhrase();
+            }
+
+            throw new RESTClientException(response.getStatus(), msg);
+
         }
 
         String output = response.getEntity(String.class);

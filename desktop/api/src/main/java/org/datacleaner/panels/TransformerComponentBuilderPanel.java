@@ -19,20 +19,6 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.api.InputColumn;
@@ -40,6 +26,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
@@ -49,6 +36,13 @@ import org.datacleaner.widgets.ComboButton;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for
@@ -163,6 +157,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     protected int getPreviewRows() {
+        if(_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) return 10;
         return PreviewTransformedDataActionListener.DEFAULT_PREVIEW_ROWS;
     }
 

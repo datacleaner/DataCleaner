@@ -256,10 +256,10 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             } catch (Exception e) {
                 if(propertyName == null){
                     logger.warn("Cannot create annotation '{}' for component '{}' property '{}'", annotationEntry.getKey(),
-                            componentName, propertyName);
+                            componentName, propertyName, e);
                 }else {
                     logger.warn("Cannot create annotation '{}' for component '{}'",annotationEntry.getKey(),
-                            componentName);
+                            componentName, e);
                 }
             }
         }

@@ -19,19 +19,18 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertTrue;
-
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertTrue;
+
 public class ComponentInfoTest {
     private ComponentInfo componentInfo = new ComponentInfo();
     private String name = "name";
-    private String description = "description";
     private String createURL = "create URL";
     private ComponentConfiguration componentConfigurationMock = null;
 
@@ -53,19 +52,6 @@ public class ComponentInfoTest {
     public void testSetName() throws Exception {
         componentInfo.setName(name);
         assertTrue(componentInfo.getName().equals(name));
-    }
-
-    @Test
-    public void testGetDescription() throws Exception {
-        assertTrue(componentInfo.getDescription().isEmpty());
-        componentInfo.setDescription(description);
-        assertTrue(componentInfo.getDescription().equals(description));
-    }
-
-    @Test
-    public void testSetDescription() throws Exception {
-        componentInfo.setDescription(description);
-        assertTrue(componentInfo.getDescription().equals(description));
     }
 
     @Test

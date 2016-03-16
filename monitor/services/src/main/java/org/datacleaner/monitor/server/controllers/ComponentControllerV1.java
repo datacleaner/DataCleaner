@@ -33,7 +33,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +40,6 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
@@ -85,6 +83,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -261,7 +260,7 @@ public class ComponentControllerV1 {
         }
     }
 
-    private JsonNode getJsonNode(Object value) {
+    private static JsonNode getJsonNode(Object value) {
         if (value == null) {
             return null;
         }
@@ -343,12 +342,10 @@ public class ComponentControllerV1 {
             boolean iconData) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
-                .setName(descriptor.getDisplayName()).setDescription(descriptor.getDescription())
+                .setName(descriptor.getDisplayName())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
-                .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
-                .setCategoryNames(getCategoryNames(descriptor))
                 .setProperties(createPropertiesInfo(descriptor, componentInstance));
-
+        setComponentAnnotations(descriptor, componentInfo);
         if (iconData) {
             componentInfo.setIconData(getComponentIconData(descriptor));
         }
@@ -392,16 +389,6 @@ public class ComponentControllerV1 {
         }
     }
 
-    private static Set<String> getCategoryNames(ComponentDescriptor<?> componentDescriptor) {
-        Set<String> categoryNames = new HashSet<>();
-
-        for (Object element : componentDescriptor.getComponentCategories()) {
-            ComponentCategory componentCategory = (ComponentCategory) element;
-            categoryNames.add(componentCategory.getClass().getName());
-        }
-
-        return categoryNames;
-    }
 
     static private String getURLForCreation(String tenant, ComponentDescriptor<?> descriptor) {
         try {
@@ -437,29 +424,63 @@ public class ComponentControllerV1 {
         return result;
     }
 
-    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentList.PropertyInfo propInfo) {
-        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
-        if (annotations == null) {
-            return;
-        }
+    private static Map<String, Map<String, Object>> getAnnotationMap(Set<Annotation> annotations, String objectName){
+        Map<String, Map<String, Object>> annotationMap = new HashMap<>();
         for (Annotation an : annotations) {
+            boolean addAnnotationToMap = true;
             Class<?> anClass = an.annotationType();
             Map<String, Object> anValues = new HashMap<>();
             for (Method anMethod : anClass.getDeclaredMethods()) {
                 try {
                     if (anMethod.getParameterTypes().length == 0) {
                         Object anValue = anMethod.invoke(an, new Object[0]);
+                        if(!isAllowedValue(anValue)){
+                            addAnnotationToMap = false;
+                            break;
+                        }
                         if (anValue != null) {
                             anValues.put(anMethod.getName(), anValue);
                         }
                     }
                 } catch (Exception e) {
-                    logger.warn("Cannot provide property '{}' annotation", propertyDescriptor.getName(), e);
+                    logger.warn("Cannot provide property '{}' annotation", objectName, e);
                 }
             }
-            propInfo.getAnnotations().put(anClass.getName(), anValues);
+            if(addAnnotationToMap) {
+                annotationMap.put(anClass.getName(), anValues);
+            }
         }
+        return annotationMap;
+    }
+
+    private static boolean isAllowedValue(final Object anValue) {
+        if (anValue == null) {
+            return true;
+        }
+        try {
+            Serializator.getJacksonObjectMapper().writeValueAsString(anValue);
+        } catch (JsonProcessingException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor,
+            ComponentList.PropertyInfo propInfo) {
+        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
+        if (annotations == null) {
+            return;
+        }
+        propInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, propertyDescriptor.getName())));
+    }
+
+    private static void setComponentAnnotations(ComponentDescriptor<?> componentDescriptor,
+            ComponentList.ComponentInfo componentInfo) {
+        Set<Annotation> annotations = componentDescriptor.getAnnotations();
+        if (annotations == null) {
+            return;
+        }
+        componentInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, componentDescriptor.getDisplayName())));
     }
 
     static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,

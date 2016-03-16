@@ -19,7 +19,23 @@
  */
 package org.datacleaner.widgets.options;
 
-import com.google.common.base.Strings;
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
+import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
@@ -33,14 +49,7 @@ import org.datacleaner.windows.OptionsDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
-import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
+import com.google.common.base.Strings;
 
 /**
  * The "Remote components" panel found in the {@link OptionsDialog}

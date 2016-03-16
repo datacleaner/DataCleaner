@@ -19,12 +19,26 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.inject.Inject;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -58,10 +72,14 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private final DataCleanerConfiguration _configuration;
     private final UserPreferences _userPreferences;
     private final JComponent _contentPanel;
+    private JPanel cards;
     private JEditorPane invalidCredentialsLabel;
     private JXTextField usernameTextField;
     private JPasswordField passwordTextField;
     private JCheckBox dontShowAgainCheckBox;
+
+    Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
+            .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
 
     @Inject
     public DataCloudLogInWindow(final DataCleanerConfiguration configuration,
@@ -92,21 +110,28 @@ public class DataCloudLogInWindow extends AbstractDialog {
     
     private JComponent createContentPanel() {
 
-        final CardLayout cardLayout = new CardLayout();
-        final JPanel result = new JPanel(cardLayout);
-        result.setOpaque(true);
+        final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final BorderLayout borderLayout= new BorderLayout();
+        result.setLayout(borderLayout);
+        result.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        final DCPanel loginCard = createLoginPanel();
-        result.add(loginCard, LOGIN_CARD);
+        CardLayout cardLayout = new CardLayout();
+        cards = new JPanel(cardLayout);
+        cards.setOpaque(true);
+        final DCPanel bottomPanel = contentBottom();
+        final DCPanel loginCard = contentLoginCard();
+        final DCPanel successCard = contentSuccessCard();
+        cards.add(loginCard, LOGIN_CARD);
+        cards.add(successCard, SUCCESS_CARD);
+        cardLayout.show(cards, LOGIN_CARD);
 
-        final DCPanel successCard = new DCPanel();
-        result.add(successCard, SUCCESS_CARD);
+        result.add(cards, BorderLayout.CENTER);
+        result.add(bottomPanel, BorderLayout.SOUTH);
 
-        cardLayout.show(result, LOGIN_CARD);
         return result;
     }
 
-    private DCPanel createLoginPanel() {
+    private DCPanel contentLoginCard() {
 
         // 1. Create components
         final JEditorPane informationText = createDataCloudInformationText();
@@ -123,12 +148,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         final JButton signInButton = WidgetFactory.createPrimaryButton("Sign in", IconUtils.ACTION_SAVE_BRIGHT);
-        final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
-        dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
-        dontShowAgainCheckBox.setOpaque(false);
-
-        Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
-                .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
         final ImageIcon usernameIcon = ImageManager.get().getImageIcon(IconUtils.USERNAME_INPUT);
         final ImageIcon passwordIcon = ImageManager.get().getImageIcon(IconUtils.PASSWORD_INPUT);
@@ -146,7 +165,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
         // 2. Layouts
         final DCPanel loginCard = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         loginCard.setOpaque(true);
-        loginCard.setBorder(new EmptyBorder(15, 15, 15, 15));
         final GroupLayout loginLayout = new GroupLayout(loginCard);
         loginCard.setLayout(loginLayout);
 
@@ -168,11 +186,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING)
                         .addComponent(invalidCredentialsLabel)
                         .addGap(PADDING)
-                        .addGroup(loginLayout.createParallelGroup()
-                                .addComponent(dontShowAgainCheckBox)
-                                .addComponent(closeButton)
-                        )
-                        .addGap(PADDING)
         );
 
         loginLayout.setHorizontalGroup(loginLayout.createParallelGroup()
@@ -190,26 +203,53 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                 )
                 .addComponent(invalidCredentialsLabel)
-                .addGroup(loginLayout.createSequentialGroup()
-                        .addGap(PADDING)
-                        .addComponent(dontShowAgainCheckBox)
-                        .addGap(PADDING, PADDING, Integer.MAX_VALUE)
-                        .addComponent(closeButton)
-                        .addGap(PADDING)
-                )
         );
 
         // 3. Add listeners
         signInButton.addActionListener(e -> signIn());
-        closeButton.addActionListener(e -> {
-            saveDontShowFlag();
-            close();
-        });
         ClearErrorLabelDocumentListener clearErrorListener = new ClearErrorLabelDocumentListener();
         usernameTextField.getDocument().addDocumentListener(clearErrorListener);
         passwordTextField.getDocument().addDocumentListener(clearErrorListener);
 
         return loginCard;
+    }
+
+    private DCPanel contentSuccessCard() {
+
+        final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final BorderLayout borderLayout = new BorderLayout();
+        result.setLayout(borderLayout);
+
+        final JLabel banner = new JLabel(new ImageIcon(bannerImage));
+        // Green color RGB 10,170,10 = #0AAA0A
+        final JLabel successLoginText = new JLabel("<html><center>You have been <font color='#0AAA0A'>successfully</font> logged on." +
+                "<br><br>Thank you!</center></html>");
+        successLoginText.setHorizontalAlignment(JLabel.CENTER);
+        successLoginText.setFont(WidgetUtils.FONT_BANNER);
+
+        result.add(banner, BorderLayout.NORTH);
+        result.add(successLoginText, BorderLayout.CENTER);
+        return result;
+    }
+
+    private DCPanel contentBottom() {
+
+        final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
+        dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
+        dontShowAgainCheckBox.setOpaque(false);
+        final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final BorderLayout borderLayout = new BorderLayout();
+        result.setLayout(borderLayout);
+
+        result.add(dontShowAgainCheckBox, BorderLayout.WEST);
+        result.add(closeButton, BorderLayout.EAST);
+
+        closeButton.addActionListener(e -> {
+            saveDontShowFlag();
+            close();
+        });
+
+        return result;
     }
 
     class ClearErrorLabelDocumentListener implements DocumentListener {
@@ -300,8 +340,9 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
                 RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
 
-                CardLayout cardLayout = (CardLayout) _contentPanel.getLayout();
-                cardLayout.show(_contentPanel, SUCCESS_CARD);
+                CardLayout cardLayout = (CardLayout) cards.getLayout();
+                cardLayout.show(cards, SUCCESS_CARD);
+                dontShowAgainCheckBox.setVisible(false);
             }
         });
     }

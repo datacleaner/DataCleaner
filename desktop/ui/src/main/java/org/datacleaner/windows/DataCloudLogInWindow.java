@@ -190,11 +190,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addGap(PADDING)
                         .addComponent(resetPasswordText)
                         .addGap(PADDING)
-                        .addGroup(layout.createParallelGroup()
-                                .addComponent(dontShowAgainCheckBox)
-                                .addComponent(closeButton)
-                        )
-                        .addGap(PADDING)
         );
 
         loginLayout.setHorizontalGroup(loginLayout.createParallelGroup()
@@ -213,13 +208,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                 )
                 .addComponent(invalidCredentialsLabel)
                 .addComponent(resetPasswordText)
-                .addGroup(layout.createSequentialGroup()
-                        .addGap(PADDING)
-                        .addComponent(dontShowAgainCheckBox)
-                        .addGap(PADDING, PADDING, Integer.MAX_VALUE)
-                        .addComponent(closeButton)
-                        .addGap(PADDING)
-                )
         );
 
         // 3. Add listeners

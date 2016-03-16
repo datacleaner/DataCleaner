@@ -67,7 +67,6 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         listScroller.setViewportView(_serverList);
        _serverList.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING));
-        //_serverList.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 0, 10)));
 
         listScroller.setEnabled(true);
 

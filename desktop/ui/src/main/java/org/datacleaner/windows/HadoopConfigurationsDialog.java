@@ -491,14 +491,10 @@ public class HadoopConfigurationsDialog extends AbstractWindow {
         
         directoryConfigurationPanel.revalidate();
        
-        WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 2, 1, GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 4, 1, GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(addPath, directoryConfigurationPanel, 3, 2, 1, 1, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1, 0);
+        WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1, 0);
+        WidgetUtils.addToGridBag(addPath, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH);
         
-//        WidgetUtils.addToGridBag(directoryConfigurationLabel1, defaultConfigPanel, 0, 0, GridBagConstraints.WEST);
-//        WidgetUtils.addToGridBag(directoryConfigurationTextField1, defaultConfigPanel, 1, 0, 1, 1, GridBagConstraints.EAST,4, 1, 0);
-//        WidgetUtils.addToGridBag(directoryConfigurationLabel2, defaultConfigPanel, 0, 1,GridBagConstraints.WEST);
-//        WidgetUtils.addToGridBag(directoryConfigurationTextField2, defaultConfigPanel, 1, 1, 1, 1, GridBagConstraints.EAST, 4, 1, 0);
         return directoryConfigurationPanel;
     }
 
@@ -576,11 +572,11 @@ public class HadoopConfigurationsDialog extends AbstractWindow {
         final List<ServerInformation> servers = new ArrayList<>();
         servers.add(new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE,
                 "hadoop conf dir"));
-//        servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
-//                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client", "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client2"));
-//        servers.add(new DirectoryBasedHadoopClusterInformation("directory2 ", "direct",
-//                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client", "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client2"));
-//        servers.add(new DirectoryBasedHadoopClusterInformation("directory3 ", "direct",
+        servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
+                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client", "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client2"));
+        servers.add(new DirectoryBasedHadoopClusterInformation("directory2 ", "direct",
+                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client", "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client2"));
+  //      servers.add(new DirectoryBasedHadoopClusterInformation("directory3 ", "direct",
 //                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client", "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client2"));
         servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
                 "hdfs://192.168.0.200:9000/")));

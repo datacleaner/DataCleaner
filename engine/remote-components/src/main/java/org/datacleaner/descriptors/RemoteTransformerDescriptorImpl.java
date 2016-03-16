@@ -19,10 +19,9 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
-import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
@@ -45,18 +44,16 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     
     private final String remoteDisplayName;
-    private final String superCategoryName;
-    private final Set<String> categoryNames;
+    private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final byte[] iconData;
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
     public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
-            String superCategoryName, Set<String> categoryNames, byte[] iconData) {
+            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
-        this.superCategoryName = superCategoryName;
-        this.categoryNames = categoryNames;
+        this.annotations = annotations;
         this.iconData = iconData;
     }
 
@@ -73,12 +70,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         return remoteDisplayName;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
-        return (Class<? extends ComponentSuperCategory>) classFromName(superCategoryName, TransformSuperCategory.class);
-    }
-
     private Class<?> classFromName(String className, Class<?> defaultClass) {
         Class<?> clazz = defaultClass;
 
@@ -92,25 +83,8 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     }
 
     @Override
-    public Set<ComponentCategory> getComponentCategories() {
-        Set<ComponentCategory> componentCategories = new HashSet<>();
-
-        try {
-            for (String name : categoryNames) {
-                Class<?> categoryClass = classFromName(name, null);
-
-                if (categoryClass == null) {
-                    continue;
-                }
-
-                ComponentCategory category = (ComponentCategory) categoryClass.newInstance();
-                componentCategories.add(category);
-            }
-        } catch (InstantiationException | IllegalAccessException e) {
-            logger.warn("New instance of a component category could not have been created. \n" + e.getMessage());
-        }
-
-        return componentCategories;
+    public Annotation getAnnotation(Class annotationClass) {
+        return annotations.get(annotationClass);
     }
 
     @Override
@@ -125,6 +99,11 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         }
 
         return remoteTransformer;
+    }
+
+    @Override
+    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
+        return TransformSuperCategory.class;
     }
 
     public byte[] getIconData() {

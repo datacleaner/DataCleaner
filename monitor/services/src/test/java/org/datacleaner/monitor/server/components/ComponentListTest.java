@@ -19,14 +19,6 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -46,6 +38,9 @@ import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("rawtypes")
 public class ComponentListTest {
@@ -160,7 +155,6 @@ public class ComponentListTest {
     private ComponentInfo getComponentInfo(int id) {
         ComponentInfo componentInfo = new ComponentInfo();
         componentInfo.setName("name" + id);
-        componentInfo.setDescription("description of " + id);
         componentInfo.setCreateURL("create URL" + id);
         Map<String, ComponentList.PropertyInfo> props = new HashMap<>();
         ComponentList.PropertyInfo prop = new ComponentList.PropertyInfo();

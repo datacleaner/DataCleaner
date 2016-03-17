@@ -66,15 +66,15 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
                 URI nameNodeUri;
                 try {
-                    nameNodeUri = new URI("hdfs", "//", _hostTextField.getText(), Integer.parseInt(_portTextField
+                    nameNodeUri = new URI("hdfs", null, _hostTextField.getText(), Integer.parseInt(_portTextField
                             .getText()), "/", null, null);
                     DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
                             _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
                     if (_directConnection != null) {
-                        _mutableServerInformationCatalog.removeServer(_directConnection);
+                        serverinformationCatalog.removeServer(_directConnection);
                     }
                     _savedServer = newServer;
-                    _mutableServerInformationCatalog.addServerInformation(newServer);
+                    serverinformationCatalog.addServerInformation(newServer);
                     dispose();
                 } catch (URISyntaxException e1) {
                     setStatusError(e1);
@@ -107,6 +107,14 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                 validateAndUpdateInternal();
             }
         });
+        
+        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdateInternal();
+            }
+        });
+       
     }
 
     private static final long serialVersionUID = 1L;

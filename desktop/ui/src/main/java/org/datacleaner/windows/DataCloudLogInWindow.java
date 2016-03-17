@@ -226,8 +226,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         result.setLayout(borderLayout);
 
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
-        // Green color RGB 10,170,10 = #0AAA0A
-        final JLabel successLoginText = new JLabel("<html><center>You have been <font color='#0AAA0A'>successfully</font> logged on." +
+        // Green color BG_COLOR_GREEN_MEDIUM = #7ABE44
+        final JLabel successLoginText = new JLabel("<html><center>You have been <font color='#7ABE44'>successfully</font> logged on." +
                 "<br><br>Thank you!</center></html>");
         successLoginText.setHorizontalAlignment(JLabel.CENTER);
         successLoginText.setFont(WidgetUtils.FONT_BANNER);
@@ -336,7 +336,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
                 try {
                     RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
                 } catch (Exception ex) {
-                    invalidCredentialsLabel.setForeground(new Color(170, 10, 10));
+                    invalidCredentialsLabel.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
                     invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
                     logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
                     return;

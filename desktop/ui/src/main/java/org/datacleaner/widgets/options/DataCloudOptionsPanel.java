@@ -22,18 +22,11 @@ package org.datacleaner.widgets.options;
 import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
 import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -162,13 +155,13 @@ public class DataCloudOptionsPanel extends DCPanel {
         try {
             RemoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
         } catch (Exception ex) {
-            invalidCredentialsLabel.setForeground(new Color(170,10,10));
+            invalidCredentialsLabel.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
             invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
             logger.warn("Sign in to DataCloud failed for user '{}'", username, ex);
             return false;
         }
 
-        invalidCredentialsLabel.setForeground(new Color(10,170,10));
+        invalidCredentialsLabel.setForeground(WidgetUtils.BG_COLOR_GREEN_MEDIUM);
         invalidCredentialsLabel.setText("Sign in to DataCloud succeeded.");
         logger.debug("Sign in to DataCloud succeeded. User name: {}", username);
         final RemoteServerConfiguration remoteServerConfig = _configuration.getEnvironment().getRemoteServerConfiguration();

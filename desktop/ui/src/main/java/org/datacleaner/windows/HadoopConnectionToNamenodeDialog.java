@@ -52,9 +52,9 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
         _statusLabel = DCLabel.bright("Please specify connection name");
         _directConnection = directConnection;
-        _nameTextField = WidgetFactory.createTextField("Connection name");
-        _hostTextField = WidgetFactory.createTextField("host");
-        _portTextField = WidgetFactory.createTextField("port");
+        _nameTextField = WidgetFactory.createTextField("MyConnection");
+        _hostTextField = WidgetFactory.createTextField("localhost");
+        _portTextField = WidgetFactory.createTextField("9000");
         _descriptionTextField = WidgetFactory.createTextField("description");
         _mutableServerInformationCatalog = serverinformationCatalog;
 
@@ -70,10 +70,10 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                             .getText()), "/", null, null);
                     DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
                             _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
+                    _savedServer = newServer;
                     if (_directConnection != null) {
                         serverinformationCatalog.removeServer(_directConnection);
                     }
-                    _savedServer = newServer;
                     serverinformationCatalog.addServerInformation(newServer);
                     dispose();
                 } catch (URISyntaxException e1) {
@@ -83,6 +83,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                     setStatusError(exception);
                     setSaveButtonEnabled(false);
                 }
+                
             }
         });
 
@@ -96,6 +97,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
         if (directConnection != null) {
             _nameTextField.setText(directConnection.getName());
+            _nameTextField.setEnabled(false);
             _hostTextField.setText(directConnection.getNameNodeUri().getHost());
             _portTextField.setText("" + directConnection.getNameNodeUri().getPort());
             _descriptionTextField.setText(directConnection.getDescription());
@@ -107,14 +109,8 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                 validateAndUpdateInternal();
             }
         });
+        //TODO: validity of the port. Must be integer. 
         
-        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdateInternal();
-            }
-        });
-       
     }
 
     private static final long serialVersionUID = 1L;

@@ -8,22 +8,26 @@ import java.net.URI;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.windows.HadoopConnectionToNamenodeDialog;
 
 public class HadoopDirectConnectionPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
     private final MutableServerInformationCatalog _serverInformationCatalog; 
     private final DirectConnectionHadoopClusterInformation _serverInformation; 
+    private final WindowContext _windowContext; 
     
-    public HadoopDirectConnectionPanel(String name, URI namenodeUri, String description,  DirectConnectionHadoopClusterInformation serverInformation, MutableServerInformationCatalog serverInformationCatalog){
+    public HadoopDirectConnectionPanel(WindowContext windowContext, String name, URI namenodeUri, String description,  DirectConnectionHadoopClusterInformation serverInformation, MutableServerInformationCatalog serverInformationCatalog){
         _serverInformationCatalog = serverInformationCatalog;
-        _serverInformation = serverInformation; 
+        _serverInformation = serverInformation;
+        _windowContext = windowContext; 
         
         
         final DCLabel label = DCLabel.dark("<html><b>" + name + "</b> - " + namenodeUri + "<br/>" + description + "</html>"); 
@@ -41,6 +45,14 @@ public class HadoopDirectConnectionPanel extends DCPanel {
     private JButton createEditButton() {
         final JButton editButton = WidgetFactory.createDefaultButton("Edit", IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit connection");
+        editButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               final HadoopConnectionToNamenodeDialog hadoopConnectionToNamenodeDialog = new HadoopConnectionToNamenodeDialog(_windowContext,_serverInformation, _serverInformationCatalog);
+               hadoopConnectionToNamenodeDialog.setVisible(true);
+            }
+        });
         return editButton;
     }
 

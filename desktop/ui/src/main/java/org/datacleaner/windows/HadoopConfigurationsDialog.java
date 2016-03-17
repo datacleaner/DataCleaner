@@ -338,7 +338,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             if (_serverInformationCatalog.getServer(serverNames[i]) instanceof DirectConnectionHadoopClusterInformation) {
                 // create panel with this server; 
                 DirectConnectionHadoopClusterInformation server = (DirectConnectionHadoopClusterInformation) _serverInformationCatalog.getServer(serverNames[i]); 
-                final HadoopDirectConnectionPanel panel = new HadoopDirectConnectionPanel(server.getName(), server.getNameNodeUri(), server.getDescription(), server,_serverInformationCatalog);
+                final HadoopDirectConnectionPanel panel = new HadoopDirectConnectionPanel(_windowContext, server.getName(), server.getNameNodeUri(), server.getDescription(), server,_serverInformationCatalog);
                 _directConnectionsListPanels.add(panel);  
             }
         }

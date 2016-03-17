@@ -26,7 +26,7 @@ public class HadoopDirectConnectionPanel extends DCPanel {
         _serverInformation = serverInformation; 
         
         
-        final DCLabel label = DCLabel.dark("<html><b>" + name + "</b> - " + namenodeUri + "</br>" + description + "</html>"); 
+        final DCLabel label = DCLabel.dark("<html><b>" + name + "</b> - " + namenodeUri + "<br/>" + description + "</html>"); 
         
         final JButton editButton = createEditButton();
         final JButton removeButton = createRemoveButton(serverInformation);

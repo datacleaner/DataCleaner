@@ -20,6 +20,8 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -33,12 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
@@ -53,8 +55,8 @@ import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.configuration.ServerInformationCatalogImpl;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.panels.HadoopDirectoryConfigurationPanel;
 import org.datacleaner.panels.HadoopDirectConnectionPanel;
+import org.datacleaner.panels.HadoopDirectoryConfigurationPanel;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
@@ -85,8 +87,10 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
     private final JPanel _directoriesConfigurationsPanel;
     private DCPanel _directConnectionsConfigurationsPanel;
     private final WindowContext _windowContext; 
-    private final List<HadoopDirectoryConfigurationPanel> _directoriesConfigurationsListPanels; 
+    private final List<HadoopDirectoryConfigurationPanel> _directoriesConfigurationsPanels; 
     private final List<HadoopDirectConnectionPanel> _directConnectionsPanels; 
+    public static final int WIDTH_CONTENT = 400;
+    public static final int MARGIN_LEFT = 20;
 
     // private final JXTextField _columnTextField;
 
@@ -100,12 +104,10 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         _configuration = configuration;
         _serverInformationCatalog = serverInformationCatalog;
         _defaultConfigurationPanel = getDefaultConfigurationPanel();
-         _directoriesConfigurationsListPanels = new ArrayList<>(); 
-        _directoriesConfigurationsPanel = getMainDirectoriesConfigurationsPanel();
+         _directoriesConfigurationsPanels = new ArrayList<>(); 
+        _directoriesConfigurationsPanel = new DCPanel().setTitledBorder("Load configuration from directories:"); 
         _directConnectionsPanels = new ArrayList<>(); 
-        _directConnectionsConfigurationsPanel = new DCPanel(); 
-
-        
+        _directConnectionsConfigurationsPanel = new DCPanel().setTitledBorder("Direct connections to namenode"); 
     }
     
     @Override
@@ -113,14 +115,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (serverInformation instanceof DirectConnectionHadoopClusterInformation) {
-                    updateDirectConnectionsPanel(); 
-                }
-                
-                if (serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)){
-                    System.out.println("Added directory server:" + serverInformation.getName());
-                    updateDirectoryConnectionPanel(); 
-                }
+                updatePanel(serverInformation);
             }
 
         });
@@ -132,26 +127,11 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (serverInformation instanceof DirectConnectionHadoopClusterInformation) {
-                    updateDirectConnectionsPanel();
-                }
+                updatePanel(serverInformation);
             }
         });
-        
     }
 
-    private void updateDirectoryConnectionPanel() {
-       
-        
-    }
-    private void updateDirectConnectionsPanel() {
-        _directConnectionsPanels.clear();
-        _directConnectionsConfigurationsPanel.removeAll();
-        _directConnectionsConfigurationsPanel.add(getDirectConnectionsConfigurationsPanel());
-        _directConnectionsConfigurationsPanel.revalidate();
-        _directConnectionsConfigurationsPanel.repaint();
-    }
-    
     private DCPanel getDefaultConfigurationPanel() {
         
         final DCPanel defaultConfigPanel = new DCPanel().setTitledBorder(
@@ -178,7 +158,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         directoryConfigurationTextField2.setToolTipText(null);
 
         WidgetUtils.addToGridBag(directoryConfigurationLabel1, defaultConfigPanel, 0, 0, GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(directoryConfigurationTextField1, defaultConfigPanel, 1, 0, 1, 1, GridBagConstraints.EAST,4, 1, 0);
+        WidgetUtils.addToGridBag(directoryConfigurationTextField1, defaultConfigPanel, 1, 0, 1, 1, GridBagConstraints.EAST, 4, 1, 0);
         WidgetUtils.addToGridBag(directoryConfigurationLabel2, defaultConfigPanel, 0, 1,GridBagConstraints.WEST);
         WidgetUtils.addToGridBag(directoryConfigurationTextField2, defaultConfigPanel, 1, 1, 1, 1, GridBagConstraints.EAST, 4, 1, 0);
 
@@ -186,12 +166,13 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
     }
 
     private DCPanel getDirectConnectionsConfigurationsPanel() {
-        final DCPanel directConnectionsPanel = new DCPanel().setTitledBorder("Direct connections to namenode");
+        final DCPanel directConnectionsPanel = new DCPanel();
         directConnectionsPanel.setLayout(new GridBagLayout());
+        
         final DCLabel subTitleLabel = DCLabel.dark("Connections:");
         subTitleLabel.setFont(WidgetUtils.FONT_HEADER2);
         
-        WidgetUtils.addToGridBag(subTitleLabel, directConnectionsPanel, 1, 0, 1.0, 0.0);
+        WidgetUtils.addToGridBag(subTitleLabel, directConnectionsPanel, 1, 0, 1.0, 1.0);
         
         final String[] serverNames = _serverInformationCatalog.getServerNames();
         for (int i = 0; i < serverNames.length; i++) {
@@ -206,7 +187,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         int row = 0; 
         for (row = 0; row <_directConnectionsPanels.size(); row++){
             // +1  to the grid positions because a label was added before
-            WidgetUtils.addToGridBag(_directConnectionsPanels.get(row), directConnectionsPanel, 1, row + 1, 1.0, 0.0);
+            WidgetUtils.addToGridBag(_directConnectionsPanels.get(row), directConnectionsPanel, 1, row + 1, 1.0, 1.0);
         }
         
         final JButton addButton = WidgetFactory.createDefaultButton("Add"); 
@@ -219,26 +200,24 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             }
         });
         
-        WidgetUtils.addToGridBag(addButton, directConnectionsPanel, 1, ++row, 1.0, 0.0); 
+        WidgetUtils.addToGridBag(addButton, directConnectionsPanel, 1, ++row, 1.0, 1.0); 
         return directConnectionsPanel;
     }
 
-    private JPanel getMainDirectoriesConfigurationsPanel() {
+    private DCPanel getDirectoriesConfigurationsPanel() {
 
-        final DCPanel directoryConfigurationPanel = new DCPanel().setTitledBorder("Load configuration from directories:");
-        final JScrollPane scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        directoryConfigurationPanel.add(scrollPane); 
+        final DCPanel directoryConfigurationPanel = new DCPanel(); 
         directoryConfigurationPanel.setLayout(new GridBagLayout());
         
         final DCLabel label = DCLabel.dark("Existing Directories:");
         label.setFont(WidgetUtils.FONT_HEADER2);
        
         final JPanel centerPanel = new DCPanel();
-         centerPanel.setLayout(new VerticalLayout());
+        centerPanel.setLayout(new VerticalLayout(true));
         createDirectoriesConfigurationListPanel(centerPanel);
         
-        for (int i=0; i<_directoriesConfigurationsListPanels.size(); i++){
-            centerPanel.add(_directoriesConfigurationsListPanels.get(i)); 
+        for (int i=0; i<_directoriesConfigurationsPanels.size(); i++){
+            centerPanel.add(_directoriesConfigurationsPanels.get(i)); 
         }
         
         final JButton addPath = WidgetFactory.createDefaultButton("Add");
@@ -247,7 +226,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             @Override
             public void actionPerformed(ActionEvent e) {
                 final HadoopDirectoryConfigurationPanel newDirConfigPanel = new HadoopDirectoryConfigurationPanel(null,_serverInformationCatalog, centerPanel);
-                _directoriesConfigurationsListPanels.add(newDirConfigPanel); 
+                _directoriesConfigurationsPanels.add(newDirConfigPanel); 
                 centerPanel.add(newDirConfigPanel); 
             }
         });
@@ -265,11 +244,12 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
                 repaint();
             }
         });
-        directoryConfigurationPanel.revalidate();
+        
+        directoryConfigurationPanel.add(wrapContent(centerPanel)); 
        
-        WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1, 0);
-        WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1, 0);
-        WidgetUtils.addToGridBag(addPath, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH);
+        WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
+        WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
+        WidgetUtils.addToGridBag(addPath, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH, 4, 1.0, 0.0);
         
         return directoryConfigurationPanel;
     }
@@ -288,7 +268,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
                 // create panel with this server;
                 final DirectoryBasedHadoopClusterInformation server = (DirectoryBasedHadoopClusterInformation) _serverInformationCatalog
                         .getServer(serverNames[i]);
-                _directoriesConfigurationsListPanels.add(new HadoopDirectoryConfigurationPanel(server,_serverInformationCatalog, parentPanel)); 
+                _directoriesConfigurationsPanels.add(new HadoopDirectoryConfigurationPanel(server,_serverInformationCatalog, parentPanel)); 
             }
         }
         
@@ -323,9 +303,13 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             public void actionPerformed(ActionEvent e) {
                 HadoopConfigurationsDialog.this.dispose();
                 // _userPreferences.save();
+                //TODO: see where can we save the server information catalog. 
             }
         });
 
+        setLayout(new BorderLayout());
+        setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, closeButton);
 
         final DCBannerPanel banner = new DCBannerPanel("Set Hadoop Configurations");
@@ -333,19 +317,24 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
-
+        
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(_defaultConfigurationPanel);
+        _directoriesConfigurationsPanel.setLayout(new BorderLayout());
+        _directoriesConfigurationsPanel.add(getDirectoriesConfigurationsPanel(), BorderLayout.CENTER); 
         contentPanel.add(_directoriesConfigurationsPanel);
-        _directConnectionsConfigurationsPanel.add(getDirectConnectionsConfigurationsPanel()); 
+        _directConnectionsConfigurationsPanel.setLayout(new BorderLayout());
+        _directConnectionsConfigurationsPanel.add(getDirectConnectionsConfigurationsPanel(), BorderLayout.CENTER); 
         contentPanel.add(_directConnectionsConfigurationsPanel);
-        //contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         
        
         panel.add(contentPanel, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(900, 900);
+        WidgetUtils.scrolleable(panel); 
+        
         return panel;
     }
 
@@ -361,6 +350,38 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         _serverInformationCatalog.removeListener(this);
     }
     
+    protected JScrollPane wrapContent(JComponent panel) {
+        panel.setMaximumSize(new Dimension(WIDTH_CONTENT, Integer.MAX_VALUE));
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        final DCPanel wrappingPanel = new DCPanel();
+        final BoxLayout layout = new BoxLayout(wrappingPanel, BoxLayout.PAGE_AXIS);
+        wrappingPanel.setLayout(layout);
+        wrappingPanel.add(panel);
+        wrappingPanel.setBorder(new EmptyBorder(0, MARGIN_LEFT, 0, 0));
+
+        final JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
+        return scroll;
+    }
+    
+    private void updatePanel(ServerInformation serverInformation) {
+        if (serverInformation instanceof DirectConnectionHadoopClusterInformation) {
+            _directoriesConfigurationsPanels.clear();
+            _directoriesConfigurationsPanel.removeAll();
+            _directoriesConfigurationsPanel.add(getDirectoriesConfigurationsPanel());
+            _directoriesConfigurationsPanel.revalidate();
+            _directoriesConfigurationsPanel.repaint();
+        }
+        
+        if (serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)){
+            _directConnectionsPanels.clear();
+            _directConnectionsConfigurationsPanel.removeAll();
+            _directConnectionsConfigurationsPanel.add(getDirectConnectionsConfigurationsPanel());
+            _directConnectionsConfigurationsPanel.revalidate();
+            _directConnectionsConfigurationsPanel.repaint();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         LookAndFeelManager.get().init();
         final List<ServerInformation> servers = new ArrayList<>();

@@ -48,8 +48,6 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
-import freemarker.core._TemplateModelException;
-
 public class HadoopDirectoryConfigurationPanel extends DCPanel {
 
     public class DirectoryPathPanel extends DCPanel {
@@ -125,6 +123,7 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
     private final JPanel _parent;
     private final JButton _saveButton; 
     private final JButton _removeButton; 
+    private final DCPanel _outerPanel; 
 
     public HadoopDirectoryConfigurationPanel(final DirectoryBasedHadoopClusterInformation server, MutableServerInformationCatalog serverInformationCatalog,  JPanel parent) {
         _server = server;
@@ -146,10 +145,10 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             }
         }
 
+        setBorder(WidgetUtils.BORDER_LIST_ITEM); 
         setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setLayout(new GridBagLayout());
         final DCPanel centerPanel = new DCPanel();
-
         final JPanel listPanel = new DCPanel();
         listPanel.setLayout(new VerticalLayout());
         for (int i = 0; i < _pathPanels.size(); i++) {
@@ -199,8 +198,9 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
                     if (result == JOptionPane.YES_OPTION) {
                         _serverInformationCatalog.removeServer(_server);
                     }
+                }else{
+                    _parent.remove(_outerPanel);
                 }
-                //updatePanel
             }
         });
         
@@ -224,27 +224,32 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
                  if (_server == null){
                      _server = new DirectoryBasedHadoopClusterInformation(_nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths.size()])); 
                  }
+                 try{
                  _serverInformationCatalog.addServerInformation(_server);
-                
+                 }
+                 catch(Exception exception){
+                     WidgetUtils.showErrorMessage("Error while adding connection", exception);
+                 }
             }
         }); 
         buttonsPanel.setLayout(new HorizontalLayout(10));
         buttonsPanel.add(_saveButton); 
         buttonsPanel.add(_removeButton); 
         
-        WidgetUtils.addToGridBag(DCLabel.dark("Name:"), centerPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 0, 0);
-        WidgetUtils.addToGridBag(_nameTextField, centerPanel, 1, 0, 1, 1, GridBagConstraints.WEST, 4, 0, 0);
-        WidgetUtils.addToGridBag(DCLabel.dark("Description:"), centerPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 0, 0);
-        WidgetUtils.addToGridBag(_descriptionTextField, centerPanel, 1, 1, 1, 1, GridBagConstraints.WEST, 4, 0, 0);
-        WidgetUtils.addToGridBag(listPanel, centerPanel, 0, 2, 4, 1, GridBagConstraints.WEST, 4, 0, 0);
-        WidgetUtils.addToGridBag(addPath, centerPanel, 4, 2, 0, 0, GridBagConstraints.SOUTHEAST, 4, 1, 0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Name:"), centerPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
+        WidgetUtils.addToGridBag(_nameTextField, centerPanel, 1, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Description:"), centerPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
+        WidgetUtils.addToGridBag(_descriptionTextField, centerPanel, 1, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
+        WidgetUtils.addToGridBag(listPanel, centerPanel, 0, 2, 4, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
+        WidgetUtils.addToGridBag(addPath, centerPanel, 4, 2, 0, 0, GridBagConstraints.SOUTHEAST, 4, 1.0, 1.0);
 
-        final DCPanel panel = new DCPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(centerPanel, BorderLayout.NORTH); 
-        panel.add(buttonsPanel, BorderLayout.CENTER); 
+        _outerPanel = new DCPanel();
+        _outerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
+        _outerPanel.setLayout(new BorderLayout());
+        _outerPanel.add(centerPanel, BorderLayout.NORTH); 
+        _outerPanel.add(buttonsPanel, BorderLayout.CENTER); 
         
-        add(panel); 
+        add(_outerPanel); 
 
     }
 

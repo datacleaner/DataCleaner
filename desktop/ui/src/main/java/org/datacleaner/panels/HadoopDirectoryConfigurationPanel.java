@@ -35,9 +35,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
@@ -226,11 +224,9 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
                      _serverInformationCatalog.removeServer(_server);
                  }
 
-                 if (_server == null){
-                     _server = new DirectoryBasedHadoopClusterInformation(_nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths.size()])); 
-                 }
                  try{
-                 _serverInformationCatalog.addServerInformation(_server);
+                     final DirectoryBasedHadoopClusterInformation newServer = new DirectoryBasedHadoopClusterInformation(_nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths.size()])); 
+                     _serverInformationCatalog.addServerInformation(newServer);
                  }
                  catch(Exception exception){
                      WidgetUtils.showErrorMessage("Error while adding connection", exception);
@@ -246,8 +242,6 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
         WidgetUtils.addToGridBag(listPanel, centerPanel, 1, 2, GridBagConstraints.CENTER);
         WidgetUtils.addToGridBag(addPath, centerPanel, 1, 3, GridBagConstraints.EAST);
 
-  
-       
         
         final DCPanel buttonsPanel = DCPanel.flow(Alignment.CENTER,_saveButton, _removeButton); 
         contentPanel.add(centerPanel, BorderLayout.CENTER); 

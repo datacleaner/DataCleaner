@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -35,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -75,7 +72,11 @@ import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
-public class HadoopConfigurationsDialog extends AbstractWindow  implements ServerInformationChangeListener{
+/**
+ * Dialog for managing the Hadoop configurations
+ */
+
+public class HadoopConfigurationsOptionsDialog extends AbstractWindow  implements ServerInformationChangeListener{
 
     private static final long serialVersionUID = 1L;
 
@@ -92,10 +93,9 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
     public static final int WIDTH_CONTENT = 400;
     public static final int MARGIN_LEFT = 20;
 
-    // private final JXTextField _columnTextField;
 
     @Inject
-    public HadoopConfigurationsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
+    public HadoopConfigurationsOptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
             UserPreferences userPreferences, final MutableServerInformationCatalog serverInformationCatalog) {
         super(windowContext);
 
@@ -120,7 +120,6 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
 
         });
     }
-   
 
     @Override
     public void onRemove(ServerInformation serverInformation) {
@@ -244,7 +243,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             }
         });
         
-        directoryConfigurationPanel.add(wrapContent(centerPanel)); 
+        directoryConfigurationPanel.add(centerPanel); 
        
         WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
         WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
@@ -300,22 +299,18 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HadoopConfigurationsDialog.this.dispose();
+                HadoopConfigurationsOptionsDialog.this.dispose();
                 // _userPreferences.save();
                 //TODO: see where can we save the server information catalog. 
             }
         });
 
-        setLayout(new BorderLayout());
-        setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, closeButton);
-
         final DCBannerPanel banner = new DCBannerPanel("Set Hadoop Configurations");
-
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        panel.setLayout(new BorderLayout());
-        panel.add(banner, BorderLayout.NORTH);
+        final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        outerPanel.setLayout(new BorderLayout());
+        outerPanel.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        outerPanel.add(banner, BorderLayout.NORTH);
         
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
@@ -328,13 +323,12 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         contentPanel.add(_directConnectionsConfigurationsPanel);
         contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         
-       
-        panel.add(contentPanel, BorderLayout.CENTER);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-        panel.setPreferredSize(900, 900);
-        WidgetUtils.scrolleable(panel); 
-        
-        return panel;
+        final JScrollPane scroll = WidgetUtils.scrolleable(contentPanel); 
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        outerPanel.add(scroll, BorderLayout.CENTER);
+        outerPanel.add(buttonPanel, BorderLayout.SOUTH);
+        outerPanel.setPreferredSize(700, 700);
+        return outerPanel;
     }
 
     @Override
@@ -347,20 +341,6 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
     public void removeNotify() {
         super.removeNotify();
         _serverInformationCatalog.removeListener(this);
-    }
-    
-    protected JScrollPane wrapContent(JComponent panel) {
-        panel.setMaximumSize(new Dimension(WIDTH_CONTENT, Integer.MAX_VALUE));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        final DCPanel wrappingPanel = new DCPanel();
-        final BoxLayout layout = new BoxLayout(wrappingPanel, BoxLayout.PAGE_AXIS);
-        wrappingPanel.setLayout(layout);
-        wrappingPanel.add(panel);
-        wrappingPanel.setBorder(new EmptyBorder(0, MARGIN_LEFT, 0, 0));
-
-        final JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
-        return scroll;
     }
     
     private void updatePanel(ServerInformation serverInformation) {
@@ -403,7 +383,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
         final UserPreferencesImpl userPreferencesImpl = new UserPreferencesImpl(null);
         WindowContext windowContext = new DCWindowContext(null, null, null);
 
-        final HadoopConfigurationsDialog hadoopConfigurationDialog = new HadoopConfigurationsDialog(windowContext, null,
+        final HadoopConfigurationsOptionsDialog hadoopConfigurationDialog = new HadoopConfigurationsOptionsDialog(windowContext, null,
                 userPreferencesImpl, mutableServerInformationCatalog);
         hadoopConfigurationDialog.setVisible(true);
         hadoopConfigurationDialog.show();

@@ -43,6 +43,7 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -50,6 +51,9 @@ import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
+/**
+ *  Dialog for creating and editing a direct connection to Hadoop namenode 
+ */
 public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
     private final DirectConnectionHadoopClusterInformation _directConnection;
@@ -74,6 +78,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("MyConnection");
         _hostTextField = WidgetFactory.createTextField("localhost");
         _portTextField = WidgetFactory.createTextField("9000");
+        _portTextField.setDocument(new NumberDocument(false));
         _descriptionTextField = WidgetFactory.createTextField("description");
         _mutableServerInformationCatalog = serverinformationCatalog;
 
@@ -102,7 +107,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                     setStatusError(exception);
                     setSaveButtonEnabled(false);
                 }
-                
+
             }
         });
 
@@ -125,11 +130,30 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                validateAndUpdateInternal();
+                validateAndUpdate();
             }
         });
-        //TODO: validity of the port. Must be integer. 
-        
+
+        _hostTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+
+        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+
+        _descriptionTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
     }
 
     private static final long serialVersionUID = 1L;
@@ -218,47 +242,61 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         return _savedServer;
     }
 
-    protected void validateAndUpdate() {
-        validateAndUpdateInternal();
-    }
-
-    private void validateAndUpdateInternal() {
+    private void validateAndUpdate() {
         boolean valid = validateForm();
         setSaveButtonEnabled(valid);
     }
 
-    protected boolean validateForm() {
-        final String _connectionName = _nameTextField.getText();
-        if (StringUtils.isNullOrEmpty(_connectionName)) {
+    private boolean validateForm() {
+        final String connectionName = _nameTextField.getText();
+        if (StringUtils.isNullOrEmpty(connectionName)) {
             setStatusError("Please enter a connection name");
             return false;
+        }
+
+        final String hostname = _hostTextField.getText();
+        if (StringUtils.isNullOrEmpty(hostname)) {
+            setStatusError("Please enter hostname");
+            return false;
+        }
+
+        final String port = _portTextField.getText();
+        if (StringUtils.isNullOrEmpty(port)) {
+            setStatusError("Please enter port number");
+            return false;
+        } else {
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt <= 0) {
+                    setStatusError("Please enter a valid (positive port number)");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                setStatusError("Please enter a valid port number");
+                return false;
+            }
         }
 
         setStatusValid();
         return true;
     }
 
-    protected void setStatusWarning(String text) {
-        _statusLabel.setText(text);
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
-    }
-
-    protected void setStatusError(Throwable error) {
+    private void setStatusError(Throwable error) {
         error = ErrorUtils.unwrapForPresentation(error);
         setStatusError(error.getMessage());
     }
 
-    protected void setStatusError(String text) {
+    private void setStatusError(String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
     }
 
-    protected void setStatusValid() {
+    private void setStatusValid() {
         _statusLabel.setText("Connection setup ready");
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
     }
 
-    protected void setSaveButtonEnabled(boolean enabled) {
+    private void setSaveButtonEnabled(boolean enabled) {
         _saveButton.setEnabled(enabled);
     }
 }

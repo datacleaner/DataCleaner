@@ -19,7 +19,6 @@
  */
 package org.datacleaner.job.tasks;
 
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -70,14 +69,16 @@ public class CloseTaskListener implements TaskListener {
         if (publishersLeft == 0) {
             final Object component = _consumer.getComponent();
             final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
-            
-            // close can occur AFTER completion
-            _lifeCycleHelper.close(descriptor, component, _success.get());
-            
-            final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
-            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-                activeOutputDataStream.close();
+
+            try {
+                _lifeCycleHelper.close(descriptor, component, _success.get());
+            } catch (Throwable t) {
+                logger.error("Got exception when cleaning {} for completion", descriptor.getDisplayName(), t);
             }
+
+            // close can occur AFTER completion
+
+            _consumer.getActiveOutputDataStreams().forEach(ActiveOutputDataStream::close);
         }
     }
 

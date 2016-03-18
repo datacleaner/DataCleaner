@@ -1,0 +1,93 @@
+package org.datacleaner.job.tasks;
+
+import java.util.List;
+
+import org.datacleaner.api.Close;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.result.ListResult;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.TestEnvironment;
+import org.datacleaner.test.TestHelper;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class CloseTaskListenerTest {
+    public static class FailingMockAnalyzer extends MockOutputDataStreamAnalyzer {
+        @Close
+        public void failingClose() {
+            throw new RuntimeException("Ouch!");
+        }
+
+    }
+
+    private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+    private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+            .withEnvironment(environment);
+
+    /**
+     * This is probably a bigger test than needed, but it was how issue #1247 was explained.
+     *
+     * TODO: Maybe slim it down later.
+     * @throws Throwable
+     */
+    @Test(timeout = 15000L)
+    public void testSimpleBuildAndExecuteScenario() throws Throwable {
+        final AnalysisJob job;
+        try (final AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
+            ajb1.setDatastore(datastore);
+
+            ajb1.addSourceColumns("customers.city");
+
+            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer1 = ajb1
+                    .addAnalyzer(FailingMockAnalyzer.class);
+            analyzer1.addInputColumn(ajb1.getSourceColumns().get(0));
+            analyzer1.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer1");
+
+            final AnalysisJobBuilder ajb2 = analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams()
+                    .get(0));
+            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer2 = ajb2
+                    .addAnalyzer(FailingMockAnalyzer.class);
+            analyzer2.addInputColumn(ajb2.getSourceColumns().get(0));
+            analyzer2.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer2");
+
+            final AnalysisJobBuilder ajb3 = analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams()
+                    .get(0));
+            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer3 = ajb3
+                    .addAnalyzer(FailingMockAnalyzer.class);
+            analyzer3.addInputColumn(ajb3.getSourceColumns().get(0));
+            analyzer3.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer3");
+
+            job = ajb1.toAnalysisJob();
+        }
+
+        // now run the job(s)
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisResultFuture resultFuture = runner.run(job);
+        resultFuture.await();
+
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+
+        assertEquals(3, resultFuture.getResults().size());
+
+        @SuppressWarnings("unchecked")
+        final List<ListResult<?>> results = (List<ListResult<?>>) resultFuture.getResults(ListResult.class);
+
+        // for every result we expect a drop-off of 1/3 values
+        assertEquals(71, results.get(0).getValues().size());
+        assertEquals(48, results.get(1).getValues().size());
+        assertEquals(32, results.get(2).getValues().size());
+    }
+
+}

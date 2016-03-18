@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -69,7 +70,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
-import org.jdesktop.swingx.JXTextField;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
 /**
@@ -132,34 +132,26 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow  implement
     }
 
     private DCPanel getDefaultConfigurationPanel() {
-        
+
         final DCPanel defaultConfigPanel = new DCPanel().setTitledBorder(
                 "Default configuration HADOOP_CONF_DIR/YARN_CONF_DIR");
         defaultConfigPanel.setLayout(new GridBagLayout());
-        final DCLabel directoryConfigurationLabel1 = DCLabel.dark("Directory 1:");
-        final JXTextField directoryConfigurationTextField1 =  WidgetFactory.createTextField("<none>");  
-        final DCLabel directoryConfigurationLabel2 = DCLabel.dark("Directory 2:");
-        final JXTextField directoryConfigurationTextField2 = WidgetFactory.createTextField("<none>");
-        
+        final DCLabel label = DCLabel.dark("Environment variables:");
         final EnvironmentBasedHadoopClusterInformation defaultServer = (EnvironmentBasedHadoopClusterInformation) _serverInformationCatalog
                 .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         final String[] directories = defaultServer.getDirectories();
+        JList<String> list = null;
         if (directories.length > 0) {
-            directoryConfigurationTextField1.setText(directories[0]);
-            if (directories.length == 2) {
-                directoryConfigurationTextField2.setText(directories[1]);
-            }
+            list = new JList<String>(directories);
         }
 
-        directoryConfigurationTextField1.setEnabled(false);
-        directoryConfigurationTextField2.setEnabled(false);
-        directoryConfigurationTextField1.setToolTipText(null);
-        directoryConfigurationTextField2.setToolTipText(null);
-
-        WidgetUtils.addToGridBag(directoryConfigurationLabel1, defaultConfigPanel, 0, 0, GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(directoryConfigurationTextField1, defaultConfigPanel, 1, 0, 1, 1, GridBagConstraints.EAST, 4, 1, 0);
-        WidgetUtils.addToGridBag(directoryConfigurationLabel2, defaultConfigPanel, 0, 1,GridBagConstraints.WEST);
-        WidgetUtils.addToGridBag(directoryConfigurationTextField2, defaultConfigPanel, 1, 1, 1, 1, GridBagConstraints.EAST, 4, 1, 0);
+        defaultConfigPanel.add(label);
+        WidgetUtils.addToGridBag(label, defaultConfigPanel, 0, 0, GridBagConstraints.WEST);
+        if (list != null) {
+            WidgetUtils.addToGridBag(list, defaultConfigPanel, 1, 1, 1, 1, GridBagConstraints.CENTER, 4, 1, 0);
+        } else {
+            WidgetUtils.addToGridBag(DCLabel.dark("None set"), defaultConfigPanel, 0, 0, GridBagConstraints.CENTER);
+        }
 
         return defaultConfigPanel;
     }
@@ -243,8 +235,6 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow  implement
             }
         });
         
-        directoryConfigurationPanel.add(centerPanel); 
-       
         WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
         WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
         WidgetUtils.addToGridBag(addConfiguration, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH, 4, 1.0, 0.0);

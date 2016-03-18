@@ -69,8 +69,8 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         _serverInformationCatalog = serverInformationCatalog;
         _hadoopConfiguration = null;
         setLayout(new VerticalLayout());
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        panel.setLayout(new GridLayout());
+        final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        outerPanel.setLayout(new GridLayout());
 
         final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
         label.setFont(WidgetUtils.FONT_HEADER2);
@@ -82,27 +82,31 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         _serverList.setLayoutOrientation(JList.VERTICAL);
         _serverList.setSelectedIndex(serverNames.length-1);
-        final JScrollPane listScroller = new JScrollPane();
-        listScroller.setViewportView(_serverList);
+        
        _serverList.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING));
 
-        listScroller.setEnabled(true);
-
+        final DCPanel listPanel = new DCPanel(); 
+        
+        listPanel.add(_serverList);
+        listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+        final JScrollPane listScroller = WidgetUtils.scrolleable(listPanel); 
+        
+  
         _okButton = WidgetFactory.createDefaultButton("OK");
         WidgetUtils.setPrimaryButtonStyle(_okButton);
         _optionsButton = WidgetFactory.createDefaultButton("Options");
         _cancelButton = WidgetFactory.createDefaultButton("Cancel");
 
-        panel.setFont(WidgetUtils.FONT_NORMAL);
-        WidgetUtils.addToGridBag(label, panel, 0, 0);
-        WidgetUtils.addToGridBag(_serverList, panel, 0, 2);
-        WidgetUtils.addToGridBag(_optionsButton, panel, 2, 1, GridBagConstraints.PAGE_START);
-        WidgetUtils.addToGridBag(_okButton, panel, 2, 2, GridBagConstraints.PAGE_END);
+        outerPanel.setFont(WidgetUtils.FONT_NORMAL);
+        WidgetUtils.addToGridBag(label, outerPanel, 0, 0);
+        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 2);
+        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 2, 1, GridBagConstraints.PAGE_START);
+        WidgetUtils.addToGridBag(_okButton, outerPanel, 2, 2, GridBagConstraints.PAGE_END);
 
         setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING));
-        add(panel);
+        add(outerPanel);
     }
 
     /**

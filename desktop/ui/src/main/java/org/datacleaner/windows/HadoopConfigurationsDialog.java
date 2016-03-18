@@ -220,8 +220,8 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             centerPanel.add(_directoriesConfigurationsPanels.get(i)); 
         }
         
-        final JButton addPath = WidgetFactory.createDefaultButton("Add");
-        addPath.addActionListener(new ActionListener() {
+        final JButton addConfiguration = WidgetFactory.createDefaultButton("Add");
+        addConfiguration.addActionListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -231,17 +231,16 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
             }
         });
         centerPanel.addContainerListener(new ContainerListener() {
-            
             @Override
             public void componentRemoved(ContainerEvent e) {
-                revalidate();
-                repaint();
+                directoryConfigurationPanel.revalidate();
+                directoryConfigurationPanel.repaint();
             }
             
             @Override
             public void componentAdded(ContainerEvent e) {
-                revalidate();
-                repaint();
+                directoryConfigurationPanel.revalidate();
+                directoryConfigurationPanel.repaint();
             }
         });
         
@@ -249,7 +248,7 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
        
         WidgetUtils.addToGridBag(label, directoryConfigurationPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
         WidgetUtils.addToGridBag(centerPanel, directoryConfigurationPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0.0);
-        WidgetUtils.addToGridBag(addPath, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH, 4, 1.0, 0.0);
+        WidgetUtils.addToGridBag(addConfiguration, directoryConfigurationPanel, 0, 2, 0, 0, GridBagConstraints.SOUTH, 4, 1.0, 0.0);
         
         return directoryConfigurationPanel;
     }
@@ -366,19 +365,17 @@ public class HadoopConfigurationsDialog extends AbstractWindow  implements Serve
     
     private void updatePanel(ServerInformation serverInformation) {
         if (serverInformation instanceof DirectConnectionHadoopClusterInformation) {
-            _directoriesConfigurationsPanels.clear();
-            _directoriesConfigurationsPanel.removeAll();
-            _directoriesConfigurationsPanel.add(getDirectoriesConfigurationsPanel());
-            _directoriesConfigurationsPanel.revalidate();
-            _directoriesConfigurationsPanel.repaint();
-        }
-        
-        if (serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)){
             _directConnectionsPanels.clear();
             _directConnectionsConfigurationsPanel.removeAll();
             _directConnectionsConfigurationsPanel.add(getDirectConnectionsConfigurationsPanel());
             _directConnectionsConfigurationsPanel.revalidate();
             _directConnectionsConfigurationsPanel.repaint();
+        } else if (serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)) {
+            _directoriesConfigurationsPanels.clear();
+            _directoriesConfigurationsPanel.removeAll();
+            _directoriesConfigurationsPanel.add(getDirectoriesConfigurationsPanel());
+            _directoriesConfigurationsPanel.revalidate();
+            _directoriesConfigurationsPanel.repaint();
         }
     }
 

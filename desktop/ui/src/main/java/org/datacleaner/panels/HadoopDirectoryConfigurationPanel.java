@@ -35,12 +35,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
@@ -60,14 +64,12 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
         private JButton _removeButton;
         private JPanel _parent;
         private final int _pathNumber;
-        private final DCPanel _centerPanel; 
 
         public DirectoryPathPanel(int pathNumber, File directory, JPanel parent) {
             _pathNumber = pathNumber;
             _parent = parent;
             _directory = directory;
             _label = DCLabel.dark("Path " + pathNumber + ":");
-            _centerPanel = new DCPanel(); 
             if (directory == null) {
                 _directoryTextField = new FilenameTextField(null, true);
             } else {
@@ -87,24 +89,20 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             }
             _removeButton = WidgetFactory.createDefaultButton("", IconUtils.ACTION_DELETE);
 
-            _centerPanel.setLayout(new HorizontalLayout(10));
-            _centerPanel.add(_label);
-            _centerPanel.add(_directoryTextField);
-            _centerPanel.add(_removeButton);
-            _centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
+            this.setLayout(new HorizontalLayout(10));
+            add(_label);
+            add(_directoryTextField);
+            add(_removeButton);
+            setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-            add(_centerPanel); 
             _removeButton.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _pathPanels.remove(_pathNumber);
-                    _parent.remove(_centerPanel);
-                    _parent.revalidate();
-                    _parent.repaint();
+                    _parent.remove(DirectoryPathPanel.this);
                 }
             });
-
         }
 
         public File getDirectory() {
@@ -114,7 +112,6 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
 
     
     private static final long serialVersionUID = 1L;
-    private JPanel _mainPanel;
     private final JXTextField _nameTextField;
     private final JXTextField _descriptionTextField;
     private List<DirectoryPathPanel> _pathPanels;
@@ -123,14 +120,13 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
     private final JPanel _parent;
     private final JButton _saveButton; 
     private final JButton _removeButton; 
-    private final DCPanel _outerPanel; 
+   // private final DCPanel _outerPanel; 
 
     public HadoopDirectoryConfigurationPanel(final DirectoryBasedHadoopClusterInformation server, MutableServerInformationCatalog serverInformationCatalog,  JPanel parent) {
         _server = server;
         _serverInformationCatalog = serverInformationCatalog; 
         _nameTextField = WidgetFactory.createTextField("MyConnection");
         _descriptionTextField = WidgetFactory.createTextField();
-        _pathPanels = getDirectoriesListPanel(_mainPanel);
         _parent = parent;
 
         if (_server != null) {
@@ -145,12 +141,18 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             }
         }
 
-        setBorder(WidgetUtils.BORDER_LIST_ITEM); 
-        setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        setLayout(new GridBagLayout());
+         
+        DCPanel contentPanel = new DCPanel(); 
+        contentPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        contentPanel.setBackground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        contentPanel.setLayout(new BorderLayout());
+        
         final DCPanel centerPanel = new DCPanel();
+        centerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        centerPanel.setLayout(new GridBagLayout());
         final JPanel listPanel = new DCPanel();
         listPanel.setLayout(new VerticalLayout());
+        _pathPanels = getDirectoriesListPanel(listPanel);
         for (int i = 0; i < _pathPanels.size(); i++) {
             listPanel.add(_pathPanels.get(i));
         }
@@ -166,13 +168,11 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             public void componentAdded(ContainerEvent e) {
                 centerPanel.revalidate();
                 centerPanel.repaint();
-
             }
         });
-
+        
         final JButton addPath = WidgetFactory.createDefaultButton("Add path");
         addPath.setToolTipText("Add path to configuration");
-
         addPath.addActionListener(new ActionListener() {
 
             @Override
@@ -184,7 +184,7 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             }
         });
 
-        final DCPanel buttonsPanel = new DCPanel(); 
+     
         _saveButton = WidgetFactory.createPrimaryButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_DELETE);
         _removeButton.addActionListener(new ActionListener() {
@@ -199,7 +199,7 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
                         _serverInformationCatalog.removeServer(_server);
                     }
                 }else{
-                    _parent.remove(_outerPanel);
+                    _parent.remove(HadoopDirectoryConfigurationPanel.this);
                 }
             }
         });
@@ -209,17 +209,22 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                 if (_server != null){
-                     _serverInformationCatalog.removeServer(_server);
-                 }
-                 final List<String> paths = new ArrayList<>(); 
-                 for (int i=0; i<_pathPanels.size(); i++){
-                     final DirectoryPathPanel directoryPathPanel = _pathPanels.get(i); 
-                     final File directory = directoryPathPanel.getDirectory(); 
+                final List<String> paths = new ArrayList<>(); 
+                for (int i=0; i<_pathPanels.size(); i++){
+                    final DirectoryPathPanel directoryPathPanel = _pathPanels.get(i); 
+                    final File directory = directoryPathPanel.getDirectory(); 
                     if (directory != null && directory.isDirectory()) {
                         paths.add(directory.getPath());
                     }
-                 } 
+                } 
+                 //We do not save a connection if there are no paths 
+                 if (paths.size() ==0 ){
+                     WidgetUtils.showErrorMessage("The connection can not be created","There are no paths defined"); 
+                     return; 
+                 }
+                 if (_server != null){
+                     _serverInformationCatalog.removeServer(_server);
+                 }
 
                  if (_server == null){
                      _server = new DirectoryBasedHadoopClusterInformation(_nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths.size()])); 
@@ -232,27 +237,26 @@ public class HadoopDirectoryConfigurationPanel extends DCPanel {
                  }
             }
         }); 
-        buttonsPanel.setLayout(new HorizontalLayout(10));
-        buttonsPanel.add(_saveButton); 
-        buttonsPanel.add(_removeButton); 
-        
-        WidgetUtils.addToGridBag(DCLabel.dark("Name:"), centerPanel, 0, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
-        WidgetUtils.addToGridBag(_nameTextField, centerPanel, 1, 0, 1, 1, GridBagConstraints.WEST, 4, 1.0, 0);
-        WidgetUtils.addToGridBag(DCLabel.dark("Description:"), centerPanel, 0, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
-        WidgetUtils.addToGridBag(_descriptionTextField, centerPanel, 1, 1, 1, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
-        WidgetUtils.addToGridBag(listPanel, centerPanel, 0, 2, 4, 1, GridBagConstraints.WEST, 4, 1.0, 1.0);
-        WidgetUtils.addToGridBag(addPath, centerPanel, 4, 2, 0, 0, GridBagConstraints.SOUTHEAST, 4, 1.0, 1.0);
 
-        _outerPanel = new DCPanel();
-        _outerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
-        _outerPanel.setLayout(new BorderLayout());
-        _outerPanel.add(centerPanel, BorderLayout.NORTH); 
-        _outerPanel.add(buttonsPanel, BorderLayout.CENTER); 
-        
-        add(_outerPanel); 
+        WidgetUtils.addToGridBag(DCLabel.dark("Name:"), centerPanel, 0, 0, 1, 1, GridBagConstraints.EAST, 4, 0.0, 0.0);
+        WidgetUtils.addToGridBag(_nameTextField, centerPanel, 1, 0, 1, 1, GridBagConstraints.WEST, 4, 0.0, 0.0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Description:"), centerPanel, 0, 1, 1, 1, GridBagConstraints.EAST, 4, 0.0, 0.0);
+        WidgetUtils.addToGridBag(_descriptionTextField, centerPanel, 1, 1, 1, 1, GridBagConstraints.WEST,  4, 1.0, 0.0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Paths:"), centerPanel, 0, 2, 1, 1, GridBagConstraints.EAST, 4, 1.0, 0.0);
+        WidgetUtils.addToGridBag(listPanel, centerPanel, 1, 2, GridBagConstraints.CENTER);
+        WidgetUtils.addToGridBag(addPath, centerPanel, 1, 3, GridBagConstraints.EAST);
 
+  
+       
+        
+        final DCPanel buttonsPanel = DCPanel.flow(Alignment.CENTER,_saveButton, _removeButton); 
+        contentPanel.add(centerPanel, BorderLayout.CENTER); 
+        contentPanel.add(buttonsPanel, BorderLayout.SOUTH); 
+        
+        setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(10,0,0,0));
+        add(contentPanel); 
     }
-
     private List<DirectoryPathPanel> getDirectoriesListPanel(JPanel parent) {
         _pathPanels = new ArrayList<>();
         if (_server != null) {

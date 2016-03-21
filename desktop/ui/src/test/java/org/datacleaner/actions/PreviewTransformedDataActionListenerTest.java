@@ -112,7 +112,7 @@ public class PreviewTransformedDataActionListenerTest {
     }
     
     @Test
-    public void PreviewTransformationAfterFilteredTransformation() throws Exception {
+    public void testPreviewTransformationAfterQueryOptimizedFilteredTransformation() throws Exception {
         analysisJobBuilder.addSourceColumns("employees.lastname");
 
         // add a "lastname=Patterson" filter on the email transformer - only 3
@@ -445,7 +445,7 @@ public class PreviewTransformedDataActionListenerTest {
     }
 
     @Test
-    public void testCompleteConcatJob() throws Exception {
+    public void testPreviewTransformationAfterNonOptimizedFilteredTransformation() throws Exception {
         final String baseFilename = getClass().getSimpleName() + "-" + testName
                 .getMethodName() + ".analysis.xml";
         final File analysisFile = new File("src/test/resources/previewfiles/" + baseFilename);

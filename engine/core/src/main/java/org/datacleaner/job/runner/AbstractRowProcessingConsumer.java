@@ -40,6 +40,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
@@ -91,11 +92,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     private boolean isAlwaysSatisfiedForConsume() {
-        if (_sourceJobsOfInputColumns.isEmpty()) {
-            return true;
-        }
-
-        if (isAlwaysSatisfiedRequirement()) {
+        final ComponentRequirement componentRequirement = _hasComponentRequirement.getComponentRequirement();
+        if (_sourceJobsOfInputColumns.isEmpty() && (componentRequirement == null || componentRequirement instanceof AnyComponentRequirement)) {
             return true;
         }
         return false;
@@ -121,7 +119,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         final Set<Object> sourceJobsOfInputColumns = sourceColumnFinder.findAllSourceJobs(inputColumnSinkJob);
         for (Iterator<Object> it = sourceJobsOfInputColumns.iterator(); it.hasNext();) {
             final Object sourceJob = it.next();
-            if (sourceJob instanceof HasComponentRequirement) {
+            if (sourceJob instanceof HasComponentRequirement && sourceJob instanceof InputColumnSourceJob) {
                 final HasComponentRequirement sourceOutcomeSinkJob = (HasComponentRequirement) sourceJob;
                 final ComponentRequirement componentRequirement = sourceOutcomeSinkJob.getComponentRequirement();
                 if (componentRequirement != null) {
@@ -137,11 +135,11 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
      */
     @Override
     public final boolean satisfiedForConsume(FilterOutcomes outcomes, InputRow row) {
-        boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(_hasComponentRequirement, row, outcomes);
+        final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(_hasComponentRequirement, row, outcomes);
         if (!satisfiedOutcomesForConsume) {
             return false;
         }
-        boolean satisfiedInputsForConsume = satisfiedInputsForConsume(row, outcomes);
+        final boolean satisfiedInputsForConsume = satisfiedInputsForConsume(row, outcomes);
         return satisfiedInputsForConsume;
     }
 

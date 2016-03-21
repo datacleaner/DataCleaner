@@ -19,38 +19,48 @@
  */
 package org.datacleaner.extension.networktools;
 
+import static org.junit.Assert.assertEquals;
+
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.test.TestHelper;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class ResolveHostnameTransformerTest {
 
-public class ResolveHostnameTransformerTest extends TestCase {
+    private final ResolveHostnameTransformer t = new ResolveHostnameTransformer();
+    private final MockInputColumn<String> col = new MockInputColumn<String>("host", String.class);
 
-	public void testTransform() throws Exception {
-		ResolveHostnameTransformer t = new ResolveHostnameTransformer();
-		MockInputColumn<String> col = new MockInputColumn<String>("host",
-				String.class);
-		t.hostnameColumn = col;
+    @Before
+    public void setUp() {
+        t.hostnameColumn = col;
+    }
 
-		assertEquals("OutputColumns[host (ip address)]", t.getOutputColumns()
-				.toString());
+    @Test
+    public void testTransformLocal() throws Exception {
+        assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "localhost"))[0]);
 
-		assertEquals("127.0.0.1",
-				t.transform(new MockInputRow().put(col, "localhost"))[0]);
+        assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "127.0.0.1"))[0]);
+        
+        assertEquals(null, t.transform(new MockInputRow().put(col, ""))[0]);
+        
+        assertEquals(null, t.transform(new MockInputRow().put(col, null))[0]);
+        
+        assertEquals(null, t.transform(new MockInputRow().put(col,
+                "lmdslfsm flskmf lskmfls kmslf kdmlfsk mflsk fmsl kfdmsl"))[0]);
+    }
+    
+    @Test
+    public void testTransformInternet() throws Exception {
+        Assume.assumeTrue(TestHelper.isInternetConnected());
+        
+        assertEquals("94.142.215.39", t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
+    }
 
-		assertEquals("127.0.0.1",
-				t.transform(new MockInputRow().put(col, "127.0.0.1"))[0]);
-
-		assertEquals("94.142.215.39",
-				t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
-		
-		assertEquals(null,
-				t.transform(new MockInputRow().put(col, ""))[0]);
-		
-		assertEquals(null,
-				t.transform(new MockInputRow().put(col, null))[0]);
-		
-		assertEquals(null,
-				t.transform(new MockInputRow().put(col, "lmdslfsm flskmf lskmfls kmslf kdmlfsk mflsk fmsl kfdmsl"))[0]);
-	}
+    @Test
+    public void testGetOutputColumns() throws Exception {
+        assertEquals("OutputColumns[host (ip address)]", t.getOutputColumns().toString());
+    }
 }

@@ -450,25 +450,25 @@ public class PreviewTransformedDataActionListenerTest {
                 .getMethodName() + ".analysis.xml";
         final File analysisFile = new File("src/test/resources/previewfiles/" + baseFilename);
 
-        JaxbJobReader reader = new JaxbJobReader(analysisJobBuilder.getConfiguration());
+        final JaxbJobReader reader = new JaxbJobReader(analysisJobBuilder.getConfiguration());
 
         final AnalysisJobBuilder readAnalysisJobBuilder = reader.create(new FileInputStream(analysisFile));
         final List<TransformerComponentBuilder<?>> transformerComponentBuilders =
                 readAnalysisJobBuilder.getTransformerComponentBuilders();
 
-        TransformerComponentBuilder<?> whitespaceTransformerComponentBuilder = transformerComponentBuilders.get(2);
+        final TransformerComponentBuilder<?> whitespaceTrimmer = transformerComponentBuilders.get(2);
+        
+        // verify that we got the right transformer - the trimmer
+        assertEquals("Whitespace trimmer", whitespaceTrimmer.getDescriptor().getDisplayName());
 
         final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                whitespaceTransformerComponentBuilder, 500);
-
+                whitespaceTrimmer, 500);
+        
         final TableModel tableModel = action.call();
 
         assertEquals(1, tableModel.getRowCount());
-
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            assertTrue(printRow(tableModel, i), tableModel.getValueAt(i, 0) == null || tableModel.getValueAt(i,
-                    1) == null);
-        }
+        
+        assertTrue(tableModel.getValueAt(0, 1).toString().contains("5307.98"));
     }
 
     private void compareWithBenchmark(PreviewTransformedDataActionListener action) throws IOException {

@@ -218,6 +218,7 @@ public class ApplicationDriver {
                 for (String prefix : PRIMARY_JAR_FILENAME_PREFIXES) {
                     if (filename.startsWith(prefix)) {
                         primaryJarRef.set(path.toString());
+                        primaryJar = true;
                         break;
                     }
                 }

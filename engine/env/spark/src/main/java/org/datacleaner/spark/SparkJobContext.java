@@ -73,7 +73,6 @@ public class SparkJobContext implements Serializable {
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJobBuilder _analysisJobBuilder;
-    private AnalysisJobBuilder _analysisJobBuilder1;
 
     public SparkJobContext(final URI dataCleanerConfigurationPath, final URI analysisJobXmlPath,
             final URI customPropertiesPath, final JavaSparkContext sparkContext) {

@@ -21,6 +21,7 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
@@ -123,7 +124,10 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
             _nameTextField.setEnabled(false);
             _hostTextField.setText(directConnection.getNameNodeUri().getHost());
             _portTextField.setText("" + directConnection.getNameNodeUri().getPort());
-            _descriptionTextField.setText(directConnection.getDescription());
+            final String description = directConnection.getDescription();
+            if (description != null) {
+                _descriptionTextField.setText(description);
+            }
         }
 
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -201,7 +205,8 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         centerPanel.add(buttonPanel, BorderLayout.SOUTH);
         centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final DCBannerPanel banner = new DCBannerPanel("Hadoop Direct Configurations");
+        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS); 
+        final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Hadoop Direct Configurations");
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
         outerPanel.add(banner, BorderLayout.NORTH);

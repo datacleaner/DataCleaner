@@ -22,6 +22,7 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
@@ -35,10 +36,12 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -127,7 +130,7 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
         _server = server;
         _serverInformationCatalog = serverInformationCatalog;
         _nameTextField = WidgetFactory.createTextField("MyConnection");
-        _descriptionTextField = WidgetFactory.createTextField();
+        _descriptionTextField = WidgetFactory.createTextField("Description");
         _statusLabel = DCLabel.bright("Please specify connection name");
 
         if (_server != null) {
@@ -141,6 +144,13 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
                 _descriptionTextField.setText(description);
             }
         }
+        
+        _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
 
         final String saveButtonText = server == null ? "Register connection" : "Save connection";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
@@ -280,7 +290,8 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
         centerPanel.add(buttonsPanel, BorderLayout.PAGE_END);
         centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final DCBannerPanel banner = new DCBannerPanel("Hadoop Directory Configurations");
+        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS); 
+        final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Hadoop Directory Configurations");
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
         outerPanel.add(banner, BorderLayout.NORTH);

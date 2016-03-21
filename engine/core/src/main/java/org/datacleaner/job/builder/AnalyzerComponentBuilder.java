@@ -59,6 +59,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     public static final String METADATA_PROPERTY_BUILDER_ID = "org.datacleaner.componentbuilder.id";
+    public static final String METADATA_PROPERTY_BUILDER_PARTITION_INDEX =
+            "org.datacleaner.componentbuilder.partition.index";
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
@@ -205,15 +207,17 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
+        int partitionIndex = 0;
         for (Entry<Table, List<InputColumn<?>>> entry : entrySet) {
             final List<InputColumn<?>> columnsOfTable = entry.getValue();
             if (_escalatingInputProperty == null || _escalatingInputProperty.isArray()) {
                 // escalation will happen only for multi-table input
-                jobs.add(createPartitionedJob(null, columnsOfTable, configuredProperties));
+                jobs.add(createPartitionedJob(null, columnsOfTable, configuredProperties, partitionIndex++));
             } else {
                 for (InputColumn<?> escalatingColumn : columnsOfTable) {
                     // escalation happens for each column
-                    jobs.add(createPartitionedJob(escalatingColumn, columnsOfTable, configuredProperties));
+                    jobs.add(createPartitionedJob(escalatingColumn, columnsOfTable, configuredProperties,
+                            partitionIndex++));
                 }
             }
         }
@@ -278,8 +282,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     private AnalyzerJob createPartitionedJob(InputColumn<?> escalatingColumnValue, Collection<InputColumn<?>> availableColumns,
-            Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
-        final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
+            Map<ConfiguredPropertyDescriptor, Object> configuredProperties, int partitionIndex) {
+        final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<>(
                 configuredProperties);
         for (Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
             final ConfiguredPropertyDescriptor propertyDescriptor = jobProperty.getKey();
@@ -299,6 +303,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         // jobs back to their builder
         final Map<String, String> metadataProperties = new LinkedHashMap<>(getMetadataProperties());
         metadataProperties.put(METADATA_PROPERTY_BUILDER_ID, "" + System.identityHashCode(this));
+        metadataProperties.put(METADATA_PROPERTY_BUILDER_PARTITION_INDEX, "" + partitionIndex);
 
         // we do not currently support this combination of multiple analyzer
         // jobs and having output data streams

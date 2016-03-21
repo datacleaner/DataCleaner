@@ -22,15 +22,14 @@ package org.datacleaner.monitor.server;
 import java.util.List;
 
 import org.datacleaner.test.TestHelper;
+import org.junit.Assume;
 
 import junit.framework.TestCase;
 
 public class JnlpUrlLaunchArtifactProviderTest extends TestCase {
 
     public void testGetFilenames() throws Exception {
-        if (!TestHelper.isInternetConnected()) {
-            return;
-        }
+        Assume.assumeTrue(TestHelper.isInternetConnected());
         
         JnlpUrlLaunchArtifactProvider provider = new JnlpUrlLaunchArtifactProvider();
 

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.test.TestHelper;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,9 +54,8 @@ public class ResolveHostnameTransformerTest {
     
     @Test
     public void testTransformInternet() throws Exception {
-        if (!TestHelper.isInternetConnected()) {
-            return;
-        }
+        Assume.assumeTrue(TestHelper.isInternetConnected());
+        
         assertEquals("94.142.215.39", t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
     }
 

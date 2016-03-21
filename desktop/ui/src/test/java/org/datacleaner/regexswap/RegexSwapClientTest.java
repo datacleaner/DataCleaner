@@ -29,15 +29,14 @@ import java.util.List;
 
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.test.TestHelper;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class RegexSwapClientTest {
 
     @Test
     public void testUpdateContent() throws Exception {
-        if (!TestHelper.isInternetConnected()) {
-            return;
-        }
+        Assume.assumeTrue(TestHelper.isInternetConnected());
 
         RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
         client.getCategories();

@@ -22,13 +22,14 @@ package org.datacleaner.panels;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
+import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -36,20 +37,19 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.HadoopConnectionToNamenodeDialog;
 
-public class HadoopDirectConnectionPanel extends DCPanel {
+public class HadoopConnectionPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
     private final MutableServerInformationCatalog _serverInformationCatalog; 
-    private final DirectConnectionHadoopClusterInformation _serverInformation; 
+    private final ServerInformation _serverInformation; 
     private final WindowContext _windowContext; 
     
-    public HadoopDirectConnectionPanel(WindowContext windowContext, String name, URI namenodeUri, String description,  DirectConnectionHadoopClusterInformation serverInformation, MutableServerInformationCatalog serverInformationCatalog){
+    public HadoopConnectionPanel(WindowContext windowContext,  ServerInformation serverInformation, MutableServerInformationCatalog serverInformationCatalog){
         _serverInformationCatalog = serverInformationCatalog;
         _serverInformation = serverInformation;
         _windowContext = windowContext; 
         
-        
-        final DCLabel label = DCLabel.dark("<html><b>" + name + "</b> - " + namenodeUri + "<br/>" + description + "</html>"); 
+        final DCLabel label = DCLabel.dark("<html><b>" + serverInformation.getName() + "</b> - " + "<br/>" + serverInformation.getDescription() + "</html>"); 
         
         final JButton editButton = createEditButton();
         final JButton removeButton = createRemoveButton(serverInformation);
@@ -68,20 +68,26 @@ public class HadoopDirectConnectionPanel extends DCPanel {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-               final HadoopConnectionToNamenodeDialog hadoopConnectionToNamenodeDialog = new HadoopConnectionToNamenodeDialog(_windowContext,_serverInformation, _serverInformationCatalog);
+                if (_serverInformation instanceof DirectConnectionHadoopClusterInformation){
+               final HadoopConnectionToNamenodeDialog hadoopConnectionToNamenodeDialog = new HadoopConnectionToNamenodeDialog(_windowContext,(DirectConnectionHadoopClusterInformation)_serverInformation, _serverInformationCatalog);
                hadoopConnectionToNamenodeDialog.setVisible(true);
+                }if (_serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)){
+                    final HadoopDirectoryConfigurationDialog hadoopDirectoryConfigurationDialog = new HadoopDirectoryConfigurationDialog(_windowContext, (DirectoryBasedHadoopClusterInformation)_serverInformation, _serverInformationCatalog);
+                    hadoopDirectoryConfigurationDialog.setVisible(true);
+                    
+                }
             }
         });
         return editButton;
     }
 
-    private JButton createRemoveButton(DirectConnectionHadoopClusterInformation serverInformation) {
+    private JButton createRemoveButton(ServerInformation serverInformation) {
         final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE);
         removeButton.setToolTipText("Remove connection");
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(HadoopDirectConnectionPanel.this,
+                int result = JOptionPane.showConfirmDialog(HadoopConnectionPanel.this,
                         "Are you sure you wish to remove the connection '" + serverInformation.getName() + "'?", "Confirm remove",
                         JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {

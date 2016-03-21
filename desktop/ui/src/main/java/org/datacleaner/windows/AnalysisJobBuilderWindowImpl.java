@@ -272,6 +272,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
     private final Provider<MonitorConnectionDialog> _monitorConnectionDialogProvider;
     private final Provider<OptionsDialog> _optionsDialogProvider;
+    private final Provider<HadoopConfigurationsOptionsDialog> _hadoopOptionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
     private final DatastoreManagementPanel _datastoreManagementPanel;
@@ -301,7 +302,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
-            Provider<OptionsDialog> optionsDialogProvider,
+            Provider<OptionsDialog> optionsDialogProvider, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
             OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
         super(windowContext);
@@ -314,6 +315,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _referenceDataDialogProvider = referenceDataDialogProvider;
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
+        _hadoopOptionsDialogProvider = hadoopOptionsDialogProvider; 
         _userPreferences = userPreferences;
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
                 DEFAULT_WINDOW_HEIGHT);
@@ -801,6 +803,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 optionsDialog.open();
             }
         });
+        
+        final JMenuItem hadoopOptionsMenuItem = WidgetFactory.createMenuItem("Hadoop Configurations", IconUtils.MENU_OPTIONS);
+        hadoopOptionsMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final HadoopConfigurationsOptionsDialog hadoopConfigurationsOptionsDialog = _hadoopOptionsDialogProvider.get();
+                hadoopConfigurationsOptionsDialog.open();
+                hadoopConfigurationsOptionsDialog.setVisible(true);
+            }
+        });
 
         final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor",
                 IconUtils.MENU_DQ_MONITOR);
@@ -901,6 +913,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.getMenu().add(new JSeparator());
         popupButton.getMenu().add(monitorMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
+        popupButton.getMenu().add(hadoopOptionsMenuItem); 
 
         return popupButton;
     }

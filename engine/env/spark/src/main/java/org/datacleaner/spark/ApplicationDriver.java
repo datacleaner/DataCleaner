@@ -57,7 +57,7 @@ public class ApplicationDriver {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDriver.class);
 
-    private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-env-spark";
+    private static final String[] PRIMARY_JAR_FILENAME_PREFIXES = { "DataCleaner-spark", "DataCleaner-env-spark" };
 
     private final URI _defaultFs;
     private final DistributedFileSystem _fileSystem;
@@ -214,16 +214,22 @@ public class ApplicationDriver {
                 final LocatedFileStatus file = files.next();
                 final Path path = file.getPath();
                 final String filename = path.getName();
-                if (filename.startsWith(PRIMARY_JAR_FILENAME_PREFIX)) {
-                    primaryJarRef.set(path.toString());
-                } else {
+                boolean primaryJar = false;
+                for (String prefix : PRIMARY_JAR_FILENAME_PREFIXES) {
+                    if (filename.startsWith(prefix)) {
+                        primaryJarRef.set(path.toString());
+                        primaryJar = true;
+                        break;
+                    }
+                }
+                if (!primaryJar) {
                     list.add(path.toString());
                 }
             }
 
         if (primaryJarRef.get() == null) {
             throw new IllegalArgumentException("Failed to find primary jar (starting with '"
-                    + PRIMARY_JAR_FILENAME_PREFIX + "') in JAR file directory: " + _jarDirectoryPath);
+                    + PRIMARY_JAR_FILENAME_PREFIXES[0] + "') in JAR file directory: " + _jarDirectoryPath);
         }
 
         return list;

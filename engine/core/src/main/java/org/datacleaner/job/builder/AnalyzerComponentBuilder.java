@@ -59,7 +59,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     public static final String METADATA_PROPERTY_BUILDER_ID = "org.datacleaner.componentbuilder.id";
-    public static final String METADATA_PROPERTY_BUILDER_PARTITION_INDEX = "org.datacleaner.componentbuilder.partition.id";
+    public static final String METADATA_PROPERTY_BUILDER_PARTITION_INDEX =
+            "org.datacleaner.componentbuilder.partition.index";
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 

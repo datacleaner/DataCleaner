@@ -19,6 +19,7 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
@@ -36,7 +37,6 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.configuration.ServerInformation;
@@ -47,6 +47,7 @@ import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -60,7 +61,6 @@ public class SelectHadoopConfigurationDialog extends JComponent {
     private final ServerInformationCatalog _serverInformationCatalog;
     private final JList<String> _serverList;
     private final JButton _okButton;
-    private final JButton _cancelButton;
     private final JButton _optionsButton;
     private String _hadoopConfiguration;
     private final LinkedList<String> _mappedServers;
@@ -82,29 +82,33 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         _serverList.setLayoutOrientation(JList.VERTICAL);
         _serverList.setSelectedIndex(serverNames.length-1);
-        
-       _serverList.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
-                WidgetUtils.DEFAULT_PADDING));
+        _serverList.setBorder(WidgetUtils.BORDER_WIDE_WELL);
 
         final DCPanel listPanel = new DCPanel(); 
-        
-        listPanel.add(_serverList);
         listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+        listPanel.setLayout(new VerticalLayout());
+        listPanel.add(_serverList, BorderLayout.CENTER);
         final JScrollPane listScroller = WidgetUtils.scrolleable(listPanel); 
-        
+        listScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
   
-        _okButton = WidgetFactory.createDefaultButton("OK");
-        WidgetUtils.setPrimaryButtonStyle(_okButton);
+        _okButton = WidgetFactory.createPrimaryButton("OK",  IconUtils.ACTION_FORWARD);
         _optionsButton = WidgetFactory.createDefaultButton("Options");
-        _cancelButton = WidgetFactory.createDefaultButton("Cancel");
+        _optionsButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO a link 
+                
+            }
+        });
 
         outerPanel.setFont(WidgetUtils.FONT_NORMAL);
         WidgetUtils.addToGridBag(label, outerPanel, 0, 0);
-        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 2);
-        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 2, 1, GridBagConstraints.PAGE_START);
-        WidgetUtils.addToGridBag(_okButton, outerPanel, 2, 2, GridBagConstraints.PAGE_END);
-
-        setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
+        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 1);
+        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 1, 1, GridBagConstraints.PAGE_START);
+        WidgetUtils.addToGridBag(_okButton, outerPanel, 1, 1, GridBagConstraints.PAGE_END);
+        
+        outerPanel.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
                 WidgetUtils.DEFAULT_PADDING));
         add(outerPanel);
     }

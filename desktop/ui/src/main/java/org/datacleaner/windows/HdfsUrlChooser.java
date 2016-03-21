@@ -59,6 +59,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.datacleaner.bootstrap.DCWindowContext;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.configuration.ServerInformationCatalogImpl;
@@ -609,11 +611,15 @@ public class HdfsUrlChooser extends JComponent {
         frame.pack();
         frame.setVisible(true);
         
-        SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(serverInformationCatalog); 
+        final WindowContext windowContext = new DCWindowContext(null, null, null);
+        SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, serverInformationCatalog); 
+        selectHadoopConfigurationDialog.setVisible(true);
+        selectHadoopConfigurationDialog.setModal(true);
+        final String selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration(); 
         
         try {
-            final String selectServer = selectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog);
-            URI selectedFile = HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectServer, null, OpenType.LOAD);
+            
+            URI selectedFile = HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
             System.out.println("Normal exit, selected file: " + selectedFile);
             System.exit(0);
         } catch (Exception e) {

@@ -32,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -68,7 +69,7 @@ public class AddDatastorePanel extends DCPanel {
             final ServerInformationCatalog serverInformationCatalog, final DatabaseDriverCatalog databaseDriverCatalog,
             final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
-            boolean showExistingDatastoresButton) {
+            boolean showExistingDatastoresButton, WindowContext wizardContext) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -76,7 +77,7 @@ public class AddDatastorePanel extends DCPanel {
         _databaseDriverCatalog = databaseDriverCatalog;
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
-        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences);
+        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, wizardContext);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;

@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -32,13 +31,13 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.bootstrap.DCWindowContext;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.configuration.ServerInformationCatalogImpl;
@@ -54,44 +53,42 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
-public class SelectHadoopConfigurationDialog extends JComponent {
+public class SelectHadoopConfigurationDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final ServerInformationCatalog _serverInformationCatalog;
     private final JList<String> _serverList;
     private final JButton _okButton;
     private final JButton _optionsButton;
-    private String _hadoopConfiguration;
+    private String _selectedConfiguration;
     private final LinkedList<String> _mappedServers;
 
-    public SelectHadoopConfigurationDialog(ServerInformationCatalog serverInformationCatalog) {
-        _serverInformationCatalog = serverInformationCatalog;
-        _hadoopConfiguration = null;
-        setLayout(new VerticalLayout());
-        final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        outerPanel.setLayout(new GridLayout());
-
-        final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
-        label.setFont(WidgetUtils.FONT_HEADER2);
-
+    public SelectHadoopConfigurationDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog) {
+         super(windowContext); 
+         //It needs to be modal. Otherwise there will be null for selected Configuration
+         setModal(true);
         // It's important to keep the order of the elements.
         _mappedServers = new LinkedList<String>();
         final String[] serverNames = getMappedServers(serverInformationCatalog.getServerNames(), _mappedServers);
+        _selectedConfiguration = serverNames[0]; 
         _serverList = new JList<String>(serverNames);
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         _serverList.setLayoutOrientation(JList.VERTICAL);
         _serverList.setSelectedIndex(serverNames.length-1);
         _serverList.setBorder(WidgetUtils.BORDER_WIDE_WELL);
 
-        final DCPanel listPanel = new DCPanel(); 
-        listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
-        listPanel.setLayout(new VerticalLayout());
-        listPanel.add(_serverList, BorderLayout.CENTER);
-        final JScrollPane listScroller = WidgetUtils.scrolleable(listPanel); 
-        listScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-  
+          
         _okButton = WidgetFactory.createPrimaryButton("OK",  IconUtils.ACTION_FORWARD);
+        _okButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final int selectedIndex = _serverList.getSelectedIndex();
+                _selectedConfiguration = serverInformationCatalog
+                        .getServerNames()[selectedIndex];
+              dispose();
+            }
+        });
         _optionsButton = WidgetFactory.createDefaultButton("Options");
         _optionsButton.addActionListener(new ActionListener() {
             
@@ -102,15 +99,7 @@ public class SelectHadoopConfigurationDialog extends JComponent {
             }
         });
 
-        outerPanel.setFont(WidgetUtils.FONT_NORMAL);
-        WidgetUtils.addToGridBag(label, outerPanel, 0, 0);
-        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 1);
-        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 1, 1, GridBagConstraints.PAGE_START);
-        WidgetUtils.addToGridBag(_okButton, outerPanel, 1, 1, GridBagConstraints.PAGE_END);
-        
-        outerPanel.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
-                WidgetUtils.DEFAULT_PADDING));
-        add(outerPanel);
+      
     }
 
     /**
@@ -131,34 +120,51 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         return mappedServers.toArray(new String[serverNames.length]);
     }
 
-    public String selectServer(Component parent, ServerInformationCatalog serverInformationCatalog) {
-
-        final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(
-                serverInformationCatalog);
-        final JDialog dialog = WidgetFactory.createModalDialog(selectHadoopConfigurationDialog, parent,
-                "Select Hadoop Configuration", false);
-
-        selectHadoopConfigurationDialog._okButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final int selectedIndex = selectHadoopConfigurationDialog._serverList.getSelectedIndex();
-                selectHadoopConfigurationDialog._hadoopConfiguration = serverInformationCatalog
-                        .getServerNames()[selectedIndex];
-                dialog.dispose();
-            }
-        });
-
-        dialog.setVisible(true);
-        dialog.setFocusable(true);
-        dialog.dispose();
-        return selectHadoopConfigurationDialog._hadoopConfiguration;
+    public String getSelectedConfiguration() {
+        return _selectedConfiguration;
     }
 
-    public ServerInformationCatalog getServerInformationCatalog() {
-        return _serverInformationCatalog;
+    @Override
+    public String getWindowTitle() {
+        return "Select Hadoop configuration";
     }
 
+    @Override
+    protected String getBannerTitle() {
+        return "Hadoop configurations";
+    }
+
+    @Override
+    protected int getDialogWidth() {
+        return 400;
+    }
+    
+    @Override
+    protected JComponent getDialogContent() {
+         final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        outerPanel.setLayout(new GridLayout());
+        outerPanel.setFont(WidgetUtils.FONT_NORMAL);
+        
+        final DCPanel listPanel = new DCPanel(); 
+        listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+        listPanel.setLayout(new VerticalLayout());
+        listPanel.add(_serverList, BorderLayout.CENTER);
+        final JScrollPane listScroller = WidgetUtils.scrolleable(listPanel); 
+        listScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
+        label.setFont(WidgetUtils.FONT_HEADER2);
+        WidgetUtils.addToGridBag(label, outerPanel, 0, 0);
+        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 1);
+        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 1, 1, GridBagConstraints.PAGE_START);
+        WidgetUtils.addToGridBag(_okButton, outerPanel, 1, 1, GridBagConstraints.PAGE_END);
+        
+        outerPanel.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
+                WidgetUtils.DEFAULT_PADDING));
+        outerPanel.setPreferredSize(getDialogWidth(), 300); 
+        return outerPanel; 
+    }
+    
     public static void main(String[] args) throws Exception {
         LookAndFeelManager.get().init();
         final List<ServerInformation> servers = new ArrayList<>();
@@ -175,15 +181,18 @@ public class SelectHadoopConfigurationDialog extends JComponent {
         servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
                 "hdfs://192.168.0.200:9000/")));
         final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
-        JFrame frame = new JFrame();
-        frame.setVisible(false);
-        frame.pack();
-        frame.dispose();
 
-        final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(
+
+        String hadoopConfiguration = null; 
+        WindowContext windowContext = new DCWindowContext(null, null, null);
+        final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
                 serverInformationCatalog);
+        selectHadoopConfigurationDialog.setVisible(true);
+        selectHadoopConfigurationDialog.pack();
 
-        System.out.println(selectHadoopConfigurationDialog.selectServer(frame, serverInformationCatalog));
+        System.out.println(hadoopConfiguration);
 
     }
+
+   
 }

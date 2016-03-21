@@ -113,7 +113,6 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
                 final HadoopConnectionToNamenodeDialog hadoopConnectionToNamenodeDialog = new HadoopConnectionToNamenodeDialog(
                         _windowContext, null, _serverInformationCatalog);
                 hadoopConnectionToNamenodeDialog.setVisible(true);
-                hadoopConnectionToNamenodeDialog.setFocusable(true);
             }
         });
 
@@ -124,7 +123,6 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
                 final HadoopDirectoryConfigurationDialog hadoopDirectoryConfigurationDialog = new HadoopDirectoryConfigurationDialog(
                         _windowContext, null, _serverInformationCatalog);
                 hadoopDirectoryConfigurationDialog.setVisible(true);
-                hadoopDirectoryConfigurationDialog.setFocusable(true);
             }
         });
     }
@@ -197,7 +195,7 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HadoopConfigurationsOptionsDialog.this.dispose();
+                HadoopConfigurationsOptionsDialog.this.close();
                 // _userPreferences.save();
                 // TODO: see where can we save the server information catalog.
             }
@@ -272,14 +270,13 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
                 serverInformationCatalog, new DatastoreXmlExternalizer(resource));
 
         final UserPreferencesImpl userPreferencesImpl = new UserPreferencesImpl(null);
-        WindowContext windowContext = new DCWindowContext(null, null, null);
+        final WindowContext windowContext = new DCWindowContext(null, null, null);
 
         final DataCleanerConfiguration dcConfig = new DataCleanerConfigurationImpl(null, null, null, null,
                 mutableServerInformationCatalog);
         final HadoopConfigurationsOptionsDialog hadoopConfigurationDialog = new HadoopConfigurationsOptionsDialog(
                 windowContext, dcConfig, userPreferencesImpl);
         hadoopConfigurationDialog.setVisible(true);
-        hadoopConfigurationDialog.setFocusable(true);
     }
 
 }

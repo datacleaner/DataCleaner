@@ -43,6 +43,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -76,7 +77,7 @@ public class Dropzone extends DCPanel {
     private final UserPreferences _userPreferences;
 
     public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
-            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences, WindowContext windowContext) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -123,9 +124,10 @@ public class Dropzone extends DCPanel {
                 // If there is only one configuration, it doesn't make sense to
                 // show the selection of configuration dialog
                 if (serverNames.length > 1) {
-                    final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(
+                    final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
                             serverInformationCatalog);
-                    selectedServer = selectHadoopConfigurationDialog.selectServer(dropZone, serverInformationCatalog);
+                    selectHadoopConfigurationDialog.setVisible(true);
+                    selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();  
                 } else {
                     selectedServer = serverNames[0];
                 }

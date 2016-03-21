@@ -26,6 +26,7 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
@@ -50,11 +51,11 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
 
     public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule,
             DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
-            final ServerInformationCatalog serverInformationCatalog, UserPreferences userPreferences) {
+            final ServerInformationCatalog serverInformationCatalog, UserPreferences userPreferences, WindowContext windowContext) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
         _selectDatastorePanel = new SelectDatastorePanel(dcModule, datastoreCatalog, serverInformationCatalog,
-                databaseDriverCatalog, userPreferences, this, true);
+                databaseDriverCatalog, userPreferences, this, true, windowContext);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);

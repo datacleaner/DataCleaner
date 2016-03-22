@@ -62,7 +62,7 @@ public class CloseTaskListener implements TaskListener {
         _analysisJob = analysisJob;
     }
 
-    public void cleanup() {
+    private void cleanup() {
         logger.debug("cleanup()");
         
         final int publishersLeft = _consumer.onPublisherClosed(_publisher);
@@ -70,13 +70,8 @@ public class CloseTaskListener implements TaskListener {
             final Object component = _consumer.getComponent();
             final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
 
-            try {
-                _lifeCycleHelper.close(descriptor, component, _success.get());
-            } catch (Throwable t) {
-                logger.error("Got exception when cleaning {} for completion", descriptor.getDisplayName(), t);
-            }
-
             // close can occur AFTER completion
+            _lifeCycleHelper.close(descriptor, component, _success.get());
 
             _consumer.getActiveOutputDataStreams().forEach(ActiveOutputDataStream::close);
         }
@@ -91,7 +86,11 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onComplete(Task task) {
-        cleanup();
+        try {
+            cleanup();
+        } catch (Exception e) {
+            onErrorInternal(task, e, false);
+        }
         if (_nextTaskListener != null) {
             _nextTaskListener.onComplete(task);
         }
@@ -99,12 +98,23 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
+        onErrorInternal(task, throwable, true);
+    }
+
+    private void onErrorInternal(Task task, Throwable throwable, boolean doCleanup) {
+        if (doCleanup) {
+            try {
+                cleanup();
+            } catch (Exception e) {
+                throwable.addSuppressed(e);
+            }
+        }
+
         final boolean previouslySuccessful = _success.getAndSet(false);
         if (previouslySuccessful) {
             // only report the first such error
             _analysisListener.errorUnknown(_analysisJob, throwable);
         }
-        cleanup();
         if (_nextTaskListener != null) {
             _nextTaskListener.onError(task, throwable);
         }

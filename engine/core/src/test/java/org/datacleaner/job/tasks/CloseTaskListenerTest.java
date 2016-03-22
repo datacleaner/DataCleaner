@@ -22,6 +22,7 @@ package org.datacleaner.job.tasks;
 import java.util.List;
 
 import org.datacleaner.api.Close;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -29,23 +30,35 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CloseTaskListenerTest {
-    public static class FailingMockAnalyzer extends MockOutputDataStreamAnalyzer {
+    public static class OnCloseFailingMockAnalyzer extends MockOutputDataStreamAnalyzer {
+        static final String OUCH_ON_CLOSE = "Ouch on close!";
+
         @Close
         public void failingClose() {
-            throw new RuntimeException("Ouch!");
+            throw new RuntimeException(OUCH_ON_CLOSE);
         }
 
+    }
+
+    public static class OnExecutionAndCloseFailingMockAnalyzer extends OnCloseFailingMockAnalyzer {
+        static final String OUCH_IN_RUN = "Ouch in run!";
+
+        @Override
+        public void run(final InputRow row, final int distinctCount) {
+            throw new RuntimeException(OUCH_IN_RUN);
+        }
     }
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
@@ -53,60 +66,74 @@ public class CloseTaskListenerTest {
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
             .withEnvironment(environment);
 
-    /**
+    @Test(timeout = 15000L) // If the error code fails, this would freeze forever otherwise
+    public void testFailingClose() throws Throwable {
+        final AnalysisResultFuture resultFuture = runAnalysisJob(OnCloseFailingMockAnalyzer.class);
+
+        resultFuture.await();
+
+        assertTrue(resultFuture.isErrornous());
+        assertEquals(OnCloseFailingMockAnalyzer.OUCH_ON_CLOSE, resultFuture.getErrors().get(0).getMessage());
+    }
+
+    @Test(timeout = 15000L) // If the error code fails, this would freeze forever otherwise
+    public void testFailingJobAndClose() throws Throwable {
+        final AnalysisResultFuture resultFuture = runAnalysisJob(OnExecutionAndCloseFailingMockAnalyzer.class);
+
+        resultFuture.await();
+
+        assertTrue(resultFuture.isErrornous());
+        final List<Throwable> errors = resultFuture.getErrors();
+        assertEquals(OnExecutionAndCloseFailingMockAnalyzer.OUCH_IN_RUN, errors.get(0).getMessage());
+
+        boolean hasCorrectException = false; // We can't really trust the order of errors.
+        for (Throwable error : errors) {
+            if(error instanceof  PreviousErrorsExistException) {
+                hasCorrectException = true;
+                assertEquals(3, error.getSuppressed().length);
+                assertEquals(OnCloseFailingMockAnalyzer.OUCH_ON_CLOSE, error.getSuppressed()[0].getMessage());
+
+            }
+        }
+        assertTrue(hasCorrectException);
+    }
+
+    /*
      * This is probably a bigger test than needed, but it was how issue #1247 was explained.
-     *
      * TODO: Maybe slim it down later.
-     * @throws Throwable
      */
-    @Test(timeout = 15000L)
-    public void testSimpleBuildAndExecuteScenario() throws Throwable {
+    private AnalysisResultFuture runAnalysisJob(Class<? extends MockOutputDataStreamAnalyzer> analyserClass) {
         final AnalysisJob job;
         try (final AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
             ajb1.setDatastore(datastore);
 
             ajb1.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer1 = ajb1
-                    .addAnalyzer(FailingMockAnalyzer.class);
+            final AnalyzerComponentBuilder<?> analyzer1 = ajb1
+                    .addAnalyzer(analyserClass);
             analyzer1.addInputColumn(ajb1.getSourceColumns().get(0));
-            analyzer1.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer1");
+            analyzer1.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer1");
 
             final AnalysisJobBuilder ajb2 = analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams()
                     .get(0));
-            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer2 = ajb2
-                    .addAnalyzer(FailingMockAnalyzer.class);
+            final AnalyzerComponentBuilder<?> analyzer2 = ajb2
+                    .addAnalyzer(analyserClass);
             analyzer2.addInputColumn(ajb2.getSourceColumns().get(0));
-            analyzer2.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer2");
+            analyzer2.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer2");
 
             final AnalysisJobBuilder ajb3 = analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams()
                     .get(0));
-            final AnalyzerComponentBuilder<FailingMockAnalyzer> analyzer3 = ajb3
-                    .addAnalyzer(FailingMockAnalyzer.class);
+            final AnalyzerComponentBuilder<?> analyzer3 = ajb3
+                    .addAnalyzer(analyserClass);
             analyzer3.addInputColumn(ajb3.getSourceColumns().get(0));
-            analyzer3.setConfiguredProperty(FailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer3");
+            analyzer3.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer3");
 
             job = ajb1.toAnalysisJob();
         }
 
         // now run the job(s)
         final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
-        final AnalysisResultFuture resultFuture = runner.run(job);
-        resultFuture.await();
-
-        if (resultFuture.isErrornous()) {
-            throw resultFuture.getErrors().get(0);
-        }
-
-        assertEquals(3, resultFuture.getResults().size());
-
-        @SuppressWarnings("unchecked")
-        final List<ListResult<?>> results = (List<ListResult<?>>) resultFuture.getResults(ListResult.class);
-
-        // for every result we expect a drop-off of 1/3 values
-        assertEquals(71, results.get(0).getValues().size());
-        assertEquals(48, results.get(1).getValues().size());
-        assertEquals(32, results.get(2).getValues().size());
+        return runner.run(job);
     }
 
 }

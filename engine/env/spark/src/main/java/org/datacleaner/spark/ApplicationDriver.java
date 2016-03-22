@@ -112,6 +112,12 @@ public class ApplicationDriver {
     }
 
     public int launch(SparkLauncher sparkLauncher) throws Exception {
+        final Process process = launchProcess(sparkLauncher);
+
+        return process.waitFor();
+    }
+
+    public Process launchProcess(final SparkLauncher sparkLauncher) throws IOException {
         final Process process = sparkLauncher.launch();
 
         final InputStream errorStream = process.getErrorStream();
@@ -119,8 +125,7 @@ public class ApplicationDriver {
 
         final InputStream inputStream = process.getInputStream();
         startLogger(inputStream);
-
-        return process.waitFor();
+        return process;
     }
 
     private void startLogger(final InputStream stream) {
@@ -137,8 +142,6 @@ public class ApplicationDriver {
                     logger.warn("Logger thread failure: " + e.getMessage(), e);
                 }
             }
-
-            ;
         }.start();
     }
 
@@ -238,7 +241,8 @@ public class ApplicationDriver {
     public File createTemporaryHadoopConfDir() throws IOException {
         final File hadoopConfDir = new File(FileHelper.getTempDir(), "datacleaner_hadoop_conf_"
                 + UUID.randomUUID().toString());
-        hadoopConfDir.mkdirs();
+        final boolean dirCreated = hadoopConfDir.mkdirs();
+        assert dirCreated;
 
         createTemporaryHadoopConfFile(hadoopConfDir, "core-site.xml", "core-site-template.xml");
         createTemporaryHadoopConfFile(hadoopConfDir, "yarn-site.xml", "yarn-site-template.xml");

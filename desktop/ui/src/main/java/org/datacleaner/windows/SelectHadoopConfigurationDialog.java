@@ -99,7 +99,7 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
               dispose();
             }
         });
-        _optionsButton = WidgetFactory.createDefaultButton("Options");
+        _optionsButton = WidgetFactory.createDefaultButton("Options", IconUtils.MENU_OPTIONS);
         _optionsButton.addActionListener(new ActionListener() {
             
             @Override

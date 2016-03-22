@@ -63,10 +63,10 @@ public class HadoopConnectionPanel extends DCPanel {
             description = "Use HADOOP_CONF_DIR and YARN_CONF_DIR";
         } else {
             final String serverDescription = serverInformation.getDescription();
-            if (serverDescription != null){
+            if (serverDescription != null) {
                 description = serverDescription;
-            }else{
-                description = "<none>"; 
+            } else {
+                description = "<none>";
             }
         }
 

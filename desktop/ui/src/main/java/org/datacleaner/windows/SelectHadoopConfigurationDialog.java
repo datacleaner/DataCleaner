@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
@@ -29,24 +30,27 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.ScrollPaneConstants;
 
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.configuration.ServerInformationCatalogImpl;
+import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -62,15 +66,21 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
     private final JButton _optionsButton;
     private String _selectedConfiguration;
     private final LinkedList<String> _mappedServers;
+    private static final ImageManager _imageManager = ImageManager.get();
+    private final Provider<HadoopConfigurationsOptionsDialog> _hadoopOptionsDialogProvider;
 
-    public SelectHadoopConfigurationDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog) {
+    
+    public SelectHadoopConfigurationDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
          super(windowContext); 
+         
+         _hadoopOptionsDialogProvider = hadoopOptionsDialogProvider; 
          //It needs to be modal. Otherwise there will be null for selected Configuration
          setModal(true);
+         setResizable(true);
         // It's important to keep the order of the elements.
         _mappedServers = new LinkedList<String>();
         final String[] serverNames = getMappedServers(serverInformationCatalog.getServerNames(), _mappedServers);
-        _selectedConfiguration = serverNames[0]; 
+        _selectedConfiguration = null; 
         _serverList = new JList<String>(serverNames);
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         _serverList.setLayoutOrientation(JList.VERTICAL);
@@ -94,8 +104,10 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO a link 
-                
+                SelectHadoopConfigurationDialog.this.close();
+                final HadoopConfigurationsOptionsDialog hadoopConfigurationsOptionsDialog = _hadoopOptionsDialogProvider
+                        .get();
+                hadoopConfigurationsOptionsDialog.setVisible(true);
             }
         });
 
@@ -141,26 +153,32 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
     
     @Override
     protected JComponent getDialogContent() {
-         final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        outerPanel.setLayout(new GridLayout());
-        outerPanel.setFont(WidgetUtils.FONT_NORMAL);
+       
+        final DCPanel contentPanel = new DCPanel();
+        contentPanel.setLayout(new GridLayout());
         
         final DCPanel listPanel = new DCPanel(); 
         listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
         listPanel.setLayout(new VerticalLayout());
-        listPanel.add(_serverList, BorderLayout.CENTER);
-        final JScrollPane listScroller = WidgetUtils.scrolleable(listPanel); 
-        listScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        listPanel.add(_serverList);
+        
 
         final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
         label.setFont(WidgetUtils.FONT_HEADER2);
-        WidgetUtils.addToGridBag(label, outerPanel, 0, 0);
-        WidgetUtils.addToGridBag(listScroller, outerPanel, 0, 1);
-        WidgetUtils.addToGridBag(_optionsButton, outerPanel, 1, 1, GridBagConstraints.PAGE_START);
-        WidgetUtils.addToGridBag(_okButton, outerPanel, 1, 1, GridBagConstraints.PAGE_END);
+        WidgetUtils.addToGridBag(label, contentPanel, 0, 0);
+        WidgetUtils.addToGridBag(listPanel, contentPanel, 0, 1);
+        WidgetUtils.addToGridBag(_optionsButton, contentPanel, 1, 1, GridBagConstraints.NORTH);
+        WidgetUtils.addToGridBag(_okButton, contentPanel, 1, 1, GridBagConstraints.SOUTH);
         
-        outerPanel.setBorder(new EmptyBorder(WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING, WidgetUtils.DEFAULT_PADDING,
-                WidgetUtils.DEFAULT_PADDING));
+        final JScrollPane scrolleable = WidgetUtils.scrolleable(contentPanel);
+        scrolleable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        final Image hadoopImage = _imageManager.getImage(IconUtils.FILE_HDFS);
+        final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Select Hadoop Cluster");
+        
+        final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND); 
+        outerPanel.setLayout(new BorderLayout());
+        outerPanel.add(banner, BorderLayout.NORTH); 
+        outerPanel.add(scrolleable, BorderLayout.CENTER); 
         outerPanel.setPreferredSize(getDialogWidth(), 300); 
         return outerPanel; 
     }
@@ -186,7 +204,7 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
         String hadoopConfiguration = null; 
         WindowContext windowContext = new DCWindowContext(null, null, null);
         final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
-                serverInformationCatalog);
+                serverInformationCatalog, null);
         selectHadoopConfigurationDialog.setVisible(true);
         selectHadoopConfigurationDialog.pack();
 

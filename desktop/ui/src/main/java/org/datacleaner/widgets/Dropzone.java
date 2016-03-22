@@ -34,6 +34,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -58,6 +59,7 @@ import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 import org.datacleaner.windows.HdfsUrlChooser;
 import org.datacleaner.windows.HdfsUrlChooser.OpenType;
 import org.datacleaner.windows.SelectHadoopConfigurationDialog;
@@ -77,7 +79,7 @@ public class Dropzone extends DCPanel {
     private final UserPreferences _userPreferences;
 
     public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
-            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences, WindowContext windowContext) {
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences, WindowContext windowContext, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -125,7 +127,7 @@ public class Dropzone extends DCPanel {
                 // show the selection of configuration dialog
                 if (serverNames.length > 1) {
                     final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
-                            serverInformationCatalog);
+                            serverInformationCatalog, hadoopOptionsDialogProvider);
                     selectHadoopConfigurationDialog.setVisible(true);
                     selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();  
                 } else {

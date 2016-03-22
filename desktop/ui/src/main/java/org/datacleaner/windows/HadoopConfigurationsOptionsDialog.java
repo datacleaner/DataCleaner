@@ -20,13 +20,10 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -35,12 +32,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
@@ -71,7 +64,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
-import org.jfree.ui.tabbedui.VerticalLayout;
 
 /**
  * Dialog for managing the Hadoop configurations
@@ -82,12 +74,10 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
     private static final long serialVersionUID = 1L;
 
     private final ImageManager imageManager = ImageManager.get();
-    private final UserPreferences _userPreferences;
-    private final DataCleanerConfiguration _configuration;
     private final MutableServerInformationCatalog _serverInformationCatalog;
-    private DCPanel _connectionsConfigurationsPanel;
+    private final DCPanel _connectionsConfigurationsPanel;
     private final WindowContext _windowContext;
-    private final List<HadoopConnectionPanel> _connectionsPanels;
+    private final List<HadoopConnectionPanel> _connectionPanels;
     private final JButton _addNamenodeConnection;
     private final JButton _addDirectoryBasedConnection;
 
@@ -97,14 +87,11 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
         super(windowContext);
 
         _windowContext = windowContext;
-        _userPreferences = userPreferences;
-        _configuration = configuration;
         _serverInformationCatalog = (MutableServerInformationCatalog) configuration.getServerInformationCatalog();
-        _connectionsPanels = new ArrayList<>();
+        _connectionPanels = new ArrayList<>();
         _connectionsConfigurationsPanel = new DCPanel();
         _addNamenodeConnection = WidgetFactory.createPrimaryButton("Add Namenode", IconUtils.ACTION_ADD);
-        _addDirectoryBasedConnection = WidgetFactory.createPrimaryButton("Add directory",
-                IconUtils.ACTION_ADD);
+        _addDirectoryBasedConnection = WidgetFactory.createPrimaryButton("Add Directory", IconUtils.ACTION_ADD);
 
         _addNamenodeConnection.addActionListener(new ActionListener() {
 
@@ -158,12 +145,12 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
             final ServerInformation server = _serverInformationCatalog.getServer(serverNames[i]);
             final HadoopConnectionPanel panel = new HadoopConnectionPanel(_windowContext, server,
                     _serverInformationCatalog);
-            _connectionsPanels.add(panel);
+            _connectionPanels.add(panel);
         }
 
         int row = 0;
-        for (row = 0; row < _connectionsPanels.size(); row++) {
-            WidgetUtils.addToGridBag(_connectionsPanels.get(row), directConnectionsPanel, 1, row + 1);
+        for (row = 0; row < _connectionPanels.size(); row++) {
+            WidgetUtils.addToGridBag(_connectionPanels.get(row), directConnectionsPanel, 1, row + 1);
         }
 
         return directConnectionsPanel;
@@ -206,7 +193,6 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
         final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Set Hadoop Clusters");
         final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         outerPanel.setLayout(new BorderLayout());
-        outerPanel.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         outerPanel.add(banner, BorderLayout.NORTH);
 
         final DCPanel contentPanel = new DCPanel();
@@ -242,7 +228,7 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
     }
 
     private void updatePanel(ServerInformation serverInformation) {
-        _connectionsPanels.clear();
+        _connectionPanels.clear();
         _connectionsConfigurationsPanel.removeAll();
         _connectionsConfigurationsPanel.add(getConnectionsConfigurationsPanel());
         _connectionsConfigurationsPanel.revalidate();

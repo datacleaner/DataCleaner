@@ -19,16 +19,17 @@
  */
 package org.datacleaner.panels;
 
+import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JComponent;
 
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class SelectDatastorePanel extends DCPanel {
@@ -40,7 +41,7 @@ public class SelectDatastorePanel extends DCPanel {
     public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog,
             final ServerInformationCatalog serverInformationCatalog, DatabaseDriverCatalog databaseDriverCatalog,
             UserPreferences userPreferences,
-            DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList, WindowContext windowContext) {
+            DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
         super();
         setLayout(new VerticalLayout());
 
@@ -54,7 +55,7 @@ public class SelectDatastorePanel extends DCPanel {
         }
 
         add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
-                !showExistingDatastoresAsLongList, windowContext));
+                !showExistingDatastoresAsLongList, hadoopOptionsDialogProvider));
 
         if (showExistingDatastoresAsLongList) {
             final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");

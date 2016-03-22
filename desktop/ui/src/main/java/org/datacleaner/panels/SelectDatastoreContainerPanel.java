@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import javax.inject.Provider;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -36,6 +37,7 @@ import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 
 /**
  * The usual container panel of {@link SelectDatastorePanel} when selecting to
@@ -51,11 +53,11 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
 
     public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule,
             DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
-            final ServerInformationCatalog serverInformationCatalog, UserPreferences userPreferences, WindowContext windowContext) {
+            final ServerInformationCatalog serverInformationCatalog, UserPreferences userPreferences, WindowContext windowContext, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
         _selectDatastorePanel = new SelectDatastorePanel(dcModule, datastoreCatalog, serverInformationCatalog,
-                databaseDriverCatalog, userPreferences, this, true, windowContext);
+                databaseDriverCatalog, userPreferences, this, true, hadoopOptionsDialogProvider);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);

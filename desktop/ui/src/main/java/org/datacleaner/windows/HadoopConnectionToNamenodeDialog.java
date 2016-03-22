@@ -42,7 +42,6 @@ import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -59,8 +58,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
     private final DirectConnectionHadoopClusterInformation _directConnection;
     private final JLabel _statusLabel;
     private final JXTextField _nameTextField;
-    private final JXTextField _hostTextField;
-    private final JXTextField _portTextField;
+    private final JXTextField _connectionStringURITextField;
     private final JXTextField _descriptionTextField;
     private final JButton _saveButton;
     private final JButton _cancelButton;
@@ -68,17 +66,14 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
     private ServerInformation _savedServer = null;
     private static final ImageManager imageManager = ImageManager.get();
 
-    public HadoopConnectionToNamenodeDialog(WindowContext windowContext,
-            DirectConnectionHadoopClusterInformation directConnection,
+    public HadoopConnectionToNamenodeDialog(WindowContext windowContext, DirectConnectionHadoopClusterInformation directConnection,
             MutableServerInformationCatalog serverinformationCatalog) {
         super(windowContext);
 
         _statusLabel = DCLabel.bright("Please specify connection name");
         _directConnection = directConnection;
         _nameTextField = WidgetFactory.createTextField("MyConnection");
-        _hostTextField = WidgetFactory.createTextField("localhost");
-        _portTextField = WidgetFactory.createTextField("9000");
-        _portTextField.setDocument(new NumberDocument(false));
+        _connectionStringURITextField = WidgetFactory.createTextField("hdfs://<hostname>:<port>/");
         _descriptionTextField = WidgetFactory.createTextField("description");
         _mutableServerInformationCatalog = serverinformationCatalog;
 
@@ -90,8 +85,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
                 URI nameNodeUri;
                 try {
-                    nameNodeUri = new URI("hdfs", null, _hostTextField.getText(), Integer.parseInt(_portTextField
-                            .getText()), "/", null, null);
+                    nameNodeUri = new URI(_connectionStringURITextField.getText());
                     DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
                             _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
                     _savedServer = newServer;
@@ -101,14 +95,13 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
                     _mutableServerInformationCatalog.addServerInformation(newServer);
                     dispose();
                 } catch (URISyntaxException e1) {
-                    setStatusError(e1);
-                    setSaveButtonEnabled(false);
+                    invalidateForm(e1);
                 } catch (Exception exception) {
-                    setStatusError(exception);
-                    setSaveButtonEnabled(false);
+                    invalidateForm(exception);
                 }
 
             }
+
         });
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
@@ -122,41 +115,22 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         if (directConnection != null) {
             _nameTextField.setText(directConnection.getName());
             _nameTextField.setEnabled(false);
-            _hostTextField.setText(directConnection.getNameNodeUri().getHost());
-            _portTextField.setText("" + directConnection.getNameNodeUri().getPort());
+            _connectionStringURITextField.setText(directConnection.getNameNodeUri().toString());
             final String description = directConnection.getDescription();
             if (description != null) {
                 _descriptionTextField.setText(description);
             }
         }
 
-        _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+        final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
             }
-        });
-
-        _hostTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-
-        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-
-        _descriptionTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
+        };
+        _nameTextField.getDocument().addDocumentListener(documentListener);
+        _connectionStringURITextField.getDocument().addDocumentListener(documentListener);
+        _descriptionTextField.getDocument().addDocumentListener(documentListener);
     }
 
     private static final long serialVersionUID = 1L;
@@ -187,12 +161,8 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Host:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_hostTextField, formPanel, 1, row);
-
-        row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("String URI:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_connectionStringURITextField, formPanel, 1, row);
 
         row++;
         WidgetUtils.addToGridBag(DCLabel.bright("Description:"), formPanel, 0, row);
@@ -205,7 +175,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         centerPanel.add(buttonPanel, BorderLayout.SOUTH);
         centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS); 
+        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS);
         final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Hadoop Direct Configurations");
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -222,6 +192,11 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         return _savedServer;
     }
 
+    private void invalidateForm(Exception exception) {
+        setStatusError(exception);
+        setSaveButtonEnabled(false);
+    }
+
     private void validateAndUpdate() {
         boolean valid = validateForm();
         setSaveButtonEnabled(valid);
@@ -234,29 +209,27 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
             return false;
         }
 
-        final String hostname = _hostTextField.getText();
-        if (StringUtils.isNullOrEmpty(hostname)) {
-            setStatusError("Please enter hostname");
+        final String connectionURI = _connectionStringURITextField.getText();
+        if (StringUtils.isNullOrEmpty(connectionURI)) {
+            setStatusError("Please enter URI to namenode");
             return false;
         }
 
-        final String port = _portTextField.getText();
-        if (StringUtils.isNullOrEmpty(port)) {
-            setStatusError("Please enter port number");
-            return false;
-        } else {
-            try {
-                int portInt = Integer.parseInt(port);
-                if (portInt <= 0) {
-                    setStatusError("Please enter a valid (positive port number)");
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                setStatusError("Please enter a valid port number");
+        try {
+            final URI uri = new URI(connectionURI);
+            if (StringUtils.isNullOrEmpty(uri.getHost())) {
+                setStatusError("Host is invalid. It is null or empty ?");
                 return false;
             }
+            final int port = uri.getPort();
+            if (port <= 0) {
+                setStatusError("Post is invalid. It is null or empty ?");
+                return false;
+            }
+        } catch (Exception e) {
+            setStatusError(e);
+            return false;
         }
-
         setStatusValid();
         return true;
     }

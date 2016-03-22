@@ -612,9 +612,8 @@ public class HdfsUrlChooser extends JComponent {
         frame.setVisible(true);
         
         final WindowContext windowContext = new DCWindowContext(null, null, null);
-        SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, serverInformationCatalog); 
+        final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, serverInformationCatalog, null); 
         selectHadoopConfigurationDialog.setVisible(true);
-        selectHadoopConfigurationDialog.setModal(true);
         final String selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration(); 
         
         try {

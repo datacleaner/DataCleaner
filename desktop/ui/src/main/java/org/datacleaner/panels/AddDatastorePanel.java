@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
@@ -51,6 +52,7 @@ import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDatastoreDialog;
+import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 
 import com.google.inject.Injector;
@@ -69,7 +71,7 @@ public class AddDatastorePanel extends DCPanel {
             final ServerInformationCatalog serverInformationCatalog, final DatabaseDriverCatalog databaseDriverCatalog,
             final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
-            boolean showExistingDatastoresButton, WindowContext wizardContext) {
+            boolean showExistingDatastoresButton, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -77,7 +79,9 @@ public class AddDatastorePanel extends DCPanel {
         _databaseDriverCatalog = databaseDriverCatalog;
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
-        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, wizardContext);
+        
+        final WindowContext windowContext = dcModule.createInjectorBuilder().createInjector().getInstance(WindowContext.class); 
+        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, windowContext, hadoopOptionsDialogProvider);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;

@@ -47,6 +47,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
@@ -171,6 +172,9 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton, _cancelButton);
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new BorderLayout());
+        final DescriptionLabel descriptionLabel = new DescriptionLabel();
+        descriptionLabel.setText("Add the URI of the namenode");
+        centerPanel.add(descriptionLabel, BorderLayout.NORTH); 
         centerPanel.add(formPanel, BorderLayout.CENTER);
         centerPanel.add(buttonPanel, BorderLayout.SOUTH);
         centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);

@@ -117,14 +117,14 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
     /**
      * We avoid having HadoopResource.DEFAULT_CLUSTERREFERENCE(
      * "org.datacleaner.hadoop.environment") as a server name. We write
-     * "default" instead
+     * "default" instead. 
      */
     private String[] getMappedServers(String[] serverNames, LinkedList<String> mappedServers) {
 
         for (int i = 0; i < serverNames.length; i++) {
             final String serverName = serverNames[i];
             if (serverName.equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
-                mappedServers.add("default");
+                mappedServers.add(0, "(default)");
             } else {
                 mappedServers.add(serverName);
             }

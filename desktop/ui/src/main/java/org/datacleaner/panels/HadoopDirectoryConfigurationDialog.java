@@ -50,6 +50,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.windows.AbstractDialog;
@@ -85,6 +86,7 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
                 @Override
                 public void onSelected(FilenameTextField filenameTextField, File file) {
                     _directory = file;
+                    validateAndUpdate();
                 }
             });
             if (_directory != null) {
@@ -103,6 +105,7 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
                 public void actionPerformed(ActionEvent e) {
                     _pathPanels.remove(_pathNumber);
                     _parent.remove(DirectoryPathPanel.this);
+                    validateAndUpdate();
                 }
             });
         }
@@ -144,7 +147,7 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
                 _descriptionTextField.setText(description);
             }
         }
-        
+
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -155,6 +158,34 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
         final String saveButtonText = server == null ? "Register connection" : "Save connection";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
+        _cancelButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HadoopDirectoryConfigurationDialog.this.close();
+            }
+        });
+
+        _saveButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (_server != null) {
+                    _serverInformationCatalog.removeServer(_server);
+                }
+                try {
+                    final List<String> paths = getPathList();
+
+                    final DirectoryBasedHadoopClusterInformation newServer = new DirectoryBasedHadoopClusterInformation(
+                            _nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths
+                                    .size()]));
+                    _serverInformationCatalog.addServerInformation(newServer);
+                } catch (Exception exception) {
+                    setStatusError(exception);
+                }
+                dispose();
+            }
+        });
 
     }
 
@@ -221,47 +252,6 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
             listPanel.add(_pathPanels.get(i));
         }
 
-        _cancelButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                HadoopDirectoryConfigurationDialog.this.close();
-            }
-        });
-
-        _saveButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final List<String> paths = new ArrayList<>();
-                for (int i = 0; i < _pathPanels.size(); i++) {
-                    final DirectoryPathPanel directoryPathPanel = _pathPanels.get(i);
-                    final File directory = directoryPathPanel.getDirectory();
-                    if (directory != null && directory.isDirectory()) {
-                        paths.add(directory.getPath());
-                    }
-                }
-                // We do not save a connection if there are no paths
-                if (paths.size() == 0) {
-                    setStatusError("The connection can not be created. There are no paths defined.");
-                    return;
-                }
-                if (_server != null) {
-                    _serverInformationCatalog.removeServer(_server);
-                }
-
-                try {
-                    final DirectoryBasedHadoopClusterInformation newServer = new DirectoryBasedHadoopClusterInformation(
-                            _nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths
-                                    .size()]));
-                    _serverInformationCatalog.addServerInformation(newServer);
-                } catch (Exception exception) {
-                    setStatusError(exception);
-                }
-                dispose();
-            }
-        });
-
         final JButton addPath = WidgetFactory.createDefaultButton("Add path");
         addPath.setToolTipText("Add path to configuration");
         addPath.addActionListener(new ActionListener() {
@@ -285,12 +275,15 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
 
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new BorderLayout());
+        final DescriptionLabel descriptionLabel = new DescriptionLabel();
+        descriptionLabel.setText("Add the directories that contain the hadoop configuration");
+        centerPanel.add(descriptionLabel, BorderLayout.NORTH);
         centerPanel.add(formPanel, BorderLayout.CENTER);
         final DCPanel buttonsPanel = DCPanel.flow(Alignment.CENTER, _saveButton, _cancelButton);
         centerPanel.add(buttonsPanel, BorderLayout.PAGE_END);
         centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS); 
+        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS);
         final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Hadoop Directory Configurations");
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -312,6 +305,12 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
     }
 
     private boolean validateForm() {
+        final List<String> paths = getPathList();
+        // We do not save a connection if there are no paths
+        if (paths.size() == 0) {
+            setStatusError("The connection can not be created. There are no paths defined.");
+            return false;
+        }
         final String connectionName = _nameTextField.getText();
         if (StringUtils.isNullOrEmpty(connectionName)) {
             setStatusError("Please enter a connection name");
@@ -343,6 +342,18 @@ public class HadoopDirectoryConfigurationDialog extends AbstractDialog {
     @Override
     public void setResizable(boolean resizable) {
         super.setResizable(true);
+    }
+
+    private List<String> getPathList() {
+        final List<String> paths = new ArrayList<>();
+        for (int i = 0; i < _pathPanels.size(); i++) {
+            final DirectoryPathPanel directoryPathPanel = _pathPanels.get(i);
+            final File directory = directoryPathPanel.getDirectory();
+            if (directory != null && directory.isDirectory()) {
+                paths.add(directory.getPath());
+            }
+        }
+        return paths;
     }
 
 }

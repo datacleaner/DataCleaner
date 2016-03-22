@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -88,7 +89,7 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
 
         _windowContext = windowContext;
         _serverInformationCatalog = (MutableServerInformationCatalog) configuration.getServerInformationCatalog();
-        _connectionPanels = new ArrayList<>();
+        _connectionPanels = new LinkedList<>();
         _connectionsConfigurationsPanel = new DCPanel();
         _addNamenodeConnection = WidgetFactory.createPrimaryButton("Add Namenode", IconUtils.ACTION_ADD);
         _addDirectoryBasedConnection = WidgetFactory.createPrimaryButton("Add Directory", IconUtils.ACTION_ADD);
@@ -141,11 +142,16 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
 
         final String[] serverNames = _serverInformationCatalog.getServerNames();
         for (int i = 0; i < serverNames.length; i++) {
+            final String serverName = serverNames[i];
             // create panel with this server;
-            final ServerInformation server = _serverInformationCatalog.getServer(serverNames[i]);
+            final ServerInformation server = _serverInformationCatalog.getServer(serverName);
             final HadoopConnectionPanel panel = new HadoopConnectionPanel(_windowContext, server,
                     _serverInformationCatalog);
-            _connectionPanels.add(panel);
+            if (serverName.equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+                _connectionPanels.add(0, panel);
+            } else {
+                _connectionPanels.add(panel);
+            }
         }
 
         int row = 0;
@@ -251,9 +257,8 @@ public class HadoopConfigurationsOptionsDialog extends AbstractWindow implements
                 "hdfs://192.168.0.200:9000/")));
         final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
 
-        final Resource resource = new FileResource(new File("C:\\Users\\claudiap\\Desktop\\testconf.xml"));
-        MutableServerInformationCatalog mutableServerInformationCatalog = new MutableServerInformationCatalog(
-                serverInformationCatalog, new DatastoreXmlExternalizer(resource));
+        final MutableServerInformationCatalog mutableServerInformationCatalog = new MutableServerInformationCatalog(
+                serverInformationCatalog, null);
 
         final UserPreferencesImpl userPreferencesImpl = new UserPreferencesImpl(null);
         final WindowContext windowContext = new DCWindowContext(null, null, null);

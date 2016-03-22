@@ -90,6 +90,7 @@ public class CloseTaskListener implements TaskListener {
             cleanup();
         } catch (Exception e) {
             onErrorInternal(task, e, false);
+            return;
         }
         if (_nextTaskListener != null) {
             _nextTaskListener.onComplete(task);
@@ -102,6 +103,8 @@ public class CloseTaskListener implements TaskListener {
     }
 
     private void onErrorInternal(Task task, Throwable throwable, boolean doCleanup) {
+        final boolean previouslySuccessful = _success.getAndSet(false);
+
         if (doCleanup) {
             try {
                 cleanup();
@@ -110,7 +113,6 @@ public class CloseTaskListener implements TaskListener {
             }
         }
 
-        final boolean previouslySuccessful = _success.getAndSet(false);
         if (previouslySuccessful) {
             // only report the first such error
             _analysisListener.errorUnknown(_analysisJob, throwable);

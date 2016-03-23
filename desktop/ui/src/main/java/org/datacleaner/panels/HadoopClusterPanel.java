@@ -36,7 +36,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.windows.HadoopConnectionToNamenodeDialog;
+import org.datacleaner.windows.DirectConnectionHadoopClusterDialog;
 
 public class HadoopClusterPanel extends DCPanel {
 
@@ -94,12 +94,12 @@ public class HadoopClusterPanel extends DCPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (_serverInformation instanceof DirectConnectionHadoopClusterInformation) {
-                    final HadoopConnectionToNamenodeDialog hadoopConnectionToNamenodeDialog = new HadoopConnectionToNamenodeDialog(
+                    final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog = new DirectConnectionHadoopClusterDialog(
                             _windowContext, (DirectConnectionHadoopClusterInformation) _serverInformation,
                             _serverInformationCatalog);
                     hadoopConnectionToNamenodeDialog.setVisible(true);
                 } else if (_serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)) {
-                    final HadoopDirectoryConfigurationDialog hadoopDirectoryConfigurationDialog = new HadoopDirectoryConfigurationDialog(
+                    final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog = new DirectoryBasedHadoopClusterDialog(
                             _windowContext, (DirectoryBasedHadoopClusterInformation) _serverInformation,
                             _serverInformationCatalog);
                     hadoopDirectoryConfigurationDialog.setVisible(true);

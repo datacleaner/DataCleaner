@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.inject.Provider;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -37,7 +36,6 @@ import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 
 /**
  * The usual container panel of {@link SelectDatastorePanel} when selecting to
@@ -51,13 +49,14 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     private final SelectDatastorePanel _selectDatastorePanel;
     private final MutableDatastoreCatalog _datastoreCatalog;
 
-    public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule,
-            DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
-            final ServerInformationCatalog serverInformationCatalog, UserPreferences userPreferences, WindowContext windowContext, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
+    public SelectDatastoreContainerPanel(final AnalysisJobBuilderWindow window, final DCModule dcModule,
+            final DatabaseDriverCatalog databaseDriverCatalog, final MutableDatastoreCatalog datastoreCatalog,
+            final ServerInformationCatalog serverInformationCatalog, final UserPreferences userPreferences,
+            final WindowContext windowContext) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
         _selectDatastorePanel = new SelectDatastorePanel(dcModule, datastoreCatalog, serverInformationCatalog,
-                databaseDriverCatalog, userPreferences, this, true, hadoopOptionsDialogProvider);
+                databaseDriverCatalog, userPreferences, this, true);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);

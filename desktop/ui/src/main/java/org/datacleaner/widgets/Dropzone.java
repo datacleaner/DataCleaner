@@ -50,6 +50,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
@@ -59,10 +60,10 @@ import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 import org.datacleaner.windows.HdfsUrlChooser;
 import org.datacleaner.windows.HdfsUrlChooser.OpenType;
-import org.datacleaner.windows.SelectHadoopConfigurationDialog;
+import org.datacleaner.windows.OptionsDialog;
+import org.datacleaner.windows.SelectHadoopClusterDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,8 @@ public class Dropzone extends DCPanel {
     private final UserPreferences _userPreferences;
 
     public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
-            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences, WindowContext windowContext, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences,
+            WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -115,27 +117,33 @@ public class Dropzone extends DCPanel {
         add(selectHadoopButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
                 GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 
-        final Component dropZone = this;
-
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                final String selectedServer;
+                String selectedServer = null;
                 final String[] serverNames = serverInformationCatalog.getServerNames();
                 // If there is only one configuration, it doesn't make sense to
                 // show the selection of configuration dialog
-                if (serverNames.length > 1) {
-                    final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
-                            serverInformationCatalog, hadoopOptionsDialogProvider);
+
+                if (serverNames.length == 1) {
+                    assert HadoopResource.DEFAULT_CLUSTERREFERENCE.equals(serverNames[0]);
+
+                    // check if YARN_CONF_DIR or HADOOP_CONF_DIR is set
+                    if (EnvironmentBasedHadoopClusterInformation.isConfigurationDirectoriesSpecified()) {
+                        selectedServer = serverNames[0];
+                    }
+                } 
+                
+                if (selectedServer == null) {
+                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog = new SelectHadoopClusterDialog(
+                            windowContext, serverInformationCatalog, optionsDialogProvider);
                     selectHadoopConfigurationDialog.setVisible(true);
-                    selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();  
-                } else {
-                    selectedServer = serverNames[0];
+                    selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();
                 }
 
                 if (selectedServer != null) {
-                    final URI selectedFile = HdfsUrlChooser.showDialog(dropZone, serverInformationCatalog,
+                    final URI selectedFile = HdfsUrlChooser.showDialog(Dropzone.this, serverInformationCatalog,
                             selectedServer, null, OpenType.LOAD);
                     logger.info("Selected HDFS file: " + selectedFile);
 

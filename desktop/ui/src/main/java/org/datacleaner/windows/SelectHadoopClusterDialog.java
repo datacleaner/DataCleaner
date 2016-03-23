@@ -25,10 +25,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -38,26 +35,19 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
-import org.datacleaner.configuration.ServerInformationCatalogImpl;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
-import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
-public class SelectHadoopConfigurationDialog extends AbstractDialog {
+public class SelectHadoopClusterDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,13 +57,13 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
     private String _selectedConfiguration;
     private final LinkedList<String> _mappedServers;
     private static final ImageManager _imageManager = ImageManager.get();
-    private final Provider<HadoopConfigurationsOptionsDialog> _hadoopOptionsDialogProvider;
+    private final Provider<OptionsDialog> _optionsDialogProvider;
 
     
-    public SelectHadoopConfigurationDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
+    public SelectHadoopClusterDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog, Provider<OptionsDialog> optionsDialogProvider) {
          super(windowContext); 
          
-         _hadoopOptionsDialogProvider = hadoopOptionsDialogProvider; 
+         _optionsDialogProvider = optionsDialogProvider; 
          //It needs to be modal. Otherwise there will be null for selected Configuration
          setModal(true);
          setResizable(true);
@@ -104,10 +94,10 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                SelectHadoopConfigurationDialog.this.close();
-                final HadoopConfigurationsOptionsDialog hadoopConfigurationsOptionsDialog = _hadoopOptionsDialogProvider
-                        .get();
-                hadoopConfigurationsOptionsDialog.setVisible(true);
+                SelectHadoopClusterDialog.this.close();
+                final OptionsDialog optionsDialog = _optionsDialogProvider.get();
+                optionsDialog.selectHadoopClustersTab();
+                optionsDialog.open();
             }
         });
 
@@ -138,17 +128,17 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return "Select Hadoop configuration";
+        return "Select Hadoop cluster";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "Hadoop configurations";
+        return getWindowTitle();
     }
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return 500;
     }
     
     @Override
@@ -182,35 +172,4 @@ public class SelectHadoopConfigurationDialog extends AbstractDialog {
         outerPanel.setPreferredSize(getDialogWidth(), 300); 
         return outerPanel; 
     }
-    
-    public static void main(String[] args) throws Exception {
-        LookAndFeelManager.get().init();
-        final List<ServerInformation> servers = new ArrayList<>();
-        servers.add(new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE,
-                "hadoop conf dir"));
-        servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
-                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\yarn_conf_client"));
-        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
-                "hdfs://192.168.0.200:9000/")));
-        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
-                "hdfs://192.168.0.200:9000/")));
-        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
-                "hdfs://192.168.0.200:9000/")));
-        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
-                "hdfs://192.168.0.200:9000/")));
-        final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
-
-
-        String hadoopConfiguration = null; 
-        WindowContext windowContext = new DCWindowContext(null, null, null);
-        final SelectHadoopConfigurationDialog selectHadoopConfigurationDialog = new SelectHadoopConfigurationDialog(windowContext, 
-                serverInformationCatalog, null);
-        selectHadoopConfigurationDialog.setVisible(true);
-        selectHadoopConfigurationDialog.pack();
-
-        System.out.println(hadoopConfiguration);
-
-    }
-
-   
 }

@@ -42,6 +42,6 @@ public class DescriptionLabel extends DCLabel {
         setFont(WidgetUtils.FONT_SMALL);
         setOpaque(true);
         setBackground(WidgetUtils.BG_COLOR_PALE_YELLOW);
-        setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM), WidgetUtils.BORDER_EMPTY));
+        setBorder(new CompoundBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT), WidgetUtils.BORDER_EMPTY));
     }
 }

@@ -52,8 +52,8 @@ import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDatastoreDialog;
-import org.datacleaner.windows.HadoopConfigurationsOptionsDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
+import org.datacleaner.windows.OptionsDialog;
 
 import com.google.inject.Injector;
 
@@ -69,9 +69,8 @@ public class AddDatastorePanel extends DCPanel {
 
     public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
             final ServerInformationCatalog serverInformationCatalog, final DatabaseDriverCatalog databaseDriverCatalog,
-            final DCModule dcModule,
-            final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
-            boolean showExistingDatastoresButton, Provider<HadoopConfigurationsOptionsDialog> hadoopOptionsDialogProvider) {
+            final DCModule dcModule, final DatastoreSelectedListener datastoreSelectedListener,
+            final UserPreferences userPreferences, final boolean showExistingDatastoresButton) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -80,8 +79,10 @@ public class AddDatastorePanel extends DCPanel {
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
         
-        final WindowContext windowContext = dcModule.createInjectorBuilder().createInjector().getInstance(WindowContext.class); 
-        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, windowContext, hadoopOptionsDialogProvider);
+        final Injector injector = dcModule.createInjectorBuilder().createInjector();
+        final WindowContext windowContext = injector.getInstance(WindowContext.class);
+        final Provider<OptionsDialog> optionsDialogProvider = injector.getProvider(OptionsDialog.class);
+        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, windowContext, optionsDialogProvider);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;

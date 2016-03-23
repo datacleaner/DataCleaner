@@ -21,25 +21,19 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformation;
-import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
@@ -48,75 +42,64 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
 /**
  * Dialog for creating and editing a direct connection to Hadoop namenode
  */
-public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
+public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
 
     private final DirectConnectionHadoopClusterInformation _directConnection;
-    private final JLabel _statusLabel;
     private final JXTextField _nameTextField;
-    private final JXTextField _connectionStringURITextField;
+    private final JXTextField _fileSystemURITextField;
     private final JXTextField _descriptionTextField;
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final MutableServerInformationCatalog _mutableServerInformationCatalog;
     private ServerInformation _savedServer = null;
-    private static final ImageManager imageManager = ImageManager.get();
 
-    public HadoopConnectionToNamenodeDialog(WindowContext windowContext, DirectConnectionHadoopClusterInformation directConnection,
+    public DirectConnectionHadoopClusterDialog(WindowContext windowContext,
+            DirectConnectionHadoopClusterInformation directConnection,
             MutableServerInformationCatalog serverinformationCatalog) {
-        super(windowContext);
+        super(windowContext, ImageManager.get().getImage(IconUtils.FILE_HDFS));
 
-        _statusLabel = DCLabel.bright("Please specify connection name");
         _directConnection = directConnection;
-        _nameTextField = WidgetFactory.createTextField("MyConnection");
-        _connectionStringURITextField = WidgetFactory.createTextField("hdfs://<hostname>:<port>/");
+        _nameTextField = WidgetFactory.createTextField("My cluster");
+        _fileSystemURITextField = WidgetFactory.createTextField("hdfs://<hostname>:<port>/");
         _descriptionTextField = WidgetFactory.createTextField("description");
         _mutableServerInformationCatalog = serverinformationCatalog;
 
-        final String saveButtonText = directConnection == null ? "Register connection" : "Save connection";
+        final String saveButtonText = directConnection == null ? "Register cluster" : "Save cluster";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
-        _saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                URI nameNodeUri;
-                try {
-                    nameNodeUri = new URI(_connectionStringURITextField.getText());
-                    DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
-                            _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
-                    _savedServer = newServer;
-                    if (_directConnection != null) {
-                        _mutableServerInformationCatalog.removeServer(_directConnection);
-                    }
-                    _mutableServerInformationCatalog.addServerInformation(newServer);
-                    dispose();
-                } catch (URISyntaxException e1) {
-                    invalidateForm(e1);
-                } catch (Exception exception) {
-                    invalidateForm(exception);
+        _saveButton.addActionListener(e -> {
+            try {
+                final URI nameNodeUri = new URI(_fileSystemURITextField.getText());
+                final DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
+                        _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
+                _savedServer = newServer;
+                if (_directConnection != null) {
+                    _mutableServerInformationCatalog.removeServer(_directConnection);
                 }
-
+                _mutableServerInformationCatalog.addServerInformation(newServer);
+                close();
+            } catch (URISyntaxException e1) {
+                invalidateForm(e1);
+                return;
+            } catch (Exception exception) {
+                invalidateForm(exception);
+                return;
             }
-
         });
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                HadoopConnectionToNamenodeDialog.this.close();
-            }
+        _cancelButton.addActionListener(e -> {
+            DirectConnectionHadoopClusterDialog.this.close();
         });
 
         if (directConnection != null) {
             _nameTextField.setText(directConnection.getName());
             _nameTextField.setEnabled(false);
-            _connectionStringURITextField.setText(directConnection.getNameNodeUri().toString());
+            _fileSystemURITextField.setText(directConnection.getNameNodeUri().toString());
             final String description = directConnection.getDescription();
             if (description != null) {
                 _descriptionTextField.setText(description);
@@ -130,7 +113,7 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
             }
         };
         _nameTextField.getDocument().addDocumentListener(documentListener);
-        _connectionStringURITextField.getDocument().addDocumentListener(documentListener);
+        _fileSystemURITextField.getDocument().addDocumentListener(documentListener);
         _descriptionTextField.getDocument().addDocumentListener(documentListener);
     }
 
@@ -138,17 +121,17 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return "Connect to Hadoop";
+        return "Hadoop cluster - Direct namenode connection";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "Connect directly to namenode";
+        return getWindowTitle();
     }
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return 700;
     }
 
     @Override
@@ -158,38 +141,32 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
         formPanel.setLayout(new GridBagLayout());
 
         int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("Connection name:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("Cluster name:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
-
-        row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("String URI:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_connectionStringURITextField, formPanel, 1, row);
 
         row++;
         WidgetUtils.addToGridBag(DCLabel.bright("Description:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_descriptionTextField, formPanel, 1, row);
 
+        row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("File system URI:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_fileSystemURITextField, formPanel, 1, row);
+
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton, _cancelButton);
+        final DescriptionLabel descriptionLabel = new DescriptionLabel(
+                "Fill out the connection information needed for DataCleaner to connect directly to the Apache Hadoop namenode and HDFS.");
+
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new BorderLayout());
-        final DescriptionLabel descriptionLabel = new DescriptionLabel();
-        descriptionLabel.setText("Add the URI of the namenode");
-        centerPanel.add(descriptionLabel, BorderLayout.NORTH); 
+        centerPanel.add(descriptionLabel, BorderLayout.NORTH);
         centerPanel.add(formPanel, BorderLayout.CENTER);
         centerPanel.add(buttonPanel, BorderLayout.SOUTH);
-        centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final Image hadoopImage = imageManager.getImage(IconUtils.FILE_HDFS);
-        final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Hadoop Direct Configurations");
-        final DCPanel outerPanel = new DCPanel();
-        outerPanel.setLayout(new BorderLayout());
-        outerPanel.add(banner, BorderLayout.NORTH);
-        outerPanel.add(centerPanel, BorderLayout.CENTER);
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-        outerPanel.add(statusBar, BorderLayout.SOUTH);
-        outerPanel.setPreferredSize(getDialogWidth(), 400);
         validateAndUpdate();
-        return outerPanel;
+
+        centerPanel.setPreferredSize(getDialogWidth(), 300);
+
+        return centerPanel;
     }
 
     public ServerInformation getSavedServer() {
@@ -197,7 +174,6 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
     }
 
     private void invalidateForm(Exception exception) {
-        setStatusError(exception);
         setSaveButtonEnabled(false);
     }
 
@@ -209,51 +185,35 @@ public class HadoopConnectionToNamenodeDialog extends AbstractDialog {
     private boolean validateForm() {
         final String connectionName = _nameTextField.getText();
         if (StringUtils.isNullOrEmpty(connectionName)) {
-            setStatusError("Please enter a connection name");
             return false;
         }
 
-        final String connectionURI = _connectionStringURITextField.getText();
+        final String connectionURI = _fileSystemURITextField.getText();
         if (StringUtils.isNullOrEmpty(connectionURI)) {
-            setStatusError("Please enter URI to namenode");
             return false;
         }
 
         try {
             final URI uri = new URI(connectionURI);
             if (StringUtils.isNullOrEmpty(uri.getHost())) {
-                setStatusError("Host is invalid. It is null or empty ?");
                 return false;
             }
             final int port = uri.getPort();
             if (port <= 0) {
-                setStatusError("Post is invalid. It is null or empty ?");
                 return false;
             }
         } catch (Exception e) {
-            setStatusError(e);
             return false;
         }
-        setStatusValid();
         return true;
-    }
-
-    private void setStatusError(Throwable error) {
-        error = ErrorUtils.unwrapForPresentation(error);
-        setStatusError(error.getMessage());
-    }
-
-    private void setStatusError(String text) {
-        _statusLabel.setText(text);
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
-    }
-
-    private void setStatusValid() {
-        _statusLabel.setText("Connection setup ready");
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
     }
 
     private void setSaveButtonEnabled(boolean enabled) {
         _saveButton.setEnabled(enabled);
+    }
+
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
     }
 }

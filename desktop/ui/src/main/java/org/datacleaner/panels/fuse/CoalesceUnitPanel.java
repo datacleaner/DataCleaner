@@ -149,7 +149,7 @@ public class CoalesceUnitPanel extends DCPanel {
         panel.setLayout(new BorderLayout());
         panel.add(new JLabel(item.getName(), IconUtils.getColumnIcon(item, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT),
                 BorderLayout.CENTER);
-        JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+        JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

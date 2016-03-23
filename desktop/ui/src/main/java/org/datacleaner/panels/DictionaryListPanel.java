@@ -204,7 +204,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
                 editButton.setEnabled(false);
             }
 
-            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
             removeButton.setToolTipText("Remove dictionary");
             removeButton.addActionListener(new ActionListener() {
                 @Override

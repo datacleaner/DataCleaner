@@ -38,14 +38,14 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.HadoopConnectionToNamenodeDialog;
 
-public class HadoopConnectionPanel extends DCPanel {
+public class HadoopClusterPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
     private final MutableServerInformationCatalog _serverInformationCatalog;
     private final ServerInformation _serverInformation;
     private final WindowContext _windowContext;
 
-    public HadoopConnectionPanel(WindowContext windowContext, ServerInformation serverInformation,
+    public HadoopClusterPanel(WindowContext windowContext, ServerInformation serverInformation,
             MutableServerInformationCatalog serverInformationCatalog) {
         _serverInformationCatalog = serverInformationCatalog;
         _serverInformation = serverInformation;
@@ -110,12 +110,12 @@ public class HadoopConnectionPanel extends DCPanel {
     }
 
     private JButton createRemoveButton(ServerInformation serverInformation) {
-        final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE);
+        final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE_DARK);
         removeButton.setToolTipText("Remove connection");
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(HadoopConnectionPanel.this,
+                int result = JOptionPane.showConfirmDialog(HadoopClusterPanel.this,
                         "Are you sure you wish to remove the connection '" + serverInformation.getName() + "'?",
                         "Confirm remove", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {

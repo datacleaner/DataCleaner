@@ -67,7 +67,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		_comboBoxPanel = new DCPanel();
 		_comboBoxPanel.setLayout(new VerticalLayout(2));
 
-		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -76,7 +76,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 			}
 		});
 
-		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

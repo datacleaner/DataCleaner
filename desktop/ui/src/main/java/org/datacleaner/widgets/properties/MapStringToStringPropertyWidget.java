@@ -61,7 +61,7 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
         _textFieldPanel = new DCPanel();
         _textFieldPanel.setLayout(new VerticalLayout(2));
 
-        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,7 +70,7 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
             }
         });
 
-        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

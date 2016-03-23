@@ -56,8 +56,8 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
         _sourceComboBoxPanel.setLayout(new VerticalLayout(2));
         _sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
 
-        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
-        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
+        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 
         _buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
         _buttonPanel.setLayout(new VerticalLayout(2));

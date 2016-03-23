@@ -43,7 +43,7 @@ public class RemoveComponentMenuItem extends JMenuItem implements ActionListener
 
     public RemoveComponentMenuItem(
             ComponentBuilder componentBuilder) {
-        super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE, IconUtils.ICON_SIZE_SMALL));
+        super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE_DARK, IconUtils.ICON_SIZE_SMALL));
         _componentBuilder = componentBuilder;
         addActionListener(this);
     }

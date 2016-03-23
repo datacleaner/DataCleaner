@@ -127,8 +127,23 @@ public final class IconUtils {
     public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_COPY = "images/actions/copy.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
-    public static final String ACTION_ADD = "images/actions/add.png";
-    public static final String ACTION_REMOVE = "images/actions/remove.png";
+    public static final String ACTION_ADD_DARK = "images/actions/add_dark.png";
+    public static final String ACTION_REMOVE_DARK = "images/actions/remove_dark.png";
+    public static final String ACTION_ADD_BRIGHT = "images/actions/add_bright.png";
+    public static final String ACTION_REMOVE_BRIGHT = "images/actions/remove_bright.png";
+    
+    /**
+     * @deprecated use {@link #ACTION_ADD_DARK} or {@link #ACTION_ADD_BRIGHT}
+     */
+    @Deprecated
+    public static final String ACTION_ADD = ACTION_ADD_DARK;
+    
+    /**
+     * @deprecated use {@link #ACTION_REMOVE_DARK} or {@link #ACTION_REMOVE_BRIGHT}
+     */
+    @Deprecated
+    public static final String ACTION_REMOVE = ACTION_REMOVE_DARK;
+    
     public static final String ACTION_RESET = "images/actions/reset.png";
     public static final String ACTION_RENAME = "images/actions/rename.png";
     public static final String ACTION_REFRESH = "images/actions/refresh.png";

@@ -89,8 +89,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		_valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		_valueWidthTextFields = new ArrayList<JXTextField>();
 		_encodingComboBox = new CharSetEncodingComboBox();
-		_addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
-		_removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+		_addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
+		_removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 
 		_headerLineComboBox = new HeaderLineComboBox();
 

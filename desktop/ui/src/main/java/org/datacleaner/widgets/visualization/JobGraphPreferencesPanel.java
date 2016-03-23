@@ -77,8 +77,8 @@ public class JobGraphPreferencesPanel extends DCPanel {
         add(Box.createHorizontalStrut(10));
 
         addLabel("Font size:");
-        add(createFontFactorButton(IconUtils.ACTION_ADD, 0.1f));
-        add(createFontFactorButton(IconUtils.ACTION_REMOVE, -0.1f));
+        add(createFontFactorButton(IconUtils.ACTION_ADD_DARK, 0.1f));
+        add(createFontFactorButton(IconUtils.ACTION_REMOVE_DARK, -0.1f));
         add(Box.createHorizontalStrut(10));
     }
 

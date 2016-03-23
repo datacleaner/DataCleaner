@@ -214,7 +214,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         }
 
         final JMenuItem menuItem = new JMenuItem(menuItemText,
-                imageManager.getImageIcon(IconUtils.ACTION_ADD, IconUtils.ICON_SIZE_SMALL));
+                imageManager.getImageIcon(IconUtils.ACTION_ADD_DARK, IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

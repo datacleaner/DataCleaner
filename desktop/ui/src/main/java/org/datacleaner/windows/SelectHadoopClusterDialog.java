@@ -21,8 +21,7 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -37,7 +36,6 @@ import javax.swing.ScrollPaneConstants;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
-import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
@@ -56,12 +54,11 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
     private final JButton _optionsButton;
     private String _selectedConfiguration;
     private final LinkedList<String> _mappedServers;
-    private static final ImageManager _imageManager = ImageManager.get();
     private final Provider<OptionsDialog> _optionsDialogProvider;
 
     
     public SelectHadoopClusterDialog(WindowContext windowContext, ServerInformationCatalog serverInformationCatalog, Provider<OptionsDialog> optionsDialogProvider) {
-         super(windowContext); 
+         super(windowContext, ImageManager.get().getImage(IconUtils.FILE_HDFS)); 
          
          _optionsDialogProvider = optionsDialogProvider; 
          //It needs to be modal. Otherwise there will be null for selected Configuration
@@ -144,7 +141,7 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
     protected JComponent getDialogContent() {
        
         final DCPanel contentPanel = new DCPanel();
-        contentPanel.setLayout(new GridLayout());
+        contentPanel.setLayout(new GridBagLayout());
         
         final DCPanel listPanel = new DCPanel(); 
         listPanel.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
@@ -152,21 +149,18 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
         listPanel.add(_serverList);
         
 
-        final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
+        final DCLabel label = DCLabel.dark("Please select the Hadoop cluster to connect to:");
         label.setFont(WidgetUtils.FONT_HEADER2);
-        WidgetUtils.addToGridBag(label, contentPanel, 0, 0);
-        WidgetUtils.addToGridBag(listPanel, contentPanel, 0, 1, 1, 2);
-        WidgetUtils.addToGridBag(_optionsButton, contentPanel, 1, 1, GridBagConstraints.NORTH);
-        WidgetUtils.addToGridBag(_okButton, contentPanel, 1, 2, GridBagConstraints.SOUTH);
+        WidgetUtils.addToGridBag(label, contentPanel, 0, 0, 1.0, 0.0);
+        WidgetUtils.addToGridBag(listPanel, contentPanel, 0, 1, 1, 2, GridBagConstraints.NORTH, 10, 1.0, 1.0);
+        WidgetUtils.addToGridBag(_optionsButton, contentPanel, 1, 1, GridBagConstraints.SOUTH);
+        WidgetUtils.addToGridBag(_okButton, contentPanel, 1, 2, GridBagConstraints.NORTH);
         
         final JScrollPane scrolleable = WidgetUtils.scrolleable(contentPanel);
         scrolleable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        final Image hadoopImage = _imageManager.getImage(IconUtils.FILE_HDFS);
-        final DCBannerPanel banner = new DCBannerPanel(hadoopImage, "Select Hadoop Cluster");
         
         final DCPanel outerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND); 
         outerPanel.setLayout(new BorderLayout());
-        outerPanel.add(banner, BorderLayout.NORTH); 
         outerPanel.add(scrolleable, BorderLayout.CENTER); 
         outerPanel.setPreferredSize(getDialogWidth(), 300); 
         return outerPanel; 

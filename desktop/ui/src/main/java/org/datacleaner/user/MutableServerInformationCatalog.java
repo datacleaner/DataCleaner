@@ -26,6 +26,7 @@ import java.util.List;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
+import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.StringUtils;
 
 /**
@@ -63,7 +64,9 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
             }
         }
         if (externalize) {
-            _configurationWriter.removeServerInformation(serverInformation.getName());
+            if (serverInformation instanceof HadoopClusterInformation) {
+                _configurationWriter.removeHadoopClusterServerInformation(serverInformation.getName());
+            }
         }
     }
 

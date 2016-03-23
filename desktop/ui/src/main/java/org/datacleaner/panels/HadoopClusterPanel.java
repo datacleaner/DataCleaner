@@ -88,7 +88,7 @@ public class HadoopClusterPanel extends DCPanel {
 
     private JButton createEditButton() {
         final JButton editButton = WidgetFactory.createDefaultButton("Edit", IconUtils.ACTION_EDIT);
-        editButton.setToolTipText("Edit connection");
+        editButton.setToolTipText("Edit Hadoop cluster");
         editButton.addActionListener(new ActionListener() {
 
             @Override
@@ -111,12 +111,12 @@ public class HadoopClusterPanel extends DCPanel {
 
     private JButton createRemoveButton(ServerInformation serverInformation) {
         final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE_DARK);
-        removeButton.setToolTipText("Remove connection");
+        removeButton.setToolTipText("Remove Hadoop cluster");
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int result = JOptionPane.showConfirmDialog(HadoopClusterPanel.this,
-                        "Are you sure you wish to remove the connection '" + serverInformation.getName() + "'?",
+                        "Are you sure you wish to remove the Hadoop cluster '" + serverInformation.getName() + "'?",
                         "Confirm remove", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     _serverInformationCatalog.removeServer(_serverInformation);

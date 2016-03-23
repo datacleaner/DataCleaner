@@ -332,6 +332,11 @@ public class DomConfigurationWriterTest {
         DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
                 (DirectConnectionHadoopClusterInformation) serverInformationCatalog.getServer("namenode");
         assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
+        
+        configurationWriter.removeHadoopClusterServerInformation("namenode");
+        
+        final String str2 = transform(configurationWriter.getDocument());
+        assertFalse(str2, str2.contains("namenode"));
     }
 
     @Test

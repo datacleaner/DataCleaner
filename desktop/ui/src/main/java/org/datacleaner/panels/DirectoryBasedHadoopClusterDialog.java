@@ -247,15 +247,10 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
 
         final JButton addPath = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addPath.setToolTipText("Add path to configuration");
-        addPath.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DirectoryPathPanel newPathPanel = new DirectoryPathPanel(null, listPanel);
-                _pathPanels.add(newPathPanel);
-                listPanel.add(newPathPanel);
-
-            }
+        addPath.addActionListener(e -> {
+            final DirectoryPathPanel newPathPanel = new DirectoryPathPanel(null, listPanel);
+            _pathPanels.add(newPathPanel);
+            listPanel.add(newPathPanel);
         });
 
         WidgetUtils.addToGridBag(DCLabel.bright("Name:"), formPanel, 0, 0);

@@ -30,16 +30,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
@@ -83,6 +83,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,10 +104,15 @@ public class ComponentControllerV1 {
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
+    private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
+    
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_TABULAR = "tabular";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_MAP = "map";
+    private static final String PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT = "document";
+    
     private static ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
-    private static BufferedImage remoteMark = null;
     private int _maxBatchSize = Integer.MAX_VALUE;
 
     private InputRewriterController inputRewriterController = new InputRewriterController();
@@ -213,6 +219,7 @@ public class ComponentControllerV1 {
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("One-shot processing '{}'", decodedName);
@@ -224,13 +231,36 @@ public class ComponentControllerV1 {
 
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
-        output.rows = getJsonNode(handler.runComponent(processStatelessInput.data, _maxBatchSize));
+        OutputStyle outputStyleEnum = OutputStyle.forString(outputStyle);
+        output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
 
         return output;
     }
 
-    private JsonNode getJsonNode(Object value) {
+    private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
+        if(outputFormat == OutputStyle.MAP) {
+            org.datacleaner.api.OutputColumns columns = handler.getOutputColumns();
+            int columnCount = columns.getColumnCount();
+            List<List<Map<String, Object>>> mapStyleOutput = new ArrayList<>(data.size());
+            for(List<Object[]> rowGroup: data) {
+                List<Map<String, Object>> columnMapRowGroup = new ArrayList<>(rowGroup.size());
+                for(Object[] row: rowGroup) {
+                    Map<String, Object> columMapRow = new HashMap<>(columnCount);
+                    for(int i = 0; i < columnCount; i++) {
+                        columMapRow.put(columns.getColumnName(i), row[i]);
+                    }
+                    columnMapRowGroup.add(columMapRow);
+                }
+                mapStyleOutput.add(columnMapRowGroup);
+            }
+            return getJsonNode(mapStyleOutput);
+        } else {
+            return getJsonNode(data);
+        }
+    }
+
+    private static JsonNode getJsonNode(Object value) {
         if (value == null) {
             return null;
         }
@@ -312,12 +342,10 @@ public class ComponentControllerV1 {
             boolean iconData) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
-                .setName(descriptor.getDisplayName()).setDescription(descriptor.getDescription())
+                .setName(descriptor.getDisplayName())
                 .setCreateURL(getURLForCreation(tenant, descriptor))
-                .setSuperCategoryName(descriptor.getComponentSuperCategory().getClass().getName())
-                .setCategoryNames(getCategoryNames(descriptor))
                 .setProperties(createPropertiesInfo(descriptor, componentInstance));
-
+        setComponentAnnotations(descriptor, componentInfo);
         if (iconData) {
             componentInfo.setIconData(getComponentIconData(descriptor));
         }
@@ -330,7 +358,6 @@ public class ComponentControllerV1 {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
             Image icon = ImageIO.read(iconStream);
-            BufferedImage mark = getRemoteMark();
             int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
             int iconH = icon.getHeight(null);
@@ -346,7 +373,6 @@ public class ComponentControllerV1 {
             BufferedImage resultImg = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = resultImg.getGraphics();
             graphics.drawImage(icon, (maxSize-iconW)/2, (maxSize-iconH)/2, null);
-            graphics.drawImage(mark, maxSize - mark.getWidth(), 0, null);
             graphics.dispose();
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -363,25 +389,6 @@ public class ComponentControllerV1 {
         }
     }
 
-    private static BufferedImage getRemoteMark() throws IOException {
-        if (remoteMark == null) {
-            InputStream markStream = ComponentControllerV1.class.getClassLoader().getResourceAsStream(REMOTE_MARK);
-            remoteMark = ImageIO.read(markStream);
-        }
-
-        return remoteMark;
-    }
-
-    private static Set<String> getCategoryNames(ComponentDescriptor<?> componentDescriptor) {
-        Set<String> categoryNames = new HashSet<>();
-
-        for (Object element : componentDescriptor.getComponentCategories()) {
-            ComponentCategory componentCategory = (ComponentCategory) element;
-            categoryNames.add(componentCategory.getClass().getName());
-        }
-
-        return categoryNames;
-    }
 
     static private String getURLForCreation(String tenant, ComponentDescriptor<?> descriptor) {
         try {
@@ -417,29 +424,63 @@ public class ComponentControllerV1 {
         return result;
     }
 
-    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentList.PropertyInfo propInfo) {
-        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
-        if (annotations == null) {
-            return;
-        }
+    private static Map<String, Map<String, Object>> getAnnotationMap(Set<Annotation> annotations, String objectName){
+        Map<String, Map<String, Object>> annotationMap = new HashMap<>();
         for (Annotation an : annotations) {
+            boolean addAnnotationToMap = true;
             Class<?> anClass = an.annotationType();
             Map<String, Object> anValues = new HashMap<>();
             for (Method anMethod : anClass.getDeclaredMethods()) {
                 try {
                     if (anMethod.getParameterTypes().length == 0) {
                         Object anValue = anMethod.invoke(an, new Object[0]);
+                        if(!isAllowedValue(anValue)){
+                            addAnnotationToMap = false;
+                            break;
+                        }
                         if (anValue != null) {
                             anValues.put(anMethod.getName(), anValue);
                         }
                     }
                 } catch (Exception e) {
-                    logger.warn("Cannot provide property '{}' annotation", propertyDescriptor.getName(), e);
+                    logger.warn("Cannot provide property '{}' annotation", objectName, e);
                 }
             }
-            propInfo.getAnnotations().put(anClass.getName(), anValues);
+            if(addAnnotationToMap) {
+                annotationMap.put(anClass.getName(), anValues);
+            }
         }
+        return annotationMap;
+    }
+
+    private static boolean isAllowedValue(final Object anValue) {
+        if (anValue == null) {
+            return true;
+        }
+        try {
+            Serializator.getJacksonObjectMapper().writeValueAsString(anValue);
+        } catch (JsonProcessingException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private static void setPropertyAnnotations(ConfiguredPropertyDescriptor propertyDescriptor,
+            ComponentList.PropertyInfo propInfo) {
+        Set<Annotation> annotations = propertyDescriptor.getAnnotations();
+        if (annotations == null) {
+            return;
+        }
+        propInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, propertyDescriptor.getName())));
+    }
+
+    private static void setComponentAnnotations(ComponentDescriptor<?> componentDescriptor,
+            ComponentList.ComponentInfo componentInfo) {
+        Set<Annotation> annotations = componentDescriptor.getAnnotations();
+        if (annotations == null) {
+            return;
+        }
+        componentInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, componentDescriptor.getDisplayName())));
     }
 
     static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
@@ -480,6 +521,29 @@ public class ComponentControllerV1 {
         propInfo.setClassName(propertyDescriptor.getType().getName());
         if (!propertyDescriptor.isInputColumn()) {
             propInfo.setSchema(visitor.finalSchema());
+        }
+    }
+
+    public enum OutputStyle {
+
+        TABULAR,
+        MAP;
+
+        public static OutputStyle forString(String outputStyle) {
+            if (outputStyle == null) {
+                return TABULAR;
+            }
+            outputStyle = outputStyle.trim().toLowerCase();
+            switch (outputStyle) {
+            case "":
+            case PARAMETER_VALUE_OUTPUT_STYLE_TABULAR:
+                return TABULAR;
+            case PARAMETER_VALUE_OUTPUT_STYLE_DOCUMENT:
+            case PARAMETER_VALUE_OUTPUT_STYLE_MAP:
+                return MAP;
+            default:
+                throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
+            }
         }
     }
 }

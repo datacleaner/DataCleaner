@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+
+	<source>
+		<data-context ref="person_names" />
+		<columns>
+			<column id="col_country" path="country" />
+			<column id="col_company" path="company" />
+		</columns>
+	</source>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col_company" />
+		</analyzer>
+		
+		<analyzer>
+			<descriptor ref="Value distribution" />
+			<input ref="col_country" />
+			<input ref="col_company" />
+		</analyzer>
+	</analysis>
+
+</job>

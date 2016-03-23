@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
@@ -40,6 +41,7 @@ import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
@@ -146,7 +148,7 @@ public class SparkJobContext implements Serializable {
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         if (_analysisJobBuilder == null) {
             // set HDFS as default scheme to avoid file resources
-            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, "hdfs");
+            SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, HdfsResource.SCHEME_HDFS);
 
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);
@@ -181,9 +183,14 @@ public class SparkJobContext implements Serializable {
     public String getComponentKey(ComponentJob componentJob) {
         final String key = componentJob.getMetadataProperties().get(METADATA_PROPERTY_COMPONENT_INDEX);
         if (key == null) {
-            throw new IllegalArgumentException("Cannot find component in job: " + componentJob);
+            throw new IllegalStateException("No key registered for component: " + componentJob);        }
+
+        final String partitionKey = componentJob.getMetadataProperties().get(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_PARTITION_INDEX);
+        if (partitionKey != null) {
+            return key + "." + partitionKey;
+        } else {
+            return key;
         }
-        return key;
     }
 
     public ComponentJob getComponentByKey(final String key) {
@@ -199,10 +206,7 @@ public class SparkJobContext implements Serializable {
         final List<ComponentJob> componentJobs = CollectionUtils.<ComponentJob> concat(false, job.getTransformerJobs(),
                 job.getTransformerJobs(), job.getAnalyzerJobs());
         for (ComponentJob componentJob : componentJobs) {
-            final String componentKey = componentJob.getMetadataProperties().get(METADATA_PROPERTY_COMPONENT_INDEX);
-            if (componentKey == null) {
-                throw new IllegalStateException("No key registered for component: " + componentJob);
-            }
+            final String componentKey = getComponentKey(componentJob);
             if (queriedKey.equals(componentKey)) {
                 return componentJob;
             }

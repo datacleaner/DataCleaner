@@ -19,11 +19,14 @@
  */
 package org.datacleaner.beans.valuedist;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -31,13 +34,37 @@ import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
+import org.datacleaner.test.TestHelper;
+import org.junit.Test;
 
-public class ValueDistributionAnalyzerTest extends TestCase {
+public class ValueDistributionAnalyzerTest {
+    
+    @Test
+    public void testComponentBuilderIsDistributable() {
+        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore(datastore);
+            ajb.addSourceColumns("customers.country", "customers.city");
+            
+            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> componentBuilder = ajb.addAnalyzer(ValueDistributionAnalyzer.class);
+            assertTrue(componentBuilder.isDistributable());
+            
+            componentBuilder.addInputColumn(ajb.getSourceColumnByName("country"));
+            assertTrue(componentBuilder.isDistributable());
+            
+            componentBuilder.addInputColumn(ajb.getSourceColumnByName("city"));
+            assertTrue(componentBuilder.isDistributable());
+        }
+    }
 
-    public void testDescriptor() throws Exception {
+    @Test
+    public void testDescriptor() {
         AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
         assertEquals(0, desc.getInitializeMethods().size());
         assertEquals(6, desc.getConfiguredProperties().size());
@@ -45,7 +72,8 @@ public class ValueDistributionAnalyzerTest extends TestCase {
         assertEquals("Value distribution", desc.getDisplayName());
     }
 
-    public void testGetCounts() throws Exception {
+    @Test
+    public void testGetCounts() {
         ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
                 new MetaModelInputColumn(new MutableColumn("col")), true);
 
@@ -93,7 +121,8 @@ public class ValueDistributionAnalyzerTest extends TestCase {
 
     }
 
-    public void testGetValueCountMetric() throws Exception {
+    @Test
+    public void testGetValueCountMetric() {
         ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
                 new MetaModelInputColumn(new MutableColumn("col")), true);
         vd.runInternal(new MockInputRow(), "hello", 1);
@@ -118,7 +147,8 @@ public class ValueDistributionAnalyzerTest extends TestCase {
         assertEquals(8, metric.getValue(result, new MetricParameters("NOT IN [foobar,world]")));
     }
 
-    public void testGetValueDistribution() throws Exception {
+    @Test
+    public void testGetValueDistribution() {
         ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
                 new MetaModelInputColumn(new MutableColumn("col")), true);
 
@@ -143,7 +173,8 @@ public class ValueDistributionAnalyzerTest extends TestCase {
         assertEquals(" - hello: 2", resultLines[2]);
     }
 
-    public void testGroupedRun() throws Exception {
+    @Test
+    public void testGroupedRun() {
         ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(new MockInputColumn<String>("foo", String.class),
                 new MockInputColumn<String>("bar", String.class), true);
 

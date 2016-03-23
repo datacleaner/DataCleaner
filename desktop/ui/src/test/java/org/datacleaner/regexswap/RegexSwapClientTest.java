@@ -19,16 +19,25 @@
  */
 package org.datacleaner.regexswap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.http.impl.client.HttpClients;
+import org.datacleaner.test.TestHelper;
+import org.junit.Assume;
+import org.junit.Test;
 
-public class RegexSwapClientTest extends TestCase {
+public class RegexSwapClientTest {
 
+    @Test
     public void testUpdateContent() throws Exception {
+        Assume.assumeTrue(TestHelper.isInternetConnected());
+
         RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
         client.getCategories();
         Collection<Category> categories = client.getCategories();

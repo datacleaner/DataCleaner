@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Maximum batch size exceeded.")
 public class BatchMaxSizeException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public BatchMaxSizeException(final long actualSize, final long maxSize) {
         super("Maximum size of input data is " + maxSize + ". Actual size is " + actualSize + ".");
     }

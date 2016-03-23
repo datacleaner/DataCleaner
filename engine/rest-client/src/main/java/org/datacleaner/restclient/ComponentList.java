@@ -21,10 +21,8 @@ package org.datacleaner.restclient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -52,10 +50,8 @@ public class ComponentList {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ComponentInfo {
         private String name = "";
-        private String description = "";
         private String createURL = "";
-        private Set<String> categoryNames = new HashSet<>();
-        private String superCategoryName = null;
+        private JsonNode annotations;
         private Map<String, PropertyInfo> properties = new HashMap<>();
         private byte[] iconData = null;
 
@@ -77,13 +73,10 @@ public class ComponentList {
             return this;
         }
 
-        public String getDescription() {
-            return description;
-        }
+        public JsonNode getAnnotations() { return annotations; }
 
-        public ComponentInfo setDescription(String description) {
-            this.description = description;
-            return this;
+        public void setAnnotations(JsonNode annotations) {
+            this.annotations = annotations;
         }
 
         public String getCreateURL() {
@@ -92,24 +85,6 @@ public class ComponentList {
 
         public ComponentInfo setCreateURL(String createURL) {
             this.createURL = createURL;
-            return this;
-        }
-
-        public Set<String> getCategoryNames() {
-            return categoryNames;
-        }
-
-        public ComponentInfo setCategoryNames(Set<String> categoryNames) {
-            this.categoryNames = categoryNames;
-            return this;
-        }
-
-        public String getSuperCategoryName() {
-            return superCategoryName;
-        }
-
-        public ComponentInfo setSuperCategoryName(String superCategoryName) {
-            this.superCategoryName = superCategoryName;
             return this;
         }
 
@@ -135,7 +110,7 @@ public class ComponentList {
         private String description;
         private boolean required;
         private boolean isInputColumn;
-        private Map<String, Map<String, Object>> annotations = new HashMap<>();
+        private JsonNode annotations;
         private JsonNode defaultValue;
 
         public void setIsInputColumn(boolean inputColumn) {
@@ -198,9 +173,9 @@ public class ComponentList {
             this.classDetails = classDetails;
         }
 
-        public Map<String, Map<String, Object>> getAnnotations() { return annotations; }
+        public JsonNode getAnnotations() { return annotations; }
 
-        public void setAnnotations(Map<String, Map<String, Object>> annotations) { this.annotations = annotations; }
+        public void setAnnotations(JsonNode annotations) { this.annotations = annotations; }
 
         public JsonNode getDefaultValue() {
             return defaultValue;

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_customernumber" path="PAYMENTS.CUSTOMERNUMBER" type="INTEGER"/>
+            <column id="col_checknumber" path="PAYMENTS.CHECKNUMBER" type="VARCHAR"/>
+            <column id="col_paymentdate" path="PAYMENTS.PAYMENTDATE" type="TIMESTAMP"/>
+            <column id="col_amount" path="PAYMENTS.AMOUNT" type="NUMERIC"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer>
+            <descriptor ref="Convert to number"/>
+            <properties>
+                <property name="Decimal separator" value="&amp;#44;"/>
+                <property name="Minus sign" value="-"/>
+                <property name="Null replacement" value="&lt;null&gt;"/>
+                <property name="Thousand separator" value="."/>
+            </properties>
+            <input ref="col_amount"/>
+            <output id="col_amountasnumber" name="AMOUNT (as number)"/>
+        </transformer>
+        <transformer requires="outcome_0">
+            <descriptor ref="Concatenator"/>
+            <properties>
+                <property name="Separator" value=" &amp;#44; "/>
+            </properties>
+            <input ref="col_customernumber"/>
+            <input ref="col_checknumber"/>
+            <input ref="col_paymentdate"/>
+            <input ref="col_amount"/>
+            <input ref="col_amountasnumber"/>
+            <output id="col_concatofcustomernumberchecknumberpaymentdateamountamountasnumber" name="Concat of CUSTOMERNUMBER,CHECKNUMBER,PAYMENTDATE,AMOUNT,AMOUNT (as number)..."/>
+        </transformer>
+        <transformer>
+            <descriptor ref="Whitespace trimmer"/>
+            <properties>
+                <property name="Trim left" value="true"/>
+                <property name="Trim right" value="true"/>
+                <property name="Trim multiple to single space" value="false"/>
+            </properties>
+            <input ref="col_concatofcustomernumberchecknumberpaymentdateamountamountasnumber"/>
+            <output id="col_concatofcustomernumberchecknumberpaymentdateamountamountasnumbertrimmed" name="Concat of CUSTOMERNUMBER,CHECKNUMBER,PAYMENTDATE,AMOUNT,AMOUNT (as number)... (trimmed)"/>
+        </transformer>
+        <filter>
+            <descriptor ref="Equals"/>
+            <properties>
+                <property name="Compare values" value="[ 5307.98 ]"/>
+            </properties>
+            <input ref="col_amountasnumber" name="Input column"/>
+            <outcome id="outcome_0" category="EQUALS"/>
+        </filter>
+    </transformation>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Create CSV file"/>
+            <properties>
+                <property name="File" value="file://datastores/orderdb-Whitespace trimmer.csv"/>
+                <property name="Separator char" value="&amp;#44;"/>
+                <property name="Quote char" value="&amp;quot;"/>
+                <property name="Escape char" value="\"/>
+                <property name="Include header" value="true"/>
+                <property name="Encoding" value="UTF-8"/>
+                <property name="Fields" value="[Concat of CUSTOMERNUMBER&amp;#44;CHECKNUMBER&amp;#44;PAYMENTDATE&amp;#44;AMOUNT&amp;#44;AMOUNT (as number)...,Concat of CUSTOMERNUMBER&amp;#44;CHECKNUMBER&amp;#44;PAYMENTDATE&amp;#44;AMOUNT&amp;#44;AMOUNT (as number)... (trimmed)]"/>
+                <property name="Overwrite file if exists" value="true"/>
+            </properties>
+            <input ref="col_concatofcustomernumberchecknumberpaymentdateamountamountasnumber" name="Columns"/>
+            <input ref="col_concatofcustomernumberchecknumberpaymentdateamountamountasnumbertrimmed" name="Columns"/>
+        </analyzer>
+    </analysis>
+</job>

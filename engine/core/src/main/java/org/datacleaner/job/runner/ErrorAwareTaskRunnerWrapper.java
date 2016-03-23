@@ -38,10 +38,10 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
     
     private static final Logger logger = LoggerFactory.getLogger(ErrorAwareTaskRunnerWrapper.class);
 
-	// a single shared exception is used if previous exceptions have been
+	// A per-job exception is used if previous exceptions have been
 	// reported. This is to make sure that the error message
 	// ("A previous exception has occurred") will only be saved once.
-	private static final PreviousErrorsExistException PREVIOUS_ERROR_EXCEPTION = new PreviousErrorsExistException(
+	private final PreviousErrorsExistException _previousErrorsExistException = new PreviousErrorsExistException(
 			"A previous exception has occurred");
 
 	private final TaskRunner _taskRunner;
@@ -55,10 +55,10 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
 	@Override
 	public void run(Task task, TaskListener taskListener) {
 		if (isErrornous()) {
-			taskListener.onError(task, PREVIOUS_ERROR_EXCEPTION);
+			taskListener.onError(task, _previousErrorsExistException);
 		} else if (isCancelled()) {
 		    logger.info("Ignoring task because job has been cancelled: {}", task);
-		    taskListener.onError(task, PREVIOUS_ERROR_EXCEPTION);
+		    taskListener.onError(task, _previousErrorsExistException);
 		} else {
 			_taskRunner.run(task, taskListener);
 		}

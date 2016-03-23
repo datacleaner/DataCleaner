@@ -19,7 +19,6 @@
  */
 package org.datacleaner.job.tasks;
 
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -63,21 +62,18 @@ public class CloseTaskListener implements TaskListener {
         _analysisJob = analysisJob;
     }
 
-    public void cleanup() {
+    private void cleanup() {
         logger.debug("cleanup()");
         
         final int publishersLeft = _consumer.onPublisherClosed(_publisher);
         if (publishersLeft == 0) {
             final Object component = _consumer.getComponent();
             final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
-            
+
             // close can occur AFTER completion
             _lifeCycleHelper.close(descriptor, component, _success.get());
-            
-            final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
-            for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-                activeOutputDataStream.close();
-            }
+
+            _consumer.getActiveOutputDataStreams().forEach(ActiveOutputDataStream::close);
         }
     }
 
@@ -90,7 +86,12 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onComplete(Task task) {
-        cleanup();
+        try {
+            cleanup();
+        } catch (Exception e) {
+            onErrorInternal(task, e, false);
+            return;
+        }
         if (_nextTaskListener != null) {
             _nextTaskListener.onComplete(task);
         }
@@ -98,12 +99,24 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
+        onErrorInternal(task, throwable, true);
+    }
+
+    private void onErrorInternal(Task task, Throwable throwable, boolean doCleanup) {
         final boolean previouslySuccessful = _success.getAndSet(false);
+
+        if (doCleanup) {
+            try {
+                cleanup();
+            } catch (Exception e) {
+                throwable.addSuppressed(e);
+            }
+        }
+
         if (previouslySuccessful) {
             // only report the first such error
             _analysisListener.errorUnknown(_analysisJob, throwable);
         }
-        cleanup();
         if (_nextTaskListener != null) {
             _nextTaskListener.onError(task, throwable);
         }

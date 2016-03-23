@@ -66,7 +66,6 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
          _optionsDialogProvider = optionsDialogProvider; 
          //It needs to be modal. Otherwise there will be null for selected Configuration
          setModal(true);
-         setResizable(true);
         // It's important to keep the order of the elements.
         _mappedServers = new LinkedList<String>();
         final String[] serverNames = getMappedServers(serverInformationCatalog.getServerNames(), _mappedServers);
@@ -156,9 +155,9 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
         final DCLabel label = DCLabel.dark("Select Hadoop configuration: ");
         label.setFont(WidgetUtils.FONT_HEADER2);
         WidgetUtils.addToGridBag(label, contentPanel, 0, 0);
-        WidgetUtils.addToGridBag(listPanel, contentPanel, 0, 1);
+        WidgetUtils.addToGridBag(listPanel, contentPanel, 0, 1, 1, 2);
         WidgetUtils.addToGridBag(_optionsButton, contentPanel, 1, 1, GridBagConstraints.NORTH);
-        WidgetUtils.addToGridBag(_okButton, contentPanel, 1, 1, GridBagConstraints.SOUTH);
+        WidgetUtils.addToGridBag(_okButton, contentPanel, 1, 2, GridBagConstraints.SOUTH);
         
         final JScrollPane scrolleable = WidgetUtils.scrolleable(contentPanel);
         scrolleable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -171,5 +170,10 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
         outerPanel.add(scrolleable, BorderLayout.CENTER); 
         outerPanel.setPreferredSize(getDialogWidth(), 300); 
         return outerPanel; 
+    }
+    
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
     }
 }

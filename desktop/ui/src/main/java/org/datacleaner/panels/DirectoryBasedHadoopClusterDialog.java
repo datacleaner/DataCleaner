@@ -172,6 +172,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
                                     .size()]));
                     _serverInformationCatalog.addServerInformation(newServer);
                 } catch (Exception exception) {
+                    WidgetUtils.showErrorMessage("Error", exception);
                     invalidateForm(exception);
                     return;
                 }

@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
@@ -34,6 +35,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
@@ -42,6 +44,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
+import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
 /**
@@ -53,10 +56,12 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
     private final JXTextField _nameTextField;
     private final JXTextField _fileSystemURITextField;
     private final JXTextField _descriptionTextField;
+    private final JLabel _statusLabel;
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final MutableServerInformationCatalog _mutableServerInformationCatalog;
     private ServerInformation _savedServer = null;
+    private static final ImageManager imageManager = ImageManager.get();
 
     public DirectConnectionHadoopClusterDialog(WindowContext windowContext,
             DirectConnectionHadoopClusterInformation directConnection,
@@ -68,6 +73,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         _fileSystemURITextField = WidgetFactory.createTextField("hdfs://<hostname>:<port>/");
         _descriptionTextField = WidgetFactory.createTextField("description");
         _mutableServerInformationCatalog = serverinformationCatalog;
+        _statusLabel = DCLabel.bright("");
 
         final String saveButtonText = directConnection == null ? "Register cluster" : "Save cluster";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
@@ -112,6 +118,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
                 validateAndUpdate();
             }
         };
+
         _nameTextField.getDocument().addDocumentListener(documentListener);
         _fileSystemURITextField.getDocument().addDocumentListener(documentListener);
         _descriptionTextField.getDocument().addDocumentListener(documentListener);
@@ -162,11 +169,18 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         centerPanel.add(formPanel, BorderLayout.CENTER);
         centerPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+
+        final DCPanel outerPanel = new DCPanel();
+        outerPanel.setLayout(new BorderLayout());
+        outerPanel.add(centerPanel, BorderLayout.CENTER);
+        outerPanel.add(statusBar, BorderLayout.SOUTH);
+
         validateAndUpdate();
 
-        centerPanel.setPreferredSize(getDialogWidth(), 300);
+        outerPanel.setPreferredSize(getDialogWidth(), 300);
 
-        return centerPanel;
+        return outerPanel;
     }
 
     public ServerInformation getSavedServer() {
@@ -174,6 +188,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
     }
 
     private void invalidateForm(Exception exception) {
+        setStatusError(exception);
         setSaveButtonEnabled(false);
     }
 
@@ -185,6 +200,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
     private boolean validateForm() {
         final String connectionName = _nameTextField.getText();
         if (StringUtils.isNullOrEmpty(connectionName)) {
+            setStatusError("Please enter a cluster name");
             return false;
         }
 
@@ -196,15 +212,18 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         try {
             final URI uri = new URI(connectionURI);
             if (StringUtils.isNullOrEmpty(uri.getHost())) {
+                setStatusError("Please enter a hostname");
                 return false;
             }
             final int port = uri.getPort();
             if (port <= 0) {
+                setStatusError("The port has to have minimum 4 digits");
                 return false;
             }
         } catch (Exception e) {
             return false;
         }
+        setStatusValid();
         return true;
     }
 
@@ -215,5 +234,20 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
     @Override
     protected boolean isWindowResizable() {
         return true;
+    }
+
+    protected void setStatusError(Throwable error) {
+        error = ErrorUtils.unwrapForPresentation(error);
+        setStatusError(error.getMessage());
+    }
+
+    protected void setStatusError(String text) {
+        _statusLabel.setText(text);
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
+    }
+
+    protected void setStatusValid() {
+        _statusLabel.setText("Hadoop cluster ready");
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
     }
 }

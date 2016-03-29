@@ -24,7 +24,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -53,7 +54,7 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
     private final JButton _okButton;
     private final JButton _optionsButton;
     private String _selectedConfiguration;
-    private final LinkedList<String> _mappedServers;
+    private final Map<String, String> _mappedServers;
     private final Provider<OptionsDialog> _optionsDialogProvider;
 
     
@@ -64,8 +65,9 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
          //It needs to be modal. Otherwise there will be null for selected Configuration
          setModal(true);
         // It's important to keep the order of the elements.
-        _mappedServers = new LinkedList<String>();
-        final String[] serverNames = getMappedServers(serverInformationCatalog.getServerNames(), _mappedServers);
+        _mappedServers = new LinkedHashMap<String, String>();
+        
+        final String[] serverNames = getMappedServers(serverInformationCatalog, _mappedServers);
         _selectedConfiguration = null; 
         _serverList = new JList<String>(serverNames);
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -79,9 +81,8 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final int selectedIndex = _serverList.getSelectedIndex();
-                _selectedConfiguration = serverInformationCatalog
-                        .getServerNames()[selectedIndex];
+                final String selectedValue = _serverList.getSelectedValue();
+                _selectedConfiguration = _mappedServers.get(selectedValue);
               dispose();
             }
         });
@@ -96,8 +97,6 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
                 optionsDialog.open();
             }
         });
-
-      
     }
 
     /**
@@ -105,17 +104,20 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
      * "org.datacleaner.hadoop.environment") as a server name. We write
      * "default" instead. 
      */
-    private String[] getMappedServers(String[] serverNames, LinkedList<String> mappedServers) {
+    private String[] getMappedServers(ServerInformationCatalog serverInformationCatalog, Map<String, String> mappedServers) {
 
+        if (serverInformationCatalog.containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+            mappedServers.put("(default)", HadoopResource.DEFAULT_CLUSTERREFERENCE);
+        }
+
+        final String[] serverNames = serverInformationCatalog.getServerNames();
         for (int i = 0; i < serverNames.length; i++) {
             final String serverName = serverNames[i];
-            if (serverName.equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
-                mappedServers.add(0, "(default)");
-            } else {
-                mappedServers.add(serverName);
+            if (!serverName.equals(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+                mappedServers.put(serverName, serverName);
             }
         }
-        return mappedServers.toArray(new String[serverNames.length]);
+        return mappedServers.keySet().toArray(new String[serverNames.length]);
     }
 
     public String getSelectedConfiguration() {

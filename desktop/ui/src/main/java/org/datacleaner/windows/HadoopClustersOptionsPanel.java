@@ -35,6 +35,7 @@ import org.datacleaner.panels.HadoopClusterPanel;
 import org.datacleaner.user.MutableServerInformationCatalog;
 import org.datacleaner.user.ServerInformationChangeListener;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -108,14 +109,24 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
         WidgetUtils.addToGridBag(DCPanel.flow(Alignment.RIGHT, _addClusterButton), panel, 0, row);
         row++;
 
-        final String[] serverNames = _serverInformationCatalog.getServerNames();
-        for (int i = 0; i < serverNames.length; i++) {
-            final String serverName = serverNames[i];
-            final ServerInformation server = _serverInformationCatalog.getServer(serverName);
-            final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, server,
+        final ServerInformation defaultServer = _serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE); 
+        if (defaultServer != null) {
+            final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, defaultServer,
                     _serverInformationCatalog);
             WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
             row++;
+        }
+        
+        final String[] serverNames = _serverInformationCatalog.getServerNames();
+        for (int i = 0; i < serverNames.length; i++) {
+            final String serverName = serverNames[i];
+            if (serverName != HadoopResource.DEFAULT_CLUSTERREFERENCE) {
+                final ServerInformation server = _serverInformationCatalog.getServer(serverName);
+                final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, server,
+                        _serverInformationCatalog);
+                WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
+                row++;
+            }
         }
 
         return panel;

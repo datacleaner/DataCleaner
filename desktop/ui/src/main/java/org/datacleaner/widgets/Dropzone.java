@@ -151,7 +151,7 @@ public class Dropzone extends DCPanel {
                         final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
                                 .getServer(selectedServer);
                         final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
-                                HadoopResource.DEFAULT_CLUSTERREFERENCE);
+                               selectedServer);
                         final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
                                 _datastoreCatalog, resource);
                         _datastoreSelectListener.datastoreSelected(datastore);

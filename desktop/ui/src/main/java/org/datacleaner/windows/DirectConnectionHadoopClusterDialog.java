@@ -73,7 +73,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
         _saveButton.addActionListener(e -> {
             try {
-                final URI nameNodeUri = new URI(_fileSystemURITextField.getText());
+                final URI nameNodeUri = new URI(_fileSystemURITextField.getText().trim());
                 final DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
                         _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
                 _savedServer = newServer;
@@ -188,7 +188,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
             return false;
         }
 
-        final String connectionURI = _fileSystemURITextField.getText();
+        final String connectionURI = _fileSystemURITextField.getText().trim();
         if (StringUtils.isNullOrEmpty(connectionURI)) {
             return false;
         }

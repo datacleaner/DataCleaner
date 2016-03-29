@@ -57,7 +57,7 @@ public class ApplicationDriver {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDriver.class);
 
-    private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-env-spark";
+    private static final String[] PRIMARY_JAR_FILENAME_PREFIXES = { "DataCleaner-spark", "DataCleaner-env-spark" };
 
     private final URI _defaultFs;
     private final DistributedFileSystem _fileSystem;
@@ -112,6 +112,12 @@ public class ApplicationDriver {
     }
 
     public int launch(SparkLauncher sparkLauncher) throws Exception {
+        final Process process = launchProcess(sparkLauncher);
+
+        return process.waitFor();
+    }
+
+    public Process launchProcess(final SparkLauncher sparkLauncher) throws IOException {
         final Process process = sparkLauncher.launch();
 
         final InputStream errorStream = process.getErrorStream();
@@ -119,8 +125,7 @@ public class ApplicationDriver {
 
         final InputStream inputStream = process.getInputStream();
         startLogger(inputStream);
-
-        return process.waitFor();
+        return process;
     }
 
     private void startLogger(final InputStream stream) {
@@ -137,8 +142,6 @@ public class ApplicationDriver {
                     logger.warn("Logger thread failure: " + e.getMessage(), e);
                 }
             }
-
-            ;
         }.start();
     }
 
@@ -214,16 +217,22 @@ public class ApplicationDriver {
                 final LocatedFileStatus file = files.next();
                 final Path path = file.getPath();
                 final String filename = path.getName();
-                if (filename.startsWith(PRIMARY_JAR_FILENAME_PREFIX)) {
-                    primaryJarRef.set(path.toString());
-                } else {
+                boolean primaryJar = false;
+                for (String prefix : PRIMARY_JAR_FILENAME_PREFIXES) {
+                    if (filename.startsWith(prefix)) {
+                        primaryJarRef.set(path.toString());
+                        primaryJar = true;
+                        break;
+                    }
+                }
+                if (!primaryJar) {
                     list.add(path.toString());
                 }
             }
 
         if (primaryJarRef.get() == null) {
             throw new IllegalArgumentException("Failed to find primary jar (starting with '"
-                    + PRIMARY_JAR_FILENAME_PREFIX + "') in JAR file directory: " + _jarDirectoryPath);
+                    + PRIMARY_JAR_FILENAME_PREFIXES[0] + "') in JAR file directory: " + _jarDirectoryPath);
         }
 
         return list;
@@ -232,7 +241,8 @@ public class ApplicationDriver {
     public File createTemporaryHadoopConfDir() throws IOException {
         final File hadoopConfDir = new File(FileHelper.getTempDir(), "datacleaner_hadoop_conf_"
                 + UUID.randomUUID().toString());
-        hadoopConfDir.mkdirs();
+        final boolean dirCreated = hadoopConfDir.mkdirs();
+        assert dirCreated;
 
         createTemporaryHadoopConfFile(hadoopConfDir, "core-site.xml", "core-site-template.xml");
         createTemporaryHadoopConfFile(hadoopConfDir, "yarn-site.xml", "yarn-site-template.xml");

@@ -20,6 +20,8 @@
 package org.datacleaner.test;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.sql.DataSource;
 
@@ -59,5 +61,18 @@ public class TestHelper {
             return null;
         }
         return xml.trim().replace("\r\n", "\n");
+    }
+    
+    public static boolean isInternetConnected() {
+        return isInternetConnected("google.com");
+    }
+
+    public static boolean isInternetConnected(String hostnameToCheck) {
+        try {
+            InetAddress.getByName(hostnameToCheck);
+            return true;
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 }

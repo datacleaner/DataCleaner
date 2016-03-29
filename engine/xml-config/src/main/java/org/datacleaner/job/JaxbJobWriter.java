@@ -347,6 +347,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             if (key.equals(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_ID)) {
                 continue;
             }
+            if (key.equals(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_PARTITION_INDEX)) {
+                continue;
+            }
             final org.datacleaner.job.jaxb.MetadataProperties.Property property = new org.datacleaner.job.jaxb.MetadataProperties.Property();
             property.setName(key);
             property.setValue(entry.getValue());

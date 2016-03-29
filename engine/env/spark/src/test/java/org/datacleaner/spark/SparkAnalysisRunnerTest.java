@@ -51,9 +51,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SparkAnalysisRunnerTest {
     private static class TestSparkJobLifeCycleListener implements SparkJobLifeCycleListener {
@@ -118,6 +116,30 @@ public class SparkAnalysisRunnerTest {
         final int upperCaseChars = stringAnalyzerResult.getEntirelyUpperCaseCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, upperCaseChars);
     }
+
+    @Test
+    public void testEscalatedValueDistributionScenario() throws Exception {
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
+                "src/test/resources/escalated-job.analysis.xml"), "escalated-job", false);
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        assertEquals(3, result.getResultMap().size());
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(3, results.size());
+
+        final List<? extends ValueDistributionAnalyzerResult> valueDistributionAnalyzerResults =
+                result.getResults(ValueDistributionAnalyzerResult.class);
+        assertEquals(2,valueDistributionAnalyzerResults.size());
+
+        final ValueDistributionAnalyzerResult
+                vdAnalyzerResult = valueDistributionAnalyzerResults.get(0);
+        assertEquals(7, vdAnalyzerResult
+                .getTotalCount());
+    }
+
 
     @Test
     public void testWriteDataScenarioNoResult() throws Exception {

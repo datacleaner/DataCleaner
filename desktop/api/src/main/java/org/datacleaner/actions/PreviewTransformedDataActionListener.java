@@ -21,7 +21,6 @@ package org.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +40,7 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
+import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -150,10 +150,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         final TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
         sanitizeIrrelevantComponents(ajb, tjb);
 
+        // represents if the transformer is already filtered (also may be transitively)
+        final boolean alreadyFiltered;
+        
         // remove irrelevant source tables
         {
             final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
             sourceColumnFinder.addSources(ajb);
+
+            
             final List<Table> tables = ajb.getSourceTables();
             if (tables.size() > 1) {
                 final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
@@ -162,6 +167,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                     ajb.removeSourceTable(otherTable);
                 }
             }
+            alreadyFiltered = sourceColumnFinder.findAllSourceJobs(tjb).stream().filter(
+                    o -> o instanceof HasFilterOutcomes).findAny().isPresent();
         }
 
         final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
@@ -170,6 +177,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                     _transformerJobBuilder);
             return null;
         }
+        
 
         // add the result collector (a dummy analyzer)
         final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb.addAnalyzer(Descriptors
@@ -183,15 +191,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         // add a max rows filter to the source of the job
         final AnalysisJobBuilder rootJobBuilder = ajb.getRootJobBuilder();
         {
-            // remove any existing max rows filters
-            final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<>(rootJobBuilder
-                    .getFilterComponentBuilders());
-            for (FilterComponentBuilder<?, ?> filter : filters) {
-                if (filter.getComponentInstance() instanceof MaxRowsFilter) {
-                    rootJobBuilder.removeFilter(filter);
-                }
-            }
-
             final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
             sourceColumnFinder.addSources(rootJobBuilder);
             final List<Table> sourceTables = rootJobBuilder.getSourceTables();
@@ -204,7 +203,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                 maxRowFilter.getComponentInstance().setApplyOrdering(false);
                 maxRowFilter.getComponentInstance().setOrderColumn(rootJobBuilder.getSourceColumnsOfTable(table).get(
                         0));
-                for (ComponentBuilder componentBuilder : rootJobBuilder.getComponentBuilders()) {
+                final Collection<? extends ComponentBuilder> componentBuilders;
+                if (alreadyFiltered) {
+                    // if there are already filters in place, only apply the max rows filter on the other filters.
+                    componentBuilders = rootJobBuilder.getFilterComponentBuilders();
+                } else {
+                    componentBuilders = rootJobBuilder.getComponentBuilders();
+                }
+                
+                for (ComponentBuilder componentBuilder : componentBuilders) {
                     if (componentBuilder != maxRowFilter) {
                         final InputColumn<?>[] input = componentBuilder.getInput();
                         if (input.length > 0) {

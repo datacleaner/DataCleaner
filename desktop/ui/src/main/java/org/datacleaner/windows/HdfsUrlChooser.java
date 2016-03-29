@@ -55,7 +55,6 @@ import javax.swing.WindowConstants;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -513,10 +512,7 @@ public class HdfsUrlChooser extends JComponent {
             return false;
         }
 
-        final Configuration configuration = clusterInformation.getConfiguration();
-
-        configuration.set(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_KEY, String
-                .valueOf(1));
+        final Configuration configuration = HdfsUtils.getHadoopConfigurationWithTimeout(clusterInformation);
         
         _currentDirectory = new Path("/");
 

@@ -28,10 +28,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -51,6 +53,7 @@ import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
+import org.datacleaner.windows.OptionsDialog;
 
 import com.google.inject.Injector;
 
@@ -66,9 +69,8 @@ public class AddDatastorePanel extends DCPanel {
 
     public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
             final ServerInformationCatalog serverInformationCatalog, final DatabaseDriverCatalog databaseDriverCatalog,
-            final DCModule dcModule,
-            final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
-            boolean showExistingDatastoresButton) {
+            final DCModule dcModule, final DatastoreSelectedListener datastoreSelectedListener,
+            final UserPreferences userPreferences, final boolean showExistingDatastoresButton) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -76,7 +78,11 @@ public class AddDatastorePanel extends DCPanel {
         _databaseDriverCatalog = databaseDriverCatalog;
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
-        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences);
+        
+        final Injector injector = dcModule.createInjectorBuilder().createInjector();
+        final WindowContext windowContext = injector.getInstance(WindowContext.class);
+        final Provider<OptionsDialog> optionsDialogProvider = injector.getProvider(OptionsDialog.class);
+        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, windowContext, optionsDialogProvider);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;

@@ -65,7 +65,7 @@ public class SimpleTableDefPanel extends DCPanel {
 	}
 
 	private DCPanel createButtonPanel() {
-		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
 		addButton.setText("Add field");
 		addButton.addActionListener(new ActionListener() {
 			@Override
@@ -74,7 +74,7 @@ public class SimpleTableDefPanel extends DCPanel {
 			}
 		});
 
-		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 		removeButton.setText("Remove field");
 		removeButton.addActionListener(new ActionListener() {
 			@Override

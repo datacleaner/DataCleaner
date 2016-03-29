@@ -215,14 +215,14 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		final DCPanel driverClassOuterPanel = new DCPanel().setTitledBorder("Driver class name");
 		driverClassOuterPanel.add(_driverClassNameComboBox);
 
-		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addFilenameTextField();
 			}
 		});
-		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

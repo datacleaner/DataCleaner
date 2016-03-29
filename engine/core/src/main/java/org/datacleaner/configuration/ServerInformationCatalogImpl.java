@@ -46,25 +46,27 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
     }
 
     public ServerInformationCatalogImpl(ServerInformation... servers) {
-        _servers = new ArrayList<>();
-        Collections.addAll(_servers, servers);
+        final List<ServerInformation> serversList = new ArrayList<>();
+        Collections.addAll(serversList, servers);
+        _servers = serversList;
 
         try {
-            if(!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+            if (!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
                 final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation = new EnvironmentBasedHadoopClusterInformation(
                         HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
-                if(environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
-                    _servers.add(environmentBasedHadoopClusterInformation);
+                if (environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
+                    serversList.add(0, environmentBasedHadoopClusterInformation);
                 }
             }
         } catch (IllegalStateException e) {
             logger.info("No Hadoop environment variables, skipping default server");
         }
+        
     }
 
     @Override
     public String[] getServerNames() {
-        List<String> names = CollectionUtils.map(_servers, new HasNameMapper());
+        final List<String> names = CollectionUtils.map(_servers, new HasNameMapper());
         Collections.sort(names);
         return names.toArray(new String[names.size()]);
     }

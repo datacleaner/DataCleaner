@@ -113,7 +113,7 @@ public class DatabaseDriversPanel extends DCPanel {
         this.removeAll();
 
         final PopupButton addDriverButton = WidgetFactory.createDefaultPopupButton("Add database driver",
-                IconUtils.ACTION_ADD);
+                IconUtils.ACTION_ADD_DARK);
         final JPopupMenu addDriverMenu = addDriverButton.getMenu();
 
         final JMenu automaticDownloadAndInstallMenu = new JMenu("Automatic download and install");

@@ -187,12 +187,12 @@ public class ComboButton extends JPanel {
         LookAndFeelManager.get().init();
 
         final ComboButton comboButton1 = new ComboButton();
-        comboButton1.addButton("Foo!", IconUtils.ACTION_ADD, true);
-        comboButton1.addButton("Boo!", IconUtils.ACTION_REMOVE, true);
+        comboButton1.addButton("Foo!", IconUtils.ACTION_ADD_DARK, true);
+        comboButton1.addButton("Boo!", IconUtils.ACTION_REMOVE_DARK, true);
 
         final ComboButton comboButton2 = new ComboButton();
-        comboButton2.addButton("Foo!", IconUtils.ACTION_ADD, false);
-        comboButton2.addButton("Boo!", IconUtils.ACTION_REMOVE, false);
+        comboButton2.addButton("Foo!", IconUtils.ACTION_ADD_DARK, false);
+        comboButton2.addButton("Boo!", IconUtils.ACTION_REMOVE_DARK, false);
         comboButton2.addButton("Mrr!", IconUtils.ACTION_REFRESH, true);
         comboButton2.addButton("Rrrh!", IconUtils.ACTION_DRILL_TO_DETAIL, true);
 
@@ -200,7 +200,7 @@ public class ComboButton extends JPanel {
         panel.add(comboButton1);
         panel.add(comboButton2);
 
-        JButton regularButton = WidgetFactory.createDefaultButton("Regular button", IconUtils.ACTION_ADD);
+        JButton regularButton = WidgetFactory.createDefaultButton("Regular button", IconUtils.ACTION_ADD_DARK);
         panel.add(regularButton);
 
         final JFrame frame = new JFrame("test");

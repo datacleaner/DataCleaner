@@ -20,12 +20,14 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.inject.Inject;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -33,7 +35,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
@@ -56,11 +57,12 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
-import org.datacleaner.widgets.options.MemoryOptionsPanel;
 import org.datacleaner.widgets.options.DataCloudOptionsPanel;
+import org.datacleaner.widgets.options.MemoryOptionsPanel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -80,7 +82,7 @@ public class OptionsDialog extends AbstractWindow {
     @Inject
     protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
             UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
-            ExtensionPackagesPanel extensionPackagesPanel) {
+            ExtensionPackagesPanel extensionPackagesPanel, HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
         super(windowContext);
         _userPreferences = userPreferences;
         _configuration = configuration;
@@ -88,20 +90,20 @@ public class OptionsDialog extends AbstractWindow {
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
                 getGeneralTab());
-        _tabbedPane.addTab("Database drivers",
-                imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_TAB),
-                databaseDriversPanel);
-        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
-                getNetworkTab());
-        _tabbedPane.addTab("DataCloud",
-                imageManager.getImageIcon(IconUtils.MENU_DATACLOUD, IconUtils.ICON_SIZE_TAB),
+        _tabbedPane.addTab("DataCloud", imageManager.getImageIcon(IconUtils.MENU_DATACLOUD, IconUtils.ICON_SIZE_TAB),
                 new DataCloudOptionsPanel(configuration));
-        _tabbedPane.addTab("Performance",
-                imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
-        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
-                new MemoryOptionsPanel());
+        _tabbedPane.addTab("Database drivers", imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+                IconUtils.ICON_SIZE_TAB), databaseDriversPanel);
+        _tabbedPane.addTab("Hadoop clusters", imageManager.getImageIcon(IconUtils.FILE_HDFS, IconUtils.ICON_SIZE_TAB),
+                hadoopClustersOptionsPanel);
         _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
+        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
+                getNetworkTab());
+        _tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png",
+                IconUtils.ICON_SIZE_TAB), getPerformanceTab());
+        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
+                new MemoryOptionsPanel());
 
         final int tabCount = _tabbedPane.getTabCount();
         for (int i = 0; i < tabCount; i++) {
@@ -110,7 +112,11 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     public void selectDatabaseDriversTab() {
-        _tabbedPane.setSelectedIndex(1);
+        _tabbedPane.setSelectedIndex(2);
+    }
+    
+    public void selectHadoopClustersTab() {
+        _tabbedPane.setSelectedIndex(3);
     }
 
     private DCPanel getGeneralTab() {
@@ -285,11 +291,22 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getPerformanceTab() {
-        DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         int row = 0;
+        
+        final DescriptionLabel descriptionLabel = new DescriptionLabel(
+                "Performance options are currently not configurable while you're running the application. "
+                        + "You need to edit the applications configuration file for this. The configuration file is named "
+                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME + "</b> and is located in the root of the folder where "
+                        + "you've installed DataCleaner.");
+        WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
+        row++;
+        
+        WidgetUtils.addToGridBag(Box.createVerticalGlue(), panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
+        row++;
 
-        TaskRunner taskRunner = _configuration.getEnvironment().getTaskRunner();
+        final TaskRunner taskRunner = _configuration.getEnvironment().getTaskRunner();
         WidgetUtils.addToGridBag(new JLabel("Task runner type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(taskRunner.getClass().getSimpleName()), panel, 1, row);
         WidgetUtils.addToGridBag(
@@ -298,7 +315,7 @@ public class OptionsDialog extends AbstractWindow {
                 panel, 2, row);
 
         if (taskRunner instanceof MultiThreadedTaskRunner) {
-            int numThreads = ((MultiThreadedTaskRunner) taskRunner).getNumThreads();
+            final int numThreads = ((MultiThreadedTaskRunner) taskRunner).getNumThreads();
 
             if (numThreads > 0) {
                 row++;
@@ -308,22 +325,19 @@ public class OptionsDialog extends AbstractWindow {
         }
 
         row++;
-        StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
+        
+        final StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
         WidgetUtils.addToGridBag(new JLabel("Storage provider type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(storageProvider.getClass().getSimpleName()), panel, 1, row);
         WidgetUtils.addToGridBag(
                 new HelpIcon(
                         "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
                 panel, 2, row);
-
         row++;
-        DCLabel descriptionLabel = DCLabel.darkMultiLine(
-                "Performance options are currently not configurable while you're running the application. "
-                        + "You need to edit the applications configuration file for this. The configuration file is named "
-                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME + "</b> and is located in the root of the folder where "
-                        + "you've installed DataCleaner.");
-        descriptionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
-        WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 2, 1);
+        
+        WidgetUtils.addToGridBag(Box.createVerticalGlue(), panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
+        row++;
+
         return panel;
     }
 

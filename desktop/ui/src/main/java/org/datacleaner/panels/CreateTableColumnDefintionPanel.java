@@ -90,7 +90,7 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
             }
         });
 
-        final JButton removeButton = WidgetFactory.createSmallButton("Remove", IconUtils.ACTION_REMOVE);
+        final JButton removeButton = WidgetFactory.createSmallButton("Remove", IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {

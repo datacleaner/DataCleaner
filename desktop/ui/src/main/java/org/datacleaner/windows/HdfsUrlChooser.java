@@ -35,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -58,8 +59,15 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.datacleaner.bootstrap.DCWindowContext;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.ServerInformation;
 import org.datacleaner.configuration.ServerInformationCatalog;
+import org.datacleaner.configuration.ServerInformationCatalogImpl;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
+import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
+import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.HdfsUtils;
@@ -162,7 +170,8 @@ public class HdfsUrlChooser extends JComponent {
             Path directory = (Path) value;
             final String directoryName = directory.getName();
             if (directoryName.isEmpty()) {
-                setText(directory.toUri().toString());
+                final URI uri = directory.toUri();
+                setText(uri.toString());
             } else {
                 setText(directoryName);
             }
@@ -182,6 +191,7 @@ public class HdfsUrlChooser extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
+       
         LinkedList<Path> directories = new LinkedList<>();
         int[] depths = null;
 
@@ -436,8 +446,9 @@ public class HdfsUrlChooser extends JComponent {
         add(panel, BorderLayout.CENTER);
     }
 
-    public static URI showDialog(Component parent, final ServerInformationCatalog serverInformationCatalog,
+    public static URI showDialog(Component parent, final ServerInformationCatalog serverInformationCatalog, final String selectedServer, 
             URI currentUri, OpenType openType) throws HeadlessException {
+        
         final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
             // Prevent to show second instance of _dialog if the previous one
@@ -449,8 +460,7 @@ public class HdfsUrlChooser extends JComponent {
             @Override
             public void componentShown(final ComponentEvent e) {
                 if (chooser._currentDirectory == null) {
-                    final boolean configured = chooser.scanHadoopConfigFiles(serverInformationCatalog);
-
+                    final boolean configured = chooser.scanHadoopConfigFiles(serverInformationCatalog, selectedServer);
                     if (configured) {
                         chooser.updateDirectories();
                     } else {
@@ -494,6 +504,7 @@ public class HdfsUrlChooser extends JComponent {
             _dialog.dispose();
         } else if (element.isDirectory()) {
             _currentDirectory = element.getPath();
+            _directoryComboBoxModel.updateDirectories();
         }
         ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
     }
@@ -504,11 +515,17 @@ public class HdfsUrlChooser extends JComponent {
      * @return True if a configuration was yielded.
      * @param serverInformationCatalog
      */
-    private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog) {
-        final HadoopClusterInformation clusterInformation =
-                (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
-
-        if(clusterInformation == null) {
+    private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog,  final String selectedServer) {
+        
+        final HadoopClusterInformation clusterInformation;
+        if (selectedServer != null) {
+            clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
+        } else {
+            clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(
+                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+        }
+        
+        if (clusterInformation == null) {
             return false;
         }
 
@@ -529,7 +546,9 @@ public class HdfsUrlChooser extends JComponent {
     private void updateDirectories() {
         _directoryComboBoxModel.updateDirectories();
     }
-
+    
+   
+    
     private void updateCurrentDirectory(final Path directory) {
         _currentDirectory = directory;
         
@@ -583,17 +602,32 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     // Test
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException {
         LookAndFeelManager.get().init();
+        
+        final List<ServerInformation> servers = new ArrayList<>();
+        servers.add(new EnvironmentBasedHadoopClusterInformation("default", "hadoop conf dir"));
+        servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
+                "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\hadoop_conf"));
+        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
+                "hdfs://192.168.0.255:9000/")));
+        final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
+        
         final JFrame frame = new JFrame("test");
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(DEFAULT_WIDTH, 400);
         frame.pack();
         frame.setVisible(true);
-
+        
+        final WindowContext windowContext = new DCWindowContext(null, null, null);
+        final SelectHadoopClusterDialog selectHadoopConfigurationDialog = new SelectHadoopClusterDialog(windowContext, serverInformationCatalog, null); 
+        selectHadoopConfigurationDialog.setVisible(true);
+        final String selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration(); 
+        
         try {
-            URI selectedFile = HdfsUrlChooser.showDialog(frame, null, null, OpenType.LOAD);
+            
+            URI selectedFile = HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
             System.out.println("Normal exit, selected file: " + selectedFile);
             System.exit(0);
         } catch (Exception e) {

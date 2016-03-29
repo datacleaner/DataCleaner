@@ -213,7 +213,7 @@ public class CreateTableDialog extends AbstractDialog {
             }
         });
 
-        final JButton addColumnButton = WidgetFactory.createSmallButton("Add column", IconUtils.ACTION_ADD);
+        final JButton addColumnButton = WidgetFactory.createSmallButton("Add column", IconUtils.ACTION_ADD_DARK);
         addColumnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -222,7 +222,7 @@ public class CreateTableDialog extends AbstractDialog {
         });
         
         final JButton removeAllColumnsButton = WidgetFactory.createSmallButton("Remove all columns",
-                IconUtils.ACTION_REMOVE);
+                IconUtils.ACTION_REMOVE_DARK);
         removeAllColumnsButton.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
         removeAllColumnsButton.addActionListener(new ActionListener() {
             @Override

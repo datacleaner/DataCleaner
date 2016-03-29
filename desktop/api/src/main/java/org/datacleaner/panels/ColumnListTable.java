@@ -138,7 +138,7 @@ public final class ColumnListTable extends DCPanel {
             }
 
             if (_editable) {
-                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
                 removeButton.setToolTipText("Remove table from source");
                 removeButton.addActionListener(new ActionListener() {
                     @Override
@@ -196,7 +196,7 @@ public final class ColumnListTable extends DCPanel {
             if (column.isPhysicalColumn() && _editable) {
                 final DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new GridBagLayout());
-                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
                 removeButton.setToolTipText("Remove column from source");
                 removeButton.addActionListener(new ActionListener() {
                     @Override

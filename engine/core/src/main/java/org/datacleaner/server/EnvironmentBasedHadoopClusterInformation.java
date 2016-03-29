@@ -27,8 +27,8 @@ import org.apache.hadoop.conf.Configuration;
 /**
  * Environment based configuration
  */
-public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation
-        implements HadoopClusterInformation {
+public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation implements
+        HadoopClusterInformation {
     private static final long serialVersionUID = 1L;
     public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
     public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
@@ -38,9 +38,19 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         super(name, description, getConfigurationDirectories());
     }
 
+    /**
+     * Determines if the configuration directories specified by YARN_CONF_DIR
+     * and/or HADOOP_CONF_DIR are set or not.
+     * 
+     * @return
+     */
+    public static boolean isConfigurationDirectoriesSpecified() {
+        return getConfigurationDirectories().length > 0;
+    }
+
     private static String[] getConfigurationDirectories() {
         final List<String> configDirectories = new ArrayList<>();
-        
+
         // first read system properties
         for (String configVariable : CONFIGURATION_VARIABLES) {
             final String propertyValues = System.getProperty(configVariable);
@@ -68,9 +78,10 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         try {
             return super.getConfiguration();
         } catch (IllegalStateException e) {
-            if(getDirectories().length == 0) {
+            if (getDirectories().length == 0) {
                 throw new IllegalStateException(
-                        "None of the standard Hadoop environment variables (HADOOP_CONF_DIR, YARN_CONF_DIR) has been set.", e);
+                        "None of the standard Hadoop environment variables (HADOOP_CONF_DIR, YARN_CONF_DIR) has been set.",
+                        e);
             } else {
                 throw e;
             }

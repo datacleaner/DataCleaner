@@ -513,7 +513,7 @@ public class HdfsUrlChooser extends JComponent {
         }
 
         final Configuration configuration = HdfsUtils.getHadoopConfigurationWithTimeout(clusterInformation);
-        
+
         _currentDirectory = new Path("/");
 
         try {

@@ -240,7 +240,7 @@ public class AboutDialog extends AbstractDialog {
 
         final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
         WidgetUtils.setDefaultButtonStyle(datacleanerButton);
-        datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
+        datacleanerButton.addActionListener(new OpenBrowserAction("https://datacleaner.org"));
         datacleanerButton.setToolTipText("Visit the DataCleaner website");
 
         final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));

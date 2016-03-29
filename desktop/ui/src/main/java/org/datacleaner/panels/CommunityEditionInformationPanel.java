@@ -78,11 +78,11 @@ public class CommunityEditionInformationPanel extends JPanel {
 
         JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
                 IconUtils.APPLICATION_ICON);
-        tryProfessionalButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
+        tryProfessionalButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
         add(DCPanel.around(tryProfessionalButton));
 
         JButton compareEditionsButton = WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
-        compareEditionsButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
+        compareEditionsButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
         add(DCPanel.around(compareEditionsButton));
     }
 

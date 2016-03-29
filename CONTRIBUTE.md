@@ -11,7 +11,7 @@ Our issue list is avialable on GitHub: [DataCleaner issues](https://github.com/d
 We generally use these communication tools to discuss features:
 
  * The issue list itself. We want you to comment on it, post new issues etc.
- * The [online DataCleaner discussion forum](http://datacleaner.org/forum). Especially if it is more of a question or a use case issue rather than a bug or technical feature description.
+ * The [online DataCleaner discussion forum](https://datacleaner.org/forum). Especially if it is more of a question or a use case issue rather than a bug or technical feature description.
 
 ### Build the code
 

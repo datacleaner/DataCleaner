@@ -43,7 +43,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
     private final String _url;
 
     public JnlpUrlLaunchArtifactProvider() {
-        this("http://datacleaner.org/resources/webstart/datacleaner.jnlp");
+        this("https://datacleaner.org/resources/webstart/datacleaner.jnlp");
     }
 
     public JnlpUrlLaunchArtifactProvider(String url) {

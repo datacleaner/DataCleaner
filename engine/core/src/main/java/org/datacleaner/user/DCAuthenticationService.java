@@ -46,13 +46,13 @@ public class DCAuthenticationService implements AuthenticationService {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("username", username);
 		try {
-			String salt = _httpXmlUtils.getUrlContent("http://datacleaner.org/ws/get_salt", params);
+			String salt = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/get_salt", params);
 
 			if (salt != null && !"not found".equals(salt)) {
 				String hashedPassword = Jcrypt.crypt(salt, new String(password));
 
 				params.put("hashed_password", hashedPassword);
-				String accepted = _httpXmlUtils.getUrlContent("http://datacleaner.org/ws/login", params);
+				String accepted = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/login", params);
 
 				if ("true".equals(accepted)) {
 					return true;

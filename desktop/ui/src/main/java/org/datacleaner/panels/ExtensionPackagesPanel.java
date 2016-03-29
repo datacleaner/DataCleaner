@@ -90,7 +90,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
         final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap",
                 imageManager.getImageIcon("images/actions/website.png"));
-        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
+        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("https://datacleaner.org/extensions"));
 
         final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file",
                 imageManager.getImageIcon("images/filetypes/archive.png"));

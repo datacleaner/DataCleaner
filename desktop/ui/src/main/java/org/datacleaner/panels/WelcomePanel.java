@@ -145,17 +145,17 @@ public class WelcomePanel extends DCSplashPanel {
                 final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
                         IconUtils.APPLICATION_ICON);
                 tryProfessionalButton
-                        .addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
+                        .addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
 
                 final JButton readMoreButton = WidgetFactory.createDefaultButton("Compare the editions",
                         IconUtils.WEBSITE);
-                readMoreButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
+                readMoreButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
 
                 final JButton discussionForumButton = WidgetFactory.createDefaultButton("Visit the discussion forum",
                         "images/menu/forum.png");
                 discussionForumButton
                         .setToolTipText("Visit the online discussion forum for questions and answers in the community");
-                final OpenBrowserAction forumActionListener = new OpenBrowserAction("http://datacleaner.org/forum");
+                final OpenBrowserAction forumActionListener = new OpenBrowserAction("https://datacleaner.org/forum");
                 discussionForumButton.addActionListener(forumActionListener);
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");

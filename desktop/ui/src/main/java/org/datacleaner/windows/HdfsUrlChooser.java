@@ -451,11 +451,14 @@ public class HdfsUrlChooser extends JComponent {
                 if (chooser._currentDirectory == null) {
                     final boolean configured = chooser.scanHadoopConfigFiles(serverInformationCatalog);
 
-                    if (!configured) {
+                    if (configured) {
+                        chooser.updateDirectories();
+                    } else {
                         final URI uri = HdfsServerAddressDialog.showHdfsNameNodeDialog(chooser, chooser.getUri());
                         if (uri != null) {
                             chooser.updateCurrentDirectory(new Path(uri));
                         } else {
+                            chooser.updateCurrentDirectory(null);
                             chooser._dialog.setVisible(false);
                         }
                     }
@@ -509,7 +512,7 @@ public class HdfsUrlChooser extends JComponent {
             return false;
         }
 
-        final Configuration configuration = clusterInformation.getConfiguration();
+        final Configuration configuration = HdfsUtils.getHadoopConfigurationWithTimeout(clusterInformation);
 
         _currentDirectory = new Path("/");
 
@@ -520,15 +523,21 @@ public class HdfsUrlChooser extends JComponent {
         }
         final HdfsDirectoryModel model = (HdfsDirectoryModel) _fileList.getModel();
         model.updateFileList();
-        _directoryComboBoxModel.updateDirectories();
         return model._files.length > 0;
+    }
+
+    private void updateDirectories() {
+        _directoryComboBoxModel.updateDirectories();
     }
 
     private void updateCurrentDirectory(final Path directory) {
         _currentDirectory = directory;
-        _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
-        ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
-        _directoryComboBoxModel.updateDirectories();
+        
+        if (directory != null) {
+            _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
+            ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
+            updateDirectories();
+        }
     }
 
     private Path getCurrentDirectory() {

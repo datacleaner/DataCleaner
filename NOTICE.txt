@@ -1,8 +1,8 @@
 DataCleaner
-Copyright (C) 2014 Neopost - Customer Information Management
+Copyright (C) 2016 Neopost - Customer Information Management
 
 This product includes software developed by
-Neopost and the DataCleaner community (http://datacleaner.org/).
+Neopost and the DataCleaner community (https://datacleaner.org/).
 
 Please refer to the 'about' dialog for more
 info on credits, license and history.

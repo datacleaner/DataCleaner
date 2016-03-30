@@ -129,7 +129,7 @@ public final class UsageLogger {
                 long sessionId = getSessionId();
 
                 final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                final HttpPost req = new HttpPost("http://datacleaner.org/ws/user_action");
+                final HttpPost req = new HttpPost("https://datacleaner.org/ws/user_action");
                 nameValuePairs.add(new BasicNameValuePair("username", NOT_LOGGED_IN_USERNAME));
                 nameValuePairs.add(new BasicNameValuePair("deployment", "" + deploymentId));
                 nameValuePairs.add(new BasicNameValuePair("session", "" + sessionId));

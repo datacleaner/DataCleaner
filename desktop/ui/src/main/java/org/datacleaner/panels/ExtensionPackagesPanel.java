@@ -85,12 +85,12 @@ public class ExtensionPackagesPanel extends DCPanel {
         removeAll();
 
         final PopupButton addExtensionButton = WidgetFactory.createDefaultPopupButton("Add extension package",
-                IconUtils.ACTION_ADD);
+                IconUtils.ACTION_ADD_DARK);
         final JPopupMenu addExtensionMenu = addExtensionButton.getMenu();
 
         final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap",
                 imageManager.getImageIcon("images/actions/website.png"));
-        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
+        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("https://datacleaner.org/extensions"));
 
         final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file",
                 imageManager.getImageIcon("images/filetypes/archive.png"));
@@ -211,7 +211,7 @@ public class ExtensionPackagesPanel extends DCPanel {
         }
 
         if (extensionPackage.isExternal()) {
-            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
             removeButton.setToolTipText("Remove extension");
             removeButton.addActionListener(new ActionListener() {
                 @Override

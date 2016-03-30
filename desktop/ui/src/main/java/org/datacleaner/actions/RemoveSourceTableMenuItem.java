@@ -37,7 +37,7 @@ public class RemoveSourceTableMenuItem extends JMenuItem implements ActionListen
     private final Table _table;
 
     public RemoveSourceTableMenuItem(AnalysisJobBuilder analysisJobBuilder, Table table) {
-        super("Remove table from source", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE,
+        super("Remove table from source", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE_DARK,
                 IconUtils.ICON_SIZE_SMALL));
         _analysisJobBuilder = analysisJobBuilder;
         _table = table;

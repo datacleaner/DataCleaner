@@ -66,7 +66,7 @@ public class WelcomeDialog extends JDialog {
 
         final JButton websiteButton = WidgetFactory.createDefaultButton("Visit the DataCleaner website",
                 IconUtils.WEBSITE);
-        websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
+        websiteButton.addActionListener(new OpenBrowserAction("https://datacleaner.org"));
 
         panel.add(DCPanel.flow(Alignment.CENTER, continueButton, websiteButton), BorderLayout.SOUTH);
 

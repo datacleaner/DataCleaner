@@ -194,7 +194,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
                 message = "<html><p>Failed to open job because of a missing component:</p><pre>"
                         + e.getMessage()
                         + "</pre>"
-                        + "<p>This may happen if the job requires a <a href=\"http://datacleaner.org/editions\">Commercial Edition of DataCleaner</a>, or an extension that you do not have installed.</p></html>";
+                        + "<p>This may happen if the job requires a <a href=\"https://datacleaner.org/editions\">Commercial Edition of DataCleaner</a>, or an extension that you do not have installed.</p></html>";
             } else {
                 message = "<html>Failed to open job because of a missing component: " + e.getMessage() + "<br/><br/>"
                         + "This may happen if the job requires an extension that you do not have installed.</html>";

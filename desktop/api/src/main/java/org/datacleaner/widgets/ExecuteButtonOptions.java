@@ -165,6 +165,7 @@ public class ExecuteButtonOptions {
                     final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
                             .addFilter(MaxRowsFilter.class);
                     maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
+                    maxRowsFilter.getComponentInstance().setApplyOrdering(false);
                     maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
                     final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
                     final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();

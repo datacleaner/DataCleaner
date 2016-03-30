@@ -46,6 +46,7 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -181,7 +182,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data",
                     ImageManager.get().getImageIcon(IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-            previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
+            if(tjb.getDescriptor() instanceof RemoteTransformerDescriptor) {
+                previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, null, tjb, 10));
+            } else {
+                previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
+            }
             previewMenuItem.setEnabled(componentBuilder.isConfigured());
             popup.add(previewMenuItem);
         }
@@ -209,7 +214,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         }
 
         final JMenuItem menuItem = new JMenuItem(menuItemText,
-                imageManager.getImageIcon(IconUtils.ACTION_ADD, IconUtils.ICON_SIZE_SMALL));
+                imageManager.getImageIcon(IconUtils.ACTION_ADD_DARK, IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

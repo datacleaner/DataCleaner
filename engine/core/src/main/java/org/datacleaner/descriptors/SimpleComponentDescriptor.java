@@ -120,7 +120,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public final <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
         return ReflectionUtils.getAnnotation(getComponentClass(), annotationClass);
     }
 

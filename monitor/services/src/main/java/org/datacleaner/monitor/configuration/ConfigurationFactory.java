@@ -36,6 +36,7 @@ import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
@@ -127,6 +128,8 @@ public class ConfigurationFactory {
         final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
         excludedRenderingFormats.add(SwingRenderingFormat.class);
         excludedRenderingFormats.add(TextRenderingFormat.class);
+        excludedRenderingFormats.add(ComponentBuilderPresenterRenderingFormat.class);
+
         final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner,
                 excludedRenderingFormats, true);
         final ClassLoader classLoader = getClass().getClassLoader();

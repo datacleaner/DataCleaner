@@ -36,10 +36,10 @@ public class SelectDatastorePanel extends DCPanel {
 
     private final ExistingDatastorePanel _existingDatastoresPanel;
 
-    public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog,
-            final ServerInformationCatalog serverInformationCatalog, DatabaseDriverCatalog databaseDriverCatalog,
-            UserPreferences userPreferences,
-            DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
+    public SelectDatastorePanel(final DCModule dcModule, final DatastoreCatalog datastoreCatalog,
+            final ServerInformationCatalog serverInformationCatalog, final DatabaseDriverCatalog databaseDriverCatalog,
+            final UserPreferences userPreferences, final DatastoreSelectedListener datastoreSelectListener,
+            final boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
 

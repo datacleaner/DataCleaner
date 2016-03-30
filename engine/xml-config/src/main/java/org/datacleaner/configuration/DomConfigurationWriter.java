@@ -195,15 +195,17 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a server by its name, if it exists and is recognizeable by the
+     * Removes a Hadoop cluster by its name, if it exists and is recognizeable by the
      * externalizer.
      *
      * @param serverName
      * @return true if a server information element was removed from the XML document.
      */
-    public boolean removeServerInformation(final String serverName) {
+    public boolean removeHadoopClusterServerInformation(final String serverName) {
         final Element serverInformationCatalogElement = getServerInformationCatalogElement();
-        return removeChildElementByNameAttribute(serverName, serverInformationCatalogElement);
+        final Element hadoopClustersElement = getOrCreateChildElementByTagName(serverInformationCatalogElement,
+                "hadoop-clusters");
+        return removeChildElementByNameAttribute(serverName, hadoopClustersElement);
     }
 
     /**

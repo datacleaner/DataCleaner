@@ -85,7 +85,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
 
         _unitPropertyWidget = createUnitPropertyWidget();
 
-        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,7 +93,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
             }
         });
 
-        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

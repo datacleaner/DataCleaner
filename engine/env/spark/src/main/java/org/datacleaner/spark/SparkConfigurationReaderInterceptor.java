@@ -20,10 +20,13 @@
 package org.datacleaner.spark;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -33,6 +36,8 @@ import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
@@ -44,8 +49,11 @@ import org.datacleaner.util.convert.HadoopResourceBuilder;
 public class SparkConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
     private static final TaskRunner TASK_RUNNER = new SingleThreadedTaskRunner();
-    private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER)
-            .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
+    private static final Collection<Class<? extends RenderingFormat<?>>> EXCLUDED_RENDERER_FORMATS = Arrays.asList(
+            SwingRenderingFormat.class, ComponentBuilderPresenterRenderingFormat.class);
+    private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER,
+            EXCLUDED_RENDERER_FORMATS).scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage(
+                    "com.neopost", true);
     private static final StorageProvider STORAGE_PROVIDER = new InMemoryStorageProvider(500, 20);
     
     private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()

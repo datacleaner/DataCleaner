@@ -348,8 +348,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), configuration.getServerInformationCatalog(), _userPreferences);
-
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), configuration.getServerInformationCatalog(), _userPreferences, windowContext);
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new CardLayout());
         _contentContainerPanel.add(_welcomePanel, AnalysisWindowPanelType.WELCOME.getName());
@@ -794,56 +793,40 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private JToggleButton createMoreMenuButton() {
         final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", IconUtils.MENU_OPTIONS);
-        optionsMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OptionsDialog optionsDialog = _optionsDialogProvider.get();
-                optionsDialog.open();
-            }
+        optionsMenuItem.addActionListener(e -> {
+            OptionsDialog optionsDialog = _optionsDialogProvider.get();
+            optionsDialog.open();
         });
-
+        
         final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor",
                 IconUtils.MENU_DQ_MONITOR);
-        monitorMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
-                dialog.open();
-            }
+        monitorMenuItem.addActionListener(e -> {
+            MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
+            dialog.open();
         });
 
         final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries",
                 IconUtils.DICTIONARY_IMAGEPATH);
-        dictionariesMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
-                referenceDataDialog.selectDictionariesTab();
-                referenceDataDialog.open();
-            }
+        dictionariesMenuItem.addActionListener(e -> {
+            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            referenceDataDialog.selectDictionariesTab();
+            referenceDataDialog.open();
         });
 
         final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonyms",
                 IconUtils.SYNONYM_CATALOG_IMAGEPATH);
-        synonymCatalogsMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
-                referenceDataDialog.selectSynonymsTab();
-                referenceDataDialog.open();
-            }
+        synonymCatalogsMenuItem.addActionListener(e -> {
+            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            referenceDataDialog.selectSynonymsTab();
+            referenceDataDialog.open();
         });
 
         final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns",
                 IconUtils.STRING_PATTERN_IMAGEPATH);
-        stringPatternsMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
-                referenceDataDialog.selectStringPatternsTab();
-                referenceDataDialog.open();
-            }
+        stringPatternsMenuItem.addActionListener(e -> {
+            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            referenceDataDialog.selectStringPatternsTab();
+            referenceDataDialog.open();
         });
 
         final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon(
@@ -854,42 +837,38 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
         final List<DCWindow> windows = getWindowContext().getWindows();
 
-        getWindowContext().addWindowListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                windowsMenuItem.removeAll();
-                for (final DCWindow window : windows) {
-                    final Image windowIcon = window.getWindowIcon();
-                    final String title = window.getWindowTitle();
-                    final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                            IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-                    final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
-                    switchToWindowItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            window.toFront();
-                        }
-                    });
-                    windowsMenuItem.add(switchToWindowItem);
-                }
-
-                windowsMenuItem.add(new JSeparator());
-
-                JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
-                closeAllWindowsItem.addActionListener(new ActionListener() {
+        getWindowContext().addWindowListener(e -> {
+            windowsMenuItem.removeAll();
+            for (final DCWindow window : windows) {
+                final Image windowIcon = window.getWindowIcon();
+                final String title = window.getWindowTitle();
+                final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
+                        IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+                final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
+                switchToWindowItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
-                        for (DCWindow window : windows) {
-                            if (window instanceof AbstractDialog) {
-                                window.close();
-                            }
-                        }
+                        window.toFront();
                     }
                 });
-                windowsMenuItem.add(closeAllWindowsItem);
+                windowsMenuItem.add(switchToWindowItem);
             }
 
+            windowsMenuItem.add(new JSeparator());
+
+            JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
+            closeAllWindowsItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
+                    for (DCWindow window : windows) {
+                        if (window instanceof AbstractDialog) {
+                            window.close();
+                        }
+                    }
+                }
+            });
+            windowsMenuItem.add(closeAllWindowsItem);
         });
 
         popupButton.getMenu().removeAll();

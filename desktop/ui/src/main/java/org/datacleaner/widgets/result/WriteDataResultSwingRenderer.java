@@ -119,7 +119,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                     final File file = fileResource.getFile();
                     if (file != null && file.exists()) {
                         final JXEditorPane editorPane = new JXEditorPane("text/html",
-                                "Data was written to file: <a href=\"http://datacleaner.org/open_file\">"
+                                "Data was written to file: <a href=\"https://datacleaner.org/open_file\">"
                                         + file.getAbsolutePath() + "</a>.");
                         editorPane.setEditable(false);
                         editorPane.setOpaque(false);
@@ -128,7 +128,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                             public void hyperlinkUpdate(HyperlinkEvent event) {
                                 if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
                                     final String href = event.getDescription();
-                                    if ("http://datacleaner.org/open_file".equals(href)) {
+                                    if ("https://datacleaner.org/open_file".equals(href)) {
                                         try {
                                             Desktop.getDesktop().open(file);
                                         } catch (IOException ex) {
@@ -159,9 +159,9 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                 
                 final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
                         + " records</b> could <i>not</i> be written to the table!<br/>"
-                        + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
+                        + "The records were written to <a href=\"https://datacleaner.org/preview_datastore\">"
                         + errorDatastore.getFilename()
-                        + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
+                        + "</a> (<a href=\"https://datacleaner.org/register_datastore\">Register as datastore</a>).");
                 editorPane.setEditable(false);
                 editorPane.setOpaque(false);
                 editorPane.addHyperlinkListener(new HyperlinkListener() {
@@ -169,11 +169,11 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                     public void hyperlinkUpdate(HyperlinkEvent e) {
                         if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                             final String href = e.getDescription();
-                            if ("http://datacleaner.org/register_datastore".equals(href)) {
+                            if ("https://datacleaner.org/register_datastore".equals(href)) {
                                 _datastoreCatalog.addDatastore(errorDatastore);
                                 JOptionPane.showMessageDialog(editorPane,
                                         "Saved datastore: " + errorDatastore.getName());
-                            } else if ("http://datacleaner.org/preview_datastore".equals(href)) {
+                            } else if ("https://datacleaner.org/preview_datastore".equals(href)) {
                                 try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
                                     Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
                                     PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
@@ -228,7 +228,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
             if (!datastore.equals(ds)) {
                 final JButton addDatastoreButton = WidgetFactory.createDefaultButton("Add to datastores",
-                        IconUtils.ACTION_ADD);
+                        IconUtils.ACTION_ADD_DARK);
                 addDatastoreButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

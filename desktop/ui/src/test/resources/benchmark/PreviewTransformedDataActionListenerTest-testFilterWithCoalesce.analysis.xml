@@ -29,7 +29,7 @@
             <output id="col_customernumbernonenglish" name="CUSTOMERNUMBER (Non-English)"/>
             <output id="col_fooasstring2" name="&quot;foo&quot; (as string)"/>
         </transformer>
-        <transformer requires="outcome_2">
+        <transformer>
             <descriptor ref="Fuse / Coalesce fields"/>
             <properties>
                 <property name="Consider empty string as null" value="true"/>
@@ -60,7 +60,7 @@
         </filter>
     </transformation>
     <analysis>
-        <analyzer requires="outcome_2">
+        <analyzer>
             <descriptor ref="Preview transformed data analyzer"/>
             <properties/>
             <input ref="col_customernumberenglish"/>

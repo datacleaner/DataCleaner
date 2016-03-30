@@ -21,6 +21,7 @@ package org.datacleaner.descriptors;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,8 +40,11 @@ import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.Serializator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Provides descriptors of components that are available for remote calls on a
@@ -171,7 +176,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 RemoteDescriptorProviderImpl.this, component.getName(),
-                                component.getSuperCategoryName(), component.getCategoryNames(),
+                                initAnnotations(component.getName(), null, component.getAnnotations()),
                                 component.getIconData());
 
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
@@ -221,22 +226,41 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     private Map<Class<? extends Annotation>, Annotation> initAnnotations(String componentName, String propertyName,
-            Map<String, Map<String, Object>> annotationsInfo) {
+            JsonNode annotationsInfo) {
         final Map<Class<? extends Annotation>, Annotation> annotations = new HashMap<>();
         if (annotationsInfo == null) {
             return annotations;
         }
-        for (Map.Entry<String, Map<String, Object>> annInfoE : annotationsInfo.entrySet()) {
+
+        for(Iterator<Map.Entry<String, JsonNode>> it = annotationsInfo.fields(); it.hasNext();) {
+            Map.Entry<String, JsonNode> annotationEntry = it.next();
             try {
-                @SuppressWarnings("unchecked")
-                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class
-                        .forName(annInfoE.getKey());
-                final Map<String, Object> anProperties = annInfoE.getValue();
-                final Annotation anProxy = AnnotationProxy.newAnnotation(anClass, anProperties);
+                String annotClassName = annotationEntry.getKey();
+                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class.forName(annotClassName);
+
+                Map<String, Object> annotationValues = new HashMap<>();
+                JsonNode annProperties = annotationEntry.getValue();
+                for (Iterator<Map.Entry<String, JsonNode>> annPropIter = annProperties.fields(); annPropIter.hasNext();) {
+                    Map.Entry<String, JsonNode> annPropEntry = annPropIter.next();
+                    String propName = annPropEntry.getKey();
+                    JsonNode propValueNode = annPropEntry.getValue();
+                    Method propMethod = anClass.getDeclaredMethod(propName, new Class[0]);
+                    Class propClass = propMethod.getReturnType();
+                    Object propValue = Serializator.getJacksonObjectMapper().treeToValue(propValueNode, propClass);
+                    annotationValues.put(propName, propValue);
+                }
+
+                final Annotation anProxy = AnnotationProxy.newAnnotation(anClass, annotationValues);
                 annotations.put(anClass, anProxy);
+
             } catch (Exception e) {
-                logger.warn("Cannot create annotation '{}' for component '{}' property '{}'", annInfoE.getKey(),
-                        componentName, propertyName);
+                if(propertyName == null){
+                    logger.warn("Cannot create annotation '{}' for component '{}' property '{}'", annotationEntry.getKey(),
+                            componentName, propertyName, e);
+                }else {
+                    logger.warn("Cannot create annotation '{}' for component '{}'",annotationEntry.getKey(),
+                            componentName, e);
+                }
             }
         }
         return annotations;

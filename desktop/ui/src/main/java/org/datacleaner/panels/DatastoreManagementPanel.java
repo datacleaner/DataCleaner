@@ -267,13 +267,13 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final int panel1ItemsCount = 11;
 
         final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);
-        for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
+        for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(),
+                panel1ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
-                panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
-                        datastoreDescriptor.getDescription(), datastoreDescriptor.getIconPath(),
-                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass(),
-                        DCPopupBubble.Position.BOTTOM));
+                panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
+                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
+                                .getDatastoreDialogClass(), DCPopupBubble.Position.BOTTOM));
                 promotedDatabaseNames.add(datastoreDescriptor.getName());
             }
         }
@@ -284,10 +284,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         for (int i = panel1ItemsCount; i < datastoreDescriptors.getAvailableDatastoreDescriptors().size(); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
-                panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
-                        datastoreDescriptor.getDescription(), datastoreDescriptor.getIconPath(),
-                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass(),
-                        DCPopupBubble.Position.TOP));
+                panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
+                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
+                                .getDatastoreDialogClass(), DCPopupBubble.Position.TOP));
                 promotedDatabaseNames.add(datastoreDescriptor.getName());
             }
         }
@@ -318,8 +317,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 final String imagePath = datastoreDescriptor.getIconPath();
                 final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
                 final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
-                menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
-                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
+                menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(), datastoreDescriptor
+                        .getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
                 moreDatastoreTypesMenu.add(menuItem);
             }
         }
@@ -355,8 +354,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return button;
     }
 
-    private <D extends Datastore> ActionListener createActionListener(final String title,
-            final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass) {
+    private <D extends Datastore> ActionListener createActionListener(final String title, final Class<D> datastoreClass,
+            final Class<? extends AbstractDialog> dialogClass) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {

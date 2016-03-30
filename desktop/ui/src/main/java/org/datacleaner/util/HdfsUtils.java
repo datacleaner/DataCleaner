@@ -25,13 +25,15 @@ import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.datacleaner.server.HadoopClusterInformation;
 
 public class HdfsUtils {
 
     public static Configuration getHadoopConfiguration(URI uri) {
-        final Configuration conf = new Configuration();
+        final Configuration conf = getHadoopConfigurationWithTimeout(null);
         conf.set("fs.defaultFS", uri.toString());
         return conf;
     }
@@ -47,5 +49,19 @@ public class HdfsUtils {
 
     public static FileSystem getFileSystemFromPath(Path path){
         return getFileSystemFromUri(path.toUri());
+    }
+
+    public static Configuration getHadoopConfigurationWithTimeout(final HadoopClusterInformation clusterInformation) {
+        Configuration configuration = null;
+        
+        if (clusterInformation == null) {
+            configuration = new Configuration();
+        } else {
+            configuration = clusterInformation.getConfiguration();
+        }
+
+        configuration.set(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_KEY, String
+                .valueOf(1));
+        return configuration;
     }
 }

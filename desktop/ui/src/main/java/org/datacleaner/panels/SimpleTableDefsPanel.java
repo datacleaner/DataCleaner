@@ -117,7 +117,7 @@ public class SimpleTableDefsPanel extends DCPanel {
     }
 
     private DCPanel createButtonPanel() {
-        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.setText("Add table");
         addButton.addActionListener(new ActionListener() {
             @Override

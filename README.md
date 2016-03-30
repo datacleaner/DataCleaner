@@ -2,7 +2,7 @@
 
 [![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
 <div>
-<img src="http://datacleaner.org/resources/dc-logo-100.png" alt="DataCleaner logo" />
+<img src="https://datacleaner.org/resources/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
 
 The premier Open Source Data Quality solution.
@@ -30,7 +30,7 @@ The main application modules are:
   * services - web services and controllers of DataCleaner monitor
   * widgets - reusable widgets and UI work, based on GWT
   * ui - the actual web user interface, based primarily on GWT and JSF
- * documentation - end-user reference documentation, published on http://datacleaner.org/docs
+ * documentation - end-user reference documentation, published on https://datacleaner.org/docs
 
 ## Code style and formatting
 
@@ -44,9 +44,9 @@ https://travis-ci.org/datacleaner/DataCleaner
 
 ## Where to go for end-user information?
 
-Please visit the main DataCleaner website http://datacleaner.org for downloads, news, forums etc.
+Please visit the main DataCleaner website https://datacleaner.org for downloads, news, forums etc.
 
-Reference Documentation for users is available at http://datacleaner.org/docs - GitHub wiki and issues are used for developers and technical aspects only.
+Reference Documentation for users is available at https://datacleaner.org/docs - GitHub wiki and issues are used for developers and technical aspects only.
 
 ## License
 

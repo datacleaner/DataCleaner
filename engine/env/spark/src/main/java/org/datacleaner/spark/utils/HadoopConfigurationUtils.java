@@ -22,21 +22,26 @@ package org.datacleaner.spark.utils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.StringUtils;
 
 /**
- * Utility class to check the validity of a datastore when trying to run job on Hadoop with Spark.  
+ * Utility class to check the validity of a datastore when trying to run job on
+ * Hadoop with Spark.
  *
  */
 public class HadoopConfigurationUtils {
 
     public static boolean isValidConfiguration(AnalysisJobBuilder analysisJobBuilder) {
 
-        if (analysisJobBuilder.getDatastore() instanceof CsvDatastore) {
-            final CsvDatastore datastore = (CsvDatastore) analysisJobBuilder.getDatastore();
-            final CsvConfiguration csvConfiguration = datastore.getCsvConfiguration();
+        final Datastore datastore = analysisJobBuilder.getDatastore();
+        if (datastore instanceof CsvDatastore) {
+            final CsvDatastore csvDatastore = (CsvDatastore) datastore;
+            final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
             final String encoding = csvConfiguration.getEncoding();
             if (!encoding.equals(FileHelper.UTF_8_ENCODING)) {
                 return false;
@@ -46,13 +51,30 @@ public class HadoopConfigurationUtils {
                 return false;
             }
 
-            if (!(datastore.getResource() instanceof HdfsResource)) {
+            final Resource resource = csvDatastore.getResource();
+            if (!isHdfsResource(resource)) {
                 return false;
             }
+        } else if (datastore instanceof JsonDatastore) {
+            final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
+            final Resource resource = jsonDatastore.getResource();
+            if (!isHdfsResource(resource)) {
+                return false;
+            }
+        } else {
+            // other type of datastore
+            return false;
         }
         return true;
     }
-    
+
+    private static boolean isHdfsResource(Resource resource) {
+        if (resource instanceof HdfsResource) {
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isSparkHomeSet() {
         final String property = System.getProperty("SPARK_HOME");
         if (StringUtils.isNullOrEmpty(property)) {

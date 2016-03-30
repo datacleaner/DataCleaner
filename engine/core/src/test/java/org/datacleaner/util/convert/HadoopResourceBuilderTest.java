@@ -37,6 +37,16 @@ public class HadoopResourceBuilderTest {
     }
 
     @Test
+    public void testPatternGroupsWithSpaces() throws Exception {
+        final Matcher matcher = HadoopResourceBuilder.RESOURCE_SCHEME_PATTERN.matcher(
+                "hdfs://{my /-+\\|& server}/foo/bar.txt");
+        assertTrue(matcher.find());
+        assertEquals("hdfs", matcher.group(1));
+        assertEquals("my /-+\\|& server", matcher.group(2));
+        assertEquals("/foo/bar.txt", matcher.group(3));
+    }
+
+    @Test
     public void testPatternGroupsNoScheme() throws Exception {
         final Matcher matcher = HadoopResourceBuilder.RESOURCE_SCHEME_PATTERN.matcher("/foo/bar.txt");
         assertFalse(matcher.find());

@@ -59,7 +59,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     public static final String PROPERTY_ADDITIONAL_OUTPUT_VALUES = "Additional output values";
 
     public static enum Condition implements HasName {
-        NOT_BLANK_OR_NULL("Not <blank> or <null>"), NOT_NULL("Not <null>");
+        NOT_BLANK_OR_NULL("Not <blank> or <null>"), NOT_NULL("Not <null>"), NULL("<null> required"), BLANK_OR_NULL("<blank> or <null> required");
 
         private final String _name;
 
@@ -144,10 +144,27 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         for (int i = 0; i < _valueColumns.length; i++) {
             final Object value = row.getValue(_valueColumns[i]);
             final boolean valid;
-            if (value instanceof String && _conditions[i] == Condition.NOT_BLANK_OR_NULL) {
-                valid = !StringUtils.isNullOrEmpty((String) value);
-            } else {
+            switch (_conditions[i]) {
+            case NOT_BLANK_OR_NULL:
+                if (value instanceof String) {
+                    valid = !StringUtils.isNullOrEmpty((String) value);
+                    break;
+                }
+                // notice fall-through to NOT_NULL scenario
+            case NOT_NULL:
                 valid = value != null;
+                break;
+            case BLANK_OR_NULL:
+                if (value instanceof String) {
+                    valid = StringUtils.isNullOrEmpty((String) value);
+                    break;
+                }
+                // notice fall-through to NULL scenario
+            case NULL:
+                valid = value == null;
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported condition: " + _conditions[i]);
             }
             if (_evaluationMode == EvaluationMode.ANY_FIELD && !valid) {
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);

@@ -74,7 +74,7 @@ public class HadoopConfigurationUtils {
     }
 
     public static boolean isSparkHomeSet() {
-        final String property = System.getProperty("SPARK_HOME");
+        final String property = System.getenv("SPARK_HOME");
         if (StringUtils.isNullOrEmpty(property)) {
             return false;
         }

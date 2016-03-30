@@ -45,7 +45,7 @@ public class HadoopResourceBuilder {
      * <li>Group 3: The path (example '/foo/bar.txt')</li>
      * </ul>
      */
-    public static final Pattern RESOURCE_SCHEME_PATTERN = Pattern.compile("([\\w\\+\\-\\.]+)://\\{([\\w\\.]*)\\}(.*)");
+    public static final Pattern RESOURCE_SCHEME_PATTERN = Pattern.compile("([\\w\\+\\-\\.]+)://\\{([\\w\\.\\W\\s]*)\\}(.*)");
 
     public HadoopResourceBuilder(ServerInformationCatalog catalog, String templatedUri) {
         final Matcher matcher = RESOURCE_SCHEME_PATTERN.matcher(templatedUri);

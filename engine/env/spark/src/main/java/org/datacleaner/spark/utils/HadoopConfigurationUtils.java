@@ -35,7 +35,7 @@ import org.datacleaner.util.StringUtils;
  */
 public class HadoopConfigurationUtils {
 
-    public static boolean isValidConfiguration(Datastore datastore) {
+    public static boolean isValidSourceDatastore(Datastore datastore) {
 
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;

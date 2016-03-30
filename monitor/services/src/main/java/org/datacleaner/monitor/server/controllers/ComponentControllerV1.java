@@ -19,8 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,8 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -46,6 +49,7 @@ import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -73,7 +77,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,8 +87,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.util.UriUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -99,7 +107,7 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 @Controller
 @RequestMapping("/{tenant}/components")
 public class ComponentControllerV1 {
-    private static final String REMOTE_MARK = "remote-icon-overlay.png";
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
@@ -357,7 +365,12 @@ public class ComponentControllerV1 {
         try {
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
-            Image icon = ImageIO.read(iconStream);
+            Image icon;
+            try {
+                icon = ImageIO.read(iconStream);
+            } finally {
+                iconStream.close();
+            }
             int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
             int iconH = icon.getHeight(null);
@@ -544,6 +557,45 @@ public class ComponentControllerV1 {
             default:
                 throw new IllegalArgumentException("Unknown outputStyle '" + outputStyle + "'");
             }
+        }
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    public Object handleException(HttpServletRequest request, final HttpServletResponse response, Object handler, Exception ex) throws IOException {
+        logger.debug("Error in controller", ex);
+
+        final AtomicInteger errorCode = new AtomicInteger(500);
+        if(ex instanceof ComponentValidationException || ex instanceof IllegalArgumentException) {
+            errorCode.set(422);
+        } else {
+            // Using DefaultHandlerExceptionResolver to map standard Spring exception
+            // like NoSuchRequestHandlingMethodException (HTTP 404) etc...
+            HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
+                public void sendError(int sc, String msg) throws IOException {
+                    errorCode.set(sc);
+                }
+                public void sendError(int sc) throws IOException {
+                    errorCode.set(sc);
+                }
+            };
+            new DefaultHandlerExceptionResolver().resolveException(request, responseWrapper, handler, ex);
+        }
+        return ResponseEntity.status(errorCode.get()).body(new ErrorResponse(ex));
+    }
+
+    public static class ErrorResponse {
+        @JsonProperty ErrorDetails error;
+        public ErrorResponse(Exception e) {
+            error = new ErrorDetails();
+            error.message = e.getMessage();
+            error.exceptionClass = e.getClass().getName();
+        }
+        public static class ErrorDetails {
+            @JsonProperty
+            private String message;
+            @JsonProperty
+            private String exceptionClass;
         }
     }
 }

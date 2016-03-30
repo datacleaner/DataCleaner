@@ -35,6 +35,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.restclient.ComponentConfiguration;
@@ -43,6 +44,7 @@ import org.datacleaner.restclient.ComponentsRestClientUtils;
 import org.datacleaner.restclient.CreateInput;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.RESTClientException;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.batch.BatchRowCollectingTransformer;
 import org.datacleaner.util.batch.BatchSink;
@@ -72,13 +74,16 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     private final RemoteServerData serverData;
     private String componentDisplayName;
 
-    private OutputColumns lastOutputColumns;
-    private CreateInput lastCreateInput;
-
     private ComponentRESTClient client;
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
     private final AtomicBoolean failed = new AtomicBoolean(false);
+    private final SingleValueErrorAwareCache<CreateInput, OutputColumns> cachedOutputColumns = new SingleValueErrorAwareCache<CreateInput, OutputColumns>() {
+        @Override
+        protected OutputColumns fetch(CreateInput input) throws Exception {
+            return getOutputColumnsInternal(input);
+        }
+    };
 
     public RemoteTransformer(RemoteServerData serverData, String componentDisplayName) {
         this.serverData = serverData;
@@ -100,55 +105,28 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     public void closeClient() {
         logger.debug("closing '{}' @{}", componentDisplayName, this.hashCode());
         client = null;
-        // TODO: client now misses a "close" method (although Jersey client has a "destroy" method).
+    }
+
+    @Validate
+    public void validate() throws Exception {
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = getConfiguration(getUsedInputColumns());
+        try {
+            cachedOutputColumns.getCachedValue(createInput);
+        } catch(RESTClientException e) {
+            if(e.getCode() == 422) {
+                // Validation failed - simplify the error message
+                throw new RuntimeException(e.getReason());
+            }
+        }
     }
 
     @Override
     public OutputColumns getOutputColumns() {
-        OutputColumns outCols;
-
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = getConfiguration(getUsedInputColumns());
         try {
-            CreateInput createInput = new CreateInput();
-            createInput.configuration = getConfiguration(getUsedInputColumns());
-            if (lastOutputColumns != null && createInput.equals(lastCreateInput)) {
-                logger.debug("Reusing cached output columns, nothing changed");
-                outCols = lastOutputColumns;
-            } else {
-                logger.debug("Getting output columns from server");
-                boolean wasInit = false;
-                if (client == null) {
-                    wasInit = true;
-                    initClient();
-                }
-                try {
-                    org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
-
-                    outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
-                    int i = 0;
-                    for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
-                        outCols.setColumnName(i, colSpec.name);
-                        try {
-                            outCols.setColumnType(i, Class.forName(colSpec.type));
-                        } catch (ClassNotFoundException e) {
-                            final Class<?> type;
-                            if (isOutputColumnEnumeration(colSpec.schema)) {
-                                type = String.class;
-                            } else {
-                                type = JsonNode.class;
-                            }
-                            outCols.setColumnType(i, type);
-                        }
-                        i++;
-                    }
-                    lastOutputColumns = outCols;
-                    lastCreateInput = createInput;
-                } finally {
-                    if (wasInit) {
-                        closeClient();
-                    }
-                }
-            }
-            return outCols;
+            return cachedOutputColumns.getCachedValue(createInput);
         } catch(Exception e) {
             logger.debug("Error retrieving columns of transformer '" + componentDisplayName + "': " + e.toString());
             return OutputColumns.NO_OUTPUT_COLUMNS;
@@ -321,5 +299,40 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             }
         }
         convertOutputRows(out.rows, sink, size);
+    }
+
+    private OutputColumns getOutputColumnsInternal(CreateInput createInput) throws Exception {
+        logger.debug("Getting output columns from server");
+        boolean wasInit = false;
+        if (client == null) {
+            wasInit = true;
+            initClient();
+        }
+        try {
+            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
+
+            OutputColumns outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
+            int i = 0;
+            for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
+                outCols.setColumnName(i, colSpec.name);
+                try {
+                    outCols.setColumnType(i, Class.forName(colSpec.type));
+                } catch (ClassNotFoundException e) {
+                    final Class<?> type;
+                    if (isOutputColumnEnumeration(colSpec.schema)) {
+                        type = String.class;
+                    } else {
+                        type = JsonNode.class;
+                    }
+                    outCols.setColumnType(i, type);
+                }
+                i++;
+            }
+            return outCols;
+        } finally {
+            if (wasInit) {
+                closeClient();
+            }
+        }
     }
 }

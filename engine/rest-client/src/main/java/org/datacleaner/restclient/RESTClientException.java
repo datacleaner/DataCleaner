@@ -19,27 +19,29 @@
  */
 package org.datacleaner.restclient;
 
-/**
- * Basic REST client that requires the endpoint and the requestBody to provide the response.
- * @since 03. 09. 2015
- */
-public interface RESTClient {
-    
-    enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        DELETE,
-        ;
-    };
+public class RESTClientException extends RuntimeException {
 
-    /**
-     * It returns the response for the given request.
-     *
-     * @param httpMethod
-     * @param url
-     * @param requestBody
-     * @return
-     */
-    String getResponse(HttpMethod httpMethod, String url, String requestBody);
+    private final int code;
+    private final String reason;
+
+    public RESTClientException(int code, String reason) {
+        this.code = code;
+        this.reason = reason == null ? "" : reason.trim();
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public String getMessage() {
+        if(reason.isEmpty()) {
+            return "Error code " + code;
+        } else {
+            return reason + " (error code " + code + ")";
+        }
+    }
 }

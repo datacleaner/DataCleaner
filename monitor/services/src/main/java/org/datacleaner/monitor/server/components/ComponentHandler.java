@@ -66,6 +66,7 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -154,11 +155,11 @@ public class ComponentHandler {
 
             MutableColumn column = columns.get(columnName);
             if (column != null) {
-                throw new RuntimeException("Multiple column definition of name '" + columnName + "'");
+                throw new IllegalArgumentException("Multiple column definition of name '" + columnName + "'");
             }
             ColumnType columnType = ColumnTypeImpl.valueOf(columnTypeName);
             if (columnType == null) {
-                throw new RuntimeException("Column '" + columnName + "' has unknown type '" + columnTypeName + "'");
+                throw new IllegalArgumentException("Column '" + columnName + "' has unknown type '" + columnTypeName + "'");
             }
             column = new MutableColumn(columnName, columnType, table, index, true);
             columns.put(columnName, column);
@@ -227,7 +228,14 @@ public class ComponentHandler {
         lifeCycleHelper = new LifeCycleHelper(injMan, false);
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        lifeCycleHelper.validate(descriptor, component);
+        try {
+            lifeCycleHelper.validate(descriptor, component);
+        } catch(Exception e) {
+            if(e instanceof ComponentValidationException) {
+                throw (ComponentValidationException)e;
+            }
+            throw new ComponentValidationException(descriptor, component, e);
+        }
         lifeCycleHelper.initialize(descriptor, component);
     }
 
@@ -244,7 +252,7 @@ public class ComponentHandler {
         }else if (component instanceof Transformer) {
             return runTransformer(data);
         } else if (component instanceof Analyzer) {
-            throw new RuntimeException("NOT YET IMPLEMENTED");
+            throw new IllegalArgumentException("Analyzers are not yet implemented");
         } else {
             throw new IllegalArgumentException("Unknown component type " + component.getClass());
         }
@@ -392,7 +400,7 @@ public class ComponentHandler {
     private InputColumn<?> getOrCreateInputColumn(String columnName, String propertyName) {
         final MutableColumn column = columns.get(columnName);
         if (column == null) {
-            throw new RuntimeException("Column '" + columnName + "' specified in property '" + propertyName
+            throw new IllegalArgumentException("Column '" + columnName + "' specified in property '" + propertyName
                     + "' was not found in table columns specification");
         }
         InputColumn<?> inputColumn = inputColumns.get(columnName);
@@ -423,7 +431,7 @@ public class ComponentHandler {
         try {
             return convertValue(type, value);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
+            throw new IllegalArgumentException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
                     + "': " + value.toString(), e);
         }
     }
@@ -432,7 +440,7 @@ public class ComponentHandler {
         try {
             return convertValue(type, value);
         } catch (Exception e) {
-            throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
+            throw new IllegalArgumentException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
     }
 

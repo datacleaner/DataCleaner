@@ -26,7 +26,6 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.StringUtils;
 
 /**
@@ -36,9 +35,8 @@ import org.datacleaner.util.StringUtils;
  */
 public class HadoopConfigurationUtils {
 
-    public static boolean isValidConfiguration(AnalysisJobBuilder analysisJobBuilder) {
+    public static boolean isValidConfiguration(Datastore datastore) {
 
-        final Datastore datastore = analysisJobBuilder.getDatastore();
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();

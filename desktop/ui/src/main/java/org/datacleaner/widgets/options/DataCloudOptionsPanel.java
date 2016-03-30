@@ -138,7 +138,7 @@ public class DataCloudOptionsPanel extends DCPanel {
 
     private Component getDescriptionComponent() {
         final DCHtmlBox htmlBox = new DCHtmlBox("When registered at "
-                + "<a href=\"http://datacleaner.org\">datacleaner.org</a> you can get access to DataCloud. <br><br>"
+                + "<a href=\"https://datacleaner.org\">datacleaner.org</a> you can get access to DataCloud. <br><br>"
                 + "DataCloud is an online service platform providing new functions to DataCleaner users and more. Sign in to the service using the form below.");
 
         return htmlBox;

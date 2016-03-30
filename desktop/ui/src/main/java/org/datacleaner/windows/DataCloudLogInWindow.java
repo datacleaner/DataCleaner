@@ -148,7 +148,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
         final JEditorPane resetPasswordText = new DCHtmlBox("Forgot your password? " +
-                "<a href='http://datacleaner.org/reset_password'>Reset it here</a>.");
+                "<a href='https://datacleaner.org/reset_password'>Reset it here</a>.");
         final JButton signInButton = WidgetFactory.createPrimaryButton("Sign in", IconUtils.ACTION_SAVE_BRIGHT);
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
         final ImageIcon usernameIcon = ImageManager.get().getImageIcon(IconUtils.USERNAME_INPUT);
@@ -312,7 +312,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         editorPane.setSize(getDialogWidth() - 30, Integer.MAX_VALUE);
         editorPane.setText(
                 "<html>Thank you for using DataCleaner." +
-                        " If you're a registered user on <a href=\"http://datacleaner.org\">datacleaner.org</a> then you can immediately access" +
+                        " If you're a registered user on <a href=\"https://datacleaner.org\">datacleaner.org</a> then you can immediately access" +
                         " our cloud data services (there are free credits with your registration). DataCloud contains services such as:" +
                         "<ul style=\"list-style-type:none\">" +
                         "   <li>\u2022 Address correction using postal data from all over the world." +

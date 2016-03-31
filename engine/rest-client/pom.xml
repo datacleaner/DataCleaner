@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>DataCleaner-engine</artifactId>
 		<groupId>org.eobjects.datacleaner</groupId>
-		<version>5.0-SNAPSHOT</version>
+		<version>5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 

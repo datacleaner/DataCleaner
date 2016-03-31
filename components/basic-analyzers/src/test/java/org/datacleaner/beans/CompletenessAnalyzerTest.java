@@ -83,6 +83,54 @@ public class CompletenessAnalyzerTest extends TestCase {
         assertEquals(1, analyzer.getResult().getInvalidRowCount());
         assertEquals(3, analyzer.getResult().getValidRowCount());
     }
+    
+    public void testSomeFieldsRequiredToBeNullFieldsEvaluationMode() throws Exception {
+        final InputColumn<?> col1 = new MockInputColumn<String>("foo");
+        final InputColumn<?> col2 = new MockInputColumn<String>("bar");
+        final InputColumn<?> col3 = new MockInputColumn<String>("baz");
+
+        final CompletenessAnalyzer analyzer = new CompletenessAnalyzer();
+        analyzer._valueColumns = new InputColumn[] { col1, col2, col3 };
+        analyzer._conditions = new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
+                CompletenessAnalyzer.Condition.NULL, CompletenessAnalyzer.Condition.BLANK_OR_NULL };
+
+        analyzer.init();
+
+        analyzer.run(new MockInputRow().put(col1, null).put(col2, null), 1);
+
+        assertEquals(1, analyzer.getResult().getInvalidRowCount());
+        assertEquals(0, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, "hello").put(col2, null), 1);
+        
+        assertEquals(1, analyzer.getResult().getInvalidRowCount());
+        assertEquals(1, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, null).put(col2, "world"), 1);
+        
+        assertEquals(2, analyzer.getResult().getInvalidRowCount());
+        assertEquals(1, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, "hello").put(col2, "world"), 1);
+
+        assertEquals(3, analyzer.getResult().getInvalidRowCount());
+        assertEquals(1, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, "hello").put(col2, "").put(col3, ""), 1);
+
+        assertEquals(4, analyzer.getResult().getInvalidRowCount());
+        assertEquals(1, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, "hello").put(col2, null).put(col3, ""), 1);
+
+        assertEquals(4, analyzer.getResult().getInvalidRowCount());
+        assertEquals(2, analyzer.getResult().getValidRowCount());
+        
+        analyzer.run(new MockInputRow().put(col1, "hello").put(col2, null).put(col3, null), 1);
+
+        assertEquals(4, analyzer.getResult().getInvalidRowCount());
+        assertEquals(3, analyzer.getResult().getValidRowCount());
+    }
 
     public void testConfigurableBeanConfiguration() throws Exception {
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {

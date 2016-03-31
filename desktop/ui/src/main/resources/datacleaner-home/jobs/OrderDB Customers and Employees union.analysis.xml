@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
 	<job-metadata>
+		<job-description>Created with DataCleaner Enterprise edition
+			5.0-SNAPSHOT</job-description>
+		<author>claudiap</author>
+		<updated-date>2016-03-31+02:00</updated-date>
 		<metadata-properties>
 			<property name="CoordinatesY.PUBLIC.EMPLOYEES">166</property>
-			<property name="CoordinatesX.PUBLIC.EMPLOYEES">105</property>
 			<property name="CoordinatesX.PUBLIC.CUSTOMERS">104</property>
 			<property name="CoordinatesY.PUBLIC.CUSTOMERS">54</property>
+			<property name="CoordinatesX.PUBLIC.EMPLOYEES">105</property>
 		</metadata-properties>
 	</job-metadata>
 	<source>
@@ -53,7 +57,7 @@
 			</metadata-properties>
 			<properties>
 				<property name="Units"
-					value="[&amp;#91;CUSTOMERNUMBER&amp;#44;EMPLOYEENUMBER&amp;#93;,&amp;#91;CONTACTFIRSTNAME&amp;#44;FIRSTNAME&amp;#93;,&amp;#91;CONTACTLASTNAME&amp;#44;LASTNAME&amp;#93;,&amp;#91;JOBTITLE&amp;#44;JOBTITLE&amp;#93;]" />
+					value="[&amp;#91;PUBLIC.CUSTOMERS.CUSTOMERNUMBER&amp;#44;PUBLIC.EMPLOYEES.EMPLOYEENUMBER&amp;#93;,&amp;#91;PUBLIC.CUSTOMERS.CONTACTFIRSTNAME&amp;#44;PUBLIC.EMPLOYEES.FIRSTNAME&amp;#93;,&amp;#91;PUBLIC.CUSTOMERS.CONTACTLASTNAME&amp;#44;PUBLIC.EMPLOYEES.LASTNAME&amp;#93;,&amp;#91;PUBLIC.CUSTOMERS.JOBTITLE&amp;#44;PUBLIC.EMPLOYEES.JOBTITLE&amp;#93;]" />
 			</properties>
 			<input ref="col_customernumber" />
 			<input ref="col_contactfirstname" />
@@ -77,7 +81,6 @@
 			<input ref="col_email" />
 			<input ref="col_officecode" />
 			<input ref="col_reportsto" />
-			<input ref="col_jobtitle2" />
 			<output-data-stream name="output">
 				<job>
 					<source>
@@ -85,10 +88,10 @@
 							<column id="col_customernumber2" path="CUSTOMERNUMBER"
 								type="INTEGER" />
 							<column id="col_contactfirstname2" path="CONTACTFIRSTNAME"
-								type="VARCHAR" />
+								type="STRING" />
 							<column id="col_contactlastname2" path="CONTACTLASTNAME"
-								type="VARCHAR" />
-							<column id="col_jobtitle3" path="JOBTITLE" type="VARCHAR" />
+								type="STRING" />
+							<column id="col_jobtitle3" path="JOBTITLE" type="STRING" />
 						</columns>
 					</source>
 					<transformation />
@@ -104,21 +107,21 @@
 									value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]" />
 								<property name="Evaluation mode" value="ANY_FIELD" />
 							</properties>
-							<input ref="col_customernumber2" />
-							<input ref="col_contactfirstname2" />
-							<input ref="col_contactlastname2" />
-							<input ref="col_jobtitle3" />
+							<input ref="col_customernumber2" name="Values" />
+							<input ref="col_contactfirstname2" name="Values" />
+							<input ref="col_contactlastname2" name="Values" />
+							<input ref="col_jobtitle3" name="Values" />
 							<output-data-stream name="Complete rows">
 								<job>
 									<source>
 										<columns>
-											<column id="col_jobtitle4" path="JOBTITLE" type="VARCHAR" />
 											<column id="col_customernumber3" path="CUSTOMERNUMBER"
 												type="INTEGER" />
 											<column id="col_contactfirstname3" path="CONTACTFIRSTNAME"
-												type="VARCHAR" />
+												type="STRING" />
 											<column id="col_contactlastname3" path="CONTACTLASTNAME"
-												type="VARCHAR" />
+												type="STRING" />
+											<column id="col_jobtitle4" path="JOBTITLE" type="STRING" />
 										</columns>
 									</source>
 									<transformation />
@@ -141,13 +144,13 @@
 								<job>
 									<source>
 										<columns>
-											<column id="col_jobtitle5" path="JOBTITLE" type="VARCHAR" />
 											<column id="col_customernumber4" path="CUSTOMERNUMBER"
 												type="INTEGER" />
 											<column id="col_contactfirstname4" path="CONTACTFIRSTNAME"
-												type="VARCHAR" />
+												type="STRING" />
 											<column id="col_contactlastname4" path="CONTACTLASTNAME"
-												type="VARCHAR" />
+												type="STRING" />
+											<column id="col_jobtitle5" path="JOBTITLE" type="STRING" />
 										</columns>
 									</source>
 									<transformation />
@@ -163,7 +166,7 @@
 												<property name="Table name" value="incomplete-records" />
 												<property name="Write mode" value="TRUNCATE" />
 												<property name="Fields"
-													value="[CONTACTFIRSTNAME,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME]" />
+													value="[JOBTITLE,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME]" />
 											</properties>
 											<input ref="col_jobtitle5" />
 											<input ref="col_customernumber4" />

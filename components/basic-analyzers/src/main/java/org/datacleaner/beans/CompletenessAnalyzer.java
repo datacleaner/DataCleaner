@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +46,8 @@ import org.datacleaner.job.output.OutputDataStreams;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.datacleaner.util.StringUtils;
+
+import com.google.common.base.Strings;
 
 @Named("Completeness analyzer")
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
@@ -59,17 +61,41 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     public static final String PROPERTY_ADDITIONAL_OUTPUT_VALUES = "Additional output values";
 
     public static enum Condition implements HasName {
-        NOT_BLANK_OR_NULL("Not <blank> or <null>"), NOT_NULL("Not <null>"), NULL("<null> required"), BLANK_OR_NULL("<blank> or <null> required");
+        
+        NOT_BLANK_OR_NULL("Not <blank> or <null>", Condition::isNotNullOrEmpty),
+
+        NOT_NULL("Not <null>", e -> (e != null)),
+
+        NULL("<null> required", e -> (e == null)),
+
+        BLANK_OR_NULL("<blank> or <null> required", Condition::isNullOrEmpty);
 
         private final String _name;
+        private final Predicate<Object> _predicate;
 
-        private Condition(String name) {
+        private Condition(String name, Predicate<Object> predicate) {
             _name = name;
+            _predicate = predicate;
         }
 
         @Override
         public String getName() {
             return _name;
+        }
+
+        public boolean isValid(Object argument) {
+            return _predicate.test(argument);
+        }
+        
+        private static final boolean isNotNullOrEmpty(Object value) {
+            return !isNullOrEmpty(value);
+        }
+
+        private static final boolean isNullOrEmpty(Object value) {
+            if (value instanceof String) {
+                return Strings.isNullOrEmpty((String) value);
+            }
+            return value == null;
         }
     }
 
@@ -90,26 +116,27 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     }
 
     @Inject
-    @Configured(order=1, value=PROPERTY_VALUES)
+    @Configured(order = 1, value = PROPERTY_VALUES)
     @Description("Values to check for completeness")
     InputColumn<?>[] _valueColumns;
 
     @Inject
-    @Configured(order=2, value=PROPERTY_CONDITIONS)
+    @Configured(order = 2, value = PROPERTY_CONDITIONS)
     @Description("The conditions of which a value is determined to be filled or not")
     @MappedProperty(PROPERTY_VALUES)
     Condition[] _conditions;
 
     @Inject
-    @Configured(order=3, value=PROPERTY_EVALUATION_MODE)
+    @Configured(order = 3, value = PROPERTY_EVALUATION_MODE)
     EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
 
     @Inject
-    @Configured(order=100, value= PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
+    @Configured(order = 100, value = PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
     @Description("Optional additional values to add to output data streams")
     InputColumn<?>[] _additionalOutputValueColumns;
 
-    // Do not inject the shared RowAnnotations, available rows are always needed.
+    // Do not inject the shared RowAnnotations, available rows are always
+    // needed.
     private final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
     private final RowAnnotation _invalidRecords = _annotationFactory.createAnnotation();
     private final AtomicInteger _rowCount = new AtomicInteger();
@@ -143,29 +170,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         boolean allInvalid = true;
         for (int i = 0; i < _valueColumns.length; i++) {
             final Object value = row.getValue(_valueColumns[i]);
-            final boolean valid;
-            switch (_conditions[i]) {
-            case NOT_BLANK_OR_NULL:
-                if (value instanceof String) {
-                    valid = !StringUtils.isNullOrEmpty((String) value);
-                    break;
-                }
-                // notice fall-through to NOT_NULL scenario
-            case NOT_NULL:
-                valid = value != null;
-                break;
-            case BLANK_OR_NULL:
-                if (value instanceof String) {
-                    valid = StringUtils.isNullOrEmpty((String) value);
-                    break;
-                }
-                // notice fall-through to NULL scenario
-            case NULL:
-                valid = value == null;
-                break;
-            default:
-                throw new UnsupportedOperationException("Unsupported condition: " + _conditions[i]);
-            }
+            final boolean valid = _conditions[i].isValid(value);
             if (_evaluationMode == EvaluationMode.ANY_FIELD && !valid) {
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);
                 if (_incompleteRowCollector != null) {
@@ -221,16 +226,16 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder completeStreamBuilder = OutputDataStreams.pushDataStream(OUTPUT_STREAM_COMPLETE);
-        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams
-                .pushDataStream(OUTPUT_STREAM_INCOMPLETE);
+        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams.pushDataStream(
+                OUTPUT_STREAM_INCOMPLETE);
 
         for (InputColumn<?> column : createOutputDataStreamColumns()) {
             completeStreamBuilder.withColumnLike(column);
             incompleteStreamBuilder.withColumnLike(column);
         }
 
-        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(),
-                incompleteStreamBuilder.toOutputDataStream() };
+        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(), incompleteStreamBuilder
+                .toOutputDataStream() };
     }
 
     @Override

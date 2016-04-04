@@ -34,7 +34,7 @@
             <descriptor ref="Insert into table"/>
             <properties>
                 <property name="Buffer size" value="TINY"/>
-                <property name="Column names" value="[SALESREPEMPLOYEENUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME,CUSTOMERNUMBER,CUSTOMERNAME,PHONE,ADDRESSLINE1,CITY,COUNTRY]"/>
+                <property name="Column names" value="[SALESREPEMPLOYEENUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME,CUSTOMERNUMBER,CUSTOMERNAME,PHONE,ADDRESSLINE1,CITY,COUNTRY,JOBTITLE]"/>
                 <property name="Datastore" value="orderdb"/>
                 <property name="Error log file location" value="C:/Users/kasper/AppData/Local/Temp"/>
                 <property name="How to handle insertion errors?" value="STOP_JOB"/>
@@ -60,6 +60,7 @@
             <input value="My address" name="Values"/>
             <input value="My city" name="Values"/>
             <input value="My country" name="Values"/>
+            <input ref="col_7" name="Values"/>
         </analyzer>
     </analysis>
 </job>

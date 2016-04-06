@@ -87,7 +87,9 @@ public class BatchTransformationBuffer<I, O> {
             @Override
             public void run() {
                 try {
-                    flushBuffer(true);
+                    do {
+                        flushBuffer(true);
+                    } while(!_queue.isEmpty());
                 } catch(Throwable t) {
                     logger.warn("Cannot flush buffer", t);
                     exception = t;
@@ -143,12 +145,6 @@ public class BatchTransformationBuffer<I, O> {
         _transformation.map(source, sink);
 
         logger.info("Batch #{} - Finished", batchNumber, batchSize);
-
-        if (scheduled) {
-            if (!_queue.isEmpty()) {
-                flushBuffer(true);
-            }
-        }
     }
 
     public void shutdown() {

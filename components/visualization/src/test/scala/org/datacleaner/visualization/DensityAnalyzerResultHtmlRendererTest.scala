@@ -20,6 +20,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.test.TestHelper
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 
+
 class DensityAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()

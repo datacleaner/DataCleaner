@@ -5,6 +5,11 @@ import org.datacleaner.result.html.HeadElement
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
 import java.awt.Color
+import java.awt.Point
+import java.util.stream.Collectors
+import java.util.Collections
+import org.datacleaner.storage.RowAnnotation;
+import java.util.Iterator
 
 /**
  * Head element that writes a script specific to the rendering of a single result
@@ -20,22 +25,26 @@ class DensityAnalyzerChartScriptHeadElement(result: DensityAnalyzerResult, eleme
   override def toHtml(context: HtmlRenderingContext): String = {
 
     val annotations = result.getRowAnnotations
-
-    val maxRowsAnnotation = annotations.values.reduce((a, b) => if (a.getRowCount() > b.getRowCount()) a else b)
+    val rowsAnnotationList = annotations.values.stream().sorted(Collections.reverseOrder()).collect(Collectors.toList()); 
+    val maxRowsAnnotation = rowsAnnotationList.get(0)
     val maxRows = maxRowsAnnotation.getRowCount()
 
-    val paintScale = DensityAnalyzerColors.getPaintScale(maxRows);
-
-    annotations.foreach(entry => {
-      val point = entry._1
-      val z = entry._2.getRowCount()
-
-      val paint = paintScale.getPaint(z)
-      val color = paint.asInstanceOf[Color]
-      val rgbHex = DensityAnalyzerColors.toHexString(color)
-      val list = series(rgbHex)
-      list += point
-    })
+    val paintScale = DensityAnalyzerColors.getPaintScale(maxRows)
+ 
+    val entrySet = annotations.entrySet()
+    val iterator = entrySet.iterator()
+    while (iterator.hasNext()){
+         val entry = iterator.next()
+         val x = entry.getKey().getX().toInt
+         val y = entry.getKey().getY().toInt
+         val point = (x,y)
+         val z = entry.getValue().getRowCount()
+         val paint = paintScale.getPaint(z)
+         val color = paint.asInstanceOf[Color]
+         val rgbHex = DensityAnalyzerColors.toHexString(color)
+         val list = series(rgbHex)
+         list += point
+       }
 
     return """<script type="text/javascript">
     //<![CDATA[

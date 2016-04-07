@@ -19,6 +19,8 @@ import org.datacleaner.descriptors.SimpleDescriptorProvider
 import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 import org.datacleaner.job.builder.AnalysisJobBuilder
+import org.datacleaner.visualization.DensityAnalyzerResult
+import org.datacleaner.visualization.DensityAnalyzer
 
 object DensityAnalyzerResultSwingRendererTestApp {
 

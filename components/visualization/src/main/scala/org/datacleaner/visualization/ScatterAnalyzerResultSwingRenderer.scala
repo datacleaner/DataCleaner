@@ -38,16 +38,16 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
   override def getPrecedence(result: ScatterAnalyzerResult) = RendererPrecedence.HIGH
 
   override def render(result: ScatterAnalyzerResult): JPanel = {
-    val xAxisLabel = result.variable1.getName();
-    val yAxisLabel = result.variable2.getName();
+    val xAxisLabel = result.getVariable1().getName();
+    val yAxisLabel = result.getVariable2().getName();
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
 
-    result.groups.foreach(group => {
-      val xySeries = new XYSeries(group.name)
-      group.getCoordinates.foreach(xy => {
-        xySeries.add(xy._1, xy._2);
-      })
+    result.getGroups().stream().map(group -> {
+      val xySeries = new XYSeries(group.getName())
+      group.getCoordinates().stream().map(xy -> {
+        xySeries.add(xy.getX(), xy.getY());
+      }); 
       dataset.addSeries(xySeries)
     });
 
@@ -70,7 +70,7 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
             val itemIndex = xyItemEntity.getItem();
             val dataItem = series.getDataItem(itemIndex);
 
-            val group = result.groups()(seriesIndex)
+            val group = result.getGroups().get(seriesIndex)
             val rowAnnotation = group.getRowAnnotation((dataItem.getX(), dataItem.getY()));
             val rowAnnotationFactory = group.getRowAnnotationFactory();
             

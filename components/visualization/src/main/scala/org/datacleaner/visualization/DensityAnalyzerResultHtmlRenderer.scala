@@ -11,6 +11,8 @@ import org.datacleaner.result.html.SimpleHtmlFragment
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 import org.datacleaner.result.html.HtmlRenderer
 
+
+
 @RendererBean(classOf[HtmlRenderingFormat])
 class DensityAnalyzerResultHtmlRenderer extends HtmlRenderer[DensityAnalyzerResult] {
 

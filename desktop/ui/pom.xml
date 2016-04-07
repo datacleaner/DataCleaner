@@ -58,6 +58,35 @@
 					<source>${project.build.directory}/lib</source>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>copy-icons</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<target name="copyicons">
+						<copy file="${project.build.directory}/classes/images/actions/add_dark.png" 
+								tofile="${project.build.directory}/classes/images/actions/add.png" />
+						<copy file="${project.build.directory}/classes/images/actions/close_dark.png" 
+								tofile="${project.build.directory}/classes/images/actions/close.png" />
+						<copy file="${project.build.directory}/classes/images/actions/remove_dark.png" 
+								tofile="${project.build.directory}/classes/images/actions/remove.png" />
+						<copy file="${project.build.directory}/classes/images/actions/save_dark.png" 
+								tofile="${project.build.directory}/classes/images/actions/save.png" />
+						<copy file="${project.build.directory}/classes/images/actions/scrolldown_dark.png" 
+								tofile="${project.build.directory}/classes/images/actions/scrolldown.png" />
+					</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

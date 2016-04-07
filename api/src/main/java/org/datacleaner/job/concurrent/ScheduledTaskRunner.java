@@ -17,47 +17,37 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.job.concurrent;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.datacleaner.job.tasks.Task;
 
 /**
- * Container for all remote servers' (DataCleaner Monitors) configuration.
+ * Extended TaskRunner for scheduled tasks.
  */
-public interface RemoteServerConfiguration {
+public interface ScheduledTaskRunner extends TaskRunner {
 
     /**
-     * @return list of all remote server configurations.
-     */
-    List<RemoteServerData> getServerList();
-
-    /**
-     * Returns RemoteServerData by server name
+     * Submits a {@link Task} and a {@link ScheduledTaskRunner} to the
+     * {@link TaskRunner}, that will schedule it.
      *
-     * @param serverName - NULL - is not exists
-     * @return
-     */
-    RemoteServerData getServerConfig(String serverName);
-
-    /**
-     * Get actual state of connection to remote server.
-     *
-     * @param remoteServerName can be null.
-     * @return
-     */
-    RemoteServerState getActualState(String remoteServerName);
-
-    /**
-     * Add listener to inform about change of state
-     *
+     * @param task
      * @param listener
+     * @param initialDelay
+     * @param delay
+     * @param unit
      */
-    void addListener(RemoteServerStateListener listener);
+    void runScheduled(Task task, TaskListener listener, long initialDelay, long delay, TimeUnit unit);
 
     /**
-     * Remove listener
+     * Submits a {@link TaskRunnable} to the {@link ScheduledTaskRunner}, that will
+     * schedule it.
      *
-     * @param listener
+     * @param taskRunnable
+     * @param initialDelay
+     * @param delay
+     * @param unit
      */
-    void removeListener(RemoteServerStateListener listener);
+    void runScheduled(TaskRunnable taskRunnable, long initialDelay, long delay, TimeUnit unit);
 }

@@ -283,7 +283,4 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         }
     }
 
-    public Collection<DescriptorProviderStatus> getStatus() {
-        return Collections.emptySet();
-    }
 }

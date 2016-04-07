@@ -23,6 +23,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -36,12 +37,13 @@ import org.slf4j.LoggerFactory;
  * java.util.concurrent package (specifically the {@link ExecutorService}
  * class).
  */
-public final class MultiThreadedTaskRunner implements TaskRunner {
+public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(MultiThreadedTaskRunner.class);
     private final ThreadFactory _threadFactory;
 
     private final ExecutorService _executorService;
+    private final ScheduledThreadPoolExecutor _executorScheduledService;
     private final int _numThreads;
     private final BlockingQueue<Runnable> _workQueue;
 
@@ -77,6 +79,8 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
 
         _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
                 _threadFactory, rejectionHandler);
+
+        _executorScheduledService = new ScheduledThreadPoolExecutor(1);
     }
 
     /**
@@ -108,9 +112,22 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
     }
 
     @Override
+    public void runScheduled(final Task task, final TaskListener listener, long initialDelay, long delay, TimeUnit unit) {
+        logger.debug("Schedule task ({},{}), delay {} {}", task, listener, delay, unit);
+        _executorScheduledService.scheduleWithFixedDelay(new TaskRunnable(task, listener), initialDelay, delay, unit);
+    }
+
+    @Override
+    public void runScheduled(TaskRunnable taskRunnable, long initialDelay, long delay, TimeUnit unit) {
+        logger.debug("Schedule task ({}), delay {} {}", taskRunnable, delay, unit);
+        _executorScheduledService.scheduleWithFixedDelay(taskRunnable, initialDelay, delay, unit);
+    }
+
+    @Override
     public void shutdown() {
         logger.info("shutdown() called, shutting down executor service");
         _executorService.shutdown();
+        _executorScheduledService.shutdown();
     }
 
     public ExecutorService getExecutorService() {

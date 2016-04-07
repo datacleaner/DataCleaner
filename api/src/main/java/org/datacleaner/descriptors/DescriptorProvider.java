@@ -46,12 +46,6 @@ import org.datacleaner.job.AnalysisJob;
 public interface DescriptorProvider {
 
     /**
-     * @return a collection of {@link DescriptorProviderStatus} describing
-     *         current status.
-     */
-    public Collection<DescriptorProviderStatus> getStatus();
-
-    /**
      * Refreshes the descriptor list.
      */
     public void refresh();

@@ -401,7 +401,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         CompositeDescriptorProvider descriptorProvider = new CompositeDescriptorProvider();
         descriptorProvider.addDelegates(providers);
         environment.setDescriptorProvider(descriptorProvider);
-        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData));
+        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData, environment.getTaskRunner()));
     }
 
     private void createDescriptorProvider(Object providerElement,
@@ -467,7 +467,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
                     server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
             remoteServersConfig.add(remoteServerData);
-            descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData));
+            descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData, dataCleanerEnvironment.getRemoteServerConfiguration()));
         }
     }
 

@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.datacleaner.api.Alias;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
@@ -75,8 +77,11 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @Override
     public String[] getAliases() {
-        return new String[0]; // To change body of implemented methods use File
-                              // | Settings | File Templates.
+        Alias alias = getAnnotation(Alias.class);
+        if (alias == null) {
+            return new String[0];
+        }
+        return alias.value();
     }
 
     @Override

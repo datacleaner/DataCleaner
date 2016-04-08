@@ -23,6 +23,7 @@ import org.datacleaner.result.ResultProducer
 import org.datacleaner.result.DefaultResultProducer
 import org.datacleaner.result.AnnotatedRowsResult
 import org.datacleaner.result.renderer.RendererFactory
+import java.awt.Point
 
 @RendererBean(classOf[SwingRenderingFormat])
 class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult, JPanel] {
@@ -43,14 +44,19 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
 
-    result.getGroups().stream().map(group -> {
-      val xySeries = new XYSeries(group.getName())
-      group.getCoordinates().stream().map(xy -> {
-        xySeries.add(xy.getX(), xy.getY());
-      }); 
-      dataset.addSeries(xySeries)
-    });
-
+    val groupsIterator = result.getGroups.iterator()
+    
+    while (groupsIterator.hasNext()){
+       val group = groupsIterator.next();  
+       val xySeries = new XYSeries(group.getName())
+       val coordinates =  group.getCoordinates().iterator()
+       while(coordinates.hasNext()){
+         val xy= coordinates.next()
+         xySeries.add(xy.getX(), xy.getY())
+       }
+       dataset.addSeries(xySeries)
+    }
+    
     val legend = result.hasGroups();
     val tooltips = true;
     val urls = false;
@@ -71,7 +77,7 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
             val dataItem = series.getDataItem(itemIndex);
 
             val group = result.getGroups().get(seriesIndex)
-            val rowAnnotation = group.getRowAnnotation((dataItem.getX(), dataItem.getY()));
+            val rowAnnotation = group.getRowAnnotation(dataItem.getX(), dataItem.getY());
             val rowAnnotationFactory = group.getRowAnnotationFactory();
             
             val resultProducer = new DefaultResultProducer(new AnnotatedRowsResult(rowAnnotation, rowAnnotationFactory))

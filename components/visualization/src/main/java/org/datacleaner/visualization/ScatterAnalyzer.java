@@ -1,6 +1,25 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.visualization;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,7 +35,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.LabelUtils; 
 
 @Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
@@ -42,8 +61,8 @@ public class ScatterAnalyzer implements Analyzer<ScatterAnalyzerResult> {
     @Provided
     RowAnnotationFactory _rowAnnotationFactory = null;
 
-    private final Map<String, ScatterGroup> _groups = new HashMap<>();
-
+    private final Map<String, ScatterGroup> _groups = new LinkedHashMap<>();
+    
     @Override
     public void run(InputRow row, int distinctCount) {
 
@@ -51,13 +70,12 @@ public class ScatterAnalyzer implements Analyzer<ScatterAnalyzerResult> {
         final Number value2 = row.getValue(_variable2);
 
         if (value1 != null && value2 != null) {
-            final String groupNameValue;
+            final Object groupNameValue;
             if (_groupColumn == null) {
                 groupNameValue = DEFAULT_GROUP_NAME;
             } else {
-                groupNameValue = (String) row.getValue(_groupColumn);
+                groupNameValue = row.getValue(_groupColumn);
             }
-
             final String groupName = LabelUtils.getValueLabel(groupNameValue);
             final ScatterGroup group = groups(groupName);
             group.register(value1, value2, row, distinctCount);
@@ -65,9 +83,13 @@ public class ScatterAnalyzer implements Analyzer<ScatterAnalyzerResult> {
     }
 
     private ScatterGroup groups(String groupName) {
-        final ScatterGroup group = new ScatterGroup(groupName, _rowAnnotationFactory);
-        _groups.put(groupName, group);
-        return group;
+        if (_groups.containsKey(groupName)){
+            return _groups.get(groupName); 
+        }else{
+            final ScatterGroup group = new ScatterGroup(groupName, _rowAnnotationFactory);
+            _groups.put(groupName, group);
+            return group;
+        }
     }
 
     public Map<String, ScatterGroup> getGroups() {

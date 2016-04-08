@@ -36,7 +36,7 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
     analyzer.run(new MockInputRow().put(analyzer.categoryColumn, 7).put(col1, 25).put(col2, 14), 1);
     analyzer.run(new MockInputRow().put(col1, 5), 1);
 
-    val result = analyzer.getResult
+    val result = analyzer.getResult()
 
     val jpanel = new StackedAreaAnalyzerResultSwingRenderer().render(result);
 

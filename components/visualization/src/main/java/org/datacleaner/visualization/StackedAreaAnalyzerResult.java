@@ -29,14 +29,14 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
 
-public class StackedAreaAnalyzerResult2 implements AnalyzerResult {
+public class StackedAreaAnalyzerResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
     private final InputColumn<?> _categoryColumn;
-    private final List<InputColumn<Number>> _measureColumns;
+    private final InputColumn<Number>[] _measureColumns;
     private final Map<Object, List<Number>> _measureMap = new HashMap<>();
 
-    public StackedAreaAnalyzerResult2(InputColumn<?> categoryColumn, List<InputColumn<Number>> measureColumns) {
+    public StackedAreaAnalyzerResult(InputColumn<?> categoryColumn, InputColumn<Number>[] measureColumns) {
         _categoryColumn= categoryColumn; 
         _measureColumns = measureColumns; 
     }
@@ -62,7 +62,7 @@ public class StackedAreaAnalyzerResult2 implements AnalyzerResult {
         return stream.sorted().collect(Collectors.toList());
     }
 
-    public List<InputColumn<Number>> getMeasureColumns() {
+    public InputColumn<Number>[] getMeasureColumns() {
         return _measureColumns;
     }
      

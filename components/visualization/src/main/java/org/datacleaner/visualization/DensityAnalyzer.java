@@ -62,9 +62,13 @@ public class DensityAnalyzer implements Analyzer<DensityAnalyzerResult> {
     private final Map<Point, RowAnnotation> _annotations = new HashMap<>();
 
     public RowAnnotation annotations(Point point) {
-        final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
-        _annotations.put(point, annotation);
-        return annotation;
+        if (_annotations.containsKey(point)) {
+            return _annotations.get(point);
+        } else {
+            final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
+            _annotations.put(point, annotation);
+            return annotation;
+        }
     }
 
     @Override

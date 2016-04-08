@@ -20,6 +20,7 @@
 package org.datacleaner.visualization;
 
 import java.awt.Point;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.datacleaner.api.AnalyzerResult;
@@ -64,5 +65,16 @@ public class DensityAnalyzerResult implements AnalyzerResult {
         final Point searchedPoint = new Point(x, y);
         final RowAnnotation rowAnnotation = _annotations.get(searchedPoint);
         return rowAnnotation;
+    }
+    
+    public Comparator<RowAnnotation> getRowAnnotationComparator(){
+       return  new Comparator<RowAnnotation>(){
+
+            @Override
+            public int compare(RowAnnotation o1, RowAnnotation o2) {
+               return o1.getRowCount() - o2.getRowCount(); 
+            }
+            
+        }; 
     }
 }

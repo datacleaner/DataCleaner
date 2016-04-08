@@ -14,8 +14,8 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
   <script type="text/javascript">
   //<![CDATA[""");
 
-    val measureColumns = result.getMeasureColumns
-    val categories = result.getCategories
+    val measureColumns = result.getMeasureColumns()
+    val categories = result.getCategories()
 
     // stack height will contain the offset of each stacked value and will be updated through the rendering of new points..
     val stackHeight: Array[Number] = categories.map(_ => 0.asInstanceOf[Number]).toArray;

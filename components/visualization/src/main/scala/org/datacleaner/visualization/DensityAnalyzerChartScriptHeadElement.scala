@@ -25,7 +25,7 @@ class DensityAnalyzerChartScriptHeadElement(result: DensityAnalyzerResult, eleme
   override def toHtml(context: HtmlRenderingContext): String = {
 
     val annotations = result.getRowAnnotations
-    val rowsAnnotationList = annotations.values.stream().sorted(Collections.reverseOrder()).collect(Collectors.toList()); 
+    val rowsAnnotationList = annotations.values().stream().sorted(Collections.reverseOrder(result.getRowAnnotationComparator())).collect(Collectors.toList()); 
     val maxRowsAnnotation = rowsAnnotationList.get(0)
     val maxRows = maxRowsAnnotation.getRowCount()
 

@@ -36,9 +36,13 @@ public class ScatterGroup implements Serializable {
     }
 
     public RowAnnotation annotations(Point point) {
-        final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
-        _annotations.put(point, annotation);
-        return annotation;
+        if (_annotations.containsKey(point)) {
+            return _annotations.get(point);
+        } else {
+            final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
+            _annotations.put(point, annotation);
+            return annotation;
+        }
     }
 
     public void register(Number x, Number y, InputRow row, int distinctCount) {
@@ -47,8 +51,8 @@ public class ScatterGroup implements Serializable {
         _rowAnnotationFactory.annotate(row, distinctCount, annotation);
     }
 
-    public RowAnnotation getRowAnnotation(int x, int y) {
-        final Point searchedPoint = new Point(x, y);
+    public RowAnnotation getRowAnnotation(Number x, Number y) {
+        final Point searchedPoint = new Point(x.intValue(), y.intValue());
         return _annotations.get(searchedPoint);
     }
 
@@ -58,7 +62,11 @@ public class ScatterGroup implements Serializable {
     }
     
     public Map<Point, RowAnnotation> getAnnotations() {
-        return _annotations;
+        return _annotations; 
     }
 
+    @Override
+    public String toString() {
+        return "Name=" + _name + "annotations" + _annotations.keySet();
+    }
 }

@@ -502,7 +502,7 @@ public class ComponentControllerV1 {
         componentInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, componentDescriptor.getDisplayName())));
     }
 
-    static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
+    private static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
             ComponentList.PropertyInfo propInfo) {
 
         // Special support for enumerations in case we are publishing info about a remote transformer from another server.
@@ -511,17 +511,17 @@ public class ComponentControllerV1 {
         // cannot be generated from a class => We do it "by hand" here.
         if(EnumerationValue.class.isAssignableFrom(propertyDescriptor.getBaseType())
                 && propertyDescriptor instanceof EnumerationProvider) {
-            EnumerationValue[] values = ((EnumerationProvider) propertyDescriptor).values();
+            final EnumerationValue[] values = ((EnumerationProvider) propertyDescriptor).values();
             if (values != null && values.length > 0) {
-                Set<String> enumValues = new HashSet<>();
+                final Set<String> enumValues = new HashSet<>();
                 for (EnumerationValue enumValue : values) {
                     enumValues.add(Serializator.enumValueToSchemaString(enumValue.getValue(), enumValue.getName(), enumValue.getAliases()));
                 }
-                JsonSchemaFactory schFactory = new JsonSchemaFactory();
-                StringSchema itemSch = schFactory.stringSchema();
+                final JsonSchemaFactory schFactory = new JsonSchemaFactory();
+                final StringSchema itemSch = schFactory.stringSchema();
                 itemSch.setEnums(enumValues);
                 if(propertyDescriptor.isArray()) {
-                    ArraySchema arSch = schFactory.arraySchema();
+                    final ArraySchema arSch = schFactory.arraySchema();
                     arSch.setItemsSchema(itemSch);
                     if (!propertyDescriptor.isInputColumn()) {
                         propInfo.setSchema(arSch);
@@ -537,11 +537,11 @@ public class ComponentControllerV1 {
             }
         }
 
-        SchemaFactoryWrapper visitor = new SchemaFactoryWrapper(Serializator.getJacksonObjectMapper().getSerializerProvider());
+        final SchemaFactoryWrapper visitor = new SchemaFactoryWrapper(Serializator.getJacksonObjectMapper().getSerializerProvider());
 
         if (propertyDescriptor instanceof AbstractPropertyDescriptor) {
-            Field f = ((AbstractPropertyDescriptor) propertyDescriptor).getField();
-            Type t = f.getGenericType();
+            final Field f = ((AbstractPropertyDescriptor) propertyDescriptor).getField();
+            final Type t = f.getGenericType();
             if (t instanceof Class) {
                 propInfo.setClassDetails(((Class<?>) t).getCanonicalName());
             } else {

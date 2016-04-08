@@ -252,7 +252,7 @@ public class Serializator {
         }
 
         protected String enumValueToSchemaString(Enum<?> value) {
-            String enumValue = value.name();
+            final String enumValue = value.name();
             String enumName;
             String[] aliases = null;
             if(value instanceof  HasName) {
@@ -268,7 +268,7 @@ public class Serializator {
     }
 
     public static String enumValueToSchemaString(String enumValue, String enumName, String[] aliases) {
-        StringBuilder serialized = new StringBuilder();
+        final StringBuilder serialized = new StringBuilder();
         serialized.append(enumValue);
         serialized.append(ENUM_ALIAS_SEPARATOR);
         serialized.append(enumName);

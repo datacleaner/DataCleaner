@@ -37,10 +37,10 @@ public class StackedAreaAnalyzerResult implements AnalyzerResult {
     private final Map<Object, List<Number>> _measureMap = new HashMap<>();
 
     public StackedAreaAnalyzerResult(InputColumn<?> categoryColumn, InputColumn<Number>[] measureColumns) {
-        _categoryColumn= categoryColumn; 
-        _measureColumns = measureColumns; 
+        _categoryColumn = categoryColumn;
+        _measureColumns = measureColumns;
     }
-    
+
     public boolean isTimeCategory() {
         return ReflectionUtils.isDate(_categoryColumn.getDataType());
     }
@@ -48,7 +48,7 @@ public class StackedAreaAnalyzerResult implements AnalyzerResult {
     public boolean isNumberCategory() {
         return ReflectionUtils.isNumber(_categoryColumn.getDataType());
     }
-    
+
     public InputColumn<?> getCategoryColumn() {
         return _categoryColumn;
     }
@@ -59,18 +59,19 @@ public class StackedAreaAnalyzerResult implements AnalyzerResult {
 
     public List<?> getCategories() {
         final Stream<?> stream = _measureMap.keySet().stream();
-        return stream.sorted().collect(Collectors.toList());
+        final List<?> categories = stream.sorted().collect(Collectors.toList());
+        return categories;
     }
 
     public InputColumn<Number>[] getMeasureColumns() {
         return _measureColumns;
     }
-     
-    public List<Number> getMeasures(Object category){
-        return _measureMap.get(category); 
+
+    public List<Number> getMeasures(Object category) {
+        return _measureMap.get(category);
     }
-    
-    public void addMeasures(Object category, List<Number> measures){
+
+    public void addMeasures(Object category, List<Number> measures) {
         final List<Number> oldMeasures = _measureMap.get(category);
         if (oldMeasures != null) {
             for (int i = 0; i < oldMeasures.size(); i++) {
@@ -83,7 +84,8 @@ public class StackedAreaAnalyzerResult implements AnalyzerResult {
             _measureMap.put(category, measures);
         }
     }
-    private Number sum(Number x, Number y) {
+
+    public Number sum(Number x, Number y) {
         if (x == null) {
             return y;
         }

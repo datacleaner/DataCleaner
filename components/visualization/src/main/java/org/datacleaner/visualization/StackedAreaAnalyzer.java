@@ -37,10 +37,13 @@ import org.datacleaner.api.Validate;
 @Categorized(VisualizationCategory.class)
 public class StackedAreaAnalyzer implements Analyzer<StackedAreaAnalyzerResult> {
 
-    @Configured(value = "Measure columns", order = 1)
+    public static final String PROPERTY_MEASURE_COLUMNS = "Measure columns";
+    public static final String PROPERTY_CATEGORY_COLUMN = "Category column";
+
+    @Configured(value = PROPERTY_MEASURE_COLUMNS, order = 1)
     InputColumn<Number>[] measureColumns = null;
 
-    @Configured(value = "Category column", order = 2)
+    @Configured(value = PROPERTY_CATEGORY_COLUMN, order = 2)
     InputColumn<?> categoryColumn = null;
 
     StackedAreaAnalyzerResult result = null;
@@ -67,8 +70,10 @@ public class StackedAreaAnalyzer implements Analyzer<StackedAreaAnalyzerResult> 
             for (int i = 0; i < measureColumns.length; i++) {
                 measures.add(row.getValue(measureColumns[i]));
             }
-
-            for (int i = 1; i < distinctCount; i++) {
+            if (result == null) {
+                result = new StackedAreaAnalyzerResult(categoryColumn, measureColumns);
+            }
+            for (int i = 0; i < distinctCount; i++) {
                 result.addMeasures(category, measures);
             }
         }

@@ -66,15 +66,15 @@ public class DensityAnalyzerResult implements AnalyzerResult {
         final RowAnnotation rowAnnotation = _annotations.get(searchedPoint);
         return rowAnnotation;
     }
-    
-    public Comparator<RowAnnotation> getRowAnnotationComparator(){
-       return  new Comparator<RowAnnotation>(){
+
+    public Comparator<RowAnnotation> getRowAnnotationComparator() {
+        return new Comparator<RowAnnotation>() {
 
             @Override
             public int compare(RowAnnotation o1, RowAnnotation o2) {
-               return o1.getRowCount() - o2.getRowCount(); 
+                return o1.getRowCount() - o2.getRowCount();
             }
-            
-        }; 
+
+        };
     }
 }

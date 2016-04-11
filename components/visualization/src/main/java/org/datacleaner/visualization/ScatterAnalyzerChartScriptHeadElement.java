@@ -60,7 +60,6 @@ public class ScatterAnalyzerChartScriptHeadElement implements HeadElement {
     }
 
     private String mapDataCoordinates(Set<Point> coordinates) {
-
         final String data = coordinates.stream().map(coor -> "[" + coor.getX() + "," + coor.getY() + "]").collect(
                 Collectors.joining(","));
         return "{ \n data: \n [ \n" + data + "],\n";

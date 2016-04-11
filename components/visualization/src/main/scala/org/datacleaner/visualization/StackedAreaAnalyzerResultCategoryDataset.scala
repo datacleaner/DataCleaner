@@ -13,8 +13,8 @@ import org.jfree.data.DomainOrder
  */
 class StackedAreaAnalyzerResultCategoryDataset(result: StackedAreaAnalyzerResult) extends CategoryDataset {
 
-  private val columnNames = result.getMeasureColumns.map(col => col.getName())
-  private val categories = result.getCategories
+  private val columnNames = result.getMeasureColumns().map(col => col.getName())
+  private val categories = result.getCategories()
   
   private var group: DatasetGroup = new DatasetGroup("StackedAreaAnalyzerResult" + result.hashCode());
 

@@ -38,12 +38,12 @@ import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.visualization.VisualizationCategory;
 
 @Named("Density plot")
-@Description("java Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
+@Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(VisualizationCategory.class)
 public class DensityAnalyzer implements Analyzer<DensityAnalyzerResult> {
 
-    private final String PROPERTY_VARIABLE1 = "Variable1";
-    private final String PROPERTY_VARIABLE2 = "Variable2";
+    public static final String PROPERTY_VARIABLE1 = "Variable1";
+    public static final String PROPERTY_VARIABLE2 = "Variable2";
 
     @Inject
     @Configured(value = PROPERTY_VARIABLE1)

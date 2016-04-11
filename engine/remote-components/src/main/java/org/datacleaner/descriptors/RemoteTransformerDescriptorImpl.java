@@ -20,7 +20,9 @@
 package org.datacleaner.descriptors;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
@@ -86,6 +88,12 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     public Annotation getAnnotation(Class annotationClass) {
         return annotations.get(annotationClass);
     }
+
+    @Override
+    public final Set<Annotation> getAnnotations() {
+        return new HashSet<Annotation>(annotations.values());
+    }
+
 
     @Override
     public RemoteTransformer newInstance() {

@@ -32,6 +32,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,8 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.EnumerationProvider;
+import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
@@ -95,7 +98,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.JsonSchemaFactory;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It
@@ -496,17 +502,46 @@ public class ComponentControllerV1 {
         componentInfo.setAnnotations(getJsonNode(getAnnotationMap(annotations, componentDescriptor.getDisplayName())));
     }
 
-    static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
+    private static void setPropertyType(ComponentDescriptor<?> descriptor, ConfiguredPropertyDescriptor propertyDescriptor,
             ComponentList.PropertyInfo propInfo) {
-        // TODO: avoid instanceof by extending the basic ComponentDescriptor
-        // interface (maybe add getter for property "Type" in addition to
-        // "Class" ? )
 
-        SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+        // Special support for enumerations in case we are publishing info about a remote transformer from another server.
+        // (Client -> Server1 -> Server2)
+        // In this case if Server1 doesn't have the enumeration class on its classpath, the json schema cannot
+        // cannot be generated from a class => We do it "by hand" here.
+        if(EnumerationValue.class.isAssignableFrom(propertyDescriptor.getBaseType())
+                && propertyDescriptor instanceof EnumerationProvider) {
+            final EnumerationValue[] values = ((EnumerationProvider) propertyDescriptor).values();
+            if (values != null && values.length > 0) {
+                final Set<String> enumValues = new HashSet<>();
+                for (EnumerationValue enumValue : values) {
+                    enumValues.add(Serializator.enumValueToSchemaString(enumValue.getValue(), enumValue.getName(), enumValue.getAliases()));
+                }
+                final JsonSchemaFactory schFactory = new JsonSchemaFactory();
+                final StringSchema itemSch = schFactory.stringSchema();
+                itemSch.setEnums(enumValues);
+                if(propertyDescriptor.isArray()) {
+                    final ArraySchema arSch = schFactory.arraySchema();
+                    arSch.setItemsSchema(itemSch);
+                    if (!propertyDescriptor.isInputColumn()) {
+                        propInfo.setSchema(arSch);
+                    }
+                    propInfo.setClassName("[UnknownEnum;");
+                } else {
+                    if (!propertyDescriptor.isInputColumn()) {
+                        propInfo.setSchema(itemSch);
+                    }
+                    propInfo.setClassName("UnknownEnum");
+                }
+                return;
+            }
+        }
+
+        final SchemaFactoryWrapper visitor = new SchemaFactoryWrapper(Serializator.getJacksonObjectMapper().getSerializerProvider());
 
         if (propertyDescriptor instanceof AbstractPropertyDescriptor) {
-            Field f = ((AbstractPropertyDescriptor) propertyDescriptor).getField();
-            Type t = f.getGenericType();
+            final Field f = ((AbstractPropertyDescriptor) propertyDescriptor).getField();
+            final Type t = f.getGenericType();
             if (t instanceof Class) {
                 propInfo.setClassDetails(((Class<?>) t).getCanonicalName());
             } else {

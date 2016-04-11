@@ -252,25 +252,33 @@ public class Serializator {
         }
 
         protected String enumValueToSchemaString(Enum<?> value) {
-            StringBuilder serialized = new StringBuilder();
-            serialized.append(value.name());
-            serialized.append(ENUM_ALIAS_SEPARATOR);
+            final String enumValue = value.name();
+            String enumName;
+            String[] aliases = null;
             if(value instanceof  HasName) {
-                serialized.append(((HasName)value).getName());
+                enumName = ((HasName)value).getName();
             } else {
-                serialized.append(String.valueOf(value));
+                enumName = String.valueOf(value);
             }
             if(value instanceof HasAliases) {
-                String[] aliases = ((HasAliases)value).getAliases();
-                if(aliases != null) {
-                    for(String alias: aliases) {
-                        if(alias != null && !alias.isEmpty()) {
-                            serialized.append(ENUM_ALIAS_SEPARATOR).append(alias);
-                        }
-                    }
+                aliases = ((HasAliases)value).getAliases();
+            }
+            return Serializator.enumValueToSchemaString(enumValue, enumName, aliases);
+        }
+    }
+
+    public static String enumValueToSchemaString(String enumValue, String enumName, String[] aliases) {
+        final StringBuilder serialized = new StringBuilder();
+        serialized.append(enumValue);
+        serialized.append(ENUM_ALIAS_SEPARATOR);
+        serialized.append(enumName);
+        if(aliases != null && aliases.length > 0) {
+            for(String alias: aliases) {
+                if(alias != null && !alias.isEmpty()) {
+                    serialized.append(ENUM_ALIAS_SEPARATOR).append(alias);
                 }
             }
-            return serialized.toString();
         }
+        return serialized.toString();
     }
 }

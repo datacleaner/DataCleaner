@@ -15,7 +15,7 @@ class StackedAreaAnalyzerResultHtmlRenderer extends HtmlRenderer[StackedAreaAnal
     frag.addHeadElement(StackedAreaAnalyzerResuableChartHeadElement)
     frag.addHeadElement(new StackedAreaAnalyzerChartScriptHeadElement(result, elementId));
     
-    val width: Int = scala.math.max(result.getCategoryCount * 4, 700);
+    val width: Int = scala.math.max(result.getCategoryCount() * 4, 700);
     
     val style = "min-width: " + width + "px";
 

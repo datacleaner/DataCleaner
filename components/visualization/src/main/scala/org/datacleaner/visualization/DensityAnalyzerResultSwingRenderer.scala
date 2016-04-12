@@ -48,16 +48,20 @@ class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult,
 
     var maxZvalue = 0
     var i = 0
-    annotations.foreach(entry => {
-      val x = entry._1._1
-      val y = entry._1._2
-      val z = entry._2.getRowCount()
+    
+    val entrySet = annotations.entrySet()
+    val iterator = entrySet.iterator()
+    while (iterator.hasNext()){
+      val entry = iterator.next() 
+      val x = entry.getKey().getX().toInt
+      val y = entry.getKey().getY().toInt
+      val z = entry.getValue().getRowCount()
       maxZvalue = scala.math.max(z, maxZvalue);
       arrays(0).update(i, x);
       arrays(1).update(i, y);
       arrays(2).update(i, z);
       i = i + 1
-    });
+    }
 
     val dataset = new DefaultXYZDataset()
     dataset.addSeries("Observations", arrays);

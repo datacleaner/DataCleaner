@@ -33,9 +33,8 @@ class StackedAreaAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     ajb.addSourceColumns("ORDERFACT.ORDERNUMBER", "ORDERFACT.YEAR_ID", "ORDERFACT.TOTALPRICE", "ORDERFACT.CUSTOMERNUMBER");
     
     val analyzer = ajb.addAnalyzer(classOf[StackedAreaAnalyzer]);
-    analyzer.setConfiguredProperty("Category column", ajb.getSourceColumnByName("ORDERNUMBER"));
-    analyzer.setConfiguredProperty("Measure columns", Array(ajb.getSourceColumnByName("TOTALPRICE"),ajb.getSourceColumnByName("YEAR_ID"),ajb.getSourceColumnByName("CUSTOMERNUMBER")));
-
+    analyzer.setConfiguredProperty(StackedAreaAnalyzer.PROPERTY_CATEGORY_COLUMN, ajb.getSourceColumnByName("ORDERNUMBER"));
+    analyzer.setConfiguredProperty(StackedAreaAnalyzer.PROPERTY_MEASURE_COLUMNS, Array(ajb.getSourceColumnByName("TOTALPRICE"),ajb.getSourceColumnByName("YEAR_ID"),ajb.getSourceColumnByName("CUSTOMERNUMBER")));
     val job = ajb.toAnalysisJob()
 
     val analysisResult = new AnalysisRunnerImpl(configuration).run(job);

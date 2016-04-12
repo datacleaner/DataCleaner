@@ -19,7 +19,7 @@ function draw_scatter_chart(chartElement, chartData, retries) {
    
     wait_for_script_load('jQuery', function() {
         importJS('""" + flotBaseLocation + """', 'jQuery.plot', function() {
-            importJS('""" + flotSelectionUrl + """', 'jQuery.plot.plugins[0]', function() {
+            importJS('""" + flotSelectionUrl + """', 'jQuery.plot', function() {
                 var elem = jQuery("#" + chartElement);
                 var showLegend = chartData.length > 1
                 

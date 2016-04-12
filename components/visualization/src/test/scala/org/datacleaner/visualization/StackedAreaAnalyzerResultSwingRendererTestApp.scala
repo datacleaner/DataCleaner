@@ -18,14 +18,12 @@ import javax.swing.JFrame
 object StackedAreaAnalyzerResultSwingRendererTestApp {
 
   def main(args: Array[String]) {
-    val analyzer = new StackedAreaAnalyzer
+    val analyzer = new StackedAreaAnalyzer()
     analyzer.categoryColumn = new MockInputColumn("category", classOf[Number])
 
     val col1 = new MockInputColumn("foo", classOf[Number])
     val col2 = new MockInputColumn("bar", classOf[Number])
     analyzer.measureColumns = Array[InputColumn[Number]](col1, col2)
-    analyzer.validate
-    analyzer.initialize
 
     analyzer.run(new MockInputRow().put(analyzer.categoryColumn, 1).put(col1, 10).put(col2, 10), 1);
     analyzer.run(new MockInputRow().put(analyzer.categoryColumn, 2).put(col1, 12).put(col2, 1), 1);
@@ -36,7 +34,8 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
     analyzer.run(new MockInputRow().put(analyzer.categoryColumn, 7).put(col1, 25).put(col2, 14), 1);
     analyzer.run(new MockInputRow().put(col1, 5), 1);
 
-    val result = analyzer.getResult
+    analyzer.validate()
+    val result = analyzer.getResult()
 
     val jpanel = new StackedAreaAnalyzerResultSwingRenderer().render(result);
 

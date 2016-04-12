@@ -23,6 +23,7 @@ import org.datacleaner.result.ResultProducer
 import org.datacleaner.result.DefaultResultProducer
 import org.datacleaner.result.AnnotatedRowsResult
 import org.datacleaner.result.renderer.RendererFactory
+import java.awt.Point
 
 @RendererBean(classOf[SwingRenderingFormat])
 class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult, JPanel] {
@@ -38,19 +39,24 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
   override def getPrecedence(result: ScatterAnalyzerResult) = RendererPrecedence.HIGH
 
   override def render(result: ScatterAnalyzerResult): JPanel = {
-    val xAxisLabel = result.variable1.getName();
-    val yAxisLabel = result.variable2.getName();
+    val xAxisLabel = result.getVariable1().getName();
+    val yAxisLabel = result.getVariable2().getName();
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
 
-    result.groups.foreach(group => {
-      val xySeries = new XYSeries(group.name)
-      group.getCoordinates.foreach(xy => {
-        xySeries.add(xy._1, xy._2);
-      })
-      dataset.addSeries(xySeries)
-    });
-
+    val groupsIterator = result.getGroups.iterator()
+    
+    while (groupsIterator.hasNext()){
+       val group = groupsIterator.next();  
+       val xySeries = new XYSeries(group.getName())
+       val coordinates =  group.getCoordinates().iterator()
+       while(coordinates.hasNext()){
+         val xy= coordinates.next()
+         xySeries.add(xy.getX(), xy.getY())
+       }
+       dataset.addSeries(xySeries)
+    }
+    
     val legend = result.hasGroups();
     val tooltips = true;
     val urls = false;
@@ -70,8 +76,8 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
             val itemIndex = xyItemEntity.getItem();
             val dataItem = series.getDataItem(itemIndex);
 
-            val group = result.groups()(seriesIndex)
-            val rowAnnotation = group.getRowAnnotation((dataItem.getX(), dataItem.getY()));
+            val group = result.getGroups().get(seriesIndex)
+            val rowAnnotation = group.getRowAnnotation(dataItem.getX(), dataItem.getY());
             val rowAnnotationFactory = group.getRowAnnotationFactory();
             
             val resultProducer = new DefaultResultProducer(new AnnotatedRowsResult(rowAnnotation, rowAnnotationFactory))

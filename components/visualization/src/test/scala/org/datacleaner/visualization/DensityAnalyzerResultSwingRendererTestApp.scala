@@ -20,6 +20,7 @@ import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 import org.datacleaner.job.builder.AnalysisJobBuilder
 
+
 object DensityAnalyzerResultSwingRendererTestApp {
 
   def main(args: Array[String]) {

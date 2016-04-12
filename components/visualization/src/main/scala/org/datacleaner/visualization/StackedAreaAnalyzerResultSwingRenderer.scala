@@ -23,7 +23,7 @@ class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyze
   override def getPrecedence(result: StackedAreaAnalyzerResult) = RendererPrecedence.HIGH
 
   override def render(result: StackedAreaAnalyzerResult): JPanel = {
-    val categoryAxisLabel = result.getCategoryColumn.getName()
+    val categoryAxisLabel = result.getCategoryColumn().getName()
     val valueAxisLabel = null
       
     val dataset = new StackedAreaAnalyzerResultCategoryDataset(result);

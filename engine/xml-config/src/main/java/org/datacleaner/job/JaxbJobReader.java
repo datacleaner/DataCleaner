@@ -880,7 +880,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final List<Property> properties = configuredPropertiesType.getProperty();
             final ComponentDescriptor<?> descriptor = builder.getDescriptor();
 
-            Map<String, String> removedProperties = new HashMap<>();
+            final Map<String, String> removedProperties = new HashMap<>();
             
             for (Property property : properties) {
                 final String name = property.getName();

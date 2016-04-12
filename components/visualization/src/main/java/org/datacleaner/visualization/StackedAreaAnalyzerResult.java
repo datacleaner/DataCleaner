@@ -19,11 +19,12 @@
  */
 package org.datacleaner.visualization;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -58,9 +59,8 @@ public class StackedAreaAnalyzerResult implements AnalyzerResult {
     }
 
     public List<?> getCategories() {
-        final Stream<?> stream = _measureMap.keySet().stream();
-        final List<?> categories = stream.sorted().collect(Collectors.toList());
-        return categories;
+        final Set<Object> keySet = _measureMap.keySet();
+        return new ArrayList<>(new TreeSet<>(keySet)); 
     }
 
     public InputColumn<Number>[] getMeasureColumns() {

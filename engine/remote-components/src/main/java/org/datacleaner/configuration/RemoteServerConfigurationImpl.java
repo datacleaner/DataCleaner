@@ -30,10 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.concurrent.ScheduledTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
+import org.datacleaner.restclient.ComponentRESTClient;
+import org.datacleaner.restclient.DataCloudUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +57,8 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
         remoteServerDataList = new ArrayList<>(serverData);
         for (RemoteServerData remoteServerData : serverData) {
-            actualStateMap.put(remoteServerData.getServerName(), RemoteServerState.UNKNOWN);
+            actualStateMap.put(remoteServerData.getServerName(),
+                    new RemoteServerState(RemoteServerState.State.UNKNOWN, remoteServerData.getUsername(), null));
         }
 
         if (taskRunner == null || !(taskRunner instanceof ScheduledTaskRunner)) {
@@ -117,6 +121,35 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     }
 
     private RemoteServerState checkServerAvailability(RemoteServerData remoteServerData) {
+        if (remoteServerData.getServerName().equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)) {
+            return checkDataCloudServerAvailability(remoteServerData);
+        } else {
+            return checkOtherServerAvailability(remoteServerData);
+        }
+    }
+
+    private RemoteServerState checkDataCloudServerAvailability(RemoteServerData remoteServerData) {
+        DataCloudUser dataCloudUserInfo = null;
+        try {
+            ComponentRESTClient restClient =
+                    new ComponentRESTClient(remoteServerData.getUrl(), remoteServerData.getUsername(),
+                            remoteServerData.getPassword());
+            dataCloudUserInfo = restClient.getDataCloudUserInfo();
+        } catch (Exception e) {
+            logger.warn("DataCloud server connection problem: " + e.getMessage());
+            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), e.getMessage());
+        }
+        RemoteServerState.State state;
+        if (dataCloudUserInfo.getCredit() != null && dataCloudUserInfo.getCredit() > 0) {
+            state = RemoteServerState.State.OK;
+        } else {
+            state = RemoteServerState.State.NO_CREDIT;
+        }
+        return new RemoteServerState(state, dataCloudUserInfo.getEmail(), dataCloudUserInfo.getRealName(),
+                dataCloudUserInfo.getCredit(), dataCloudUserInfo.isEmailConfirmed());
+    }
+
+    private RemoteServerState checkOtherServerAvailability(RemoteServerData remoteServerData) {
         try (Socket socket = new Socket()) {
             URL siteURL = new URL(remoteServerData.getUrl());
             int port = siteURL.getPort();
@@ -127,14 +160,15 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
             final boolean connectionCheckResult = socket.isConnected();
             if (connectionCheckResult) {
-                return RemoteServerState.OK;
+                return new RemoteServerState(RemoteServerState.State.OK, remoteServerData.getUsername(), null);
             } else {
-                return RemoteServerState.ERROR;
+                return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), null);
             }
         } catch (IOException e) {
-            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
-                    + e.getMessage());
-            return RemoteServerState.ERROR;
+            logger.warn(
+                    "Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
+                            + e.getMessage());
+            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), e.getMessage());
         }
     }
 
@@ -185,5 +219,4 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             logger.error("Error in Remote server status task.", throwable);
         }
     }
-
 }

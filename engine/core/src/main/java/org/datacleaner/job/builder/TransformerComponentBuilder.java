@@ -96,7 +96,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
              RemoteServerState state = ((RemoteTransformerDescriptor<?>) componentDescriptor).getRemoteDescriptorProvider()
                     .getServerState();
 
-            if (state != RemoteServerState.ERROR) {
+            if (state.getActualState() != RemoteServerState.State.ERROR) {
                 logger.warn("Output columns for transformer '" + transformer
                         + "' can not be retrieved because the remote server is down. ");
                 return Collections.emptyList();

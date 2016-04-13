@@ -120,6 +120,12 @@ public class ComponentRESTClient {
         }
     }
 
+    public DataCloudUser getDataCloudUserInfo(){
+        String userTenantName = getUserTenantName();
+        String response = call(RESTClient.HttpMethod.GET, url + "/repository/" + userTenantName + "/userinfo", null);
+        return Serializator.processDataCloudUser(response);
+    }
+
     private String urlify(String string) {
         return ComponentsRestClientUtils.encodeUrlPathSegment(ComponentsRestClientUtils.escapeComponentName(string));
     }

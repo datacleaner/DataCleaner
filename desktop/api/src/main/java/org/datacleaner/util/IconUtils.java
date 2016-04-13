@@ -241,8 +241,9 @@ public final class IconUtils {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
-            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState().equals(
-                    RemoteServerState.ERROR)) {
+            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState()
+                    .getActualState().equals(
+                            RemoteServerState.State.ERROR)) {
                 serverDown = true;
             }
         }

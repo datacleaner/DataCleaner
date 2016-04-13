@@ -89,17 +89,13 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
 
     @Override
     public RemoteServerState getActualState(String remoteServerName) {
-        if (serverStatusTask == null) {
-            scheduleTask();
-        }
+        scheduleTask();
         return actualStateMap.get(remoteServerName);
     }
 
     @Override
     public void addListener(RemoteServerStateListener listener) {
-        if (serverStatusTask == null) {
-            scheduleTask();
-        }
+        scheduleTask();
         listeners.add(listener);
     }
 

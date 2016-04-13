@@ -90,7 +90,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     @Override
     public RemoteServerState getActualState(String remoteServerName) {
         if (serverStatusTask == null) {
-            scheduledTask();
+            scheduleTask();
         }
         return actualStateMap.get(remoteServerName);
     }
@@ -98,7 +98,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     @Override
     public void addListener(RemoteServerStateListener listener) {
         if (serverStatusTask == null) {
-            scheduledTask();
+            scheduleTask();
         }
         listeners.add(listener);
     }
@@ -108,7 +108,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         listeners.remove(listener);
     }
 
-    private synchronized void scheduledTask() {
+    private synchronized void scheduleTask() {
         if (scheduledTaskRunner != null && serverStatusTask == null) {
             serverStatusTask = new ServerStatusTask();
             ServerStatusListener serverStatusListener = new ServerStatusListener();

@@ -5,6 +5,7 @@ import org.datacleaner.api.InputColumn
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
 
+@Deprecated
 class DensityAnalyzerResult(annotations: Map[(Int, Int), RowAnnotation], variable1: InputColumn[Number], variable2: InputColumn[Number], annotationFactory: RowAnnotationFactory) extends AnalyzerResult {
 
   def getVariable1 = variable1;

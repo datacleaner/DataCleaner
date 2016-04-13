@@ -22,6 +22,7 @@ object DensityAnalyzer {
 @Named("Density plot")
 @Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
+@Deprecated
 class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
 
   @Inject

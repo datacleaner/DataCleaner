@@ -9,8 +9,9 @@ import org.datacleaner.api.InputColumn
 import org.datacleaner.api.InputRow
 import org.datacleaner.api.Initialize
 import org.datacleaner.api.Validate
+import collection.JavaConversions._
 
-object StackedAreaAnalyzer {
+object StackedAreaAnalyzerRevised {
   final val PROPERTY_MEASURE_COLUMNS = "Measure columns"
   final val PROPERTY_CATEGORY_COLUMN = "Category column"
 }
@@ -18,20 +19,19 @@ object StackedAreaAnalyzer {
 @Named("Stacked area plot")
 @Description("Plots a number of related measures in a stacked area chart. Useful visualization for showing the relative influence of each measure compared to the sum of measures.")
 @Categorized(Array(classOf[VisualizationCategory]))
-@Deprecated
-class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
+class StackedAreaAnalyzerRevised extends Analyzer[StackedAreaAnalyzerResultRevised] {
 
-  @Configured(value = StackedAreaAnalyzer.PROPERTY_MEASURE_COLUMNS, order = 1)
+  @Configured(value = StackedAreaAnalyzerRevised.PROPERTY_MEASURE_COLUMNS, order = 1)
   var measureColumns: Array[InputColumn[Number]] = null
 
-  @Configured(value = StackedAreaAnalyzer.PROPERTY_CATEGORY_COLUMN, order = 2)
+  @Configured(value = StackedAreaAnalyzerRevised.PROPERTY_CATEGORY_COLUMN, order = 2)
   var categoryColumn: InputColumn[_] = null
 
-  var result: StackedAreaAnalyzerResult = null;
+  var result: StackedAreaAnalyzerResultRevised = null;
 
   @Validate
   def validate() {
-    result = new StackedAreaAnalyzerResult(categoryColumn, measureColumns);
+    result = new StackedAreaAnalyzerResultRevised(categoryColumn, measureColumns);
     if (!result.isNumberCategory && !result.isTimeCategory) {
       throw new IllegalStateException("Category column must be either a number or time based")
     }
@@ -39,7 +39,7 @@ class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
 
   @Initialize
   def initialize() {
-    result = new StackedAreaAnalyzerResult(categoryColumn, measureColumns);
+    result = new StackedAreaAnalyzerResultRevised(categoryColumn, measureColumns);
   }
 
   override def run(row: InputRow, distinctCount: Int) = {
@@ -53,5 +53,5 @@ class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
     }
   }
 
-  override def getResult(): StackedAreaAnalyzerResult = result
+  override def getResult(): StackedAreaAnalyzerResultRevised = result
 }

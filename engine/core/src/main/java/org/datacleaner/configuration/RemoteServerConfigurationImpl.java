@@ -26,8 +26,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.datacleaner.job.concurrent.ScheduledTaskRunner;
@@ -44,7 +46,8 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteServerConfigurationImpl.class);
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
-    private static final long DELAY_MIN = 5;
+    private static final long ERROR_DELAY_MIN = 1;
+    private static final long OK_DELAY_MIN = 5;
     private final Map<String, RemoteServerState> actualStateMap = Collections.synchronizedMap(new HashMap<>());
     private ServerStatusTask serverStatusTask;
     private ScheduledTaskRunner scheduledTaskRunner;
@@ -58,7 +61,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         }
 
         if (taskRunner == null || !(taskRunner instanceof ScheduledTaskRunner)) {
-            logger.error("Task runner isn't ScheduledTaskRunner. Remote server status task won't be scheduled.");
+            logger.warn("Task runner isn't ScheduledTaskRunner. Remote server status task won't be scheduled.");
         } else {
             scheduledTaskRunner = (ScheduledTaskRunner) taskRunner;
         }
@@ -108,7 +111,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         if (scheduledTaskRunner != null && serverStatusTask == null) {
             serverStatusTask = new ServerStatusTask();
             ServerStatusListener serverStatusListener = new ServerStatusListener();
-            scheduledTaskRunner.runScheduled(serverStatusTask, serverStatusListener, 0, DELAY_MIN, TimeUnit.MINUTES);
+            scheduledTaskRunner.runScheduled(serverStatusTask, serverStatusListener, 0, ERROR_DELAY_MIN, TimeUnit.MINUTES);
         }
     }
 
@@ -138,23 +141,50 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
 
         private List<String> stateChanged;
 
+        private long iterCounter = 0;
+
         @Override
         public void execute() throws Exception {
             stateChanged = new ArrayList<>();
-            for (RemoteServerData remoteServerData : remoteServerDataList) {
-                String serverName = remoteServerData.getServerName();
-                RemoteServerState state = checkServerAvailability(remoteServerData);
-                RemoteServerState oldState = actualStateMap.get(serverName);
-                if (!state.equals(oldState)) { //old state can be null - new remote server.
-                    actualStateMap.put(serverName, state);
-                    stateChanged.add(serverName);
+            if(iterCounter % OK_DELAY_MIN == 0) {
+                logger.error("CheckALL");
+                for (RemoteServerData remoteServerData : remoteServerDataList) {
+                   checkStatus(remoteServerData);
                 }
+            }else {
+                logger.error("CheckErrOr");
+                Set<String> errorServers = getErrorServers();
+                for (String errorServer : errorServers) {
+                    RemoteServerData remoteServerData = getServerConfig(errorServer);
+                    checkStatus(remoteServerData);
+                }
+            }
+            iterCounter++;
+        }
+
+        private void checkStatus(RemoteServerData remoteServerData){
+            String serverName = remoteServerData.getServerName();
+            RemoteServerState state = checkServerAvailability(remoteServerData);
+            RemoteServerState oldState = actualStateMap.get(serverName);
+            if (!state.equals(oldState)) { //old state can be null - new remote server.
+                actualStateMap.put(serverName, state);
+                stateChanged.add(serverName);
             }
         }
 
         public List<String> getStateChanged() {
             return stateChanged;
         }
+    }
+
+    private Set<String> getErrorServers(){
+        Set<String> errorServers = new HashSet<>();
+        for (Map.Entry<String, RemoteServerState> serverStateEntry : actualStateMap.entrySet()) {
+            if(serverStateEntry.getValue() == RemoteServerState.ERROR){
+                errorServers.add(serverStateEntry.getKey());
+            }
+        }
+        return errorServers;
     }
 
     private class ServerStatusListener implements TaskListener {

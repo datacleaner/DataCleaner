@@ -18,6 +18,7 @@ import org.jfree.chart.ChartPanel
 import org.jfree.ui.RectangleEdge
 
 @RendererBean(classOf[SwingRenderingFormat])
+@Deprecated
 class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyzerResult, JPanel] {
   
   override def getPrecedence(result: StackedAreaAnalyzerResult) = RendererPrecedence.HIGH

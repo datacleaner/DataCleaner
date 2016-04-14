@@ -12,7 +12,7 @@ class StackedAreaAnalyzerJavaTest extends AssertionsForJUnit {
 
   @Test
   def testBasicScenario = {
-    val analyzer = new StackedAreaAnalyzerRevised
+    val analyzer = new StackedAreaAnalyzer
     analyzer.categoryColumn = new MockInputColumn("category", classOf[Number]);
 
     val col1 = new MockInputColumn("foo", classOf[Number])

@@ -6,6 +6,7 @@ import org.datacleaner.api.InputColumn
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
 
+@Deprecated
 class ScatterAnalyzerResult(groups: List[ScatterGroup], variable1: InputColumn[_], variable2: InputColumn[_], groupColumn: InputColumn[_]) extends AnalyzerResult {
 
   def variable1(): InputColumn[_] = variable1

@@ -5,6 +5,7 @@ import org.datacleaner.result.html.HtmlRenderingContext
 import org.apache.metamodel.util.NumberComparator
 import java.util.Date
 
+@Deprecated
 class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResult, elementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {

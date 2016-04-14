@@ -40,7 +40,7 @@ import org.datacleaner.util.LabelUtils;
 @Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
 @Categorized(VisualizationCategory.class)
-public class ScatterAnalyzerRevised implements Analyzer<ScatterAnalyzerResultRevised> {
+public class ScatterAnalyzer implements Analyzer<ScatterAnalyzerResultRevised> {
 
     public static final String PROPERTY_VARIABLE1 = "Variable1";
     public static final String PROPERTY_VARIABLE2 = "Variable2";

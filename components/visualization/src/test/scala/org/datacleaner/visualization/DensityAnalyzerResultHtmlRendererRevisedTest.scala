@@ -24,7 +24,7 @@ import collection.JavaConversions._
 class DensityAnalyzerResultHtmlRendererRevisedTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
-  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultHtmlRenderer]));
+  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultHtmlRendererRevised]));
   val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");

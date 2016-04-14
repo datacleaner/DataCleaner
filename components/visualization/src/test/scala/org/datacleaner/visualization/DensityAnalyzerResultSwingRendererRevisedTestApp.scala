@@ -20,11 +20,11 @@ import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 import org.datacleaner.job.builder.AnalysisJobBuilder
 
-object DensityAnalyzerResultSwingRendererTestApp {
+object DensityAnalyzerResultSwingRendererRevisedTestApp {
 
   def main(args: Array[String]) {
     val descriptorProvider = new SimpleDescriptorProvider()
-    descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultSwingRenderer]));
+    descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultSwingRendererRevised]));
     val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
     val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");
@@ -41,9 +41,9 @@ object DensityAnalyzerResultSwingRendererTestApp {
 
     val analysisResult = new AnalysisRunnerImpl(configuration).run(job);
     
-    val analyzerResult = analysisResult.getResults().get(0).asInstanceOf[DensityAnalyzerResult]
+    val analyzerResult = analysisResult.getResults().get(0).asInstanceOf[DensityAnalyzerResultRevised]
 
-    val panel = new DensityAnalyzerResultSwingRenderer().render(analyzerResult)
+    val panel = new DensityAnalyzerResultSwingRendererRevised().render(analyzerResult)
 
     LookAndFeelManager.get().init();
 

@@ -11,6 +11,7 @@ import org.jfree.data.DomainOrder
 /**
  * CategoryDataset implementation of the StackedAreaAnalyzerResult for JFreeCharts
  */
+ @Deprecated
 class StackedAreaAnalyzerResultCategoryDataset(result: StackedAreaAnalyzerResult) extends CategoryDataset {
 
   private val columnNames = result.getMeasureColumns.map(col => col.getName())

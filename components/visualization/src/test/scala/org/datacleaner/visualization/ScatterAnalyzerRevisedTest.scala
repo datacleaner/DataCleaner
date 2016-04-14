@@ -15,7 +15,7 @@ class ScatterAnalyzerRevisedTest extends AssertionsForJUnit {
 
   @Test
   def testMapDefaultValue = {
-    val analyzer = new ScatterAnalyzerRevised()
+    val analyzer = new ScatterAnalyzer()
     analyzer.rowAnnotationFactory = RowAnnotations.getInMemoryFactory()
     analyzer.variable1 = new MockInputColumn("foo");
     analyzer.variable2 = new MockInputColumn("bar");

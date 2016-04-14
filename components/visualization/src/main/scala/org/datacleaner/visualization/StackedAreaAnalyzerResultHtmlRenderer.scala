@@ -7,6 +7,7 @@ import org.datacleaner.result.html.SimpleHtmlFragment
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 
 @RendererBean(classOf[HtmlRenderingFormat])
+@Deprecated
 class StackedAreaAnalyzerResultHtmlRenderer extends HtmlRenderer[StackedAreaAnalyzerResult] {
 
   override def handleFragment(frag: SimpleHtmlFragment, result: StackedAreaAnalyzerResult, context: HtmlRenderingContext) {

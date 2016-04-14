@@ -40,7 +40,7 @@ import org.datacleaner.visualization.VisualizationCategory;
 @Named("Density plot")
 @Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(VisualizationCategory.class)
-public class DensityAnalyzerRevised implements Analyzer<DensityAnalyzerResultRevised> {
+public class DensityAnalyzer implements Analyzer<DensityAnalyzerResultRevised> {
 
     public static final String PROPERTY_VARIABLE1 = "Variable1";
     public static final String PROPERTY_VARIABLE2 = "Variable2";

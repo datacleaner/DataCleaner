@@ -219,7 +219,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return annotations;
     }
 
-    private class RemoteServerStateListenerImpl implements org.datacleaner.configuration.RemoteServerStateListener{
+    private class RemoteServerStateListenerImpl implements RemoteServerStateListener{
 
         @Override
         public void onRemoteServerStateChange(final String remoteServerName, final RemoteServerState state) {

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * This is Empty implementation of RemoteServerConfiguration. Useful implementation is in DataCleaner-remote-components module
  */
-public class EmptyRemoteSeerverConfigurationImpl implements RemoteServerConfiguration {
+public class EmptyRemoteServerConfigurationImpl implements RemoteServerConfiguration {
 
     @Override
     public List<RemoteServerData> getServerList() {

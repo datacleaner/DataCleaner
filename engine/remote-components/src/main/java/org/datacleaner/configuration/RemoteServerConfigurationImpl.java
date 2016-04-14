@@ -214,7 +214,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private Set<String> getErrorServers(){
         Set<String> errorServers = new HashSet<>();
         for (Map.Entry<String, RemoteServerState> serverStateEntry : actualStateMap.entrySet()) {
-            if(serverStateEntry.getValue() == RemoteServerState.ERROR){
+            if(serverStateEntry.getValue().getActualState() == RemoteServerState.State.ERROR){
                 errorServers.add(serverStateEntry.getKey());
             }
         }

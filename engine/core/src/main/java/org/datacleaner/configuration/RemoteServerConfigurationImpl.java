@@ -147,12 +147,10 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         public void execute() throws Exception {
             stateChanged = new ArrayList<>();
             if(iterCounter % OK_DELAY_MIN == 0) {
-                logger.error("CheckALL");
                 for (RemoteServerData remoteServerData : remoteServerDataList) {
                    checkStatus(remoteServerData);
                 }
             }else {
-                logger.error("CheckErrOr");
                 Set<String> errorServers = getErrorServers();
                 for (String errorServer : errorServers) {
                     RemoteServerData remoteServerData = getServerConfig(errorServer);

@@ -48,6 +48,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.beans.transform.PlainSearchReplaceTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
@@ -878,38 +879,49 @@ public class JaxbJobReader implements JobReader<InputStream> {
         if (configuredPropertiesType != null) {
             final List<Property> properties = configuredPropertiesType.getProperty();
             final ComponentDescriptor<?> descriptor = builder.getDescriptor();
+
+            final Map<String, String> removedProperties = new HashMap<>();
+            
             for (Property property : properties) {
                 final String name = property.getName();
-                final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);
+                
+                if (isRemovedProperty(descriptor, name)) {
+                    removedProperties.put(name, getValue(property));
+                } else {
+                    final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);
 
-                if (configuredProperty == null) {
-                    throw new ComponentConfigurationException("No such property: " + name);
-                }
-
-                String stringValue = getValue(property);
-                if (stringValue == null) {
-                    String variableRef = property.getRef();
-                    if (variableRef == null) {
-                        throw new IllegalStateException("Neither value nor ref was specified for property: " + name);
+                    if (configuredProperty == null) {
+                        throw new ComponentConfigurationException("No such property: " + name);
                     }
 
-                    stringValue = variables.get(variableRef);
-
+                    String stringValue = getValue(property);
                     if (stringValue == null) {
-                        throw new ComponentConfigurationException("No such variable: " + variableRef);
+                        String variableRef = property.getRef();
+                        if (variableRef == null) {
+                            throw new IllegalStateException("Neither value nor ref was specified for property: "
+                                    + name);
+                        }
+
+                        stringValue = variables.get(variableRef);
+
+                        if (stringValue == null) {
+                            throw new ComponentConfigurationException("No such variable: " + variableRef);
+                        }
+
+                        builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty
+                                .getName(), variableRef);
                     }
 
-                    builder.getMetadataProperties().put(
-                            DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
+                    final Converter<?> customConverter = configuredProperty.createCustomConverter();
+                    final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
+                            customConverter);
+
+                    logger.debug("Setting property '{}' to {}", name, value);
+                    builder.setConfiguredProperty(configuredProperty, value);
                 }
-
-                final Converter<?> customConverter = configuredProperty.createCustomConverter();
-                final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
-                        customConverter);
-
-                logger.debug("Setting property '{}' to {}", name, value);
-                builder.setConfiguredProperty(configuredProperty, value);
             }
+            
+            processRemovedProperties(builder, stringConverter, descriptor, removedProperties);
         }
         if (metadataPropertiesType != null) {
             final List<org.datacleaner.job.jaxb.MetadataProperties.Property> propertyList = metadataPropertiesType
@@ -920,6 +932,18 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 builder.setMetadataProperty(name, value);
             }
         }
+    }
+
+    private static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
+            final ComponentDescriptor<?> descriptor, Map<String, String> removedProperties) {
+        if (descriptor.getComponentClass() == PlainSearchReplaceTransformer.class) {
+            PlainSearchReplaceTransformer.processRemovedProperties(builder, stringConverter, descriptor,
+                    removedProperties);
+        }
+    }
+
+    private static boolean isRemovedProperty(final ComponentDescriptor<?> descriptor, final String name) {
+        return PlainSearchReplaceTransformer.isRemovedProperty(descriptor, name); 
     }
 
     private String getValue(Property property) {

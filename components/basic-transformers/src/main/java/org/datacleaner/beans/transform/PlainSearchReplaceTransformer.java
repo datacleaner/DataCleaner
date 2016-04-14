@@ -19,6 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -26,6 +27,7 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
+import org.datacleaner.api.Converter;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -33,6 +35,12 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.TextCategory;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.util.convert.MapStringToStringConverter;
+import org.datacleaner.util.convert.SerializationStringEscaper;
+import org.datacleaner.util.convert.StringConverter;
 
 import com.google.common.base.Strings;
 
@@ -40,6 +48,12 @@ import com.google.common.base.Strings;
 @Description("Search and replace text in String values.")
 @Categorized(TextCategory.class)
 public class PlainSearchReplaceTransformer implements Transformer {
+
+    private static final String REPLACEMENTS_PROPERTY_NAME = "Replacements";
+
+    private static final String REPLACEMENT_STRING_PROPERTY_NAME = "Replacement string";
+
+    private static final String SEARCH_STRING_PROPERTY_NAME = "Search string";
 
     @Configured(value = "Value", order = 1)
     InputColumn<String> valueColumn;
@@ -108,4 +122,29 @@ public class PlainSearchReplaceTransformer implements Transformer {
     public void setReplaceEntireString(boolean replaceEntireString) {
         this.replaceEntireString = replaceEntireString;
     }
+
+    public static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
+            final ComponentDescriptor<?> descriptor, Map<String, String> removedProperties) {
+        if (removedProperties.containsKey(SEARCH_STRING_PROPERTY_NAME) && removedProperties.containsKey(
+                REPLACEMENT_STRING_PROPERTY_NAME)) {
+            final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(
+                    REPLACEMENTS_PROPERTY_NAME);
+
+            final Converter<?> customConverter = configuredProperty.createCustomConverter();
+
+            Map<String, String> replacements = new HashMap<>();
+            replacements.put(SerializationStringEscaper.unescape(removedProperties.get(SEARCH_STRING_PROPERTY_NAME)),
+                    SerializationStringEscaper.unescape(removedProperties.get(REPLACEMENT_STRING_PROPERTY_NAME)));
+
+            final Object value = stringConverter.deserialize(new MapStringToStringConverter().toString(replacements),
+                    configuredProperty.getType(), customConverter);
+
+            builder.setConfiguredProperty(configuredProperty, value);
+        }
+    }
+
+    public static boolean isRemovedProperty(final ComponentDescriptor<?> descriptor, final String name) {
+        return (SEARCH_STRING_PROPERTY_NAME.equals(name) || REPLACEMENT_STRING_PROPERTY_NAME.equals(name));
+    }
+
 }

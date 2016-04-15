@@ -28,6 +28,7 @@ import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.configuration.RemoteServerState;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -92,10 +93,10 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         ComponentDescriptor<?> componentDescriptor = getDescriptor();
 
         if (componentDescriptor instanceof RemoteTransformerDescriptor) {
-            boolean serverUp = ((RemoteTransformerDescriptor<?>) componentDescriptor).getRemoteDescriptorProvider()
-                    .isServerUp();
+             RemoteServerState state = ((RemoteTransformerDescriptor<?>) componentDescriptor).getRemoteDescriptorProvider()
+                    .getServerState();
 
-            if (!serverUp) {
+            if (state != RemoteServerState.ERROR) {
                 logger.warn("Output columns for transformer '" + transformer
                         + "' can not be retrieved because the remote server is down. ");
                 return Collections.emptyList();

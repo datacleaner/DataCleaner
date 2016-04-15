@@ -74,16 +74,11 @@
 				</executions>
 				<configuration>
 					<target name="copyicons">
-						<copy file="${project.build.directory}/classes/images/actions/add_dark.png" 
-								tofile="${project.build.directory}/classes/images/actions/add.png" />
-						<copy file="${project.build.directory}/classes/images/actions/close_dark.png" 
-								tofile="${project.build.directory}/classes/images/actions/close.png" />
-						<copy file="${project.build.directory}/classes/images/actions/remove_dark.png" 
-								tofile="${project.build.directory}/classes/images/actions/remove.png" />
-						<copy file="${project.build.directory}/classes/images/actions/save_dark.png" 
-								tofile="${project.build.directory}/classes/images/actions/save.png" />
-						<copy file="${project.build.directory}/classes/images/actions/scrolldown_dark.png" 
-								tofile="${project.build.directory}/classes/images/actions/scrolldown.png" />
+						<copy file="${project.build.directory}/classes/images/actions/add_dark.png" tofile="${project.build.directory}/classes/images/actions/add.png" />
+						<copy file="${project.build.directory}/classes/images/actions/close_dark.png" tofile="${project.build.directory}/classes/images/actions/close.png" />
+						<copy file="${project.build.directory}/classes/images/actions/remove_dark.png" tofile="${project.build.directory}/classes/images/actions/remove.png" />
+						<copy file="${project.build.directory}/classes/images/actions/save_dark.png" tofile="${project.build.directory}/classes/images/actions/save.png" />
+						<copy file="${project.build.directory}/classes/images/actions/scrolldown_dark.png" tofile="${project.build.directory}/classes/images/actions/scrolldown.png" />
 					</target>
 				</configuration>
 			</plugin>

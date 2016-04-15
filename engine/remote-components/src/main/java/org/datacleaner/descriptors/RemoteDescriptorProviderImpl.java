@@ -19,25 +19,20 @@
  */
 package org.datacleaner.descriptors;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.ClassUtils;
-import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.SharedExecutorService;
+import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
+import org.datacleaner.configuration.RemoteServerState;
+import org.datacleaner.configuration.RemoteServerStateListener;
 import org.datacleaner.restclient.ComponentList;
 import org.datacleaner.restclient.ComponentRESTClient;
 import org.datacleaner.restclient.Serializator;
@@ -57,18 +52,17 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
+    private final RemoteServerConfiguration remoteServerConfiguration;
     private RemoteLazyRef dataLazyReference = new RemoteLazyRef();
 
-    private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
-    private static final int TEST_CONNECTION_INTERVAL = 2 * 1000; // [ms]
-    /* for all remote transformer descriptors together */
-    private long lastConnectionCheckTime = 0L;
-    private boolean lastConnectionCheckResult = true;
-    private boolean checkInProgress = false;
+    private RemoteServerState actualState = null;
+    private RemoteServerStateListener remoteServerStateListener = new RemoteServerStateListenerImpl();
 
-    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData) {
+    public RemoteDescriptorProviderImpl(RemoteServerData remoteServerData,
+            RemoteServerConfiguration remoteServerConfiguration) {
         super(false);
         this.remoteServerData = remoteServerData;
+        this.remoteServerConfiguration = remoteServerConfiguration;
         dataLazyReference.requestLoad();
     }
 
@@ -77,51 +71,12 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return remoteServerData;
     }
 
-    public boolean isServerUp() {
-        final long now = System.currentTimeMillis();
-        boolean runCheck = false;
-
-        synchronized (this) { // not to start multiple checks at once
-            if (lastConnectionCheckTime + TEST_CONNECTION_INTERVAL < now && checkInProgress == false) {
-                runCheck = true;
-                lastConnectionCheckTime = now;
-                checkInProgress = true;
-            }
+    public RemoteServerState getServerState() {
+        if (actualState == null) {
+            remoteServerConfiguration.addListener(remoteServerStateListener);
+            actualState = remoteServerConfiguration.getActualState(remoteServerData.getServerName());
         }
-
-        if (runCheck) {
-            SharedExecutorService.get().execute(new Runnable() {
-                @Override
-                public void run() {
-                    checkServerAvailability();
-                }
-            });
-        }
-
-        return lastConnectionCheckResult;
-    }
-
-    private void checkServerAvailability() {
-        Socket socket = new Socket();
-        try {
-            URL siteURL = new URL(remoteServerData.getUrl());
-            int port = siteURL.getPort();
-            if(port <= 0) {
-                port = siteURL.getDefaultPort();
-            }
-            InetSocketAddress endpoint = new InetSocketAddress(siteURL.getHost(), port);
-            socket.connect(endpoint, TEST_CONNECTION_TIMEOUT);
-            lastConnectionCheckResult = socket.isConnected();
-        } catch (IOException e) {
-            lastConnectionCheckResult = false;
-            logger.warn("Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
-                    + e.getMessage());
-        } finally {
-            synchronized (this) {
-                checkInProgress = false;
-                FileHelper.safeClose(socket);
-            }
-        }
+        return actualState;
     }
 
     public void refresh() {
@@ -211,8 +166,6 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                         logger.error("Cannot create remote component representation for: " + component.getName(), e);
                     }
                 }
-                //Load actual status of remote server.
-                isServerUp();
             } catch (Exception e) {
                 logger.error("Cannot get list of remote components on " + remoteServerData.getUrl(), e);
                 // TODO: plan a task to try again after somw while. And then
@@ -266,16 +219,13 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return annotations;
     }
 
-    @Override
-    public Collection<DescriptorProviderStatus> getStatus() {
-        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
+    private class RemoteServerStateListenerImpl implements RemoteServerStateListener{
 
-        if (!isServerUp()) {
-            DescriptorProviderStatus serverDownState = new DescriptorProviderStatus(
-                    DescriptorProviderStatus.Level.ERROR, "Remote server is not available at the moment. ");
-            statusSet.add(serverDownState);
+        @Override
+        public void onRemoteServerStateChange(final String remoteServerName, final RemoteServerState state) {
+            if(remoteServerName.equals(remoteServerData.getServerName())){
+                actualState = state;
+            }
         }
-
-        return statusSet;
     }
 }

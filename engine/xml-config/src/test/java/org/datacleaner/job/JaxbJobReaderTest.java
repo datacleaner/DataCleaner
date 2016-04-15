@@ -464,4 +464,11 @@ public class JaxbJobReaderTest extends TestCase {
         assertNotNull(result3);
         assertEquals(0, result3.getRowCount(result3.getColumns()[0]));
     }
+
+    public void testPlainSearchReplaceJobUpgrade() throws Exception {
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/version_4_5_3_plain_search_replace.analysis.xml"));
+        assertTrue(jobBuilder.isConfigured());
+    }
 }

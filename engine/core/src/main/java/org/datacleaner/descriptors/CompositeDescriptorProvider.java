@@ -277,13 +277,4 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         }
         return null;
     }
-
-    @Override
-    public Set<DescriptorProviderStatus> getStatus() {
-        final Set<DescriptorProviderStatus> statusSet = new HashSet<>();
-        for (DescriptorProvider provider : delegates) {
-            statusSet.addAll(provider.getStatus());
-        }
-        return statusSet;
-    }
 }

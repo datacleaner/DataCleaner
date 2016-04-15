@@ -17,20 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
-
-import org.datacleaner.configuration.RemoteServerData;
-import org.datacleaner.configuration.RemoteServerState;
+package org.datacleaner.configuration;
 
 /**
- * Descriptor provider for remote components.
+ * States for connection to remote components.
  */
-public interface RemoteDescriptorProvider extends DescriptorProvider {
-
-    String DATACLOUD_URL = "https://services.datacleaner.org";
-    String DATACLOUD_SERVER_NAME = "DataCloud";
-
-    public RemoteServerData getServerData();
-
-    public RemoteServerState getServerState();
+public enum RemoteServerState {
+    UNKNOWN, OK, ERROR;
 }

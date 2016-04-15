@@ -563,7 +563,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog(
-                        "Processing of " + metrics.getTable().getName() + " finished. Generating results...");
+                        "Processing of " + metrics.getTable().getName() + " is successful. Generating results...");
             }
 
             @Override

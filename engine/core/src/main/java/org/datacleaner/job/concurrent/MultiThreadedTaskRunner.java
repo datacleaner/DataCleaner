@@ -81,6 +81,7 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
                 _threadFactory, rejectionHandler);
 
         _executorScheduledService = new ScheduledThreadPoolExecutor(1);
+        _executorScheduledService.setMaximumPoolSize(50);
     }
 
     /**

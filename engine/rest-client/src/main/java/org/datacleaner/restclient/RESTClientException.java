@@ -21,6 +21,8 @@ package org.datacleaner.restclient;
 
 public class RESTClientException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+    
     private final int code;
     private final String reason;
 

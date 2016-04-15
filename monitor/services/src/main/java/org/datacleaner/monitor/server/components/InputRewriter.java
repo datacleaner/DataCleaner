@@ -36,5 +36,5 @@ public interface InputRewriter {
      *
      * @return true if the input rewriting should stop here (NO other rewriters will be processed).
      */
-    boolean rewriteInput(TransformerDescriptor transformer, ProcessStatelessInput input);
+    boolean rewriteInput(TransformerDescriptor<?> transformer, ProcessStatelessInput input);
 }

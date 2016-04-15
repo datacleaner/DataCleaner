@@ -34,11 +34,11 @@ public class InputRewriterController {
      */
     public void rewriteStatelessInput(ComponentDescriptor<?> compDesc, ProcessStatelessInput processStatelessInput) {
         if(compDesc instanceof TransformerDescriptor) {
-            rewriteStatelessInputForTransformer((TransformerDescriptor)compDesc, processStatelessInput);
+            rewriteStatelessInputForTransformer((TransformerDescriptor<?>)compDesc, processStatelessInput);
         }
     }
 
-    private void rewriteStatelessInputForTransformer(TransformerDescriptor compDesc, ProcessStatelessInput input) {
+    private void rewriteStatelessInputForTransformer(TransformerDescriptor<?> compDesc, ProcessStatelessInput input) {
         for(InputRewriter rewriter: inputRewriters) {
             if(rewriter.rewriteInput(compDesc, input)) {
                 return;

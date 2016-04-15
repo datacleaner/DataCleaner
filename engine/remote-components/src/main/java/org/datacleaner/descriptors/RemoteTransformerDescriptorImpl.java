@@ -28,8 +28,6 @@ import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.configuration.RemoteServerData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Transformer descriptor that represents a remote transformer sitting on a
@@ -43,7 +41,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon {
     
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(RemoteTransformerDescriptorImpl.class);
     
     private final String remoteDisplayName;
     private final Map<Class<? extends Annotation>, Annotation> annotations;
@@ -72,21 +69,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         return remoteDisplayName;
     }
 
-    private Class<?> classFromName(String className, Class<?> defaultClass) {
-        Class<?> clazz = defaultClass;
-
-        try {
-            clazz = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            logger.warn("Class '" + className + "' was not found. \n" + e.getMessage());
-        }
-
-        return clazz;
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
-    public Annotation getAnnotation(Class annotationClass) {
-        return annotations.get(annotationClass);
+    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+        return (A) annotations.get(annotationClass);
     }
 
     @Override

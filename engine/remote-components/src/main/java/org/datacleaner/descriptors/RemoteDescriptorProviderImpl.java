@@ -235,7 +235,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         for(Iterator<Map.Entry<String, JsonNode>> it = annotationsInfo.fields(); it.hasNext();) {
             Map.Entry<String, JsonNode> annotationEntry = it.next();
             try {
-                String annotClassName = annotationEntry.getKey();
+                final String annotClassName = annotationEntry.getKey();
+                @SuppressWarnings("unchecked")
                 final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class.forName(annotClassName);
 
                 Map<String, Object> annotationValues = new HashMap<>();
@@ -245,7 +246,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                     String propName = annPropEntry.getKey();
                     JsonNode propValueNode = annPropEntry.getValue();
                     Method propMethod = anClass.getDeclaredMethod(propName, new Class[0]);
-                    Class propClass = propMethod.getReturnType();
+                    Class<?> propClass = propMethod.getReturnType();
                     Object propValue = Serializator.getJacksonObjectMapper().treeToValue(propValueNode, propClass);
                     annotationValues.put(propName, propValue);
                 }

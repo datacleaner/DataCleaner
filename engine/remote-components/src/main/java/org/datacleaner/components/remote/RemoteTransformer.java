@@ -322,7 +322,14 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
                     if (isOutputColumnEnumeration(colSpec.schema)) {
                         type = String.class;
                     } else {
-                        type = JsonNode.class;
+                        // For unknown types we specify "Object" as a class
+                        // This causes that Jackson will deserialize it not as a JsonNode,
+                        // but simple Java Maps, Lists, Strings etc.
+                        // We NEED it, because we need the values to be Serializable.
+                        // This is because some analyzer results contain the values
+                        // and analyzer results must be serializable (e.g. to save it in DC monitor, or
+                        // to send it over wire when doing ditributed computing etc.)
+                        type = Object.class;
                     }
                     outCols.setColumnType(i, type);
                 }

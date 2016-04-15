@@ -93,10 +93,11 @@ public class DataCloudInformationPanel extends JPanel {
             panelContent = addLine(panelContent, "(email: " + remoteServerState.getEmail() + ")");
             if (remoteServerState.getCredit() > 0) {
                 panelContent =
-                        addLine(panelContent, "Your credit balance: " + creditFormatter(remoteServerState.getCredit()));
+                        addLine(panelContent,
+                                "Your credit balance: " + String.format("%,d", remoteServerState.getCredit()));
             } else {
                 panelContent = addLine(panelContent,
-                        "Your credit: <font color=\"red\">" + creditFormatter(remoteServerState.getCredit())
+                        "Your credit: <font color=\"red\">" + String.format("%,d", remoteServerState.getCredit())
                                 + " </font>");
             }
 
@@ -153,30 +154,6 @@ public class DataCloudInformationPanel extends JPanel {
     @Override
     public Color getForeground() {
         return _foreground;
-    }
-
-
-    /**
-     * For spaces in number. 121 100, 1 000, -12 120
-     *
-     * @param credit
-     * @return
-     */
-    private String creditFormatter(Long credit) {
-        if (credit == null) {
-            return "";
-        }
-        String creditStr = credit.toString();
-        String formattedCredit = "";
-
-        for (int i = creditStr.length() - 1; i >= 0; i--) {
-            int index = creditStr.length() - 1 - i;
-            if (index != 0 && index % 3 == 0 && creditStr.charAt(i) != '-') {
-                formattedCredit = " " + formattedCredit;
-            }
-            formattedCredit = creditStr.charAt(i) + formattedCredit;
-        }
-        return formattedCredit;
     }
 
     private String addLine(String text, String newLine) {

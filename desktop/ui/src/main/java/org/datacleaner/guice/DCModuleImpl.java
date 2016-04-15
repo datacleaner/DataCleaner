@@ -303,7 +303,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final RemoteServerConfiguration remoteServerConfiguration =
                             new MutableRemoteServerConfigurationImpl(
                                     c.getEnvironment().getRemoteServerConfiguration().getServerList(),
-                                    c.getEnvironment().getTaskRunner(), configurationWriter);
+                                    taskRunner, configurationWriter);
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory,
                             remoteServerConfiguration);

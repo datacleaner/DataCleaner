@@ -159,6 +159,10 @@ public class Serializator {
         return (ProcessResult) Serializator.fromString(response, ProcessResult.class);
     }
 
+    public static DataCloudUser processDataCloudUser(String response){
+        return (DataCloudUser) Serializator.fromString(response, DataCloudUser.class);
+    }
+
     private static String intoString(Object value) {
         try {
             return objectMapper.writeValueAsString(value);

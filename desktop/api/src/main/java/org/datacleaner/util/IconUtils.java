@@ -178,6 +178,11 @@ public final class IconUtils {
     public static final String CHART_LINE = "images/chart-types/line.png";
     public static final String CHART_SCATTER = "images/chart-types/scatter.png";
 
+    public static final String CLOUD_GREY = "images/datacloud/cloudGrey.png";
+    public static final String CLOUD_ORANGE = "images/datacloud/cloudOrange.png";
+    public static final String CLOUD_GREEN = "images/datacloud/cloudGreen.png";
+    public static final String CLOUD_RED = "images/datacloud/cloudRed.png";
+
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";
     public static final String DICTIONARY_TEXTFILE_IMAGEPATH = "images/model/dictionary_textfile.png";
@@ -241,8 +246,9 @@ public final class IconUtils {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
-            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState().equals(
-                    RemoteServerState.ERROR)) {
+            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState()
+                    .getActualState().equals(
+                            RemoteServerState.State.ERROR)) {
                 serverDown = true;
             }
         }

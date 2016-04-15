@@ -17,41 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.restclient;
+
+import java.io.Serializable;
 
 /**
- * States for connection to remote components.
+ * Object for rest communication
  */
-public class RemoteServerState {
-
-    public enum State {
-        NOT_CONNECTED, OK, ERROR, NO_CREDIT;
-    }
-
-    private State actualState;
+public class DataCloudUser implements Serializable {
     private String email;
     private String realName;
     private Long credit;
     private Boolean emailConfirmed;
-    private String errorMessage;
 
-    public RemoteServerState(final State actualState, final String email, final String realName, final Long credit,
-            final Boolean emailConfirmed) {
-        this.actualState = actualState;
+    public DataCloudUser() {
+    }
+
+    public DataCloudUser(final String email, final String realName, final Long credit, final Boolean emailConfirmed) {
         this.email = email;
         this.realName = realName;
         this.credit = credit;
         this.emailConfirmed = emailConfirmed;
-    }
-
-    public RemoteServerState(final State actualState, final String email, String errorMessage) {
-        this.actualState = actualState;
-        this.email = email;
-        this.errorMessage = errorMessage;
-    }
-
-    public State getActualState() {
-        return actualState;
     }
 
     public String getEmail() {
@@ -69,8 +55,5 @@ public class RemoteServerState {
     public Boolean isEmailConfirmed() {
         return emailConfirmed;
     }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
 }
+

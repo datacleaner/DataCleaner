@@ -24,12 +24,6 @@ package org.datacleaner.configuration;
  */
 public class RemoteServerDataImpl implements RemoteServerData {
 
-    private static final RemoteServerData NO_SERVER = new RemoteServerDataImpl(null, null, null, null);
-
-    public static RemoteServerData noServer() {
-        return NO_SERVER;
-    }
-
     private final String serverName;
     private final String url;
     private String username;

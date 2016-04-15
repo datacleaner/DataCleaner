@@ -36,6 +36,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -103,6 +104,7 @@ import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
+import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
@@ -765,6 +767,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executeButton.addComponentsToToolbar(toolBar);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+
+        final DataCloudStatusLabel dataCloudStatusLabel = new DataCloudStatusLabel(_configuration.getEnvironment().getRemoteServerConfiguration(),  _glassPane);
+        statusBar.add(dataCloudStatusLabel);
+        statusBar.add(Box.createHorizontalStrut(20));
 
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);

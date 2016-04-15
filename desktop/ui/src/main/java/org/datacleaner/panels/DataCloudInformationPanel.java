@@ -106,7 +106,7 @@ public class DataCloudInformationPanel extends JPanel {
             }
         }
 
-        if (remoteServerState.getActualState() == RemoteServerState.State.UNKNOWN) {
+        if (remoteServerState.getActualState() == RemoteServerState.State.NOT_CONNECTED) {
             panelContent = addLine(panelContent, "Datacloud is not configured.");
             panelContent = addLine(panelContent, "You can set your credentials in");
             panelContent = addLine(panelContent, "<b>Options dialog - DataCloud</b>");

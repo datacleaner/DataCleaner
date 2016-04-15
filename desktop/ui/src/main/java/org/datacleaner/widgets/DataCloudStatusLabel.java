@@ -50,8 +50,8 @@ public class DataCloudStatusLabel extends JLabel {
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
 
-        setIcon(RemoteServerState.State.UNKNOWN);
-        _dataCloudInformationPanel.setInformationStatus(new RemoteServerState(RemoteServerState.State.UNKNOWN, null, null));
+        setIcon(RemoteServerState.State.NOT_CONNECTED);
+        _dataCloudInformationPanel.setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
@@ -64,7 +64,7 @@ public class DataCloudStatusLabel extends JLabel {
 
     private void setIcon(RemoteServerState.State state) {
         switch (state) {
-        case UNKNOWN:
+        case NOT_CONNECTED:
             setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_GREY, IconUtils.ICON_SIZE_SMALL));
             break;
         case NO_CREDIT:

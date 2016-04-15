@@ -25,7 +25,7 @@ package org.datacleaner.configuration;
 public class RemoteServerState {
 
     public enum State {
-        UNKNOWN, OK, ERROR, NO_CREDIT;
+        NOT_CONNECTED, OK, ERROR, NO_CREDIT;
     }
 
     private State actualState;

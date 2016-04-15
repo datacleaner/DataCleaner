@@ -61,7 +61,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         remoteServerDataList = new ArrayList<>(serverData);
         for (RemoteServerData remoteServerData : serverData) {
             actualStateMap.put(remoteServerData.getServerName(),
-                    new RemoteServerState(RemoteServerState.State.UNKNOWN, remoteServerData.getUsername(), null));
+                    new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, remoteServerData.getUsername(), null));
         }
 
         if (taskRunner == null || !(taskRunner instanceof ScheduledTaskRunner)) {

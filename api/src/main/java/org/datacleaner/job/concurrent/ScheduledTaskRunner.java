@@ -29,7 +29,7 @@ import org.datacleaner.job.tasks.Task;
 public interface ScheduledTaskRunner extends TaskRunner {
 
     /**
-     * Submits a {@link Task} and a {@link ScheduledTaskRunner} to the
+     * Submits a {@link Task} and a {@link TaskListener} to the
      * {@link TaskRunner}, that will schedule it.
      *
      * @param task

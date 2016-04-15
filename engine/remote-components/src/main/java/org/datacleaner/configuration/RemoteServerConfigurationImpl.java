@@ -54,7 +54,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private final Map<String, RemoteServerState> actualStateMap = Collections.synchronizedMap(new HashMap<>());
     private ServerStatusTask serverStatusTask;
     private ScheduledTaskRunner scheduledTaskRunner;
-    private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList());
+    private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList<>());
     protected final List<RemoteServerData> remoteServerDataList;
 
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
@@ -65,7 +65,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         }
 
         if (taskRunner == null || !(taskRunner instanceof ScheduledTaskRunner)) {
-            logger.warn("Task runner isn't ScheduledTaskRunner. Remote server status task won't be scheduled.");
+            logger.info("Task runner isn't ScheduledTaskRunner. Remote server status task won't be scheduled.");
         } else {
             scheduledTaskRunner = (ScheduledTaskRunner) taskRunner;
         }

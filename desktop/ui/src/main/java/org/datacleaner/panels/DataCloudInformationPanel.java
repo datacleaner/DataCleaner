@@ -155,6 +155,13 @@ public class DataCloudInformationPanel extends JPanel {
         return _foreground;
     }
 
+
+    /**
+     * For spaces in number. 121 100, 1 000, -12 120
+     *
+     * @param credit
+     * @return
+     */
     private String creditFormatter(Long credit) {
         if (credit == null) {
             return "";

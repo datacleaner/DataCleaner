@@ -65,16 +65,16 @@ public class DataCloudStatusLabel extends JLabel {
     private void setIcon(RemoteServerState.State state) {
         switch (state) {
         case UNKNOWN:
-            setIcon(ImageManager.get().getImageIcon("images/datacloud/cloudNotUsed.png", IconUtils.ICON_SIZE_SMALL));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_GREY, IconUtils.ICON_SIZE_SMALL));
             break;
         case NO_CREDIT:
-            setIcon(ImageManager.get().getImageIcon("images/datacloud/cloudNoCredit.png", IconUtils.ICON_SIZE_SMALL));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_ORANGE, IconUtils.ICON_SIZE_SMALL));
             break;
         case OK:
-            setIcon(ImageManager.get().getImageIcon("images/datacloud/cloudOk.png", IconUtils.ICON_SIZE_SMALL));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_GREEN, IconUtils.ICON_SIZE_SMALL));
             break;
         case ERROR:
-            setIcon(ImageManager.get().getImageIcon("images/datacloud/cloudError.png", IconUtils.ICON_SIZE_SMALL));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_RED, IconUtils.ICON_SIZE_SMALL));
             break;
         }
     }

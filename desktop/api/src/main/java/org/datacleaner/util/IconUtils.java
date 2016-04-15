@@ -32,6 +32,7 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.configuration.RemoteServerState;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
@@ -240,7 +241,8 @@ public final class IconUtils {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
-            if (!((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().isServerUp()) {
+            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState().equals(
+                    RemoteServerState.ERROR)) {
                 serverDown = true;
             }
         }

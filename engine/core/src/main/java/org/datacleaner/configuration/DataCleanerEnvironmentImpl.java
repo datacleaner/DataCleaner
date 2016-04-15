@@ -176,6 +176,6 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     }
 
     public static RemoteServerConfiguration defaultRemoteServerConfiguration() {
-        return new RemoteServerConfigurationImpl(new ArrayList<>());
+        return new RemoteServerConfigurationImpl(new ArrayList<>(), null);
     }
 }

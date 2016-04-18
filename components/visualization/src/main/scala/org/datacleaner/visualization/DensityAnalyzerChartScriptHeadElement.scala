@@ -1,11 +1,11 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.HeadElement
-import scala.collection.mutable.Map
-import scala.collection.mutable.ListBuffer
 import java.awt.Color
 
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+
+import scala.collection.JavaConversions._
+import scala.collection.mutable.{ListBuffer, Map}
 /**
  * Head element that writes a script specific to the rendering of a single result
  */
@@ -34,7 +34,7 @@ class DensityAnalyzerChartScriptHeadElement(result: DensityAnalyzerResult, eleme
       val color = paint.asInstanceOf[Color]
       val rgbHex = DensityAnalyzerColors.toHexString(color)
       val list = series(rgbHex)
-      list += point
+      list += new Tuple2(point.getLeft, point.getRight)
     })
 
     return """<script type="text/javascript">

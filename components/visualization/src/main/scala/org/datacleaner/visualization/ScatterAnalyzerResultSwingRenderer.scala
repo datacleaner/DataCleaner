@@ -1,31 +1,22 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.api.RendererBean
-import org.datacleaner.result.renderer.SwingRenderingFormat
-import org.datacleaner.api.Renderer
-import javax.swing.JPanel
-import org.datacleaner.api.RendererPrecedence
-import org.jfree.chart.ChartFactory
-import org.jfree.data.xy.XYDataset
-import org.jfree.data.xy.XYSeriesCollection
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.chart.ChartPanel
-import org.jfree.data.xy.XYSeries
-import org.datacleaner.util.ChartUtils
-import org.jfree.chart.ChartMouseListener
-import org.jfree.chart.ChartMouseEvent
-import org.jfree.chart.entity.XYItemEntity
-import org.datacleaner.bootstrap.WindowContext
 import javax.inject.Inject
-import org.datacleaner.api.Provided
+import javax.swing.JPanel
+
+import org.datacleaner.api.{Provided, Renderer, RendererBean, RendererPrecedence}
+import org.datacleaner.bootstrap.WindowContext
+import org.datacleaner.result.{AnnotatedRowsResult, DefaultResultProducer}
+import org.datacleaner.result.renderer.{RendererFactory, SwingRenderingFormat}
+import org.datacleaner.util.ChartUtils
 import org.datacleaner.widgets.result.DrillToDetailsCallbackImpl
-import org.datacleaner.result.ResultProducer
-import org.datacleaner.result.DefaultResultProducer
-import org.datacleaner.result.AnnotatedRowsResult
-import org.datacleaner.result.renderer.RendererFactory
+import org.jfree.chart.{ChartFactory, ChartMouseEvent, ChartMouseListener}
+import org.jfree.chart.entity.XYItemEntity
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
+import scala.collection.JavaConverters._
 
 @RendererBean(classOf[SwingRenderingFormat])
-class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult, JPanel] {
+class ScatterAnalyzerResultSwingRenderer extends Renderer[ScalaScatterAnalyzerResult, JPanel] {
   
   @Inject
   @Provided
@@ -35,18 +26,18 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
   @Provided
   var rendererFactory: RendererFactory = null
 
-  override def getPrecedence(result: ScatterAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(result: ScalaScatterAnalyzerResult) = RendererPrecedence.HIGH
 
-  override def render(result: ScatterAnalyzerResult): JPanel = {
-    val xAxisLabel = result.variable1.getName();
-    val yAxisLabel = result.variable2.getName();
+  override def render(result: ScalaScatterAnalyzerResult): JPanel = {
+    val xAxisLabel = result.getVariable1.getName
+    val yAxisLabel = result.getVariable2.getName
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
 
-    result.groups.foreach(group => {
-      val xySeries = new XYSeries(group.name)
-      group.getCoordinates.foreach(xy => {
-        xySeries.add(xy._1, xy._2);
+    result.getGroups.asScala.foreach(group => {
+      val xySeries = new XYSeries(group.getName)
+      group.getCoordinates.asScala.foreach(xy => {
+        xySeries.add(xy.getLeft, xy.getRight)
       })
       dataset.addSeries(xySeries)
     });
@@ -70,8 +61,8 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
             val itemIndex = xyItemEntity.getItem();
             val dataItem = series.getDataItem(itemIndex);
 
-            val group = result.groups()(seriesIndex)
-            val rowAnnotation = group.getRowAnnotation((dataItem.getX(), dataItem.getY()));
+            val group = result.getGroups.asScala(seriesIndex)
+            val rowAnnotation = group.getRowAnnotation(dataItem.getX(), dataItem.getY());
             val rowAnnotationFactory = group.getRowAnnotationFactory();
             
             val resultProducer = new DefaultResultProducer(new AnnotatedRowsResult(rowAnnotation, rowAnnotationFactory))

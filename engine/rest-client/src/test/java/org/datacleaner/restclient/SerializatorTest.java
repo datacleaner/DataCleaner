@@ -33,7 +33,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SerializatorTest {
     private static final Logger logger = LoggerFactory.getLogger(Serializator.class);
     private final String componentName = "Concatenator";
-    private final String componentDescription = "Concatenator description";
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

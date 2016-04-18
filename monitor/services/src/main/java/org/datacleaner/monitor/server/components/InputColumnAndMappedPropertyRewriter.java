@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
 
-    public boolean rewriteInput(TransformerDescriptor transformer, ProcessStatelessInput input) {
+    public boolean rewriteInput(TransformerDescriptor<?> transformer, ProcessStatelessInput input) {
 
         // If columns specification is int the input, we do not rewrite
         if(input.configuration != null && input.configuration.getColumns() != null && !input.configuration.getColumns().isEmpty()) {

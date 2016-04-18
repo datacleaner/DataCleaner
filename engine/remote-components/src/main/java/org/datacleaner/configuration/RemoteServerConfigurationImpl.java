@@ -51,13 +51,22 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final long ERROR_DELAY_MIN = 1;
     private static final long OK_DELAY_MIN = 5;
-    private final Map<String, RemoteServerState> actualStateMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, RemoteServerState> actualStateMap;
     private ServerStatusTask serverStatusTask;
     private ScheduledTaskRunner scheduledTaskRunner;
     private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList<>());
     protected final List<RemoteServerData> remoteServerDataList;
 
+    public RemoteServerConfigurationImpl(RemoteServerConfigurationImpl remoteServerConfiguration){
+        actualStateMap = remoteServerConfiguration.actualStateMap;
+        serverStatusTask = remoteServerConfiguration.serverStatusTask;
+        scheduledTaskRunner = remoteServerConfiguration.scheduledTaskRunner;
+        listeners = remoteServerConfiguration.listeners;
+        remoteServerDataList = remoteServerConfiguration.remoteServerDataList;
+    }
+
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
+        actualStateMap = Collections.synchronizedMap(new HashMap<>());
         remoteServerDataList = new ArrayList<>(serverData);
         for (RemoteServerData remoteServerData : serverData) {
             actualStateMap.put(remoteServerData.getServerName(),

@@ -19,20 +19,17 @@
  */
 package org.datacleaner.util;
 
-import java.util.List;
-
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.RemoteServerConfigurationImpl;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
-import org.datacleaner.job.concurrent.TaskRunner;
 
 public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurationImpl {
 
     private DomConfigurationWriter configWriter;
 
-    public MutableRemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner, DomConfigurationWriter configurationWriter) {
-        super(serverData, taskRunner);
+    public MutableRemoteServerConfigurationImpl(RemoteServerConfigurationImpl remoteServerConfiguration, DomConfigurationWriter configurationWriter) {
+        super(remoteServerConfiguration);
         configWriter = configurationWriter;
     }
 

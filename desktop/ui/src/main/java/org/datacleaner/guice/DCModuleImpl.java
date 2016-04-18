@@ -42,6 +42,7 @@ import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.RemoteServerConfiguration;
+import org.datacleaner.configuration.RemoteServerConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -300,10 +301,16 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
-                    final RemoteServerConfiguration remoteServerConfiguration =
-                            new MutableRemoteServerConfigurationImpl(
-                                    c.getEnvironment().getRemoteServerConfiguration().getServerList(),
-                                    taskRunner, configurationWriter);
+                    RemoteServerConfiguration remoteServerConfiguration =
+                            c.getEnvironment().getRemoteServerConfiguration();
+                    if (remoteServerConfiguration instanceof RemoteServerConfigurationImpl) {
+                        remoteServerConfiguration = new MutableRemoteServerConfigurationImpl(
+                                (RemoteServerConfigurationImpl) remoteServerConfiguration, configurationWriter);
+                    } else {
+                        new RuntimeException(
+                                "RemoteServerConfiguration is not instance of RemoteServerConfigurationImpl.");
+                    }
+
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory,
                             remoteServerConfiguration);

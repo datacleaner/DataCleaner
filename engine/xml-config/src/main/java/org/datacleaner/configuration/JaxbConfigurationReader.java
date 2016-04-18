@@ -369,11 +369,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         // now go through providers specification and create them
-        List<RemoteServerData> remoteServerData = new ArrayList<>();
+        List<RemoteServerData> remoteServerDataList = readAllRemoteServers(providersElement);
+        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerDataList, environment.getTaskRunner()));
+
         for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             createDescriptorProvider(provider, environment,
-                    temporaryConfiguration, providers, remoteServerData);
+                    temporaryConfiguration, providers);
         }
+        createRemoteDescriptorProviders(environment, providers, remoteServerDataList);
 
         if (providers.isEmpty()) {
             if(!(environment.getDescriptorProvider() instanceof  CompositeDescriptorProvider)){
@@ -401,11 +404,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         CompositeDescriptorProvider descriptorProvider = new CompositeDescriptorProvider();
         descriptorProvider.addDelegates(providers);
         environment.setDescriptorProvider(descriptorProvider);
-        environment.setRemoteServerConfiguration(new RemoteServerConfigurationImpl(remoteServerData, environment.getTaskRunner()));
     }
 
     private void createDescriptorProvider(Object providerElement,
-            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration, List<DescriptorProvider> providerList, List<RemoteServerData> remoteServerData) {
+            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration,
+            List<DescriptorProvider> providerList) {
         if (providerElement instanceof CustomElementType) {
             providerList.add(createCustomElement(((CustomElementType) providerElement), DescriptorProvider.class,
                     temporaryConfiguration, true));
@@ -414,12 +417,41 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                     (ClasspathScannerType) providerElement, environment);
             providerList.add(classPathProvider);
         } else if (providerElement instanceof RemoteComponentsType) {
-            createRemoteDescriptorProvider(
-                    (RemoteComponentsType) providerElement, environment, providerList, remoteServerData);
+            // nothing. Remote server providers will be created separately in createRemoteDescriptorProviders method
         } else {
             throw new IllegalStateException("Unsupported descriptor provider type: " + providerElement.getClass());
         }
+    }
 
+    private void createRemoteDescriptorProviders(DataCleanerEnvironment environment,
+            List<DescriptorProvider> providerList, List<RemoteServerData> remoteServerDataList) {
+        for (RemoteServerData remoteServerData : remoteServerDataList) {
+            providerList.add(new RemoteDescriptorProviderImpl(remoteServerData,
+                    environment.getRemoteServerConfiguration()));
+        }
+    }
+
+    private List<RemoteServerData> readAllRemoteServers(DescriptorProvidersType providersElement) {
+        List<RemoteServerData> remoteServerDataList= new ArrayList<>();
+        for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
+            if (provider instanceof RemoteComponentsType) {
+                int i = 0;
+                for (RemoteComponentServerType server : ((RemoteComponentsType) provider).getServer()) {
+                    i++;
+                    final String serverName = (server.getName() == null
+                            ? ("server" + i) : server.getName());
+                    String serverUrl = server.getUrl();
+                    if (StringUtils.isNullOrEmpty(serverUrl) && serverName
+                            .equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)) {
+                        serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
+                    }
+                    RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
+                            server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
+                    remoteServerDataList.add(remoteServerData);
+                }
+            }
+        }
+        return remoteServerDataList;
     }
 
     private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(
@@ -451,25 +483,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-    private void createRemoteDescriptorProvider(RemoteComponentsType providerElement,
-                DataCleanerEnvironment dataCleanerEnvironment, List<DescriptorProvider> descriptorProviders ,
-                List<RemoteServerData> remoteServersConfig) {
-
-        int i = 0;
-        for (RemoteComponentServerType server : providerElement.getServer()) {
-            i++;
-            final String serverName = (server.getName() == null
-                    ? ("server" + i) : server.getName());
-            String serverUrl = server.getUrl();
-            if(StringUtils.isNullOrEmpty(serverUrl) && serverName.equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)){
-                serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
-            }
-            RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
-                    server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
-            remoteServersConfig.add(remoteServerData);
-            descriptorProviders.add(new RemoteDescriptorProviderImpl(remoteServerData, dataCleanerEnvironment.getRemoteServerConfiguration()));
-        }
-    }
 
     private void updateStorageProviderIfSpecified(Configuration configuration,
             TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {

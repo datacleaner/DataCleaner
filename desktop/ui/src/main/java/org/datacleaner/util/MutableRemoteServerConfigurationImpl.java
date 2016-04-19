@@ -25,6 +25,7 @@ import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.RemoteServerConfigurationImpl;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.concurrent.TaskRunner;
 
 public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurationImpl {
@@ -38,8 +39,13 @@ public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurat
 
     public void addServer(String serverName, String url, String username, String password) {
         RemoteServerData serverData = new RemoteServerDataImpl(url, serverName, username, password);
-        remoteServerDataList.add(serverData);
-        configWriter.addRemoteServer(serverName, url, username, password);
+        addRemoteData(serverData);
+        if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)){
+            configWriter.addRemoteServer(serverName, null, username, password);
+        }else{
+            configWriter.addRemoteServer(serverName, url, username, password);
+        }
+
     }
 
     public void updateServerCredentials(String serverName, String userName, String password) {

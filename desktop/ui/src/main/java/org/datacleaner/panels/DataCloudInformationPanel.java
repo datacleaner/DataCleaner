@@ -20,8 +20,12 @@
 package org.datacleaner.panels;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.inject.Provider;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
@@ -30,10 +34,13 @@ import javax.swing.border.LineBorder;
 
 import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.configuration.RemoteServerState;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.windows.OptionsDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -47,17 +54,30 @@ public class DataCloudInformationPanel extends JPanel {
     private static final int POSITION_Y = 130;
 
     private final DCGlassPane _glassPane;
+    private final Provider<OptionsDialog> _optionsDialogProvider;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private DCLabel text;
-    final DCHtmlBox htmlBoxDataCloud =
+    private JButton optionButton;
+    final private DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(DCGlassPane glassPane) {
+    public DataCloudInformationPanel(DCGlassPane glassPane, Provider<OptionsDialog> optionsDialogProvider) {
         super();
         _glassPane = glassPane;
+        _optionsDialogProvider = optionsDialogProvider;
+        optionButton = WidgetFactory.createDefaultButton("Option", IconUtils.MENU_OPTIONS);
+        optionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                moveOut(0);
+                OptionsDialog optionsDialog = _optionsDialogProvider.get();
+                optionsDialog.getTabbedPane().setSelectedIndex(1);
+                optionsDialog.open();
+            }
+        });
         setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
         setVisible(false);
         setSize(WIDTH, 400);
@@ -73,6 +93,8 @@ public class DataCloudInformationPanel extends JPanel {
         text = DCLabel.darkMultiLine("");
         add(text);
         add(Box.createVerticalBox());
+        add(optionButton);
+        add(Box.createVerticalBox());
         add(htmlBoxDataCloud);
     }
 
@@ -85,6 +107,7 @@ public class DataCloudInformationPanel extends JPanel {
     }
 
     public void setInformationStatus(RemoteServerState remoteServerState) {
+        optionButton.setVisible(false);
         text.setText("");
         String panelContent = "";
         if (remoteServerState.getActualState() == RemoteServerState.State.OK ||
@@ -108,8 +131,8 @@ public class DataCloudInformationPanel extends JPanel {
 
         if (remoteServerState.getActualState() == RemoteServerState.State.NOT_CONNECTED) {
             panelContent = addLine(panelContent, "Datacloud is not configured.");
-            panelContent = addLine(panelContent, "You can set your credentials in");
-            panelContent = addLine(panelContent, "<b>Options dialog - DataCloud</b>");
+            panelContent = addLine(panelContent, "You can set your credentials here.");
+            optionButton.setVisible(true);
         }
 
         if (remoteServerState.getActualState() == RemoteServerState.State.ERROR) {

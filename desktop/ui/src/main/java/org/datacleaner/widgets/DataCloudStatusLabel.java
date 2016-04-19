@@ -23,6 +23,7 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.inject.Provider;
 import javax.swing.JLabel;
 
 import org.datacleaner.configuration.RemoteServerConfiguration;
@@ -34,6 +35,7 @@ import org.datacleaner.panels.DataCloudInformationPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.OptionsDialog;
 
 /**
  * Status Label for DataCloud
@@ -42,16 +44,18 @@ public class DataCloudStatusLabel extends JLabel {
     private RemoteServerConfiguration _remoteServerConfiguration;
     private DataCloudInformationPanel _dataCloudInformationPanel;
 
-    public DataCloudStatusLabel(final RemoteServerConfiguration remoteServerConfiguration, DCGlassPane glassPane) {
+    public DataCloudStatusLabel(final RemoteServerConfiguration remoteServerConfiguration, DCGlassPane glassPane,
+            Provider<OptionsDialog> optionsDialogProvider) {
         super("DataCloud");
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _remoteServerConfiguration = remoteServerConfiguration;
-        _dataCloudInformationPanel = new DataCloudInformationPanel(glassPane);
+        _dataCloudInformationPanel = new DataCloudInformationPanel(glassPane, optionsDialogProvider);
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
 
         setIcon(RemoteServerState.State.NOT_CONNECTED);
-        _dataCloudInformationPanel.setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
+        _dataCloudInformationPanel
+                .setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {

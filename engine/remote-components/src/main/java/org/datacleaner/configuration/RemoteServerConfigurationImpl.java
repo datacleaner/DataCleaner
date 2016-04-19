@@ -55,7 +55,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private ServerStatusTask serverStatusTask;
     private ScheduledTaskRunner scheduledTaskRunner;
     private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList<>());
-    protected final List<RemoteServerData> remoteServerDataList;
+    private final List<RemoteServerData> remoteServerDataList;
 
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
         remoteServerDataList = new ArrayList<>(serverData);
@@ -136,7 +136,8 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             dataCloudUserInfo = restClient.getDataCloudUserInfo();
         } catch (Exception e) {
             logger.warn("DataCloud server connection problem: " + e.getMessage());
-            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), e.getMessage());
+            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(),
+                    getErrorMessage(e));
         }
         RemoteServerState.State state;
         if (dataCloudUserInfo.getCredit() != null && dataCloudUserInfo.getCredit() > 0) {
@@ -167,7 +168,33 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             logger.warn(
                     "Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
                             + e.getMessage());
-            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), e.getMessage());
+            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(), getErrorMessage(e));
+        }
+    }
+
+    protected synchronized void addRemoteData(RemoteServerData remoteServerData){
+        String serverName = remoteServerData.getServerName();
+        remoteServerDataList.add(remoteServerData);
+        if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)){
+            RemoteServerState remoteServerState = checkDataCloudServerAvailability(remoteServerData);
+            actualStateMap.put(serverName, remoteServerState);
+            notifyAllListeners(serverName);
+        }
+    }
+
+    private void notifyAllListeners(String remoteServerName){
+        RemoteServerState remoteServerState = actualStateMap.get(remoteServerName);
+        for (RemoteServerStateListener listener : listeners) {
+            logger.info("Remote server {} has new state {}", remoteServerName, remoteServerState);
+            listener.onRemoteServerStateChange(remoteServerName, remoteServerState);
+        }
+    }
+
+    private String getErrorMessage(Exception e) {
+        if (e.getCause() == null) {
+            return e.getMessage();
+        } else {
+            return e.getCause().getMessage();
         }
     }
 
@@ -230,11 +257,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         public void onComplete(final Task task) {
             ServerStatusTask serverStatusTask = (ServerStatusTask) task;
             for (String changeServerName : serverStatusTask.getStateChanged()) {
-                for (RemoteServerStateListener listener : listeners) {
-                    RemoteServerState remoteServerState = actualStateMap.get(changeServerName);
-                    logger.info("Remote server {} has new state {}", changeServerName, remoteServerState);
-                    listener.onRemoteServerStateChange(changeServerName, remoteServerState);
-                }
+                notifyAllListeners(changeServerName);
             }
         }
 

@@ -25,11 +25,11 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
@@ -66,7 +66,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     }
 
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
-        actualStateMap = Collections.synchronizedMap(new HashMap<>());
+        actualStateMap = new ConcurrentHashMap<>();
         remoteServerDataList = new ArrayList<>(serverData);
         for (RemoteServerData remoteServerData : serverData) {
             actualStateMap.put(remoteServerData.getServerName(),

@@ -1,9 +1,10 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.apache.metamodel.util.NumberComparator
 import java.util.Date
+
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+
+import scala.collection.JavaConverters._
 
 class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResult, elementId: String) extends HeadElement {
 
@@ -15,11 +16,11 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
   //<![CDATA[""");
 
     val measureColumns = result.getMeasureColumns
-    val categories = result.getCategories
+    val categories = result.getCategories.asScala
 
     // stack height will contain the offset of each stacked value and will be updated through the rendering of new points..
     val stackHeight: Array[Number] = categories.map(_ => 0.asInstanceOf[Number]).toArray;
-    
+
     val colors = StackedAreaColors.getColors()
 
     for (i <- 0 to measureColumns.size - 1) {
@@ -81,7 +82,7 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
 
     return html.toString
   }
-  
+
   def toNumber(x: Any): Number = {
     if (x.isInstanceOf[Number]) {
       return x.asInstanceOf[Number]

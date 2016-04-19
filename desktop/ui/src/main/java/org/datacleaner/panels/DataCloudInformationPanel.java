@@ -73,7 +73,7 @@ public class DataCloudInformationPanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 moveOut(0);
-                OptionsDialog optionsDialog = _optionsDialogProvider.get();
+                final OptionsDialog optionsDialog = _optionsDialogProvider.get();
                 optionsDialog.getTabbedPane().setSelectedIndex(1);
                 optionsDialog.open();
             }

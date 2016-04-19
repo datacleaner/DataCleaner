@@ -183,7 +183,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     }
 
     private void notifyAllListeners(String remoteServerName){
-        RemoteServerState remoteServerState = actualStateMap.get(remoteServerName);
+        final RemoteServerState remoteServerState = actualStateMap.get(remoteServerName);
         for (RemoteServerStateListener listener : listeners) {
             logger.info("Remote server {} has new state {}", remoteServerName, remoteServerState);
             listener.onRemoteServerStateChange(remoteServerName, remoteServerState);

@@ -20,8 +20,11 @@
 package org.datacleaner.panels;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
@@ -29,11 +32,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.datacleaner.actions.MoveComponentTimerActionListener;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerState;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.windows.DataCloudLogInWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -51,13 +61,32 @@ public class DataCloudInformationPanel extends JPanel {
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
-    private DCLabel text;
-    final DCHtmlBox htmlBoxDataCloud =
+    private final DCLabel text;
+    private final JButton optionButton;
+    final private DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(DCGlassPane glassPane) {
+    public DataCloudInformationPanel(DCGlassPane glassPane, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
         super();
         _glassPane = glassPane;
+        optionButton = WidgetFactory.createDefaultButton("Sign in to DataCloud", IconUtils.MENU_OPTIONS);
+        optionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                moveOut(0);
+                WidgetUtils.invokeSwingAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
+                            final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
+                                    userPreferences, windowContext, owner);
+                            dataCloudLogInWindow.open();
+                        }
+                    }
+                });
+            }
+        });
         setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
         setVisible(false);
         setSize(WIDTH, 400);
@@ -73,6 +102,8 @@ public class DataCloudInformationPanel extends JPanel {
         text = DCLabel.darkMultiLine("");
         add(text);
         add(Box.createVerticalBox());
+        add(optionButton);
+        add(Box.createVerticalBox());
         add(htmlBoxDataCloud);
     }
 
@@ -85,6 +116,7 @@ public class DataCloudInformationPanel extends JPanel {
     }
 
     public void setInformationStatus(RemoteServerState remoteServerState) {
+        optionButton.setVisible(false);
         text.setText("");
         String panelContent = "";
         if (remoteServerState.getActualState() == RemoteServerState.State.OK ||
@@ -108,8 +140,8 @@ public class DataCloudInformationPanel extends JPanel {
 
         if (remoteServerState.getActualState() == RemoteServerState.State.NOT_CONNECTED) {
             panelContent = addLine(panelContent, "Datacloud is not configured.");
-            panelContent = addLine(panelContent, "You can set your credentials in");
-            panelContent = addLine(panelContent, "<b>Options dialog - DataCloud</b>");
+            panelContent = addLine(panelContent, "You can set your credentials here.");
+            optionButton.setVisible(true);
         }
 
         if (remoteServerState.getActualState() == RemoteServerState.State.ERROR) {

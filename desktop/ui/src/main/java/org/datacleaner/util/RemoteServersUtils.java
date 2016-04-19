@@ -45,18 +45,18 @@ public class RemoteServersUtils {
             DataCleanerEnvironment env, String serverName, String serverUrl, String userName, String password) {
         if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)) {
             serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
-            getMutableServerConfig(env).addServer(serverName, null, userName, password);
-        } else {
-            getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
         }
+        getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
 
-        RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
+        final RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
 
-        if(!(env.getDescriptorProvider() instanceof CompositeDescriptorProvider)){
+        if (!(env.getDescriptorProvider() instanceof CompositeDescriptorProvider)) {
             throw new IllegalStateException("DescriptorProvider is not instance of CompositeDescriptorProvider class.");
         }
-        final CompositeDescriptorProvider descriptorProvider = (CompositeDescriptorProvider) env.getDescriptorProvider();
-        descriptorProvider.addDelegate(new RemoteDescriptorProviderImpl(remoteServerData, env.getRemoteServerConfiguration()));
+        final CompositeDescriptorProvider descriptorProvider =
+                (CompositeDescriptorProvider) env.getDescriptorProvider();
+        descriptorProvider
+                .addDelegate(new RemoteDescriptorProviderImpl(remoteServerData, env.getRemoteServerConfiguration()));
         descriptorProvider.refresh();
     }
 

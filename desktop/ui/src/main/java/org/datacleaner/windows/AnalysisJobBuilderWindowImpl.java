@@ -768,7 +768,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
-        final DataCloudStatusLabel dataCloudStatusLabel = new DataCloudStatusLabel(_configuration.getEnvironment().getRemoteServerConfiguration(),  _glassPane);
+        final DataCloudStatusLabel dataCloudStatusLabel =
+                new DataCloudStatusLabel( _glassPane, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
@@ -800,7 +801,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JToggleButton createMoreMenuButton() {
         final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", IconUtils.MENU_OPTIONS);
         optionsMenuItem.addActionListener(e -> {
-            OptionsDialog optionsDialog = _optionsDialogProvider.get();
+            final OptionsDialog optionsDialog = _optionsDialogProvider.get();
+            optionsDialog.getTabbedPane().setSelectedIndex(0);
             optionsDialog.open();
         });
         

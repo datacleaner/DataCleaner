@@ -9,8 +9,9 @@ import org.datacleaner.data.MockInputRow
 import scala.collection.SortedMap
 import scala.collection.immutable.TreeMap
 import org.datacleaner.storage.RowAnnotations
+import collection.JavaConversions._ 
 
-class ScatterAnalyzerTest extends AssertionsForJUnit {
+class ScatterAnalyzerRevisedTest extends AssertionsForJUnit {
 
   @Test
   def testMapDefaultValue = {
@@ -24,7 +25,15 @@ class ScatterAnalyzerTest extends AssertionsForJUnit {
     analyzer.run(new MockInputRow().put(analyzer.variable1, 1).put(analyzer.variable2, 1), 1);
     
     val group = analyzer.getResult.groups.head
-    val str = group.annotations.map(entry => (entry._1, entry._2.getRowCount())).mkString(", ");
+    val iterator = group.getAnnotations().entrySet().iterator();
+    var str:String = new String
+    while (iterator.hasNext()){
+      val row = iterator.next(); 
+      var rowData = "(" + row.getKey.getX().toInt + "," + row.getKey.getY().toInt + ") -> " + row.getValue().getRowCount() + ", "
+      str = str.concat(rowData)
+    }
+    str = str.dropRight(2)
+
     Assert.assertEquals("(1,1) -> 2, (1,2) -> 1", str);
   }
 }

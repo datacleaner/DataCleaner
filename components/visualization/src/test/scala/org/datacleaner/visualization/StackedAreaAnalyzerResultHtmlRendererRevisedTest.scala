@@ -18,10 +18,10 @@ import org.apache.metamodel.util.FileHelper
 import org.junit.Assert
 import java.io.File
 
-class StackedAreaAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
+class StackedAreaAnalyzerResultHtmlRendererRevisedTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
-  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[StackedAreaAnalyzerResultHtmlRenderer]));
+  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[StackedAreaAnalyzerResultHtmlRendererRevised]));
   val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");

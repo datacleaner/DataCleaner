@@ -4,9 +4,10 @@ import org.datacleaner.result.html.HeadElement
 import org.datacleaner.result.html.HtmlRenderingContext
 import org.apache.metamodel.util.NumberComparator
 import java.util.Date
+import collection.JavaConversions._
 
-@Deprecated
-class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResult, elementId: String) extends HeadElement {
+
+class StackedAreaAnalyzerChartScriptHeadElementRevised(result: StackedAreaAnalyzerResultRevised, elementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
     val html = new StringBuilder

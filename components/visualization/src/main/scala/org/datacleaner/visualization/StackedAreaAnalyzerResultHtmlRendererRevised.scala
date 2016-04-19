@@ -6,15 +6,15 @@ import org.datacleaner.result.html.HtmlRenderingContext
 import org.datacleaner.result.html.SimpleHtmlFragment
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 
-@RendererBean(classOf[HtmlRenderingFormat])
-@Deprecated
-class StackedAreaAnalyzerResultHtmlRenderer extends HtmlRenderer[StackedAreaAnalyzerResult] {
 
-  override def handleFragment(frag: SimpleHtmlFragment, result: StackedAreaAnalyzerResult, context: HtmlRenderingContext) {
+@RendererBean(classOf[HtmlRenderingFormat])
+class StackedAreaAnalyzerResultHtmlRendererRevised extends HtmlRenderer[StackedAreaAnalyzerResultRevised] {
+
+  override def handleFragment(frag: SimpleHtmlFragment, result: StackedAreaAnalyzerResultRevised, context: HtmlRenderingContext) {
     val elementId = context.createElementId()
 
     frag.addHeadElement(StackedAreaAnalyzerResuableChartHeadElement)
-    frag.addHeadElement(new StackedAreaAnalyzerChartScriptHeadElement(result, elementId));
+    frag.addHeadElement(new StackedAreaAnalyzerChartScriptHeadElementRevised(result, elementId));
     
     val width: Int = scala.math.max(result.getCategoryCount * 4, 700);
     

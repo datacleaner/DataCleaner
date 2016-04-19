@@ -18,16 +18,15 @@ import org.jfree.chart.ChartPanel
 import org.jfree.ui.RectangleEdge
 
 @RendererBean(classOf[SwingRenderingFormat])
-@Deprecated
-class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyzerResult, JPanel] {
+class StackedAreaAnalyzerResultSwingRendererRevised extends Renderer[StackedAreaAnalyzerResultRevised, JPanel] {
   
-  override def getPrecedence(result: StackedAreaAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(result: StackedAreaAnalyzerResultRevised) = RendererPrecedence.HIGH
 
-  override def render(result: StackedAreaAnalyzerResult): JPanel = {
+  override def render(result: StackedAreaAnalyzerResultRevised): JPanel = {
     val categoryAxisLabel = result.getCategoryColumn.getName()
     val valueAxisLabel = null
       
-    val dataset = new StackedAreaAnalyzerResultCategoryDataset(result);
+    val dataset = new StackedAreaAnalyzerResultCategoryDatasetRevised(result);
     
     val legend = true;
     val tooltips = true;

@@ -20,10 +20,10 @@ import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.test.TestHelper
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 
-class ScatterAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
+class ScatterAnalyzerResultHtmlRendererRevisedTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
-  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ScatterAnalyzerResultHtmlRenderer]));
+  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ScatterAnalyzerResultHtmlRendererRevised]));
   val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");

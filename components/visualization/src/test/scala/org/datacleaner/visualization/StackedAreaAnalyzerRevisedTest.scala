@@ -6,8 +6,9 @@ import org.datacleaner.api.InputColumn
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
 import org.junit.Assert
+import collection.JavaConversions._
 
-class StackedAreaAnalyzerTest extends AssertionsForJUnit {
+class StackedAreaAnalyzerJavaTest extends AssertionsForJUnit {
 
   @Test
   def testBasicScenario = {

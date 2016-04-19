@@ -15,7 +15,7 @@ import org.datacleaner.util.LookAndFeelManager
 
 import javax.swing.JFrame
 
-object StackedAreaAnalyzerResultSwingRendererTestApp {
+object StackedAreaAnalyzerResultSwingRendererRevisedTestApp {
 
   def main(args: Array[String]) {
     val analyzer = new StackedAreaAnalyzer
@@ -38,7 +38,7 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
 
     val result = analyzer.getResult
 
-    val jpanel = new StackedAreaAnalyzerResultSwingRenderer().render(result);
+    val jpanel = new StackedAreaAnalyzerResultSwingRendererRevised().render(result);
 
     LookAndFeelManager.get().init();
 

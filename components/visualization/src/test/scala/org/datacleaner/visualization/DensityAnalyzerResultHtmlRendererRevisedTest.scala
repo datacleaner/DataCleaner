@@ -19,11 +19,12 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.test.TestHelper
 import org.datacleaner.job.runner.AnalysisRunnerImpl
+import collection.JavaConversions._
 
-class DensityAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
+class DensityAnalyzerResultHtmlRendererRevisedTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
-  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultHtmlRenderer]));
+  descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultHtmlRendererRevised]));
   val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");

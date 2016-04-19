@@ -154,8 +154,8 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
                 "org.datacleaner.visualization.ScalaDensityAnalyzerResult");
         addRenamedClass("org.datacleaner.visualization.ScatterAnalyzerResult",
                 "org.datacleaner.visualization.ScalaScatterAnalyzerResult");
-        addRenamedClass("org.datacleaner.visualization.ScatterGroup",
-                "org.datacleaner.visualization.ScalaScatterGroup");
+        addRenamedClass("org.datacleaner.visualization.StackedAreaAnalyzerResult",
+                "org.datacleaner.visualization.ScalaStackedAreaAnalyzerResult");
 
         // analyzer results moved as of ticket #993
         addRenamedClass("org.datacleaner.result.ValueDistributionGroupResult",

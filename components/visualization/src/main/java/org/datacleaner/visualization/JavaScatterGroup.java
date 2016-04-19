@@ -19,6 +19,7 @@
  */
 package org.datacleaner.visualization;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,7 @@ import org.datacleaner.storage.RowAnnotationFactory;
  * Represents a group of scattered points
  */
 @SuppressWarnings("SuspiciousNameCombination")
-public class JavaScatterGroup implements ScatterGroup {
+public class JavaScatterGroup implements CommonScatterGroup {
     private static final long serialVersionUID = 1L;
 
     private final String _name;

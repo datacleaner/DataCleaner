@@ -38,7 +38,7 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
   @Provided
   var rowAnnotationFactory: RowAnnotationFactory = null
 
-  val groups: mutable.Map[String, ScatterGroup] = mutable.Map[String, ScatterGroup]().withDefault(
+  val groups: mutable.Map[String, CommonScatterGroup] = mutable.Map[String, CommonScatterGroup]().withDefault(
     groupName => {
       val group = new JavaScatterGroup(groupName, rowAnnotationFactory)
       groups.put(groupName, group)

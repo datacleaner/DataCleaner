@@ -19,6 +19,8 @@
  */
 package org.datacleaner.visualization;
 
+
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,7 +28,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
-public interface ScatterGroup {
+public interface CommonScatterGroup extends Serializable {
     String getName();
 
     RowAnnotationFactory getRowAnnotationFactory();

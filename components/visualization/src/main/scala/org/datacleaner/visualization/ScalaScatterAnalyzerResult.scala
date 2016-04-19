@@ -6,7 +6,7 @@ import org.datacleaner.api.InputColumn
 
 import scala.collection.JavaConverters._
 
-class ScalaScatterAnalyzerResult(groups: List[ScatterGroup], variable1: InputColumn[_], variable2: InputColumn[_], groupColumn: InputColumn[_]) extends ScatterAnalyzerResult {
+class ScalaScatterAnalyzerResult(groups: List[CommonScatterGroup], variable1: InputColumn[_], variable2: InputColumn[_], groupColumn: InputColumn[_]) extends ScatterAnalyzerResult {
 
   def getVariable1: InputColumn[_] = variable1
 
@@ -16,7 +16,7 @@ class ScalaScatterAnalyzerResult(groups: List[ScatterGroup], variable1: InputCol
 
   def hasGroups: Boolean = groupColumn != null
 
-  def getGroups: util.List[ScatterGroup] = {
+  def getGroups: util.List[CommonScatterGroup] = {
     groups.asJava
   }
 }

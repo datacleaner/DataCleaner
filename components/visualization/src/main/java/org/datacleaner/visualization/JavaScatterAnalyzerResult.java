@@ -25,12 +25,12 @@ import org.datacleaner.api.InputColumn;
 
 public class JavaScatterAnalyzerResult implements ScatterAnalyzerResult {
     private static final long serialVersionUID = 1L;
-    private final List<ScatterGroup> _groups;
+    private final List<CommonScatterGroup> _groups;
     private final InputColumn<?> _variable1;
     private final InputColumn<?> _variable2;
     private final InputColumn<?> _groupColumn;
 
-    public JavaScatterAnalyzerResult(final List<ScatterGroup> groups, final InputColumn<?> variable1,
+    public JavaScatterAnalyzerResult(final List<CommonScatterGroup> groups, final InputColumn<?> variable1,
             final InputColumn<?> variable2, final InputColumn<?> groupColumn) {
         _groups = groups;
         _variable1 = variable1;
@@ -60,7 +60,7 @@ public class JavaScatterAnalyzerResult implements ScatterAnalyzerResult {
     }
 
     @Override
-    public List<ScatterGroup> getGroups() {
+    public List<CommonScatterGroup> getGroups() {
         return _groups;
     }
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 
-public interface ScatterAnalyzerResult extends AnalyzerResult{
+public interface ScatterAnalyzerResult extends AnalyzerResult {
     InputColumn<?> getVariable1();
 
     InputColumn<?> getVariable2();
@@ -33,5 +33,5 @@ public interface ScatterAnalyzerResult extends AnalyzerResult{
 
     boolean hasGroups();
 
-    List<ScatterGroup> getGroups();
+    List<CommonScatterGroup> getGroups();
 }

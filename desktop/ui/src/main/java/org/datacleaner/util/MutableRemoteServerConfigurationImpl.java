@@ -20,16 +20,18 @@
 package org.datacleaner.util;
 
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerConfigurationImpl;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerDataImpl;
+import org.datacleaner.job.concurrent.TaskRunner;
 
 public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurationImpl {
 
     private DomConfigurationWriter configWriter;
 
-    public MutableRemoteServerConfigurationImpl(RemoteServerConfigurationImpl remoteServerConfiguration, DomConfigurationWriter configurationWriter) {
-        super(remoteServerConfiguration);
+    public MutableRemoteServerConfigurationImpl(RemoteServerConfiguration remoteServerConfiguration, TaskRunner taskRunner, DomConfigurationWriter configurationWriter) {
+        super(remoteServerConfiguration, taskRunner);
         configWriter = configurationWriter;
     }
 

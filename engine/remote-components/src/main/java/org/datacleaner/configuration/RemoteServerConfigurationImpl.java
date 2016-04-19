@@ -51,21 +51,30 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final long ERROR_DELAY_MIN = 1;
     private static final long OK_DELAY_MIN = 5;
-    private final Map<String, RemoteServerState> actualStateMap;
+    private Map<String, RemoteServerState> actualStateMap;
     private ServerStatusTask serverStatusTask;
     private ScheduledTaskRunner scheduledTaskRunner;
     private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList<>());
-    protected final List<RemoteServerData> remoteServerDataList;
+    protected List<RemoteServerData> remoteServerDataList;
 
-    public RemoteServerConfigurationImpl(RemoteServerConfigurationImpl remoteServerConfiguration){
-        actualStateMap = remoteServerConfiguration.actualStateMap;
-        serverStatusTask = remoteServerConfiguration.serverStatusTask;
-        scheduledTaskRunner = remoteServerConfiguration.scheduledTaskRunner;
-        listeners = remoteServerConfiguration.listeners;
-        remoteServerDataList = remoteServerConfiguration.remoteServerDataList;
+    public RemoteServerConfigurationImpl(RemoteServerConfiguration remoteServerConfiguration, TaskRunner taskRunner){
+        if(remoteServerConfiguration instanceof RemoteServerConfigurationImpl){
+            RemoteServerConfigurationImpl remoteServerConfigurationImpl = (RemoteServerConfigurationImpl) remoteServerConfiguration;
+            actualStateMap = remoteServerConfigurationImpl.actualStateMap;
+            serverStatusTask = remoteServerConfigurationImpl.serverStatusTask;
+            scheduledTaskRunner = remoteServerConfigurationImpl.scheduledTaskRunner;
+            listeners = remoteServerConfigurationImpl.listeners;
+            remoteServerDataList = remoteServerConfigurationImpl.remoteServerDataList;
+        }else{
+            init(remoteServerConfiguration.getServerList(), taskRunner);
+        }
     }
 
     public RemoteServerConfigurationImpl(List<RemoteServerData> serverData, TaskRunner taskRunner) {
+        init(serverData, taskRunner);
+    }
+
+    private void init(List<RemoteServerData> serverData, TaskRunner taskRunner){
         actualStateMap = new ConcurrentHashMap<>();
         remoteServerDataList = new ArrayList<>(serverData);
         for (RemoteServerData remoteServerData : serverData) {

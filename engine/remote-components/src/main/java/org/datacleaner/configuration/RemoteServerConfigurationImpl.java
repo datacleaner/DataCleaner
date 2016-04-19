@@ -173,10 +173,10 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     }
 
     protected synchronized void addRemoteData(RemoteServerData remoteServerData){
-        String serverName = remoteServerData.getServerName();
+        final String serverName = remoteServerData.getServerName();
         remoteServerDataList.add(remoteServerData);
         if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)){
-            RemoteServerState remoteServerState = checkDataCloudServerAvailability(remoteServerData);
+            final RemoteServerState remoteServerState = checkDataCloudServerAvailability(remoteServerData);
             actualStateMap.put(serverName, remoteServerState);
             notifyAllListeners(serverName);
         }

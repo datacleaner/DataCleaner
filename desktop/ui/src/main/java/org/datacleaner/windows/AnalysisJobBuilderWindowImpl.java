@@ -802,7 +802,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JToggleButton createMoreMenuButton() {
         final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", IconUtils.MENU_OPTIONS);
         optionsMenuItem.addActionListener(e -> {
-            OptionsDialog optionsDialog = _optionsDialogProvider.get();
+            final OptionsDialog optionsDialog = _optionsDialogProvider.get();
             optionsDialog.getTabbedPane().setSelectedIndex(0);
             optionsDialog.open();
         });

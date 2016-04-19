@@ -38,7 +38,7 @@ public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurat
     }
 
     public void addServer(String serverName, String url, String username, String password) {
-        RemoteServerData serverData = new RemoteServerDataImpl(url, serverName, username, password);
+        final RemoteServerData serverData = new RemoteServerDataImpl(url, serverName, username, password);
         addRemoteData(serverData);
         if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)){
             configWriter.addRemoteServer(serverName, null, username, password);

@@ -48,7 +48,7 @@ public class RemoteServersUtils {
         }
         getMutableServerConfig(env).addServer(serverName, serverUrl, userName, password);
 
-        RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
+        final RemoteServerData remoteServerData = new RemoteServerDataImpl(serverUrl, serverName, userName, password);
 
         if (!(env.getDescriptorProvider() instanceof CompositeDescriptorProvider)) {
             throw new IllegalStateException("DescriptorProvider is not instance of CompositeDescriptorProvider class.");

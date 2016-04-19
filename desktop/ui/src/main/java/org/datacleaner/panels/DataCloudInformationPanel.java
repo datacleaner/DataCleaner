@@ -59,8 +59,8 @@ public class DataCloudInformationPanel extends JPanel {
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
-    private DCLabel text;
-    private JButton optionButton;
+    private final DCLabel text;
+    private final JButton optionButton;
     final private DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 

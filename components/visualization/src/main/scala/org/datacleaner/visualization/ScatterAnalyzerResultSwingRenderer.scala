@@ -16,7 +16,7 @@ import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import scala.collection.JavaConverters._
 
 @RendererBean(classOf[SwingRenderingFormat])
-class ScatterAnalyzerResultSwingRenderer extends Renderer[ScalaScatterAnalyzerResult, JPanel] {
+class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult, JPanel] {
   
   @Inject
   @Provided
@@ -26,9 +26,9 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScalaScatterAnalyzerRe
   @Provided
   var rendererFactory: RendererFactory = null
 
-  override def getPrecedence(result: ScalaScatterAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(result: ScatterAnalyzerResult) = RendererPrecedence.HIGH
 
-  override def render(result: ScalaScatterAnalyzerResult): JPanel = {
+  override def render(result: ScatterAnalyzerResult): JPanel = {
     val xAxisLabel = result.getVariable1.getName
     val yAxisLabel = result.getVariable2.getName
 

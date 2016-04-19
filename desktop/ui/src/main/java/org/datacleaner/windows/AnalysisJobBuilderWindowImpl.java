@@ -769,8 +769,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         final DataCloudStatusLabel dataCloudStatusLabel =
-                new DataCloudStatusLabel(_configuration.getEnvironment().getRemoteServerConfiguration(), _glassPane,
-                        _optionsDialogProvider);
+                new DataCloudStatusLabel( _glassPane, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 

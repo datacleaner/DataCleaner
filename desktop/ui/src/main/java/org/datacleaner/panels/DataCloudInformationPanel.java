@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -33,14 +32,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.datacleaner.actions.MoveComponentTimerActionListener;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerState;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.windows.OptionsDialog;
+import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.windows.DataCloudLogInWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -54,7 +57,6 @@ public class DataCloudInformationPanel extends JPanel {
     private static final int POSITION_Y = 130;
 
     private final DCGlassPane _glassPane;
-    private final Provider<OptionsDialog> _optionsDialogProvider;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
@@ -64,18 +66,25 @@ public class DataCloudInformationPanel extends JPanel {
     final private DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(DCGlassPane glassPane, Provider<OptionsDialog> optionsDialogProvider) {
+    public DataCloudInformationPanel(DCGlassPane glassPane, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
         super();
         _glassPane = glassPane;
-        _optionsDialogProvider = optionsDialogProvider;
-        optionButton = WidgetFactory.createDefaultButton("Option", IconUtils.MENU_OPTIONS);
+        optionButton = WidgetFactory.createDefaultButton("Sign in to DataCloud", IconUtils.MENU_OPTIONS);
         optionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 moveOut(0);
-                final OptionsDialog optionsDialog = _optionsDialogProvider.get();
-                optionsDialog.getTabbedPane().setSelectedIndex(1);
-                optionsDialog.open();
+                WidgetUtils.invokeSwingAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
+                            final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
+                                    userPreferences, windowContext, owner);
+                            dataCloudLogInWindow.open();
+                        }
+                    }
+                });
             }
         });
         setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));

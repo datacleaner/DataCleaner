@@ -23,19 +23,21 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.inject.Provider;
 import javax.swing.JLabel;
 
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerState;
 import org.datacleaner.configuration.RemoteServerStateListener;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DataCloudInformationPanel;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.windows.OptionsDialog;
+import org.datacleaner.windows.AbstractWindow;
 
 /**
  * Status Label for DataCloud
@@ -44,12 +46,12 @@ public class DataCloudStatusLabel extends JLabel {
     private RemoteServerConfiguration _remoteServerConfiguration;
     private DataCloudInformationPanel _dataCloudInformationPanel;
 
-    public DataCloudStatusLabel(final RemoteServerConfiguration remoteServerConfiguration, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider) {
+    public DataCloudStatusLabel(DCGlassPane glassPane,final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
         super("DataCloud");
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _remoteServerConfiguration = remoteServerConfiguration;
-        _dataCloudInformationPanel = new DataCloudInformationPanel(glassPane, optionsDialogProvider);
+        _remoteServerConfiguration = configuration.getEnvironment().getRemoteServerConfiguration();
+        _dataCloudInformationPanel = new DataCloudInformationPanel(glassPane, configuration, userPreferences, windowContext, owner);
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
 

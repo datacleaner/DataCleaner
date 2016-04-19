@@ -300,10 +300,11 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
-                    final RemoteServerConfiguration remoteServerConfiguration =
-                            new MutableRemoteServerConfigurationImpl(
-                                    c.getEnvironment().getRemoteServerConfiguration().getServerList(),
-                                    taskRunner, configurationWriter);
+                    RemoteServerConfiguration remoteServerConfiguration =
+                            c.getEnvironment().getRemoteServerConfiguration();
+                    remoteServerConfiguration = new MutableRemoteServerConfigurationImpl(
+                            remoteServerConfiguration, taskRunner, configurationWriter);
+
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory,
                             remoteServerConfiguration);

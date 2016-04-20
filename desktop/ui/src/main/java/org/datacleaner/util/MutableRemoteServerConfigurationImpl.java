@@ -44,7 +44,6 @@ public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurat
         }else{
             configWriter.addRemoteServer(serverName, url, username, password);
         }
-
     }
 
     public void updateServerCredentials(String serverName, String userName, String password) {
@@ -58,5 +57,6 @@ public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurat
                     "Update credentials failed. RemoteServerData is not instance of RemoteServerDataImpl");
         }
         configWriter.updateRemoteServerCredentials(serverName, userName, password);
+        checkStatus(serverName);
     }
 }

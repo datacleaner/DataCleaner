@@ -100,6 +100,15 @@
 					<p>The job will not be automatically invoked.</p>
 				</div>
 			</div>
+			
+				<div class="triggerPanel">
+				<g:CheckBox ui:field="runOnHadoop" text="Run job on Hadoop"
+					name="runOnHadoop" />
+				
+				<div class="configurationPanel">
+					<p>The job will run on Hadoop</p>
+				</div>
+			</div>
 
 	</g:HTMLPanel>
 </ui:UiBinder>

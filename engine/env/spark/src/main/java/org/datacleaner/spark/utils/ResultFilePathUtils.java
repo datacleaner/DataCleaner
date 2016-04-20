@@ -24,12 +24,9 @@ import java.net.URI;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.spark.SparkJobContext;
-import org.datacleaner.util.FileFilters;
+import org.datacleaner.spark.SparkRunner;
 
 public class ResultFilePathUtils {
-
-    private static final String DEFAULT_RESULT_PATH = "/datacleaner/results";
-    private static final String RESULT_FILE_EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
     /**
      * Gets the Resource to use for the job's result. The path can be configured
@@ -49,7 +46,7 @@ public class ResultFilePathUtils {
 
         URI resultPath = sparkJobContext.getResultPath();
         if (resultPath == null) {
-            resultPath = URI.create(DEFAULT_RESULT_PATH + '/' + generateResultFilename(sparkJobContext));
+            resultPath = URI.create(SparkRunner.DEFAULT_RESULT_PATH + '/' + generateResultFilename(sparkJobContext));
         } else {
             if (hdfsHelper.isDirectory(resultPath)) {
                 if (resultPath.toString().endsWith("/")) {
@@ -66,7 +63,7 @@ public class ResultFilePathUtils {
     }
 
     private static String generateResultFilename(SparkJobContext sparkJobContext) {
-        return sparkJobContext.getJobName() + "-" + System.currentTimeMillis() + RESULT_FILE_EXTENSION;
+        return sparkJobContext.getJobName() + "-" + System.currentTimeMillis() + SparkRunner.RESULT_FILE_EXTENSION;
     }
 
 }

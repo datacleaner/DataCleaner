@@ -186,7 +186,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         }
     }
 
-    private AnalysisListener createAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
+    protected AnalysisListener createAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
         // we always want a MonitorAnalysisListener instance
         final AnalysisListener monitorAnalysisListener = new MonitorAnalysisListener(execution, executionLogger);
 
@@ -255,7 +255,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * 
      * @throws FileNotFoundException
      */
-    private void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException,
+    protected void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException,
             ResourceException {
         final String sourceDatastoreName = job.getSourceDatastoreName();
         final Datastore datastore = context.getConfiguration().getDatastoreCatalog().getDatastore(sourceDatastoreName);
@@ -285,7 +285,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * 
      * @throws NoSuchDatastoreException
      */
-    private void preExecuteJob(TenantContext context, DataCleanerJobContext job, AnalysisJob analysisJob)
+    protected void preExecuteJob(TenantContext context, DataCleanerJobContext job, AnalysisJob analysisJob)
             throws NoSuchDatastoreException {
         final Datastore datastore = analysisJob.getDatastore();
 

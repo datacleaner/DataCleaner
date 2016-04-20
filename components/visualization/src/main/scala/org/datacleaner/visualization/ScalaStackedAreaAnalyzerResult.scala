@@ -1,13 +1,13 @@
 package org.datacleaner.visualization
 
+import org.apache.metamodel.util.ObjectComparator
 import org.datacleaner.api.InputColumn
 import org.datacleaner.util.ReflectionUtils
+
+import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
 
-import org.apache.metamodel.util.ObjectComparator
-import scala.collection.JavaConverters._
-
-class ScalaStackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: Array[InputColumn[Number]]) extends StackedAreaAnalyzerResult {
+class ScalaStackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: Array[InputColumn[Number]]) extends IStackedAreaAnalyzerResult {
 
   val measureMap: Map[Any, Array[Number]] = Map();
 

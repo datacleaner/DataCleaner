@@ -6,7 +6,7 @@ import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
 
 import scala.collection.JavaConverters._
 
-class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResult, elementId: String) extends HeadElement {
+class StackedAreaAnalyzerChartScriptHeadElement(result: IStackedAreaAnalyzerResult, elementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
     val html = new StringBuilder

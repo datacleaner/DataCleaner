@@ -5,21 +5,21 @@ import javax.swing.JPanel
 
 import org.datacleaner.api.{Provided, Renderer, RendererBean, RendererPrecedence}
 import org.datacleaner.bootstrap.WindowContext
-import org.datacleaner.result.{AnnotatedRowsResult, DefaultResultProducer}
 import org.datacleaner.result.renderer.{RendererFactory, SwingRenderingFormat}
+import org.datacleaner.result.{AnnotatedRowsResult, DefaultResultProducer}
 import org.datacleaner.util.ChartUtils
 import org.datacleaner.widgets.result.DrillToDetailsCallbackImpl
-import org.jfree.chart.{ChartMouseEvent, ChartMouseListener, JFreeChart}
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.entity.XYItemEntity
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYBlockRenderer
+import org.jfree.chart.{ChartMouseEvent, ChartMouseListener, JFreeChart}
 import org.jfree.data.xy.DefaultXYZDataset
 
 import scala.collection.JavaConversions._
 
 @RendererBean(classOf[SwingRenderingFormat])
-class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult, JPanel] {
+class DensityAnalyzerResultSwingRenderer extends Renderer[IDensityAnalyzerResult, JPanel] {
 
   @Inject
   @Provided
@@ -29,9 +29,9 @@ class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult,
   @Provided
   var rendererFactory: RendererFactory = null
 
-  override def getPrecedence(r: DensityAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(r: IDensityAnalyzerResult) = RendererPrecedence.HIGH
 
-  override def render(r: DensityAnalyzerResult): JPanel = {
+  override def render(r: IDensityAnalyzerResult): JPanel = {
     val annotations = r.getRowAnnotations
     val xValues = Array.fill[Double](annotations.size)(0.0d)
     val yValues = Array.fill[Double](annotations.size)(0.0d)

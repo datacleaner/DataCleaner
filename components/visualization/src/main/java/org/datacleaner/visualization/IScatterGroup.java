@@ -19,19 +19,25 @@
  */
 package org.datacleaner.visualization;
 
-import java.util.List;
 
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.InputColumn;
+import java.io.Serializable;
+import java.util.Map;
 
-public interface ScatterAnalyzerResult extends AnalyzerResult {
-    InputColumn<?> getVariable1();
+import org.apache.commons.lang3.tuple.Pair;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.storage.RowAnnotation;
+import org.datacleaner.storage.RowAnnotationFactory;
 
-    InputColumn<?> getVariable2();
+public interface IScatterGroup extends Serializable {
+    String getName();
 
-    InputColumn<?> getGroupColumn();
+    RowAnnotationFactory getRowAnnotationFactory();
 
-    boolean hasGroups();
+    void register(Number x, Number y, InputRow row, int distinctCount);
 
-    List<CommonScatterGroup> getGroups();
+    RowAnnotation getRowAnnotation(Number x, Number y);
+
+    Iterable<Pair<Number, Number>> getCoordinates();
+
+    Map<Pair<Number, Number>, RowAnnotation> getRowAnnotations();
 }

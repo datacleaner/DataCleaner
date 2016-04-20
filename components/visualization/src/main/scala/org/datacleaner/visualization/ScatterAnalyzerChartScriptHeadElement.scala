@@ -1,12 +1,12 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.HeadElement
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+
 import scala.collection.JavaConverters._
 /**
  * Head element that writes a script specific to the rendering of a single result
  */
-class ScatterAnalyzerChartScriptHeadElement(result: ScatterAnalyzerResult, elementId: String) extends HeadElement {
+class ScatterAnalyzerChartScriptHeadElement(result: IScatterAnalyzerResult, elementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
 

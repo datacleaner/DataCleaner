@@ -19,25 +19,27 @@
  */
 package org.datacleaner.visualization;
 
+import java.util.List;
 
-import java.io.Serializable;
-import java.util.Map;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.storage.RowAnnotation;
-import org.datacleaner.storage.RowAnnotationFactory;
+public interface IStackedAreaAnalyzerResult extends AnalyzerResult {
+    boolean isTimeCategory();
 
-public interface CommonScatterGroup extends Serializable {
-    String getName();
+    boolean isNumberCategory();
 
-    RowAnnotationFactory getRowAnnotationFactory();
+    InputColumn<?> getCategoryColumn();
 
-    void register(Number x, Number y, InputRow row, int distinctCount);
+    int getCategoryCount();
 
-    RowAnnotation getRowAnnotation(Number x, Number y);
+    List<?> getCategories();
 
-    Iterable<Pair<Number, Number>> getCoordinates();
+    InputColumn<Number>[] getMeasureColumns();
 
-    Map<Pair<Number, Number>, RowAnnotation> getRowAnnotations();
+    Number[] getMeasures(Object category);
+
+    void addMeasures(Object category, Number[] measures);
+
+    Number sum(Number a, Number b);
 }

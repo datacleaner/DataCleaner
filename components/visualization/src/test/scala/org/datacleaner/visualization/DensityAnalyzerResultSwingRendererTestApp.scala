@@ -1,24 +1,13 @@
 package org.datacleaner.visualization
 
-import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.renderer.xy.XYBlockRenderer
-import org.jfree.data.xy.DefaultXYZDataset
-import org.datacleaner.util.ChartUtils
-import org.datacleaner.util.LookAndFeelManager
-import org.jfree.chart.renderer.LookupPaintScale
 import javax.swing.JFrame
-import java.awt.Color
-import org.jfree.chart.axis.NumberAxis
-import org.datacleaner.util.WidgetUtils
-import org.datacleaner.test.TestHelper
-import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl
-import org.datacleaner.descriptors.SimpleDescriptorProvider
-import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.job.runner.AnalysisRunnerImpl
+
+import org.datacleaner.configuration.{DataCleanerConfigurationImpl, DataCleanerEnvironmentImpl}
+import org.datacleaner.descriptors.{Descriptors, SimpleDescriptorProvider}
 import org.datacleaner.job.builder.AnalysisJobBuilder
+import org.datacleaner.job.runner.AnalysisRunnerImpl
+import org.datacleaner.test.TestHelper
+import org.datacleaner.util.LookAndFeelManager
 
 object DensityAnalyzerResultSwingRendererTestApp {
 
@@ -41,7 +30,7 @@ object DensityAnalyzerResultSwingRendererTestApp {
 
     val analysisResult = new AnalysisRunnerImpl(configuration).run(job);
     
-    val analyzerResult = analysisResult.getResults().get(0).asInstanceOf[DensityAnalyzerResult]
+    val analyzerResult = analysisResult.getResults().get(0).asInstanceOf[IDensityAnalyzerResult]
 
     val panel = new DensityAnalyzerResultSwingRenderer().render(analyzerResult)
 

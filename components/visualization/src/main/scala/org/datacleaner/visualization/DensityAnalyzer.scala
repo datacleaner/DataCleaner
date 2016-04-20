@@ -17,7 +17,7 @@ object DensityAnalyzer {
 @Named("Density plot")
 @Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
-class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
+class DensityAnalyzer extends Analyzer[IDensityAnalyzerResult] {
 
   @Inject
   @Configured(value = DensityAnalyzer.PROPERTY_VARIABLE1)
@@ -51,7 +51,7 @@ class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
     }
   }
 
-  override def getResult: DensityAnalyzerResult = {
+  override def getResult: IDensityAnalyzerResult = {
     new JavaDensityAnalyzerResult(annotations.asJava, variable1, variable2, rowAnnotationFactory)
   }
 }

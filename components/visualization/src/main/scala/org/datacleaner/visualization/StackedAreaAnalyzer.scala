@@ -12,7 +12,7 @@ object StackedAreaAnalyzer {
 @Named("Stacked area plot")
 @Description("Plots a number of related measures in a stacked area chart. Useful visualization for showing the relative influence of each measure compared to the sum of measures.")
 @Categorized(Array(classOf[VisualizationCategory]))
-class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
+class StackedAreaAnalyzer extends Analyzer[IStackedAreaAnalyzerResult] {
 
   @Configured(value = StackedAreaAnalyzer.PROPERTY_MEASURE_COLUMNS, order = 1)
   var measureColumns: Array[InputColumn[Number]] = null
@@ -20,7 +20,7 @@ class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
   @Configured(value = StackedAreaAnalyzer.PROPERTY_CATEGORY_COLUMN, order = 2)
   var categoryColumn: InputColumn[_] = null
 
-  var result: StackedAreaAnalyzerResult = null;
+  var result: IStackedAreaAnalyzerResult = null;
 
   @Validate
   def validate() {
@@ -46,5 +46,5 @@ class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
     }
   }
 
-  override def getResult(): StackedAreaAnalyzerResult = result
+  override def getResult(): IStackedAreaAnalyzerResult = result
 }

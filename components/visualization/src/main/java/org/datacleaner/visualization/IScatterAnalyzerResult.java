@@ -24,22 +24,14 @@ import java.util.List;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 
-public interface StackedAreaAnalyzerResult extends AnalyzerResult {
-    boolean isTimeCategory();
+public interface IScatterAnalyzerResult extends AnalyzerResult {
+    InputColumn<?> getVariable1();
 
-    boolean isNumberCategory();
+    InputColumn<?> getVariable2();
 
-    InputColumn<?> getCategoryColumn();
+    InputColumn<?> getGroupColumn();
 
-    int getCategoryCount();
+    boolean hasGroups();
 
-    List<?> getCategories();
-
-    InputColumn<Number>[] getMeasureColumns();
-
-    Number[] getMeasures(Object category);
-
-    void addMeasures(Object category, Number[] measures);
-
-    Number sum(Number a, Number b);
+    List<IScatterGroup> getGroups();
 }

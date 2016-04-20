@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.{ImmutablePair, Pair}
 import org.datacleaner.api.InputColumn
 import org.datacleaner.storage.{RowAnnotation, RowAnnotationFactory}
 
-class ScalaDensityAnalyzerResult(annotations: Map[(Int, Int), RowAnnotation], variable1: InputColumn[Number], variable2: InputColumn[Number], annotationFactory: RowAnnotationFactory) extends DensityAnalyzerResult {
+class ScalaDensityAnalyzerResult(annotations: Map[(Int, Int), RowAnnotation], variable1: InputColumn[Number], variable2: InputColumn[Number], annotationFactory: RowAnnotationFactory) extends IDensityAnalyzerResult {
 
   def getVariable1 = variable1
   

@@ -24,14 +24,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.metamodel.util.ObjectComparator;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
 
-public class JavaStackedAreaAnalyzerResult implements StackedAreaAnalyzerResult {
+public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult {
     private static final long serialVersionUID = 1L;
 
     private final InputColumn<?> _categoryColumn;

@@ -27,7 +27,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
-public interface DensityAnalyzerResult extends AnalyzerResult {
+public interface IDensityAnalyzerResult extends AnalyzerResult {
     InputColumn<Number> getVariable1();
 
     InputColumn<Number> getVariable2();

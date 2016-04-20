@@ -11,7 +11,7 @@ import scala.collection.mutable.{LinkedHashMap, Map}
   * Represents a group of scattered points
   */
 @SerialVersionUID(1746285060428286068L)
-class ScatterGroup(name: String, rowAnnotationFactory: RowAnnotationFactory) extends CommonScatterGroup {
+class ScatterGroup(name: String, rowAnnotationFactory: RowAnnotationFactory) extends IScatterGroup {
 
   def getName: String = name
 

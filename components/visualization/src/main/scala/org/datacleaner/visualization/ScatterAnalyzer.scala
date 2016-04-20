@@ -18,7 +18,7 @@ object ScatterAnalyzer {
 @Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
-class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
+class ScatterAnalyzer extends Analyzer[IScatterAnalyzerResult] {
 
   @Inject
   @Configured(value = ScatterAnalyzer.PROPERTY_VARIABLE1)
@@ -38,7 +38,7 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
   @Provided
   var rowAnnotationFactory: RowAnnotationFactory = null
 
-  val groups: mutable.Map[String, CommonScatterGroup] = mutable.Map[String, CommonScatterGroup]().withDefault(
+  val groups: mutable.Map[String, IScatterGroup] = mutable.Map[String, IScatterGroup]().withDefault(
     groupName => {
       val group = new JavaScatterGroup(groupName, rowAnnotationFactory)
       groups.put(groupName, group)
@@ -59,7 +59,7 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
     }
   }
 
-  override def getResult: ScatterAnalyzerResult = {
+  override def getResult: IScatterAnalyzerResult = {
     val groupList = groups.values.toList
     new JavaScatterAnalyzerResult(groupList.asJava, variable1, variable2, groupColumn)
   }

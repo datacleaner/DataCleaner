@@ -9,7 +9,7 @@ import scala.collection.mutable.{ListBuffer, Map}
 /**
  * Head element that writes a script specific to the rendering of a single result
  */
-class DensityAnalyzerChartScriptHeadElement(result: DensityAnalyzerResult, elementId: String) extends HeadElement {
+class DensityAnalyzerChartScriptHeadElement(result: IDensityAnalyzerResult, elementId: String) extends HeadElement {
 
   val series: Map[String, ListBuffer[(Int, Int)]] = Map[String, ListBuffer[(Int, Int)]]().withDefault(rgbHex => {
     val list: ListBuffer[(Int, Int)] = new ListBuffer[(Int, Int)]()

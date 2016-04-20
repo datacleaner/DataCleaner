@@ -28,7 +28,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
-public class JavaDensityAnalyzerResult implements DensityAnalyzerResult {
+public class JavaDensityAnalyzerResult implements IDensityAnalyzerResult {
     private static final long serialVersionUID = 1L;
 
     private final InputColumn<Number> _variable1;

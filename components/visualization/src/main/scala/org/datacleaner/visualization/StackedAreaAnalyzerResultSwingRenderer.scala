@@ -1,28 +1,20 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.bootstrap.WindowContext
-import org.datacleaner.api.RendererBean
-import org.datacleaner.api.RendererPrecedence
-import org.datacleaner.api.Provided
-import org.datacleaner.api.Renderer
-import org.datacleaner.result.renderer.RendererFactory
+import javax.swing.JPanel
+
+import org.datacleaner.api.{Renderer, RendererBean, RendererPrecedence}
 import org.datacleaner.result.renderer.SwingRenderingFormat
 import org.datacleaner.util.ChartUtils
-import javax.swing.JPanel
-import javax.inject.Inject
-import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.ChartFactory
-import org.jfree.data.category.CategoryDataset
-import org.jfree.data.category.DefaultCategoryDataset
-import org.jfree.chart.ChartPanel
+import org.jfree.chart.plot.PlotOrientation
 import org.jfree.ui.RectangleEdge
 
 @RendererBean(classOf[SwingRenderingFormat])
-class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyzerResult, JPanel] {
+class StackedAreaAnalyzerResultSwingRenderer extends Renderer[IStackedAreaAnalyzerResult, JPanel] {
   
-  override def getPrecedence(result: StackedAreaAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(result: IStackedAreaAnalyzerResult) = RendererPrecedence.HIGH
 
-  override def render(result: StackedAreaAnalyzerResult): JPanel = {
+  override def render(result: IStackedAreaAnalyzerResult): JPanel = {
     val categoryAxisLabel = result.getCategoryColumn.getName()
     val valueAxisLabel = null
       

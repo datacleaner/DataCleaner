@@ -5,18 +5,19 @@ import javax.swing.JPanel
 
 import org.datacleaner.api.{Provided, Renderer, RendererBean, RendererPrecedence}
 import org.datacleaner.bootstrap.WindowContext
-import org.datacleaner.result.{AnnotatedRowsResult, DefaultResultProducer}
 import org.datacleaner.result.renderer.{RendererFactory, SwingRenderingFormat}
+import org.datacleaner.result.{AnnotatedRowsResult, DefaultResultProducer}
 import org.datacleaner.util.ChartUtils
 import org.datacleaner.widgets.result.DrillToDetailsCallbackImpl
-import org.jfree.chart.{ChartFactory, ChartMouseEvent, ChartMouseListener}
 import org.jfree.chart.entity.XYItemEntity
 import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.{ChartFactory, ChartMouseEvent, ChartMouseListener}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
+
 import scala.collection.JavaConverters._
 
 @RendererBean(classOf[SwingRenderingFormat])
-class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult, JPanel] {
+class ScatterAnalyzerResultSwingRenderer extends Renderer[IScatterAnalyzerResult, JPanel] {
   
   @Inject
   @Provided
@@ -26,9 +27,9 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
   @Provided
   var rendererFactory: RendererFactory = null
 
-  override def getPrecedence(result: ScatterAnalyzerResult) = RendererPrecedence.HIGH
+  override def getPrecedence(result: IScatterAnalyzerResult) = RendererPrecedence.HIGH
 
-  override def render(result: ScatterAnalyzerResult): JPanel = {
+  override def render(result: IScatterAnalyzerResult): JPanel = {
     val xAxisLabel = result.getVariable1.getName
     val yAxisLabel = result.getVariable2.getName
 

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.visualization;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.datacleaner.api.InputColumn;
@@ -32,7 +33,8 @@ public class JavaScatterAnalyzerResult implements ScatterAnalyzerResult {
 
     public JavaScatterAnalyzerResult(final List<CommonScatterGroup> groups, final InputColumn<?> variable1,
             final InputColumn<?> variable2, final InputColumn<?> groupColumn) {
-        _groups = groups;
+        // Make sure all Scala stuff is gone
+        _groups = new ArrayList<>(groups);
         _variable1 = variable1;
         _variable2 = variable2;
         _groupColumn = groupColumn;

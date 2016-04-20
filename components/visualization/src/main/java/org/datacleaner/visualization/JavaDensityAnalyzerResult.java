@@ -19,6 +19,7 @@
  */
 package org.datacleaner.visualization;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -28,6 +29,7 @@ import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
 public class JavaDensityAnalyzerResult implements DensityAnalyzerResult {
+    private static final long serialVersionUID = 1L;
 
     private final InputColumn<Number> _variable1;
     private final InputColumn<Number> _variable2;
@@ -36,7 +38,9 @@ public class JavaDensityAnalyzerResult implements DensityAnalyzerResult {
 
     public JavaDensityAnalyzerResult(Map<Pair<Integer, Integer>, RowAnnotation> annotations, InputColumn<Number> variable1,
             InputColumn<Number> variable2, RowAnnotationFactory rowAnnotationFactory) {
-        _annotations = annotations;
+        // Make sure that Scala wrapper is lost.
+        _annotations = new HashMap<>();
+        _annotations.putAll(annotations);
         _variable1 = variable1;
         _variable2 = variable2;
         _rowAnnotationFactory = rowAnnotationFactory;

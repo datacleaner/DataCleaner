@@ -42,6 +42,8 @@ import org.datacleaner.restclient.DataCloudUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+
 /**
  * Implementation of {@link RemoteServerConfiguration}.
  */
@@ -152,7 +154,11 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
                     new ComponentRESTClient(remoteServerData.getUrl(), remoteServerData.getUsername(),
                             remoteServerData.getPassword());
             dataCloudUserInfo = restClient.getDataCloudUserInfo();
-        } catch (Exception e) {
+        }catch (ClientHandlerException clientHandleException){
+            logger.warn("DataCloud server connection problem: " + clientHandleException.getMessage());
+            return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(),
+                    "DataCloud server connection problem.");
+        }catch (Exception e) {
             logger.warn("DataCloud server connection problem: " + e.getMessage());
             return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(),
                     getErrorMessage(e));
@@ -198,12 +204,12 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         notifyAllListeners(serverName);
     }
 
-    protected void checkStatus(String serverName) {
+    protected void checkStatus(String serverName, boolean alwaysNotify) {
         RemoteServerData serverConfig = getServerConfig(serverName);
         if (serverConfig != null) {
             final RemoteServerState newState = checkDataCloudServerAvailability(serverConfig);
             RemoteServerState serverState = actualStateMap.get(serverName);
-            if(serverState == null || !serverState.getActualState().equals(newState.getActualState())){
+            if(alwaysNotify || serverState == null || !serverState.getActualState().equals(newState.getActualState())){
                 actualStateMap.put(serverName, newState);
                 notifyAllListeners(serverName);
             }

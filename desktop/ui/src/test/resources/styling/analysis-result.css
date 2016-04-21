@@ -1,14 +1,14 @@
-@import url(http://fonts.googleapis.com/css?family=Ubuntu|Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Muli|Ubuntu|Open+Sans);
 
 body {
 	margin: 0px;
 	font-size: 13px;
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Muli', sans-serif;
 	color: black;
 }
 
 div.analyzerResult {
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Muli', sans-serif;
 }
 
 div.analysisResultHeader {
@@ -57,7 +57,7 @@ p,div,span,ul,ol,li,table,td,a {
 }
 
 h1,h2,h3,h4,h5 {
-	font-family: 'Ubuntu', sans-serif;
+	font-family: 'Muli', sans-serif;
 	color: #16c2f4;
 	font-weight: normal;
 	font-style: normal;
@@ -156,7 +156,7 @@ table tr.odd td {
 }
 
 .ui-tabs {
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Muli', sans-serif;
 	padding-left: 0;
 	padding-right: 0;
 	padding-top: 0;

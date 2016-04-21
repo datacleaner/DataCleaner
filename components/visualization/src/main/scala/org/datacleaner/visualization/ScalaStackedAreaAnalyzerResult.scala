@@ -1,13 +1,13 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.api.AnalyzerResult
+import org.apache.metamodel.util.ObjectComparator
 import org.datacleaner.api.InputColumn
 import org.datacleaner.util.ReflectionUtils
-import scala.collection.mutable.Map
-import org.apache.metamodel.util.TimeComparator
-import org.apache.metamodel.util.ObjectComparator
 
-class StackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: Array[InputColumn[Number]]) extends AnalyzerResult {
+import scala.collection.JavaConverters._
+import scala.collection.mutable.Map
+
+class ScalaStackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: Array[InputColumn[Number]]) extends IStackedAreaAnalyzerResult {
 
   val measureMap: Map[Any, Array[Number]] = Map();
 
@@ -16,12 +16,12 @@ class StackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: 
   def isNumberCategory(): Boolean = ReflectionUtils.isNumber(CategoryColumn.getDataType());
 
   def getCategoryColumn() = CategoryColumn
-  
+
   def getCategoryCount() = measureMap.size
 
-  def getCategories(): List[_] = {
+  def getCategories(): java.util.List[_] = {
     val list = measureMap.keys.toList
-    return list.sortWith({ (x, y) => ObjectComparator.getComparator().compare(x.asInstanceOf[AnyRef], y.asInstanceOf[AnyRef]) < 0 });
+    return list.sortWith({ (x, y) => ObjectComparator.getComparator().compare(x.asInstanceOf[AnyRef], y.asInstanceOf[AnyRef]) < 0 }).asJava;
   }
 
   def getMeasureColumns = measureColumns;

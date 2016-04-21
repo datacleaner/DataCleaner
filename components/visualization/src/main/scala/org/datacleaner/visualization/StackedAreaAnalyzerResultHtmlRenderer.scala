@@ -1,15 +1,13 @@
 package org.datacleaner.visualization
 
 import org.datacleaner.api.RendererBean
-import org.datacleaner.result.html.HtmlRenderer
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.SimpleHtmlFragment
+import org.datacleaner.result.html.{HtmlRenderer, HtmlRenderingContext, SimpleHtmlFragment}
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 
 @RendererBean(classOf[HtmlRenderingFormat])
-class StackedAreaAnalyzerResultHtmlRenderer extends HtmlRenderer[StackedAreaAnalyzerResult] {
+class StackedAreaAnalyzerResultHtmlRenderer extends HtmlRenderer[IStackedAreaAnalyzerResult] {
 
-  override def handleFragment(frag: SimpleHtmlFragment, result: StackedAreaAnalyzerResult, context: HtmlRenderingContext) {
+  override def handleFragment(frag: SimpleHtmlFragment, result: IStackedAreaAnalyzerResult, context: HtmlRenderingContext) {
     val elementId = context.createElementId()
 
     frag.addHeadElement(StackedAreaAnalyzerResuableChartHeadElement)

@@ -149,6 +149,14 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("org.datacleaner.result.DateAndTimeAnalyzerResult",
                 "org.datacleaner.beans.DateAndTimeAnalyzerResult");
 
+        // analyzer results Scala migrations compat-classes as of ticket #1268
+        addRenamedClass("org.datacleaner.visualization.DensityAnalyzerResult",
+                "org.datacleaner.visualization.ScalaDensityAnalyzerResult");
+        addRenamedClass("org.datacleaner.visualization.ScatterAnalyzerResult",
+                "org.datacleaner.visualization.ScalaScatterAnalyzerResult");
+        addRenamedClass("org.datacleaner.visualization.StackedAreaAnalyzerResult",
+                "org.datacleaner.visualization.ScalaStackedAreaAnalyzerResult");
+
         // analyzer results moved as of ticket #993
         addRenamedClass("org.datacleaner.result.ValueDistributionGroupResult",
                 "org.datacleaner.beans.valuedist.SingleValueDistributionResult");

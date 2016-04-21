@@ -1,11 +1,11 @@
 package org.datacleaner.visualization
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
 import org.datacleaner.api.InputColumn
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.MockInputRow
-import org.junit.Assert
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
+import org.junit.{Assert, Test}
+import org.scalatest.junit.AssertionsForJUnit
+
+import scala.collection.JavaConverters._
 
 class StackedAreaAnalyzerTest extends AssertionsForJUnit {
 
@@ -27,7 +27,7 @@ class StackedAreaAnalyzerTest extends AssertionsForJUnit {
     analyzer.run(new MockInputRow().put(col1, 5), 1);
     
     val result = analyzer.getResult
-    Assert.assertEquals("1,2", result.getCategories.mkString(","));
+    Assert.assertEquals("1,2", result.getCategories.asScala.mkString(","));
     
     Assert.assertNull(result.getMeasures(1337))
     Assert.assertEquals("10,10", result.getMeasures(1).mkString(","));

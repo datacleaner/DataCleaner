@@ -156,7 +156,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.setPreferredSize(getDialogWidth(), 400);
+        mainPanel.setPreferredSize(getDialogWidth(), 430);
 
         return mainPanel;
     }

@@ -45,7 +45,6 @@ public class HadoopDataCleanerJobEngine extends DataCleanerJobEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(HadoopDataCleanerJobEngine.class);
 
-    private final ClusterManagerFactory _clusterManagerFactory;
     private final DescriptorProvider _descriptorProvider;
     private final Map<String, AnalysisResultFuture> _runningJobs;
     private final ApplicationContext _applicationContext;
@@ -54,7 +53,6 @@ public class HadoopDataCleanerJobEngine extends DataCleanerJobEngine {
     public HadoopDataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider,
             ApplicationContext applicationContext) {
         super(clusterManagerFactory, descriptorProvider, applicationContext);
-        _clusterManagerFactory = clusterManagerFactory;
         _descriptorProvider = descriptorProvider;
         _applicationContext = applicationContext;
         _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
@@ -76,6 +74,7 @@ public class HadoopDataCleanerJobEngine extends DataCleanerJobEngine {
             throw new IllegalStateException("No such job: " + execution.getJob());
         }
         
+
         super.preLoadJob(tenantContext, job);
         
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
@@ -83,27 +82,8 @@ public class HadoopDataCleanerJobEngine extends DataCleanerJobEngine {
         final AnalysisJob analysisJob = job.getAnalysisJob(variables);
         super.preExecuteJob(tenantContext, job, analysisJob);
 
-      
-        
-        final ClusterManager clusterManager;
-        if (_clusterManagerFactory != null && execution.getSchedule().isDistributedExecution()) {
-            final TenantIdentifier tenant = new TenantIdentifier(tenantContext.getTenantId());
-            clusterManager = _clusterManagerFactory.getClusterManager(tenant);
-        } else {
-            clusterManager = null;
-        }
-        
-        final AnalysisRunner runner;
-        if (clusterManager == null) {
-            runner = new AnalysisRunnerImpl(configuration, analysisListener);
-        } else {
-            executionLogger.log("Partitioning and dispatching job to run in distributed mode.");
-            runner = new DistributedAnalysisRunner(configuration, clusterManager, analysisListener);
-        }
-        
+        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
         final RepositoryFile jobFile = job.getJobFile();
-
-       
         final String jobName = HadoopJobExecutionUtils.getUrlReadyJobName(getJobName());
 
         final String hadoopJobFileName = SparkRunner.DATACLEANER_TEMP_DIR + "/" + jobName + ".analysis.xml";
@@ -112,13 +92,25 @@ public class HadoopDataCleanerJobEngine extends DataCleanerJobEngine {
                 hadoopJobFileName).toString());
 
         final OutputStream jobWriter = analysisJobResource.write();
-        new JaxbJobWriter(configuration).write(job, jobWriter);
-
+        new JaxbJobWriter(configuration).write(analysisJob, jobWriter);
         jobWriter.close();
 
         final File configurationFile = HadoopJobExecutionUtils.createMinimalConfigurationFile(configuration, analysisJob);
         final SparkRunner sparkRunner = new SparkRunner(configurationFile.getAbsolutePath(), analysisJobResource
                 .getFilepath(), hadoopJobResultFileName);
+        
+        sparkRunner.runJob(new SparkRunner.ProgressListener() {
+            
+            @Override
+            public void onJobSubmitted() {
+                
+            }
+            
+            @Override
+            public void onJobFilesReady() {
+                
+            }
+        })
     }
 
     private String getJobName() {

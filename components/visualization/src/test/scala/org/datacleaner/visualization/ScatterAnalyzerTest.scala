@@ -1,15 +1,11 @@
 package org.datacleaner.visualization
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
-import org.junit.Assert
-import org.junit.Test
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.MockInputRow
-import scala.collection.SortedMap
-import scala.collection.immutable.TreeMap
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
 import org.datacleaner.storage.RowAnnotations
+import org.junit.{Assert, Test}
+import org.scalatest.junit.AssertionsForJUnit
 
+import scala.collection.JavaConverters._
 class ScatterAnalyzerTest extends AssertionsForJUnit {
 
   @Test
@@ -23,8 +19,10 @@ class ScatterAnalyzerTest extends AssertionsForJUnit {
     analyzer.run(new MockInputRow().put(analyzer.variable1, 1).put(analyzer.variable2, 2), 1);
     analyzer.run(new MockInputRow().put(analyzer.variable1, 1).put(analyzer.variable2, 1), 1);
     
-    val group = analyzer.getResult.groups.head
-    val str = group.annotations.map(entry => (entry._1, entry._2.getRowCount())).mkString(", ");
-    Assert.assertEquals("(1,1) -> 2, (1,2) -> 1", str);
+    val group = analyzer.getResult.getGroups.asScala.head
+
+    Assert.assertEquals(2, group.getRowAnnotations.size());
+    Assert.assertEquals(2, group.getRowAnnotation(1,1).getRowCount);
+    Assert.assertEquals(1, group.getRowAnnotation(1,2).getRowCount);
   }
 }

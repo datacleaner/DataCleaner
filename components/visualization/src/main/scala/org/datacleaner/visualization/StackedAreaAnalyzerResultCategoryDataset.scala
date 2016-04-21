@@ -1,17 +1,16 @@
 package org.datacleaner.visualization
 
 import java.util.List
+
 import org.jfree.data.category.CategoryDataset
-import org.jfree.data.general.DatasetChangeListener
-import org.jfree.data.general.DatasetGroup
+import org.jfree.data.general.{DatasetChangeListener, DatasetGroup}
+
 import scala.collection.JavaConversions._
-import org.jfree.data.xy.TableXYDataset
-import org.jfree.data.DomainOrder
 
 /**
  * CategoryDataset implementation of the StackedAreaAnalyzerResult for JFreeCharts
  */
-class StackedAreaAnalyzerResultCategoryDataset(result: StackedAreaAnalyzerResult) extends CategoryDataset {
+class StackedAreaAnalyzerResultCategoryDataset(result: IStackedAreaAnalyzerResult) extends CategoryDataset {
 
   private val columnNames = result.getMeasureColumns.map(col => col.getName())
   private val categories = result.getCategories

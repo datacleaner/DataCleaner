@@ -63,4 +63,59 @@ public class OpenAnalysisResultTest extends TestCase {
 
         assertEquals("all_analyzers.analysis.result.dat | Analysis results", window.getWindowTitle());
     }
+
+    public void testDensityPlotVisualizationComponentLoading() throws Exception {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("!!! Skipping test because environment is headless: " + getName());
+            return;
+        }
+
+        DCModule module = new DCModuleImpl();
+
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile(
+                "src/test/resources/densityplot.analysis.result.dat");
+
+        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        ResultWindow window = listener.openAnalysisResult(file, module);
+        assertNotNull(window);
+
+        assertEquals("densityplot.analysis.result.dat | Analysis results", window.getWindowTitle());
+    }
+
+    public void testStackedAreaPlotVisualizationComponentLoading() throws Exception {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("!!! Skipping test because environment is headless: " + getName());
+            return;
+        }
+
+        DCModule module = new DCModuleImpl();
+
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile(
+                "src/test/resources/stackedarea.analysis.result.dat");
+
+        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        ResultWindow window = listener.openAnalysisResult(file, module);
+        assertNotNull(window);
+
+        assertEquals("stackedarea.analysis.result.dat | Analysis results", window.getWindowTitle());
+    }
+
+    public void testScatterPlotVisualizationComponentLoading() throws Exception {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("!!! Skipping test because environment is headless: " + getName());
+            return;
+        }
+
+        DCModule module = new DCModuleImpl();
+
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile(
+                "src/test/resources/scatterplot.analysis.result.dat");
+
+        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        ResultWindow window = listener.openAnalysisResult(file, module);
+        assertNotNull(window);
+
+        assertEquals("scatterplot.analysis.result.dat | Analysis results", window.getWindowTitle());
+    }
+
 }

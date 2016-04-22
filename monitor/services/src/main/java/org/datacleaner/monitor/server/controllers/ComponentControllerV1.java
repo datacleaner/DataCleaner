@@ -51,6 +51,7 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
+import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
@@ -369,6 +370,11 @@ public class ComponentControllerV1 {
 
     private static byte[] getComponentIconData(ComponentDescriptor<?> descriptor) {
         try {
+            // Providing remote transformer info about a transformer being already remote.
+            if(descriptor instanceof HasIcon) {
+                return ((HasIcon) descriptor).getIconData();
+            }
+
             String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
             InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
             Image icon;

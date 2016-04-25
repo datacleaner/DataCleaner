@@ -98,10 +98,15 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
                 scheduleDefinition.setVariableProvider(variableProviderDef);
             }
 
+            final Boolean runOnHadoop = schedule.isRunOnHadoop();
+            if (runOnHadoop != null && runOnHadoop.booleanValue()){
+                scheduleDefinition.setRunOnHadoop(runOnHadoop);
+            }
             final Boolean distributedExecution = schedule.isDistributedExecution();
             if (distributedExecution != null && distributedExecution.booleanValue()) {
-                scheduleDefinition.setDistributedExecution(true);
+                scheduleDefinition.setDistributedExecution(distributedExecution.booleanValue());
             }
+            
         }
 
         scheduleDefinition.setJob(job);

@@ -31,7 +31,10 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.junit.Test;
 
-
+/**
+ * This class tests the old xml schedule configuration which doesn't have a 'run on hadoop' setting 
+ *
+ */
 public class JaxbScheduleReaderTest{
 
     
@@ -45,7 +48,8 @@ public class JaxbScheduleReaderTest{
         String groupName="test";
         final ScheduleDefinition schedule = reader.read(fileInputStream, job, tenant, groupName); 
         assertEquals("@daily",schedule.getCronExpression());
-        assertFalse(schedule.isDistributedExecution()); 
+        assertFalse(schedule.isDistributedExecution());
+        assertFalse(schedule.isRunOnHadoop()); 
         
     }
 }

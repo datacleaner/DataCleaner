@@ -59,6 +59,9 @@ public class DefaultJobEngineManagerTest extends TestCase {
         
         engine = manager.getJobEngine(CustomJobContext.class);
         assertEquals(CustomJobEngine.class, engine.getClass());
+        
+        engine = manager.getJobEngineOfType(HadoopDataCleanerJobEngine.class); 
+        assertNotNull(engine);
     }
     
     public void testGetJobEngineHierarchy() throws Exception {
@@ -75,5 +78,10 @@ public class DefaultJobEngineManagerTest extends TestCase {
 
         engine = manager.getJobEngine(MetricJobContext.class);
         assertNull(engine);
+        
+        engine = manager.getJobEngineOfType(HadoopDataCleanerJobEngine.class); 
+        assertNotNull(engine);
+        
+                
     }
 }

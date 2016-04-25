@@ -20,28 +20,23 @@
 package org.datacleaner.monitor.server.job;
 
 import org.datacleaner.monitor.configuration.TenantContext;
-import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricJobEngine;
 import org.datacleaner.repository.RepositoryFile;
 
-/**
- * The {@link JobContext} implementation for DataCleaner analysis jobs. This
- * implementation caches the read analysis jobs for quick access.
- */
-public class DataCleanerJobContextImpl extends AbstractDataCleanerJobContext {
+public class HadoopDataCleanerJobContextImpl extends AbstractDataCleanerJobContext {
 
-    private final DataCleanerJobEngine _engine;
- 
+    private final HadoopDataCleanerJobEngine _engine;
 
-    public DataCleanerJobContextImpl(DataCleanerJobEngine engine, TenantContext tenantContext, RepositoryFile file) {
-        super(tenantContext, file); 
+    public HadoopDataCleanerJobContextImpl(HadoopDataCleanerJobEngine engine, TenantContext tenantContext,
+            RepositoryFile file) {
+        super(tenantContext, file);
         _engine = engine;
-      
+
     }
 
     @Override
-    public DataCleanerJobEngine getJobEngine() {
+    public MetricJobEngine<? extends MetricJobContext> getJobEngine() {
         return _engine;
     }
-
-  
 }

@@ -43,7 +43,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private boolean _distributedExecution;
     private String _dateForOneTimeSchedule;
 	private Map<String,String> _jobMetadataProperties;
-    private Boolean _runOnHadoop; 
+    private boolean _runOnHadoop; 
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -67,7 +67,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         _runOnHadoop = runOnHadoop;
     }
 	
-	public Boolean getRunOnHadoop(){
+	public Boolean isRunOnHadoop(){
         return _runOnHadoop;
 	    
 	}

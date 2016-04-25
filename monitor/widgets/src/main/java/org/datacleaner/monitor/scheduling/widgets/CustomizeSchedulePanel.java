@@ -215,7 +215,7 @@ public class CustomizeSchedulePanel extends Composite {
         }
 
         
-        final Boolean runOnHadoopSetting = _schedule.getRunOnHadoop();
+        final Boolean runOnHadoopSetting = _schedule.isRunOnHadoop();
         if (runOnHadoopSetting != null){
             runOnHadoop.setValue(runOnHadoopSetting.booleanValue());
         }else{

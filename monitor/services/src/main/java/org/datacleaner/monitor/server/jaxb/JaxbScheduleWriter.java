@@ -76,7 +76,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             schedule.setVariableProvider(variableProvider);
         }
 
-        final Boolean runOnHadoop = scheduleDefinition.getRunOnHadoop();
+        final Boolean runOnHadoop = scheduleDefinition.isRunOnHadoop();
         if (runOnHadoop != null && runOnHadoop.booleanValue()){
             schedule.setRunOnHadoop(runOnHadoop);
         }

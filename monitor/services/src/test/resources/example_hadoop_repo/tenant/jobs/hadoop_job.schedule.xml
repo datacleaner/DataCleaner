@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:schedule xmlns="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns2="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns3="http://eobjects.org/datacleaner/execution-log/1.0" xmlns:ns4="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns5="http://eobjects.org/datacleaner/shared/1.0">
+    <ns4:manual-trigger>true</ns4:manual-trigger>
+    <ns4:distributed-execution>false</ns4:distributed-execution>
+    <ns4:run-on-hadoop>true</ns4:run-on-hadoop>
+    <ns4:alerts/>
+</ns4:schedule>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Created with DataCleaner Enterprise edition 5.0</job-description>
+        <author>claudiap</author>
+        <updated-date>2016-04-26+02:00</updated-date>
+        <metadata-properties>
+            <property name="CoordinatesX.datacleaner.customers.csv">40</property>
+            <property name="CoordinatesY.datacleaner.customers.csv">40</property>
+        </metadata-properties>
+    </job-metadata>
+    <source>
+        <data-context ref="customers.csv"/>
+        <columns>
+            <column id="col_id" path="id" type="STRING"/>
+            <column id="col_given_name" path="given_name" type="STRING"/>
+            <column id="col_family_name" path="family_name" type="STRING"/>
+            <column id="col_company" path="company" type="STRING"/>
+            <column id="col_address_line" path="address_line" type="STRING"/>
+            <column id="col_post_code" path="post_code" type="STRING"/>
+            <column id="col_city" path="city" type="STRING"/>
+            <column id="col_country" path="country" type="STRING"/>
+            <column id="col_email" path="email" type="STRING"/>
+            <column id="col_birthdate" path="birthdate" type="STRING"/>
+            <column id="col_gender" path="gender" type="STRING"/>
+            <column id="col_job_title" path="job_title" type="STRING"/>
+            <column id="col_income_amount" path="income_amount" type="STRING"/>
+            <column id="col_income_currency" path="income_currency" type="STRING"/>
+        </columns>
+    </source>
+    <transformation/>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Value distribution"/>
+            <metadata-properties>
+                <property name="CoordinatesY">237</property>
+                <property name="CoordinatesX">350</property>
+            </metadata-properties>
+            <properties>
+                <property name="Record unique values" value="true"/>
+                <property name="Record drill-down information" value="true"/>
+                <property name="Top n most frequent values" value="&lt;null&gt;"/>
+                <property name="Bottom n most frequent values" value="&lt;null&gt;"/>
+            </properties>
+            <input ref="col_country" name="Column"/>
+        </analyzer>
+    </analysis>
+</job>

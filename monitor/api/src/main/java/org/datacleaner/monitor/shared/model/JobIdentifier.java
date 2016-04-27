@@ -97,7 +97,7 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
 
     @Override
     public String toString() {
-        return "JobIdentifier[name=" + _name +  "type=" + _type + "]";
+        return "JobIdentifier[name=" + _name + "]";
     }
 
     @Override

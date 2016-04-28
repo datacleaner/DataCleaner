@@ -21,13 +21,11 @@ package org.datacleaner.monitor.server.job;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -223,6 +221,20 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     private void runJobOnHadoop(DataCleanerConfiguration configuration, ExecutionIdentifier executionIndentifier,
             AnalysisJob analysisJob, TenantContext tenantContext, AnalysisListener analysisListener,
             ExecutionLogger executionLogger, ExecutionLog execution) throws Exception {
+        
+        if (!HadoopJobExecutionUtils.isSparkHomeSet()) {
+            final Exception exception = new Exception("Error while trying to run Hadoop Job. The environment variable SPARK_HOME is not set.");
+            executionLogger.setStatusFailed(null, null, exception);
+            return;
+        }
+      
+        final Datastore datastore = analysisJob.getDatastore();
+        if (!HadoopJobExecutionUtils.isValidSourceDatastore(datastore)){
+           final Exception exception = new Exception("Error while trying to run Hadoop Job. The datastore is not located on Hadoop cluster.");
+           executionLogger.setStatusFailed(null, null, exception);
+           return;
+        }
+        
         final String jobName = HadoopJobExecutionUtils.getUrlReadyJobName(executionIndentifier.getResultId());
         final String hadoopJobFileName = SparkRunner.DATACLEANER_TEMP_DIR + "/" + jobName + ".analysis.xml";
         final String hadoopJobResultFileName = SparkRunner.DEFAULT_RESULT_PATH + "/" + jobName
@@ -267,12 +279,14 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
                 @Override
                 protected void done() {
                     // copy the file from Hadoop to the server
-                    getResultFileFromCluster(tenantContext, executionLogger, execution, hadoopJobResultFileName,
-                            configuration, jobName);
-                    executionLogger.log("Job has finished. The results are copied to the server.");
-                    // the result is null so that there is no empty result is persisted
-                    executionLogger.setStatusSuccess(null);
-                    executionLogger.flushLog();
+                    getResultFileFromCluster(tenantContext, executionLogger,hadoopJobResultFileName, jobName);
+                    if (!execution.getExecutionStatus().equals(ExecutionStatus.FAILURE)) {
+                        executionLogger.log("Job has finished.");
+                        // the result is null so that there is no empty result
+                        // is persisted
+                        executionLogger.setStatusSuccess(null);
+                        executionLogger.flushLog();
+                    }
                 }
             };
 
@@ -280,8 +294,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         } catch (Exception e) {
             // Exception occurred when interacting with Hadoop Cluster
             executionLogger.setStatusFailed(null, null, e);
-            execution.setJobEndDate(new Date());
         }
+
         executionLogger.flushLog();
     }
 
@@ -463,9 +477,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         return Collections.emptyList();
     }
 
-    private void getResultFileFromCluster(TenantContext tenantContext, ExecutionLogger executionLogger,
-            ExecutionLog execution, String hadoopResultFileName, DataCleanerConfiguration configuration,
-            String jobName) {
+    private void getResultFileFromCluster(TenantContext tenantContext, ExecutionLogger executionLogger, String hadoopResultFileName, String jobName) {
         HdfsResource resultsResource = null;
         try {
             resultsResource = new HdfsResource(HadoopUtils.getFileSystem().getUri().resolve(hadoopResultFileName)
@@ -482,15 +494,13 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
                 FileHelper.copy(resultsResource, resourceFile);
                 executionLogger.log("The result of the job has been retrieved from Hadoop");
             } else {
-                executionLogger.log("The result of the job was not persisted on Hadoop");
-                execution.setJobEndDate(new Date());
-                execution.setExecutionStatus(ExecutionStatus.FAILURE);
+                final String message = "An error has occured while running the job. The result was not persisted on Hadoop.";
+                final Exception error = new Exception(message);
+                executionLogger.setStatusFailed(null, null, error);
             }
         }
-        catch (IOException e) {
+        catch (Exception e) {
             executionLogger.setStatusFailed(null, null, e);
-            execution.setJobEndDate(new Date());
         }
-
     }
 }

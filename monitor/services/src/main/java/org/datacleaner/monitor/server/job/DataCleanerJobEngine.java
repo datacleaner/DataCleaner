@@ -260,14 +260,15 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
                         @Override
                         public void onJobFilesReady() {
-                            executionLogger.log("Files are copied to Hadoop.");
+                            executionLogger.log("Upload job definition to HDFS");
                             analysisListener.jobBegin(analysisJob, null);
                             executionLogger.flushLog();
                         }
 
                         @Override
                         public void onJobSubmitted() {
-                            executionLogger.log("Job submitted. Awaiting result.");
+                            executionLogger.log("Submit job with Apache Spark");
+                            executionLogger.log("Await job completition");
                             executionLogger.flushLog();
                         }
 
@@ -278,13 +279,14 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
                 @Override
                 protected void done() {
+                    executionLogger.log("Download job results");
                     // copy the file from Hadoop to the server
                     getResultFileFromCluster(tenantContext, executionLogger,hadoopJobResultFileName, jobName);
                     if (!execution.getExecutionStatus().equals(ExecutionStatus.FAILURE)) {
-                        executionLogger.log("Job has finished.");
-                        // the result is null so that there is no empty result
-                        // is persisted
+                        // the result is null so that there is no EMPTY result
+                        // is persisted. The method will create an empty result file. We already copied one from Hadoop.
                         executionLogger.setStatusSuccess(null);
+                        execution.setResultPersisted(true);
                         executionLogger.flushLog();
                     }
                 }
@@ -294,6 +296,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         } catch (Exception e) {
             // Exception occurred when interacting with Hadoop Cluster
             executionLogger.setStatusFailed(null, null, e);
+            executionLogger.log("Job failed, please check Hadoop and/or DataCleaner monitor logs");
         }
 
         executionLogger.flushLog();
@@ -482,7 +485,6 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         try {
             resultsResource = new HdfsResource(HadoopUtils.getFileSystem().getUri().resolve(hadoopResultFileName)
                     .toString());
-
             if (resultsResource != null && resultsResource.isExists()) {
                 final RepositoryFolder repositoryResultFolder = tenantContext.getResultFolder();
 
@@ -492,9 +494,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
                 
                 logger.info("Writing the result to" + resourceFile.getQualifiedPath());
                 FileHelper.copy(resultsResource, resourceFile);
-                executionLogger.log("The result of the job has been retrieved from Hadoop");
             } else {
-                final String message = "An error has occured while running the job. The result was not persisted on Hadoop.";
+                final String message = "An error has occured while running the job. The result was not persisted on Hadoop. Please check Hadoop and/or DataCleaner logs";
                 final Exception error = new Exception(message);
                 executionLogger.setStatusFailed(null, null, error);
             }

@@ -237,8 +237,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         
         final String jobName = HadoopJobExecutionUtils.getUrlReadyJobName(executionIndentifier.getResultId());
         final String hadoopJobFileName = SparkRunner.DATACLEANER_TEMP_DIR + "/" + jobName + ".analysis.xml";
-        final String hadoopJobResultFileName = SparkRunner.DEFAULT_RESULT_PATH + "/" + jobName
-                + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        final String hadoopJobResultFileName = SparkRunner.DEFAULT_RESULT_PATH + "/" + jobName + SparkRunner.RESULT_FILE_EXTENSION;
         final String uri = HadoopUtils.getFileSystem().getUri().resolve(hadoopJobFileName).toString();
         final HdfsResource analysisJobResource = new HdfsResource(uri);
 
@@ -298,7 +297,6 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             executionLogger.setStatusFailed(null, null, e);
             executionLogger.log("Job failed, please check Hadoop and/or DataCleaner monitor logs");
         }
-
         executionLogger.flushLog();
     }
 

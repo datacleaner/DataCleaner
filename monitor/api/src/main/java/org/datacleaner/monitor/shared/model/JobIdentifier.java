@@ -33,7 +33,6 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
 
     private static final long serialVersionUID = 1L;
 
-    public static final String JOB_TYPE_ANALYSIS_JOB_HADOOP = "HadoopDataCleanerAnalysisJob";
     public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
     public static final String JOB_TYPE_CUSTOM_JOB = "CustomJob";
 

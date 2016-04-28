@@ -102,11 +102,11 @@
 			</div>
 			
 				<div class="triggerPanel">
-				<g:CheckBox ui:field="runOnHadoop" text="Run job on Hadoop"
+				<g:CheckBox ui:field="runOnHadoop" text="Run on Hadoop cluster"
 					name="runOnHadoop" />
 				
 				<div class="configurationPanel">
-					<p>The job will run on Hadoop</p>
+					<p>The job will run on Hadoop cluster</p>
 				</div>
 			</div>
 

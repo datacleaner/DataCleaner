@@ -30,10 +30,13 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Validate;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
 import org.datacleaner.components.categories.WriteSuperCategory;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -49,6 +52,10 @@ import org.datacleaner.user.UserPreferences;
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
+
+    static final String H2_DATABASE_CONNECTION_PROTOCOL = "jdbc:h2:";
+
+    static final String H2_DRIVER_CLASS_NAME = "org.h2.Driver";
 
     /**
      * Write mode for the datastore output analyzer. Determines if the datastore
@@ -128,5 +135,33 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
 
     public void setDatastoreName(String datastoreName) {
         this.datastoreName = datastoreName;
+    }
+
+    @Validate
+    public void validate() {
+        // The first time this method is invoked, the datastoreCatalog and
+        // userPreferences fields haven't been populated yet, therefore we just
+        // skip the check, because it is called a little bit later again, and
+        // then these fields are populated.
+        if (datastoreCatalog != null) {
+            // Validate that the datastoreName doesn't conflict with one of the
+            // datastores in the datastoreCatalog.
+            Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+            
+            if (datastore != null) {
+                if (datastore instanceof JdbcDatastore 
+                        && ((JdbcDatastore) datastore).getDriverClass().equals(H2_DRIVER_CLASS_NAME)) {
+                    if (!((JdbcDatastore) datastore).getJdbcUrl().startsWith(H2_DATABASE_CONNECTION_PROTOCOL
+                            + userPreferences.getSaveDatastoreDirectory().getPath())) {
+                        throw new IllegalStateException("Datastore \"" + datastoreName
+                                + "\" is not located in \"Written datastores\" directory \"" + userPreferences
+                                        .getSaveDatastoreDirectory().getPath() + "\".");
+                    }
+                } else {
+                    throw new IllegalStateException("Datastore \"" + datastoreName
+                            + "\" is not an H2 database, so it can't be used as a staging database.");
+                }
+            }
+        }        
     }
 }

@@ -761,9 +761,12 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
 
-        // only validate, don't initialize
-        lifeCycleHelper.validate(descriptor, component);
-
+        try {
+            // only validate, don't initialize
+            lifeCycleHelper.validate(descriptor, component);
+        } catch (RuntimeException e) {
+            return null;
+        }
         return component;
     }
 

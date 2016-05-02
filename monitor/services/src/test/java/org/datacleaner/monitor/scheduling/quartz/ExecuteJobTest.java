@@ -142,30 +142,30 @@ public class ExecuteJobTest extends TestCase {
         final TenantContext tenantContext = tenantContextFactory.getContext(tenantIdentifier);
         final JobIdentifier jobIdentifier = new JobIdentifier("hadoop_job");
         
-        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, jobIdentifier, "Hadoop");
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, jobIdentifier, "Hadoop");
         schedule.setRunOnHadoop(true);
         assertTrue(schedule.isRunOnHadoop()); 
-        ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
+        final JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
         
         assertTrue(manager instanceof DefaultJobEngineManager);
 
-        JobEngine<?> engine;
+        final JobEngine<?> engine;
         
         engine = manager.getJobEngine(DataCleanerJobContext.class);
         assertEquals(DataCleanerJobEngine.class, engine.getClass());
         
-        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, manager);
+        final String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, manager);
         assertNotNull(executionId);
         try {
-            SchedulingService schedulingService = new SchedulingServiceImpl(repository, tenantContextFactory);
+            final SchedulingService schedulingService = new SchedulingServiceImpl(repository, tenantContextFactory);
 
-            ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
+            final ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
             assertEquals("SUCCESS", log.getExecutionStatus().toString()); 
 
         } finally {
-            RepositoryNode logNode = repository.getRepositoryNode("/tenant/results/" + executionId
+            final RepositoryNode logNode = repository.getRepositoryNode("/tenant/results/" + executionId
                     + ".analysis.execution.log.xml");
             assertNotNull(logNode);
 

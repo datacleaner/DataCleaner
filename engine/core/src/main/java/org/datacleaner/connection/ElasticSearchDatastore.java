@@ -19,8 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
@@ -43,6 +41,8 @@ import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 /**
  * Datastore providing access to an ElasticSearch index.
  */
@@ -53,7 +53,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
         private String _humanReadableName;
 
-        private ClientType(String humanReadableName) {
+        ClientType(String humanReadableName) {
             _humanReadableName = humanReadableName;
         }
 
@@ -139,15 +139,15 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     }
 
-    private final UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(DataContext dataContext,
+    private UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(DataContext dataContext,
             Client simpleclient) {
         switch (_clientType) {
         case NODE:
         case TRANSPORT:
-            return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>((ElasticSearchDataContext) dataContext,
+            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext,
                     this, simpleclient);
         case REST:
-            return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(
+            return new UpdateableDatastoreConnectionImpl<>(
                     (ElasticSearchRestDataContext) dataContext, this);
         default:
             //do nothing
@@ -169,10 +169,15 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     private JestClient getClientForRestProtocol() {
         final JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
-                true).build());
-        final JestClient client = factory.getObject();
-        return client;
+        HttpClientConfig.Builder builder =
+                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
+                        true);
+        if (!Strings.isNullOrEmpty(_username)) {
+            builder = builder.defaultCredentials(_username, _password);
+        }
+        factory.setHttpClientConfig(builder.build());
+
+        return factory.getObject();
     }
 
     private Client getClientForJoiningClusterAsNode() {

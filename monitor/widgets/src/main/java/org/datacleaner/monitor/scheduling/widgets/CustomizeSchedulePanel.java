@@ -43,6 +43,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -84,6 +85,9 @@ public class CustomizeSchedulePanel extends Composite {
 
     @UiField
     DateBox dateBox;
+    
+    @UiField
+    CheckBox runOnHadoop; 
 
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
@@ -210,6 +214,14 @@ public class CustomizeSchedulePanel extends Composite {
             manualTriggerRadio.setValue(true);
         }
 
+        
+        final Boolean runOnHadoopSetting = _schedule.isRunOnHadoop();
+        if (runOnHadoopSetting != null){
+            runOnHadoop.setValue(runOnHadoopSetting.booleanValue());
+        }else{
+            runOnHadoop.setValue(false);
+        }
+     
         dependentTriggerJobListBox.addFocusHandler(new FocusHandler() {
 
             @Override
@@ -231,6 +243,7 @@ public class CustomizeSchedulePanel extends Composite {
                 }
             }
         });
+        
     }
 
     public ScheduleDefinition getUpdatedSchedule() {
@@ -264,6 +277,9 @@ public class CustomizeSchedulePanel extends Composite {
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
             _schedule.setDependentJob(new JobIdentifier(dependentJobName));
         }
+    
+         _schedule.setRunOnHadoop(runOnHadoop.getValue());
+        
         return _schedule;
     }
 }

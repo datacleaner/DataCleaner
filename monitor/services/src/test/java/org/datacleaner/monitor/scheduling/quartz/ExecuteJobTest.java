@@ -21,17 +21,21 @@ package org.datacleaner.monitor.scheduling.quartz;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.scheduling.SchedulingService;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.server.SchedulingServiceImpl;
+import org.datacleaner.monitor.server.job.DataCleanerJobContext;
+import org.datacleaner.monitor.server.job.DataCleanerJobEngine;
+import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -40,6 +44,10 @@ import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.repository.file.FileRepository;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 public class ExecuteJobTest extends TestCase {
 
@@ -113,5 +121,58 @@ public class ExecuteJobTest extends TestCase {
             // cleanup
             logNode.delete();
         }
+    }
+    /**
+     * Testing Hadoop execution in debug mode. The example job from example_hadoop_repo should be modified accordingly. 
+     */
+    public void ignoreTestHadoopExecution() throws Exception {
+        
+        final File targetDir = new File("target/example_hadoop_repo");
+        FileUtils.deleteDirectory(targetDir);
+        FileUtils.copyDirectory(new File("src/test/resources/example_hadoop_repo"), targetDir);
+
+        final Repository repository = new FileRepository(targetDir); 
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                 "context/application-context.xml");
+
+        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                 new DefaultJobEngineManager(applicationContext));
+
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant");
+        final TenantContext tenantContext = tenantContextFactory.getContext(tenantIdentifier);
+        final JobIdentifier jobIdentifier = new JobIdentifier("hadoop_job");
+        
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, jobIdentifier, "Hadoop");
+        schedule.setRunOnHadoop(true);
+        assertTrue(schedule.isRunOnHadoop()); 
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+
+        final JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
+        
+        assertTrue(manager instanceof DefaultJobEngineManager);
+
+        final JobEngine<?> engine;
+        
+        engine = manager.getJobEngine(DataCleanerJobContext.class);
+        assertEquals(DataCleanerJobEngine.class, engine.getClass());
+        
+        final String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, manager);
+        assertNotNull(executionId);
+        try {
+            final SchedulingService schedulingService = new SchedulingServiceImpl(repository, tenantContextFactory);
+
+            final ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
+            assertEquals("SUCCESS", log.getExecutionStatus().toString()); 
+
+        } finally {
+            final RepositoryNode logNode = repository.getRepositoryNode("/tenant/results/" + executionId
+                    + ".analysis.execution.log.xml");
+            assertNotNull(logNode);
+
+            // cleanup
+            logNode.delete();
+        }
+        
+        
     }
 }

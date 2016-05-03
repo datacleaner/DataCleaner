@@ -27,7 +27,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
-import org.datacleaner.spark.utils.HadoopConfigurationUtils;
+import org.datacleaner.spark.utils.HadoopJobExecutionUtils;
 import org.junit.Test;
 
 import junit.framework.TestCase;
@@ -41,7 +41,7 @@ public class HadoopConfigurationUtilsTest extends TestCase{
         final CsvDatastore csvDatastore = new CsvDatastore("MyCsv", hdfsResource);
         assertTrue(csvDatastore.getCsvConfiguration().isMultilineValues());
         assertEquals(FileHelper.UTF_8_ENCODING,csvDatastore.getEncoding()); 
-        assertFalse(HadoopConfigurationUtils.isValidSourceDatastore(csvDatastore)); 
+        assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(csvDatastore)); 
     }
     
     @Test
@@ -51,21 +51,21 @@ public class HadoopConfigurationUtilsTest extends TestCase{
         final CsvDatastore csvDatastore = new CsvDatastore("MyCsv", hdfsResource, csvConfiguration);
         assertFalse(csvDatastore.getCsvConfiguration().isMultilineValues());
         assertEquals(FileHelper.UTF_8_ENCODING,csvDatastore.getEncoding()); 
-        assertTrue(HadoopConfigurationUtils.isValidSourceDatastore(csvDatastore)); 
+        assertTrue(HadoopJobExecutionUtils.isValidSourceDatastore(csvDatastore)); 
     }
     
     @Test
     public void testJson(){
         final HdfsResource hdfsResource = new  HdfsResource("hdfs://datacleaner/files/test.csv"); 
         final JsonDatastore jsonDatastore = new JsonDatastore("test", hdfsResource);
-        assertTrue(HadoopConfigurationUtils.isValidSourceDatastore(jsonDatastore)); 
+        assertTrue(HadoopJobExecutionUtils.isValidSourceDatastore(jsonDatastore)); 
     }
     
     @Test
     public void testInvalidDatastore(){
         final ExcelDatastore excelDatastore = new ExcelDatastore("MyTest", new FileResource("C://test"), "Test");
-        assertFalse(HadoopConfigurationUtils.isValidSourceDatastore(excelDatastore)); 
+        assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(excelDatastore)); 
         final Neo4jDatastore neo4jDatastore = new Neo4jDatastore("neo", "localhost", "me", "password"); 
-        assertFalse(HadoopConfigurationUtils.isValidSourceDatastore(neo4jDatastore));
+        assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(neo4jDatastore));
     }
 }

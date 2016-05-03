@@ -28,6 +28,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.launcher.SparkLauncher;
 import org.datacleaner.spark.utils.HadoopUtils;
+import org.datacleaner.util.FileFilters;
 
 /**
  * Prepares job for launching on Spark
@@ -52,6 +53,9 @@ public class SparkRunner {
     public final static String DATACLEANER_DIR = "/datacleaner";
     public final static String DATACLEANER_TEMP_DIR = DATACLEANER_DIR + "/temp";
     public final static String DATACLEANER_LIB_DIR = DATACLEANER_DIR + "/lib";
+    public static final String DEFAULT_RESULT_PATH = "/datacleaner/results";
+    public static final String RESULT_FILE_EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
+    
 
     private final FileSystem _hadoopDefaultFS;
     private final ApplicationDriver _applicationDriver;

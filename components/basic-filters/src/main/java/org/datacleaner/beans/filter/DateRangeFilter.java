@@ -30,7 +30,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.FilterCategory;
 
 @Named("Date range")
-@Description("A filter that filters out rows where a number value is outside a specified range")
+@Description("A filter that filters out rows where a date value is outside a specified range")
 @Categorized(FilterCategory.class)
 public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
 

@@ -229,10 +229,11 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         }
       
         final Datastore datastore = analysisJob.getDatastore();
-        if (!HadoopJobExecutionUtils.isValidSourceDatastore(datastore)){
-           final Exception exception = new Exception("Error while trying to run Hadoop Job. The datastore is not located on Hadoop cluster.");
-           executionLogger.setStatusFailed(null, null, exception);
-           return;
+        if (!HadoopJobExecutionUtils.isValidSourceDatastore(datastore)) {
+            final Exception exception = new Exception(
+                    "Error while trying to run Hadoop Job. The datastore is not valid. Please check the configuration of the datastore. The encoding must be UTF-8 and multiline values must be false.");
+            executionLogger.setStatusFailed(null, null, exception);
+            return;
         }
         
         final String jobName = HadoopJobExecutionUtils.getUrlReadyJobName(executionIndentifier.getResultId());

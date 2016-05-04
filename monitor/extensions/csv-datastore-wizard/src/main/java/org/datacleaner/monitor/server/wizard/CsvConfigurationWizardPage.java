@@ -64,7 +64,7 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
         map.put("escape", detectedConfiguration.getEscapeChar());
         map.put("headerLineNumber", detectedConfiguration.getColumnNameLineNumber());
         map.put("encoding", detectedConfiguration.getEncoding());
-        map.put("multilines-values", detectedConfiguration.isMultilineValues());
+        map.put("multilinesValues", detectedConfiguration.isMultilineValues());
         return map;
     };
 
@@ -95,7 +95,7 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
         }
 
         final String encoding = getString(formParameters, "encoding");
-        final boolean multilines = getBoolean(formParameters, "multilines-values");
+        final boolean multilines = getBoolean(formParameters, "multilinesValues");
         final CsvConfiguration configuration = new CsvConfiguration(headerLineNumber, encoding, separator, quote,
                 escape, true, multilines);
 

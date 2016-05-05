@@ -32,10 +32,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility class for dealing with {@link ClassLoader}s. The primary focus of
  * this class is to ease with handling the diversity of situations that the
- * applcation can be deployed to: Embedded in a non-system classloader, a Java
+ * application can be deployed to: Embedded in a non-system classloader, a Java
  * Web Start classloader and running in a regular system classloader.
- * 
- * 
  */
 public final class ClassLoaderUtils {
 
@@ -52,7 +50,7 @@ public final class ClassLoaderUtils {
 	/**
 	 * Gets an appropriate classloader for usage when performing classpath
 	 * lookups and scanning.
-	 * 
+	 *
 	 * @return
 	 */
 	public static ClassLoader getParentClassLoader() {
@@ -86,18 +84,11 @@ public final class ClassLoaderUtils {
 		return createClassLoader(urls, ClassLoaderUtils.getParentClassLoader());
 	}
 
-	public static ClassLoader createClassLoader(final URL[] urls, final ClassLoader parentClassLoader) {
-		// removing the security manager is nescesary for classes in
-		// external jar files to have privileges to do eg. system property
-		// lookups etc.
-		System.setSecurityManager(null);
-
-		final URLClassLoader newClassLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-			@Override
-			public URLClassLoader run() {
-				return new URLClassLoader(urls, parentClassLoader);
-			}
-		});
-		return newClassLoader;
-	}
+    public static ClassLoader createClassLoader(final URL[] urls, final ClassLoader parentClassLoader) {
+        // removing the security manager is nescesary for classes in external jar files to have privileges to do
+		// eg. system property lookups etc.
+        System.setSecurityManager(null);
+        return AccessController
+                .doPrivileged((PrivilegedAction<URLClassLoader>)() -> new URLClassLoader(urls, parentClassLoader));
+    }
 }

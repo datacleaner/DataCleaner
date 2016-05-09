@@ -19,15 +19,15 @@
  */
 package org.datacleaner.monitor.server.wizard;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.easymock.EasyMock;
-import org.datacleaner.monitor.wizard.WizardPageController;
 import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.monitor.wizard.WizardPageController;
+import org.easymock.EasyMock;
 
 import junit.framework.TestCase;
 
@@ -36,7 +36,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
     public void testBuildConfigurationFromParameters() throws Exception {
         final WizardPageController pageMock = EasyMock.createMock(WizardPageController.class);
         
-        final File file = null;
+        final Resource file = null;
         final CsvConfigurationWizardPage page = new CsvConfigurationWizardPage(file) {
             @Override
             protected WizardPageController nextPageController(CsvConfiguration configuration) {

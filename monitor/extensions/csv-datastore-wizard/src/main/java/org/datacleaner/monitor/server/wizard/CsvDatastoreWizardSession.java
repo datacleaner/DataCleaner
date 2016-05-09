@@ -23,6 +23,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
@@ -45,6 +46,7 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
     private CsvConfiguration _configuration;
     private String _name;
     private String _description;
+    final static String[] extensions = new String[]{"csv", "tsv","txt"}; 
 
     public CsvDatastoreWizardSession(DatastoreWizardContext context) {
         super(context);
@@ -92,9 +94,7 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
                         if (resource instanceof FileResource) {
                             final File file = ((FileResource) resource).getFile();
                             final String filepath = file.getAbsolutePath();
-                            if (!filepath.toLowerCase().endsWith(".csv")) {
-                                if (!filepath.toLowerCase().endsWith(".tsv")) {
-                                    if (!filepath.toLowerCase().endsWith(".txt")) {
+                            if (!FilenameUtils.isExtension(file.getName() , extensions)) {
                                         // only .csv and .tsv files are allowed
                                         // to
                                         // be referenced on the server, for
@@ -103,14 +103,10 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
                                         throw new DCUserInputException(
                                                 "For security reasons, only existing .csv, .tsv or .txt files can be referenced on the server");
                                     }
-                                }
-
                                 if (file.exists() && !file.canRead()) {
                                     throw new DCUserInputException("Cannot read from file:\n" + filepath);
                                 }
                             }
-
-                        }
                         _resource = resource;
                         return showCsvConfigurationPage(resource.getName());
                     }

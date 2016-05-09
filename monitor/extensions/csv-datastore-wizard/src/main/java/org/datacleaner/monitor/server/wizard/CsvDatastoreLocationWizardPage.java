@@ -74,7 +74,6 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("filename", _filename);
         map.put("absolutePrefix", absolutePrefix);
-        map.put("relativePrefix", "/datacleaner/");
 
         if (_newFile) {
             map.put("introductionText", "What should be the server location of the CSV file:");
@@ -84,6 +83,7 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
             map.put("introductionText", "What is the server location of the CSV file:");
             map.put("repositoryText", "It's located in the repository:");
             map.put("absoluteText", "It's at an absolute location on the server:");
+            map.put("relativePrefix", "/datacleaner/");
             map.put("relativeHadoopText", "It's a path on the Hadoop cluster:");
         }
 

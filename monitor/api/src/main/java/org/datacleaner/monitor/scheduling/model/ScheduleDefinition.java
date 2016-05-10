@@ -43,7 +43,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private boolean _distributedExecution;
     private String _dateForOneTimeSchedule;
 	private Map<String,String> _jobMetadataProperties;
-    private boolean _runOnHadoop; 
+    private boolean _runOnHadoop;
+    private String _hotFolder;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -138,8 +139,9 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
             return TriggerType.PERIODIC;
         } else if(_dateForOneTimeSchedule!= null){
         	return TriggerType.ONETIME;
-        }
-        else {
+        } else if (_hotFolder != null) {
+            return TriggerType.HOTFOLDER;
+        } else {
             return TriggerType.MANUAL;
         }
     }
@@ -159,7 +161,15 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 	public Map<String,String> getJobMetadataProperties(){
 		return _jobMetadataProperties;
 	}
-    
+
+    public String getHotFolder() {
+        return _hotFolder;
+    }
+
+    public void setHotFolder(String hotFolder) {
+        _hotFolder = hotFolder;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

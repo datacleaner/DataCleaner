@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -35,6 +36,9 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
@@ -103,8 +107,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private final TenantContextFactory _tenantContextFactory;
     private final Scheduler _scheduler;
     private final SchedulingServiceConfiguration _schedulingServiceConfiguration;
+    private final FileAlterationMonitor _hotFolderMonitor = new FileAlterationMonitor();
 
     private ApplicationContext _applicationContext;
+    private Map<String, FileAlterationObserver> _registeredHotFolders = new HashMap<>();
 
     /**
      * Creates a default single-node scheduler
@@ -197,6 +203,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalStateException("Failed to start scheduler", e);
         }
 
+        try {
+            _hotFolderMonitor.start();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to start file alteration monitor", e);
+        }
+       
         if (_schedulingServiceConfiguration.isTenantInitialization()) {
             logTriggers();
         }
@@ -230,6 +242,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             _scheduler.shutdown();
         } catch (SchedulerException e) {
             logger.error("Failed to shutdown scheduler: " + e.getMessage(), e);
+        }
+
+        try {
+            _hotFolderMonitor.stop();
+        } catch (Exception e) {
+            logger.error("Failed to shutdown file alteration monitor: " + e.getMessage(), e);
         }
     }
 
@@ -369,6 +387,22 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                                 cronExpression);
                         _scheduler.scheduleJob(jobDetail, trigger);
                     }
+                } else if (triggerType == TriggerType.HOTFOLDER) {
+                    String hotFolder = schedule.getHotFolder();
+                    
+                    if (hotFolder != null) {
+                        File directory = new File(hotFolder);
+                    
+                        FileAlterationObserver observer = new FileAlterationObserver(directory);
+                    
+                        observer.addListener(new HotFolderAlterationListener(job, schedule.getTenant()));
+                    
+                        _hotFolderMonitor.addObserver(observer);
+                        
+                        _registeredHotFolders.put(jobListenerName, observer);
+                    
+                        logger.info("Adding hot folder {} as trigger for job {}", hotFolder, jobListenerName);
+                    }
                 } else {
                     // event based trigger (via a job listener)
                     _scheduler.addJob(jobDetail, true);
@@ -427,6 +461,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
             throw new IllegalStateException("Failed to remove job schedule: " + job, e);
         }
+        removeHotFolder(jobListenerName);
     }
 
     protected static CronExpression toCronExpression(String scheduleExpression) {
@@ -664,5 +699,63 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         String timeStampName = calendar.getTimeZone().getDisplayName();
         logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
         return serverDateFormat;
+    }
+
+    void removeHotFolder(String jobIdentifier) {
+        FileAlterationObserver observer = _registeredHotFolders.get(jobIdentifier);
+        _hotFolderMonitor.removeObserver(observer);
+        try {
+            observer.destroy();
+        } catch (Exception e) {
+            logger.info("Removing hot folder trigger for job {}", jobIdentifier);
+        }
+    }
+    
+    private final class HotFolderAlterationListener implements FileAlterationListener {
+        private final JobIdentifier job;
+        private final TenantIdentifier tenant;
+
+        private HotFolderAlterationListener(final JobIdentifier job, final TenantIdentifier tenant) {
+            this.job = job;
+            this.tenant = tenant;
+        }
+
+        public void onStop(FileAlterationObserver observer) {
+            // Do nothing.
+        }
+
+        public void onStart(FileAlterationObserver observer) {
+            // Do nothing.
+        }
+
+        public void onFileDelete(File file) {
+            // Do nothing.
+        }
+
+        public void onFileCreate(File file) {
+            logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
+                    .getName());
+
+            triggerExecution(tenant, job);
+        }
+
+        public void onFileChange(File file) {
+            logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
+                    .getName());
+
+            triggerExecution(tenant, job);
+        }
+
+        public void onDirectoryDelete(File directory) {
+            // Do nothing.
+        }
+
+        public void onDirectoryCreate(File directory) {
+            // Do nothing.
+        }
+
+        public void onDirectoryChange(File directory) {
+            // Do nothing.
+        }
     }
 }

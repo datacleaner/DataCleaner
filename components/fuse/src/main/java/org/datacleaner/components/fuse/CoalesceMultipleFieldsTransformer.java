@@ -48,11 +48,12 @@ import org.slf4j.LoggerFactory;
 @Categorized(CompositionCategory.class)
 public class CoalesceMultipleFieldsTransformer implements Transformer {
     private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
-
+    public static final String PROPERTY_UNITS = "Units";
+    
     @Configured
     InputColumn<?>[] _input;
 
-    @Configured
+    @Configured(value = PROPERTY_UNITS)
     CoalesceUnit[] _units;
 
     @Configured

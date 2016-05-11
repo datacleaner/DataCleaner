@@ -49,6 +49,8 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.transform.PlainSearchReplaceTransformer;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
@@ -364,6 +366,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         if (job == null) {
             throw new IllegalArgumentException("Job cannot be null");
         }
+      
         if (sourceColumnMapping != null && !sourceColumnMapping.isSatisfied()) {
             throw new IllegalArgumentException("Source column mapping is not satisfied!");
         }
@@ -470,6 +473,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
         final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
 
+        final List<ColumnType> columnsTypes = job.getSource().getColumns().getColumn();
         // iterate to create all the initial component builders without any
         // wiring
         final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
@@ -477,7 +481,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder, descriptorProvider,
                     componentType);
 
-            initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType, componentBuilder);
+            initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType, componentBuilder, inputColumns, columnsTypes);
         }
 
         wireInputColumns(inputColumns, componentBuilders);
@@ -707,12 +711,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private void initializeComponentBuilder(final Map<String, String> variables, final StringConverter stringConverter,
             final Map<ComponentType, ComponentBuilder> componentBuilders, ComponentType componentType,
-            final ComponentBuilder componentBuilder) {
+            final ComponentBuilder componentBuilder, Map<String, InputColumn<?>> inputColumns, List<ColumnType> columnsTypes) {
         // shared setting of properties (except for input columns)
         componentBuilder.setName(componentType.getName());
 
         applyProperties(componentBuilder, componentType.getProperties(), componentType.getMetadataProperties(),
-                stringConverter, variables);
+                stringConverter, variables, inputColumns, columnsTypes);
 
         componentBuilders.put(componentType, componentBuilder);
     }
@@ -875,7 +879,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private void applyProperties(final ComponentBuilder builder,
             final ConfiguredPropertiesType configuredPropertiesType, final MetadataProperties metadataPropertiesType,
-            final StringConverter stringConverter, final Map<String, String> variables) {
+            final StringConverter stringConverter, final Map<String, String> variables, Map<String, InputColumn<?>> mappingInputColumns, List<ColumnType> columnsTypes) {
         if (configuredPropertiesType != null) {
             final List<Property> properties = configuredPropertiesType.getProperty();
             final ComponentDescriptor<?> descriptor = builder.getDescriptor();
@@ -915,9 +919,50 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     final Converter<?> customConverter = configuredProperty.createCustomConverter();
                     final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
                             customConverter);
+               
+                    if (name.equals(CoalesceMultipleFieldsTransformer.PROPERTY_UNITS)) {
+                        /* This part of the code refers to the situation when we
+                         open the job as a template where we need to replace
+                         the name of the columns with the mapped ones */
+                        final CoalesceUnit[] units = (CoalesceUnit[]) value;
 
+                        final ArrayList<CoalesceUnit> newUnitsList = new ArrayList<CoalesceUnit>();
+                        final Set<Entry<String, InputColumn<?>>> mappingColumnsSet = mappingInputColumns.entrySet();
+                        for (int i = 0; i < units.length; i++) {
+                            final String[] oldInputColumnNames = units[i].getInputColumnNames();
+                            final ArrayList<InputColumn<?>> newInputColumns = new ArrayList<InputColumn<?>>();
+                            for (Entry<String, InputColumn<?>> entry : mappingColumnsSet) {
+                                final String column_id = entry.getKey();
+                                final String path = getPath(columnsTypes, column_id);
+                                for (int j = 0; j < oldInputColumnNames.length; j++) {
+                                    /* Eg. <column id="col_given_name" path="given_name" type="STRING"/>
+                                     The path is found in the name of the column: 
+                                    datastores.customers.csv.given_name */
+                                    if (oldInputColumnNames[j].contains(path)) {
+                                        // add the mapped column.  
+                                        newInputColumns.add(entry.getValue());
+                                    }
+                                }
+                            }
+                            //create new coalesce unit with the mapped columns. 
+                            if (!newInputColumns.isEmpty()) {
+                                final CoalesceUnit newCoalesceUnit = new CoalesceUnit(newInputColumns);
+                                newUnitsList.add(newCoalesceUnit);
+                            }
+                        }
+
+                        // If in the coalesce units we have inputcolumns names and not the physical names then we keep
+                        // the original value. Eg value="[&amp;#91;EQ name&amp;#44;NEQ name&amp;#93;]"/>
+                        if (!newUnitsList.isEmpty()) {
+                            final CoalesceUnit[] newUnits = newUnitsList.toArray(new CoalesceUnit[0]);
+                            builder.setConfiguredProperty(configuredProperty, newUnits);
+                        } else {
+                            builder.setConfiguredProperty(configuredProperty, value);
+                        }
+                    } else {
+                        builder.setConfiguredProperty(configuredProperty, value);
+                    }
                     logger.debug("Setting property '{}' to {}", name, value);
-                    builder.setConfiguredProperty(configuredProperty, value);
                 }
             }
             
@@ -932,6 +977,15 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 builder.setMetadataProperty(name, value);
             }
         }
+    }
+
+    private String getPath(List<ColumnType> columnsTypes, final String column_id) {
+        for(ColumnType column: columnsTypes){
+               if (column_id.equals(column.getId())){
+                   return column.getPath(); 
+               }
+           }
+        return null; 
     }
 
     private static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,

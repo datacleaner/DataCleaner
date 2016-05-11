@@ -21,15 +21,21 @@ package org.datacleaner.job;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -75,6 +81,7 @@ public class JaxbJobReaderTest extends TestCase {
             "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
+    
     private final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(
             datastoreCatalog).withEnvironment(
             new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
@@ -470,5 +477,42 @@ public class JaxbJobReaderTest extends TestCase {
         AnalysisJobBuilder jobBuilder = reader.create(new File(
                 "src/test/resources/version_4_5_3_plain_search_replace.analysis.xml"));
         assertTrue(jobBuilder.isConfigured());
+    }
+    
+    public void testCoalesceJob() throws Exception {
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-fuse-coalesce-issue.analysis.xml"));
+        assertTrue(jobBuilder.isConfigured()); 
+    }
+    
+    public void testCoalesceJobAsTemplate() throws Exception{
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        final File file = new File(
+                "src/test/resources/example-job-coalesce.analysis.xml");
+      
+        final InputStream inputStream = new FileInputStream(file);
+        final AnalysisJobBuilder ajb;
+        final Datastore datastore = conf.getDatastoreCatalog().getDatastore("my database");
+        try(  final DatastoreConnection connection = datastore.openConnection(); ) {
+            final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping();
+            sourceColumnMapping.setDatastore(datastore);
+            final Table employeesTable = connection.getDataContext().getTableByQualifiedLabel("EMPLOYEES");
+            assertNotNull(employeesTable);
+            sourceColumnMapping.setColumn("col_customername", employeesTable.getColumnByName("LASTNAME"));
+            sourceColumnMapping.setColumn("col_contactlastname", employeesTable.getColumnByName("LASTNAME"));
+            sourceColumnMapping.setColumn("col_contactfirstname", employeesTable.getColumnByName("FIRSTNAME"));
+            sourceColumnMapping.setColumn("col_phone", employeesTable.getColumnByName("REPORTSTO"));
+            sourceColumnMapping.setColumn("col_city", employeesTable.getColumnByName("EXTENSION"));
+            sourceColumnMapping.setColumn("col_postalcode", employeesTable.getColumnByName("OFFICECODE"));
+            assertTrue(sourceColumnMapping.isSatisfied()); 
+
+
+            ajb = reader.create(inputStream, sourceColumnMapping, null);
+        } finally {
+            FileHelper.safeClose(inputStream);
+        }
+        assertTrue(ajb.isConfigured()); 
+
     }
 }

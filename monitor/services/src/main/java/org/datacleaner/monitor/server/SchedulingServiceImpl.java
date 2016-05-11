@@ -510,10 +510,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+        return triggerExecution(tenant, job, TriggerType.MANUAL);
+    }
 
+    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
         final ScheduleDefinition schedule = getSchedule(tenant, job);
-        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());
 
         try {
@@ -736,14 +739,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job);
+            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
         }
 
         public void onFileChange(File file) {
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job);
+            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
         }
 
         public void onDirectoryDelete(File directory) {

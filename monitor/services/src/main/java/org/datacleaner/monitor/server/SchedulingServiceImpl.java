@@ -36,7 +36,9 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
@@ -391,9 +393,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     String hotFolder = schedule.getHotFolder();
                     
                     if (hotFolder != null) {
-                        File directory = new File(hotFolder);
-                    
-                        FileAlterationObserver observer = new FileAlterationObserver(directory);
+                        FileAlterationObserver observer = createObserver(hotFolder);
                     
                         observer.addListener(new HotFolderAlterationListener(job, schedule.getTenant()));
                     
@@ -416,6 +416,17 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 throw (RuntimeException) e;
             }
             throw new IllegalStateException("Failed to schedule job: " + job, e);
+        }
+    }
+
+    private FileAlterationObserver createObserver(String fileName) {
+        File file = new File(fileName);
+
+        if (file.isDirectory()) {
+            return new FileAlterationObserver(file);
+        } else {
+            return new FileAlterationObserver(FilenameUtils.getFullPathNoEndSeparator(fileName), FileFilterUtils
+                    .nameFileFilter(FilenameUtils.getName(fileName)));
         }
     }
 
@@ -714,7 +725,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
     
-    private final class HotFolderAlterationListener implements FileAlterationListener {
+    private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
 
@@ -723,18 +734,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             this.tenant = tenant;
         }
 
-        public void onStop(FileAlterationObserver observer) {
-            // Do nothing.
-        }
-
-        public void onStart(FileAlterationObserver observer) {
-            // Do nothing.
-        }
-
-        public void onFileDelete(File file) {
-            // Do nothing.
-        }
-
+        @Override
         public void onFileCreate(File file) {
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
@@ -742,23 +742,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             triggerExecution(tenant, job, TriggerType.HOTFOLDER);
         }
 
+        @Override
         public void onFileChange(File file) {
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
             triggerExecution(tenant, job, TriggerType.HOTFOLDER);
-        }
-
-        public void onDirectoryDelete(File directory) {
-            // Do nothing.
-        }
-
-        public void onDirectoryCreate(File directory) {
-            // Do nothing.
-        }
-
-        public void onDirectoryChange(File directory) {
-            // Do nothing.
         }
     }
 }

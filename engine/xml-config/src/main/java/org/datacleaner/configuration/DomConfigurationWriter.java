@@ -19,14 +19,12 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -86,12 +84,7 @@ public class DomConfigurationWriter {
     }
 
     public DomConfigurationWriter(Resource resource) {
-        _document = resource.read(new Func<InputStream, Document>() {
-            @Override
-            public Document eval(InputStream in) {
-                return XmlUtils.parseDocument(in);
-            }
-        });
+        _document = resource.read(XmlUtils::parseDocument);
 
     }
 
@@ -663,9 +656,11 @@ public class DomConfigurationWriter {
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "cluster-name", datastore.getClusterName());
         appendElement(ds, "index-name", datastore.getIndexName());
+        appendElement(ds, "client-type", datastore.getClientType().name());
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "ssl", datastore.getSsl());
+
         if (datastore.getSsl()) {
             appendElement(ds, "keystore-path", datastore.getKeystorePath());
             appendElement(ds, "keystore-password", encodePassword(datastore.getKeystorePassword()));

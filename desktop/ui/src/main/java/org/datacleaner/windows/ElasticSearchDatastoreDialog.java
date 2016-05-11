@@ -220,7 +220,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
             _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
-            _clientTypeComboBox.setSelectedItem(ClientType.REST);
+            _clientTypeComboBox.setSelectedItem(DEFAULT_CLIENT_TYPE);
         } else {
             _clientTypeComboBox.setSelectedItem(originalDatastore.getClientType());
             _datastoreNameTextField.setText(originalDatastore.getName());

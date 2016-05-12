@@ -390,7 +390,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         _scheduler.scheduleJob(jobDetail, trigger);
                     }
                 } else if (triggerType == TriggerType.HOTFOLDER) {
-                    String hotFolder = schedule.getHotFolder();
+                    final String hotFolder = schedule.getHotFolder();
                     
                     if (hotFolder != null) {
                         FileAlterationObserver observer = createObserver(hotFolder);
@@ -420,7 +420,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     private FileAlterationObserver createObserver(String fileName) {
-        File file = new File(fileName);
+        final File file = new File(fileName);
 
         if (file.isDirectory()) {
             return new FileAlterationObserver(file);
@@ -716,7 +716,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     void removeHotFolder(String jobIdentifier) {
-        FileAlterationObserver observer = _registeredHotFolders.get(jobIdentifier);
+        final FileAlterationObserver observer = _registeredHotFolders.get(jobIdentifier);
         _hotFolderMonitor.removeObserver(observer);
         try {
             observer.destroy();

@@ -98,7 +98,7 @@ public class JobHistoryPanel extends Composite {
         });
         executionList.setSelectionModel(selectionModel);
 
-        executionList.setPixelSize(200, 400);
+        executionList.setPixelSize(250, 400);
         executionList.addStyleName("ExecutionCellList");
 
         initWidget(uiBinder.createAndBindUi(this));

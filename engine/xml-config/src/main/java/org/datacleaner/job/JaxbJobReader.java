@@ -49,7 +49,6 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.transform.PlainSearchReplaceTransformer;
-import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
@@ -919,40 +918,59 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     final Converter<?> customConverter = configuredProperty.createCustomConverter();
                     final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
                             customConverter);
-               
-                    if (name.equals(CoalesceMultipleFieldsTransformer.PROPERTY_UNITS)) {
-                        /* This part of the code refers to the situation when we
-                         open the job as a template where we need to replace
-                         the name of the columns with the mapped ones */
+
+                    
+                    if (configuredProperty.getBaseType().getName().equals(CoalesceUnit.class)) {
+                        /*
+                         * This part of the code refers to the situation when we
+                         * open the job as a template where we need to replace
+                         * the name of the columns with the mapped ones
+                         */
                         final CoalesceUnit[] units = (CoalesceUnit[]) value;
 
                         final ArrayList<CoalesceUnit> newUnitsList = new ArrayList<CoalesceUnit>();
                         final Set<Entry<String, InputColumn<?>>> mappingColumnsSet = mappingInputColumns.entrySet();
                         for (int i = 0; i < units.length; i++) {
-                            final String[] oldInputColumnNames = units[i].getInputColumnNames();
-                            final ArrayList<InputColumn<?>> newInputColumns = new ArrayList<InputColumn<?>>();
-                            for (Entry<String, InputColumn<?>> entry : mappingColumnsSet) {
-                                final String column_id = entry.getKey();
-                                final String path = getPath(columnsTypes, column_id);
-                                for (int j = 0; j < oldInputColumnNames.length; j++) {
-                                    /* Eg. <column id="col_given_name" path="given_name" type="STRING"/>
-                                     The path is found in the name of the column: 
-                                    datastores.customers.csv.given_name */
-                                    if (oldInputColumnNames[j].contains(path)) {
-                                        // add the mapped column.  
-                                        newInputColumns.add(entry.getValue());
+                            ;
+                            final String[] oldInputColumns = units[i].getInputColumnNames();
+                            final ArrayList<String> newInputColumns = new ArrayList<String>();
+                            for (int j = 0; j < oldInputColumns.length; j++) {
+                                /*
+                                 * Eg. <column id="col_given_name"
+                                 * path="given_name" type="STRING"/> The path is
+                                 * found in the name of the column:
+                                 * datastores.customers.csv.given_name
+                                 */
+                                final String oldColumn = oldInputColumns[j];
+                                boolean found = false;
+                                for (Entry<String, InputColumn<?>> entry : mappingColumnsSet) {
+                                    final String column_id = entry.getKey();
+                                    final String path = getPath(columnsTypes, column_id);
+                                    if (oldColumn.contains(path)) {
+                                        // add the mapped column.
+                                        newInputColumns.add(entry.getValue().getName());
+                                        found = true;
+                                        break;
                                     }
                                 }
+                                // If in the coalesce units we have inputcolumns
+                                // names
+                                // and not the physical names then we keep
+                                // the original value. Eg value="[&amp;#91;EQ
+                                // name&amp;#44;NEQ name&amp;#93;]"/>
+                                if (!found) {
+                                    newInputColumns.add(oldInputColumns[j]);
+                                }
                             }
-                            //create new coalesce unit with the mapped columns. 
+
+                            // create new coalesce unit with the mapped columns.
                             if (!newInputColumns.isEmpty()) {
-                                final CoalesceUnit newCoalesceUnit = new CoalesceUnit(newInputColumns);
+                                final CoalesceUnit newCoalesceUnit = new CoalesceUnit(newInputColumns.toArray(
+                                        new String[0]));
                                 newUnitsList.add(newCoalesceUnit);
                             }
                         }
 
-                        // If in the coalesce units we have inputcolumns names and not the physical names then we keep
-                        // the original value. Eg value="[&amp;#91;EQ name&amp;#44;NEQ name&amp;#93;]"/>
                         if (!newUnitsList.isEmpty()) {
                             final CoalesceUnit[] newUnits = newUnitsList.toArray(new CoalesceUnit[0]);
                             builder.setConfiguredProperty(configuredProperty, newUnits);

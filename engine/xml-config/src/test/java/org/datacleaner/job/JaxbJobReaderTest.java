@@ -21,21 +21,16 @@ package org.datacleaner.job;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -46,6 +41,8 @@ import org.datacleaner.beans.dategap.DateGapTextRenderer;
 import org.datacleaner.beans.transform.DateMaskMatcherTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -59,9 +56,12 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -74,6 +74,8 @@ import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
+
+import junit.framework.TestCase;
 
 public class JaxbJobReaderTest extends TestCase {
 
@@ -479,40 +481,31 @@ public class JaxbJobReaderTest extends TestCase {
         assertTrue(jobBuilder.isConfigured());
     }
     
-    public void testCoalesceJob() throws Exception {
-        JaxbJobReader reader = new JaxbJobReader(conf);
-        AnalysisJobBuilder jobBuilder = reader.create(new File(
-                "src/test/resources/example-job-fuse-coalesce-issue.analysis.xml"));
-        assertTrue(jobBuilder.isConfigured()); 
+    public void testCoalesceJobWithTranformerColumns() throws Exception {
+        final JaxbJobReader reader = new JaxbJobReader(conf);
+        final AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-coalesce-issue.analysis.xml"));
+        final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
+        assertEquals(5, componentBuilders.size()); 
+        final ComponentBuilder componentBuilder = componentBuilders.get(3);
+        final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+        
+        assertEquals("Fuse / Coalesce fields",descriptor.getDisplayName()); 
+        assertTrue(componentBuilder.isConfigured()); 
+     
     }
     
-    public void testCoalesceJobAsTemplate() throws Exception{
-        JaxbJobReader reader = new JaxbJobReader(conf);
-        final File file = new File(
-                "src/test/resources/example-job-coalesce.analysis.xml");
-      
-        final InputStream inputStream = new FileInputStream(file);
-        final AnalysisJobBuilder ajb;
-        final Datastore datastore = conf.getDatastoreCatalog().getDatastore("my database");
-        try(  final DatastoreConnection connection = datastore.openConnection(); ) {
-            final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping();
-            sourceColumnMapping.setDatastore(datastore);
-            final Table employeesTable = connection.getDataContext().getTableByQualifiedLabel("EMPLOYEES");
-            assertNotNull(employeesTable);
-            sourceColumnMapping.setColumn("col_customername", employeesTable.getColumnByName("LASTNAME"));
-            sourceColumnMapping.setColumn("col_contactlastname", employeesTable.getColumnByName("LASTNAME"));
-            sourceColumnMapping.setColumn("col_contactfirstname", employeesTable.getColumnByName("FIRSTNAME"));
-            sourceColumnMapping.setColumn("col_phone", employeesTable.getColumnByName("REPORTSTO"));
-            sourceColumnMapping.setColumn("col_city", employeesTable.getColumnByName("EXTENSION"));
-            sourceColumnMapping.setColumn("col_postalcode", employeesTable.getColumnByName("OFFICECODE"));
-            assertTrue(sourceColumnMapping.isSatisfied()); 
-
-
-            ajb = reader.create(inputStream, sourceColumnMapping, null);
-        } finally {
-            FileHelper.safeClose(inputStream);
-        }
-        assertTrue(ajb.isConfigured()); 
-
+    public void testCoalesceJobWithCombinedTranformerColumns() throws Exception {
+        final JaxbJobReader reader = new JaxbJobReader(conf);
+        final AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-coalesce-combined-columns.analysis.xml"));
+        final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
+        assertEquals(3, componentBuilders.size()); 
+        final ComponentBuilder componentBuilder = componentBuilders.get(1);
+        final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+        
+        assertEquals("Fuse / Coalesce fields",descriptor.getDisplayName()); 
+        assertTrue(componentBuilder.isConfigured()); 
+     
     }
 }

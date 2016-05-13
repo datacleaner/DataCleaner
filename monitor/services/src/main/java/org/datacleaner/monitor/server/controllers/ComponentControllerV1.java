@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -144,6 +145,19 @@ public class ComponentControllerV1 {
     @Autowired
     ComponentCache _componentCache;
 
+
+    /**
+     * Allow or denied components
+     *
+     * denied - Throw Runtime Exception
+     *
+     * @param componentName
+     * @throws RuntimeException
+     */
+    protected void canCall(String componentName) throws RuntimeException {
+        return;
+    }
+
     /**
      * It returns a list of all components and their configurations.
      * 
@@ -237,9 +251,10 @@ public class ComponentControllerV1 {
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        canCall(decodedName);
+
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-
         // try to enhance the input in case the client uses simplified input format\
         ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
         inputRewriterController.rewriteStatelessInput(compDesc, processStatelessInput);

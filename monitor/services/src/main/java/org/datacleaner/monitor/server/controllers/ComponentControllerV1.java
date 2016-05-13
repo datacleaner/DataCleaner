@@ -83,6 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -624,6 +625,8 @@ public class ComponentControllerV1 {
         final AtomicInteger errorCode = new AtomicInteger(500);
         if(ex instanceof ComponentValidationException || ex instanceof IllegalArgumentException) {
             errorCode.set(422);
+        } else if(ex instanceof AccessDeniedException) {
+            errorCode.set(HttpServletResponse.SC_FORBIDDEN);
         } else {
             // Using DefaultHandlerExceptionResolver to map standard Spring exception
             // like NoSuchRequestHandlingMethodException (HTTP 404) etc...

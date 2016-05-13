@@ -59,7 +59,6 @@ import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.server.components.AccessDeniedException;
 import org.datacleaner.monitor.server.components.ComponentCache;
 import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentHandler;
@@ -148,13 +147,15 @@ public class ComponentControllerV1 {
 
 
     /**
-     *  Allow or denied components
+     * Allow or denied components
+     *
+     * denied - Throw Runtime Exception
      *
      * @param componentName
-     * @return
+     * @throws RuntimeException
      */
-    protected boolean canCall(String componentName){
-        return true;
+    protected void canCall(String componentName) throws RuntimeException {
+        return;
     }
 
     /**
@@ -250,10 +251,7 @@ public class ComponentControllerV1 {
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        if(!canCall(decodedName)){
-            logger.info("Component {} is not allowed for tenant {}.", decodedName, tenant);
-            throw new AccessDeniedException(decodedName, tenant);
-        }
+        canCall(decodedName);
 
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);

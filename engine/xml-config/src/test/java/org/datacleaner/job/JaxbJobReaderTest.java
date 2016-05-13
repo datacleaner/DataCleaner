@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
@@ -39,6 +40,7 @@ import org.datacleaner.beans.dategap.DateGapTextRenderer;
 import org.datacleaner.beans.transform.DateMaskMatcherTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
+import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -53,6 +55,7 @@ import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -481,26 +484,90 @@ public class JaxbJobReaderTest extends TestCase {
         final AnalysisJobBuilder jobBuilder = reader.create(new File(
                 "src/test/resources/example-job-coalesce-issue.analysis.xml"));
         final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
-        assertEquals(5, componentBuilders.size()); 
+        assertEquals(5, componentBuilders.size());
         final ComponentBuilder componentBuilder = componentBuilders.get(3);
         final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-        
-        assertEquals("Fuse / Coalesce fields",descriptor.getDisplayName()); 
-        assertTrue(componentBuilder.isConfigured()); 
-     
+
+        assertEquals("Fuse / Coalesce fields", descriptor.getDisplayName());
+        assertTrue(componentBuilder.isConfigured());
+        final ConfiguredPropertyDescriptor configuredPropertyDescriptor = componentBuilder.getDescriptor()
+                .getConfiguredProperty("Units");
+        final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
+                configuredPropertyDescriptor);
+        assertEquals("EQ name", units[0].getInputColumnNames()[0].toString());
+        assertEquals("NEQ name", units[0].getInputColumnNames()[1].toString());
     }
-    
+
     public void testCoalesceJobWithCombinedTranformerColumns() throws Exception {
         final JaxbJobReader reader = new JaxbJobReader(conf);
         final AnalysisJobBuilder jobBuilder = reader.create(new File(
                 "src/test/resources/example-job-coalesce-combined-columns.analysis.xml"));
         final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
-        assertEquals(3, componentBuilders.size()); 
+        assertEquals(3, componentBuilders.size());
         final ComponentBuilder componentBuilder = componentBuilders.get(1);
         final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-        
-        assertEquals("Fuse / Coalesce fields",descriptor.getDisplayName()); 
-        assertTrue(componentBuilder.isConfigured()); 
-     
+
+        assertEquals("Fuse / Coalesce fields", descriptor.getDisplayName());
+        assertTrue(componentBuilder.isConfigured());
+
+        final ConfiguredPropertyDescriptor configuredPropertyDescriptor = componentBuilder.getDescriptor()
+                .getConfiguredProperty("Units");
+        final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
+                configuredPropertyDescriptor);
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
+        assertEquals("CONTACTLASTNAME (Upper case)", units[0].getInputColumnNames()[1].toString());
     }
+
+    public void testCoalesceJobWithInputColumns() throws Exception {
+        final JaxbJobReader reader = new JaxbJobReader(conf);
+        final AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-coalesce-inputcolumns.analysis.xml"));
+        final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
+        assertEquals(2, componentBuilders.size());
+        final ComponentBuilder componentBuilder = componentBuilders.get(0);
+        final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+
+        assertEquals("Fuse / Coalesce fields", descriptor.getDisplayName());
+        assertTrue(componentBuilder.isConfigured());
+
+        final ConfiguredPropertyDescriptor configuredPropertyDescriptor = componentBuilder.getDescriptor()
+                .getConfiguredProperty("Units");
+        final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
+                configuredPropertyDescriptor);
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
+        assertEquals("CONTACTFIRSTNAME", units[0].getInputColumnNames()[1].toString());
+        assertEquals("PHONE", units[1].getInputColumnNames()[0].toString());
+        assertEquals("CITY", units[1].getInputColumnNames()[1].toString());
+    }
+
+    public void testUnionJob() throws Exception {
+
+        final JaxbJobReader reader = new JaxbJobReader(conf);
+        final AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-union.analysis.xml"));
+        final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
+        assertEquals(1, componentBuilders.size());
+        final ComponentBuilder componentBuilder = componentBuilders.get(0);
+        final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+
+        assertEquals("Union", descriptor.getDisplayName());
+        assertTrue(componentBuilder.isConfigured());
+
+        final ConfiguredPropertyDescriptor configuredPropertyDescriptor = componentBuilder.getDescriptor()
+                .getConfiguredProperty("Units");
+        final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
+                configuredPropertyDescriptor);
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
+        assertEquals("LASTNAME", units[0].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTLASTNAME", units[0].getSuggestedOutputColumnName());
+        assertEquals("CONTACTFIRSTNAME", units[1].getInputColumnNames()[0].toString());
+        assertEquals("FIRSTNAME", units[1].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTFIRSTNAME", units[1].getSuggestedOutputColumnName());
+
+        final List<OutputDataStream> outputDataStreams = componentBuilder.getOutputDataStreams();
+        assertEquals(1, outputDataStreams.size());
+        final OutputDataStream outputDataStream = outputDataStreams.get(0);
+        assertEquals("output", outputDataStream.getName());
+    }
+    
 }

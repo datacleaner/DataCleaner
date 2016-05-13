@@ -49,6 +49,7 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.transform.PlainSearchReplaceTransformer;
+import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
@@ -920,7 +921,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                             customConverter);
 
                     
-                    if (configuredProperty.getBaseType().getName().equals(CoalesceUnit.class)) {
+                    if (name.equals(CoalesceMultipleFieldsTransformer.PROPERTY_UNITS)) {
                         /*
                          * This part of the code refers to the situation when we
                          * open the job as a template where we need to replace

@@ -920,8 +920,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
                             customConverter);
 
-                    
-                    if (name.equals(CoalesceMultipleFieldsTransformer.PROPERTY_UNITS)) {
+                    if (value instanceof CoalesceUnit[]) {
                         /*
                          * This part of the code refers to the situation when we
                          * open the job as a template where we need to replace

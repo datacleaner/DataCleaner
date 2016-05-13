@@ -21,17 +21,12 @@ package org.datacleaner.restclient;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.HasAliases;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,15 +42,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 
 /**
  * Class for input/output data types conversion from/into String.
  * @since 11. 09. 2015
  */
 public class Serializator {
-    private static final Logger logger = LoggerFactory.getLogger(Serializator.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
     public static final String ENUM_ALIAS_SEPARATOR = "::";
     static {
@@ -73,58 +65,7 @@ public class Serializator {
     public static ComponentList componentList(String response) {
         ComponentList components = Serializator.fromString(response, ComponentList.class);
 
-        workaroundJacksonBug(components, response);
-
         return components;
-    }
-
-    /**
-     * Workaround Jackson bug https://github.com/FasterXML/jackson-module-jsonSchema/issues/77
-     * "Schema with enum array - when deserialized, the enum values are lost"
-     */
-    private static void workaroundJacksonBug(ComponentList components, String response) {
-        try {
-            JsonNode rootN = objectMapper.readTree(response);
-            JsonNode componentsN = rootN.get("components");
-            if(componentsN == null) { return; }
-            for(JsonNode componentN: componentsN) {
-                String componentName = componentN.get("name").asText();
-                JsonNode propsN = componentN.get("properties");
-                if(propsN == null || !propsN.isObject()) { continue; }
-                for(Iterator<Map.Entry<String, JsonNode>> propIt = propsN.fields(); propIt.hasNext();) {
-                    Map.Entry<String, JsonNode> propE = propIt.next();
-                    String propName = propE.getKey();
-                    JsonNode propInfoN = propE.getValue();
-                    JsonNode schemaN = propInfoN.get("schema");
-                    if(schemaN == null) { continue; }
-                    JsonNode schemaTypeN = schemaN.get("type");
-                    if(schemaTypeN == null || !"array".equals(schemaTypeN.asText())) { continue; }
-                    JsonNode itemsN = schemaN.get("items");
-                    if(itemsN == null) { continue; }
-                    JsonNode enumN = itemsN.get("enum");
-                    if(enumN != null) {
-                        // We have component with property of type = array of enums. Lets repair it in the component list.
-                        for(ComponentList.ComponentInfo componentInfo: components.getComponents()) {
-                            if(componentName.equals(componentInfo.getName())) {
-                                ComponentList.PropertyInfo propInfo = componentInfo.getProperties().get(propName);
-                                if(propInfo != null) {
-                                    JsonSchema propSchema = propInfo.getSchema();
-                                    Set<String> enumSet = new HashSet<>();
-                                    for(JsonNode enumVal: enumN) {
-                                        enumSet.add(enumVal.asText());
-                                    }
-                                    logger.debug("Repaired json enum schema of '{}'.'{}'", componentName, propName);
-                                    ((StringSchema)propSchema.asArraySchema().getItems().asSingleItems().getSchema()).setEnums(enumSet);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static ComponentList.ComponentInfo componentInfo(String response) {

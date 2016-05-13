@@ -12,7 +12,7 @@
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
 		<hadoop.version>2.7.1</hadoop.version>
-		<spark.version>1.4.1</spark.version>
+		<spark.version>1.6.1</spark.version>
 		<easymock.version>3.4</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
@@ -25,7 +25,7 @@
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
-		<jackson.version>2.4.6</jackson.version>
+		<jackson.version>2.7.3</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<javax.jsp.version>2.3.1</javax.jsp.version>
 		<javax.el.version>2.2.5</javax.el.version>
@@ -1268,6 +1268,11 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-jsonSchema</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-scala_2.11</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>

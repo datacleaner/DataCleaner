@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -58,6 +59,7 @@ import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.components.AccessDeniedException;
 import org.datacleaner.monitor.server.components.ComponentCache;
 import org.datacleaner.monitor.server.components.ComponentCacheConfigWrapper;
 import org.datacleaner.monitor.server.components.ComponentHandler;
@@ -143,6 +145,17 @@ public class ComponentControllerV1 {
 
     @Autowired
     ComponentCache _componentCache;
+
+
+    /**
+     *  Allow or denied components
+     *
+     * @param componentName
+     * @return
+     */
+    protected boolean canCall(String componentName){
+        return true;
+    }
 
     /**
      * It returns a list of all components and their configurations.
@@ -237,9 +250,13 @@ public class ComponentControllerV1 {
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        if(!canCall(decodedName)){
+            logger.info("Component {} is not allowed for tenant {}.", decodedName, tenant);
+            throw new AccessDeniedException(decodedName, tenant);
+        }
+
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-
         // try to enhance the input in case the client uses simplified input format\
         ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
         inputRewriterController.rewriteStatelessInput(compDesc, processStatelessInput);

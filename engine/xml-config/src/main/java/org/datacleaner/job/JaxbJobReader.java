@@ -49,7 +49,6 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.transform.PlainSearchReplaceTransformer;
-import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
@@ -509,16 +508,34 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 // map column id's to input columns
                 final Map<String, InputColumn<?>> inputColumns = new HashMap<>();
 
-                for (ColumnType sourceColumnPath : sourceColumnTypes) {
-                    for (InputColumn<?> inputColumn : sourceColumns) {
-                        if (inputColumn.getName().equals(sourceColumnPath.getPath())) {
-                            inputColumns.put(sourceColumnPath.getId(), inputColumn);
-                        }
-                    }
+                for (int i = 0; i < sourceColumnTypes.size(); i++) {
+                    final ColumnType sourceColumnPath = sourceColumnTypes.get(i);
+                    final String outputStreamColumnPathName =
+                            getOutputStreamColumnPath(sourceColumnTypes.get(i).getPath(), componentType,
+                                    componentBuilder, i);
+
+                    sourceColumns.stream()
+                            .filter(inputColumn -> inputColumn.getName().equals(outputStreamColumnPathName))
+                            .forEach(inputColumn -> inputColumns.put(sourceColumnPath.getId(), inputColumn));
                 }
 
                 configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns);
             }
+        }
+    }
+
+    private String getOutputStreamColumnPath(final String suggestedPath, final ComponentType componentType,
+            final ComponentBuilder componentBuilder, int sourceColumnIndex) {
+        // Stupid special case for FuseStreamsComponent
+        if(componentType.getDescriptor().getRef().equals("Union")){
+            final ConfiguredPropertyDescriptor configuredPropertyDescriptor =
+                    componentBuilder.getDescriptor().getConfiguredProperty("Units");
+            final CoalesceUnit[] units = (CoalesceUnit[])
+                    componentBuilder.getConfiguredProperty(configuredPropertyDescriptor);
+            final CoalesceUnit unit = units[sourceColumnIndex];
+            return unit.getSuggestedOutputColumnName();
+        } else {
+            return suggestedPath;
         }
     }
 
@@ -928,12 +945,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
                          */
                         final CoalesceUnit[] units = (CoalesceUnit[]) value;
 
-                        final ArrayList<CoalesceUnit> newUnitsList = new ArrayList<CoalesceUnit>();
+                        final ArrayList<CoalesceUnit> newUnitsList = new ArrayList<>();
                         final Set<Entry<String, InputColumn<?>>> mappingColumnsSet = mappingInputColumns.entrySet();
                         for (int i = 0; i < units.length; i++) {
-                            ;
                             final String[] oldInputColumns = units[i].getInputColumnNames();
-                            final ArrayList<String> newInputColumns = new ArrayList<String>();
+                            final ArrayList<String> newInputColumns = new ArrayList<>();
                             for (int j = 0; j < oldInputColumns.length; j++) {
                                 /*
                                  * Eg. <column id="col_given_name"
@@ -946,7 +962,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                                 for (Entry<String, InputColumn<?>> entry : mappingColumnsSet) {
                                     final String column_id = entry.getKey();
                                     final String path = getPath(columnsTypes, column_id);
-                                    if (oldColumn.contains(path)) {
+                                    if (oldColumn.contains('.' + path)) {
                                         // add the mapped column.
                                         newInputColumns.add(entry.getValue().getName());
                                         found = true;

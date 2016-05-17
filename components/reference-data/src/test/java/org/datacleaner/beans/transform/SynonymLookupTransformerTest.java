@@ -45,7 +45,7 @@ public class SynonymLookupTransformerTest {
         MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
-        transformer.lookUpEveryToken = true;
+        transformer.replaceInlinedSynonyms = true;
         transformer.init();
 
         assertEquals("Hello DNK DNK DNK!", transformer.transform(new MockInputRow().put(col,
@@ -65,7 +65,7 @@ public class SynonymLookupTransformerTest {
         MockInputColumn<String> col = new MockInputColumn<>("my col", String.class);
 
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
-        transformer.lookUpEveryToken = false;
+        transformer.replaceInlinedSynonyms = false;
         transformer.init();
 
         assertEquals("Hello denmark dnk dk!", transformer.transform(new MockInputRow().put(col,
@@ -89,6 +89,7 @@ public class SynonymLookupTransformerTest {
 
         // with retain original value
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
+        transformer.replaceInlinedSynonyms = false;
         assertEquals(3, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
 
@@ -103,6 +104,7 @@ public class SynonymLookupTransformerTest {
 
         // without retain original value
         transformer = new SynonymLookupTransformer(col, sc, false, configuration);
+        transformer.replaceInlinedSynonyms = false;
         assertEquals(3, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
         assertEquals("my col (synonyms found)", transformer.getOutputColumns().getColumnName(1));
@@ -128,7 +130,7 @@ public class SynonymLookupTransformerTest {
 
         // with retain original value
         SynonymLookupTransformer transformer = new SynonymLookupTransformer(col, sc, true, configuration);
-        transformer.lookUpEveryToken = true;
+        transformer.replaceInlinedSynonyms = true;
         transformer.replacedSynonymsType = SynonymLookupTransformer.ReplacedSynonymsType.LIST;
         transformer.init();
         assertEquals(3, transformer.getOutputColumns().getColumnCount());
@@ -159,6 +161,7 @@ public class SynonymLookupTransformerTest {
 
         // without retain original value
         transformer = new SynonymLookupTransformer(col, sc, false, configuration);
+        transformer.replaceInlinedSynonyms = false;
         transformer.init();
         assertEquals(3, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));

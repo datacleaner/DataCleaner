@@ -136,8 +136,8 @@ h3 {
 					</li> 					<li class="list-group-item">
 						<h3>
 							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							 Look up every token
-						</h3> <p>Tokenize and look up every token of the input, rather than looking up the complete input string?</p> <!-- type --> <span
+							 Replace inlined synonyms
+						</h3> <p>Replace synonyms that occur as a substring within the complete text? If turned off, only synonyms that match the complete text value will be replaced.</p> <!-- type --> <span
 						class="label label-primary">boolean</span>  
 
 						<!-- required/optional -->  <span
@@ -157,7 +157,7 @@ h3 {
 						<h3>
 							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 							 Retain original value
-						</h3> <p>Retain original value in case no synonym is found (otherwise null)</p> <!-- type --> <span
+						</h3> <p>Retain original value when no synonyms are found. If turned off, <null> will be returned when no synonyms are found.</p> <!-- type --> <span
 						class="label label-primary">boolean</span>  
 
 						<!-- required/optional -->  <span

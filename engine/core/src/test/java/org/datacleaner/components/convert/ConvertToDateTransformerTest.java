@@ -37,11 +37,19 @@ public class ConvertToDateTransformerTest extends TestCase {
     private static final String TEST_TIMEZONE = "CET";
 
     private SimpleDateFormat dateFormat;
+    private TimeZone realTimeZone;
 
+    @Override
     protected void setUp() throws Exception {
+        realTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone(TEST_TIMEZONE));
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
     };
+    
+    @Override
+    protected void tearDown() throws Exception {
+        TimeZone.setDefault(realTimeZone);
+    }
 
     public void testConvertWithNumberOnlyDateMask() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();

@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -88,7 +89,13 @@ public class CustomizeSchedulePanel extends Composite {
     
     @UiField
     CheckBox runOnHadoop; 
+    
+    @UiField
+    RadioButton hotFolderTriggerRadio;
 
+    @UiField
+    TextBox hotFolderTriggerLocation;
+    
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
     private Date serverDate;
@@ -198,6 +205,7 @@ public class CustomizeSchedulePanel extends Composite {
         final String expression = _schedule.getCronExpression();
         final JobIdentifier scheduleAfterJob = _schedule.getDependentJob();
         final String expressionForOneTime = _schedule.getDateForOneTimeSchedule();
+        final String hotFolder = _schedule.getHotFolder();
 
         if (expression != null) {
             periodicTriggerRadio.setValue(true);
@@ -210,6 +218,9 @@ public class CustomizeSchedulePanel extends Composite {
             dependentTriggerRadio.setValue(true);
             dependentTriggerJobListBox.addItem(scheduleAfterJob.getName());
             dependentTriggerJobListBox.setSelectedIndex(0);
+        } else if (hotFolder != null) {
+            hotFolderTriggerRadio.setValue(true);
+            hotFolderTriggerLocation.setValue(hotFolder);
         } else {
             manualTriggerRadio.setValue(true);
         }
@@ -243,13 +254,21 @@ public class CustomizeSchedulePanel extends Composite {
                 }
             }
         });
-        
+
+        hotFolderTriggerLocation.addFocusHandler(new FocusHandler() {
+            
+            @Override
+            public void onFocus(FocusEvent arg0) {
+                hotFolderTriggerRadio.setValue(true);
+            }
+        });
     }
 
     public ScheduleDefinition getUpdatedSchedule() {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
         _schedule.setDateForOneTimeSchedule(null);
+        _schedule.setHotFolder(null);
 
         if (periodicTriggerRadio.getValue()) {
             if (periodicTriggerExpressionTextBox.getText().equals("")) {
@@ -276,6 +295,14 @@ public class CustomizeSchedulePanel extends Composite {
             final int index = dependentTriggerJobListBox.getSelectedIndex();
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
             _schedule.setDependentJob(new JobIdentifier(dependentJobName));
+        }
+        
+        if (hotFolderTriggerRadio.getValue()) {
+            if (hotFolderTriggerLocation.getValue() == null) {
+                throw new DCUserInputException("Please specify a file or folder as hot folder location");
+            } else {
+                _schedule.setHotFolder(hotFolderTriggerLocation.getValue());
+            }
         }
     
          _schedule.setRunOnHadoop(runOnHadoop.getValue());

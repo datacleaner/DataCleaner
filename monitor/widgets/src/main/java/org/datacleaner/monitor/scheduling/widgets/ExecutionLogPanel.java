@@ -146,6 +146,8 @@ public class ExecutionLogPanel extends Composite {
                 case ONETIME:
                 	triggerLabel.setText("Scheduled: OneTime '" + executionLog.getSchedule().getDateForOneTimeSchedule() + "'");
                 	break;
+                case HOTFOLDER:
+                    triggerLabel.setText("Hot folder '" + executionLog.getSchedule().getHotFolder() + "' triggered");
                 }
             }
 

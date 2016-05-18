@@ -157,7 +157,7 @@
 
 .JobHistoryPanel .ExecutionCellList {
 	float: left;
-	width: 20%;
+	width: 25%;
 	overflow: auto;
 }
 
@@ -172,7 +172,7 @@
 }
 
 .JobHistoryPanel .ExecutionLogPanelTarget {
-	width: 70%;
+	width: 65%;
 	float: right;
 	margin-left: 15px;
 }

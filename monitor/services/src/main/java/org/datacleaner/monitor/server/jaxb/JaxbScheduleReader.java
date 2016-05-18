@@ -98,6 +98,8 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
                 scheduleDefinition.setVariableProvider(variableProviderDef);
             }
 
+            scheduleDefinition.setHotFolder(schedule.getHotFolder());
+
             final Boolean runOnHadoop = schedule.isRunOnHadoop();
             if (runOnHadoop != null && runOnHadoop.booleanValue()){
                 scheduleDefinition.setRunOnHadoop(runOnHadoop);

@@ -83,7 +83,7 @@ public final class CliRunner implements Closeable {
      * Alternative constructor that will specifically specifies the output
      * writer. Should be used only for testing, since normally the CliArguments
      * should be used to decide which outputwriter to use
-     * 
+     *
      * @param arguments
      * @param writer
      * @param outputStream
@@ -101,7 +101,7 @@ public final class CliRunner implements Closeable {
                     }
                 };
             } else {
-                if(_arguments.getRunType() == CliRunType.SPARK){
+                if (_arguments.getRunType() == CliRunType.SPARK) {
                     _writerRef = null;
                     _outputStreamRef = null;
                 } else {
@@ -213,7 +213,7 @@ public final class CliRunner implements Closeable {
             System.err.println("Error:");
             e.printStackTrace(System.err);
         } finally {
-            if(configuration != null) {
+            if (configuration != null) {
                 configuration.getEnvironment().getTaskRunner().shutdown();
             }
         }
@@ -353,7 +353,17 @@ public final class CliRunner implements Closeable {
             final AnalysisJobBuilder analysisJobBuilder;
             final InputStream inputStream = jobResource.read();
             try {
-                analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
+                if (_arguments.getDatastoreName() != null) {
+                    final Datastore datastore =
+                            configuration.getDatastoreCatalog().getDatastore(_arguments.getDatastoreName());
+                    if(datastore == null) {
+                        throw new IllegalArgumentException("No such datastore: " + _arguments.getDatastoreName());
+                    }
+                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides,
+                            datastore);
+                } else {
+                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
+                }
             } finally {
                 FileHelper.safeClose(inputStream);
             }

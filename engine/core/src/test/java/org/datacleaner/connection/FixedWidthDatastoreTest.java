@@ -47,7 +47,7 @@ public class FixedWidthDatastoreTest extends TestCase {
 
     public void testGetDatastoreConnection() throws Exception {
         FixedWidthDatastore ds = new FixedWidthDatastore("example datastore",
-                "src/test/resources/employees-fixed-width.txt", "UTF-8", 19, false);
+                "src/test/resources/employees-fixed-width.txt", "UTF-8", 19, false, false, true);
 
         try (DatastoreConnection con = ds.openConnection()) {
             Schema schema = con.getDataContext().getDefaultSchema();

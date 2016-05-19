@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
-import nu.validator.htmlparser.common.XmlViolationPolicy;
-import nu.validator.htmlparser.sax.HtmlParser;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,6 +44,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Splitter;
+
+import nu.validator.htmlparser.common.XmlViolationPolicy;
+import nu.validator.htmlparser.sax.HtmlParser;
 
 public class MainTest extends TestCase {
 
@@ -93,7 +94,7 @@ public class MainTest extends TestCase {
         assertEquals(
                 "-ds (-datastore, --datastore-name) VAL                     : Name of datastore when printing a list of schemas, tables",
                 lines[2].trim());
-        assertEquals("or columns", lines[3].trim());
+        assertEquals("or columns. Overrides datastore used when used with -job", lines[3].trim());
         assertEquals(
                 "-job (--job-file) PATH                                     : Path to an analysis job XML file to execute",
                 lines[4].trim());

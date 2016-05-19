@@ -109,7 +109,7 @@ public class JaxbJobWriterTest extends TestCase {
         try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
             jobBuilder.setDatastore(ds);
             final Table table = jobBuilder.getDatastoreConnection().getDataContext().getDefaultSchema().getTable(0);
-            assertEquals("[foo, bar, baz, ]", Arrays.toString(table.getColumnNames()));
+            assertEquals("[foo, bar, baz, A]", Arrays.toString(table.getColumnNames()));
             assertEquals(4, table.getColumnCount());
             jobBuilder.addSourceColumns(table.getColumns());
 
@@ -125,7 +125,7 @@ public class JaxbJobWriterTest extends TestCase {
         final byte[] bytes = out.toByteArray();
         final String str = new String(bytes);
         assertTrue(str,
-                str.indexOf("<column id=\"col_\" path=\"csv_with_blank_column_name.txt.\" type=\"STRING\"/>") != -1);
+                str.indexOf("<column id=\"col_a\" path=\"A\" type=\"STRING\"/>") != -1);
 
         final AnalysisJob readJob = new JaxbJobReader(conf).read(new ByteArrayInputStream(bytes));
 
@@ -133,7 +133,7 @@ public class JaxbJobWriterTest extends TestCase {
         assertEquals("[MetaModelInputColumn[resources.csv_with_blank_column_name.txt.foo], "
                 + "MetaModelInputColumn[resources.csv_with_blank_column_name.txt.bar], "
                 + "MetaModelInputColumn[resources.csv_with_blank_column_name.txt.baz], "
-                + "MetaModelInputColumn[resources.csv_with_blank_column_name.txt.]]", sourceColumns.toString());
+                + "MetaModelInputColumn[resources.csv_with_blank_column_name.txt.A]]", sourceColumns.toString());
     }
 
     public void testReadAndWriteAnyComponentRequirementJob() throws Exception {

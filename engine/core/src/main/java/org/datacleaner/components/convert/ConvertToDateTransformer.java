@@ -84,8 +84,10 @@ public class ConvertToDateTransformer implements Transformer {
 
     public static ConvertToDateTransformer getInternalInstance() {
         if (internalInstance == null) {
-            internalInstance = new ConvertToDateTransformer();
-            internalInstance.init();
+            // because we are not synchronized, cannot assign to internalInstance directly, to prevent usage of uninitialized instance.
+            ConvertToDateTransformer newInst = new ConvertToDateTransformer();
+            newInst.init();
+            internalInstance = newInst;
         }
         return internalInstance;
     }

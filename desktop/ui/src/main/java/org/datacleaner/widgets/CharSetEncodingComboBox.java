@@ -40,9 +40,10 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 	private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);
 
 	private static final String[] encodings;
+	private static final String EBCDIC_POSTFIX = " (EBCDIC)";
 
 	static {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("UTF-8");
 		list.add("UTF-16");
 		list.add("UTF-16BE");
@@ -54,6 +55,10 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 
 		for (int i = 1250; i <= 1258; i++) {
 			list.add("Windows-" + i);
+		}
+
+		for (int i = 1140; i <= 1149; i++) {
+			list.add("IBM0" + i + EBCDIC_POSTFIX);
 		}
 
 		encodings = list.toArray(new String[list.size()]);
@@ -77,5 +82,10 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		logger.info("CharsetMatch: {} ({}% confidence)", charSet, confidence);
 		setSelectedItem(charSet);
 		return charSet;
+	}
+
+	@Override
+	public String getSelectedItem() {
+		return super.getSelectedItem().replace(EBCDIC_POSTFIX, "");
 	}
 }

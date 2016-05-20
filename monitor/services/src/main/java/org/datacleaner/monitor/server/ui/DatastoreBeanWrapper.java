@@ -23,15 +23,18 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.datacleaner.connection.CompositeDatastore;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.FileDatastore;
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.connection.ResourceDatastore;
-import org.datacleaner.connection.UsernameDatastore;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.connection.CompositeDatastore;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FileDatastore;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.JsonDatastore;
+import org.datacleaner.connection.ResourceDatastore;
+import org.datacleaner.connection.UsernameDatastore;
+import org.datacleaner.util.HadoopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +95,13 @@ public class DatastoreBeanWrapper {
 
     public String getFilename() {
         if (_datastore instanceof FileDatastore) {
-            String filename = ((FileDatastore) _datastore).getFilename();
+            if (_datastore instanceof CsvDatastore || _datastore instanceof JsonDatastore) {
+                final Resource resource = ((ResourceDatastore) _datastore).getResource();
+                if (resource instanceof HadoopResource) {
+                    return resource.getQualifiedPath();
+                }
+            }
+            final String filename = ((FileDatastore) _datastore).getFilename();
             return filename;
         } else {
             return null;

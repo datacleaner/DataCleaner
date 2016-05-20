@@ -82,12 +82,13 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     SynonymCatalog synonymCatalog;
 
     @Configured
-    @Description("Retain original value in case no synonym is found (otherwise null)")
+    @Description("Retain original value when no synonyms are found. If turned off, <null> will be returned when no synonyms are found.")
     boolean retainOriginalValue = true;
 
     @Configured
-    @Description("Tokenize and look up every token of the input, rather than looking up the complete input string?")
-    boolean lookUpEveryToken = false;
+    @Alias("Look up every token")
+    @Description("Replace synonyms that occur as a substring within the complete text? If turned off, only synonyms that match the complete text value will be replaced.")
+    boolean replaceInlinedSynonyms = true;
 
     @Inject
     @Configured
@@ -154,7 +155,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
             return new String[3];
         }
 
-        if (lookUpEveryToken) {
+        if (replaceInlinedSynonyms) {
             final SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(
                     originalValue);
             if (replacedSynonymsType == ReplacedSynonymsType.STRING) {

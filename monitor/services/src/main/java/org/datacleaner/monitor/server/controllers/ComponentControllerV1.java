@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,6 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -143,6 +145,19 @@ public class ComponentControllerV1 {
 
     @Autowired
     ComponentCache _componentCache;
+
+
+    /**
+     * Allow or denied components
+     *
+     * denied - Throw Runtime Exception
+     *
+     * @param componentName
+     * @throws RuntimeException
+     */
+    protected void canCall(String componentName) throws RuntimeException {
+        return;
+    }
 
     /**
      * It returns a list of all components and their configurations.
@@ -237,9 +252,10 @@ public class ComponentControllerV1 {
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
+        canCall(decodedName);
+
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-
         // try to enhance the input in case the client uses simplified input format\
         ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
         inputRewriterController.rewriteStatelessInput(compDesc, processStatelessInput);
@@ -609,6 +625,8 @@ public class ComponentControllerV1 {
         final AtomicInteger errorCode = new AtomicInteger(500);
         if(ex instanceof ComponentValidationException || ex instanceof IllegalArgumentException) {
             errorCode.set(422);
+        } else if(ex instanceof AccessDeniedException) {
+            errorCode.set(HttpServletResponse.SC_FORBIDDEN);
         } else {
             // Using DefaultHandlerExceptionResolver to map standard Spring exception
             // like NoSuchRequestHandlingMethodException (HTTP 404) etc...

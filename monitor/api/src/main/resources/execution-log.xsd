@@ -34,6 +34,7 @@
 			<enumeration value="DEPENDENT" />
 			<enumeration value="MANUAL" />
 			<enumeration value="ONETIME" />
+			<enumeration value="HOTFOLDER" />
 		</restriction>
 	</simpleType>
 

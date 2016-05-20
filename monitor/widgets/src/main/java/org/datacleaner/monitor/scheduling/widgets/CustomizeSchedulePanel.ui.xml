@@ -44,9 +44,9 @@
 			</p>
 			<p>
 				Either you can select to only allow
-				<i>manuel triggering</i>
+				<i>manual triggering</i>
 				of the job. In that case your job will not be automatically invoked,
-				but you can invoke it manually using this web application, ur using
+				but you can invoke it manually using this web application, or using
 				a web service invocation.
 			</p>
 		</div>
@@ -91,6 +91,14 @@
 					<g:ListBox ui:field="dependentTriggerJobListBox" styleName="form-control" />
 				</div>
 			</div>
+			<div class="triggerPanel">
+				<g:RadioButton ui:field="hotFolderTriggerRadio" text="Hot Folder trigger"
+					name="triggerTypeRadio" />
+				<div class="configurationPanel">
+					<p>Please provide a folder or file on which a change will trigger a run of this job:</p>
+					<g:TextBox ui:field="hotFolderTriggerLocation" styleName="form-control" />
+				</div>
+			</div>
 			</div>
 			<div class="triggerPanel">
 				<g:RadioButton ui:field="manualTriggerRadio" text="Manual trigger"
@@ -101,7 +109,7 @@
 				</div>
 			</div>
 			
-				<div class="triggerPanel">
+			<div class="triggerPanel">
 				<g:CheckBox ui:field="runOnHadoop" text="Run on Hadoop cluster"
 					name="runOnHadoop" />
 				

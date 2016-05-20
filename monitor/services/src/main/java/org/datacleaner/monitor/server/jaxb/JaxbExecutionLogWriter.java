@@ -72,6 +72,8 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.datacleaner.
             return TriggerType.MANUAL;
         case ONETIME :
         	return TriggerType.ONETIME; 
+        case HOTFOLDER:
+            return TriggerType.HOTFOLDER; 
         default:
             throw new UnsupportedOperationException("Unknown trigger type: " + triggerType);
         }

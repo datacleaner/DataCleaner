@@ -181,6 +181,10 @@ public class SchedulePanel extends Composite {
         case ONETIME :
         	scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
         	scheduleAnchor.removeStyleName("discrete");
+        	break;
+        case HOTFOLDER:
+            scheduleAnchor.setText(_schedule.getHotFolder());
+            scheduleAnchor.removeStyleName("discrete");
         }
     }
 

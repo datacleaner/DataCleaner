@@ -19,16 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.util.CsvConfigurationDetection;
-import org.apache.metamodel.csv.CsvConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +40,10 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
     private static final Logger logger = LoggerFactory.getLogger(CsvConfigurationWizardPage.class);
 
-    private final File _file;
+    private final Resource _resource;
 
-    public CsvConfigurationWizardPage(File file) {
-        _file = file;
+    public CsvConfigurationWizardPage(Resource resource) {
+        _resource = resource;
     }
 
     @Override
@@ -57,22 +57,23 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
     }
 
     protected Map<String, Object> getFormModel() {
-        final CsvConfiguration detectedConfiguration = autoDetectConfiguration(_file);
+        final CsvConfiguration detectedConfiguration = autoDetectConfiguration(_resource);
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("separator", detectedConfiguration.getSeparatorChar());
         map.put("quote", detectedConfiguration.getQuoteChar());
         map.put("escape", detectedConfiguration.getEscapeChar());
         map.put("headerLineNumber", detectedConfiguration.getColumnNameLineNumber());
         map.put("encoding", detectedConfiguration.getEncoding());
+        map.put("multilinesValues", detectedConfiguration.isMultilineValues());
         return map;
     };
 
-    private CsvConfiguration autoDetectConfiguration(File file) {
+    private CsvConfiguration autoDetectConfiguration(Resource resource) {
         try {
-            final CsvConfigurationDetection detection = new CsvConfigurationDetection(file);
+            final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
             return detection.suggestCsvConfiguration();
         } catch (Exception e) {
-            logger.warn("Failed to detect CSV configuration for file: " + file, e);
+            logger.warn("Failed to detect CSV configuration for file: " + resource, e);
             return new CsvConfiguration();
         }
     }
@@ -94,9 +95,9 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
         }
 
         final String encoding = getString(formParameters, "encoding");
-
+        final boolean multilines = getBoolean(formParameters, "multilinesValues");
         final CsvConfiguration configuration = new CsvConfiguration(headerLineNumber, encoding, separator, quote,
-                escape, true);
+                escape, true, multilines);
 
         return nextPageController(configuration);
     }

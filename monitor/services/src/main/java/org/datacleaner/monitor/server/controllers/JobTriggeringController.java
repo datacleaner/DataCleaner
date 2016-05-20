@@ -33,7 +33,9 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -49,19 +51,35 @@ public class JobTriggeringController {
     @Autowired
     SchedulingService _schedulingService;
 
-    @RequestMapping(produces = "application/json")
+    @RequestMapping(method = { RequestMethod.DELETE, RequestMethod.GET, RequestMethod.HEAD, RequestMethod.OPTIONS,
+            RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.TRACE }, produces = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis) throws Throwable {
+        return invokeJob(tenant, jobName, block, timeoutMillis, null);
+    }
 
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestBody final JobTriggerConfiguration configuration)
+            throws Throwable {
+        return invokeJob(tenant, jobName, configuration.getBlock(), configuration.getTimeoutMillis(), configuration
+                .getOverridePropertiesFilePath());
+    }
+
+    private Map<String, String> invokeJob(final String tenant, String jobName, Boolean block, Integer timeoutMillis,
+            String overridePropertiesFilePath) throws InterruptedException {
         final boolean blocking = block != null && block.booleanValue();
 
         jobName = jobName.replaceAll("\\+", " ");
 
         TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
-        ExecutionLog executionLog = _schedulingService.triggerExecution(tenantIdentifier, new JobIdentifier(jobName));
+        ExecutionLog executionLog = _schedulingService.triggerExecution(tenantIdentifier, new JobIdentifier(jobName),
+                overridePropertiesFilePath);
 
         if (blocking) {
             int millisWaited = 0;

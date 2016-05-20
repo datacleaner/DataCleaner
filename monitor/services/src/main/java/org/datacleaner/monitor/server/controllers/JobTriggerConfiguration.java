@@ -17,29 +17,34 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.controllers;
 
-import java.util.List;
-import java.util.Map;
+public class JobTriggerConfiguration {
+    private Boolean _block;
+    private Integer _timeoutMillis;
+    private String _overridePropertiesFilePath;
 
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.monitor.job.JobContext;
-import org.datacleaner.monitor.job.MetricJobContext;
-import org.datacleaner.monitor.job.XmlJobContext;
+    public Boolean getBlock() {
+        return _block;
+    }
 
-/**
- * Specialized {@link JobContext} for jobs that are typical DataCleaner
- * {@link AnalysisJob}s
- */
-public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
+    public void setBlock(Boolean block) {
+        _block = block;
+    }
 
-    public String getSourceDatastoreName();
+    public Integer getTimeoutMillis() {
+        return _timeoutMillis;
+    }
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+    public void setTimeoutMillis(Integer timeoutMillis) {
+        _timeoutMillis = timeoutMillis;
+    }
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, String overridePropertiesFilePath);
+    public String getOverridePropertiesFilePath() {
+        return _overridePropertiesFilePath;
+    }
 
-    public AnalysisJob getAnalysisJob();
-
-    public List<String> getSourceColumnPaths();
+    public void setOverridePropertiesFilePath(String overridePropertiesFilePath) {
+        _overridePropertiesFilePath = overridePropertiesFilePath;
+    }
 }

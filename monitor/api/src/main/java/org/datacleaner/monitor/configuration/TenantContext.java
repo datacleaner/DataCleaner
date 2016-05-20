@@ -143,6 +143,14 @@ public interface TenantContext {
     public DataCleanerConfiguration getConfiguration();
 
     /**
+     * Gets/loads the {@link DataCleanerConfiguration} for this tenant and
+     * replaces the properties in the overridePropertiesFilePath in it.
+     * 
+     * @return
+     */
+    public DataCleanerConfiguration getConfiguration(String overridePropertiesFilePath);
+
+    /**
      * Determines if a particular job exists or not.
      * 
      * @param jobName

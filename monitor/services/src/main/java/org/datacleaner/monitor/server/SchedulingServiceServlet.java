@@ -98,6 +98,12 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            String overridePropertiesFilePath) {
+        return _delegate.triggerExecution(tenant, job, overridePropertiesFilePath);
+    }
+
+    @Override
     public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
             throws DCSecurityException {
         return _delegate.getDependentJobCandidates(tenant, schedule);

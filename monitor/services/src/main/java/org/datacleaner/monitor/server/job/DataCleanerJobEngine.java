@@ -161,11 +161,12 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             throw new IllegalStateException("No such job: " + execution.getJob());
         }
 
-        preLoadJob(tenantContext, job);
+        final String overridePropertiesFilePath = execution.getSchedule().getOverridePropertiesFilePath();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration(overridePropertiesFilePath);
 
-        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        preLoadJob(configuration, job);
 
-        final AnalysisJob analysisJob = job.getAnalysisJob(variables);
+        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overridePropertiesFilePath);
 
         if (execution.getSchedule().isRunOnHadoop()) {
             runJobOnHadoop(configuration, execution, analysisJob, tenantContext, analysisListener, executionLogger,
@@ -370,10 +371,10 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * 
      * @throws FileNotFoundException
      */
-    private void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException,
+    private void preLoadJob(DataCleanerConfiguration configuration, DataCleanerJobContext job) throws FileNotFoundException,
             ResourceException {
         final String sourceDatastoreName = job.getSourceDatastoreName();
-        final Datastore datastore = context.getConfiguration().getDatastoreCatalog().getDatastore(sourceDatastoreName);
+        final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(sourceDatastoreName);
 
         if (datastore instanceof ResourceDatastore) {
             Resource resource = ((ResourceDatastore) datastore).getResource();

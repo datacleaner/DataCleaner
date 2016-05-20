@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -146,6 +147,14 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     @Override
     public DataCleanerConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
+    }
+    
+    @Override
+    public DataCleanerConfiguration getConfiguration(final String overridePropertiesFilePath) {
+        if (overridePropertiesFilePath == null || "".equals(overridePropertiesFilePath)) {
+            return getConfiguration();
+        }
+        return _configurationCache.getAnalyzerBeansConfiguration(new FileResource(overridePropertiesFilePath));
     }
 
     @Override

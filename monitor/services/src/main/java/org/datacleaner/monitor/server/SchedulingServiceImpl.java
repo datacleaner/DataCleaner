@@ -273,6 +273,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
+        return getSchedule(tenant, jobIdentifier, null);
+    }
+
+    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final String overridePropertiesFilePath) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -308,6 +313,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         schedule.setJobMetadataProperties(jobMetadataProperties);
+        schedule.setOverridePropertiesFilePath(overridePropertiesFilePath);
 
         return schedule;
     }
@@ -521,12 +527,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
-        return triggerExecution(tenant, job, TriggerType.MANUAL);
+        return triggerExecution(tenant, job, null);
     }
 
-    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job, final TriggerType manual) {
+    @Override
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            String overridePropertiesFilePath) {
+        return triggerExecution(tenant, job, overridePropertiesFilePath, TriggerType.MANUAL);
+    }
+
+    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            String overridePropertiesFilePath, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
-        final ScheduleDefinition schedule = getSchedule(tenant, job);
+
+        final ScheduleDefinition schedule = getSchedule(tenant, job, overridePropertiesFilePath);
+
         final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());
 
@@ -739,7 +754,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
+            triggerExecution(tenant, job, null, TriggerType.HOTFOLDER);
         }
 
         @Override
@@ -747,7 +762,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
+            triggerExecution(tenant, job, null, TriggerType.HOTFOLDER);
         }
     }
 }

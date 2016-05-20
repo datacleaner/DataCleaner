@@ -146,19 +146,6 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		onSettingsUpdated(true);
 	}
 
-	private List<JXTextField> createDebugValue() {
-		int[] widths = new int[] { 2, 1, 8, 3, 105, 70, 35, 4, 92, 3, 35, 35, 35, 35, 105, 70, 35, 105, 70 };
-		List<JXTextField> list = new ArrayList<>();
-
-		for (int w : widths) {
-			JXTextField field = new JXTextField();
-			field.setText("" + w);
-			list.add(field);
-		}
-
-		return list;
-	}
-
 	private void onSettingsUpdated(boolean autoDetectEncoding) {
 		if (!validateForm()) {
 			return;
@@ -172,21 +159,11 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 		final String charSet;
 		if (autoDetectEncoding) {
-			if (_datastoreNameTextField.getText().toLowerCase().contains(".ebc")) {// mytodo
-				charSet = "IBM500";
-				showPreview = false;
-				_encodingComboBox.setSelectedItem(charSet);
-				_headerPresentCheckBox.setSelected(true);
-				_eolPresentCheckBox.setSelected(false);
-				_valueWidthTextFields.clear();
-				_valueWidthTextFields.addAll(createDebugValue());
-				_headerLineComboBox.setSelectedItem(0);
-			} else {
-				charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
-			}
+			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
 		} else {
-			charSet = _encodingComboBox.getSelectedItem();
+			charSet = _encodingComboBox.getSelectedItem().toString();
 		}
+
 		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
 		int lineLength = StringUtils.indexOf('\n', sampleChars);

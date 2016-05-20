@@ -49,7 +49,6 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		list.add("UTF-16BE");
 		list.add("UTF-16LE");
 		list.add("ASCII");
-		list.add("IBM500"); // EBCDIC500
 
 		for (int i = 1; i <= 16; i++) {
 			list.add("ISO-8859-" + i);

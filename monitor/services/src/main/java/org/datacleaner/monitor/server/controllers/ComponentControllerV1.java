@@ -252,12 +252,12 @@ public class ComponentControllerV1 {
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
-        canCall(decodedName);
 
         logger.debug("One-shot processing '{}'", decodedName);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         // try to enhance the input in case the client uses simplified input format\
         ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
+        canCall(compDesc.getDisplayName());
         inputRewriterController.rewriteStatelessInput(compDesc, processStatelessInput);
 
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
@@ -310,6 +310,8 @@ public class ComponentControllerV1 {
             @RequestBody final CreateInput createInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentDescriptor<?> compDesc = componentHandlerFactory.resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), decodedName);
+        canCall(compDesc.getDisplayName());
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
         _componentCache.put(tenant, tenantContext, new ComponentStoreHolder(longTimeout, createInput, id, decodedName));

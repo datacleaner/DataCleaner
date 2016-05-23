@@ -128,7 +128,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	private JCheckBox createCheckBox(String label, boolean selected) {
-		JCheckBox checkBox = new JCheckBox(label, selected);
+		final JCheckBox checkBox = new JCheckBox(label, selected);
 		checkBox.setOpaque(false);
 		checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
@@ -193,10 +193,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		final File file = new File(getFilename());
 		final int bufferSize = getBufferSize();
 		byte[] bytes = new byte[bufferSize];
-		FileInputStream fileInputStream = null;
 
-		try {
-			fileInputStream = new FileInputStream(file);
+		try (final FileInputStream fileInputStream = new FileInputStream(file)) {
 			int startPosition = getStartPosition();
 			fileInputStream.skip(startPosition);
 			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
@@ -209,8 +207,6 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		} catch (IOException e) {
 			logger.error("IOException occurred while reading sample buffer", e);
 			return new byte[0];
-		} finally {
-			FileHelper.safeClose(fileInputStream);
 		}
 	}
 

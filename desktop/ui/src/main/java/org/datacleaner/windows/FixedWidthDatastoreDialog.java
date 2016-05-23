@@ -227,7 +227,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 					final int columnWidth = Integer.parseInt(textField.getText());
 					length += columnWidth;
 				} catch (NumberFormatException e) {
-					// silently ignored
+					throw new IllegalStateException("Value width must be a valid number.");
 				}
 			}
 		}
@@ -359,20 +359,28 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	private int[] getValueWidths(boolean failOnMissingValue) {
-		int[] valueWidths = new int[_valueWidthTextFields.size()];
-		for (int i = 0; i < valueWidths.length; i++) {
-			String text = _valueWidthTextFields.get(i).getText();
-			if (StringUtils.isNullOrEmpty(text)) {
-				if (failOnMissingValue) {
-					throw new IllegalStateException("Please fill out all column widths");
-				} else {
-					text = "0";
-				}
-			}
-			valueWidths[i] = Integer.parseInt(text);
-		}
-		return valueWidths;
-	}
+        int[] valueWidths = new int[_valueWidthTextFields.size()];
+
+        try {
+            for (int i = 0; i < valueWidths.length; i++) {
+                String text = _valueWidthTextFields.get(i).getText();
+
+                if (StringUtils.isNullOrEmpty(text)) {
+                    if (failOnMissingValue) {
+                        throw new IllegalStateException("Please fill out all column widths.");
+                    } else {
+                        text = "0";
+                    }
+                }
+
+                valueWidths[i] = Integer.parseInt(text);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Please specify all column widths as numbers. ");
+        }
+
+        return valueWidths;
+    }
 
 	@Override
 	protected String getDatastoreIconPath() {

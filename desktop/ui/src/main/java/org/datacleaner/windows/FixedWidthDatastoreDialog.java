@@ -22,7 +22,10 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -34,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
@@ -161,16 +165,15 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		if (autoDetectEncoding) {
 			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
 		} else {
-			charSet = _encodingComboBox.getSelectedItem().toString();
+			charSet = _encodingComboBox.getSelectedItem();
 		}
 
 		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
 		int lineLength = StringUtils.indexOf('\n', sampleChars);
-		if (lineLength == -1) {
+		if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
 			setStatusWarning("No newline in first " + sampleChars.length + " chars");
-			// don't show the preview if no newlines where found (it may try
-			// to treat the whole file as a single row)
+			// don't show the preview if no newlines where found (it may try to treat the whole file as a single row)
 			showPreview = false;
 		} else {
 			int[] valueWidths = getValueWidths(false);
@@ -186,8 +189,60 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
+	protected byte[] getSampleBuffer() {
+		final File file = new File(getFilename());
+		final int bufferSize = getBufferSize();
+		byte[] bytes = new byte[bufferSize];
+		FileInputStream fileInputStream = null;
+
+		try {
+			fileInputStream = new FileInputStream(file);
+			int startPosition = getStartPosition();
+			fileInputStream.skip(startPosition);
+			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
+
+			if (bytesRead != -1 && bytesRead <= bufferSize) {
+				bytes = Arrays.copyOf(bytes, bytesRead);
+			}
+
+			return bytes;
+		} catch (IOException e) {
+			logger.error("IOException occurred while reading sample buffer", e);
+			return new byte[0];
+		} finally {
+			FileHelper.safeClose(fileInputStream);
+		}
+	}
+
+	private int getStartPosition() {
+		return _headerPresentCheckBox.isSelected() ? getRecordDataLength() : 0;
+	}
+
+	private int getBufferSize() {
+		return _eolPresentCheckBox.isSelected() ? SAMPLE_BUFFER_SIZE : getRecordDataLength();
+	}
+
+	private int getRecordDataLength() {
+		int length = 0;
+
+		if (_valueWidthTextFields != null && _valueWidthTextFields.size() > 0) {
+			for (JXTextField textField : _valueWidthTextFields) {
+				try {
+					final int columnWidth = Integer.parseInt(textField.getText());
+					length += columnWidth;
+				} catch (NumberFormatException e) {
+					// silently ignored
+				}
+			}
+		}
+
+		return length;
+	}
+
+	@Override
 	protected FixedWidthDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false, false, true);
+		return createDatastore("Preview", filename, false, _headerPresentCheckBox.isSelected(),
+				_eolPresentCheckBox.isSelected());
 	}
 
 	@Override

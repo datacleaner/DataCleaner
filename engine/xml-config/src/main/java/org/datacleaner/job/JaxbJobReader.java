@@ -344,6 +344,13 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return create(unmarshallJob(inputStream), null, variableOverrides);
     }
 
+    public AnalysisJobBuilder create(InputStream inputStream, Map<String, String> variableOverrides, Datastore datastore) {
+        final JobType jobType = unmarshallJob(inputStream);
+        SourceColumnMapping sourceColumnMapping = new SourceColumnMapping(readMetadata(jobType));
+        sourceColumnMapping.autoMap(datastore);
+        return create(jobType, sourceColumnMapping, variableOverrides);
+    }
+
     private JobType unmarshallJob(InputStream inputStream) {
         try {
             Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();

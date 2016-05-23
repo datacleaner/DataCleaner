@@ -36,6 +36,7 @@ import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
@@ -235,6 +236,19 @@ public class DomConfigurationWriterTest {
                 .append("</datahub-datastore>\n");//
 
         assertEquals(expectedConfiguration.toString(), transform(externalized));
+    }
+    
+    @Test
+    public void testExternalizeJsonDatastore() throws Exception {
+        final JsonDatastore jsonDatastore = new JsonDatastore("my Json", new FileResource("c:/test/json.json")); 
+        jsonDatastore.setDescription("My Json datastore");
+        final Element elem = configurationWriter.toElement(jsonDatastore, "json.json");
+
+        final String str = transform(elem);
+        assertEquals("<json-datastore description=\"My Json datastore\" name=\"my Json\">\n" + 
+                "  <filename>json.json</filename>\n" + 
+                "</json-datastore>\n", str); 
+        
     }
 
     @Test

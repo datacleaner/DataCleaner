@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.configuration;
 
 import java.util.List;
+import java.util.Map;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -144,11 +145,11 @@ public interface TenantContext {
 
     /**
      * Gets/loads the {@link DataCleanerConfiguration} for this tenant and
-     * replaces the properties in the overridePropertiesFilePath in it.
+     * replaces the properties in the overrideProperties in it.
      * 
      * @return
      */
-    public DataCleanerConfiguration getConfiguration(String overridePropertiesFilePath);
+    public DataCleanerConfiguration getConfiguration(Map<String, String> overrideProperties);
 
     /**
      * Determines if a particular job exists or not.

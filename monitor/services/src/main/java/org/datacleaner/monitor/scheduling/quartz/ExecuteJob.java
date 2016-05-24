@@ -161,7 +161,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             }
 
             final DataCleanerConfiguration configuration = context.getConfiguration(execution.getSchedule()
-                    .getOverridePropertiesFilePath());           
+                    .getOverrideProperties());           
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);

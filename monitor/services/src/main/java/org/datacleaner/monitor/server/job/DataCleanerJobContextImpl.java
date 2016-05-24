@@ -92,8 +92,8 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     }
     
     @Override
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, String overridePropertiesFilePath) {
-        if ((variableOverrides == null || variableOverrides.isEmpty()) && overridePropertiesFilePath == null) {
+    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties) {
+        if ((variableOverrides == null || variableOverrides.isEmpty()) && overrideProperties == null) {
             // cached job definition may be used, if not outdated
             final long configurationLastModified = _tenantContext.getConfigurationFile().getLastModified();
             long lastModified = Math.max(_file.getLastModified(), configurationLastModified);
@@ -112,7 +112,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
             return _job;
         }
 
-        final DataCleanerConfiguration configuration = _tenantContext.getConfiguration(overridePropertiesFilePath);
+        final DataCleanerConfiguration configuration = _tenantContext.getConfiguration(overrideProperties);
         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
         final AnalysisJob job = reader.readJob(variableOverrides);
         _sourceDatastoreName = job.getDatastore().getName();

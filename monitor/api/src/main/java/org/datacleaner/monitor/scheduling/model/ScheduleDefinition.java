@@ -45,7 +45,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 	private Map<String,String> _jobMetadataProperties;
     private boolean _runOnHadoop;
     private String _hotFolder;
-    private String _overridePropertiesFilePath;
+    private Map<String, String> _overrideProperties;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -171,12 +171,12 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         _hotFolder = hotFolder;
     }
 
-    public String getOverridePropertiesFilePath() {
-        return _overridePropertiesFilePath;
+    public Map<String, String> getOverrideProperties() {
+        return _overrideProperties;
     }
 
-    public void setOverridePropertiesFilePath(String overridePropertiesFilePath) {
-        _overridePropertiesFilePath = overridePropertiesFilePath;
+    public void setOverrideProperties(Map<String, String> overrideProperties) {
+        _overrideProperties = overrideProperties;
     }
 
     @Override

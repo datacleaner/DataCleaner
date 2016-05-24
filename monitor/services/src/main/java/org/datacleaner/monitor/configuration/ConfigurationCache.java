@@ -20,9 +20,9 @@
 package org.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -92,7 +92,7 @@ final class ConfigurationCache {
             synchronized (this) {
                 lastModified = _file.getLastModified();
                 if (_configuration == null || lastModified != _lastModifiedCache) {
-                    DataCleanerConfiguration readConfiguration = readConfiguration(null);
+                    DataCleanerConfiguration readConfiguration = readConfiguration();
                     DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
                     _configuration = decoratedConfiguration;
                 }
@@ -101,20 +101,18 @@ final class ConfigurationCache {
         return _configuration;
     }
 
-    public DataCleanerConfiguration getAnalyzerBeansConfiguration(Resource overrideProperties) {
-        DataCleanerConfiguration readConfiguration = readConfiguration(overrideProperties);
-        DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
-        return decoratedConfiguration;
-    }
-
     protected DataCleanerConfiguration decorateConfiguration(DataCleanerConfiguration conf) {
         // set the injection manager factory on the configuration
         return conf;
     }
 
-    protected DataCleanerConfiguration readConfiguration(Resource propertiesResource) {
+    protected DataCleanerConfiguration readConfiguration() {
+        return readConfiguration(null);
+    }
+    
+    DataCleanerConfiguration readConfiguration(Map<String, String> overrideProperties) {
         final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository,
-                _tenantContext, propertiesResource, _injectionManagerFactory);
+                _tenantContext, overrideProperties, _injectionManagerFactory);
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();

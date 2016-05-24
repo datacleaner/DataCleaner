@@ -37,7 +37,7 @@ public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
 
     public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, String overridePropertiesFilePath);
+    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties);
 
     public AnalysisJob getAnalysisJob();
 

@@ -21,8 +21,8 @@ package org.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -59,8 +59,8 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
-            Resource propertiesResource, InjectionManagerFactory injectionManagerFactory) {
-        super(propertiesResource, createBaseEnvironment(injectionManagerFactory));
+            Map<String, String> propertyOverrides, InjectionManagerFactory injectionManagerFactory) {
+        super(propertyOverrides, createBaseEnvironment(injectionManagerFactory));
         _repository = repository;
         _tenantContext = tenantContext;
     }

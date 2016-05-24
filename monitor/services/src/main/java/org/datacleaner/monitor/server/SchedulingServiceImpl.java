@@ -277,7 +277,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
-            final String overridePropertiesFilePath) {
+            final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -313,7 +313,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         schedule.setJobMetadataProperties(jobMetadataProperties);
-        schedule.setOverridePropertiesFilePath(overridePropertiesFilePath);
+        schedule.setOverrideProperties(overrideProperties);
 
         return schedule;
     }
@@ -532,15 +532,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            String overridePropertiesFilePath) {
-        return triggerExecution(tenant, job, overridePropertiesFilePath, TriggerType.MANUAL);
+            Map<String, String> overrideProperties) {
+        return triggerExecution(tenant, job, overrideProperties, TriggerType.MANUAL);
     }
 
     private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            String overridePropertiesFilePath, final TriggerType manual) {
+            Map<String, String> overrideProperties, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
 
-        final ScheduleDefinition schedule = getSchedule(tenant, job, overridePropertiesFilePath);
+        final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
 
         final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());

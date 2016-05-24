@@ -161,12 +161,12 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             throw new IllegalStateException("No such job: " + execution.getJob());
         }
 
-        final String overridePropertiesFilePath = execution.getSchedule().getOverridePropertiesFilePath();
-        final DataCleanerConfiguration configuration = tenantContext.getConfiguration(overridePropertiesFilePath);
+        final Map<String, String> overrideProperties = execution.getSchedule().getOverrideProperties();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration(overrideProperties);
 
         preLoadJob(configuration, job);
 
-        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overridePropertiesFilePath);
+        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overrideProperties);
 
         if (execution.getSchedule().isRunOnHadoop()) {
             runJobOnHadoop(configuration, execution, analysisJob, tenantContext, analysisListener, executionLogger,

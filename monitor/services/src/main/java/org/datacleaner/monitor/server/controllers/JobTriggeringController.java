@@ -21,6 +21,7 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -31,13 +32,16 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.common.collect.Maps;
 
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job:.+}.trigger")
@@ -61,25 +65,27 @@ public class JobTriggeringController {
         return invokeJob(tenant, jobName, block, timeoutMillis, null);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json", 
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestBody final JobTriggerConfiguration configuration)
-            throws Throwable {
-        return invokeJob(tenant, jobName, configuration.getBlock(), configuration.getTimeoutMillis(), configuration
-                .getOverridePropertiesFilePath());
-    }
-
-    private Map<String, String> invokeJob(final String tenant, String jobName, Boolean block, Integer timeoutMillis,
-            String overridePropertiesFilePath) throws InterruptedException {
+            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
+            @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis,
+            @RequestParam(value = "overrideProperties") final MultipartFile overrideProperties) throws Throwable {
         final boolean blocking = block != null && block.booleanValue();
 
         jobName = jobName.replaceAll("\\+", " ");
 
         TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
+
+        Properties properties = new Properties();
+        if (overrideProperties != null && !overrideProperties.isEmpty()) {
+            properties.load(overrideProperties.getInputStream());
+        }
+
         ExecutionLog executionLog = _schedulingService.triggerExecution(tenantIdentifier, new JobIdentifier(jobName),
-                overridePropertiesFilePath);
+                Maps.fromProperties(properties));
 
         if (blocking) {
             int millisWaited = 0;

@@ -22,10 +22,10 @@ package org.datacleaner.monitor.configuration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.metamodel.util.FileResource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -150,11 +150,11 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
     
     @Override
-    public DataCleanerConfiguration getConfiguration(final String overridePropertiesFilePath) {
-        if (overridePropertiesFilePath == null || "".equals(overridePropertiesFilePath)) {
+    public DataCleanerConfiguration getConfiguration(final Map<String, String> overrideProperties) {
+        if (overrideProperties == null) {
             return getConfiguration();
         }
-        return _configurationCache.getAnalyzerBeansConfiguration(new FileResource(overridePropertiesFilePath));
+        return _configurationCache.readConfiguration(overrideProperties);
     }
 
     @Override

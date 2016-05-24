@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.scheduling;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -55,7 +56,7 @@ public interface SchedulingService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            String overridePropertiesFilePath) throws DCSecurityException;
+            Map<String, String> overrideProperties) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException;

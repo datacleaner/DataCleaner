@@ -50,6 +50,7 @@ import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
@@ -80,6 +81,7 @@ import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
+import org.datacleaner.windows.JsonDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.Neo4jDatastoreDialog;
 import org.datacleaner.windows.OdbDatastoreDialog;
@@ -401,6 +403,16 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
                             _datastoreCatalog, _windowContext, _userPreferences);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof JsonDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final Injector injector = getInjectorBuilder().with(JsonDatastore.class, datastore)
+                            .createInjector();
+                    final JsonDatastoreDialog dialog = injector.getInstance(JsonDatastoreDialog.class);
                     dialog.open();
                 }
             });

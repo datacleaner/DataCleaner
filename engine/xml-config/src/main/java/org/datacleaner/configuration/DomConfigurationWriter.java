@@ -37,6 +37,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.reference.DatastoreDictionary;
@@ -169,6 +170,10 @@ public class DomConfigurationWriter {
 
         if (datastore instanceof DataHubDatastore) {
             return true;
+        }
+        
+        if (datastore instanceof JsonDatastore){
+            return true; 
         }
 
         return false;
@@ -331,6 +336,10 @@ public class DomConfigurationWriter {
             elem = toElement((SalesforceDatastore) datastore);
         } else if (datastore instanceof DataHubDatastore) {
             elem = toElement((DataHubDatastore) datastore);
+        } else if (datastore instanceof JsonDatastore) {
+            final Resource resource = ((JsonDatastore) datastore).getResource();
+            final String filename = toFilename(resource);
+            elem = toElement((JsonDatastore) datastore, filename);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -817,6 +826,23 @@ public class DomConfigurationWriter {
         appendElement(datastoreElement, "header-line-number", datastore.getHeaderLineNumber());
 
         return datastoreElement;
+    }
+    /**
+     * Extrnalizes a Json datastore
+     * @param datastore
+     * @param filename
+     * @return
+     */
+    public Element toElement(JsonDatastore datastore, String filename){
+        final Element datastoreElement = getDocument().createElement("json-datastore"); 
+        datastoreElement.setAttribute("name", datastore.getName());
+        final String description = datastore.getDescription();
+        if (!Strings.isNullOrEmpty(description)) {
+            datastoreElement.setAttribute("description", description);
+        }
+        appendElement(datastoreElement, "filename", filename);
+        
+        return datastoreElement; 
     }
 
     /**

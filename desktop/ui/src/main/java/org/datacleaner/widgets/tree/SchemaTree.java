@@ -319,13 +319,13 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                     for (ComponentCategory category : descriptor.getComponentCategories()) {
                         if (categoryTreeNodes.containsKey(category)) {
                             placedInSubmenu = true;
-                            final DefaultMutableTreeNode treeNode = new SortedDefaultMutableTreeModel(descriptor);
+                            final DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(descriptor);
                             categoryTreeNodes.get(category).add(treeNode);
                         }
                     }
 
                     if (!placedInSubmenu) {
-                        superCategoryNode.add(new SortedDefaultMutableTreeModel(descriptor));
+                        superCategoryNode.add(new DefaultMutableTreeNode(descriptor));
                     }
                 }
             };

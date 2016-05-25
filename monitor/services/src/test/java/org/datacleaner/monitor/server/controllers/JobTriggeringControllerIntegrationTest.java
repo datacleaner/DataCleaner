@@ -75,8 +75,8 @@ public class JobTriggeringControllerIntegrationTest {
         final String propertiesFileName = repositoryName + "/" + tenantName + "/override.properties";
         final InputStream overrideProperties = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
 
-        jobTriggeringController.invokeJob(tenantName, jobName, null, null, new MockMultipartFile(propertiesFileName,
-                overrideProperties));
+        jobTriggeringController.handleMultipartFormData(tenantName, jobName, null, null, new MockMultipartFile(
+                propertiesFileName, overrideProperties));
 
         // Spend a maximum of 10 seconds waiting for the execution to finish.
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenantName);

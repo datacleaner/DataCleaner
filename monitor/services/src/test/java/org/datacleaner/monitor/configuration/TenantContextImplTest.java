@@ -19,16 +19,20 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import junit.framework.TestCase;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
+
+import junit.framework.TestCase;
 
 public class TenantContextImplTest extends TestCase {
 
@@ -67,5 +71,16 @@ public class TenantContextImplTest extends TestCase {
     public void testGetConfiguration() throws Exception {
         DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         assertNotNull(configuration);
+    }
+    
+    public void testConfigurationWithOverrideProperties() throws Exception {
+        final String overrideFilename = "foo2/bar2.csv";
+        final String datastoreName = "SomeCSV";
+
+        final Map<String, String> overrideProperties = new HashMap<>();
+        overrideProperties.put("datastoreCatalog." + datastoreName + ".filename", overrideFilename);
+
+        assertEquals(overrideFilename, ((CsvDatastore) tenantContext.getConfiguration(overrideProperties)
+                .getDatastoreCatalog().getDatastore(datastoreName)).getFilename());
     }
 }

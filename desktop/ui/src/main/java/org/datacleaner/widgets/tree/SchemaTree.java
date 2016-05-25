@@ -28,6 +28,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -306,7 +308,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             MenuCallback menuCallback = new MenuCallback() {
                 @Override
                 public void addCategory(ComponentCategory category) {
-                    final DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(category);
+                    final DefaultMutableTreeNode treeNode = new SortedDefaultMutableTreeModel(category);
                     categoryTreeNodes.put(category, treeNode);
                     superCategoryNode.add(treeNode);
                 }
@@ -317,17 +319,24 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                     for (ComponentCategory category : descriptor.getComponentCategories()) {
                         if (categoryTreeNodes.containsKey(category)) {
                             placedInSubmenu = true;
-                            final DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(descriptor);
+                            final DefaultMutableTreeNode treeNode = new SortedDefaultMutableTreeModel(descriptor);
                             categoryTreeNodes.get(category).add(treeNode);
                         }
                     }
 
                     if (!placedInSubmenu) {
-                        superCategoryNode.add(new DefaultMutableTreeNode(descriptor));
+                        superCategoryNode.add(new SortedDefaultMutableTreeModel(descriptor));
                     }
                 }
             };
 
+            final Comparator<ComponentDescriptor<?>> comparatorDescriptor = new Comparator<ComponentDescriptor<?>>() {
+                public int compare(ComponentDescriptor<?> o1, ComponentDescriptor<?> o2) {
+                     return o1.getDisplayName().compareTo(o2.getDisplayName()); 
+                }
+            };
+            
+            Collections.sort(filteredComponentDescriptors, comparatorDescriptor);
             DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors);
 
         }

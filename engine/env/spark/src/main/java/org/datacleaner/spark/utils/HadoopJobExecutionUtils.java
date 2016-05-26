@@ -59,10 +59,10 @@ import com.google.common.collect.Iterators;
 public class HadoopJobExecutionUtils {
 
     public static boolean isValidSourceDatastore(Datastore datastore) {
-        if (isValidDatastoreHdfsResource(datastore)){
+        if (isHdfsResourcedDatastore(datastore)){
             if (datastore instanceof CsvDatastore){
                 final CsvDatastore csvDatastore = (CsvDatastore) datastore;
-                if (!isValidMultilinesCsvDatastore(csvDatastore) || !isValidEncondingCsvDatastore(csvDatastore)){
+                if (!isValidMultilines(csvDatastore) || !isValidEnconding(csvDatastore)){
                     return false; 
                 }
             }
@@ -72,7 +72,7 @@ public class HadoopJobExecutionUtils {
         }
     }
 
-    public static boolean isValidDatastoreHdfsResource(Datastore datastore) {
+    public static boolean isHdfsResourcedDatastore(Datastore datastore) {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
@@ -93,7 +93,7 @@ public class HadoopJobExecutionUtils {
 
     }
 
-    public static boolean isValidEncondingCsvDatastore(CsvDatastore datastore) {
+    public static boolean isValidEnconding(CsvDatastore datastore) {
         final CsvConfiguration csvConfiguration = datastore.getCsvConfiguration();
         final String encoding = csvConfiguration.getEncoding();
         if (!encoding.equals(FileHelper.UTF_8_ENCODING)) {
@@ -102,7 +102,7 @@ public class HadoopJobExecutionUtils {
         return true;
     }
 
-    public static boolean isValidMultilinesCsvDatastore(CsvDatastore datastore) {
+    public static boolean isValidMultilines(CsvDatastore datastore) {
         final CsvConfiguration csvConfiguration = datastore.getCsvConfiguration();
         if (csvConfiguration.isMultilineValues()) {
             return false;

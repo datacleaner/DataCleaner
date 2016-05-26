@@ -22,6 +22,7 @@ package org.datacleaner.monitor.configuration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -146,6 +147,14 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     @Override
     public DataCleanerConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
+    }
+    
+    @Override
+    public DataCleanerConfiguration getConfiguration(final Map<String, String> overrideProperties) {
+        if (overrideProperties == null) {
+            return getConfiguration();
+        }
+        return _configurationCache.readConfiguration(overrideProperties);
     }
 
     @Override

@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.scheduling;
 
 import java.util.List;
+import java.util.Map;
 
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -46,6 +47,9 @@ public interface SchedulingServiceAsync {
     void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<ExecutionIdentifier>> callback);
 
     void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
+
+    void triggerExecution(TenantIdentifier tenant, JobIdentifier job, Map<String, String> overrideProperties,
+            AsyncCallback<ExecutionLog> callback);
 
     void getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule,
             AsyncCallback<List<JobIdentifier>> callback);

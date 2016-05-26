@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
@@ -106,8 +107,12 @@ final class ConfigurationCache {
     }
 
     protected DataCleanerConfiguration readConfiguration() {
+        return readConfiguration(null);
+    }
+    
+    DataCleanerConfiguration readConfiguration(Map<String, String> overrideProperties) {
         final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository,
-                _tenantContext, _injectionManagerFactory);
+                _tenantContext, overrideProperties, _injectionManagerFactory);
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();

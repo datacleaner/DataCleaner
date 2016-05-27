@@ -154,13 +154,13 @@ public class JobInvocationController {
     }
 
     /**
-     * Takes a JSON request body in this form (2 rows with 1 int and 2 strings
+     * Takes a JSON request body containing an array of key value pairs (the example below has 2 rows with 1 int and 2 strings
      * each):
      *
      * <pre>
      * {"rows":[
-     *   {"id":"1", "name":"John", "message": "hello"},
-     *   {"id":"2", "name":"Jane", "message": "howdy"}
+     *   {"id":1, "name":"John", "message": "hello"},
+     *   {"id":2, "name":"Jane", "message": "howdy"}
      * ]}
      * </pre>
      * The column names as known in the datastore are passed as key for the values.

@@ -442,6 +442,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         setSchemaTree(datastore, expandTree, con);
         updateStatusLabel();
+        _graph.refresh();
     }
 
     private void setSchemaTree(final Datastore datastore, boolean expandTree, final DatastoreConnection con) {

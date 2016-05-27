@@ -20,7 +20,9 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -61,7 +63,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.base.Strings;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke")
 public class JobInvocationController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobInvocationController.class);
@@ -89,55 +90,22 @@ public class JobInvocationController {
      * @return
      * @throws Throwable
      */
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);
 
-        jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
-        final JobContext job = tenantContext.getJob(jobName);
-
-        if (!(job instanceof DataCleanerJobContext)) {
-            throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
-        }
-
-        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) job;
-        final String datastoreName = analysisJobContext.getSourceDatastoreName();
-        final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
-
-        final String tablePath = getTablePath(columnPaths);
-
-        String schemaName;
-        String tableName;
-        if (tablePath.indexOf('.') == -1) {
-            tableName = tablePath;
-            schemaName = null;
-        } else {
-            schemaName = tablePath.substring(0, tablePath.indexOf('.'));
-            tableName = tablePath.substring(tablePath.indexOf('.') + 1);
-        }
-
-        if (Strings.isNullOrEmpty(schemaName)) {
-            schemaName = "schema";
-        }
-        if (Strings.isNullOrEmpty(tableName)) {
-            tableName = "table";
-        }
+        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
+        final String tablePath = getTablePath(analysisJobContext.getSourceColumnPaths());
+        String schemaName = getSchemaName(tablePath);
+        String tableName = getTableName(tablePath);
 
         final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>(1);
-        final List<String> columnNames = CollectionUtils.map(columnPaths, new Func<String, String>() {
-            @Override
-            public String eval(String columnPath) {
-                if (!tablePath.isEmpty()) {
-                    return columnPath.substring(tablePath.length() + 1);
-                }
-                return columnPath;
-            }
-        });
+        final List<String> columnNames = getColumnNames(analysisJobContext.getSourceColumnPaths(), tablePath);
 
         final List<JobInvocationRowData> inputRows = input.getRows();
         final List<Object[]> inputRowData = CollectionUtils.map(inputRows, new Func<JobInvocationRowData, Object[]>() {
@@ -151,6 +119,7 @@ public class JobInvocationController {
         final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames.toArray(new String[0]));
         tableDataProviders.add(new ArrayTableDataProvider(tableDef, inputRowData));
 
+        final String datastoreName = analysisJobContext.getSourceDatastoreName();
         final PojoDatastore placeholderDatastore = new PojoDatastore(datastoreName, schemaName, tableDataProviders);
 
         final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
@@ -184,6 +153,90 @@ public class JobInvocationController {
         return output;
     }
 
+    /**
+     * Takes a JSON request body in this form (2 rows with 1 int and 2 strings
+     * each):
+     *
+     * <pre>
+     * {"rows":[
+     *   {"id":"1", "name":"John", "message": "hello"},
+     *   {"id":"2", "name":"Jane", "message": "howdy"}
+     * ]}
+     * </pre>
+     * The column names as known in the datastore are passed as key for the values.
+     * These values will be passed as source records for a job, and the
+     * transformed records will be returned.
+     *
+     * @param tenant
+     * @param jobName
+     * @param input
+     * @return - returns the output in row/ column format and adds a list with the output/ value map e.g. {"outputColumn1": "Output Value 1", "outputColumn2": "Output Value 2"} per row
+     * @throws Throwable
+     */
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
+    public JobInvocationPayload invokeJobMapped(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
+
+        final TenantContext tenantContext = _contextFactory.getContext(tenant);
+        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
+        final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
+        final List<String> columnNames = getColumnNames(columnPaths,  getTablePath(columnPaths));
+
+        JobInvocationPayload convertedInput = new JobInvocationPayload();
+        convertedInput.setRows(toRows(columnNames, input.getColumnValueMap()));
+
+        JobInvocationPayload output = invokeJob(tenant, jobName, convertedInput);
+        output.setColumnValueMap(toColumnValueMap(output.getColumns(), output.getRows()));
+        return output;
+    }
+
+    private String getTableName(String tablePath) {
+        String tableName = null;
+        if (tablePath.indexOf('.') == -1) {
+            tableName = tablePath;
+        } else {
+            tableName = tablePath.substring(tablePath.indexOf('.') + 1);
+        }
+        if (Strings.isNullOrEmpty(tableName)) {
+            tableName = "table";
+        }
+        return tableName;
+    }
+
+    private String getSchemaName(String tablePath) {
+        String schemaName = null;
+        if (tablePath.indexOf('.') > -1) {
+            schemaName = tablePath.substring(0, tablePath.indexOf('.'));
+        }
+        if (Strings.isNullOrEmpty(schemaName)) {
+            schemaName = "schema";
+        }
+        return schemaName;
+    }
+
+    private List<String> getColumnNames(List<String> columnPaths, String tablePath){
+        return CollectionUtils.map(columnPaths, new Func<String, String>() {
+            @Override
+            public String eval(String columnPath) {
+                if (!tablePath.isEmpty()) {
+                    return columnPath.substring(tablePath.length() + 1);
+                }
+                return columnPath;
+            }
+        });
+    }
+
+    private JobContext getJob(String jobName, TenantContext tenantContext){
+        jobName = jobName.replaceAll("\\+", " ");
+        final JobContext job = tenantContext.getJob(jobName);
+        if (!(job instanceof DataCleanerJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
+        }
+        return job;
+    }
+
     private DataCleanerConfiguration getRunnerConfiguration(TenantContext tenantContext) {
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         final DataCleanerEnvironment environment = configuration.getEnvironment();
@@ -204,5 +257,37 @@ public class JobInvocationController {
             tablePath = tablePath.substring(0, lastDotIndex);
         }
         return tablePath;
+    }
+
+    private List<JobInvocationRowData> toRows(List<String> columnNames, List<Map<String, Object>> columnValueMapRows){
+        List<JobInvocationRowData> result = new ArrayList<>();
+        for(Map<String, Object> columnValueMap: columnValueMapRows){
+            List<Object> values = new ArrayList<>();
+            for(String columnName: columnNames){
+                if(columnValueMap.containsKey(columnName)){
+                    values.add(columnValueMap.get(columnName));
+                }else {
+                    values.add(null);
+                }
+            }
+            result.add(new JobInvocationRowData(values.toArray(new Object[values.size()])));
+        }
+
+        return result;
+    }
+
+    private List<Map<String, Object>> toColumnValueMap(List<String> columnNames, List<JobInvocationRowData> rows){
+        List<Map<String, Object>> result = new ArrayList<>();
+        for(JobInvocationRowData row: rows){
+            Object[] values = row.getValues();
+            Map<String, Object> columnValueMap = new HashMap<>();
+            int index = 0;
+            for(String column: columnNames){
+                columnValueMap.put(column, values[index]);
+                index++;
+            }
+            result.add(columnValueMap);
+        }
+        return result;
     }
 }

@@ -59,16 +59,16 @@ import com.google.common.collect.Iterators;
 public class HadoopJobExecutionUtils {
 
     public static boolean isValidSourceDatastore(Datastore datastore) {
-        if (isHdfsResourcedDatastore(datastore)){
-            if (datastore instanceof CsvDatastore){
+        if (isHdfsResourcedDatastore(datastore)) {
+            if (datastore instanceof CsvDatastore) {
                 final CsvDatastore csvDatastore = (CsvDatastore) datastore;
-                if (!isValidMultilines(csvDatastore) || !isValidEnconding(csvDatastore)){
-                    return false; 
+                if (!isValidMultilines(csvDatastore) || !isValidEnconding(csvDatastore)) {
+                    return false;
                 }
             }
-            return true; 
-        }else{
-            return false; 
+            return true;
+        } else {
+            return false;
         }
     }
 

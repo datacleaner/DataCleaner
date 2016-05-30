@@ -21,6 +21,8 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +35,8 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -131,6 +135,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		final JCheckBox checkBox = new JCheckBox(label, selected);
 		checkBox.setOpaque(false);
 		checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		checkBox.addItemListener(item -> onSettingsUpdated(false));
 
 		return checkBox;
 	}

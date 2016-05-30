@@ -28,6 +28,9 @@ import org.datacleaner.configuration.RemoteServerState;
 public interface RemoteDescriptorProvider extends DescriptorProvider {
 
     String DATACLOUD_URL = "https://services.datacleaner.org";
+    String DATACLOUD_TERMS__PURE_URL = "http://localhost:8888/datacloud_terms_pure"; // TODO
+    String DATACLOUD_TERMS_URL = "http://localhost:8888/datacloud_terms"; // TODO
+    String DATACLOUD_TERMS_ACCEPT_URL = "http://localhost:8888/ws/datacloud_accept_terms"; // TODO
     String DATACLOUD_SERVER_NAME = "DataCloud";
 
     public RemoteServerData getServerData();

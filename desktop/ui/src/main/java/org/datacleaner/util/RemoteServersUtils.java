@@ -82,7 +82,7 @@ public class RemoteServersUtils {
     }
 
     public static String getDataCloudTermsAndConditions() throws IOException {
-        InputStream in = new URL(RemoteDescriptorProvider.DATACLOUD_TERMS__PURE_URL).openStream();
+        InputStream in = new URL(RemoteDescriptorProvider.DATACLOUD_TERMS_PURE_URL).openStream();
         try {
             return IOUtils.toString(in);
         } finally {

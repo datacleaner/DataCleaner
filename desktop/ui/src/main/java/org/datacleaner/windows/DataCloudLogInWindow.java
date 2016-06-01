@@ -247,8 +247,9 @@ public class DataCloudLogInWindow extends AbstractDialog {
         final JButton acceptButton = WidgetFactory.createPrimaryButton("Accept", IconUtils.ACTION_SAVE_BRIGHT);
         final JXEditorPane tacArea = new JXEditorPane();
         try {
-            tacArea.setText(RemoteServersUtils.getDataCloudTermsAndConditions());
+            String tac = RemoteServersUtils.getDataCloudTermsAndConditions();
             tacArea.setContentType("text/html");
+            tacArea.setText(tac);
             tacArea.setCaretPosition(0);
         } catch (IOException e) {
             // TODO

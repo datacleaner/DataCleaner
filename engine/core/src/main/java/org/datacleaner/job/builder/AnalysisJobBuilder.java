@@ -410,6 +410,20 @@ public final class AnalysisJobBuilder implements Closeable {
     public AnalysisJobBuilder removeTransformer(TransformerComponentBuilder<?> tjb) {
         final boolean removed = _transformerComponentBuilders.remove(tjb);
         if (removed) {
+            final List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
+            final Collection<ComponentBuilder> componentBuilders = this.getComponentBuilders();
+            for (ComponentBuilder componentBuilder : componentBuilders) {
+                for (InputColumn<?> inputColumn : outputColumns) {
+                    final ConfiguredPropertyDescriptor defaultConfiguredPropertyForInput = componentBuilder
+                            .getDefaultConfiguredPropertyForInput();
+                    componentBuilder.removeInputColumn(inputColumn, defaultConfiguredPropertyForInput);
+                    final Set<ConfiguredPropertyDescriptor> descriptors = componentBuilder.getDescriptor().getConfiguredProperties(); 
+                    for (ConfiguredPropertyDescriptor propertyDescriptor: descriptors){
+                        componentBuilder.removeInputColumn(inputColumn, propertyDescriptor); 
+                    }
+                }
+            }
+            
             tjb.onRemoved();
 
             // Ajb removal last, so listeners gets triggered

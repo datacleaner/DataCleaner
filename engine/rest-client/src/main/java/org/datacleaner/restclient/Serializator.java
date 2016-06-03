@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.ShortNews;
 import org.datacleaner.util.HasAliases;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -62,9 +63,12 @@ public class Serializator {
         return objectMapper;
     }
 
+    public static ShortNews shortNewsList(String response) {
+        return Serializator.fromString(response, ShortNews.class);
+    }
+
     public static ComponentList componentList(String response) {
         ComponentList components = Serializator.fromString(response, ComponentList.class);
-
         return components;
     }
 

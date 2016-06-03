@@ -52,19 +52,39 @@ public class NewsChannelPanel extends JPanel {
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
+    private final JScrollPane scroll;
+
     public NewsChannelPanel(DCGlassPane glassPane, UserPreferences userPreferences) {
         super();
         _glassPane = glassPane;
-        setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
         setVisible(false);
-        setSize(WIDTH, 400);
         setLocation(getXWhenOut(), POSITION_Y);
-        setLayout(new VerticalLayout(5));
+        this.setSize(WIDTH, 400);
+
+        JComponent content = createContentPanel();
+        scroll = new JScrollPane(content);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.getVerticalScrollBar().setUnitIncrement(20);
+        this.setLayout(new BorderLayout());
+        this.add(scroll);
+        this.setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
+    }
+
+    private JComponent createContentPanel() {
+        JPanel p = new JPanel() {
+            // this trick effectively makes the panel with fixed width, but flexible height.
+            public Dimension getPreferredSize() {
+                Dimension s = super.getPreferredSize();
+                s.width = WIDTH - scroll.getVerticalScrollBar().getWidth() - 50;
+                return s;
+            }
+        };
+        p.setLayout(new VerticalLayout(5));
 
         DCLabel header = DCLabel.darkMultiLine("News Channel");
         header.setFont(WidgetUtils.FONT_HEADER1);
         header.setIcon(ImageManager.get().getImageIcon("images/editions/community.png"));
-        add(header);
+        p.add(header);
 
         java.util.List<Items> newsitems = getNews();
         String divStyles = "background-color: #F5F5F5; padding: 5px;";
@@ -80,8 +100,9 @@ public class NewsChannelPanel extends JPanel {
                     "<br /><span style='" + msgStyles + "'>" + newsitem.getMessage() + "</span>" +
                     " <a href='http://127.0.0.1:8888/newsitem/" + newsitem.getName() + "' style='text-decoration: none;'>More.</a>" +
                     "</div>");
-            add(text);
+            p.add(text);
         }
+        return p;
     }
 
     private java.util.List<Items> getNews() {

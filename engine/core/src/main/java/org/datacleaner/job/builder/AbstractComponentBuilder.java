@@ -49,6 +49,7 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.connection.OutputDataStreamDatastore;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -580,7 +581,11 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 inputColumns = null;
             } else {
                 if (inputColumns.getClass().isArray()) {
-                    inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);
+                    if (inputColumns.getClass().getComponentType().equals(String.class) && inputColumn instanceof TransformedInputColumn) {
+                        inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn.getName());
+                    } else {
+                        inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);
+                    }
                 }
             }
             setConfiguredProperty(propertyDescriptor, inputColumns);

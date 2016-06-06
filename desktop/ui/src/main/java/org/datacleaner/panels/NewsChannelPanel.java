@@ -80,6 +80,7 @@ public class NewsChannelPanel extends JPanel {
             }
         };
         p.setLayout(new VerticalLayout(5));
+        p.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         DCLabel header = DCLabel.darkMultiLine("News Channel");
         header.setFont(WidgetUtils.FONT_HEADER1);

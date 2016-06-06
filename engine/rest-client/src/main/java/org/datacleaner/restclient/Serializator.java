@@ -118,7 +118,7 @@ public class Serializator {
 
     private static <T> T fromString(String value, Class<T> type) {
         try {
-            if (value instanceof String && (value == null || value.equals(""))) {
+            if (value == null || value.equals("")) {
                 return null;
             }
 

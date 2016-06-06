@@ -448,7 +448,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private void acceptTerms() {
         try {
             // call web service to accept T&C
-            RESTClientImpl client = new RESTClientImpl(usernameTextField.getText(), new String(passwordTextField.getPassword()));
+            final RESTClientImpl client = new RESTClientImpl(usernameTextField.getText(), new String(passwordTextField.getPassword()));
             client.getResponse(RESTClient.HttpMethod.POST, RemoteDescriptorProvider.DATACLOUD_TERMS_ACCEPT_URL, "");
 
             addRemoteServer();

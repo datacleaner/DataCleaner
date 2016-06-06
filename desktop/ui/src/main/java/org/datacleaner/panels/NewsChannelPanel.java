@@ -21,6 +21,7 @@ package org.datacleaner.panels;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -28,9 +29,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.datacleaner.actions.MoveComponentTimerActionListener;
-import org.datacleaner.api.ShortNews.Items;
-import org.datacleaner.restclient.NewsChannelRESTClient;
-import org.datacleaner.user.UserPreferences;
+import org.datacleaner.api.ShortNews;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
@@ -53,10 +53,15 @@ public class NewsChannelPanel extends JPanel {
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final JScrollPane scroll;
+    private final java.util.List<ShortNews.Items> _newsitems;
+    private final long _lastCheck;
+    private java.util.List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
 
-    public NewsChannelPanel(DCGlassPane glassPane, UserPreferences userPreferences) {
+    public NewsChannelPanel(DCGlassPane glassPane, java.util.List<ShortNews.Items> newsitems, long lastCheck) {
         super();
         _glassPane = glassPane;
+        _newsitems = newsitems;
+        _lastCheck = lastCheck;
         setVisible(false);
         setLocation(getXWhenOut(), POSITION_Y);
         this.setSize(WIDTH, 400);
@@ -67,7 +72,7 @@ public class NewsChannelPanel extends JPanel {
         scroll.getVerticalScrollBar().setUnitIncrement(20);
         this.setLayout(new BorderLayout());
         this.add(scroll);
-        this.setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
+        this.setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 10)));
     }
 
     private JComponent createContentPanel() {
@@ -84,31 +89,28 @@ public class NewsChannelPanel extends JPanel {
 
         DCLabel header = DCLabel.darkMultiLine("News Channel");
         header.setFont(WidgetUtils.FONT_HEADER1);
-        header.setIcon(ImageManager.get().getImageIcon("images/editions/community.png"));
+        header.setIcon(ImageManager.get().getImageIcon("images/news/news_blue.png"));
         p.add(header);
 
-        java.util.List<Items> newsitems = getNews();
-        String divStyles = "background-color: #F5F5F5; padding: 5px;";
-        String titleStyles = "font-weight: bold;";
-        String dateStyles = "font-size: 80%; color: grey;";
-        String msgStyles = "font-size: 90%;";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        for(int i = 0; i < newsitems.size(); i++) {
-            Items newsitem = newsitems.get(i);
-            DCHtmlBox text = new DCHtmlBox("<div style='" + divStyles + "'>" +
-                    "<span style='" + titleStyles + "'>" + newsitem.getTitle() + "</span>" +
-                    " <span style='" + dateStyles + "'>(" + formatter.format(newsitem.getDateCreated()) + ")</span>" +
-                    "<br /><span style='" + msgStyles + "'>" + newsitem.getMessage() + "</span>" +
-                    " <a href='http://127.0.0.1:8888/newsitem/" + newsitem.getName() + "' style='text-decoration: none;'>More.</a>" +
-                    "</div>");
-            p.add(text);
+        if(_newsitems .size() == 0) {
+            DCLabel label = DCLabel.darkMultiLine("You have not received any News.");
+            label.setFont(WidgetUtils.FONT_HEADER2);
+            p.add(label);
+        } else {
+            for (int i = 0; i < _newsitems.size(); i++) {
+                NewsDCHtmlBox newsDCHtmlBox = new NewsDCHtmlBox(_lastCheck, _newsitems.get(i));
+                _newsBoxes.add(newsDCHtmlBox);
+                p.add(newsDCHtmlBox);
+            }
         }
         return p;
     }
 
-    private java.util.List<Items> getNews() {
-        NewsChannelRESTClient client = new NewsChannelRESTClient("http://127.0.0.1:8888/ws/lastnews");
-        return client.getNews(3);
+    public void refresh(long lastCheck){
+        for(NewsDCHtmlBox box : _newsBoxes) {
+            box.setLastCheck(lastCheck);
+        }
+        this.repaint();
     }
 
     private int getXWhenOut() {
@@ -153,5 +155,47 @@ public class NewsChannelPanel extends JPanel {
     @Override
     public Color getForeground() {
         return _foreground;
+    }
+
+    private class NewsDCHtmlBox extends DCHtmlBox{
+        private final ShortNews.Items _item;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        private long _lastCheckTime;
+
+        private final String divStyles = "padding: 5px; border: 1px #DCDCDC solid; margin-right: 15px; background-color: ";
+        private final String titleStyles = "font-weight: bold;";
+        private final String dateStyles = "font-size: 80%; color: grey;";
+        private final String msgStyles = "font-size: 90%;";
+
+        public NewsDCHtmlBox(long lastCheck, ShortNews.Items item) {
+            super(null);
+            _item = item;
+            _lastCheckTime = lastCheck;
+            setContentText();
+        }
+
+        private void setLastCheck(Long lastCheck){
+            _lastCheckTime = lastCheck;
+            setContentText();
+        }
+
+        private void setContentText() {
+            setText("<div style='" + divStyles + getBgColor() + "'>" +
+                    "<span style='" + titleStyles + "'>" + _item.getTitle() + "</span>" +
+                    " <span style='" + dateStyles + "'>(" + formatter.format(_item.getDateCreated()) + ")</span>" +
+                    "<br /><span style='" + msgStyles + "'>" + _item.getMessage() + "</span>" +
+                    " <a href='" + RemoteDescriptorProvider.DATACLOUD_URL + "/newsitem/" + _item.getName() +
+                    "' style='text-decoration: none;'>More.</a>" +
+                    "</div>");
+        }
+
+        private String getBgColor() {
+            String backgroundItemColor = "#FFFFFF;";
+            java.util.Date itemDate = _item.getDateCreated();
+            if(itemDate.getTime() > _lastCheckTime) {
+                backgroundItemColor = "#F5F5F5;";
+            }
+            return  backgroundItemColor;
+        }
     }
 }

@@ -746,6 +746,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
     
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
+        private static final String PROPERTIES_FILE_EXTENSION = ".properties";
+        
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
         private final String overridePropertiesFilePath;
@@ -756,9 +758,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             final String hotFolderPath = schedule.getHotFolder();
             final File hotFolder = new File(hotFolderPath);
-            final String overridePropertiesFileName = job.getName() + ".properties";
+            final String overridePropertiesFileName = job.getName() + PROPERTIES_FILE_EXTENSION;
             if (hotFolder.isDirectory()) {
                 overridePropertiesFilePath = new File(hotFolder, overridePropertiesFileName).getAbsolutePath();
+            } else if (hotFolderPath.endsWith(PROPERTIES_FILE_EXTENSION)) {
+                overridePropertiesFilePath = hotFolderPath;
             } else {
                 overridePropertiesFilePath = FilenameUtils.getFullPath(hotFolderPath) + overridePropertiesFileName;
             }

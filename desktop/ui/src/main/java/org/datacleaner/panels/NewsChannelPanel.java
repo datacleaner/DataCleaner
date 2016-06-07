@@ -90,7 +90,7 @@ public class NewsChannelPanel extends JPanel {
 
         DCLabel header = DCLabel.darkMultiLine("News Channel");
         header.setFont(WidgetUtils.FONT_HEADER1);
-        header.setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_ORANGE));
+        header.setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_TITLE_ICON));
         p.add(header);
 
         if(_newsitems .size() == 0) {

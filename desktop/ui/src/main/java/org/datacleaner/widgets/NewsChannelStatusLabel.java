@@ -66,12 +66,12 @@ public class NewsChannelStatusLabel extends JLabel {
 
         if(newsitems.size() > 0) {
             if (lastNewsCheckValue == null || newsitems.get(0).getDateCreated().getTime() > lastNewsCheck) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_HIGHLIGHTED));
+                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
             } else {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL));
+                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
             }
         } else {
-            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_HIGHLIGHTED));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -91,7 +91,7 @@ public class NewsChannelStatusLabel extends JLabel {
             _newNewsChannelPanel.moveOut(0);
         } else {
             if(size > 0) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL, IconUtils.ICON_SIZE_SMALL));
+                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
                 _userPreferences.getAdditionalProperties().put(LAST_NEWS_READING, String.valueOf(new Date().getTime()));
                 _userPreferences.save();
             }

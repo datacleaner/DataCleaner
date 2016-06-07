@@ -189,7 +189,7 @@ public final class IconUtils {
     public static final String DICTIONARY_DATASTORE_IMAGEPATH = "images/model/dictionary_datastore.png";
 
     public static final String NEWS_CHANNEL = "images/news/news_channel_16.png";
-    public static final String NEWS_CHANNEL_BLUE = "images/news/news_blue.png";
+    public static final String NEWS_CHANNEL_ORANGE = "images/news/news_channel_28.png";
     public static final String NEWS_CHANNEL_HIGHLIGHTED = "images/news/news_channel_20.png";
 
     public static final String SYNONYM_CATALOG_IMAGEPATH = "images/model/synonym.png";

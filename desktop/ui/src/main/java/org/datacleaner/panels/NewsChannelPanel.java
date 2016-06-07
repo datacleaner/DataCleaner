@@ -113,6 +113,10 @@ public class NewsChannelPanel extends JPanel {
         this.repaint();
     }
 
+    public void scrollToTop() {
+        scroll.getViewport().setViewPosition(new Point(0,0));
+    }
+
     private int getXWhenOut() {
         return _glassPane.getSize().width + WIDTH + 10;
     }
@@ -162,7 +166,7 @@ public class NewsChannelPanel extends JPanel {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         private long _lastCheckTime;
 
-        private final String divStyles = "padding: 5px; border: 1px #DCDCDC solid; margin-right: 15px; background-color: ";
+        private final String divStyles = "padding: 5px; border-bottom: 1px #DCDCDC solid; margin-right: 15px; background-color: ";
         private final String titleStyles = "font-weight: bold;";
         private final String dateStyles = "font-size: 80%; color: grey;";
         private final String msgStyles = "font-size: 90%;";

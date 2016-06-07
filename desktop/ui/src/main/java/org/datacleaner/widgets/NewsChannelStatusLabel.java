@@ -36,11 +36,14 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Status Label News Channel for DataCloud
  */
 public class NewsChannelStatusLabel extends JLabel {
+    private static final Logger logger = LoggerFactory.getLogger(NewsChannelStatusLabel.class);
     private static final long serialVersionUID = 1L;
 
     private final NewsChannelPanel _newNewsChannelPanel;
@@ -92,6 +95,7 @@ public class NewsChannelStatusLabel extends JLabel {
                 _userPreferences.getAdditionalProperties().put(LAST_NEWS_READING, String.valueOf(new Date().getTime()));
                 _userPreferences.save();
             }
+            _newNewsChannelPanel.scrollToTop();
             _newNewsChannelPanel.moveIn(0);
         }
     }
@@ -101,6 +105,7 @@ public class NewsChannelStatusLabel extends JLabel {
             NewsChannelRESTClient client = new NewsChannelRESTClient(RemoteDescriptorProvider.DATACLOUD_NEWS_CHANNEL_URL);
             return client.getNews(3);
         } catch(Exception e) {
+            logger.error("Connection problem to the website service.", e.getMessage());
             return new ArrayList<>();
         }
     }

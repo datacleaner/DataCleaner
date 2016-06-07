@@ -188,8 +188,9 @@ public final class IconUtils {
     public static final String DICTIONARY_TEXTFILE_IMAGEPATH = "images/model/dictionary_textfile.png";
     public static final String DICTIONARY_DATASTORE_IMAGEPATH = "images/model/dictionary_datastore.png";
 
-    public static final String NEWS_ORANGE = "images/news/news_orange.png";
-    public static final String NEWS_GREY = "images/news/news_gray.png";
+    public static final String NEWS_CHANNEL = "images/news/news_channel_16.png";
+    public static final String NEWS_CHANNEL_BLUE = "images/news/news_blue.png";
+    public static final String NEWS_CHANNEL_HIGHLIGHTED = "images/news/news_channel_20.png";
 
     public static final String SYNONYM_CATALOG_IMAGEPATH = "images/model/synonym.png";
     public static final String SYNONYM_CATALOG_TEXTFILE_IMAGEPATH = "images/model/synonym_textfile.png";

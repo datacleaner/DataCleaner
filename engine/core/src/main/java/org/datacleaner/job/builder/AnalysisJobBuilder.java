@@ -434,7 +434,6 @@ public final class AnalysisJobBuilder implements Closeable {
              **/
             final List<MutableInputColumn<?>> componentOutputColumnsToBeRemoved = new ArrayList<>();
             if (componentBuilder instanceof TransformerComponentBuilder) {
-                @SuppressWarnings("unchecked")
                 final List<TransformedInputColumn<?>> componentOutputColumns = ((TransformerComponentBuilder) componentBuilder)
                         .getOutputColumns();
                 for (MutableInputColumn<?> outputColumn : componentOutputColumns) {

@@ -31,6 +31,7 @@ import javax.swing.border.LineBorder;
 import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.api.ShortNews;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
@@ -64,7 +65,7 @@ public class NewsChannelPanel extends JPanel {
         _lastCheck = lastCheck;
         setVisible(false);
         setLocation(getXWhenOut(), POSITION_Y);
-        this.setSize(WIDTH, 400);
+        this.setSize(WIDTH, 500);
 
         JComponent content = createContentPanel();
         scroll = new JScrollPane(content);
@@ -89,7 +90,7 @@ public class NewsChannelPanel extends JPanel {
 
         DCLabel header = DCLabel.darkMultiLine("News Channel");
         header.setFont(WidgetUtils.FONT_HEADER1);
-        header.setIcon(ImageManager.get().getImageIcon("images/news/news_blue.png"));
+        header.setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_ORANGE));
         p.add(header);
 
         if(_newsitems .size() == 0) {

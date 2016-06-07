@@ -66,7 +66,7 @@ public class NewsChannelStatusLabel extends JLabel {
 
         if(newsitems.size() > 0) {
             if (lastNewsCheckValue == null || newsitems.get(0).getDateCreated().getTime() > lastNewsCheck) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_BLUE, IconUtils.ICON_SIZE_SMALL));
+                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_ORANGE, IconUtils.ICON_SIZE_SMALL));
             } else {
                 setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_GREY, IconUtils.ICON_SIZE_SMALL));
             }

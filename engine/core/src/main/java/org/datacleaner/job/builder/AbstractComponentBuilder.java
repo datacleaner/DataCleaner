@@ -581,7 +581,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 inputColumns = null;
             } else {
                 if (inputColumns.getClass().isArray()) {
-                    if (inputColumns.getClass().getComponentType().equals(String.class) && inputColumn instanceof TransformedInputColumn) {
+                    if (inputColumns.getClass().getComponentType().equals(String.class)
+                            && inputColumn instanceof TransformedInputColumn) {
                         inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn.getName());
                     } else {
                         inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);

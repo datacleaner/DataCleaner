@@ -425,15 +425,19 @@ public final class AnalysisJobBuilder implements Closeable {
 
     private void removeTransformersOutputColumns(final List<MutableInputColumn<?>> outputColumns,
             final Collection<ComponentBuilder> componentBuilders) {
-        
+
         for (ComponentBuilder componentBuilder : componentBuilders) {
-            /**Remove all the output columns from the flow that have anything to do with the output columns of the transformer being removed 
-            Eg. Username (standardized email) (merged) **/
+            /**
+             * Remove all the output columns from the flow that have anything to
+             * do with the output columns of the transformer being removed Eg.
+             * Username (standardized email) (merged)
+             **/
             final List<MutableInputColumn<?>> componentOutputColumnsToBeRemoved = new ArrayList<>();
             if (componentBuilder instanceof TransformerComponentBuilder) {
-                final List<TransformedInputColumn<?>> compOutputColumns = ((TransformerComponentBuilder) componentBuilder)
+                @SuppressWarnings("unchecked")
+                final List<TransformedInputColumn<?>> componentOutputColumns = ((TransformerComponentBuilder) componentBuilder)
                         .getOutputColumns();
-                for (MutableInputColumn<?> outputColumn : compOutputColumns) {
+                for (MutableInputColumn<?> outputColumn : componentOutputColumns) {
                     for (InputColumn<?> inputColumn : outputColumns) {
                         if (outputColumn.getName().contains(inputColumn.getName())) {
                             componentOutputColumnsToBeRemoved.add(outputColumn);
@@ -456,16 +460,19 @@ public final class AnalysisJobBuilder implements Closeable {
                 removeTransformersOutputColumns(outputColumns, outputStreamComponentBuilders);
             }
         }
-        
+
         /**
          * The output columns of the removed transformer may be input columns
-         * for other component are removed at the end so that the other transformer output
-         * columns connected in any way with the original removed columns can be found in the flow and
-         * removed.  Eg. Username (standardized email) (merged) 
+         * for other component are removed at the end so that the other
+         * transformer output columns connected in any way with the original
+         * removed columns can be found in the flow and removed. Eg. Username
+         * (standardized email) (merged)
          */
         removeTransformersOutputColumnsDescriptors(outputColumns, componentBuilders);
     }
-    /** Removes the output column of a transformers from every descriptor. 
+
+    /**
+     * Removes the output column of a transformers from every descriptor.
      * 
      * @param outputColumns
      * @param componentBuilders

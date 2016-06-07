@@ -21,8 +21,8 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
@@ -77,7 +77,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         }
     }
 
-    private final LinkedHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
+    private final WeakHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
     private final MappedStringsPropertyWidget _mappedStringsPropertyWidget;
 
@@ -95,7 +95,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
     public MultipleMappedStringsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedStringsProperty) {
         super(componentBuilder, inputColumnsProperty);
-        _mappedTextFields = new LinkedHashMap<InputColumn<?>, JXTextField>();
+        _mappedTextFields = new WeakHashMap<InputColumn<?>, JXTextField>();
         _mappedStringsProperty = mappedStringsProperty;
 
         _mappedStringsPropertyWidget = new MappedStringsPropertyWidget(componentBuilder, mappedStringsProperty);
@@ -273,14 +273,4 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         super.onBatchFinished();
         _mappedStringsPropertyWidget.fireValueChanged();
     }
-    
-    @Override
-    public void onRemove(InputColumn<?> sourceColumn) {
-        // TODO Auto-generated method stub
-        super.onRemove(sourceColumn);
-    }
-    
-    
-    
-    
 }

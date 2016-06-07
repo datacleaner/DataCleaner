@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
 
@@ -109,7 +110,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     public MultipleMappedColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {
         super(componentBuilder, inputColumnsProperty);
-        _mappedColumnComboBoxes = new LinkedHashMap<>();
+        _mappedColumnComboBoxes = new WeakHashMap<>();
         _comboBoxDecorations = new IdentityHashMap<>();
         _mappedColumnsProperty = mappedColumnsProperty;
 

@@ -32,6 +32,7 @@ public interface RemoteDescriptorProvider extends DescriptorProvider {
     String DATACLOUD_TERMS_PURE_URL = DATACLEANER_BASE_URL + "/datacloud_terms_pure";
     String DATACLOUD_TERMS_URL = DATACLEANER_BASE_URL + "/datacloud_terms";
     String DATACLOUD_TERMS_ACCEPT_URL = DATACLEANER_BASE_URL + "/ws/datacloud_accept_terms";
+    String DATACLOUD_NEWS_CHANNEL_URL = DATACLEANER_BASE_URL + "/ws/lastnews";
     String DATACLOUD_SERVER_NAME = "DataCloud";
 
     public RemoteServerData getServerData();

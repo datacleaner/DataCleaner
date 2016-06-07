@@ -67,19 +67,19 @@ public class ShortNews implements java.io.Serializable {
             return message;
         }
 
-        public void setName(String name) {
+        private void setName(String name) {
             this.name = name;
         }
 
-        public void setTitle(String title) {
+        private void setTitle(String title) {
             this.title = title;
         }
 
-        public void setDateCreated(Date dateCreated) {
+        private void setDateCreated(Date dateCreated) {
             this.dateCreated = dateCreated;
         }
 
-        public void setMessage(String message) {
+        private void setMessage(String message) {
             this.message = message;
         }
 

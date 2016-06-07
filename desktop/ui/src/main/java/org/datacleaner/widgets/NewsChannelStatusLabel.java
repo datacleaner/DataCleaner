@@ -52,7 +52,7 @@ public class NewsChannelStatusLabel extends JLabel {
         super("News Channel");
         _userPreferences = userPreferences;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        java.util.List<ShortNews.Items> newsitems = getNews();
+        java.util.List<ShortNews.Item> newsitems = getNews();
 
         String lastNewsCheckValue = userPreferences.getAdditionalProperties().get(LAST_NEWS_READING);
         long lastNewsCheck = 0;
@@ -96,7 +96,7 @@ public class NewsChannelStatusLabel extends JLabel {
         }
     }
 
-    private java.util.List<ShortNews.Items> getNews() {
+    private java.util.List<ShortNews.Item> getNews() {
         try{
             NewsChannelRESTClient client = new NewsChannelRESTClient(RemoteDescriptorProvider.DATACLOUD_NEWS_CHANNEL_URL);
             return client.getNews(3);

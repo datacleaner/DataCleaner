@@ -5,31 +5,31 @@ import java.util.List;
 
 public class ShortNews implements java.io.Serializable {
 
-    List<Items> newsItems;
+    List<Item> newsItems;
 
     public ShortNews() {
     }
 
-    public ShortNews(List<Items> newsItems) {
+    public ShortNews(List<Item> newsItems) {
         this.newsItems = newsItems;
     }
 
-    public List<Items> getNewsItems() {
+    public List<Item> getNewsItems() {
         return newsItems;
     }
 
-    public void setNewsItems(List<Items> newsItems) {
+    public void setNewsItems(List<Item> newsItems) {
         this.newsItems = newsItems;
     }
 
-    public static class Items implements java.io.Serializable {
+    public static class Item implements java.io.Serializable {
 
         private String name;
         private String title;
         private Date dateCreated;
         private String message;
 
-        public Items() {
+        public Item() {
         }
 
         public String getName() {
@@ -69,9 +69,9 @@ public class ShortNews implements java.io.Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Items items = (Items) o;
+            Item item = (Item) o;
 
-            return name.equals(items.name);
+            return name.equals(item.name);
 
         }
 

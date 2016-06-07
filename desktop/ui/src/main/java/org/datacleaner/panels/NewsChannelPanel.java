@@ -53,11 +53,11 @@ public class NewsChannelPanel extends JPanel {
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final JScrollPane scroll;
-    private final java.util.List<ShortNews.Items> _newsitems;
+    private final java.util.List<ShortNews.Item> _newsitems;
     private final long _lastCheck;
     private java.util.List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
 
-    public NewsChannelPanel(DCGlassPane glassPane, java.util.List<ShortNews.Items> newsitems, long lastCheck) {
+    public NewsChannelPanel(DCGlassPane glassPane, java.util.List<ShortNews.Item> newsitems, long lastCheck) {
         super();
         _glassPane = glassPane;
         _newsitems = newsitems;
@@ -158,7 +158,7 @@ public class NewsChannelPanel extends JPanel {
     }
 
     private class NewsDCHtmlBox extends DCHtmlBox{
-        private final ShortNews.Items _item;
+        private final ShortNews.Item _item;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         private long _lastCheckTime;
 
@@ -167,7 +167,7 @@ public class NewsChannelPanel extends JPanel {
         private final String dateStyles = "font-size: 80%; color: grey;";
         private final String msgStyles = "font-size: 90%;";
 
-        public NewsDCHtmlBox(long lastCheck, ShortNews.Items item) {
+        public NewsDCHtmlBox(long lastCheck, ShortNews.Item item) {
             super(null);
             _item = item;
             _lastCheckTime = lastCheck;

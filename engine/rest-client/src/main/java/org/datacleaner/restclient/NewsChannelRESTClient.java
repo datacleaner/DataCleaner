@@ -34,7 +34,7 @@ public class NewsChannelRESTClient {
         restClient = new RESTClientImpl(null, null);
     }
 
-    public List<ShortNews.Items> getNews(final int count) {
+    public List<ShortNews.Item> getNews(final int count) {
         String response = call(count);
         ShortNews news = Serializator.shortNewsList(response);
         return news.getNewsItems();

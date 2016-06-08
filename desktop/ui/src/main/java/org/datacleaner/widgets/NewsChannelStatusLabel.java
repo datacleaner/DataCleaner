@@ -22,8 +22,8 @@ package org.datacleaner.widgets;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -55,7 +55,7 @@ public class NewsChannelStatusLabel extends JLabel {
         super("News Channel");
         _userPreferences = userPreferences;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        java.util.List<ShortNews.Item> newsitems = getNews();
+        List<ShortNews.Item> newsitems = getNews();
 
         String lastNewsCheckValue = userPreferences.getAdditionalProperties().get(LAST_NEWS_READING);
         long lastNewsCheck = 0;
@@ -64,21 +64,29 @@ public class NewsChannelStatusLabel extends JLabel {
         }
         _newNewsChannelPanel = new NewsChannelPanel(glassPane, newsitems, lastNewsCheck);
 
-        if(newsitems.size() > 0) {
-            if (lastNewsCheckValue == null || newsitems.get(0).getDateCreated().getTime() > lastNewsCheck) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
+        if(newsitems != null) {
+            if (newsitems.size() > 0) {
+                if (lastNewsCheckValue == null || newsitems.get(0).getDateCreated().getTime() > lastNewsCheck) {
+                    setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
+                } else {
+                    setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
+                }
             } else {
                 setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
             }
         } else {
-            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                onMouseClick(newsitems.size());
+                if(newsitems == null) {
+                    onMouseClick(0);
+                } else {
+                    onMouseClick(newsitems.size());
+                }
             }
         });
     }
@@ -90,8 +98,8 @@ public class NewsChannelStatusLabel extends JLabel {
             }
             _newNewsChannelPanel.moveOut(0);
         } else {
+            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
             if(size > 0) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
                 _userPreferences.getAdditionalProperties().put(LAST_NEWS_READING, String.valueOf(new Date().getTime()));
                 _userPreferences.save();
             }
@@ -100,13 +108,13 @@ public class NewsChannelStatusLabel extends JLabel {
         }
     }
 
-    private java.util.List<ShortNews.Item> getNews() {
+    private List<ShortNews.Item> getNews() {
         try{
             NewsChannelRESTClient client = new NewsChannelRESTClient(RemoteDescriptorProvider.DATACLOUD_NEWS_CHANNEL_URL);
             return client.getNews(3);
         } catch(Exception e) {
             logger.error("Connection problem to the website service.", e.getMessage());
-            return new ArrayList<>();
+            return null;
         }
     }
 }

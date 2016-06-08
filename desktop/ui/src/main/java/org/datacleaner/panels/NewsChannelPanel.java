@@ -22,6 +22,7 @@ package org.datacleaner.panels;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -54,11 +55,11 @@ public class NewsChannelPanel extends JPanel {
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final JScrollPane scroll;
-    private final java.util.List<ShortNews.Item> _newsitems;
+    private final List<ShortNews.Item> _newsitems;
     private final long _lastCheck;
-    private java.util.List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
+    private List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
 
-    public NewsChannelPanel(DCGlassPane glassPane, java.util.List<ShortNews.Item> newsitems, long lastCheck) {
+    public NewsChannelPanel(DCGlassPane glassPane, List<ShortNews.Item> newsitems, long lastCheck) {
         super();
         _glassPane = glassPane;
         _newsitems = newsitems;
@@ -93,15 +94,17 @@ public class NewsChannelPanel extends JPanel {
         header.setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_TITLE_ICON));
         p.add(header);
 
-        if(_newsitems .size() == 0) {
-            DCLabel label = DCLabel.darkMultiLine("You have not received any News.");
-            label.setFont(WidgetUtils.FONT_HEADER2);
-            p.add(label);
+        if(_newsitems == null) {
+            p.add(createWarningLabel("DataCleaner has a problem to connect to the server."));
         } else {
-            for (int i = 0; i < _newsitems.size(); i++) {
-                NewsDCHtmlBox newsDCHtmlBox = new NewsDCHtmlBox(_lastCheck, _newsitems.get(i));
-                _newsBoxes.add(newsDCHtmlBox);
-                p.add(newsDCHtmlBox);
+            if (_newsitems.size() == 0) {
+                p.add(createWarningLabel("You have not received any News."));
+            } else {
+                for (int i = 0; i < _newsitems.size(); i++) {
+                    NewsDCHtmlBox newsDCHtmlBox = new NewsDCHtmlBox(_lastCheck, _newsitems.get(i));
+                    _newsBoxes.add(newsDCHtmlBox);
+                    p.add(newsDCHtmlBox);
+                }
             }
         }
         return p;
@@ -202,5 +205,11 @@ public class NewsChannelPanel extends JPanel {
             }
             return  backgroundItemColor;
         }
+    }
+
+    private DCLabel createWarningLabel(String warningText) {
+        DCLabel label = DCLabel.darkMultiLine(warningText);
+        label.setFont(WidgetUtils.FONT_HEADER2);
+        return  label;
     }
 }

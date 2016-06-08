@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -260,6 +261,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         final JScrollPane tacScroll = new JScrollPane(tacArea);
         tacScroll.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         tacScroll.setPreferredSize(new Dimension(100,200));
+        tacScroll.getHorizontalScrollBar().setEnabled(false);
+        tacScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         p.setLayout(l);
         p.setOpaque(true);
@@ -269,7 +272,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
                 .addComponent(description)
                 .addGap(PADDING)
                 .addComponent(tacScroll)
-                .addGap(PADDING)
+                .addGap(PADDING*2)
                 .addComponent(acceptButton)
                 .addGap(PADDING)
         );

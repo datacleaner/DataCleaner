@@ -22,6 +22,7 @@ package org.datacleaner.panels;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -54,11 +55,11 @@ public class NewsChannelPanel extends JPanel {
     private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final JScrollPane scroll;
-    private final java.util.List<ShortNews.Item> _newsitems;
+    private final List<ShortNews.Item> _newsitems;
     private final long _lastCheck;
-    private java.util.List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
+    private List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
 
-    public NewsChannelPanel(DCGlassPane glassPane, java.util.List<ShortNews.Item> newsitems, long lastCheck) {
+    public NewsChannelPanel(DCGlassPane glassPane, List<ShortNews.Item> newsitems, long lastCheck) {
         super();
         _glassPane = glassPane;
         _newsitems = newsitems;

@@ -22,7 +22,6 @@ package org.datacleaner.widgets;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.*;
@@ -71,7 +70,7 @@ public class NewsChannelStatusLabel extends JLabel {
                 setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
             }
         } else {
-            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_NOT_READ_STATUS));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS));
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -90,8 +89,8 @@ public class NewsChannelStatusLabel extends JLabel {
             }
             _newNewsChannelPanel.moveOut(0);
         } else {
+            setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
             if(size > 0) {
-                setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
                 _userPreferences.getAdditionalProperties().put(LAST_NEWS_READING, String.valueOf(new Date().getTime()));
                 _userPreferences.save();
             }
@@ -106,7 +105,7 @@ public class NewsChannelStatusLabel extends JLabel {
             return client.getNews(3);
         } catch(Exception e) {
             logger.error("Connection problem to the website service.", e.getMessage());
-            return new ArrayList<>();
+            return null;
         }
     }
 }

@@ -29,15 +29,17 @@ public class DataCloudUser implements Serializable {
     private String realName;
     private Long credit;
     private Boolean emailConfirmed;
+    private String id;
 
     public DataCloudUser() {
     }
 
-    public DataCloudUser(final String email, final String realName, final Long credit, final Boolean emailConfirmed) {
+    public DataCloudUser(final String email, final String realName, final Long credit, final Boolean emailConfirmed, String id) {
         this.email = email;
         this.realName = realName;
         this.credit = credit;
         this.emailConfirmed = emailConfirmed;
+        this.id = id;
     }
 
     public String getEmail() {
@@ -54,6 +56,10 @@ public class DataCloudUser implements Serializable {
 
     public Boolean isEmailConfirmed() {
         return emailConfirmed;
+    }
+
+    public String getId() {
+        return id;
     }
 }
 

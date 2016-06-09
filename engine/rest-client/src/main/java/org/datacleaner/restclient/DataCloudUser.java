@@ -21,9 +21,12 @@ package org.datacleaner.restclient;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Object for rest communication
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DataCloudUser implements Serializable {
     private String email;
     private String realName;

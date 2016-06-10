@@ -514,6 +514,7 @@
 				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
 				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
 						maxOccurs="1" />
+				    <element name="proxiedhost" minOccurs="0" maxOccurs="1" type="string" />
 				</all>
 			</extension>
 		</complexContent>

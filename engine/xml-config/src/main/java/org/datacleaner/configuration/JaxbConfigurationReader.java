@@ -1081,8 +1081,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 .isAcceptunverifiedsslpeers(), false);
         DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
         DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
+        String proxiedHost = getStringVariable("proxiedhost", datastoreType.getProxiedhost());
         return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers,
-                dataHubSecurityMode);
+                dataHubSecurityMode, proxiedHost);
     }
 
     private Datastore createDatastore(String name, MongodbDatastoreType mongodbDatastoreType) {

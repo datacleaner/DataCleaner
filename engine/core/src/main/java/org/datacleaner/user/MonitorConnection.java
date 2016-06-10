@@ -97,7 +97,7 @@ public class MonitorConnection implements Serializable {
         final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
         if ("CAS".equalsIgnoreCase(securityMode)) {
             final String casUrl = System.getProperty(SystemProperties.MONITOR_CAS_URL);
-            return new CASMonitorHttpClient(httpClient, casUrl, username, password, getBaseUrl());
+            return new CASMonitorHttpClient(httpClient, casUrl, username, password, getBaseUrl(), "");
         }
 
         return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), username, password);

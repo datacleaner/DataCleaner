@@ -767,7 +767,9 @@ public class DomConfigurationWriter {
         appendElement(ds, "https", datastore.isHttps());
         appendElement(ds, "acceptunverifiedsslpeers", datastore.isAcceptUnverifiedSslPeers());
         appendElement(ds, "datahubsecuritymode", datastore.getSecurityMode());
-
+        if(!isNullOrEmpty(datastore.getProxiedHost())) {
+            appendElement(ds, "proxiedhost", datastore.getProxiedHost());
+        }
         return ds;
     }
 

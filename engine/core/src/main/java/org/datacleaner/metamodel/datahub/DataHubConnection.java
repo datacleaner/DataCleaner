@@ -49,9 +49,10 @@ public class DataHubConnection {
     private final String _scheme;
     private boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
+    private final String _proxiedHost;
     
     public DataHubConnection(String hostname, Integer port, String username, String password,
-            boolean useHTTPS, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
+            boolean useHTTPS, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode, String proxiedHost) {
 
         _hostname = hostname;
         _port = port;
@@ -61,6 +62,7 @@ public class DataHubConnection {
         _scheme = _useHTTPS ? "https" : "http";
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
         _securityMode = dataHubSecurityMode;
+        _proxiedHost = proxiedHost;
     }
 
     public MonitorHttpClient getHttpClient(String contextUrl) {
@@ -71,7 +73,7 @@ public class DataHubConnection {
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if (CAS.equals(_securityMode)) {
-            return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+            return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl, _proxiedHost);
         } else {
             return new DataHubDefaultMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
@@ -90,7 +92,7 @@ public class DataHubConnection {
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if (CAS.equals(_securityMode)) {
-            return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
+            return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl, _proxiedHost);
         } else {
             return new DataHubDefaultMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }

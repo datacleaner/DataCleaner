@@ -75,6 +75,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
     private final JXTextField _hostTextField;
     private final JXTextField _portTextField;
+    private final JXTextField _proxiedHostTextField;
     private final JCheckBox _httpsCheckBox;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
@@ -102,7 +103,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
                 _httpsCheckBox.isSelected(),
                 _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
-                        .getSelectedItem().toString())));
+                        .getSelectedItem().toString()), _proxiedHostTextField.getText()));
     }
 
     private void updateUrlLabel() {
@@ -117,6 +118,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
         _hostTextField = WidgetFactory.createTextField("Hostname");
         _portTextField = WidgetFactory.createTextField("Port");
+        _proxiedHostTextField = WidgetFactory.createTextField("Proxied host");
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
         // _contextPathTextField =
@@ -284,6 +286,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     protected DataHubDatastore createDatastore() {
         final String host = _hostTextField.getText();
         final Integer port = Integer.parseInt(_portTextField.getText());
+        final String proxiedHost = _proxiedHostTextField.getText();
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
@@ -293,7 +296,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
         return new DataHubDatastore(name, host, port, username, password, https,
-                acceptUnverifiedSslPeersCheckBox, DataHubSecurityMode.valueOf(securityMode));
+                acceptUnverifiedSslPeersCheckBox, DataHubSecurityMode.valueOf(securityMode), proxiedHost);
     }
 
     @Override
@@ -316,6 +319,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("DataHub hostname", _hostTextField));
         result.add(new ImmutableEntry<String, JComponent>("DataHub port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Proxied host", _proxiedHostTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _acceptUnverifiedSslPeersCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Security mode", _securityModeSelector));

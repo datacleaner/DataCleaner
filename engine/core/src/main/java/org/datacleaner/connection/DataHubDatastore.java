@@ -34,9 +34,10 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final boolean _https;
     private final boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
+    private final String _proxiedHost;
 
     public DataHubDatastore(String name, String host, Integer port, String username, String password,
-            boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
+            boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode, String proxiedHost) {
         super(name);
         _host = host;
         _port = port;
@@ -45,6 +46,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         _https = https;
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
         _securityMode = dataHubSecurityMode;
+        _proxiedHost = proxiedHost == null ? "" : proxiedHost;
     }
 
     @Override
@@ -81,6 +83,10 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return _securityMode;
     }
 
+    public String getProxiedHost() {
+        return _proxiedHost;
+    }
+    
     @Override
     public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
@@ -90,7 +96,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     @Override
     protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
         final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password,
-                _https, _acceptUnverifiedSslPeers, _securityMode);
+                _https, _acceptUnverifiedSslPeers, _securityMode, _proxiedHost);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
         return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
     }
@@ -99,7 +105,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username
                 + ", https=" + _https + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
-                + ", securityMode=" + _securityMode + "]";
+                + ", securityMode=" + _securityMode + ", proxied host=" + _proxiedHost + "]";
     }
 
 }

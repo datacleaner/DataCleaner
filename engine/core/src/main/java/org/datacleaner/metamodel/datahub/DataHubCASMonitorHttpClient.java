@@ -31,8 +31,8 @@ import org.datacleaner.util.http.CASMonitorHttpClient;
 public class DataHubCASMonitorHttpClient extends CASMonitorHttpClient {
 
     public DataHubCASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
-            String monitorBaseUrl) {
-        super(client, casServerUrl, username, password, monitorBaseUrl);
+            String monitorBaseUrl, String _proxiedHost) {
+        super(client, casServerUrl, username, password, monitorBaseUrl, _proxiedHost);
     }
     
     private static final String CDI_TICKET_HEADER = "CDI-ticket";

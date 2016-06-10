@@ -132,8 +132,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 RemoteDescriptorProviderImpl.this, component.getName(),
                                 initAnnotations(component.getName(), null, component.getAnnotations()),
-                                component.getIconData());
-
+                                component.getIconData(), component.isEnabled());
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {
                             final String propertyName = propE.getKey();

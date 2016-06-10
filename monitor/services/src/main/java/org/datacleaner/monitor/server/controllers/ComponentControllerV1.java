@@ -178,7 +178,8 @@ public class ComponentControllerV1 {
         for (TransformerDescriptor<?> descriptor : transformerDescriptors) {
             if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
                 try {
-                    componentList.add(createComponentInfo(tenant, descriptor, iconData));
+                    componentList.add(createComponentInfo(tenant, descriptor, iconData,
+                            isComponentEnabled(descriptor.getDisplayName())));
                 } catch(Exception e) {
                     logger.error("Cannot create info about component {}", descriptor, e);
                 }
@@ -202,7 +203,8 @@ public class ComponentControllerV1 {
             logger.info("Component {} is not allowed.", name);
             throw ComponentNotAllowed.createInstanceNotAllowed(name);
         }
-        return createComponentInfo(tenant, descriptor, iconData);
+
+        return createComponentInfo(tenant, descriptor, iconData, isComponentEnabled(descriptor.getDisplayName()));
     }
 
     /**
@@ -372,10 +374,11 @@ public class ComponentControllerV1 {
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,
-            boolean iconData) {
+            boolean iconData, boolean isEnabled) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
+                .setEnabled(isEnabled)
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setProperties(createPropertiesInfo(descriptor, componentInstance));
         setComponentAnnotations(descriptor, componentInfo);
@@ -441,6 +444,15 @@ public class ComponentControllerV1 {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isComponentEnabled(String componentName){
+        try {
+            canCall(componentName);
+        }catch (RuntimeException e){
+            return false;
+        }
+        return true;
     }
 
     private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor<?> descriptor,

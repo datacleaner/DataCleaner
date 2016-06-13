@@ -32,6 +32,7 @@ import org.datacleaner.util.HasAliases;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,6 +57,7 @@ public class Serializator {
         // our custom serializers
         myModule.addSerializer(new MyInputColumnSerializer());
         myModule.addSerializer(new MyEnumSerializer());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(myModule);
     }
 

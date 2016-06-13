@@ -19,22 +19,24 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.repository.Repository;
-import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.RepositoryFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.restclient.Serializator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Class is for storing components.
@@ -50,7 +52,7 @@ public class ComponentStoreImpl implements ComponentStore {
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwLock.readLock();
     private final Lock writeLock = rwLock.writeLock();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private final RepositoryFolder componentsFolder;
 
     public ComponentStoreImpl(Repository repository, String tenantId) {

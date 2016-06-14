@@ -53,7 +53,7 @@ public class ComponentList {
         private String createURL = "";
         private JsonNode annotations;
         private Map<String, PropertyInfo> properties = new HashMap<>();
-        private boolean isEnabled = true;
+        private Boolean isEnabled = null;
         private byte[] iconData = null;
 
         public ComponentInfo setProperties(Map<String, PropertyInfo> properties) {
@@ -98,11 +98,11 @@ public class ComponentList {
             return this;
         }
 
-        public boolean isEnabled() {
+        public Boolean isEnabled() {
             return isEnabled;
         }
 
-        public ComponentInfo setEnabled(final boolean enabled) {
+        public ComponentInfo setEnabled(final Boolean enabled) {
             isEnabled = enabled;
             return this;
         }

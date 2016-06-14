@@ -45,6 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.datacleaner.Version;
+import org.datacleaner.VersionComparator;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
@@ -75,6 +77,7 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.RESTClient;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
@@ -88,6 +91,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -118,6 +122,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 public class ComponentControllerV1 {
 
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
+    private static final String VERSION_ENABLE_COMPONENT_PARAM = "5.0.4-SNAPSHOT";
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
@@ -168,19 +173,28 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ComponentList getAllComponents(@RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) String dataCleanerClientVersion,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider().getTransformerDescriptors();
         ComponentList componentList = new ComponentList();
 
+        final int comp = compareVersions(VERSION_ENABLE_COMPONENT_PARAM, dataCleanerClientVersion);
+
         for (TransformerDescriptor<?> descriptor : transformerDescriptors) {
             if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
                 try {
-                    componentList.add(createComponentInfo(tenant, descriptor, iconData,
-                            isComponentEnabled(descriptor.getDisplayName())));
-                } catch(Exception e) {
+                    final ComponentList.ComponentInfo componentInfo;
+                    if (comp <= 0) {
+                        componentInfo = createComponentInfo(tenant, descriptor, iconData,
+                                isComponentEnabled(descriptor.getDisplayName()));
+                    } else {
+                        componentInfo = createComponentInfo(tenant, descriptor, iconData, null);
+                    }
+                    componentList.add(componentInfo);
+                } catch (Exception e) {
                     logger.error("Cannot create info about component {}", descriptor, e);
                 }
             }
@@ -192,7 +206,8 @@ public class ComponentControllerV1 {
 
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList.ComponentInfo getComponentInfo(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ComponentList.ComponentInfo getComponentInfo(@RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) String dataCleanerClientVersion,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
@@ -204,7 +219,12 @@ public class ComponentControllerV1 {
             throw ComponentNotAllowed.createInstanceNotAllowed(name);
         }
 
-        return createComponentInfo(tenant, descriptor, iconData, isComponentEnabled(descriptor.getDisplayName()));
+        final int comp = compareVersions(VERSION_ENABLE_COMPONENT_PARAM, dataCleanerClientVersion);
+        if (comp <= 0) {
+            return createComponentInfo(tenant, descriptor, iconData, isComponentEnabled(descriptor.getDisplayName()));
+        } else {
+            return createComponentInfo(tenant, descriptor, iconData, null);
+        }
     }
 
     /**
@@ -374,7 +394,7 @@ public class ComponentControllerV1 {
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,
-            boolean iconData, boolean isEnabled) {
+            boolean iconData, Boolean isEnabled) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
@@ -387,6 +407,21 @@ public class ComponentControllerV1 {
         }
 
         return componentInfo;
+    }
+
+    private int compareVersions(final String version1, final String version2) {
+        final VersionComparator versionComparator = new VersionComparator();
+        return versionComparator.compare(cleanVersion(version1), cleanVersion(version2));
+    }
+
+    private String cleanVersion(final String version) {
+        String clean = version;
+        if (clean == null) {
+            clean = "1.0";//old version
+        } else if (clean.equals(Version.UNKNOWN_VERSION)) {
+            clean = Version.getVersion(); // We expect the current version
+        }
+        return clean;
     }
 
     private static byte[] getComponentIconData(ComponentDescriptor<?> descriptor) {

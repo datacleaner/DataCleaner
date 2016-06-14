@@ -24,13 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ComponentRESTClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ComponentRESTClientTest.class);
@@ -41,7 +42,7 @@ public class ComponentRESTClientTest {
     private static final String PASSWORD = "admin";
     private static final String COMPONENT_NAME = "Concatenator";
     private static final String INSTANCE_ID = "0166fb12-d403-408f-b2bc-61eb898ee338";
-    private ComponentRESTClient componentRESTClient = new ComponentRESTClient(HOST, USERNAME, PASSWORD, "demo");
+    private ComponentRESTClient componentRESTClient = new ComponentRESTClient(HOST, USERNAME, PASSWORD, "demo", "version");
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

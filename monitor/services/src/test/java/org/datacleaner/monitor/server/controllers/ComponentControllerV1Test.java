@@ -19,11 +19,6 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -59,6 +54,9 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.*;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -177,7 +175,7 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents(tenant, false);
+        ComponentList componentList = componentControllerV1.getAllComponents("UNKNOWN", tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
     }
 

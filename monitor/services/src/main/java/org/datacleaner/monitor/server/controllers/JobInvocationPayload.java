@@ -20,8 +20,7 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Bean which represents the payload of invoking a DC job using the
@@ -34,6 +33,8 @@ public class JobInvocationPayload implements Serializable {
     private List<JobInvocationRowData> rows;
 
     private List<String> columns;
+
+    private List<Map<String, Object>> columnValueMap;
 
     public void setRows(List<JobInvocationRowData> rows) {
         this.rows = rows;
@@ -56,6 +57,17 @@ public class JobInvocationPayload implements Serializable {
 
     public List<String> getColumns() {
         return columns;
+    }
+
+    public List<Map<String, Object>> getColumnValueMap() {
+        if(columnValueMap == null){
+            columnValueMap = new ArrayList<>();
+        }
+        return columnValueMap;
+    }
+
+    public void setColumnValueMap(List<Map<String, Object>> columnValueMap) {
+        this.columnValueMap = columnValueMap;
     }
 
     @Override

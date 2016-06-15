@@ -19,8 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -140,5 +139,38 @@ public class JobInvocationControllerTest extends TestCase {
 
         final Object[] values = rows.get(0).getValues();
         assertEquals("[bar foo]", Arrays.toString(values));
+    }
+
+    public void testInvokeJobMapped() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        Map<String, Object> value1 = new HashMap<>();
+        value1.put("EMAIL", "kasper@eobjects.dk");
+        Map<String, Object> value2 = new HashMap<>();
+        value2.put("EMAIL", "kasper.sorensen@humaninference.com");
+        List<Map<String, Object>> inputColumnValueMap = Arrays.asList(value1, value2);
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+        sourceRecords.setColumnValueMap(inputColumnValueMap);
+
+        JobInvocationPayload result = controller.invokeJobMapped("tenant1", "email_standardizer", sourceRecords);
+
+        assertEquals("[Username, Domain]", result.getColumns().toString());
+
+        List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(2, rows.size());
+        assertEquals("[kasper, eobjects.dk]", Arrays.toString(rows.get(0).getValues()));
+        assertEquals("[kasper.sorensen, humaninference.com]", Arrays.toString(rows.get(1).getValues()));
+
+        List<Map<String, Object>> columnValueMap = result.getColumnValueMap();
+        assertEquals(2, columnValueMap.size());
+        assertEquals("kasper", columnValueMap.get(0).get("Username"));
+        assertEquals("eobjects.dk", columnValueMap.get(0).get("Domain"));
+        assertEquals("kasper.sorensen", columnValueMap.get(1).get("Username"));
+        assertEquals("humaninference.com", columnValueMap.get(1).get("Domain"));
+
     }
 }

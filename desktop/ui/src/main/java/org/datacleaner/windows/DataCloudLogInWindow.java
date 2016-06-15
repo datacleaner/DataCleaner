@@ -22,12 +22,16 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,7 +41,9 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -48,6 +54,8 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.restclient.RESTClient;
+import org.datacleaner.restclient.RESTClientImpl;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -55,6 +63,7 @@ import org.datacleaner.util.RemoteServersUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
+import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +77,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
     public static final String SHOW_DATACLOUD_DIALOG_USER_PREFERENCE = "show.datacloud.dialog";
     private final static String LOGIN_CARD = "Card with login form";
     private final static String SUCCESS_CARD = "Card with information about successful login";
+    private final static String TERMS_CARD = "Card with terms and conditions";
 
     private final DataCleanerConfiguration _configuration;
     private final UserPreferences _userPreferences;
@@ -77,6 +87,11 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private JXTextField usernameTextField;
     private JPasswordField passwordTextField;
     private JCheckBox dontShowAgainCheckBox;
+    private DCPanel loginCard;
+    private DCPanel successCard;
+    private DCPanel termsCard;
+    private JXEditorPane tacArea = new JXEditorPane();
+    private JButton acceptButton;
 
     Image bannerImage = ImageManager.get().getImage("images/datacloud_banner.png")
             .getScaledInstance(530, 303, Image.SCALE_SMOOTH);
@@ -94,7 +109,13 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                signIn();
+                if(loginCard.isVisible()) {
+                    signIn();
+                } else if(termsCard.isVisible()) {
+                    acceptTerms();
+                } else if(successCard.isVisible()) {
+                    close();
+                }
             }
         });
     }
@@ -111,23 +132,45 @@ public class DataCloudLogInWindow extends AbstractDialog {
     private JComponent createContentPanel() {
 
         final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        final BorderLayout borderLayout= new BorderLayout();
-        result.setLayout(borderLayout);
+        final GroupLayout layout = new GroupLayout(result);
+        result.setLayout(layout);
         result.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        invalidCredentialsLabel = new DCHtmlBox("");
+        invalidCredentialsLabel.setBorder(WidgetUtils.BORDER_EMPTY);
+        invalidCredentialsLabel.setOpaque(false);
+        final JEditorPane resetPasswordText = new DCHtmlBox("Forgot your password? " +
+                "<a href='https://datacleaner.org/reset_password'>Reset it here</a>.");
 
         CardLayout cardLayout = new CardLayout();
         cards = new JPanel(cardLayout);
         cards.setOpaque(true);
         final DCPanel bottomPanel = contentBottom();
-        final DCPanel loginCard = contentLoginCard();
-        final DCPanel successCard = contentSuccessCard();
+        loginCard = contentLoginCard();
+        successCard = contentSuccessCard();
+        termsCard = contentTermsAndConditions();
         cards.add(loginCard, LOGIN_CARD);
         cards.add(successCard, SUCCESS_CARD);
+        cards.add(termsCard, TERMS_CARD);
         cardLayout.show(cards, LOGIN_CARD);
 
-        result.add(cards, BorderLayout.CENTER);
-        result.add(bottomPanel, BorderLayout.SOUTH);
-
+        layout.setHorizontalGroup(
+            layout.createParallelGroup()
+                .addComponent(cards)
+                .addComponent(bottomPanel)
+                .addComponent(invalidCredentialsLabel)
+                .addComponent(resetPasswordText)
+        );
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addComponent(cards, 300, cards.getPreferredSize().height + 36, cards.getPreferredSize().height + 36)
+                .addGap(PADDING)
+                .addComponent(invalidCredentialsLabel)
+//                .addGap(PADDING)
+                .addComponent(resetPasswordText)
+                .addGap(PADDING)
+                .addComponent(bottomPanel, bottomPanel.getPreferredSize().height, bottomPanel.getPreferredSize().height, bottomPanel.getPreferredSize().height)
+        );
         return result;
     }
 
@@ -138,17 +181,12 @@ public class DataCloudLogInWindow extends AbstractDialog {
         informationText.setBorder(WidgetUtils.BORDER_EMPTY);
 
         // Set initially two lines of empty text for preferred size enough for 2-lines error message.
-        invalidCredentialsLabel = new DCHtmlBox("&nbsp;");
-        invalidCredentialsLabel.setBorder(WidgetUtils.BORDER_EMPTY);
-        invalidCredentialsLabel.setOpaque(false);
         final JLabel usernameLabel = new JLabel();
         final JLabel passwordLabel = new JLabel();
         usernameTextField = WidgetFactory.createTextField("email address");
         usernameTextField.setName("email address");
         passwordTextField = WidgetFactory.createPasswordField();
         passwordTextField.setName("password");
-        final JEditorPane resetPasswordText = new DCHtmlBox("Forgot your password? " +
-                "<a href='https://datacleaner.org/reset_password'>Reset it here</a>.");
         final JButton signInButton = WidgetFactory.createPrimaryButton("Sign in", IconUtils.ACTION_SAVE_BRIGHT);
         final JLabel banner = new JLabel(new ImageIcon(bannerImage));
         final ImageIcon usernameIcon = ImageManager.get().getImageIcon(IconUtils.USERNAME_INPUT);
@@ -186,10 +224,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                                 .addComponent(signInButton, GroupLayout.DEFAULT_SIZE, textFieldHeight, textFieldHeight)
                         )
                         .addGap(PADDING)
-                        .addComponent(invalidCredentialsLabel)
-                        .addGap(PADDING)
-                        .addComponent(resetPasswordText)
-                        .addGap(PADDING)
         );
 
         loginLayout.setHorizontalGroup(loginLayout.createParallelGroup()
@@ -206,8 +240,6 @@ public class DataCloudLogInWindow extends AbstractDialog {
                         .addComponent(signInButton)
                         .addGap(PADDING, PADDING, Integer.MAX_VALUE)
                 )
-                .addComponent(invalidCredentialsLabel)
-                .addComponent(resetPasswordText)
         );
 
         // 3. Add listeners
@@ -217,6 +249,44 @@ public class DataCloudLogInWindow extends AbstractDialog {
         passwordTextField.getDocument().addDocumentListener(clearErrorListener);
 
         return loginCard;
+    }
+
+    private DCPanel contentTermsAndConditions() {
+
+        final DCPanel p = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final GroupLayout l = new GroupLayout(p);
+        final JLabel description = new JLabel("Please review terms and conditions before using DataCloud services");
+        acceptButton = WidgetFactory.createPrimaryButton("Accept", IconUtils.ACTION_SAVE_BRIGHT);
+        tacArea = new JXEditorPane();
+        final JScrollPane tacScroll = new JScrollPane(tacArea);
+        tacScroll.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        tacScroll.setPreferredSize(new Dimension(100,200));
+        tacScroll.getHorizontalScrollBar().setEnabled(false);
+        tacScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        p.setLayout(l);
+        p.setOpaque(true);
+
+        l.setVerticalGroup(l.createSequentialGroup()
+                .addGap(PADDING)
+                .addComponent(description)
+                .addGap(PADDING)
+                .addComponent(tacScroll)
+                .addGap(PADDING*2)
+                .addComponent(acceptButton)
+                .addGap(PADDING)
+        );
+        l.setHorizontalGroup(l.createParallelGroup()
+                .addComponent(description, GroupLayout.Alignment.LEADING)
+                .addComponent(tacScroll, GroupLayout.Alignment.CENTER)
+                .addComponent(acceptButton, GroupLayout.Alignment.CENTER)
+        );
+
+        acceptButton.addActionListener(e -> {
+            acceptTerms();
+        });
+
+        return p;
     }
 
     private DCPanel contentSuccessCard() {
@@ -259,21 +329,19 @@ public class DataCloudLogInWindow extends AbstractDialog {
 
     class ClearErrorLabelDocumentListener implements DocumentListener {
 
-        String emptyLabel = "&nbsp;";
-
         @Override
         public void insertUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText(emptyLabel);
+            showError("");
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText(emptyLabel);
+            showError("");
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            invalidCredentialsLabel.setText(emptyLabel);
+            showError("");
         }
     }
 
@@ -292,9 +360,8 @@ public class DataCloudLogInWindow extends AbstractDialog {
         return _contentPanel;
     }
 
-
     protected boolean isWindowResizable() {
-        return false;
+        return true;
     }
 
     @Override
@@ -332,27 +399,84 @@ public class DataCloudLogInWindow extends AbstractDialog {
             @Override
             public void run() {
                 String userName = usernameTextField.getText();
-                String pass = new String(passwordTextField.getPassword());
                 try {
-                    RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+                    checkServer();
                 } catch (Exception ex) {
-                    invalidCredentialsLabel.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
-                    invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
-                    logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
-                    return;
-                }
 
-                invalidCredentialsLabel.setText("&nbsp;");
+                    String msg = ex.getMessage();
+                    if(msg != null && msg.toLowerCase().contains("terms and conditions")) {
+                        showError("");
+                        try {
+                            String tac = RemoteServersUtils.getDataCloudTermsAndConditions();
+                            tacArea.setContentType("text/html");
+                            tacArea.setText(tac);
+                            tacArea.setCaretPosition(0);
+                        } catch (IOException e) {
+                            showError("Cannot download DataCloud Terms and Conditions from the website: " + e.toString() + ".<br/>Please, visit <a href=\"" + RemoteDescriptorProvider.DATACLOUD_TERMS_URL + "\">" + RemoteDescriptorProvider.DATACLOUD_TERMS_URL + "</a>");
+                            tacArea.setText("Cannot download DataCloud Terms and Conditions from the website: " + e.toString() + "\n\nPlease, visit " + RemoteDescriptorProvider.DATACLOUD_TERMS_URL);
+                            acceptButton.setEnabled(false);
+                        }
+
+                        CardLayout cardLayout = (CardLayout) cards.getLayout();
+                        cardLayout.show(cards, TERMS_CARD);
+                        return;
+                    } else {
+                        showError("Sign in to DataCloud failed: " + ex.getMessage());
+                        logger.warn("Sign in to DataCloud failed for user '{}'", userName, ex);
+                        return;
+                    }
+                }
+                showError("");
+
                 logger.debug("Sign in to DataCloud succeeded. User name: {}", userName);
 
-                RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), RemoteDescriptorProvider.DATACLOUD_SERVER_NAME, RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
-
-                CardLayout cardLayout = (CardLayout) cards.getLayout();
-                cardLayout.show(cards, SUCCESS_CARD);
-                dontShowAgainCheckBox.setVisible(false);
+                addRemoteServer();
             }
         });
     }
+
+    private void showError(String s) {
+        if(s == null || s.isEmpty()) {
+            s = "";
+        }
+        invalidCredentialsLabel.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        invalidCredentialsLabel.setText(s);
+        invalidCredentialsLabel.invalidate();
+        _contentPanel.invalidate();
+        _contentPanel.validate();
+        _contentPanel.revalidate();
+        _contentPanel.repaint();
+    }
+
+    private void acceptTerms() {
+        try {
+            // call web service to accept T&C
+            final RESTClientImpl client = new RESTClientImpl(usernameTextField.getText(), new String(passwordTextField.getPassword()));
+            client.getResponse(RESTClient.HttpMethod.POST, RemoteDescriptorProvider.DATACLOUD_TERMS_ACCEPT_URL, "");
+
+            addRemoteServer();
+            dontShowAgainCheckBox.setVisible(false);
+        } catch(Exception e) {
+            showError("Cannot send acceptance message to server: " + e.getMessage());
+        }
+    }
+
+    protected void addRemoteServer() {
+        RemoteServersUtils.addRemoteServer(
+                _configuration.getEnvironment(),
+                RemoteDescriptorProvider.DATACLOUD_SERVER_NAME,
+                RemoteDescriptorProvider.DATACLOUD_URL,
+                usernameTextField.getText(),
+                new String(passwordTextField.getPassword()));
+        CardLayout cardLayout = (CardLayout) cards.getLayout();
+        cardLayout.show(cards, SUCCESS_CARD);
+    }
+
+    protected void checkServer() throws Exception {
+        String userName = usernameTextField.getText();
+        String pass = new String(passwordTextField.getPassword());
+        RemoteServersUtils.checkServerWithCredentials(RemoteDescriptorProvider.DATACLOUD_URL, userName, pass);
+   }
 
     private void saveDontShowFlag(){
         Boolean selectedNeg = !dontShowAgainCheckBox.isSelected();
@@ -366,7 +490,24 @@ public class DataCloudLogInWindow extends AbstractDialog {
     }
 
     public static void main(String[] args) {
-        DataCloudLogInWindow w = new DataCloudLogInWindow(null, null, null, null);
+        AtomicInteger i = new AtomicInteger();
+        DataCloudLogInWindow w = new DataCloudLogInWindow(null, null, null, null) {
+            protected void checkServer() {
+                System.out.println("Check server");
+                if(i.getAndIncrement() < 1) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    throw new RuntimeException("TEST ERROR WITH SOME LONGER (ALTHOUGH NOT SO LONG) TEXT. TRY AGAIN.");
+                }
+                throw new RuntimeException("DataCloud terms and conditions not accepted");
+            }
+            protected void addRemoteServer() {
+                System.out.println("Add server");
+            }
+        };
         w.open();
     }
 }

@@ -89,7 +89,7 @@ public class DataCloudInformationPanel extends JPanel {
         });
         setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
         setVisible(false);
-        setSize(WIDTH, 400);
+        setSize(WIDTH, 500);
         setLocation(getXWhenOut(), POSITION_Y);
 
         setLayout(new VerticalLayout(10));

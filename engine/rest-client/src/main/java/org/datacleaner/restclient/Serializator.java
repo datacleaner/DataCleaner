@@ -26,11 +26,13 @@ import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.ShortNews;
 import org.datacleaner.util.HasAliases;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,6 +57,7 @@ public class Serializator {
         // our custom serializers
         myModule.addSerializer(new MyInputColumnSerializer());
         myModule.addSerializer(new MyEnumSerializer());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(myModule);
     }
 
@@ -62,9 +65,12 @@ public class Serializator {
         return objectMapper;
     }
 
+    public static ShortNews shortNewsList(String response) {
+        return Serializator.fromString(response, ShortNews.class);
+    }
+
     public static ComponentList componentList(String response) {
         ComponentList components = Serializator.fromString(response, ComponentList.class);
-
         return components;
     }
 
@@ -114,7 +120,7 @@ public class Serializator {
 
     private static <T> T fromString(String value, Class<T> type) {
         try {
-            if (value instanceof String && (value == null || value.equals(""))) {
+            if (value == null || value.equals("")) {
                 return null;
             }
 

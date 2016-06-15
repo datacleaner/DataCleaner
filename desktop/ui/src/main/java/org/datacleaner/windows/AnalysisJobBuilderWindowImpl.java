@@ -36,19 +36,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
@@ -107,6 +95,7 @@ import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
+import org.datacleaner.widgets.NewsChannelStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -442,6 +431,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         setSchemaTree(datastore, expandTree, con);
         updateStatusLabel();
+        _graph.refresh();
     }
 
     private void setSchemaTree(final Datastore datastore, boolean expandTree, final DatastoreConnection con) {
@@ -771,6 +761,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel( _glassPane, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
+        statusBar.add(Box.createHorizontalStrut(20));
+
+        final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(_glassPane, _userPreferences);
+        statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);

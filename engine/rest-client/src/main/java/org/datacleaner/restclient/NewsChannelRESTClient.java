@@ -17,29 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.job;
+package org.datacleaner.restclient;
 
 import java.util.List;
-import java.util.Map;
 
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.monitor.job.JobContext;
-import org.datacleaner.monitor.job.MetricJobContext;
-import org.datacleaner.monitor.job.XmlJobContext;
+import org.datacleaner.api.RestrictedFunctionalityException;
+import org.datacleaner.api.ShortNews;
 
-/**
- * Specialized {@link JobContext} for jobs that are typical DataCleaner
- * {@link AnalysisJob}s
- */
-public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
+public class NewsChannelRESTClient {
 
-    public String getSourceDatastoreName();
+    private final RESTClient restClient;
+    private final String url;
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+    public NewsChannelRESTClient(String url) {
+        this.url = url;
+        restClient = new RESTClientImpl(null, null);
+    }
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties);
+    public List<ShortNews.Item> getNews(final int count) {
+        String response = call(count);
+        ShortNews news = Serializator.shortNewsList(response);
+        return news.getNewsItems();
+    }
 
-    public AnalysisJob getAnalysisJob();
-
-    public List<String> getSourceColumnPaths();
+    private String call(int count) throws RestrictedFunctionalityException {
+        String response = restClient.getResponse(RESTClient.HttpMethod.GET, url + "?count=" + count, "");
+        return response;
+    }
 }
+

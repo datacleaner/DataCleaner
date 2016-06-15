@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -95,6 +96,12 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.triggerExecution(tenant, job);
+    }
+
+    @Override
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            Map<String, String> overrideProperties) {
+        return _delegate.triggerExecution(tenant, job, overrideProperties);
     }
 
     @Override

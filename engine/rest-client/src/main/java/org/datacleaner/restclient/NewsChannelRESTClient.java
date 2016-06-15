@@ -29,9 +29,9 @@ public class NewsChannelRESTClient {
     private final RESTClient restClient;
     private final String url;
 
-    public NewsChannelRESTClient(String url) {
+    public NewsChannelRESTClient(String url, String dataCleanerVersion) {
         this.url = url;
-        restClient = new RESTClientImpl(null, null);
+        restClient = new RESTClientImpl(null, null, dataCleanerVersion);
     }
 
     public List<ShortNews.Item> getNews(final int count) {

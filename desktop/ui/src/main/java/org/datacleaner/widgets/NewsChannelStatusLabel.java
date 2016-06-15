@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.swing.*;
 
+import org.datacleaner.Version;
 import org.datacleaner.api.ShortNews;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.panels.DCGlassPane;
@@ -110,7 +111,8 @@ public class NewsChannelStatusLabel extends JLabel {
 
     private List<ShortNews.Item> getNews() {
         try{
-            NewsChannelRESTClient client = new NewsChannelRESTClient(RemoteDescriptorProvider.DATACLOUD_NEWS_CHANNEL_URL);
+            NewsChannelRESTClient client = new NewsChannelRESTClient(RemoteDescriptorProvider.DATACLOUD_NEWS_CHANNEL_URL,
+                    Version.getVersion());
             return client.getNews(3);
         } catch(Exception e) {
             logger.error("Connection problem to the website service.", e.getMessage());

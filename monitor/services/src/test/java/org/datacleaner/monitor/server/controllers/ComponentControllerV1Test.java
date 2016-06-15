@@ -55,6 +55,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
 
@@ -175,8 +177,13 @@ public class ComponentControllerV1Test {
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents("UNKNOWN", tenant, false);
+        ComponentList componentList = componentControllerV1.getAllComponents("1.0", tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
+        assertNull(componentList.getComponents().get(0).isEnabled());
+
+        ComponentList componentList2 = componentControllerV1.getAllComponents("55.0.0", tenant, false);
+        assertTrue(componentList2.getComponents().size() > 0);
+        assertNotNull(componentList2.getComponents().get(0).isEnabled());
     }
 
     @Test

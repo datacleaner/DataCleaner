@@ -37,6 +37,7 @@ import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.descriptors.Allowable;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
@@ -171,7 +172,9 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             DCPanel panel = new DCPanel();
             DCHtmlBox dcHtmlBox = new DCHtmlBox(
                     "<p>This service is not currently available for your DataCloud account.</p>"
-                            + "<p> Please contact 'support@datacleaner.org' to obtain access.</p>");
+                            + "<p> More information on your "
+                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile" + "'>DataCleaner profile</a>"
+                            + ".</p>");
             panel.add(dcHtmlBox);
             addTaskPane(icon, "Component is disabled", panel, true);
         }

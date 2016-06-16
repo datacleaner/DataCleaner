@@ -34,31 +34,31 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Documented
 @Inherited
-public @interface DcScope {
+public @interface ComponentScope {
 
     String ALL_COUNTRIES = "all";
 
-    enum ScopeServiceType {
-        ENRICH, CLEANSING
+    enum ServiceType {
+        ENRICH, CORRECTION
     }
 
-    enum ScopeEntityType {
+    enum EntityType {
         PEOPLE, COMPANY
     }
 
     /**
-     * Specifies the type of component. Enrich or cleansing
+     * Specifies the type of component. Enrich or correction
      *
-     * @return array with enum ENRICH, CLEANSING
+     * @return array with enum ENRICH, CORRECTION
      */
-    ScopeServiceType[] serviceType() default {};
+    ServiceType[] serviceType() default {};
 
     /**
      * Component is working with data about PEOPLE or COMPANY.
      *
      * @return array with enum  PEOPLE, COMPANY
      */
-    ScopeEntityType[] entityTypes() default {};
+    EntityType[] entityTypes() default {};
 
     /**
      * Array of Countries, where is component usable.

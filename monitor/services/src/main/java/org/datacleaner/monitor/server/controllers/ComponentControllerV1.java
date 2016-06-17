@@ -122,6 +122,7 @@ public class ComponentControllerV1 {
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
+    private static final String PARAMETER_NAME_COLUMNS = "columns";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     
@@ -247,9 +248,11 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ProcessStatelessOutput processStateless(
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE,required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_COLUMNS,required = false, defaultValue = "false") boolean outputColumnsInfo,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
 
@@ -265,6 +268,22 @@ public class ComponentControllerV1 {
         OutputStyle outputStyleEnum = OutputStyle.forString(outputStyle);
         output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
+
+        if(outputColumnsInfo) {
+            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
+            OutputColumns outColsResult = new OutputColumns();
+            output.columns = new ArrayList<>();
+            for (int i = 0; i < outCols.getColumnCount(); i++) {
+                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+                try {
+                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+                } catch (JsonMappingException e) {
+                    throw new RuntimeException(e);
+                }
+                outColsResult.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
+            }
+            output.columns = outColsResult.getColumns();
+        }
 
         return output;
     }

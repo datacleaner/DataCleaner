@@ -184,7 +184,7 @@ public class ComponentControllerV1Test {
     @Test
     public void testProcessStateless() throws Exception {
         ProcessStatelessInput input = createSampleInput();
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, input);
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, false, input);
         JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
@@ -197,7 +197,7 @@ public class ComponentControllerV1Test {
 
         ProcessStatelessInput input = createSampleInput();
 
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", input);
+        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", false, input);
         JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());

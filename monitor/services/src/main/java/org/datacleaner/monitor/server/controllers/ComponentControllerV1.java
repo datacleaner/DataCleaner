@@ -219,19 +219,7 @@ public class ComponentControllerV1 {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, createInput.configuration);
         try {
-            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
-            org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
-
-            for (int i = 0; i < outCols.getColumnCount(); i++) {
-                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-                try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
-                } catch (JsonMappingException e) {
-                    throw new RuntimeException(e);
-                }
-                result.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
-            }
-            return result;
+            return createOutputColumns(handler.getOutputColumns());
         } finally {
             handler.closeComponent();
         }
@@ -270,22 +258,24 @@ public class ComponentControllerV1 {
         output.result = getJsonNode(handler.closeComponent());
 
         if(outputColumnsInfo) {
-            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
-            OutputColumns outColsResult = new OutputColumns();
-            output.columns = new ArrayList<>();
-            for (int i = 0; i < outCols.getColumnCount(); i++) {
-                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-                try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
-                } catch (JsonMappingException e) {
-                    throw new RuntimeException(e);
-                }
-                outColsResult.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
-            }
-            output.columns = outColsResult.getColumns();
+            output.columns = createOutputColumns(handler.getOutputColumns()).getColumns();
         }
 
         return output;
+    }
+
+    private OutputColumns createOutputColumns(org.datacleaner.api.OutputColumns outCols) {
+        OutputColumns outColsResult = new OutputColumns();
+        for (int i = 0; i < outCols.getColumnCount(); i++) {
+            SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+            try {
+                ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+            } catch (JsonMappingException e) {
+                throw new RuntimeException(e);
+            }
+            outColsResult.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
+        }
+        return outColsResult;
     }
 
     private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {

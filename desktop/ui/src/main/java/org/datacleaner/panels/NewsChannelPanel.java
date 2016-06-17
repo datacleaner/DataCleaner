@@ -192,7 +192,7 @@ public class NewsChannelPanel extends JPanel {
                     "<span style='" + titleStyles + "'>" + _item.getTitle() + "</span>" +
                     " <span style='" + dateStyles + "'>(" + formatter.format(_item.getDateCreated()) + ")</span>" +
                     "<br /><span style='" + msgStyles + "'>" + _item.getMessage() + "</span>" +
-                    " <a href='" + RemoteDescriptorProvider.DATACLOUD_URL + "/newsitem/" + _item.getName() +
+                    " <a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/newsitem/" + _item.getName() +
                     "' style='text-decoration: none;'>More.</a>" +
                     "</div>");
         }

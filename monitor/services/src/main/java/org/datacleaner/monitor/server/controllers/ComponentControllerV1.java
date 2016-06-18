@@ -241,8 +241,8 @@ public class ComponentControllerV1 {
     public ProcessStatelessOutput processStateless(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE,required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
-            @RequestParam(value = PARAMETER_NAME_COLUMNS,required = false, defaultValue = "false") boolean outputColumnsInfo,
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_COLUMNS, required = false, defaultValue = "false") boolean outputColumnsInfo,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
 

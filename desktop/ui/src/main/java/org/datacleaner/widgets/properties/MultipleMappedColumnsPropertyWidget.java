@@ -37,6 +37,8 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.MutableRef;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -117,6 +119,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         _mappedColumnNamesPropertyWidget = new MappedColumnNamesPropertyWidget(componentBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
+        logger.info("The current value in MultipleMappedColumnsPropertyWidget is " + currentValue);
         final String[] currentMappedColumnsValue = (String[]) componentBuilder
                 .getConfiguredProperty(mappedColumnsProperty);
         if (currentValue != null && currentMappedColumnsValue != null) {
@@ -131,6 +134,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
                 createComboBox(inputColumn, new MutableColumn(mappedColumnName));
             }
 
+            logger.info("Current value is " +  currentValue);
             setValue(currentValue);
         }
     }
@@ -350,5 +354,27 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     protected void onBatchFinished() {
         super.onBatchFinished();
         _mappedColumnNamesPropertyWidget.fireValueChanged();
+    }
+    @Override
+    public void onRemove(InputColumn<?> sourceColumn) {
+        super.onRemove(sourceColumn);
+   
+        final boolean removed = _mappedColumnComboBoxes.remove(sourceColumn,  _comboBoxDecorations.get(sourceColumn)); 
+        final JComponent decoration = _comboBoxDecorations.remove(sourceColumn);
+        remove(decoration); 
+        
+        if (sourceColumn instanceof MutableInputColumn) {
+            ((MutableInputColumn<?>) sourceColumn).removeListener(this);
+        }
+
+        if (sourceColumn instanceof TransformedInputColumn) {
+            ((TransformedInputColumn<?>) sourceColumn).removeListener(this);
+        }
+        if (removed) {
+            fireValueChanged();
+        }
+        
+        super.updateComponents();
+        updateUI();
     }
 }

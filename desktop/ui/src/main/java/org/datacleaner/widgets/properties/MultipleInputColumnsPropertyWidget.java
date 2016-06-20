@@ -48,6 +48,7 @@ import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -221,8 +222,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         return false;
     }
 
-    private void updateComponents() {
+    protected void updateComponents() {
         final InputColumn<?>[] currentValue = getCurrentValue();
+        logger.info("The current value in MultipleInpuWidget is " + currentValue); 
         updateComponents(currentValue);
     }
 
@@ -230,7 +232,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         // fetch available input columns
         final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(
                 getComponentBuilder(), _dataType);
-
+        if (availableColumns != null) {
+            logger.info("Available columns are" + availableColumns.toString());
+        }
         final Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<>();
         inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());
 
@@ -322,7 +326,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public InputColumn<?>[] getValue() {
         final List<InputColumn<?>> result = getSelectedInputColumns();
+        
+        final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
+                getComponentBuilder(), _dataType);
 
+         final ArrayList<InputColumn<?>> goodColumns = new ArrayList<>();        
         if (logger.isDebugEnabled()) {
             final List<String> names = CollectionUtils.map(result, new HasNameMapper());
             logger.debug("getValue() returning: {}", names);
@@ -357,6 +365,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public void onRemove(InputColumn<?> sourceColumn) {
         removeAvailableInputColumn(sourceColumn);
+        updateComponents();
         updateVisibility();
         updateUI();
     }
@@ -406,6 +415,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         // we need to save the current value before we update the components
         // here. Otherwise any previous selections will be lost.
         final InputColumn<?>[] value = getValue();
+        logger.info("On output changed , inputcolumns before updating are" + Arrays.asList(value));
         getComponentBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
 
         updateComponents(value);
@@ -542,6 +552,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             ((MutableInputColumn<?>) col).removeListener(this);
         }
 
+        if (col instanceof TransformedInputColumn) {
+            ((TransformedInputColumn<?>) col).removeListener(this);
+        }
         if (valueChanged) {
             fireValueChanged();
         }

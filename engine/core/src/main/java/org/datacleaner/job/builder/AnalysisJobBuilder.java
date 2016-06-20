@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.metamodel.schema.Column;
@@ -648,6 +649,10 @@ public final class AnalysisJobBuilder implements Closeable {
 
     public List<FilterComponentBuilder<?, ?>> getFilterComponentBuilders() {
         return Collections.unmodifiableList(_filterComponentBuilders);
+    }
+
+    public Optional<FilterComponentBuilder<?, ?>> getFilterComponentBuilderByName(String name) {
+        return _filterComponentBuilders.stream().filter(f -> f.getName() != null && f.getName().equals(name)).findFirst();
     }
 
     public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(AnalyzerDescriptor<A> descriptor) {

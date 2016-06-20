@@ -20,6 +20,7 @@
 package org.datacleaner.restclient;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,4 +38,6 @@ public class ProcessStatelessOutput implements Serializable {
     public JsonNode result;
     @JsonProperty
     public JsonNode rows;
+    @JsonProperty
+    public List<OutputColumns.OutputColumn> columns;
 }

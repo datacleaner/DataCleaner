@@ -123,6 +123,7 @@ public class ComponentControllerV1 {
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
+    private static final String PARAMETER_NAME_COLUMNS = "columns";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     
@@ -220,19 +221,7 @@ public class ComponentControllerV1 {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, createInput.configuration);
         try {
-            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
-            org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
-
-            for (int i = 0; i < outCols.getColumnCount(); i++) {
-                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-                try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
-                } catch (JsonMappingException e) {
-                    throw new RuntimeException(e);
-                }
-                result.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
-            }
-            return result;
+            return createOutputColumns(handler.getOutputColumns());
         } finally {
             handler.closeComponent();
         }
@@ -249,9 +238,11 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ProcessStatelessOutput processStateless(
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_COLUMNS, required = false, defaultValue = "false") boolean outputColumnsInfo,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
 
@@ -268,7 +259,25 @@ public class ComponentControllerV1 {
         output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
 
+        if(outputColumnsInfo) {
+            output.columns = createOutputColumns(handler.getOutputColumns()).getColumns();
+        }
+
         return output;
+    }
+
+    private OutputColumns createOutputColumns(org.datacleaner.api.OutputColumns outCols) {
+        OutputColumns outColsResult = new OutputColumns();
+        for (int i = 0; i < outCols.getColumnCount(); i++) {
+            SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+            try {
+                ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+            } catch (JsonMappingException e) {
+                throw new RuntimeException(e);
+            }
+            outColsResult.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
+        }
+        return outColsResult;
     }
 
     private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {

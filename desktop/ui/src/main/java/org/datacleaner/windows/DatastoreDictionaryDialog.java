@@ -100,8 +100,9 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         _splitPane.setBackground(WidgetUtils.BG_COLOR_DARK);
-        _splitPane.setBorder(null);
+        _splitPane.setBorder(WidgetUtils.BORDER_EMPTY);
         _splitPane.setDividerLocation(320);
+        _splitPane.setLayout(new BorderLayout());
 
         _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
@@ -114,8 +115,8 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
                     if (datastore != null) {
                         _treePanel.removeAll();
 
-                        Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore)
-                                .with(AnalyzerComponentBuilder.class, null).createInjector();
+                        Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore).with(
+                                AnalyzerComponentBuilder.class, null).createInjector();
 
                         final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
                         schemaTree.setIncludeLibraryNode(false);
@@ -160,7 +161,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 500;
+        return 600;
     }
 
     @Override
@@ -222,8 +223,8 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
 
-        _splitPane.add(formPanel);
-        _splitPane.add(_treePanel);
+        _splitPane.add(formPanel, BorderLayout.WEST);
+        _splitPane.add(_treePanel, BorderLayout.CENTER);
 
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());

@@ -109,7 +109,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 465;
+        return 485;
     }
 
     @Override
@@ -224,7 +224,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         mainPanel.add(descriptionLabel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(testitPanel, BorderLayout.SOUTH);
-        mainPanel.setPreferredSize(getDialogWidth(), 400);
+        mainPanel.setPreferredSize(getDialogWidth(), 450);
 
         return mainPanel;
     }

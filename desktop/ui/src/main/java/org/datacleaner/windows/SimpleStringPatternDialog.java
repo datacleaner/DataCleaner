@@ -219,7 +219,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         mainPanel.add(descriptionLabel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(testitPanel, BorderLayout.SOUTH);
-        mainPanel.setPreferredSize(getDialogWidth(), 400);
+        mainPanel.setPreferredSize(getDialogWidth(), 450);
 
         return mainPanel;
     }

@@ -70,11 +70,6 @@ public class Serializator {
             @Override
             public void setupModule(final SetupContext context) {
                 context.setMixInAnnotations(ComponentScope.ServiceType.class, ComponentScopeServiceTypeMixin.class);
-            }
-        });
-        objectMapper.registerModule(new SimpleModule(){
-            @Override
-            public void setupModule(final SetupContext context) {
                 context.setMixInAnnotations(ComponentScope.EntityType.class, ComponentScopeEntityTypeMixin.class);
             }
         });

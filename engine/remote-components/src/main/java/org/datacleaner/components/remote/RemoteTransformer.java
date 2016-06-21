@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.Version;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -94,7 +95,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     public void initClient() throws RemoteComponentException {
         try {
             logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
-            client = new ComponentRESTClient(serverData.getUrl(), serverData.getUsername(), serverData.getPassword());
+            client = new ComponentRESTClient(serverData.getUrl(), serverData.getUsername(), serverData.getPassword(),
+                    Version.getVersion());
         } catch (Exception e) {
             throw new RemoteComponentException(
                     "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());

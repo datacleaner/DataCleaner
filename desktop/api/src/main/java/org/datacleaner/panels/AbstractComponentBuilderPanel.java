@@ -34,8 +34,10 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 import org.datacleaner.api.HiddenProperty;
+import org.datacleaner.descriptors.Allowable;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
@@ -44,6 +46,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ChangeRequirementButton;
+import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetCollection;
@@ -136,7 +139,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
 
     private final void init() {
         final ComponentBuilder componentBuilder = getComponentBuilder();
-
+        addInformationPanelAboutDisable();
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
 
         final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
@@ -161,6 +164,20 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         }
 
         onOutputDataStreamsChanged();
+    }
+
+    private void addInformationPanelAboutDisable() {
+        if (_descriptor instanceof Allowable && !((Allowable) _descriptor).isAllowed()) {
+            final ImageIcon icon = imageManager.getImageIcon(IconUtils.STATUS_INFO, IconUtils.ICON_SIZE_TASK_PANE);
+            DCPanel panel = new DCPanel();
+            DCHtmlBox dcHtmlBox = new DCHtmlBox(
+                    "<p>This service is not currently available for your DataCloud account.</p>"
+                            + "<p> More information on your "
+                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile" + "'>DataCleaner profile</a>"
+                            + ".</p>");
+            panel.add(dcHtmlBox);
+            addTaskPane(icon, "Component is disabled", panel, true);
+        }
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {

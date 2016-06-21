@@ -17,30 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
+package org.datacleaner.descriptors;
 
 /**
- * Basic REST client that requires the endpoint and the requestBody to provide the response.
- * @since 03. 09. 2015
+ * Descriptor interface for providing component's information about availability.
  */
-public interface RESTClient {
-    String HEADER_DC_VERSION = "datacleaner-version";
-    
-    enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        DELETE,
-        ;
-    };
+public interface Allowable {
 
-    /**
-     * It returns the response for the given request.
-     *
-     * @param httpMethod
-     * @param url
-     * @param requestBody
-     * @return
-     */
-    String getResponse(HttpMethod httpMethod, String url, String requestBody);
+    boolean isAllowed();
 }

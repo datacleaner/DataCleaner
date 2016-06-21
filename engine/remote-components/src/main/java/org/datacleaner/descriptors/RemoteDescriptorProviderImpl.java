@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.Version;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.configuration.RemoteServerState;
@@ -124,7 +125,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             try {
                 logger.info("Loading remote components list from " + remoteServerData.getUrl());
                 final ComponentRESTClient client = new ComponentRESTClient(remoteServerData.getUrl(),
-                        remoteServerData.getUsername(), remoteServerData.getPassword());
+                        remoteServerData.getUsername(), remoteServerData.getPassword(), Version.getVersion());
                 final ComponentList components = client.getAllComponents(true);
 
                 for (ComponentList.ComponentInfo component : components.getComponents()) {
@@ -132,8 +133,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                         final RemoteTransformerDescriptorImpl transformerDescriptor = new RemoteTransformerDescriptorImpl(
                                 RemoteDescriptorProviderImpl.this, component.getName(),
                                 initAnnotations(component.getName(), null, component.getAnnotations()),
-                                component.getIconData());
-
+                                component.getIconData(), component.isEnabled());
                         for (Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
                                 .entrySet()) {
                             final String propertyName = propE.getKey();

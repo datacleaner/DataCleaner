@@ -20,9 +20,12 @@
 package org.datacleaner.util;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.net.URL;
 import java.util.Set;
 
@@ -353,7 +356,7 @@ public final class IconUtils {
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
             if(componentDescriptor instanceof Allowable && !((Allowable) componentDescriptor).isAllowed()){
-                imageIcon = getDesaturationIcon(imageIcon);
+                imageIcon = getDisabledIcon(imageIcon);
             }
             imageIcon = addRemoteOverlay(imageIcon);
             _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
@@ -609,74 +612,35 @@ public final class IconUtils {
         return imagePath;
     }
 
-    public static ImageIcon getDesaturationIcon(ImageIcon inputIcon) {
-        BufferedImage inputBufferedImage = new BufferedImage(
-                inputIcon.getIconWidth(),
-                inputIcon.getIconHeight(),
-                BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics graphics = inputBufferedImage.createGraphics();
-        inputIcon.paintIcon(null, graphics, 0, 0);
-        graphics.dispose();
+    public static ImageIcon getDisabledIcon(ImageIcon inputIcon) {
+        DisabledFilter filter = new DisabledFilter();
+        ImageProducer prod = new FilteredImageSource(inputIcon.getImage().getSource(), filter);
+        return new ImageIcon(Toolkit.getDefaultToolkit().createImage(prod));
+    }
 
-        BufferedImage bufferedImage =
-                new BufferedImage(inputIcon.getIconWidth(), inputIcon.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+    private static class DisabledFilter extends RGBImageFilter {
+        @Override
+        public int filterRGB(final int x, final int y, final int rgb) {
 
-        for (int x = 0; x < inputBufferedImage.getWidth(); x++) {
-            for (int y = 0; y < inputBufferedImage.getHeight(); y++) {
-
-                final int rgb = inputBufferedImage.getRGB(x, y);
-                if (isTransparent(inputBufferedImage, x, y)) {
-                    bufferedImage.setRGB(x, y, rgb);
-                    continue;
-                }
-
-                // Get pixels by R, G, B
-                final int alpha = new Color(rgb).getAlpha();
-                final int[] pixel = new int[3];
-                pixel[0] = new Color(rgb).getRed();
-                pixel[1] = new Color(rgb).getGreen();
-                pixel[2] = new Color(rgb).getBlue();
-
-                final int max = Math.max(Math.max(pixel[0], pixel[1]), pixel[2]);
-                final int min = Math.min(Math.min(pixel[0], pixel[1]), pixel[2]);
-                final int newVal = (max + min) / 2;
-                final int[] newPixelRGB = { newVal, newVal, newVal };
-                brighter(newPixelRGB, 40);
-                // Return back to original format
-                final int newPixel = colorToRGB(alpha, newPixelRGB[0], newPixelRGB[1], newPixelRGB[2]);
-
-                // Write pixels into image
-                bufferedImage.setRGB(x, y, newPixel);
+            if ((rgb >> 24) == 0x00) { // is transparent
+                return rgb;
             }
+
+            final int red = new Color(rgb).getRed();
+            final int green = new Color(rgb).getGreen();
+            final int blue = new Color(rgb).getBlue();
+
+            final int max = Math.max(Math.max(red, green), blue);
+            final int min = Math.min(Math.min(red, green), blue);
+            final int gray = brighter((max + min) / 2, 40);
+
+            return (rgb & 0xff000000) | (gray << 16) | (gray << 8) | gray;
         }
-        return new ImageIcon(bufferedImage);
-    }
 
-    private static boolean isTransparent(BufferedImage img, int x, int y ) {
-        int pixel = img.getRGB(x,y);
-        if( (pixel>>24) == 0x00 ) {
-            return true;
+        private int brighter(int rgb, int percent) {
+            double q = 255 * percent * 0.01;
+            double k = (255 - q) / 255;
+            return (int) (k * rgb + q);
         }
-        return false;
-    }
-
-    private static void brighter(int[] rgb, int percent) {
-        double q = 255 * percent * 0.01;
-        double k = (255-q)/255;
-        rgb[0] = new Double((k * rgb[0] + q)).intValue();
-        rgb[1] = new Double((k * rgb[1] + q)).intValue();
-        rgb[2] = new Double((k * rgb[2] + q)).intValue();
-    }
-
-    // Convert R, G, B, Alpha to standard 8 bit
-    private static int colorToRGB(int alpha, int red, int green, int blue) {
-        int newPixel = 0;
-        newPixel += alpha;
-        newPixel = newPixel << 8;
-        newPixel += red; newPixel = newPixel << 8;
-        newPixel += green; newPixel = newPixel << 8;
-        newPixel += blue;
-
-        return newPixel;
     }
 }

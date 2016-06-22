@@ -43,7 +43,7 @@ public @interface ComponentScope {
     }
 
     enum EntityType {
-        PEOPLE, COMPANY
+        PERSON, COMPANY
     }
 
     /**
@@ -56,7 +56,7 @@ public @interface ComponentScope {
     /**
      * Component is working with data about PEOPLE or COMPANY.
      *
-     * @return array with enum  PEOPLE, COMPANY
+     * @return array with enum  PERSON, COMPANY
      */
     EntityType[] entityTypes() default {};
 

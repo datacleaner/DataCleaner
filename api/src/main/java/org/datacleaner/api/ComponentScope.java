@@ -51,7 +51,7 @@ public @interface ComponentScope {
      *
      * @return array with enum ENRICH, CORRECTION
      */
-    ServiceType[] serviceType() default {};
+    ServiceType[] serviceTypes() default {};
 
     /**
      * Component is working with data about PEOPLE or COMPANY.

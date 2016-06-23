@@ -45,11 +45,11 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     private final String remoteDisplayName;
     private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final byte[] iconData;
-    private final boolean isEnabled;
+    private final Boolean isEnabled;
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
     public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
-            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData, boolean isEnabled) {
+            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData, Boolean isEnabled) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
@@ -108,6 +108,6 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
 
     @Override
     public boolean isAllowed() {
-        return isEnabled;
+        return isEnabled == null || isEnabled == Boolean.TRUE;
     }
 }

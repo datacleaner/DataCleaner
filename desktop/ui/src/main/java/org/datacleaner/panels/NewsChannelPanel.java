@@ -25,11 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
-import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.api.ShortNews;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.util.IconUtils;
@@ -46,27 +42,18 @@ public class NewsChannelPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int WIDTH = 360;
-    private static final int POSITION_Y = 130;
-
-    private final DCGlassPane _glassPane;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
-    private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final JScrollPane scroll;
     private final List<ShortNews.Item> _newsitems;
     private final long _lastCheck;
     private List<NewsDCHtmlBox> _newsBoxes = new ArrayList<>();
 
-    public NewsChannelPanel(DCGlassPane glassPane, List<ShortNews.Item> newsitems, long lastCheck) {
+    public NewsChannelPanel(List<ShortNews.Item> newsitems, long lastCheck) {
         super();
-        _glassPane = glassPane;
         _newsitems = newsitems;
         _lastCheck = lastCheck;
-        setVisible(false);
-        setLocation(getXWhenOut(), POSITION_Y);
-        this.setSize(WIDTH, 500);
 
         JComponent content = createContentPanel();
         scroll = new JScrollPane(content);
@@ -74,7 +61,6 @@ public class NewsChannelPanel extends JPanel {
         scroll.getVerticalScrollBar().setUnitIncrement(20);
         this.setLayout(new BorderLayout());
         this.add(scroll);
-        this.setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 10)));
     }
 
     private JComponent createContentPanel() {
@@ -119,40 +105,6 @@ public class NewsChannelPanel extends JPanel {
 
     public void scrollToTop() {
         scroll.getViewport().setViewPosition(new Point(0,0));
-    }
-
-    private int getXWhenOut() {
-        return _glassPane.getSize().width + WIDTH + 10;
-    }
-
-    private int getXWhenIn() {
-        return _glassPane.getSize().width - WIDTH + 10;
-    }
-
-    public void moveIn(int delay) {
-        setLocation(getXWhenOut(), POSITION_Y);
-        setVisible(true);
-        _glassPane.add(this);
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenIn(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
-    }
-
-    public void moveOut(int delay) {
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenOut(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-                NewsChannelPanel me = NewsChannelPanel.this;
-                me.setVisible(false);
-                _glassPane.remove(me);
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
     }
 
     @Override

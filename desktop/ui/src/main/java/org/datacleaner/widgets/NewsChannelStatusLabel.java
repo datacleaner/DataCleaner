@@ -30,8 +30,8 @@ import javax.swing.*;
 import org.datacleaner.Version;
 import org.datacleaner.api.ShortNews;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
-import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.NewsChannelPanel;
+import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.restclient.NewsChannelRESTClient;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -46,15 +46,18 @@ import org.slf4j.LoggerFactory;
 public class NewsChannelStatusLabel extends JLabel {
     private static final Logger logger = LoggerFactory.getLogger(NewsChannelStatusLabel.class);
     private static final long serialVersionUID = 1L;
+    private static final String PANEL_NAME = "News Channel";
 
     private final NewsChannelPanel _newNewsChannelPanel;
+    private final RightInformationPanel _rightPanel;
     private final UserPreferences _userPreferences;
 
     private static final String LAST_NEWS_READING = "lastNewsReading";
 
-    public NewsChannelStatusLabel(DCGlassPane glassPane, UserPreferences userPreferences) {
-        super("News Channel");
+    public NewsChannelStatusLabel(RightInformationPanel rightPanel, UserPreferences userPreferences) {
+        super(PANEL_NAME);
         _userPreferences = userPreferences;
+        _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         List<ShortNews.Item> newsitems = getNews();
 
@@ -63,7 +66,8 @@ public class NewsChannelStatusLabel extends JLabel {
         if(lastNewsCheckValue != null) {
             lastNewsCheck = Long.valueOf(lastNewsCheckValue);
         }
-        _newNewsChannelPanel = new NewsChannelPanel(glassPane, newsitems, lastNewsCheck);
+        _newNewsChannelPanel = new NewsChannelPanel(newsitems, lastNewsCheck);
+        _rightPanel.addTabToPane(PANEL_NAME, _newNewsChannelPanel);
 
         if(newsitems != null) {
             if (newsitems.size() > 0) {
@@ -93,11 +97,11 @@ public class NewsChannelStatusLabel extends JLabel {
     }
 
     protected void onMouseClick(int size) {
-        if (_newNewsChannelPanel.isVisible()) {
+        if (_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
             if(size > 0) {
                 _newNewsChannelPanel.refresh(Long.valueOf(_userPreferences.getAdditionalProperties().get(LAST_NEWS_READING)));
             }
-            _newNewsChannelPanel.moveOut(0);
+            _rightPanel.closeWindow();
         } else {
             setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
             if(size > 0) {
@@ -105,7 +109,7 @@ public class NewsChannelStatusLabel extends JLabel {
                 _userPreferences.save();
             }
             _newNewsChannelPanel.scrollToTop();
-            _newNewsChannelPanel.moveIn(0);
+            _rightPanel.openWindow(PANEL_NAME);
         }
     }
 

@@ -19,15 +19,15 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import org.datacleaner.Version;
 import org.datacleaner.panels.CommunityEditionInformationPanel;
-import org.datacleaner.panels.DCGlassPane;
+import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
@@ -38,18 +38,18 @@ import org.datacleaner.util.WidgetUtils;
 public class LicenceAndEditionStatusLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;
+    private static final String PANEL_NAME = "License and Edition";
 
-    private static final String EDITION = Version.getEdition();
-
+    private final RightInformationPanel _rightPanel;
     private final CommunityEditionInformationPanel _communityEditionInformationPanel;
 
-    public LicenceAndEditionStatusLabel(DCGlassPane glassPane) {
-        super(EDITION);
-
+    public LicenceAndEditionStatusLabel(RightInformationPanel rightPanel) {
+        super(PANEL_NAME);
+        _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         if (Version.isCommunityEdition()) {
-            _communityEditionInformationPanel = new CommunityEditionInformationPanel(glassPane);
+            _communityEditionInformationPanel = new CommunityEditionInformationPanel();
             setIcon(ImageManager.get().getImageIcon("images/editions/community.png", IconUtils.ICON_SIZE_SMALL));
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             addMouseListener(new MouseAdapter() {
@@ -62,14 +62,14 @@ public class LicenceAndEditionStatusLabel extends JLabel {
             setIcon(ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
             _communityEditionInformationPanel = null;
         }
-
+        _rightPanel.addTabToPane(PANEL_NAME, _communityEditionInformationPanel);
     }
 
     protected void onMouseClick() {
-        if (_communityEditionInformationPanel.isVisible()) {
-            _communityEditionInformationPanel.moveOut(0);
+        if (_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
+            _rightPanel.closeWindow();
         } else {
-            _communityEditionInformationPanel.moveIn(0);
+            _rightPanel.openWindow(PANEL_NAME);
         }
     }
 }

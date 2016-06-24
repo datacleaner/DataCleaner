@@ -769,7 +769,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
+        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
         statusBar.add(statusLabel);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);

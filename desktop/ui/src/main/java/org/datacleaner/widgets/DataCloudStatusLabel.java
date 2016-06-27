@@ -43,7 +43,7 @@ import org.datacleaner.windows.AbstractWindow;
  * Status Label for DataCloud
  */
 public class DataCloudStatusLabel extends JLabel {
-    private static final String PANEL_NAME = "DataCloud";
+    public static final String PANEL_NAME = "DataCloud";
 
     private RemoteServerConfiguration _remoteServerConfiguration;
     private DataCloudInformationPanel _dataCloudInformationPanel;
@@ -91,11 +91,7 @@ public class DataCloudStatusLabel extends JLabel {
     }
 
     private void onMouseClick(){
-        if (_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
-            _rightPanel.closeWindow();
-        } else {
-            _rightPanel.openWindow(PANEL_NAME);
-        }
+        _rightPanel.toggleWindow(PANEL_NAME);
     }
 
     private class RemoteServerStateListenerImpl implements RemoteServerStateListener{

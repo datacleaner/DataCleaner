@@ -62,7 +62,15 @@ public class RightInformationPanel extends JPanel {
         add(panel, panelTitle);
     }
 
-    public void openWindow(String tabTitle) {
+    public  void toggleWindow(String tabTitle) {
+        if (openedCard.equals(tabTitle)) {
+            closeWindow();
+        } else {
+            openWindow(tabTitle);
+        }
+    }
+
+    private void openWindow(String tabTitle) {
         if(!openedCard.equals(tabTitle)) {
             moveOut();
         }
@@ -71,7 +79,7 @@ public class RightInformationPanel extends JPanel {
         openedCard = tabTitle;
     }
 
-    public void closeWindow() {
+    private void closeWindow() {
         moveOut();
         openedCard = "";
     }

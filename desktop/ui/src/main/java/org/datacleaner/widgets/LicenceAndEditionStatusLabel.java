@@ -66,10 +66,6 @@ public class LicenceAndEditionStatusLabel extends JLabel {
     }
 
     protected void onMouseClick() {
-        if (_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
-            _rightPanel.closeWindow();
-        } else {
-            _rightPanel.openWindow(PANEL_NAME);
-        }
+        _rightPanel.toggleWindow(PANEL_NAME);
     }
 }

@@ -37,6 +37,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.DataCloudLogInWindow;
 import org.jdesktop.swingx.VerticalLayout;
@@ -63,7 +64,7 @@ public class DataCloudInformationPanel extends JPanel {
         optionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                rightPanel.closeWindow();
+                rightPanel.toggleWindow(DataCloudStatusLabel.PANEL_NAME);
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {

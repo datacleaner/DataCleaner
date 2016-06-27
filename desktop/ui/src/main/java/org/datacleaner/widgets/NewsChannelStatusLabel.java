@@ -97,20 +97,19 @@ public class NewsChannelStatusLabel extends JLabel {
     }
 
     protected void onMouseClick(int size) {
-        if (_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
-            if(size > 0) {
-                _newNewsChannelPanel.refresh(Long.valueOf(_userPreferences.getAdditionalProperties().get(LAST_NEWS_READING)));
-            }
-            _rightPanel.closeWindow();
-        } else {
+        String lastReading = _userPreferences.getAdditionalProperties().get(LAST_NEWS_READING);
+        if(lastReading != null) {
+            _newNewsChannelPanel.refresh(Long.valueOf(lastReading));
+        }
+        if (!_rightPanel.getOpenedCard().equals(PANEL_NAME)) {
             setIcon(ImageManager.get().getImageIcon(IconUtils.NEWS_CHANNEL_READ_STATUS, IconUtils.ICON_SIZE_SMALL));
             if(size > 0) {
                 _userPreferences.getAdditionalProperties().put(LAST_NEWS_READING, String.valueOf(new Date().getTime()));
                 _userPreferences.save();
             }
-            _newNewsChannelPanel.scrollToTop();
-            _rightPanel.openWindow(PANEL_NAME);
         }
+        _newNewsChannelPanel.scrollToTop();
+        _rightPanel.toggleWindow(PANEL_NAME);
     }
 
     private List<ShortNews.Item> getNews() {

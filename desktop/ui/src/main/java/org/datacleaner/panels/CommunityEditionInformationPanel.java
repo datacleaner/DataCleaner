@@ -19,7 +19,6 @@
  */
 package org.datacleaner.panels;
 
-
 import java.awt.Color;
 
 import javax.swing.JButton;

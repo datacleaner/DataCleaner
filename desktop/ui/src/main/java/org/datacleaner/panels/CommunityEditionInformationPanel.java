@@ -19,9 +19,11 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.*;
 
-import javax.swing.*;
+import java.awt.Color;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

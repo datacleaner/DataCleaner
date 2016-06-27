@@ -19,11 +19,11 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.*;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.*;
+import javax.swing.JLabel;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;

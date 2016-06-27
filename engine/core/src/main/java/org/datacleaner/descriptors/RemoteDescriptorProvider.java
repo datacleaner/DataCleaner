@@ -29,6 +29,7 @@ public interface RemoteDescriptorProvider extends DescriptorProvider {
 
     String DATACLEANER_BASE_URL = "https://datacleaner.org";
     String DATACLOUD_URL = "https://services.datacleaner.org";
+    //String DATACLOUD_URL = "http://tst-datacloud:8080";
     String DATACLOUD_TERMS_PURE_URL = DATACLEANER_BASE_URL + "/datacloud_terms_pure";
     String DATACLOUD_TERMS_URL = DATACLEANER_BASE_URL + "/datacloud_terms";
     String DATACLOUD_TERMS_ACCEPT_URL = DATACLEANER_BASE_URL + "/ws/datacloud_accept_terms";

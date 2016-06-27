@@ -19,13 +19,13 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.*;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JLabel;
 
 import org.datacleaner.Version;
 import org.datacleaner.api.ShortNews;

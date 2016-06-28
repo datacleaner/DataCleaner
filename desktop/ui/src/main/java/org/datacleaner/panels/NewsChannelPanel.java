@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import org.datacleaner.api.ShortNews;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
@@ -110,7 +111,12 @@ public class NewsChannelPanel extends JPanel {
     }
 
     public void scrollToTop() {
-        scroll.getViewport().setViewPosition(new Point(0,0));
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                scroll.getViewport().setViewPosition(new Point(0,0));
+            }
+        });
     }
 
     @Override

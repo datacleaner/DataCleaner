@@ -31,8 +31,8 @@ import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerState;
 import org.datacleaner.configuration.RemoteServerStateListener;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
-import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DataCloudInformationPanel;
+import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -43,15 +43,20 @@ import org.datacleaner.windows.AbstractWindow;
  * Status Label for DataCloud
  */
 public class DataCloudStatusLabel extends JLabel {
+    public static final String PANEL_NAME = "DataCloud";
+
     private RemoteServerConfiguration _remoteServerConfiguration;
     private DataCloudInformationPanel _dataCloudInformationPanel;
+    private final RightInformationPanel _rightPanel;
 
-    public DataCloudStatusLabel(DCGlassPane glassPane,final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
-        super("DataCloud");
+    public DataCloudStatusLabel(RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
+                                final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
+        super(PANEL_NAME);
+        _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _remoteServerConfiguration = configuration.getEnvironment().getRemoteServerConfiguration();
-        _dataCloudInformationPanel = new DataCloudInformationPanel(glassPane, configuration, userPreferences, windowContext, owner);
+        _dataCloudInformationPanel = new DataCloudInformationPanel(rightPanel, configuration, userPreferences, windowContext, owner);
+        _rightPanel.addTabToPane(PANEL_NAME, _dataCloudInformationPanel);
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
 
@@ -86,11 +91,7 @@ public class DataCloudStatusLabel extends JLabel {
     }
 
     private void onMouseClick(){
-        if (_dataCloudInformationPanel.isVisible()) {
-            _dataCloudInformationPanel.moveOut(0);
-        } else {
-            _dataCloudInformationPanel.moveIn(0);
-        }
+        _rightPanel.toggleWindow(PANEL_NAME);
     }
 
     private class RemoteServerStateListenerImpl implements RemoteServerStateListener{

@@ -172,8 +172,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             DCPanel panel = new DCPanel();
             DCHtmlBox dcHtmlBox = new DCHtmlBox(
                     "<p>This service is not currently available for your DataCloud account.</p>"
-                            + "<p> More information on your "
-                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile" + "'>DataCleaner profile</a>"
+                            + "<p> Please check the Access Rights on your "
+                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile#DataCloudAccessRights" + "'>DataCleaner profile</a>"
                             + ".</p>");
             panel.add(dcHtmlBox);
             addTaskPane(icon, "Component is disabled", panel, true);

@@ -19,12 +19,17 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
@@ -94,11 +99,11 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             setDatastoreConnection(datastore.openConnection());
         }
         if (table == null) {
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
             int selectedIndex = 0;
 
-            List<Column> comboBoxList = new ArrayList<Column>();
+            List<Column> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
             Column[] columns = table.getColumns();
@@ -108,18 +113,72 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
                     selectedIndex = comboBoxList.size() - 1;
                 }
             }
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             setSelectedIndex(selectedIndex);
         }
     }
 
     public void setModel(Datastore datastore) {
-        setModel(datastore, true);
+        //setModel(datastore, true);
+
+        // mytodo
+        // disable before
+        // enable after
+
+        try {
+            SetModelWorker setModelWorker = new SetModelWorker(this, datastore);
+            setModelWorker.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setModel(Table table) {
         setModel(null, table);
+    }
+
+    private static class SetModelWorker extends SwingWorker<Void, Void> {
+        private final ProgressBar _bar;
+        private final Datastore _datastore;
+        private final SourceColumnComboBox _box;
+
+        public SetModelWorker(SourceColumnComboBox box, Datastore datastore) {
+            _box = box;
+            _datastore = datastore;
+            _bar = new ProgressBar();
+        }
+
+        protected Void doInBackground() throws Exception {
+            System.out.println("doInBackground started...");
+            _bar.setVisible(true);
+            Thread.sleep(3000);
+            _box.setModel(_datastore, true);
+
+            System.out.println("doInBackground ended.");
+            return null;
+        }
+
+        protected void done() {
+            System.out.println("done");
+            _bar.setVisible(false);
+        }
+
+        private static class ProgressBar extends JFrame {
+            public ProgressBar() {
+                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                setUndecorated(true);
+
+                final JProgressBar bar = new JProgressBar();
+                bar.setPreferredSize(new Dimension(200, 25));
+                bar.setStringPainted(true);
+                bar.setString("X/Y items completed...");
+                bar.setIndeterminate(true);
+
+                add(bar);
+                pack();
+            }
+        }
     }
 
     public void setModel(Datastore datastore, boolean retainSelection) {
@@ -129,14 +188,14 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
 
         if (datastore == null) {
             setDatastoreConnection(null);
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
 
             DatastoreConnection con = setDatastoreConnection(datastore.openConnection());
 
             int selectedIndex = 0;
 
-            List<Object> comboBoxList = new ArrayList<Object>();
+            List<Object> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
             Schema[] schemas = con.getSchemaNavigator().getSchemas();
@@ -168,7 +227,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
                 }
             }
 
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             if (retainSelection) {
                 setSelectedIndex(selectedIndex);
@@ -203,12 +262,9 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
     }
 
     public void addColumnSelectedListener(final DCComboBox.Listener<Column> listener) {
-        super.addListener(new DCComboBox.Listener<Object>() {
-            @Override
-            public void onItemSelected(Object item) {
-                if (item instanceof Column) {
-                    listener.onItemSelected((Column) item);
-                }
+        super.addListener(item -> {
+            if (item instanceof Column) {
+                listener.onItemSelected((Column) item);
             }
         });
     }

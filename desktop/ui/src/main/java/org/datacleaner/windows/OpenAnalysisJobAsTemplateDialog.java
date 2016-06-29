@@ -38,7 +38,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -55,7 +54,6 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -97,46 +95,42 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _metadata = metadata;
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _sourceColumnMapping = new SourceColumnMapping(metadata);
-        _variableTextFields = new HashMap<String, JXTextField>();
+        _variableTextFields = new HashMap<>();
 
         _openButton = WidgetFactory.createPrimaryButton("Open job", IconUtils.MODEL_JOB);
-        _openButton.addActionListener(new ActionListener() {
+        _openButton.addActionListener(e -> {
+            JaxbJobReader reader = new JaxbJobReader(_configuration);
+            try {
+                SourceColumnMapping sourceColumnMapping = getSourceColumnMapping();
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JaxbJobReader reader = new JaxbJobReader(_configuration);
-                try {
-                    SourceColumnMapping sourceColumnMapping = getSourceColumnMapping();
-
-                    Map<String, String> variableOverrides = new HashMap<String, String>();
-                    for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
-                        variableOverrides.put(entry.getKey(), entry.getValue().getText());
-                    }
-
-                    final InputStream inputStream = _file.getContent().getInputStream();
-                    final AnalysisJobBuilder ajb;
-                    try {
-                        ajb = reader.create(inputStream, sourceColumnMapping, variableOverrides);
-                    } finally {
-                        FileHelper.safeClose(inputStream);
-                    }
-
-                    final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
-                            .get();
-                    final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
-
-                    OpenAnalysisJobAsTemplateDialog.this.dispose();
-
-                    final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-                    window.open();
-                } catch (Exception e1) {
-                    throw new IllegalStateException(e1);
+                Map<String, String> variableOverrides = new HashMap<>();
+                for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
+                    variableOverrides.put(entry.getKey(), entry.getValue().getText());
                 }
+
+                final InputStream inputStream = _file.getContent().getInputStream();
+                final AnalysisJobBuilder ajb;
+                try {
+                    ajb = reader.create(inputStream, sourceColumnMapping, variableOverrides);
+                } finally {
+                    FileHelper.safeClose(inputStream);
+                }
+
+                final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
+                        .get();
+                final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
+
+                OpenAnalysisJobAsTemplateDialog.this.dispose();
+
+                final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                window.open();
+            } catch (Exception e1) {
+                throw new IllegalStateException(e1);
             }
         });
 
         final List<String> columnPaths = _metadata.getSourceColumnPaths();
-        _sourceColumnComboBoxes = new HashMap<String, List<SourceColumnComboBox>>();
+        _sourceColumnComboBoxes = new HashMap<>();
         for (String columnPath : columnPaths) {
             int columnDelim = columnPath.lastIndexOf('.');
             final String tablePath;
@@ -153,24 +147,20 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             final SourceColumnComboBox comboBox = new SourceColumnComboBox();
             comboBox.setEnabled(false);
             comboBox.setName(columnPath);
-            comboBox.addColumnSelectedListener(new Listener<Column>() {
-
-                @Override
-                public void onItemSelected(Column col) {
-                    if (col != null) {
-                        // make sure all comboboxes in a group use the same
-                        // table
-                        List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tablePath);
-                        for (SourceColumnComboBox sameTableComboBox : comboBoxes) {
-                            sameTableComboBox.setModel(_datastore, col.getTable());
-                        }
+            comboBox.addColumnSelectedListener(col -> {
+                if (col != null) {
+                    // make sure all comboboxes in a group use the same
+                    // table
+                    List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tablePath);
+                    for (SourceColumnComboBox sameTableComboBox : comboBoxes) {
+                        sameTableComboBox.setModel(_datastore, col.getTable());
                     }
-                    refreshOpenButtonVisibility();
                 }
+                refreshOpenButtonVisibility();
             });
 
             if (!_sourceColumnComboBoxes.containsKey(tablePath)) {
-                _sourceColumnComboBoxes.put(tablePath, new ArrayList<SourceColumnComboBox>());
+                _sourceColumnComboBoxes.put(tablePath, new ArrayList<>());
             }
 
             _sourceColumnComboBoxes.get(tablePath).add(comboBox);
@@ -191,7 +181,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         // the combobox will contain all datastore names and a null for
         // "not selected"
         final String[] comboBoxModel = CollectionUtils.array(new String[1], datastoreNames);
-        _datastoreCombobox = new JComboBox<String>(comboBoxModel);
+        _datastoreCombobox = new JComboBox<>(comboBoxModel);
         _datastoreCombobox.setEditable(false);
         _datastoreCombobox.addActionListener(new ActionListener() {
             @Override
@@ -225,17 +215,14 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         _autoMapButton = WidgetFactory.createDefaultButton("Map automatically");
         _autoMapButton.setVisible(false);
-        _autoMapButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _sourceColumnMapping.autoMap(_datastore);
-                Set<String> paths = _sourceColumnMapping.getPaths();
-                for (String path : paths) {
-                    for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
-                        for (SourceColumnComboBox comboBox : comboBoxes) {
-                            if (path.equals(comboBox.getName())) {
-                                comboBox.setSelectedItem(_sourceColumnMapping.getColumn(path));
-                            }
+        _autoMapButton.addActionListener(e -> {
+            _sourceColumnMapping.autoMap(_datastore);
+            Set<String> paths = _sourceColumnMapping.getPaths();
+            for (String path : paths) {
+                for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
+                    for (SourceColumnComboBox comboBox : comboBoxes) {
+                        if (path.equals(comboBox.getName())) {
+                            comboBox.setSelectedItem(_sourceColumnMapping.getColumn(path));
                         }
                     }
                 }
@@ -316,13 +303,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
             final JButton clearButton = WidgetFactory.createDefaultButton("Clear");
-            clearButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);
-                    for (SourceColumnComboBox comboBox : comboBoxes) {
-                        comboBox.setModel(_datastore, false);
-                    }
+            clearButton.addActionListener(e -> {
+                List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);
+                for (SourceColumnComboBox comboBox : comboBoxes) {
+                    comboBox.setModel(_datastore, false);
                 }
             });
             final DCPanel clearButtonPanel = new DCPanel();

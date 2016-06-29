@@ -36,6 +36,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -97,10 +98,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private class ComboBoxUpdater extends SwingWorker<Void, Void> {
         private final ProgressBar _bar;
 
-        public ComboBoxUpdater() {
+        public ComboBoxUpdater(JDialog parent) {
             final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
             _datastore = _datastoreCatalog.getDatastore(datastoreName);
-            _bar = new ProgressBar();
+            _bar = new ProgressBar(parent);
         }
 
         private void update() {
@@ -122,6 +123,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         private void disableGUI() {
             refreshOpenButtonVisibility();
             _clearButton.setEnabled(false);
+            _datastoreCombobox.setEnabled(false);
         }
 
         private void enableGUI() {
@@ -132,11 +134,12 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             }
 
             _clearButton.setEnabled(true);
+            _datastoreCombobox.setEnabled(true);
         }
 
         protected Void doInBackground() throws Exception {
-            _bar.setVisible(true);
             disableGUI();
+            _bar.setVisible(true);
             update();
 
             return null;
@@ -148,9 +151,11 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         }
 
         private class ProgressBar extends JFrame {
-            public ProgressBar() {
+            public ProgressBar(JDialog parent) {
                 setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 setUndecorated(true);
+                setAlwaysOnTop(true);
+                setLocationRelativeTo(parent);
 
                 final JProgressBar bar = new JProgressBar();
                 bar.setPreferredSize(new Dimension(200, 25));
@@ -260,11 +265,12 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         final String[] comboBoxModel = CollectionUtils.array(new String[1], datastoreNames);
         _datastoreCombobox = new JComboBox<>(comboBoxModel);
         _datastoreCombobox.setEditable(false);
+        final JDialog parent = this;
         _datastoreCombobox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                  try {
-                     ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater();
+                     ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater(parent);
                      comboBoxUpdater.execute();
                  } catch (Exception exception) {
                      logger.error(exception.getMessage());

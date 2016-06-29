@@ -19,17 +19,12 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
 
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
@@ -120,65 +115,11 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
     }
 
     public void setModel(Datastore datastore) {
-        //setModel(datastore, true);
-
-        // mytodo
-        // disable before
-        // enable after
-
-        try {
-            SetModelWorker setModelWorker = new SetModelWorker(this, datastore);
-            setModelWorker.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setModel(datastore, true);
     }
 
     public void setModel(Table table) {
         setModel(null, table);
-    }
-
-    private static class SetModelWorker extends SwingWorker<Void, Void> {
-        private final ProgressBar _bar;
-        private final Datastore _datastore;
-        private final SourceColumnComboBox _box;
-
-        public SetModelWorker(SourceColumnComboBox box, Datastore datastore) {
-            _box = box;
-            _datastore = datastore;
-            _bar = new ProgressBar();
-        }
-
-        protected Void doInBackground() throws Exception {
-            System.out.println("doInBackground started...");
-            _bar.setVisible(true);
-            Thread.sleep(3000);
-            _box.setModel(_datastore, true);
-
-            System.out.println("doInBackground ended.");
-            return null;
-        }
-
-        protected void done() {
-            System.out.println("done");
-            _bar.setVisible(false);
-        }
-
-        private static class ProgressBar extends JFrame {
-            public ProgressBar() {
-                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                setUndecorated(true);
-
-                final JProgressBar bar = new JProgressBar();
-                bar.setPreferredSize(new Dimension(200, 25));
-                bar.setStringPainted(true);
-                bar.setString("X/Y items completed...");
-                bar.setIndeterminate(true);
-
-                add(bar);
-                pack();
-            }
-        }
     }
 
     public void setModel(Datastore datastore, boolean retainSelection) {

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,11 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.CollectionUtils;
@@ -58,6 +63,8 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
@@ -67,8 +74,8 @@ import com.google.inject.Injector;
  * datastore.
  */
 public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
-
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobAsTemplateDialog.class);
 
     private static final ImageManager imageManager = ImageManager.get();
 
@@ -81,10 +88,81 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
     private final Map<String, JXTextField> _variableTextFields;
     private final JButton _openButton;
+    private final JButton _clearButton;
     private final JButton _autoMapButton;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
 
     private volatile Datastore _datastore;
+
+    private class ComboBoxUpdater extends SwingWorker<Void, Void> {
+        private final ProgressBar _bar;
+
+        public ComboBoxUpdater() {
+            final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
+            _datastore = _datastoreCatalog.getDatastore(datastoreName);
+            _bar = new ProgressBar();
+        }
+
+        private void update() {
+            _sourceColumnMapping.setDatastore(_datastore);
+
+            for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
+                for (SourceColumnComboBox comboBox : comboBoxes) {
+                    comboBox.setModel(_datastore);
+
+                    if (_datastore == null) { // no datastore selected
+                        comboBox.setEnabled(false);
+                    } else {
+                        comboBox.setEnabled(true);
+                    }
+                }
+            }
+        }
+
+        private void disableGUI() {
+            refreshOpenButtonVisibility();
+            _clearButton.setEnabled(false);
+        }
+
+        private void enableGUI() {
+            if (_datastore == null) {
+                _autoMapButton.setVisible(false);
+            } else {
+                _autoMapButton.setVisible(true);
+            }
+
+            _clearButton.setEnabled(true);
+        }
+
+        protected Void doInBackground() throws Exception {
+            _bar.setVisible(true);
+            disableGUI();
+            update();
+
+            return null;
+        }
+
+        protected void done() {
+            enableGUI();
+            _bar.setVisible(false);
+        }
+
+        private class ProgressBar extends JFrame {
+            public ProgressBar() {
+                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                setUndecorated(true);
+
+                final JProgressBar bar = new JProgressBar();
+                bar.setPreferredSize(new Dimension(200, 25));
+                bar.setStringPainted(true);
+                bar.setString("Loading...");
+                bar.setIndeterminate(true);
+
+                add(bar);
+                pack();
+            }
+        }
+    }
 
     public OpenAnalysisJobAsTemplateDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
             FileObject file, AnalysisJobMetadata metadata,
@@ -97,6 +175,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _sourceColumnMapping = new SourceColumnMapping(metadata);
         _variableTextFields = new HashMap<>();
 
+        _clearButton = WidgetFactory.createDefaultButton("Clear");
         _openButton = WidgetFactory.createPrimaryButton("Open job", IconUtils.MODEL_JOB);
         _openButton.addActionListener(e -> {
             JaxbJobReader reader = new JaxbJobReader(_configuration);
@@ -149,8 +228,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             comboBox.setName(columnPath);
             comboBox.addColumnSelectedListener(col -> {
                 if (col != null) {
-                    // make sure all comboboxes in a group use the same
-                    // table
+                    // make sure all comboboxes in a group use the same table
                     List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tablePath);
                     for (SourceColumnComboBox sameTableComboBox : comboBoxes) {
                         sameTableComboBox.setModel(_datastore, col.getTable());
@@ -178,38 +256,19 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _datastoreCatalog = configuration.getDatastoreCatalog();
 
         final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-        // the combobox will contain all datastore names and a null for
-        // "not selected"
+        // the combobox will contain all datastore names and a null for "not selected"
         final String[] comboBoxModel = CollectionUtils.array(new String[1], datastoreNames);
         _datastoreCombobox = new JComboBox<>(comboBoxModel);
         _datastoreCombobox.setEditable(false);
         _datastoreCombobox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
-                _datastore = _datastoreCatalog.getDatastore(datastoreName);
-
-                _sourceColumnMapping.setDatastore(_datastore);
-
-                refreshOpenButtonVisibility();
-
-                for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
-                    for (SourceColumnComboBox comboBox : comboBoxes) {
-                        comboBox.setModel(_datastore);
-                        if (_datastore == null) {
-                            // no datastore selected
-                            comboBox.setEnabled(false);
-                        } else {
-                            comboBox.setEnabled(true);
-                        }
-                    }
-                }
-
-                if (_datastore == null) {
-                    _autoMapButton.setVisible(false);
-                } else {
-                    _autoMapButton.setVisible(true);
-                }
+                 try {
+                     ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater();
+                     comboBoxUpdater.execute();
+                 } catch (Exception exception) {
+                     logger.error(exception.getMessage());
+                 }
             }
         });
 
@@ -302,15 +361,14 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL));
             WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
-            final JButton clearButton = WidgetFactory.createDefaultButton("Clear");
-            clearButton.addActionListener(e -> {
+            _clearButton.addActionListener(e -> {
                 List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);
                 for (SourceColumnComboBox comboBox : comboBoxes) {
                     comboBox.setModel(_datastore, false);
                 }
             });
             final DCPanel clearButtonPanel = new DCPanel();
-            clearButtonPanel.add(clearButton);
+            clearButtonPanel.add(_clearButton);
             WidgetUtils.addToGridBag(clearButtonPanel, panel, 2, row, GridBagConstraints.CENTER);
 
             final List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);

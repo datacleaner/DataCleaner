@@ -94,26 +94,26 @@ div.popupPageContent {
 
 .InfographicEvolution {
 	background-image: url("images/infographic_part_evolution.png");
-	background-position: center 60px;
-	height: 310px;
+	background-position: center 80px;
+	height: 330px;
 }
 
 .InfographicImprove {
 	background-image: url("images/infographic_part_improve.png");
-	background-position: center 60px;
-	height: 390px;
+	background-position: center 70px;
+	height: 400px;
 }
 
 .InfographicShare {
 	background-image: url("images/infographic_part_share.png");
-	background-position: center 60px;
-	height: 400px;
+	background-position: center 70px;
+	height: 410px;
 }
 
 .InfographicConnect {
 	background-image: url("images/infographic_part_connect.png");
-	background-position: center 65px;
-	height: 310px;
+	background-position: center 95px;
+	height: 350px;
 }
 
 /**

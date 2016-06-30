@@ -30,9 +30,14 @@ import javax.annotation.security.RolesAllowed;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.FilterJob;
+import org.datacleaner.job.TransformerJob;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
@@ -52,6 +57,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.UrlEscapers;
 
 @Controller
@@ -75,8 +82,8 @@ public class JobsFolderController {
             for (JobIdentifier job : jobs) {
                 final JobContext jobContext = context.getJob(job);
                 final RepositoryFile file = jobContext.getJobFile();
-                
-                final  Map<String, String> map = new HashMap<String, String>();
+
+                final Map<String, String> map = new HashMap<String, String>();
                 map.put("name", job.getName());
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
@@ -86,22 +93,88 @@ public class JobsFolderController {
 
         return result;
     }
-    
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public String getFolderJobsByMetadataProperty(@PathVariable("tenant") String tenant,
+            @RequestParam(value = "property", required = true) String metadataProperty,
+            @RequestParam(value = "value", required = true) String metadataPropertyValue)
+            throws JsonProcessingException {
+        final TenantContext tenantContext = _contextFactory.getContext(tenant);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        {
+            final List<JobIdentifier> jobs = tenantContext.getJobs();
+            for (JobIdentifier job : jobs) {
+                final JobContext jobContext = tenantContext.getJob(job);
+                final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
+                if (jobMetadataProperties.containsKey(metadataProperty)) {
+                    final String metadataPropertyResult = jobMetadataProperties.get(metadataProperty);
+                    if (metadataPropertyResult.toLowerCase().trim().equals(metadataPropertyValue.toLowerCase()
+                            .trim())) {
+                        final Map<String, Object> jobDetails = new HashMap<String, Object>();
+                        final RepositoryFile file = jobContext.getJobFile();
+                        jobDetails.put("name", job.getName());
+                        jobDetails.put("filename", file.getName());
+                        jobDetails.put("repository_path", file.getQualifiedPath());
+                        jobDetails.put("metadataProperties", jobMetadataProperties);
+                        final List<Map<String, Object>> descriptors = new ArrayList<Map<String, Object>>();
+
+                        if (jobContext instanceof DataCleanerJobContext) {
+                            final DataCleanerJobContext dcContext = (DataCleanerJobContext) jobContext;
+
+                            final AnalysisJob analysisJob = dcContext.getAnalysisJob();
+                            final List<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
+                            for (AnalyzerJob analyzerJob : analyzerJobs) {
+                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                jobComponent.put("type", "analyzer");
+                                jobComponent.put("descriptor", analyzerJob.getDescriptor().getDisplayName());
+                                jobComponent.put("metadataProperties", analyzerJob.getMetadataProperties());
+                                descriptors.add(jobComponent);
+                            }
+
+                            List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
+                            for (TransformerJob transformerJob : transformerJobs) {
+                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                jobComponent.put("type", "transformer");
+                                jobComponent.put("descriptor", transformerJob.getDescriptor().getDisplayName());
+                                jobComponent.put("metadataProperties", transformerJob.getMetadataProperties());
+                                descriptors.add(jobComponent);
+                            }
+
+                            List<FilterJob> filterJobs = analysisJob.getFilterJobs();
+                            for (FilterJob filterJob : filterJobs) {
+                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                jobComponent.put("type", "filter");
+                                jobComponent.put("descriptor", filterJob.getDescriptor().getDisplayName());
+                                jobComponent.put("metadataProperties", filterJob.getMetadataProperties());
+                                descriptors.add(jobComponent);
+                            }
+                        }
+                        jobDetails.put("descriptors", descriptors);
+                        result.add(jobDetails);
+                    }
+                }
+            }
+        }
+        return objectMapper.writeValueAsString(result);
+    }
+
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAnalysisJobToFolderHtml(@PathVariable("tenant") final String tenant,
-        @RequestParam("file") final MultipartFile file) {
+            @RequestParam("file") final MultipartFile file) {
         final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, file);
         final String status = outcome.get("status");
         final String filename = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
         return "redirect:/scheduling?job_upload=" + status + "&job_filename=" + filename;
     }
-    
+
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadAnalysisJobToFolderJson(@PathVariable("tenant") final String tenant,
-        @RequestParam("file") final MultipartFile file) {
+            @RequestParam("file") final MultipartFile file) {
         if (file == null) {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
@@ -136,7 +209,7 @@ public class JobsFolderController {
 
         return result;
     }
-    
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     @ResponseBody

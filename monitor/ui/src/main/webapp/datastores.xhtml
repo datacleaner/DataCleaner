@@ -79,6 +79,16 @@
 									<span>Download</span>
 								</button>
 							</h:panelGroup>
+							<h:panelGroup
+								rendered="#{ds.fileDatastore and user.configurationEditor}">
+<!-- 									onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.download'" -->
+								<button
+								    onclick="datacleaner.startDatastoreWizard();"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-edit" aria-hidden="true" />
+									<span>Edit</span>
+								</button>
+							</h:panelGroup>
 							<h:panelGroup rendered="#{user.jobEditor and monitorUIPreferences.showWebstartLaunchOptions}">
 								<button
 									onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.analyze.jnlp'"

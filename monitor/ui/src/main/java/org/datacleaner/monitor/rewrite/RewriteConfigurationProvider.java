@@ -47,6 +47,7 @@ public class RewriteConfigurationProvider extends HttpConfigurationProvider {
         builder = addJoinRule(builder, "/scheduling", "/scheduling.jsf");
         builder = addJoinRule(builder, "/repository", "/repository.jsf");
         builder = addJoinRule(builder, "/datastores", "/datastores.jsf");
+        builder = addJoinRule(builder,"/referencedata","/referencedata.jsf"); 
         builder = addJoinRule(builder, "/query", "/query.jsf");
 
         return builder;

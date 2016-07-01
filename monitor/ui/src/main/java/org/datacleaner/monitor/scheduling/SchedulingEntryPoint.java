@@ -36,6 +36,7 @@ public class SchedulingEntryPoint implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
+        System.out.println("I am in module load Schedueling Data Entry Point");
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
 
         final ClientConfig clientConfig = new DictionaryClientConfig();

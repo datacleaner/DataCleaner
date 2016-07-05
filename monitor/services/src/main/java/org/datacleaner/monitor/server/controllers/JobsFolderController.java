@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.UrlEscapers;
 
 @Controller
@@ -93,12 +92,11 @@ public class JobsFolderController {
         return result;
     }
 
-    @RequestMapping(value="/filter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/filter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Map<String, Object>> getFolderJobsByMetadataProperty(@PathVariable("tenant") String tenant,
             @RequestParam(value = "property", required = true) String metadataProperty,
-            @RequestParam(value = "value", required = true) String metadataPropertyValue)
-            throws JsonProcessingException {
+            @RequestParam(value = "value", required = true) String metadataPropertyValue) {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         {
@@ -125,7 +123,7 @@ public class JobsFolderController {
                             final List<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
                             for (AnalyzerJob analyzerJob : analyzerJobs) {
                                 final Map<String, Object> jobComponent = new HashMap<String, Object>();
-                                jobComponent.put("name", analyzerJob.getName()); 
+                                jobComponent.put("name", analyzerJob.getName());
                                 jobComponent.put("type", "analyzer");
                                 jobComponent.put("descriptor", analyzerJob.getDescriptor().getDisplayName());
                                 jobComponent.put("metadataProperties", analyzerJob.getMetadataProperties());
@@ -135,7 +133,7 @@ public class JobsFolderController {
                             List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
                             for (TransformerJob transformerJob : transformerJobs) {
                                 final Map<String, Object> jobComponent = new HashMap<String, Object>();
-                                jobComponent.put("name", transformerJob.getName()); 
+                                jobComponent.put("name", transformerJob.getName());
                                 jobComponent.put("type", "transformer");
                                 jobComponent.put("descriptor", transformerJob.getDescriptor().getDisplayName());
                                 jobComponent.put("metadataProperties", transformerJob.getMetadataProperties());
@@ -145,7 +143,7 @@ public class JobsFolderController {
                             List<FilterJob> filterJobs = analysisJob.getFilterJobs();
                             for (FilterJob filterJob : filterJobs) {
                                 final Map<String, Object> jobComponent = new HashMap<String, Object>();
-                                jobComponent.put("name", filterJob.getName()); 
+                                jobComponent.put("name", filterJob.getName());
                                 jobComponent.put("type", "filter");
                                 jobComponent.put("descriptor", filterJob.getDescriptor().getDisplayName());
                                 jobComponent.put("metadataProperties", filterJob.getMetadataProperties());
@@ -158,7 +156,7 @@ public class JobsFolderController {
                 }
             }
         }
-        return result; 
+        return result;
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)

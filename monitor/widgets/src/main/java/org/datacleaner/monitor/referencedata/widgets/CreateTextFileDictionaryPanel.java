@@ -1,4 +1,4 @@
-package org.datacleaner.monitor.referencedata;
+package org.datacleaner.monitor.referencedata.widgets;
 
 import org.datacleaner.monitor.shared.widgets.DCButtons;
 

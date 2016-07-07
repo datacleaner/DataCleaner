@@ -48,21 +48,21 @@ import org.datacleaner.components.categories.FilterCategory;
 @Distributed(true)
 public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.NullCheckCategory>, HasLabelAdvice {
 
-    public static enum NullCheckCategory {
+    public enum NullCheckCategory {
         @Alias("INVALID")
         NULL,
 
         @Alias("VALID")
-        NOT_NULL;
+        NOT_NULL
     }
 
-    public static enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are NULL, the record is considered NULL"), ANY_FIELD(
-                "When any field is NULL, the record is considered NULL");
+    public enum EvaluationMode implements HasName {
+        ALL_FIELDS("When all fields are NULL, the record is considered NULL"),
+        ANY_FIELD("When any field is NULL, the record is considered NULL");
 
         private final String _name;
 
-        private EvaluationMode(String name) {
+        EvaluationMode(String name) {
             _name = name;
         }
 
@@ -82,7 +82,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
     boolean considerEmptyStringAsNull = false;
 
     @Configured("Evaluation mode")
-    EvaluationMode evaluationMode = EvaluationMode.ANY_FIELD;;
+    EvaluationMode evaluationMode = EvaluationMode.ANY_FIELD;
 
     public NullCheckFilter() {
     }
@@ -132,12 +132,12 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
                 }
                 q.where(column, OperatorType.DIFFERENT_FROM, null);
                 if (considerEmptyStringAsNull && col.getDataType() == String.class) {
-                    q.where(column, OperatorType.DIFFERENT_FROM, "");
+                    q.where(column, OperatorType.LIKE, "%");
                 }
             }
         } else {
             // if NULL all filter items will be OR'ed.
-            List<FilterItem> filterItems = new ArrayList<FilterItem>();
+            List<FilterItem> filterItems = new ArrayList<>();
             for (InputColumn<?> col : columns) {
                 Column column = col.getPhysicalColumn();
                 if (column == null) {
@@ -195,7 +195,6 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
                     break;
                 }
             }
-            
         }
         return result;
     }

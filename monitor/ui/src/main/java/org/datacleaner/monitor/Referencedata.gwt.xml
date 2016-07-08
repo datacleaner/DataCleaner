@@ -22,7 +22,14 @@
 -->
 <module rename-to='referencedata'>
 
-	<inherits name="org.datacleaner.monitor.Widgets" />
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+
+  <!-- Inherit the default GWT style sheet.  You can change       -->
+  <!-- the theme of your GWT application by uncommenting          -->
+  <!-- any one of the following lines.                            -->
+  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+<!-- 	<inherits name="org.datacleaner.monitor.Widgets" /> -->
 	
 <!-- 	<inherits name="com.googlecode.gflot.GFlot" /> -->
 <!-- 	<set-property name="gflot.load.canvas2image" value="ENABLED" /> -->
@@ -30,7 +37,12 @@
 	<entry-point class='org.datacleaner.monitor.referencedata.ReferencedataEntryPoint' />
 
 	<source path='referencedata' />
+	<source path='shared' />
+	<source path='widgets' />
+	
 	
 <!-- 	<stylesheet src="dashboard.css" /> -->
+<!-- allow Super Dev Mode -->
+  <add-linker name="xsiframe"/>
 	
 </module>

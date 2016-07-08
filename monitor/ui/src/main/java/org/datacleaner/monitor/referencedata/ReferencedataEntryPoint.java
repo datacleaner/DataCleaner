@@ -4,16 +4,17 @@ import org.datacleaner.monitor.referencedata.widgets.ReferenceDataOverviewPanel;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
+
 public class ReferencedataEntryPoint implements com.google.gwt.core.client.EntryPoint {
 
-    public ReferencedataEntryPoint() {
-        // TODO Auto-generated constructor stub
-    }
+   
+    private final Logger logger = LoggerFactory.getLogger(ReferencedataEntryPoint.class); 
     @Override
     public void onModuleLoad() {
         final ClientConfig clientConfig = new DictionaryClientConfig();

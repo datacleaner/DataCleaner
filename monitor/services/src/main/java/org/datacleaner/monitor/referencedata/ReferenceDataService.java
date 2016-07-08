@@ -25,9 +25,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("../gwtrpc/referencedataService")
-public interface ReferenceDataService extends RemoteService{
+public interface ReferenceDataService extends RemoteService {
 
-    public void getDictionaries(TenantIdentifier tenant);
+    public String getDictionaries(TenantIdentifier tenant);
 
     public void getSynonymsCatalog(TenantIdentifier tenant);
 

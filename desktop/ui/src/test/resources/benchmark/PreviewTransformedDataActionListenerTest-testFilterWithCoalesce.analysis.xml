@@ -48,7 +48,7 @@
             <outcome id="outcome_0" category="EQUALS"/>
             <outcome id="outcome_1" category="NOT_EQUALS"/>
         </filter>
-        <filter name="org.datacleaner.actions.PreviewTransformedDataActionListener-CUSTOMERS-MaxRows">
+        <filter name="org.datacleaner.util.PreviewUtils-CUSTOMERS-MaxRows">
             <descriptor ref="Max rows"/>
             <properties>
                 <property name="Apply ordering" value="false"/>

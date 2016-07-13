@@ -370,7 +370,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public void open() {
         super.open();
     }
-
+    
     @Override
     public void changePanel(AnalysisWindowPanelType panel) {
         if (_datastore == null) {
@@ -391,7 +391,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     /**
      * Gets whether or not the datastore has been set in this window (ie. if the
      * tree is showing a datastore).
-     *
+     * 
      * @return true if a datastore is set.
      */
     @Override
@@ -401,7 +401,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     *
+     * 
      * @param datastore
      */
     @Override
@@ -411,7 +411,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     *
+     * 
      * @param datastore
      * @param expandTree
      *            true if the datastore tree should be initially expanded.
@@ -798,7 +798,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             optionsDialog.getTabbedPane().setSelectedIndex(0);
             optionsDialog.open();
         });
-
+        
         final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor",
                 IconUtils.MENU_DQ_MONITOR);
         monitorMenuItem.addActionListener(e -> {

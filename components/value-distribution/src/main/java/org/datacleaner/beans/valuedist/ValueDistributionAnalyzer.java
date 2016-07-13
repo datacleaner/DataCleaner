@@ -94,7 +94,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
 
     /**
      * Constructor used for testing and ad-hoc purposes
-     *
+     * 
      * @param column
      * @param recordUniqueValues
      */
@@ -104,7 +104,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
 
     /**
      * Constructor used for testing and ad-hoc purposes
-     *
+     * 
      * @param column
      * @param groupColumn
      * @param recordUniqueValues
@@ -199,7 +199,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     }
 
     /**
-     *
+     * 
      * @param collectionFactory
      * @deprecated use of this property is no longer adviced. It will be phased
      *             out in later versions of DataCleaner

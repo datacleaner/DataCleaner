@@ -24,6 +24,8 @@
 
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
+  
+  <inherits name="org.datacleaner.monitor.Widgets"/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
@@ -39,6 +41,7 @@
 	<source path='referencedata' />
 	<source path='shared' />
 	<source path='widgets' />
+	<source path='client' />
 	
 	
 <!-- 	<stylesheet src="dashboard.css" /> -->

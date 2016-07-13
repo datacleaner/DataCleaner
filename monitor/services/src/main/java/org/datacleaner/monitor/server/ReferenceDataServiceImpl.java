@@ -2,8 +2,6 @@ package org.datacleaner.monitor.server;
 
 import org.datacleaner.monitor.referencedata.ReferenceDataService;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component("RefereceDataService")
 public class ReferenceDataServiceImpl implements ReferenceDataService, ApplicationContextAware{
 
-    private static Logger logger = LoggerFactory.getLogger(ReferenceDataServiceImpl.class); 
     private ApplicationContext _applicationContext;
     
     @Override
@@ -36,7 +33,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        logger.info("The application context has been initialized" + applicationContext.getDisplayName()); 
+     System.out.println("The application context has been initialized" + applicationContext.getDisplayName()); 
         _applicationContext = applicationContext; 
     }
 

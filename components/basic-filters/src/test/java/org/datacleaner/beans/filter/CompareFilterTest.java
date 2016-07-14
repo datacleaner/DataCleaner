@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.filter;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
@@ -28,8 +30,6 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.test.TestHelper;
-
-import junit.framework.TestCase;
 
 public class CompareFilterTest extends TestCase {
 
@@ -62,7 +62,18 @@ public class CompareFilterTest extends TestCase {
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "")));
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, null)));
     }
-
+    
+    public void testCompareStringsWithInOperator() throws Exception {
+        final MockInputColumn<String> column = new MockInputColumn<>("col", String.class);
+        CompareFilter f = new CompareFilter(column, CompareFilter.Operator.IN, " USA   ,  GBR  ");
+        assertEquals(CompareFilter.Category.TRUE, f.categorize(new MockInputRow().put(column, "USA")));
+        assertEquals(CompareFilter.Category.TRUE, f.categorize(new MockInputRow().put(column, "GBR")));
+        assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "usa")));
+        assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "NL")));
+        assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "")));
+        assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, null)));
+    }
+    
     public void testCompareNumbers() throws Exception {
         final MockInputColumn<Integer> column = new MockInputColumn<>("col", Integer.class);
         CompareFilter f = new CompareFilter(column, CompareFilter.Operator.GREATER_THAN, "100");

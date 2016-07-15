@@ -141,7 +141,7 @@ public enum Country implements HasName, HasAliases {
 
     CONGO_BRAZZAVILLE("CG", "COG", "Congo (Brazzaville)", "Congo", "Congo (the)", "the Republic of the Congo"),
 
-    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)", "Congo, Democratic republic of the", "the Democratic Republic of the Congo", "Congo (the Democratic Republic of the)", "Zaire"),
+    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)", "Congo, Democratic republic of the", "the Democratic Republic of the Congo", "Congo (the Democratic Republic of the)", "Zaire"), /* Former country name 'Zaire' */
     
     COOK_ISLANDS("CK", "COK", "Cook Islands"),
 
@@ -200,7 +200,7 @@ public enum Country implements HasName, HasAliases {
 
     GABON("GA", "GAB", "Gabon"),
 
-    GAMBIA("GM", "GMB", "Gambia", ""),
+    GAMBIA("GM", "GMB", "Gambia"),
 
     GEORGIA("GE", "GEO", "Georgia"),
 

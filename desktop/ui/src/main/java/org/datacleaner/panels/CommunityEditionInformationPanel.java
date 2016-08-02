@@ -23,12 +23,7 @@ import java.awt.Color;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.Timer;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
-import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -45,22 +40,11 @@ public class CommunityEditionInformationPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int WIDTH = 360;
-    private static final int POSITION_Y = 130;
-
-    private final DCGlassPane _glassPane;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
-    private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
-    public CommunityEditionInformationPanel(DCGlassPane glassPane) {
+    public CommunityEditionInformationPanel() {
         super();
-        _glassPane = glassPane;
-        setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
-        setVisible(false);
-        setSize(WIDTH, 400);
-        setLocation(getXWhenOut(), POSITION_Y);
-
         setLayout(new VerticalLayout(10));
 
         DCLabel header = DCLabel.darkMultiLine("You are right now using\n" + "DataCleaner community edition");
@@ -84,40 +68,6 @@ public class CommunityEditionInformationPanel extends JPanel {
         JButton compareEditionsButton = WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
         compareEditionsButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
         add(DCPanel.around(compareEditionsButton));
-    }
-
-    private int getXWhenOut() {
-        return _glassPane.getSize().width + WIDTH + 10;
-    }
-
-    private int getXWhenIn() {
-        return _glassPane.getSize().width - WIDTH + 10;
-    }
-
-    public void moveIn(int delay) {
-        setLocation(getXWhenOut(), POSITION_Y);
-        setVisible(true);
-        _glassPane.add(this);
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenIn(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
-    }
-
-    public void moveOut(int delay) {
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenOut(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-                CommunityEditionInformationPanel me = CommunityEditionInformationPanel.this;
-                me.setVisible(false);
-                _glassPane.remove(me);
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
     }
 
     @Override

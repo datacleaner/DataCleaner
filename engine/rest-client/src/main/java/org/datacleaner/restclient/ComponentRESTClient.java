@@ -34,9 +34,9 @@ public class ComponentRESTClient {
     private final String url;
     private String tenantName;
 
-    public ComponentRESTClient(String url, String username, String password) {
+    public ComponentRESTClient(String url, String username, String password, String dataCleanerVersion) {
         this.url = url;
-        restClient = new RESTClientImpl(username, password);
+        restClient = new RESTClientImpl(username, password, dataCleanerVersion);
         getUserTenantName();
     }
 
@@ -44,9 +44,9 @@ public class ComponentRESTClient {
      * Mainly for tests, tenant can be recognized automatically when other
      * constructor is used
      */
-    public ComponentRESTClient(String url, String username, String password, String tenantName) {
+    public ComponentRESTClient(String url, String username, String password, String tenantName, String dataCleanerVersion) {
         this.url = url;
-        restClient = new RESTClientImpl(username, password);
+        restClient = new RESTClientImpl(username, password, dataCleanerVersion);
         this.tenantName = tenantName;
     }
 

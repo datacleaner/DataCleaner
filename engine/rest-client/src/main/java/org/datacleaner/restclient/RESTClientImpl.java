@@ -43,10 +43,12 @@ public class RESTClientImpl implements RESTClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
     private static final Map<String, Client> clientCache = new ConcurrentHashMap<>();
-    
+    private final String dataCleanerVersion;
+
     private Client client = null;
 
-    public RESTClientImpl(String username, String password) {
+    public RESTClientImpl(String username, String password, String dataCleanerVersion) {
+        this.dataCleanerVersion = dataCleanerVersion;
         if (username == null) {
             username = "";
         }
@@ -98,7 +100,8 @@ public class RESTClientImpl implements RESTClient {
         WebResource webResource = client.resource(url);
         WebResource.Builder builder = webResource
                 .accept(MediaType.APPLICATION_JSON)
-                .type(MediaType.APPLICATION_JSON);
+                .type(MediaType.APPLICATION_JSON)
+                .header(HEADER_DC_VERSION, dataCleanerVersion);
         ClientResponse response = null;
 
         if (requestBody != null && ! requestBody.isEmpty()) {

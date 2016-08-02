@@ -20,7 +20,7 @@
 package org.datacleaner.components.categories;
 
 import org.datacleaner.api.ComponentCategory;
-import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.ApiStringUtils;
 
 /**
  * Abstract implementation of {@link ComponentCategory}. This implementation
@@ -37,7 +37,7 @@ public abstract class AbstractComponentCategory implements ComponentCategory {
 		if (simpleName.endsWith("Category")) {
 			simpleName = simpleName.substring(0, simpleName.length() - "Category".length());
 		}
-		return ReflectionUtils.explodeCamelCase(simpleName, false);
+		return ApiStringUtils.explodeCamelCase(simpleName, false);
 	}
 
 	@Override

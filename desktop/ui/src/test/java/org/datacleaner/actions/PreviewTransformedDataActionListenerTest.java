@@ -62,6 +62,7 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.TestHelper;
+import org.datacleaner.util.PreviewUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -480,7 +481,7 @@ public class PreviewTransformedDataActionListenerTest {
         final PreviewTransformedDataActionListener.PreviewJob previewJob = action.createPreviewJob();
         assertNotNull(previewJob);
         final AnalysisJobBuilder ajb = previewJob.analysisJobBuilder;
-        ajb.getAnalysisJobMetadata().getProperties().put(PreviewTransformedDataActionListener.METADATA_PROPERTY_MARKER, "test");
+        ajb.getAnalysisJobMetadata().getProperties().put(PreviewUtils.METADATA_PROPERTY_MARKER, "test");
         
         final JaxbJobWriter writer = new JaxbJobWriter(ajb.getConfiguration(), new EmptyJaxbJobMetadataFactory());
         

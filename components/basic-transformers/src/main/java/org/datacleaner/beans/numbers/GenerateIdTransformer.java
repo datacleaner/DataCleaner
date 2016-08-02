@@ -65,6 +65,8 @@ public class GenerateIdTransformer implements Transformer {
     InputColumn<?> columnInScope;
 
     @Configured
+    @Description("The row number offset. This is often used to insert into a database with existing sequential IDs."
+            + " Since the transformer increments before inserting, an offset of e.g. 100 would make the first newly inserted ID 101.")
     long offset = 0;
 
     private final AtomicLong _counter;

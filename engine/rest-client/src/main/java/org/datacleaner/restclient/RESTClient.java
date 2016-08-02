@@ -24,6 +24,7 @@ package org.datacleaner.restclient;
  * @since 03. 09. 2015
  */
 public interface RESTClient {
+    String HEADER_DC_VERSION = "datacleaner-version";
     
     enum HttpMethod {
         POST,

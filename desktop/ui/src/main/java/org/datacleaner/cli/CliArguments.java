@@ -122,7 +122,7 @@ public class CliArguments {
     @Option(name = "-list", usage = "Used to print a list of various elements available in the configuration")
     private CliListType listType;
 
-    @Option(name = "-ds", aliases = { "-datastore", "--datastore-name" }, usage = "Name of datastore when printing a list of schemas, tables or columns")
+    @Option(name = "-ds", aliases = { "-datastore", "--datastore-name" }, usage = "Name of datastore when printing a list of schemas, tables or columns. Overrides datastore used when used with -job")
     private String datastoreName;
 
     @Option(name = "-s", aliases = { "-schema", "--schema-name" }, usage = "Name of schema when printing a list of tables or columns")

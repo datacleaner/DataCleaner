@@ -45,6 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.datacleaner.Version;
+import org.datacleaner.VersionComparator;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
@@ -75,11 +77,13 @@ import org.datacleaner.restclient.ProcessOutput;
 import org.datacleaner.restclient.ProcessResult;
 import org.datacleaner.restclient.ProcessStatelessInput;
 import org.datacleaner.restclient.ProcessStatelessOutput;
+import org.datacleaner.restclient.RESTClient;
 import org.datacleaner.restclient.Serializator;
 import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,6 +92,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -118,10 +123,12 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 public class ComponentControllerV1 {
 
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
+    private static final String VERSION_ENABLE_COMPONENT_PARAM = "5.0.4-SNAPSHOT";
 
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ICON_DATA = "iconData";
     private static final String PARAMETER_NAME_OUTPUT_STYLE = "outputStyle";
+    private static final String PARAMETER_NAME_COLUMNS = "columns";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
     
@@ -138,6 +145,7 @@ public class ComponentControllerV1 {
     TenantContextFactory _tenantContextFactory;
     
     @Autowired
+    @Qualifier(value="published-components")
     RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
     @Autowired
@@ -168,18 +176,28 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ComponentList getAllComponents(@RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) String dataCleanerClientVersion,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider().getTransformerDescriptors();
         ComponentList componentList = new ComponentList();
 
+        final int comp = compareVersions(VERSION_ENABLE_COMPONENT_PARAM, dataCleanerClientVersion);
+
         for (TransformerDescriptor<?> descriptor : transformerDescriptors) {
             if (_remoteComponentsConfiguration.isAllowed(descriptor)) {
                 try {
-                    componentList.add(createComponentInfo(tenant, descriptor, iconData));
-                } catch(Exception e) {
+                    final ComponentList.ComponentInfo componentInfo;
+                    if (comp <= 0) {
+                        componentInfo = createComponentInfo(tenant, descriptor, iconData,
+                                isComponentEnabled(descriptor.getDisplayName()));
+                    } else {
+                        componentInfo = createComponentInfo(tenant, descriptor, iconData, null);
+                    }
+                    componentList.add(componentInfo);
+                } catch (Exception e) {
                     logger.error("Cannot create info about component {}", descriptor, e);
                 }
             }
@@ -191,7 +209,8 @@ public class ComponentControllerV1 {
 
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList.ComponentInfo getComponentInfo(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ComponentList.ComponentInfo getComponentInfo(@RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) String dataCleanerClientVersion,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) String name,
             @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
@@ -202,7 +221,13 @@ public class ComponentControllerV1 {
             logger.info("Component {} is not allowed.", name);
             throw ComponentNotAllowed.createInstanceNotAllowed(name);
         }
-        return createComponentInfo(tenant, descriptor, iconData);
+
+        final int comp = compareVersions(VERSION_ENABLE_COMPONENT_PARAM, dataCleanerClientVersion);
+        if (comp <= 0) {
+            return createComponentInfo(tenant, descriptor, iconData, isComponentEnabled(descriptor.getDisplayName()));
+        } else {
+            return createComponentInfo(tenant, descriptor, iconData, null);
+        }
     }
 
     /**
@@ -218,19 +243,7 @@ public class ComponentControllerV1 {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentHandler handler = componentHandlerFactory.createComponent(tenantContext, decodedName, createInput.configuration);
         try {
-            org.datacleaner.api.OutputColumns outCols = handler.getOutputColumns();
-            org.datacleaner.restclient.OutputColumns result = new org.datacleaner.restclient.OutputColumns();
-
-            for (int i = 0; i < outCols.getColumnCount(); i++) {
-                SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-                try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
-                } catch (JsonMappingException e) {
-                    throw new RuntimeException(e);
-                }
-                result.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
-            }
-            return result;
+            return createOutputColumns(handler.getOutputColumns());
         } finally {
             handler.closeComponent();
         }
@@ -247,9 +260,11 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    public ProcessStatelessOutput processStateless(
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_COLUMNS, required = false, defaultValue = "false") boolean outputColumnsInfo,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
 
@@ -266,7 +281,25 @@ public class ComponentControllerV1 {
         output.rows = getOutputJsonNode(handler, handler.runComponent(processStatelessInput.data, _maxBatchSize), outputStyleEnum);
         output.result = getJsonNode(handler.closeComponent());
 
+        if(outputColumnsInfo) {
+            output.columns = createOutputColumns(handler.getOutputColumns()).getColumns();
+        }
+
         return output;
+    }
+
+    private OutputColumns createOutputColumns(org.datacleaner.api.OutputColumns outCols) {
+        OutputColumns outColsResult = new OutputColumns();
+        for (int i = 0; i < outCols.getColumnCount(); i++) {
+            SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+            try {
+                ComponentHandler.mapper.acceptJsonFormatVisitor(outCols.getColumnType(i), visitor);
+            } catch (JsonMappingException e) {
+                throw new RuntimeException(e);
+            }
+            outColsResult.add(outCols.getColumnName(i), outCols.getColumnType(i), visitor.finalSchema());
+        }
+        return outColsResult;
     }
 
     private JsonNode getOutputJsonNode(ComponentHandler handler, Collection<List<Object[]>> data, OutputStyle outputFormat) {
@@ -372,10 +405,11 @@ public class ComponentControllerV1 {
     }
 
     public static ComponentList.ComponentInfo createComponentInfo(String tenant, ComponentDescriptor<?> descriptor,
-            boolean iconData) {
+            boolean iconData, Boolean isEnabled) {
         Object componentInstance = descriptor.newInstance();
         ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
                 .setName(descriptor.getDisplayName())
+                .setEnabled(isEnabled)
                 .setCreateURL(getURLForCreation(tenant, descriptor))
                 .setProperties(createPropertiesInfo(descriptor, componentInstance));
         setComponentAnnotations(descriptor, componentInfo);
@@ -384,6 +418,21 @@ public class ComponentControllerV1 {
         }
 
         return componentInfo;
+    }
+
+    private int compareVersions(final String version1, final String version2) {
+        final VersionComparator versionComparator = new VersionComparator();
+        return versionComparator.compare(cleanVersion(version1), cleanVersion(version2));
+    }
+
+    private String cleanVersion(final String version) {
+        String clean = version;
+        if (clean == null) {
+            clean = "1.0";//old version
+        } else if (clean.equals(Version.UNKNOWN_VERSION)) {
+            clean = Version.getVersion(); // We expect the current version
+        }
+        return clean;
     }
 
     private static byte[] getComponentIconData(ComponentDescriptor<?> descriptor) {
@@ -441,6 +490,15 @@ public class ComponentControllerV1 {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isComponentEnabled(String componentName){
+        try {
+            canCall(componentName);
+        }catch (RuntimeException e){
+            return false;
+        }
+        return true;
     }
 
     private static Map<String, ComponentList.PropertyInfo> createPropertiesInfo(ComponentDescriptor<?> descriptor,

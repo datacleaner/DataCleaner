@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -73,8 +75,6 @@ import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
 
-import junit.framework.TestCase;
-
 public class JaxbJobReaderTest extends TestCase {
 
     private final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
@@ -89,7 +89,7 @@ public class JaxbJobReaderTest extends TestCase {
     // see #1196 - Synonym lookup changes has broken old jobs
     public void testReadJobWhereOutputColumnsHasBeenAddedToComponent() throws Exception {
         SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("Job titles");
-        Collection<SynonymCatalog> synonyms = Arrays.asList(synonymCatalog);
+        Collection<SynonymCatalog> synonyms = Collections.singletonList(synonymCatalog);
         ReferenceDataCatalog referenceDataCatalog = new ReferenceDataCatalogImpl(Collections.emptyList(), synonyms, Collections.emptyList());
         DataCleanerConfigurationImpl conf = this.conf.withReferenceDataCatalog(referenceDataCatalog);
         
@@ -251,8 +251,8 @@ public class JaxbJobReaderTest extends TestCase {
             final String message = e.getMessage();
             assertTrue(message, message.startsWith("javax.xml.bind.UnmarshalException"));
             assertTrue(message,
-                    message.toLowerCase().indexOf("uri:\"http://eobjects.org/analyzerbeans/job/1.0\"") != -1);
-            assertTrue(message, message.indexOf("\"datacontext\"") != -1);
+                    message.toLowerCase().contains("uri:\"http://eobjects.org/analyzerbeans/job/1.0\""));
+            assertTrue(message, message.contains("\"datacontext\""));
         }
     }
 
@@ -309,6 +309,16 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("FIRSTNAME,Blank count: 0", resultLines[3]);
         assertEquals("FIRSTNAME,Diacritic chars: 0", resultLines[4]);
         assertEquals("FIRSTNAME,Digit chars: 0", resultLines[5]);
+    }
+
+    public void testUsingSourceAlternateDatastore() throws Throwable {
+        Datastore datastore = TestHelper.createSampleDatabaseDatastore("another datastore name");
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        final AnalysisJobBuilder analysisJobBuilder = reader.create(new FileInputStream(new File(
+                "src/test/resources/example-job-valid.xml")), null, datastore);
+
+        final AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
+        assertEquals("another datastore name", analysisJob.getDatastore().getName());
     }
 
     public void testUsingSourceColumnMapping() throws Throwable {
@@ -494,8 +504,8 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("EQ name", units[0].getInputColumnNames()[0].toString());
-        assertEquals("NEQ name", units[0].getInputColumnNames()[1].toString());
+        assertEquals("EQ name", units[0].getInputColumnNames()[0]);
+        assertEquals("NEQ name", units[0].getInputColumnNames()[1]);
     }
 
     public void testCoalesceJobWithCombinedTranformerColumns() throws Exception {
@@ -514,8 +524,8 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
-        assertEquals("CONTACTLASTNAME (Upper case)", units[0].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("CONTACTLASTNAME (Upper case)", units[0].getInputColumnNames()[1]);
     }
 
     public void testCoalesceJobWithInputColumns() throws Exception {
@@ -534,10 +544,10 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
-        assertEquals("CONTACTFIRSTNAME", units[0].getInputColumnNames()[1].toString());
-        assertEquals("PHONE", units[1].getInputColumnNames()[0].toString());
-        assertEquals("CITY", units[1].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("CONTACTFIRSTNAME", units[0].getInputColumnNames()[1]);
+        assertEquals("PHONE", units[1].getInputColumnNames()[0]);
+        assertEquals("CITY", units[1].getInputColumnNames()[1]);
     }
 
     public void testUnionJob() throws Exception {
@@ -557,11 +567,11 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0].toString());
-        assertEquals("LASTNAME", units[0].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("LASTNAME", units[0].getInputColumnNames()[1]);
         assertEquals("CONTACTLASTNAME", units[0].getSuggestedOutputColumnName());
-        assertEquals("CONTACTFIRSTNAME", units[1].getInputColumnNames()[0].toString());
-        assertEquals("FIRSTNAME", units[1].getInputColumnNames()[1].toString());
+        assertEquals("CONTACTFIRSTNAME", units[1].getInputColumnNames()[0]);
+        assertEquals("FIRSTNAME", units[1].getInputColumnNames()[1]);
         assertEquals("CONTACTFIRSTNAME", units[1].getSuggestedOutputColumnName());
 
         final List<OutputDataStream> outputDataStreams = componentBuilder.getOutputDataStreams();

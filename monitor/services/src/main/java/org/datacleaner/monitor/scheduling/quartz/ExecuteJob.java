@@ -160,7 +160,8 @@ public class ExecuteJob extends AbstractQuartzJob {
                 throw new UnsupportedOperationException("No Job engine available for job: " + job);
             }
 
-            final DataCleanerConfiguration configuration = context.getConfiguration();
+            final DataCleanerConfiguration configuration = context.getConfiguration(execution.getSchedule()
+                    .getOverrideProperties());           
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);

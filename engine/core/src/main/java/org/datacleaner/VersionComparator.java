@@ -23,7 +23,7 @@ import java.util.Comparator;
 
 /**
  * Compares the versions of DataCleaner to determine the latest.
- * 
+ *
  * Versions are Strings in format: X.Y.Z or X.Y.Z-SNAPSHOT. The comparator
  * expects only correct inputs, the values should be validated before passing it
  * to the comparator otherwise it will crash.
@@ -36,32 +36,37 @@ public class VersionComparator implements Comparator<String> {
         String[] o2Split = o2.split("\\.");
 
         for (int i = 0; i < Math.min(o1Split.length, o2Split.length); i++) {
-            int snapshotCounter = 0;
+            int specialEndCounter = 0;
             Integer o1Part;
-            if (o1Split[i].endsWith("-SNAPSHOT")) {
-                snapshotCounter++;
-                o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-SNAPSHOT")));
+            if (o1Split[i].contains("-")) {
+                specialEndCounter++;
+                o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-")));
             } else {
                 o1Part = Integer.parseInt(o1Split[i]);
             }
             Integer o2Part;
-            if (o2Split[i].endsWith("-SNAPSHOT")) {
-                snapshotCounter++;
-                o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-SNAPSHOT")));
+            if (o2Split[i].contains("-")) {
+                specialEndCounter++;
+                o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-")));
             } else {
                 o2Part = Integer.parseInt(o2Split[i]);
             }
 
             int compareTo = o1Part.compareTo(o2Part);
             if (compareTo == 0) {
-                // check if there was one SNAPSHOT and one release - release is
+                // check if there was one SNAPSHOT/RC1/beta and one release - release is
                 // ofc newer despite the same number
-                if (snapshotCounter == 1) {
-                    if (o1Split[i].endsWith("-SNAPSHOT")) {
+                if (specialEndCounter == 1) {
+                    if (o1Split[i].contains("-")) {
                         return -1;
                     } else {
                         return 1;
                     }
+                } else if (specialEndCounter == 2) {
+                    final String endO1 = o1Split[i].substring(o1Split[i].lastIndexOf("-") + 1, o1Split[i].length());
+                    final String endO2 = o2Split[i].substring(o2Split[i].lastIndexOf("-") + 1, o2Split[i].length());
+                    // SNAPSHOT/RC1/beta lexicographically sort
+                    return endO1.toLowerCase().compareTo(endO2.toLowerCase());
                 } else {
                     // check another part
                     continue;

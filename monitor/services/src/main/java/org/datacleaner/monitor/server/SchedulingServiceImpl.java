@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -43,6 +45,7 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -94,6 +97,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Maps;
 
 /**
  * Main implementation of the {@link SchedulingService} interface.
@@ -273,6 +278,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
+        return getSchedule(tenant, jobIdentifier, null);
+    }
+
+    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -308,6 +318,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         schedule.setJobMetadataProperties(jobMetadataProperties);
+        schedule.setOverrideProperties(overrideProperties);
 
         return schedule;
     }
@@ -395,7 +406,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     if (hotFolder != null) {
                         FileAlterationObserver observer = createObserver(hotFolder);
                     
-                        observer.addListener(new HotFolderAlterationListener(job, schedule.getTenant()));
+                        observer.addListener(new HotFolderAlterationListener(job, schedule));
                     
                         _hotFolderMonitor.addObserver(observer);
                         
@@ -521,12 +532,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
-        return triggerExecution(tenant, job, TriggerType.MANUAL);
+        return triggerExecution(tenant, job, null);
     }
 
-    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job, final TriggerType manual) {
+    @Override
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            Map<String, String> overrideProperties) {
+        return triggerExecution(tenant, job, overrideProperties, TriggerType.MANUAL);
+    }
+
+    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
+            Map<String, String> overrideProperties, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
-        final ScheduleDefinition schedule = getSchedule(tenant, job);
+
+        final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
+
         final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());
 
@@ -726,12 +746,26 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
     
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
+        private static final String PROPERTIES_FILE_EXTENSION = ".properties";
+        
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
+        private final String overridePropertiesFilePath;
 
-        private HotFolderAlterationListener(final JobIdentifier job, final TenantIdentifier tenant) {
+        private HotFolderAlterationListener(final JobIdentifier job, final ScheduleDefinition schedule) {
             this.job = job;
-            this.tenant = tenant;
+            this.tenant = schedule.getTenant();
+
+            final String hotFolderPath = schedule.getHotFolder();
+            final File hotFolder = new File(hotFolderPath);
+            final String overridePropertiesFileName = job.getName() + PROPERTIES_FILE_EXTENSION;
+            if (hotFolder.isDirectory()) {
+                overridePropertiesFilePath = new File(hotFolder, overridePropertiesFileName).getAbsolutePath();
+            } else if (hotFolderPath.endsWith(PROPERTIES_FILE_EXTENSION)) {
+                overridePropertiesFilePath = hotFolderPath;
+            } else {
+                overridePropertiesFilePath = FilenameUtils.getFullPath(hotFolderPath) + overridePropertiesFileName;
+            }
         }
 
         @Override
@@ -739,7 +773,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
+            triggerJobExecution();
         }
 
         @Override
@@ -747,7 +781,26 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
                     .getName());
 
-            triggerExecution(tenant, job, TriggerType.HOTFOLDER);
+            triggerJobExecution();
+        }
+
+        private void triggerJobExecution() {
+            final FileResource overrideProperties = new FileResource(overridePropertiesFilePath);
+            Map<String, String> propertiesMap = null;
+            
+            if (overrideProperties.isExists()) {
+                try {
+                    Properties properties = new Properties();
+                    properties.load(overrideProperties.read());
+                    
+                    propertiesMap = Maps.fromProperties(properties);
+                } catch (IOException e) {
+                    logger.warn("Exception occurred when loading properties file {} for hot folder trigger of job {}.",
+                            overridePropertiesFilePath, job.getName());
+                }
+            }
+            
+            triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
         }
     }
 }

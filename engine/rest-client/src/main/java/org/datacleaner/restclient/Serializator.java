@@ -25,17 +25,24 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.ComponentScope;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.ShortNews;
 import org.datacleaner.util.HasAliases;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -55,16 +62,29 @@ public class Serializator {
         // our custom serializers
         myModule.addSerializer(new MyInputColumnSerializer());
         myModule.addSerializer(new MyEnumSerializer());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(myModule);
+
+        //For better deserialize of enumeration in ComponentScope annotation. - We will ignore unknown values.
+        objectMapper.registerModule(new SimpleModule(){
+            @Override
+            public void setupModule(final SetupContext context) {
+                context.setMixInAnnotations(ComponentScope.ServiceType.class, ComponentScopeServiceTypeMixin.class);
+                context.setMixInAnnotations(ComponentScope.EntityType.class, ComponentScopeEntityTypeMixin.class);
+            }
+        });
     }
 
     public static ObjectMapper getJacksonObjectMapper() {
         return objectMapper;
     }
 
+    public static ShortNews shortNewsList(String response) {
+        return Serializator.fromString(response, ShortNews.class);
+    }
+
     public static ComponentList componentList(String response) {
         ComponentList components = Serializator.fromString(response, ComponentList.class);
-
         return components;
     }
 
@@ -114,7 +134,7 @@ public class Serializator {
 
     private static <T> T fromString(String value, Class<T> type) {
         try {
-            if (value instanceof String && (value == null || value.equals(""))) {
+            if (value == null || value.equals("")) {
                 return null;
             }
 
@@ -225,5 +245,39 @@ public class Serializator {
             }
         }
         return serialized.toString();
+    }
+
+    @JsonDeserialize(using = ComponentScopeServiceTypeDeserializer.class)
+    interface ComponentScopeServiceTypeMixin {}
+
+    @JsonDeserialize(using = ComponentScopeEntityTypeDeserializer.class)
+    interface ComponentScopeEntityTypeMixin {}
+
+    private static final class ComponentScopeServiceTypeDeserializer extends JsonDeserializer<ComponentScope.ServiceType> {
+        @Override
+        public ComponentScope.ServiceType deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
+                throws IOException {
+            final String jsonParserText = jsonParser.getText();
+            for (final ComponentScope.ServiceType value : ComponentScope.ServiceType.values()) {
+                if(value.name().equals(jsonParserText)){
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    private static final class ComponentScopeEntityTypeDeserializer extends JsonDeserializer<ComponentScope.EntityType> {
+        @Override
+        public ComponentScope.EntityType deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
+                throws IOException {
+            final String jsonParserText = jsonParser.getText();
+            for (final ComponentScope.EntityType value : ComponentScope.EntityType.values()) {
+                if(value.name().equals(jsonParserText)){
+                    return value;
+                }
+            }
+            return null;
+        }
     }
 }

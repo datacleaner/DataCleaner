@@ -25,6 +25,7 @@ import java.util.List;
 import javax.inject.Named;
 
 import org.apache.metamodel.query.FilterItem;
+import org.apache.metamodel.query.FunctionType;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
@@ -132,7 +133,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
                 }
                 q.where(column, OperatorType.DIFFERENT_FROM, null);
                 if (considerEmptyStringAsNull && col.getDataType() == String.class) {
-                    q.where(column, OperatorType.LIKE, "%");
+                    q.having(FunctionType.TO_BOOLEAN, column, OperatorType.EQUALS_TO, "TRUE");
                 }
             }
         } else {

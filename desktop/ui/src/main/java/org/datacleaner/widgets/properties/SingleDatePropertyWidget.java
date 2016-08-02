@@ -70,6 +70,9 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         _dateYesterdayRadio.addActionListener(fireValueChangedActionListener());
         _nowPlusRadio.addActionListener(fireValueChangedActionListener());
         _nowPlusTextField.addActionListener(fireValueChangedActionListener());
+        _nowPlusTextField.addPropertyChangeListener(evt -> {
+            fireValueChanged();
+        });       
 
         final ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(_dateCustomRadio);

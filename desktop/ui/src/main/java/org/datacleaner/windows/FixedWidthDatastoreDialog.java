@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,13 +33,10 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
@@ -69,7 +64,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
-	private final JCheckBox _headerPresentCheckBox;
+	private final JCheckBox _skipEbcdicHeaderCheckBox;
 	private final JCheckBox _eolPresentCheckBox;
 	private final List<JXTextField> _valueWidthTextFields;
 	private final DCPanel _valueWidthsPanel;
@@ -102,13 +97,13 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		_headerLineComboBox = new HeaderLineComboBox();
 
 		_failOnInconsistenciesCheckBox = createCheckBox("Fail on inconsistent line length", true);
-		_headerPresentCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
+		_skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
 		_eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
 		if (originalDatastore != null) {
 			_encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
 			_failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
-			_headerPresentCheckBox.setSelected(originalDatastore.isHeaderPresent());
+			_skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
 			_eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
 
 			int[] valueWidths = originalDatastore.getValueWidths();
@@ -216,7 +211,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	private int getStartPosition() {
-		return _headerPresentCheckBox.isSelected() ? getRecordDataLength() : 0;
+		return _skipEbcdicHeaderCheckBox.isSelected() ? getRecordDataLength() : 0;
 	}
 
 	private int getBufferSize() {
@@ -242,7 +237,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	@Override
 	protected FixedWidthDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false, _headerPresentCheckBox.isSelected(),
+		return createDatastore("Preview", filename, false, _skipEbcdicHeaderCheckBox.isSelected(),
 				_eolPresentCheckBox.isSelected());
 	}
 
@@ -318,7 +313,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		result.add(new ImmutableEntry<>("Column widths", valueWidthConfigurationPanel));
 		result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
 		result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
-		result.add(new ImmutableEntry<>("", _headerPresentCheckBox));
+		result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
 		result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
 		return result;
 	}
@@ -347,17 +342,17 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	@Override
 	protected FixedWidthDatastore createDatastore(String name, String filename) {
 		boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
-		boolean headerPresent = _headerPresentCheckBox.isSelected();
+		boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
 		boolean eolPresent = _eolPresentCheckBox.isSelected();
-		return createDatastore(name, filename, failOnInconsistencies, headerPresent, eolPresent);
+		return createDatastore(name, filename, failOnInconsistencies, skipEbcdicHeader, eolPresent);
 	}
 
 	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
-			boolean headerPresent, boolean eolPresent) {
+			boolean skipEbcdicHeader, boolean eolPresent) {
 		int[] valueWidths = getValueWidths(true);
 		try {
 			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), valueWidths,
-					failOnInconsistencies, headerPresent, eolPresent, getHeaderLine());
+					failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine());
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException("Value width must be a valid number.");
 		}

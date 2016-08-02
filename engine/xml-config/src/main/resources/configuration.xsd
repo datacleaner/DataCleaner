@@ -789,7 +789,7 @@
 						</annotation>
 					</element>
 					<element name="fail-on-inconsistencies" type="boolean" minOccurs="0" />
-					<element name="header-present" type="boolean" minOccurs="0" />
+					<element name="skip-ebcdic-header" type="boolean" minOccurs="0" />
 					<element name="eol-present" type="boolean" minOccurs="0" />
 				</all>
 			</extension>

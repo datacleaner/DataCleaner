@@ -600,6 +600,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
+                    final ActionListener[] actionListeners = _saveButton.getActionListeners();
+                    if (actionListeners[0] instanceof SaveAnalysisJobActionListener){
+                        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = (SaveAnalysisJobActionListener) actionListeners[0];
+                        if (!saveAnalysisJobActionListener.isSaved()) {
+                            return false;
+                        }
+                    }
                 } else if (unsavedChangesChoice != 1) { // cancel closing
                     return false;
                 }
@@ -843,10 +850,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             for (final DCWindow window : windows) {
                 final Image windowIcon = window.getWindowIcon();
                 final String title = window.getWindowTitle();
+                final String titleText;
+                // see issue #1454
+                if (title.length() > 100) {
+                    titleText = title.substring(0, 100).concat(" ...");
+                } else {
+                    titleText = title;
+                }
                 final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
                         IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-                final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
-                switchToWindowItem.addActionListener(e1 -> window.toFront());
+                final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
+                switchToWindowItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        window.toFront();
+                    }
+                });
                 windowsMenuItem.add(switchToWindowItem);
             }
 

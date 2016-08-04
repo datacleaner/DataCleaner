@@ -19,7 +19,7 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,11 +37,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.CollectionUtils;
@@ -61,6 +58,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
@@ -92,16 +90,24 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private final JButton _clearButton;
     private final JButton _autoMapButton;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
+    private final LoadingIcon _loadingIcon = createLoadingIcon();
 
     private volatile Datastore _datastore;
-
+    
+    public static LoadingIcon createLoadingIcon() {
+        LoadingIcon loadingIcon = new LoadingIcon();
+        loadingIcon.setBackground(Color.WHITE);
+        loadingIcon.setOpaque(true);
+        loadingIcon.setVisible(false);
+        
+        return loadingIcon;
+    }
+    
     private class ComboBoxUpdater extends SwingWorker<Void, Void> {
-        private final ProgressBar _bar;
 
         public ComboBoxUpdater(JDialog parent) {
             final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
             _datastore = _datastoreCatalog.getDatastore(datastoreName);
-            _bar = new ProgressBar(parent);
         }
 
         private void update() {
@@ -139,7 +145,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         protected Void doInBackground() throws Exception {
             disableGUI();
-            _bar.setVisible(true);
+            _loadingIcon.setVisible(true);
             update();
 
             return null;
@@ -147,25 +153,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         protected void done() {
             enableGUI();
-            _bar.setVisible(false);
-        }
-
-        private class ProgressBar extends JFrame {
-            public ProgressBar(JDialog parent) {
-                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                setUndecorated(true);
-                setAlwaysOnTop(true);
-                setLocationRelativeTo(parent);
-
-                final JProgressBar bar = new JProgressBar();
-                bar.setPreferredSize(new Dimension(200, 25));
-                bar.setStringPainted(true);
-                bar.setString("Loading...");
-                bar.setIndeterminate(true);
-
-                add(bar);
-                pack();
-            }
+            _loadingIcon.setVisible(false);
         }
     }
 
@@ -355,6 +343,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         DCPanel datastoreButtonPanel = new DCPanel();
         datastoreButtonPanel.setLayout(new HorizontalLayout(0));
         datastoreButtonPanel.add(_datastoreCombobox);
+        datastoreButtonPanel.add(_loadingIcon);
         datastoreButtonPanel.add(Box.createHorizontalStrut(4));
         datastoreButtonPanel.add(_autoMapButton);
 

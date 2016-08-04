@@ -17,27 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.restclient;
-
-import java.io.Serializable;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+package org.datacleaner.descriptors;
 
 /**
- * Crate for a component output.
- *
- * @since 9. 7. 2015
+ * Descriptor interface for providing component's information about availability.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProcessStatelessOutput implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @JsonProperty
-    public JsonNode result;
-    @JsonProperty
-    public JsonNode rows;
-    @JsonProperty
-    public List<OutputColumns.OutputColumn> columns;
+public interface Allowable {
+
+    boolean isAllowed();
 }

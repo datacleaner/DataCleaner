@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.datacleaner.Version;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.configuration.RemoteServerData;
@@ -78,7 +79,7 @@ public class RemoteServersUtils {
     }
 
     public static void checkServerWithCredentials(String url, String username, String password) throws Exception{
-        new ComponentRESTClient(url, username, password);
+        new ComponentRESTClient(url, username, password, Version.getVersion());
     }
 
     public static String getDataCloudTermsAndConditions() throws IOException {

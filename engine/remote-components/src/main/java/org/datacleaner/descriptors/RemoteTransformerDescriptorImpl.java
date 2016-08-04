@@ -38,22 +38,24 @@ import org.datacleaner.configuration.RemoteServerData;
  * @Since 9/1/15
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer>
-        implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon {
+        implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon, Allowable {
     
     private static final long serialVersionUID = 1L;
     
     private final String remoteDisplayName;
     private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final byte[] iconData;
+    private final Boolean isEnabled;
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
     public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
-            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData) {
+            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData, Boolean isEnabled) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
         this.annotations = annotations;
         this.iconData = iconData;
+        this.isEnabled = isEnabled;
     }
 
     public RemoteDescriptorProvider getRemoteDescriptorProvider() {
@@ -102,5 +104,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
 
     public byte[] getIconData() {
         return iconData;
+    }
+
+    @Override
+    public boolean isAllowed() {
+        return isEnabled == null || isEnabled == Boolean.TRUE;
     }
 }

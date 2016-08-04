@@ -19,8 +19,13 @@
  */
 package org.datacleaner.util;
 
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.net.URL;
 import java.util.Set;
 
@@ -56,6 +61,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
+import org.datacleaner.descriptors.Allowable;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -349,6 +355,9 @@ public final class IconUtils {
             BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
+            if(componentDescriptor instanceof Allowable && !((Allowable) componentDescriptor).isAllowed()){
+                imageIcon = getDisabledIcon(imageIcon);
+            }
             imageIcon = addRemoteOverlay(imageIcon);
             _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
         } else {
@@ -601,5 +610,37 @@ public final class IconUtils {
         }
         
         return imagePath;
+    }
+
+    public static ImageIcon getDisabledIcon(ImageIcon inputIcon) {
+        DisabledFilter filter = new DisabledFilter();
+        ImageProducer prod = new FilteredImageSource(inputIcon.getImage().getSource(), filter);
+        return new ImageIcon(Toolkit.getDefaultToolkit().createImage(prod));
+    }
+
+    private static class DisabledFilter extends RGBImageFilter {
+        @Override
+        public int filterRGB(final int x, final int y, final int rgb) {
+
+            if ((rgb >> 24) == 0x00) { // is transparent
+                return rgb;
+            }
+
+            final int red = new Color(rgb).getRed();
+            final int green = new Color(rgb).getGreen();
+            final int blue = new Color(rgb).getBlue();
+
+            final int max = Math.max(Math.max(red, green), blue);
+            final int min = Math.min(Math.min(red, green), blue);
+            final int gray = brighter((max + min) / 2, 40);
+
+            return (rgb & 0xff000000) | (gray << 16) | (gray << 8) | gray;
+        }
+
+        private int brighter(int rgb, int percent) {
+            double q = 255 * percent * 0.01;
+            double k = (255 - q) / 255;
+            return (int) (k * rgb + q);
+        }
     }
 }

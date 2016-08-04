@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.Version;
 import org.datacleaner.descriptors.RemoteDescriptorProvider;
 import org.datacleaner.job.concurrent.ScheduledTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
@@ -152,7 +153,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
         try {
             ComponentRESTClient restClient =
                     new ComponentRESTClient(remoteServerData.getUrl(), remoteServerData.getUsername(),
-                            remoteServerData.getPassword());
+                            remoteServerData.getPassword(), Version.getVersion());
             dataCloudUserInfo = restClient.getDataCloudUserInfo();
         }catch (ClientHandlerException clientHandleException){
             logger.warn("DataCloud server connection problem: " + clientHandleException.getMessage());

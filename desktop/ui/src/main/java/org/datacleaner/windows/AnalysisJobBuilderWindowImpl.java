@@ -75,6 +75,7 @@ import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatastoreManagementPanel;
+import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.panels.SchemaTreePanel;
 import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
@@ -757,17 +758,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executeButton.addComponentsToToolbar(toolBar);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);;
 
         final DataCloudStatusLabel dataCloudStatusLabel =
-                new DataCloudStatusLabel( _glassPane, _configuration, _userPreferences, getWindowContext(), this);
+                new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
-        final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(_glassPane, _userPreferences);
+        final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
+        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
         statusBar.add(statusLabel);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);

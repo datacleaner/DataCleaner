@@ -26,12 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.Timer;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
-import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.RemoteServerState;
@@ -42,6 +37,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCHtmlBox;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.DataCloudLogInWindow;
 import org.jdesktop.swingx.VerticalLayout;
@@ -53,28 +49,22 @@ public class DataCloudInformationPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int WIDTH = 360;
-    private static final int POSITION_Y = 130;
-
-    private final DCGlassPane _glassPane;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
-    private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 
     private final DCLabel text;
     private final JButton optionButton;
     final private DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(DCGlassPane glassPane, final DataCleanerConfiguration configuration,
+    public DataCloudInformationPanel(RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
             final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
         super();
-        _glassPane = glassPane;
         optionButton = WidgetFactory.createDefaultButton("Sign in to DataCloud", IconUtils.MENU_OPTIONS);
         optionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                moveOut(0);
+                rightPanel.toggleWindow(DataCloudStatusLabel.PANEL_NAME);
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
@@ -87,11 +77,6 @@ public class DataCloudInformationPanel extends JPanel {
                 });
             }
         });
-        setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
-        setVisible(false);
-        setSize(WIDTH, 500);
-        setLocation(getXWhenOut(), POSITION_Y);
-
         setLayout(new VerticalLayout(10));
 
         DCLabel header = DCLabel.darkMultiLine("DataCloud status");
@@ -105,14 +90,6 @@ public class DataCloudInformationPanel extends JPanel {
         add(optionButton);
         add(Box.createVerticalBox());
         add(htmlBoxDataCloud);
-    }
-
-    private int getXWhenOut() {
-        return _glassPane.getSize().width + WIDTH + 10;
-    }
-
-    private int getXWhenIn() {
-        return _glassPane.getSize().width - WIDTH + 10;
     }
 
     public void setInformationStatus(RemoteServerState remoteServerState) {
@@ -150,32 +127,6 @@ public class DataCloudInformationPanel extends JPanel {
                     addLine(panelContent, "<font color=\"red\">" + remoteServerState.getErrorMessage() + " </font>");
         }
         text.setText(panelContent);
-    }
-
-    public void moveIn(int delay) {
-        setLocation(getXWhenOut(), POSITION_Y);
-        setVisible(true);
-        _glassPane.add(this);
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenIn(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
-    }
-
-    public void moveOut(int delay) {
-        final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenOut(), POSITION_Y, 40) {
-            @Override
-            protected void done() {
-                DataCloudInformationPanel me = DataCloudInformationPanel.this;
-                me.setVisible(false);
-                _glassPane.remove(me);
-            }
-        });
-        timer.setInitialDelay(delay);
-        timer.start();
     }
 
     @Override

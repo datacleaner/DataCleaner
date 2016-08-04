@@ -211,43 +211,7 @@ public final class ReflectionUtils {
     }
 
     public static String explodeCamelCase(String str, boolean excludeGetOrSet) {
-        if (str == null) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder(str.trim());
-        if (sb.length() > 1) {
-            if (excludeGetOrSet) {
-                if (str.startsWith("get") || str.startsWith("set")) {
-                    sb.delete(0, 3);
-                }
-            }
-
-            // Special handling for instance variables that have the "_" prefix
-            if (sb.charAt(0) == '_') {
-                sb.deleteCharAt(0);
-            }
-
-            // First character is set to uppercase
-            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-
-            boolean previousUpperCase = true;
-
-            for (int i = 1; i < sb.length(); i++) {
-                char currentChar = sb.charAt(i);
-                if (!previousUpperCase) {
-                    if (Character.isUpperCase(currentChar)) {
-                        sb.setCharAt(i, Character.toLowerCase(currentChar));
-                        sb.insert(i, ' ');
-                        i++;
-                    }
-                } else {
-                    if (Character.isLowerCase(currentChar)) {
-                        previousUpperCase = false;
-                    }
-                }
-            }
-        }
-        return sb.toString();
+      return ApiStringUtils.explodeCamelCase(str, excludeGetOrSet);
     }
 
     public static int getTypeParameterCount(Field field) {

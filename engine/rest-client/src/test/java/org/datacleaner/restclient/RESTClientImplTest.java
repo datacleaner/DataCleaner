@@ -19,15 +19,16 @@
  */
 package org.datacleaner.restclient;
 
-import com.sun.jersey.api.client.Client;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.sun.jersey.api.client.Client;
 
 public class RESTClientImplTest {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
     private static final String URL = "http://localhost:1234";
-    private RESTClient restClient = new RESTClientImpl(USERNAME, PASSWORD);
+    private RESTClient restClient = new RESTClientImpl(USERNAME, PASSWORD, "test");
 
     @Test
     public void testSetEndpoint() throws Exception {
@@ -62,10 +63,10 @@ public class RESTClientImplTest {
     public void testCache() {
         String username = "username";
         String password = "password";
-        Client instance1 = new RESTClientImpl(username, password).getClient();
-        Client instance2 = new RESTClientImpl(username + "2", password + "2").getClient();
-        Client instance3 = new RESTClientImpl(username, password).getClient();
-        Client instance4 = new RESTClientImpl(username, password + "4").getClient();
+        Client instance1 = new RESTClientImpl(username, password, "test").getClient();
+        Client instance2 = new RESTClientImpl(username + "2", password + "2", "test").getClient();
+        Client instance3 = new RESTClientImpl(username, password, "test").getClient();
+        Client instance4 = new RESTClientImpl(username, password + "4", "test").getClient();
 
         Assert.assertEquals(instance1, instance3);
         Assert.assertNotEquals(instance1, instance2);

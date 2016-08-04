@@ -19,53 +19,51 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.metamodel.util.Action;
-import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.PreviewUtils;
+import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 /**
  * This class provides an API for hooking in "Execute" button options.
- * 
+ *
  * Each hook is represented as an {@link ExecutionMenuItem} that will be shown
  * when the user clicks the caret symbol next to the "Execute" button.
  */
 public class ExecuteButtonOptions {
 
-    public static interface ExecutionMenuItem {
+    interface ExecutionMenuItem {
 
-        public String getText();
+        String getText();
 
-        public String getIconPath();
+        String getIconPath();
 
         /**
          * Creates the action listener for the menu item. This method will be
          * called each time the menu is popping up.
-         * 
+         *
          * If the method returns null then the menu item will be marked as
          * disabled. This may be useful if certain functionality doesn't always
          * apply to the given job.
-         * 
+         *
          * @param analysisJobBuilder
          *            the current job builder object
          * @param executeAction
@@ -73,12 +71,12 @@ public class ExecuteButtonOptions {
          *            to execute it.
          * @return
          */
-        public ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,
+        ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,
                 Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow);
 
     }
 
-    public static abstract class SimpleExecutionMenuItem implements ExecutionMenuItem {
+    private static abstract class SimpleExecutionMenuItem implements ExecutionMenuItem {
 
         private final String _text;
         private final String _iconPath;
@@ -101,15 +99,12 @@ public class ExecuteButtonOptions {
         @Override
         public final ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
                 final Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow) {
-            return new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    try {
-                        run(analysisJobBuilder, executeAction, analysisJobBuilderWindow);
-                    } catch (Exception e) {
-                        WidgetUtils.showErrorMessage("Unexpected error",
-                                "An error occurred while executing job in mode '" + getText() + "'", e);
-                    }
+            return event -> {
+                try {
+                    run(analysisJobBuilder, executeAction, analysisJobBuilderWindow);
+                } catch (Exception e) {
+                    WidgetUtils.showErrorMessage("Unexpected error",
+                            "An error occurred while executing job in mode '" + getText() + "'", e);
                 }
             };
         }
@@ -162,17 +157,29 @@ public class ExecuteButtonOptions {
                     final AnalysisJob jobCopy = analysisJobBuilder.toAnalysisJob(false);
                     final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(
                             analysisJobBuilder.getConfiguration(), jobCopy);
-                    final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
-                            .addFilter(MaxRowsFilter.class);
-                    maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
-                    maxRowsFilter.getComponentInstance().setApplyOrdering(false);
-                    maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
-                    final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
-                    final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
-                    for (ComponentBuilder componentBuilder : componentBuilders) {
-                        if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
-                            componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
-                        }
+
+                    final Set<ComponentBuilder> analyzers = jobBuilderCopy.getComponentBuilders().stream()
+                            .filter(o -> o instanceof AnalyzerComponentBuilder)
+                            .collect(Collectors.toSet());
+
+                    SourceColumnFinder scf = new SourceColumnFinder();
+                    scf.addSources(jobBuilderCopy);
+
+                    final Set<ComponentBuilder> filtered =
+                            analyzers.stream().filter(acb -> PreviewUtils.hasFilterPresent(scf, acb)).collect(Collectors.toSet());
+
+                    if (filtered.size() == 0) {
+                        PreviewUtils.limitJobRows(jobBuilderCopy, jobBuilderCopy.getComponentBuilders(), maxRows);
+                    } else {
+                        PreviewUtils.limitJobRows(jobBuilderCopy, jobBuilderCopy.getFilterComponentBuilders(), maxRows);
+
+                        final Set<ComponentBuilder> unfilteredAnalyzers =
+                                analyzers.stream().filter(acb -> !PreviewUtils.hasFilterPresent(scf, acb)).collect(Collectors.toSet());
+
+                        // TODO: This may risk running through more input rows than intended, but alternative is worse.
+                        // TODO: Transformers implementing HasAnalyzerResult will _not_ undergo special filtering.
+                        PreviewUtils.limitJobRows(jobBuilderCopy, unfilteredAnalyzers, maxRows);
+
                     }
 
                     executeAction.run(jobBuilderCopy);

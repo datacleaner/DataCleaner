@@ -19,13 +19,14 @@
  */
 package org.datacleaner;
 
-import static org.junit.Assert.assertEquals;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class VersionComparatorTest {
 
@@ -63,6 +64,23 @@ public class VersionComparatorTest {
         
         max = Collections.max(versions, comparator);
         assertEquals("4.1", max);
+    }
+
+    @Test
+    public void testRC() {
+        VersionComparator comparator = new VersionComparator();
+
+        List<String> versions1 = Arrays.asList("5.0-RC1", "5.0", "5.0.1.5","4.0", "5.0-SNAPSHOT", "4.0.1-SNAPSHOT","5.0.1-beta","5.0.1-alfa", "5.0.1-RC2", "5.0.0-SNAPSHOT", "5.0.1-SNAPSHOT", "5.0.1-RC1");
+        List<String> versions2 = new ArrayList<>(versions1);
+
+        Collections.sort(versions1, comparator);
+        assertEquals("[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, 5.0.1-beta, 5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]", versions1.toString());
+
+        // Reversed order
+        Collections.reverse(versions2);
+
+        Collections.sort(versions2, comparator);
+        assertEquals("[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, 5.0.1-beta, 5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]", versions2.toString());
     }
 
 }

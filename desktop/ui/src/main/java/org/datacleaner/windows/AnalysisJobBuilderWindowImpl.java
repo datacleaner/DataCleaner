@@ -853,9 +853,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             for (final DCWindow window : windows) {
                 final Image windowIcon = window.getWindowIcon();
                 final String title = window.getWindowTitle();
+                final String titleText;
+                // see issue #1454
+                if (title.length() > 100) {
+                    titleText = title.substring(0, 100).concat(" ...");
+                } else {
+                    titleText = title;
+                }
                 final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
                         IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-                final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
+                final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
                 switchToWindowItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

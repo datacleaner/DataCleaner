@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,7 +96,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private volatile Datastore _datastore;
     
     public static LoadingIcon createLoadingIcon() {
-        LoadingIcon loadingIcon = new LoadingIcon();
+        final LoadingIcon loadingIcon = new LoadingIcon();
+        final int formElementHeight = 32;
+        final Dimension size = new Dimension(formElementHeight, formElementHeight);
+        loadingIcon.setPreferredSize(size);
         loadingIcon.setBackground(Color.WHITE);
         loadingIcon.setOpaque(true);
         loadingIcon.setVisible(false);

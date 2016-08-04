@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.ByteArrayOutputStream;
@@ -860,12 +861,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
                         IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
                 final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
-                switchToWindowItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        window.toFront();
-                    }
-                });
+                switchToWindowItem.addActionListener(e1 -> window.toFront());
                 windowsMenuItem.add(switchToWindowItem);
             }
 

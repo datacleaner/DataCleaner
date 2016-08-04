@@ -77,5 +77,39 @@ public class CountryTest extends TestCase {
         assertEquals(Country.UNITED_KINGDOM, Country.find("England"));
         assertEquals(Country.UNITED_KINGDOM, Country.find("Northern Ireland"));
         assertEquals(Country.UNITED_KINGDOM, Country.find(".uk"));
+        assertEquals(Country.UNITED_KINGDOM, Country.find("The United Kingdom"));
+        assertEquals(Country.UNITED_KINGDOM, Country.find("Northern Ireland")); 
+    }
+    
+    public void testFindKongoKinshasa() throws Exception {
+        assertEquals(Country.CONGO_KINSHASA, Country.find("Congo (the Democratic Republic of the)"));
+        assertEquals(Country.CONGO_KINSHASA, Country.find("Congo, Democratic Republic of the")); 
+        
+    }
+    
+    public void testFindCongoBrazzaville() throws Exception {
+        assertEquals(Country.CONGO_BRAZZAVILLE, Country.find("Congo, Republic of the")); 
+    }
+    
+    public void testFindCountriesWithTheInNames() throws Exception {
+        assertEquals(Country.GAMBIA, Country.find("Gambia, The"));
+        assertEquals(Country.CAYMAN_ISLANDS, Country.find("Cayman Islands, The"));
+        assertEquals(Country.BAHAMAS, Country.find("Bahamas, The")); 
+        assertEquals(Country.NETHERLANDS, Country.find("Netherlands")); 
+    }
+    
+    public void testRandomContries(){
+        assertEquals(Country.SOUTH_SUDAN, Country.find("South Sudan"));
+        assertEquals(Country.MACEDONIA, Country.find("Macedonia, The Former Yugoslav Republic of"));
+        assertEquals(Country.MYANMAR, Country.find("Burma"));
+        assertEquals(Country.MYANMAR, Country.find("Myanmar"));
+        assertEquals(Country.TIMOR_LESTE, Country.find("East Timor"));
+        assertEquals(Country.TIMOR_LESTE, Country.find("Timor-Leste")); 
+        assertEquals(Country.VIRGIN_ISLANDS_BRITISH, Country.find("British Virgin Islands"));
+        assertEquals(Country.MICRONESIA, Country.find("Micronesia, Federated States of"));
+        assertEquals(Country.SINT_MAARTEN, Country.find("St. Maarten"));
+        assertEquals(Country.WALLIS_AND_FUTUNA_ISLANDS, Country.find("Wallis and Futuna"));
+        assertEquals(Country.VATICAN_CITY, Country.find("Holy See"));    
+        assertEquals(Country.FRANCE, Country.find("Corsica"));
     }
 }

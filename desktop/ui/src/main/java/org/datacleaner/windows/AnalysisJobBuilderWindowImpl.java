@@ -594,6 +594,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
+                    final ActionListener[] actionListeners = _saveButton.getActionListeners();
+                    if (actionListeners[0] instanceof SaveAnalysisJobActionListener){
+                        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = (SaveAnalysisJobActionListener) actionListeners[0];
+                        if (!saveAnalysisJobActionListener.isSaved()) {
+                            return false;
+                        }
+                    }
                 } else if (unsavedChangesChoice != 1) { // cancel closing
                     return false;
                 }

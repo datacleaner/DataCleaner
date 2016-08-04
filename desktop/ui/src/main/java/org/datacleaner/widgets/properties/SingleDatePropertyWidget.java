@@ -20,6 +20,8 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -70,9 +72,7 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         _dateYesterdayRadio.addActionListener(fireValueChangedActionListener());
         _nowPlusRadio.addActionListener(fireValueChangedActionListener());
         _nowPlusTextField.addActionListener(fireValueChangedActionListener());
-        _nowPlusTextField.addPropertyChangeListener(evt -> {
-            fireValueChanged();
-        });       
+        _nowPlusTextField.addFocusListener(createFocusListener());
 
         final ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(_dateCustomRadio);
@@ -92,6 +92,19 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
         Date currentValue = getCurrentValue();
         setValue(currentValue);
+    }
+    
+    private FocusListener createFocusListener() {
+        return new FocusListener() {
+            @Override
+            public void focusGained(final FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(final FocusEvent e) {
+                fireValueChanged();
+            }
+        };
     }
 
     @Override

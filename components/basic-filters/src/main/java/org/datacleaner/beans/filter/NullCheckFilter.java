@@ -132,7 +132,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
                 }
                 q.where(column, OperatorType.DIFFERENT_FROM, null);
                 if (considerEmptyStringAsNull && col.getDataType() == String.class) {
-                    q.where(column, OperatorType.LIKE, "%");
+                    q.where(column, OperatorType.DIFFERENT_FROM, "");
                 }
             }
         } else {

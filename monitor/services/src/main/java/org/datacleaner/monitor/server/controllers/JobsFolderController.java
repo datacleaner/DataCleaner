@@ -21,6 +21,8 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +67,7 @@ public class JobsFolderController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobFileController.class);
     private static final String STATUS_SUCCESS = "Success";
+    private static final String STATUS_FAILURE = "Failure";
 
     @Autowired
     TenantContextFactory _contextFactory;
@@ -161,7 +164,8 @@ public class JobsFolderController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(value = "/multiple_upload", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(value = "/multiple_upload", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, 
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadMultipleAnalysisJobsToFolderHtml(@PathVariable("tenant") final String tenant,
             @RequestParam("files") final MultipartFile[] files) {
         final String[] fileNames = new String[files.length];
@@ -170,17 +174,43 @@ public class JobsFolderController {
 
         for (MultipartFile singleFile : files) {
             final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, singleFile);
+            fileNames[i] = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
+            boolean fileWasUploaded = isUploadedFilePresent(tenant, fileNames[i]);
+
+            if (!fileWasUploaded) {
+                status = STATUS_FAILURE;
+                break;
+            }
 
             if (!outcome.get("status").equals(STATUS_SUCCESS)) {
                 status = outcome.get("status");
                 break;
             }
 
-            fileNames[i] = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
             i++;
         }
 
-        return String.format("redirect:/scheduling?job_upload=%s&job_filename=%s", status, fileNames);
+        return getRedirectUrl(status, fileNames);
+    }
+    
+    private String getRedirectUrl(String status, String[] fileNames) {
+        final String baseUrl = "redirect:/scheduling";
+        
+        try {
+            final String listOfFiles = URLEncoder.encode(String.join(",", fileNames), "UTF-8");
+            final String parameters = String.format("job_upload=%s&job_filename=%s", status, listOfFiles);
+            return String.format("%s?%s", baseUrl, parameters);
+        } catch (UnsupportedEncodingException e) {
+            return baseUrl;
+        }
+    }
+    
+    private boolean isUploadedFilePresent(String tenant, String fileName) {
+        final TenantContext context = _contextFactory.getContext(tenant);
+        final RepositoryFolder jobsFolder = context.getJobFolder();
+        final RepositoryFile file = jobsFolder.getFile(fileName);
+        
+        return (file != null && file.getSize() > 0);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)

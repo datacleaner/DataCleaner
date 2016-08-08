@@ -59,9 +59,9 @@ public class NullCheckFilterTest extends TestCase {
 	}
 
 	public void testCategorize() throws Exception {
-		InputColumn<Integer> col1 = new MockInputColumn<Integer>("col1", Integer.class);
-		InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("col2", Boolean.class);
-		InputColumn<String> col3 = new MockInputColumn<String>("col3", String.class);
+		InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+		InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+		InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
 		InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
 		NullCheckFilter filter = new NullCheckFilter(columns, true);
@@ -82,9 +82,9 @@ public class NullCheckFilterTest extends TestCase {
 	}
 	
 	public void testCategorizeAllFieldsMode() throws Exception {
-        InputColumn<Integer> col1 = new MockInputColumn<Integer>("col1", Integer.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("col2", Boolean.class);
-        InputColumn<String> col3 = new MockInputColumn<String>("col3", String.class);
+        InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+        InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+        InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
         InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
         NullCheckFilter filter = new NullCheckFilter(columns, true, EvaluationMode.ALL_FIELDS);
@@ -132,8 +132,8 @@ public class NullCheckFilterTest extends TestCase {
 		Query optimizedQuery = filter.optimizeQuery(baseQuery.clone(), NullCheckFilter.NullCheckCategory.NOT_NULL);
 
 		assertEquals("SELECT \"EMPLOYEES\".\"EMAIL\", \"EMPLOYEES\".\"EMPLOYEENUMBER\" FROM "
-				+ "PUBLIC.\"EMPLOYEES\" WHERE \"EMPLOYEES\".\"EMAIL\" IS NOT NULL AND \"EMPLOYEES\".\"EMAIL\" <> '' AND "
-				+ "\"EMPLOYEES\".\"EMPLOYEENUMBER\" IS NOT NULL", optimizedQuery.toSql());
+				+ "PUBLIC.\"EMPLOYEES\" WHERE \"EMPLOYEES\".\"EMAIL\" IS NOT NULL AND \"EMPLOYEES\".\"EMAIL\" "
+				+ "LIKE '%' AND \"EMPLOYEES\".\"EMPLOYEENUMBER\" IS NOT NULL", optimizedQuery.toSql());
 
 		optimizedQuery = filter.optimizeQuery(baseQuery.clone(), NullCheckFilter.NullCheckCategory.NULL);
 

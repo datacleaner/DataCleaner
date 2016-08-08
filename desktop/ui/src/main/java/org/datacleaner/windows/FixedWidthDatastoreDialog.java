@@ -21,10 +21,11 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -52,7 +53,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
@@ -64,6 +64,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
+	private final JCheckBox _skipEbcdicHeaderCheckBox;
+	private final JCheckBox _eolPresentCheckBox;
 	private final List<JXTextField> _valueWidthTextFields;
 	private final DCPanel _valueWidthsPanel;
 	private final DCLabel _lineWidthLabel;
@@ -87,20 +89,22 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		_lineWidthLabel = DCLabel.bright("");
 		_valueWidthsPanel = new DCPanel();
 		_valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-		_valueWidthTextFields = new ArrayList<JXTextField>();
+		_valueWidthTextFields = new ArrayList<>();
 		_encodingComboBox = new CharSetEncodingComboBox();
 		_addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
 		_removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 
 		_headerLineComboBox = new HeaderLineComboBox();
 
-		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent line length", true);
-		_failOnInconsistenciesCheckBox.setOpaque(false);
-		_failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_failOnInconsistenciesCheckBox = createCheckBox("Fail on inconsistent line length", true);
+		_skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
+		_eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
 		if (originalDatastore != null) {
 			_encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
 			_failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
+			_skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
+			_eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
 
 			int[] valueWidths = originalDatastore.getValueWidths();
 			for (int valueWidth : valueWidths) {
@@ -116,31 +120,19 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 			addValueWidthTextField();
 		}
 
-		_addValueWidthButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				addValueWidthTextField();
-			}
-		});
+		_addValueWidthButton.addActionListener(e -> addValueWidthTextField());
+		_removeValueWidthButton.addActionListener(e -> removeValueWidthTextField());
+		_encodingComboBox.addListener(item -> onSettingsUpdated(false));
+		_headerLineComboBox.addListener(item -> onSettingsUpdated(false));
+	}
 
-		_removeValueWidthButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				removeValueWidthTextField();
-			}
-		});
-		_encodingComboBox.addListener(new Listener<String>() {
-			@Override
-			public void onItemSelected(String item) {
-				onSettingsUpdated(false);
-			}
-		});
-		_headerLineComboBox.addListener(new Listener<Integer>() {
-			@Override
-			public void onItemSelected(Integer item) {
-				onSettingsUpdated(false);
-			}
-		});
+	private JCheckBox createCheckBox(String label, boolean selected) {
+		final JCheckBox checkBox = new JCheckBox(label, selected);
+		checkBox.setOpaque(false);
+		checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		checkBox.addItemListener(item -> onSettingsUpdated(false));
+
+		return checkBox;
 	}
 
 	@Override
@@ -173,15 +165,15 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		if (autoDetectEncoding) {
 			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
 		} else {
-			charSet = _encodingComboBox.getSelectedItem().toString();
+			charSet = _encodingComboBox.getSelectedItem();
 		}
+
 		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
 		int lineLength = StringUtils.indexOf('\n', sampleChars);
-		if (lineLength == -1) {
+		if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
 			setStatusWarning("No newline in first " + sampleChars.length + " chars");
-			// don't show the preview if no newlines where found (it may try
-			// to treat the whole file as a single row)
+			// don't show the preview if no newlines where found (it may try to treat the whole file as a single row)
 			showPreview = false;
 		} else {
 			int[] valueWidths = getValueWidths(false);
@@ -197,8 +189,56 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
+	protected byte[] getSampleBuffer() {
+		final File file = new File(getFilename());
+		final int bufferSize = getBufferSize();
+		byte[] bytes = new byte[bufferSize];
+
+		try (final FileInputStream fileInputStream = new FileInputStream(file)) {
+			int startPosition = getStartPosition();
+			fileInputStream.skip(startPosition);
+			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
+
+			if (bytesRead != -1 && bytesRead <= bufferSize) {
+				bytes = Arrays.copyOf(bytes, bytesRead);
+			}
+
+			return bytes;
+		} catch (IOException e) {
+			logger.error("IOException occurred while reading sample buffer", e);
+			return new byte[0];
+		}
+	}
+
+	private int getStartPosition() {
+		return _skipEbcdicHeaderCheckBox.isSelected() ? getRecordDataLength() : 0;
+	}
+
+	private int getBufferSize() {
+		return _eolPresentCheckBox.isSelected() ? SAMPLE_BUFFER_SIZE : getRecordDataLength();
+	}
+
+	private int getRecordDataLength() {
+		int length = 0;
+
+		if (_valueWidthTextFields != null && _valueWidthTextFields.size() > 0) {
+			for (JXTextField textField : _valueWidthTextFields) {
+				try {
+					final int columnWidth = Integer.parseInt(textField.getText());
+					length += columnWidth;
+				} catch (NumberFormatException e) {
+					throw new IllegalStateException("Value width must be a valid number.");
+				}
+			}
+		}
+
+		return length;
+	}
+
+	@Override
 	protected FixedWidthDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false);
+		return createDatastore("Preview", filename, false, _skipEbcdicHeaderCheckBox.isSelected(),
+				_eolPresentCheckBox.isSelected());
 	}
 
 	@Override
@@ -269,20 +309,23 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		valueWidthConfigurationPanel.add(_lineWidthLabel, BorderLayout.SOUTH);
 
 		final List<Entry<String, JComponent>> result = super.getFormElements();
-		result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
-		result.add(new ImmutableEntry<String, JComponent>("Column widths", valueWidthConfigurationPanel));
-		result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
-		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
+		result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
+		result.add(new ImmutableEntry<>("Column widths", valueWidthConfigurationPanel));
+		result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
+		result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
+		result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
+		result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
 		return result;
 	}
 
 	@Override
 	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		FileFilter combinedFilter = FileFilters.combined("Any text or data file (.txt, .dat)", FileFilters.TXT,
-				FileFilters.DAT);
+		FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
+				FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
 		filenameField.addChoosableFileFilter(combinedFilter);
 		filenameField.addChoosableFileFilter(FileFilters.TXT);
 		filenameField.addChoosableFileFilter(FileFilters.DAT);
+		filenameField.addChoosableFileFilter(FileFilters.EBC);
 		filenameField.setSelectedFileFilter(combinedFilter);
 	}
 
@@ -299,34 +342,45 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	@Override
 	protected FixedWidthDatastore createDatastore(String name, String filename) {
 		boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
-		return createDatastore(name, filename, failOnInconsistencies);
+		boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
+		boolean eolPresent = _eolPresentCheckBox.isSelected();
+		return createDatastore(name, filename, failOnInconsistencies, skipEbcdicHeader, eolPresent);
 	}
 
-	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies) {
+	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
+			boolean skipEbcdicHeader, boolean eolPresent) {
 		int[] valueWidths = getValueWidths(true);
 		try {
-			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem().toString(), valueWidths,
-					failOnInconsistencies, getHeaderLine());
+			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), valueWidths,
+					failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine());
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException("Value width must be a valid number.");
 		}
 	}
 
 	private int[] getValueWidths(boolean failOnMissingValue) {
-		int[] valueWidths = new int[_valueWidthTextFields.size()];
-		for (int i = 0; i < valueWidths.length; i++) {
-			String text = _valueWidthTextFields.get(i).getText();
-			if (StringUtils.isNullOrEmpty(text)) {
-				if (failOnMissingValue) {
-					throw new IllegalStateException("Please fill out all column widths");
-				} else {
-					text = "0";
-				}
-			}
-			valueWidths[i] = Integer.parseInt(text);
-		}
-		return valueWidths;
-	}
+        int[] valueWidths = new int[_valueWidthTextFields.size()];
+
+        try {
+            for (int i = 0; i < valueWidths.length; i++) {
+                String text = _valueWidthTextFields.get(i).getText();
+
+                if (StringUtils.isNullOrEmpty(text)) {
+                    if (failOnMissingValue) {
+                        throw new IllegalStateException("Please fill out all column widths.");
+                    } else {
+                        text = "0";
+                    }
+                }
+
+                valueWidths[i] = Integer.parseInt(text);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Please specify all column widths as numbers. ");
+        }
+
+        return valueWidths;
+    }
 
 	@Override
 	protected String getDatastoreIconPath() {

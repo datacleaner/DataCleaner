@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -36,7 +35,19 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
@@ -468,12 +479,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (!_leftPanel.isCollapsed()) {
                 _leftPanel.setCollapsed(true);
             }
-            final Timer timer = new Timer(500, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (_leftPanel.isCollapsed()) {
-                        _leftPanel.setVisible(false);
-                    }
+            final Timer timer = new Timer(500, e -> {
+                if (_leftPanel.isCollapsed()) {
+                    _leftPanel.setVisible(false);
                 }
             });
             timer.setRepeats(false);
@@ -505,10 +513,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                     setStatusLabelWarning();
                 }
             } catch (Exception ex) {
+                executeable = false;
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
                 if (ex instanceof UnconfiguredConfiguredPropertyException) {
-                    executeable = false;
                     final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
                     final ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
                             .getConfiguredProperty();
@@ -517,7 +525,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                     errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils.getLabel(
                             componentBuilder) + " is not set!";
                 } else if (ex instanceof ComponentValidationException) {
-                    executeable = false;
                     final ComponentValidationException componentValidationException = (ComponentValidationException) ex;
                     errorMessage = componentValidationException.getComponentDescriptor().getDisplayName()
                             + " validation failed: " + ex.getMessage();
@@ -626,11 +633,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
         if (lastSavedJobFile == null) {
-            if (analysisJobBuilder.getComponentCount() == 0) {
-                // user didn't actually do anything yet
-                return false;
-            }
-            return true;
+            return analysisJobBuilder.getComponentCount() != 0;
         }
         try {
             if (!lastSavedJobFile.exists()) {
@@ -745,12 +748,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JButton logoButton = new JButton(imageManager.getImageIcon("images/menu/dc-logo-30.png"));
         logoButton.setToolTipText("About DataCleaner");
         logoButton.setBorder(new EmptyBorder(0, 4, 0, 10));
-        logoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AboutDialog(getWindowContext()).open();
-            }
-        });
+        logoButton.addActionListener(e -> new AboutDialog(getWindowContext()).open());
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(logoButton);
@@ -765,7 +763,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executeButton.addComponentsToToolbar(toolBar);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-        RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);;
+        RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
@@ -863,26 +861,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
                         IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
                 final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
-                switchToWindowItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        window.toFront();
-                    }
-                });
+                switchToWindowItem.addActionListener(e1 -> window.toFront());
                 windowsMenuItem.add(switchToWindowItem);
             }
 
             windowsMenuItem.add(new JSeparator());
 
             JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
-            closeAllWindowsItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
-                    for (DCWindow window : windows) {
-                        if (window instanceof AbstractDialog) {
-                            window.close();
-                        }
+            closeAllWindowsItem.addActionListener(e1 -> {
+                List<DCWindow> windows1 = new ArrayList<>(getWindowContext().getWindows());
+                for (DCWindow window : windows1) {
+                    if (window instanceof AbstractDialog) {
+                        window.close();
                     }
                 }
             });

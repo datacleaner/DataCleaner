@@ -135,9 +135,11 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
                      * other components as input columns. If the user wants to
                      * use them, he can select them in the transformer.
                      */
-                    if (this.getDescriptor().getAnnotation(HideOutputColumns.class).isHidden()) {
+                    final HideOutputColumns hideOutputColumnsAnnotation = this.getDescriptor().getAnnotation(HideOutputColumns.class);
+                    if (hideOutputColumnsAnnotation != null && hideOutputColumnsAnnotation.isHidden()) {
                         column.setHidden(true);
                     }
+
                     _outputColumns.add(column);
                     _automaticOutputColumnNames.add(name);
                 }

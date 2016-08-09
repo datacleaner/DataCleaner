@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 /**
  * Determines if the output columns {@link Transformer#getOutputColumns()} of
- * transformer should hidden in other components
+ * transformer should be hidden in other components
  *
  */
 

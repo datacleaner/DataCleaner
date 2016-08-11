@@ -43,7 +43,7 @@ public class LicenceAndEditionStatusLabel extends JLabel {
     private final RightInformationPanel _rightPanel;
 
     public LicenceAndEditionStatusLabel(RightInformationPanel rightPanel) {
-        super(PANEL_NAME);
+        super(Version.getEdition());
         _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 

@@ -17,7 +17,7 @@
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
-		<metamodel.version>4.5.3</metamodel.version>
+		<metamodel.version>4.5.4</metamodel.version>
 		<metamodel.extras.version>4.4.0</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.9.RELEASE</spring.core.version>
@@ -44,7 +44,7 @@
 	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>5.0.4-SNAPSHOT</version>
+	<version>5.1.2-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with

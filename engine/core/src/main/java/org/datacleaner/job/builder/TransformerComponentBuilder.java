@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.datacleaner.api.Component;
+import org.datacleaner.api.HideOutputColumns;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
@@ -127,7 +128,19 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
                     final int nextIndex = _outputColumns.size();
                     final String name = getColumnName(outputColumns, nextIndex);
                     final String id = _id + "-" + _idGenerator.nextId();
-                    _outputColumns.add(new TransformedInputColumn<>(name, id));
+                    final TransformedInputColumn<Object> column = new TransformedInputColumn<>(name, id);
+                    /*
+                     * If the transformer has the annotation
+                     * "HideOutputColumns", the output columns are hidden in
+                     * other components as input columns. If the user wants to
+                     * use them, he can select them in the transformer.
+                     */
+                    final HideOutputColumns hideOutputColumnsAnnotation = this.getDescriptor().getAnnotation(HideOutputColumns.class);
+                    if (hideOutputColumnsAnnotation != null && hideOutputColumnsAnnotation.isHidden()) {
+                        column.setHidden(true);
+                    }
+
+                    _outputColumns.add(column);
                     _automaticOutputColumnNames.add(name);
                 }
             } else if (colDiff < 0) {

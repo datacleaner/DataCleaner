@@ -41,17 +41,17 @@ public class LicenceAndEditionStatusLabel extends JLabel {
     private static final String PANEL_NAME = "License and Edition";
 
     private final RightInformationPanel _rightPanel;
-    private final CommunityEditionInformationPanel _communityEditionInformationPanel;
 
     public LicenceAndEditionStatusLabel(RightInformationPanel rightPanel) {
-        super(PANEL_NAME);
+        super(Version.getEdition());
         _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         if (Version.isCommunityEdition()) {
-            _communityEditionInformationPanel = new CommunityEditionInformationPanel();
+            final CommunityEditionInformationPanel communityEditionInformationPanel = new CommunityEditionInformationPanel();
             setIcon(ImageManager.get().getImageIcon("images/editions/community.png", IconUtils.ICON_SIZE_SMALL));
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            _rightPanel.addTabToPane(PANEL_NAME, communityEditionInformationPanel);
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -60,9 +60,7 @@ public class LicenceAndEditionStatusLabel extends JLabel {
             });
         } else {
             setIcon(ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
-            _communityEditionInformationPanel = null;
         }
-        _rightPanel.addTabToPane(PANEL_NAME, _communityEditionInformationPanel);
     }
 
     protected void onMouseClick() {

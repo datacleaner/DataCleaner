@@ -53,10 +53,10 @@ import com.google.common.base.Joiner;
 @Named("Equals")
 @Description("A filter that excludes values that are not equal (=) to specific set of valid values.")
 @Categorized(FilterCategory.class)
-@Distributed(true)
+@Distributed()
 public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>, HasLabelAdvice {
 
-    public static enum Category {
+    public enum Category {
         @Alias("VALID") @Description("Outcome when the operands of the filter are equal.") EQUALS,
 
         @Alias("INVALID") @Description("Outcome when the operands of the filter are not equal.") NOT_EQUALS;
@@ -79,8 +79,8 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
     @Description("Column holding value to compare with")
     InputColumn<?> compareColumn;
 
-    private Object[] operands;
-    private boolean number = false;
+    private Object[] _operands;
+    private boolean _number = false;
 
     public EqualsFilter() {
     }
@@ -120,22 +120,21 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
     public void init() {
         Class<?> dataType = inputColumn.getDataType();
         if (ReflectionUtils.isNumber(dataType)) {
-            number = true;
+            _number = true;
         }
 
-        List<Object> operandList = new ArrayList<Object>();
+        List<Object> operandList = new ArrayList<>();
         if (compareColumn != null) {
             operandList.add(null);
         }
         if (compareValues != null) {
-            for (int i = 0; i < compareValues.length; i++) {
-                final String value = compareValues[i];
+            for (final String value : compareValues) {
                 final Object operand = toOperand(value);
                 operandList.add(operand);
             }
         }
 
-        operands = operandList.toArray();
+        _operands = operandList.toArray();
     }
 
     @Override
@@ -192,8 +191,12 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
     }
 
     public EqualsFilter.Category filter(final Object v, final Object compareValue) {
+        final Object[] operands;
+
         if (compareColumn != null) {
-            operands[0] = toOperand(compareValue);
+            operands = new Object[] { toOperand(compareValue) };
+        } else {
+            operands = _operands;
         }
 
         if (v == null) {
@@ -207,7 +210,7 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
             for (Object operand : operands) {
                 if (operand != null) {
 
-                    if (number) {
+                    if (_number) {
                         Number n1 = (Number) operand;
                         Number n2 = (Number) v;
                         if (equals(n1, n2)) {
@@ -262,8 +265,8 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
         if (category == Category.EQUALS) {
             if (compareColumn == null) {
                 final SelectItem selectItem = new SelectItem(inputPhysicalColumn);
-                final List<FilterItem> filterItems = new ArrayList<FilterItem>();
-                for (Object operand : operands) {
+                final List<FilterItem> filterItems = new ArrayList<>();
+                for (Object operand : _operands) {
                     filterItems.add(new FilterItem(selectItem, OperatorType.EQUALS_TO, operand));
                 }
                 
@@ -278,7 +281,7 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
             }
         } else {
             if (compareColumn == null) {
-                for (Object operand : operands) {
+                for (Object operand : _operands) {
                     q.where(inputColumn.getPhysicalColumn(), OperatorType.DIFFERENT_FROM, operand);
                 }
             } else {

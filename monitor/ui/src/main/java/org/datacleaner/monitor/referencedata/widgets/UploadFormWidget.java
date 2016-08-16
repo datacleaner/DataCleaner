@@ -30,17 +30,18 @@ import com.google.gwt.user.client.ui.Label;
 
 public class UploadFormWidget extends FormPanel {
     private static final int SPACING = 10;
+    private static final String FILE_UPLOAD_ACTION = "/repository/{tenant}/referencedata";
     
-    public UploadFormWidget(String uploadAction) {
-        setAction(uploadAction);
+    public UploadFormWidget(String tenantId) {
+        setAction(FILE_UPLOAD_ACTION.replace("{tenant}", tenantId));
         setEncoding(FormPanel.ENCODING_MULTIPART);
         setMethod(FormPanel.METHOD_POST);
         final HorizontalPanel formPanel = new HorizontalPanel();
         setWidget(formPanel);
         formPanel.setSpacing(SPACING);
-        formPanel.add(new Label("Upload new item"));
+        formPanel.add(new Label("Upload new data: "));
         final FileUpload upload = new FileUpload();
-        upload.setName("new-items");
+        upload.setName("file");
         formPanel.add(upload);
         formPanel.add(new Button("Upload", new ClickHandler() { // do not use lambda, java 1.7
             @Override

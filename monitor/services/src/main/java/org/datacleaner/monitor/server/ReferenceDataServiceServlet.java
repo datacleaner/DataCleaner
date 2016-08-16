@@ -42,11 +42,11 @@ public class ReferenceDataServiceServlet extends SecureGwtServlet implements Ref
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             ReferenceDataService delegate = applicationContext.getBean(ReferenceDataServiceImpl.class);
-            
+
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
-            
+
             _delegate = delegate;
         }
     }

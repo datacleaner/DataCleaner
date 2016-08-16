@@ -22,47 +22,56 @@ package org.datacleaner.monitor.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 import org.datacleaner.monitor.referencedata.ReferenceDataService;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.reference.ReferenceDataCatalog;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component("RefereceDataService")
 public class ReferenceDataServiceImpl implements ReferenceDataService, ApplicationContextAware {
-
     private ApplicationContext _applicationContext;
-    
+   
+    @Autowired
+    TenantContextFactory _contextFactory;
+
     @Override
     public List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
-        return getDummyData("dictionary");
+        return namesToList(getReferenceDataCatalog(tenant).getDictionaryNames());
     }
 
     @Override
     public List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
-        return getDummyData("synonym-catalog");
+        return namesToList(getReferenceDataCatalog(tenant).getSynonymCatalogNames());
     }
 
     @Override
     public List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
-        return getDummyData("string-pattern");
+        return namesToList(getReferenceDataCatalog(tenant).getStringPatternNames());
     }
-    
-    private List<ReferenceDataItem> getDummyData(String prefix) {
+
+    private ReferenceDataCatalog getReferenceDataCatalog(TenantIdentifier tenant) {
+        return _contextFactory.getContext(tenant).getConfiguration().getReferenceDataCatalog();
+    }
+
+    private List<ReferenceDataItem> namesToList(String[] allNames) {
         final List<ReferenceDataItem> list = new ArrayList<>();
-        
-        for (int i = 0; i < 3; i++) {
-            list.add(new ReferenceDataItem(prefix + i, prefix + "-ABC" + i));
+
+        for (String name : allNames) {
+            list.add(new ReferenceDataItem(name, name));
         }
-        
+
         return list;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-     System.out.println("The application context has been initialized: " + applicationContext.getDisplayName()); 
-        _applicationContext = applicationContext; 
+        System.out.println("The application context has been initialized: " + applicationContext.getDisplayName());
+        _applicationContext = applicationContext;
     }
 }

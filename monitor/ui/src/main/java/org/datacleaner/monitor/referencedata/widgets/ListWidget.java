@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ListWidget extends VerticalPanel {
     
     public ListWidget(List<ReferenceDataItem> list) {
         for (ReferenceDataItem item : list) {
-            this.add(new Hyperlink(item.getName(), "/view_item?id=" + item.getId()));
+            this.add(new Label(item.getName()));
         }
     }
 }

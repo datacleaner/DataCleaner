@@ -20,9 +20,9 @@
 package org.datacleaner.monitor.referencedata;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.datacleaner.monitor.referencedata.widgets.SectionWidget;
+import org.datacleaner.monitor.referencedata.widgets.UploadFormWidget;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -35,7 +35,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class ReferenceDataEntryPoint implements EntryPoint {
-    private static Logger logger = Logger.getLogger(ReferenceDataEntryPoint.class.getName());
+    private static final String FILE_UPLOAD_HTML_ID = "FileUpload";
     private static final String DICTIONARIES_HTML_ID = "Dictionaries";
     private static final String SYNONYMS_HTML_ID = "Synonyms";
     private static final String PATTERNS_HTML_ID = "Patterns";
@@ -48,31 +48,31 @@ public class ReferenceDataEntryPoint implements EntryPoint {
     }
 
     protected void render(ReferenceDataServiceAsync service, ClientConfig clientConfig) {
+        TenantIdentifier tenantId = clientConfig.getTenant();
+        RootPanel.get(FILE_UPLOAD_HTML_ID).add(new UploadFormWidget(tenantId.getId()));
         RootPanel.get(DICTIONARIES_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(SYNONYMS_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(PATTERNS_HTML_ID).add(new LoadingIndicator());
-        
-        TenantIdentifier tenantId = clientConfig.getTenant();
         
         service.getDictionaries(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final List<ReferenceDataItem> list) {
                 RootPanel.get(DICTIONARIES_HTML_ID).clear();
-                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget("Dictionaries", "/upload_dictionary", list));
+                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget("Dictionaries", list));
             }
         });
         service.getSynonymCatalogs(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final List<ReferenceDataItem> list) {
                 RootPanel.get(SYNONYMS_HTML_ID).clear();
-                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget("Synonyms", "/upload_synonym", list));
+                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget("Synonyms", list));
             }
         });
         service.getStringPatterns(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final List<ReferenceDataItem> list) {
                 RootPanel.get(PATTERNS_HTML_ID).clear();
-                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget("Patterns", "/upload_pattern", list));
+                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget("Patterns", list));
             }
         });
     }

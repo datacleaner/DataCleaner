@@ -26,9 +26,8 @@ import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SectionWidget extends VerticalPanel {
-    public SectionWidget(String title, String uploadAction, List<ReferenceDataItem> list) {
+    public SectionWidget(String title, List<ReferenceDataItem> list) {
         add(new TitleWidget(title));
-        add(new UploadFormWidget(uploadAction));
         add(new ListWidget(list));
     }
 }

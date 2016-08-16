@@ -165,6 +165,7 @@
 		<servlet-name>SchedulingService</servlet-name>
 		<url-pattern>/gwtrpc/schedulingService</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>ReferenceDataService</servlet-name>
 		<servlet-class>org.datacleaner.monitor.server.ReferenceDataServiceServlet</servlet-class>
@@ -172,7 +173,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ReferenceDataService</servlet-name>
-		<url-pattern>/gwtrpc/referencedataService</url-pattern>
+		<url-pattern>/gwtrpc/referenceDataService</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

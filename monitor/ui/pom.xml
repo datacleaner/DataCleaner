@@ -27,6 +27,9 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
+						<configuration>
+							<sourceLevel>1.7</sourceLevel> <!-- 1.6 or 1.7 -->
+						</configuration>
 					</execution>
 					<execution>
 						<!-- Run GwtTestCases with the gwt driver -->

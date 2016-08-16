@@ -19,20 +19,16 @@
  */
 package org.datacleaner.monitor.referencedata.widgets;
 
-import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
+import java.util.List;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 
-public class CreateTextFileReferenceDictionaryHandler implements ClickHandler {
+import com.google.gwt.user.client.ui.VerticalPanel;
 
-    @Override
-    public void onClick(ClickEvent event) {
-        final DCPopupPanel popup = new DCPopupPanel("Create Text File Dictionary");
-
-        popup.setWidget(new CreateTextFileDictionaryPanel());
-        popup.center();
-        popup.show();
+public class SectionWidget extends VerticalPanel {
+    public SectionWidget(String title, String uploadAction, List<ReferenceDataItem> list) {
+        add(new TitleWidget(title));
+        add(new UploadFormWidget(uploadAction));
+        add(new ListWidget(list));
     }
-
 }

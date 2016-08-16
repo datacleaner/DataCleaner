@@ -17,18 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.referencedata;
+package org.datacleaner.monitor.referencedata.widgets;
 
 import java.util.List;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
-@RemoteServiceRelativePath("../gwtrpc/referenceDataService")
-public interface ReferenceDataService extends RemoteService {
-    List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
-    List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
-    List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
+public class ListWidget extends VerticalPanel {
+    
+    public ListWidget(List<ReferenceDataItem> list) {
+        for (ReferenceDataItem item : list) {
+            this.add(new Hyperlink(item.getName(), "/view_item?id=" + item.getId()));
+        }
+    }
 }

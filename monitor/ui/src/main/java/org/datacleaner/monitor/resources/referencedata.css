@@ -17,18 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.referencedata;
+ #ReferenceDataPage div.title {
+	background-position: left;
+	background-repeat: no-repeat;
+	height: 32px;
+	padding-left: 42px;
+	padding-top: 4px;
+	font-size: Large;
+	font-weight: bold;
+}
 
-import java.util.List;
+#ReferenceDataPage #Dictionaries div.title {
+	background-image: url("../images/dictionary.png");
+}
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+#ReferenceDataPage #Synonyms div.title {
+	background-image: url("../images/synonym.png");
+}
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-
-@RemoteServiceRelativePath("../gwtrpc/referenceDataService")
-public interface ReferenceDataService extends RemoteService {
-    List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
-    List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
-    List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
+#ReferenceDataPage #Patterns div.title {
+	background-image: url("../images/stringpattern.png");
 }

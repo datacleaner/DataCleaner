@@ -19,16 +19,33 @@
  */
 package org.datacleaner.monitor.referencedata;
 
-import java.util.List;
+import java.io.Serializable;
 
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
+public class ReferenceDataItem implements Serializable {
+    private String _id;
+    private String _name;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+    public ReferenceDataItem() {
+    }
+    
+    public ReferenceDataItem(String id, String name) {
+        _id = id;
+        _name = name;
+    }
 
-@RemoteServiceRelativePath("../gwtrpc/referenceDataService")
-public interface ReferenceDataService extends RemoteService {
-    List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
-    List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
-    List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
+    public void setId(final String id) {
+        _id = id;
+    }
+
+    public void setName(final String name) {
+        _name = name;
+    }
+
+    public String getId() {
+        return _id;
+    }
+
+    public String getName() {
+        return _name;
+    }
 }

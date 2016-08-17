@@ -22,7 +22,6 @@ package org.datacleaner.monitor.referencedata;
 import java.util.Set;
 
 import org.datacleaner.monitor.referencedata.widgets.SectionWidget;
-import org.datacleaner.monitor.referencedata.widgets.UploadFormWidget;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -52,7 +51,7 @@ public class ReferenceDataEntryPoint implements EntryPoint {
 
     protected void render(ReferenceDataServiceAsync service, ClientConfig clientConfig) {
         TenantIdentifier tenantId = clientConfig.getTenant();
-        RootPanel.get(FILE_UPLOAD_HTML_ID).add(new UploadFormWidget(tenantId.getId()));
+        //RootPanel.get(FILE_UPLOAD_HTML_ID).add(new UploadFormWidget(tenantId.getId()));
         RootPanel.get(DICTIONARIES_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(SYNONYMS_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(PATTERNS_HTML_ID).add(new LoadingIndicator());

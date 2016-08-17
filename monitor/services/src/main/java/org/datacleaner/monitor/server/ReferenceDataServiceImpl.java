@@ -19,8 +19,8 @@
  */
 package org.datacleaner.monitor.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
@@ -41,17 +41,17 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
     TenantContextFactory _contextFactory;
 
     @Override
-    public List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
         return namesToList(getReferenceDataCatalog(tenant).getDictionaryNames());
     }
 
     @Override
-    public List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
         return namesToList(getReferenceDataCatalog(tenant).getSynonymCatalogNames());
     }
 
     @Override
-    public List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
         return namesToList(getReferenceDataCatalog(tenant).getStringPatternNames());
     }
 
@@ -59,14 +59,14 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
         return _contextFactory.getContext(tenant).getConfiguration().getReferenceDataCatalog();
     }
 
-    private List<ReferenceDataItem> namesToList(String[] allNames) {
-        final List<ReferenceDataItem> list = new ArrayList<>();
+    private Set<ReferenceDataItem> namesToList(String[] allNames) {
+        final Set<ReferenceDataItem> set = new HashSet<>();
 
         for (String name : allNames) {
-            list.add(new ReferenceDataItem(name, name));
+            set.add(new ReferenceDataItem(name, name));
         }
 
-        return list;
+        return set;
     }
 
     @Override

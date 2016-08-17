@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.referencedata;
 
-import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
@@ -28,7 +28,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("../gwtrpc/referenceDataService")
 public interface ReferenceDataService extends RemoteService {
-    List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
-    List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
-    List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
+    Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
+    Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
+    Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
 }

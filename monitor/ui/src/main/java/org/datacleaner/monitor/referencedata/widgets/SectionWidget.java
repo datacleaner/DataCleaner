@@ -19,15 +19,15 @@
  */
 package org.datacleaner.monitor.referencedata.widgets;
 
-import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SectionWidget extends VerticalPanel {
-    public SectionWidget(String title, List<ReferenceDataItem> list) {
+    public SectionWidget(String title, Set<ReferenceDataItem> set) {
         add(new TitleWidget(title));
-        add(new ListWidget(list));
+        add(new ListWidget(set));
     }
 }

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.referencedata;
 
-import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.monitor.referencedata.widgets.SectionWidget;
 import org.datacleaner.monitor.referencedata.widgets.UploadFormWidget;
@@ -39,6 +39,9 @@ public class ReferenceDataEntryPoint implements EntryPoint {
     private static final String DICTIONARIES_HTML_ID = "Dictionaries";
     private static final String SYNONYMS_HTML_ID = "Synonyms";
     private static final String PATTERNS_HTML_ID = "Patterns";
+    private static final String DICTIONARIES_TITLE = "Dictionaries";
+    private static final String SYNONYMS_TITLE = "Synonyms";
+    private static final String PATTERNS_TITLE = "Patterns";
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
@@ -54,25 +57,25 @@ public class ReferenceDataEntryPoint implements EntryPoint {
         RootPanel.get(SYNONYMS_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(PATTERNS_HTML_ID).add(new LoadingIndicator());
         
-        service.getDictionaries(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
+        service.getDictionaries(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
-            public void onSuccess(final List<ReferenceDataItem> list) {
+            public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(DICTIONARIES_HTML_ID).clear();
-                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget("Dictionaries", list));
+                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget(DICTIONARIES_TITLE, set));
             }
         });
-        service.getSynonymCatalogs(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
+        service.getSynonymCatalogs(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
-            public void onSuccess(final List<ReferenceDataItem> list) {
+            public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(SYNONYMS_HTML_ID).clear();
-                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget("Synonyms", list));
+                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget(SYNONYMS_TITLE, set));
             }
         });
-        service.getStringPatterns(tenantId, new DCAsyncCallback<List<ReferenceDataItem>>() {
+        service.getStringPatterns(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
-            public void onSuccess(final List<ReferenceDataItem> list) {
+            public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(PATTERNS_HTML_ID).clear();
-                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget("Patterns", list));
+                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget(PATTERNS_TITLE, set));
             }
         });
     }

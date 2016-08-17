@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.server;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
@@ -60,17 +60,17 @@ public class ReferenceDataServiceServlet extends SecureGwtServlet implements Ref
     }
 
     @Override
-    public List<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
         return _delegate.getDictionaries(tenant);
     }
 
     @Override
-    public List<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
         return _delegate.getSynonymCatalogs(tenant);
     }
 
     @Override
-    public List<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
         return _delegate.getStringPatterns(tenant);
     }
 }

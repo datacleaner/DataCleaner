@@ -67,12 +67,10 @@ public class ReferenceDataController {
             final TenantContext context = _contextFactory.getContext(tenantId);
             final RepositoryFile configurationFile = context.getConfigurationFile();
             final WriteUpdatedConfigurationFileAction writeAction =
-                    new WriteUpdatedConfigurationFileAction(inStream, configurationFile);
+                    new WriteUpdatedConfigurationFileAction(inStream, configurationFile, true);
             configurationFile.writeFile(writeAction);
         } finally {
             FileHelper.safeClose(inStream);
         }
-
-        System.out.println("uploaded...");
     }
 }

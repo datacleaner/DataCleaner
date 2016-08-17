@@ -61,7 +61,7 @@ public class UploadFormWidget extends FormPanel {
         addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() { // do not use lambda, java 1.7
             @Override
             public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
-                Window.alert(event.getResults());
+                Window.Location.reload();
             }
         });
     }

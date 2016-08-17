@@ -19,14 +19,14 @@
  */
 package org.datacleaner.monitor.referencedata;
 
-import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ReferenceDataServiceAsync {
-    void getDictionaries(TenantIdentifier tenant, AsyncCallback<List<ReferenceDataItem>> callback);
-    void getSynonymCatalogs(TenantIdentifier tenant, AsyncCallback<List<ReferenceDataItem>> callback);
-    void getStringPatterns(TenantIdentifier tenant, AsyncCallback<List<ReferenceDataItem>> callback);
+    void getDictionaries(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
+    void getSynonymCatalogs(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
+    void getStringPatterns(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
 }

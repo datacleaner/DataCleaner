@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.referencedata.widgets;
 
-import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 
@@ -28,8 +28,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ListWidget extends VerticalPanel {
     
-    public ListWidget(List<ReferenceDataItem> list) {
-        for (ReferenceDataItem item : list) {
+    public ListWidget(Set<ReferenceDataItem> set) {
+        for (ReferenceDataItem item : set) {
             this.add(new Label(item.getName()));
         }
     }

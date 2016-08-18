@@ -20,22 +20,24 @@
 package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JButton;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class CustomColumnNamesWidget {
     private final DCPanel _innerPanel;
     private final DCPanel _outerPanel;
+    private final List<JButton> _buttons;
 
     public CustomColumnNamesWidget(List<String> columnNames) {
         _innerPanel = new DCPanel();
@@ -59,6 +61,8 @@ public class CustomColumnNamesWidget {
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
 
+        _buttons = Arrays.asList(addButton, removeButton);
+
         if (columnNames != null) {
             columnNames.forEach(columnName -> addColumnName(columnName, false));
         }
@@ -71,7 +75,7 @@ public class CustomColumnNamesWidget {
     }
 
     private void addColumnName(String columnName, boolean updateUI) {
-        JXTextField columnNameField = WidgetFactory.createTextField();
+        JTextField columnNameField = WidgetFactory.createTextField();
         if (columnName != null) {
             columnNameField.setText(columnName);
         }
@@ -90,14 +94,17 @@ public class CustomColumnNamesWidget {
     }
 
     public List<String> getColumnNames() {
-        List<String> columnNames = new ArrayList<String>();
-        for (Component component : _innerPanel.getComponents()) {
-            final String columnName = ((JXTextField) component).getText();
-            if (columnName.length() != 0) {
-                columnNames.add(columnName);
-            }
-        }
-        return columnNames;
+        return getColumnNameFields().stream().filter(field -> field.getText().length() > 0).map(JTextField::getText)
+                .collect(Collectors.toList());
+    }
+
+    public List<JTextField> getColumnNameFields() {
+        return Stream.of(_innerPanel.getComponents()).map(component -> (JTextField) component).collect(Collectors
+                .toList());
+    }
+
+    public List<JButton> getButtons() {
+        return _buttons;
     }
 
     public DCPanel getPanel() {

@@ -461,6 +461,13 @@
 							</documentation>
 						</annotation>
 					</element>
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</all>
 			</extension>
 		</complexContent>
@@ -811,7 +818,13 @@
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
 					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="custom-column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</sequence>
 			</extension>
 		</complexContent>

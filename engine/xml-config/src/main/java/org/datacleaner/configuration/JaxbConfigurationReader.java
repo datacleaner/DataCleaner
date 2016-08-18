@@ -1143,8 +1143,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", excelDatastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
-        final List<String> customeColumnNames = excelDatastoreType.getCustomColumnName();
-        return new ExcelDatastore(name, resource, filename, customeColumnNames);
+
+        List<String> customColumnNames = null;
+        if (excelDatastoreType.getCustomColumnNames() != null) {
+            customColumnNames = excelDatastoreType.getCustomColumnNames().getColumnName();
+        }
+        return new ExcelDatastore(name, resource, filename, customColumnNames);
     }
 
     private Datastore createDatastore(String name, XmlDatastoreType xmlDatastoreType) {
@@ -1284,8 +1288,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             headerLineNumber = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
         }
 
+        List<String> customColumnNames = null;
+        if (csvDatastoreType.getCustomColumnNames() != null) {
+            customColumnNames = csvDatastoreType.getCustomColumnNames().getColumnName();
+        }
+
         return new CsvDatastore(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding,
-                failOnInconsistencies, multilineValues, headerLineNumber);
+                failOnInconsistencies, multilineValues, headerLineNumber, customColumnNames);
     }
 
     private char getChar(String charString, char ifNull, char ifBlank) {

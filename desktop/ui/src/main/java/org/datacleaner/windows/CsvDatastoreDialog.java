@@ -22,13 +22,19 @@ package org.datacleaner.windows;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
@@ -49,6 +55,7 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.HeaderLineComboBox;
@@ -81,8 +88,11 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _multilineValuesCheckBox;
+    private final CustomColumnNamesWidget _columnNamesWidget;
 
     private volatile boolean showPreview = true;
+
+    private Set<JTextField> _columnNameFields = new HashSet<>();
 
     @Inject
     public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore,
@@ -176,7 +186,18 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             _escapeCharField.setSelectedItem(escape);
 
             onSettingsUpdated(false, false, getResource());
+
+            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+        } else {
+            _columnNamesWidget = new CustomColumnNamesWidget(null);
         }
+
+        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
+            onSettingsUpdated(false, false, getResource());
+            SwingUtilities.invokeLater(() -> registerColumnNameFields());
+        }));
+
+        registerColumnNameFields();
 
         // add listeners
         _separatorCharField.addItemListener(new ItemListener() {
@@ -336,6 +357,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
         result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
+        result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
         return result;
     }
 
@@ -424,7 +446,8 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     private CsvDatastore createDatastore(String name, Resource resource, boolean failOnInconsistentRecords) {
         return new CsvDatastore(name, resource, resource.getQualifiedPath(), getQuoteChar(), getSeparatorChar(),
-                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
+                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine(),
+                _columnNamesWidget.getColumnNames());
     }
 
     public boolean isMultilineValues() {
@@ -460,6 +483,21 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            }
+        });
+    }
+
+    private void registerColumnNameFields() {
+        _columnNamesWidget.getColumnNameFields().forEach(field -> {
+            if (!_columnNameFields.contains(field)) {
+                field.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        onSettingsUpdated(false, false, getResource());
+                    }
+                });
+
+                _columnNameFields.add(field);
             }
         });
     }

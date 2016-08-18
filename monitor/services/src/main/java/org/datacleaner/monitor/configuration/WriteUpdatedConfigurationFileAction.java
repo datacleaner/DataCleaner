@@ -27,9 +27,15 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.HasName;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.CustomElementType;
+import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
+import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.SimplePatternType;
+import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
+import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
 import org.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
 import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
@@ -154,12 +160,24 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
     }
 
     private String getComparableName(Object referenceDataObject) {
-        if (referenceDataObject instanceof HasName) {
-            return ((HasName)referenceDataObject).getName();
+        if (referenceDataObject instanceof SimplePatternType) {
+            return ((SimplePatternType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof RegexPatternType) {
+            return ((RegexPatternType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof TextFileDictionaryType) {
+            return ((TextFileDictionaryType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof ValueListDictionaryType) {
+            return ((ValueListDictionaryType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof DatastoreDictionaryType) {
+            return ((DatastoreDictionaryType) referenceDataObject).getName();
         } else if (referenceDataObject instanceof CustomElementType) {
-            return ((CustomElementType)referenceDataObject).getClassName();
+            return ((CustomElementType) referenceDataObject).getClassName();
+        } else if (referenceDataObject instanceof TextFileSynonymCatalogType) {
+            return ((TextFileSynonymCatalogType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof DatastoreSynonymCatalogType) {
+            return ((DatastoreSynonymCatalogType) referenceDataObject).getName();
         }
-        
+
         return "";
     }
 }

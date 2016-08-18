@@ -38,8 +38,8 @@ public class ReferenceDataEntryPoint implements EntryPoint {
     private static final String SYNONYMS_HTML_ID = "Synonyms";
     private static final String PATTERNS_HTML_ID = "Patterns";
     private static final String DICTIONARIES_TITLE = "Dictionaries";
-    private static final String SYNONYMS_TITLE = "Synonyms";
-    private static final String PATTERNS_TITLE = "Patterns";
+    private static final String SYNONYMS_TITLE = "Synonym catalogs";
+    private static final String PATTERNS_TITLE = "String patterns";
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());

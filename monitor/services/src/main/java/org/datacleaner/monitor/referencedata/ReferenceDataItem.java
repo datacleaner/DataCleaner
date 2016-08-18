@@ -22,30 +22,36 @@ package org.datacleaner.monitor.referencedata;
 import java.io.Serializable;
 
 public class ReferenceDataItem implements Serializable {
-    private String _id;
+    public enum Type {
+        DICTIONARY,
+        SYNONYM_CATALOG,
+        STRING_PATTERN,
+    }
+
     private String _name;
+    private Type _type;
 
     public ReferenceDataItem() {
     }
-    
-    public ReferenceDataItem(String id, String name) {
-        _id = id;
+
+    public ReferenceDataItem(Type type, String name) {
+        _type = type;
         _name = name;
     }
 
-    public void setId(final String id) {
-        _id = id;
+    public Type getType() {
+        return _type;
     }
 
-    public void setName(final String name) {
-        _name = name;
-    }
-
-    public String getId() {
-        return _id;
+    public void setType(final Type type) {
+        _type = type;
     }
 
     public String getName() {
         return _name;
+    }
+
+    public void setName(final String name) {
+        _name = name;
     }
 }

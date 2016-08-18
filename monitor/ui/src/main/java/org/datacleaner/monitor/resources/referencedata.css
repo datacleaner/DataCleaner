@@ -17,6 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+#ReferenceDataPage table {
+    width: 100%;
+}
+
+#ReferenceDataPage table tr td:last-child {
+    text-align: right;
+}
+
 #ReferenceDataPage div.title {
 	background-position: left;
 	background-repeat: no-repeat;
@@ -25,6 +33,7 @@
 	padding-top: 4px;
 	font-size: Large;
 	font-weight: bold;
+	text-align: left;
 }
 
 #ReferenceDataPage #Dictionaries div.title {

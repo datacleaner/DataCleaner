@@ -28,7 +28,33 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("../gwtrpc/referenceDataService")
 public interface ReferenceDataService extends RemoteService {
+    /**
+     * Gets reference data -- dictionaries. 
+     * @param tenant
+     * @return
+     */
     Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant);
+
+    /**
+     * Gets reference data -- synonym catalogs. 
+     * @param tenant
+     * @return
+     */
     Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant);
+
+    /**
+     * Gets reference data -- string patterns.
+     * @param tenant
+     * @return
+     */
     Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant);
+
+    /**
+     * Removes reference data by its type and name.
+     * @param tenant
+     * @param type
+     * @param name
+     * @return
+     */
+    boolean removeItem(TenantIdentifier tenant, ReferenceDataItem.Type type, String name);
 }

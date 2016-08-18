@@ -34,7 +34,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class ReferenceDataEntryPoint implements EntryPoint {
-    private static final String FILE_UPLOAD_HTML_ID = "FileUpload";
     private static final String DICTIONARIES_HTML_ID = "Dictionaries";
     private static final String SYNONYMS_HTML_ID = "Synonyms";
     private static final String PATTERNS_HTML_ID = "Patterns";
@@ -50,8 +49,7 @@ public class ReferenceDataEntryPoint implements EntryPoint {
     }
 
     protected void render(ReferenceDataServiceAsync service, ClientConfig clientConfig) {
-        TenantIdentifier tenantId = clientConfig.getTenant();
-        //RootPanel.get(FILE_UPLOAD_HTML_ID).add(new UploadFormWidget(tenantId.getId()));
+        final TenantIdentifier tenantId = clientConfig.getTenant();
         RootPanel.get(DICTIONARIES_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(SYNONYMS_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(PATTERNS_HTML_ID).add(new LoadingIndicator());
@@ -60,21 +58,21 @@ public class ReferenceDataEntryPoint implements EntryPoint {
             @Override
             public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(DICTIONARIES_HTML_ID).clear();
-                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget(DICTIONARIES_TITLE, set));
+                RootPanel.get(DICTIONARIES_HTML_ID).add(new SectionWidget(tenantId, DICTIONARIES_TITLE, set));
             }
         });
         service.getSynonymCatalogs(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(SYNONYMS_HTML_ID).clear();
-                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget(SYNONYMS_TITLE, set));
+                RootPanel.get(SYNONYMS_HTML_ID).add(new SectionWidget(tenantId, SYNONYMS_TITLE, set));
             }
         });
         service.getStringPatterns(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final Set<ReferenceDataItem> set) {
                 RootPanel.get(PATTERNS_HTML_ID).clear();
-                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget(PATTERNS_TITLE, set));
+                RootPanel.get(PATTERNS_HTML_ID).add(new SectionWidget(tenantId, PATTERNS_TITLE, set));
             }
         });
     }

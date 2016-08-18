@@ -22,12 +22,13 @@ package org.datacleaner.monitor.referencedata.widgets;
 import java.util.Set;
 
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SectionWidget extends VerticalPanel {
-    public SectionWidget(String title, Set<ReferenceDataItem> set) {
+    public SectionWidget(TenantIdentifier tenant, String title, Set<ReferenceDataItem> set) {
         add(new TitleWidget(title));
-        add(new ListWidget(set));
+        add(new ListWidget(tenant, set));
     }
 }

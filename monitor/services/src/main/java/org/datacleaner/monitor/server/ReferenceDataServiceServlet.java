@@ -73,4 +73,9 @@ public class ReferenceDataServiceServlet extends SecureGwtServlet implements Ref
     public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
         return _delegate.getStringPatterns(tenant);
     }
+
+    @Override
+    public boolean removeItem(TenantIdentifier tenant, ReferenceDataItem.Type type, String name) {
+        return _delegate.removeItem(tenant, type, name);
+    }
 }

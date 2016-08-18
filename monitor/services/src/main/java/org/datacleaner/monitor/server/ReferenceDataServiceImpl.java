@@ -36,34 +36,56 @@ import org.springframework.stereotype.Component;
 @Component("RefereceDataService")
 public class ReferenceDataServiceImpl implements ReferenceDataService, ApplicationContextAware {
     private ApplicationContext _applicationContext;
-   
+
     @Autowired
     TenantContextFactory _contextFactory;
 
     @Override
     public Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
-        return namesToList(getReferenceDataCatalog(tenant).getDictionaryNames());
+        return namesToList(ReferenceDataItem.Type.DICTIONARY, getReferenceDataCatalog(tenant).getDictionaryNames());
     }
 
     @Override
     public Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
-        return namesToList(getReferenceDataCatalog(tenant).getSynonymCatalogNames());
+        return namesToList(ReferenceDataItem.Type.SYNONYM_CATALOG,
+                getReferenceDataCatalog(tenant).getSynonymCatalogNames());
     }
 
     @Override
     public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
-        return namesToList(getReferenceDataCatalog(tenant).getStringPatternNames());
+        return namesToList(ReferenceDataItem.Type.STRING_PATTERN,
+                getReferenceDataCatalog(tenant).getStringPatternNames());
+    }
+
+    @Override
+    public boolean removeItem(final TenantIdentifier tenant, final ReferenceDataItem.Type type, final String name) {
+        if (type.equals(ReferenceDataItem.Type.DICTIONARY) &&
+                getReferenceDataCatalog(tenant).containsDictionary(name)) {
+            return getReferenceDataCatalog(tenant).removeDictionary(name);
+        }
+
+        if (type.equals(ReferenceDataItem.Type.SYNONYM_CATALOG) &&
+                getReferenceDataCatalog(tenant).containsSynonymCatalog(name)) {
+            return getReferenceDataCatalog(tenant).removeSynonymCatalog(name);
+        }
+
+        if (type.equals(ReferenceDataItem.Type.STRING_PATTERN) &&
+                getReferenceDataCatalog(tenant).containsStringPattern(name)) {
+            return getReferenceDataCatalog(tenant).removeStringPattern(name);
+        }
+
+        return false;
     }
 
     private ReferenceDataCatalog getReferenceDataCatalog(TenantIdentifier tenant) {
         return _contextFactory.getContext(tenant).getConfiguration().getReferenceDataCatalog();
     }
 
-    private Set<ReferenceDataItem> namesToList(String[] allNames) {
+    private Set<ReferenceDataItem> namesToList(ReferenceDataItem.Type type, String[] allNames) {
         final Set<ReferenceDataItem> set = new HashSet<>();
 
         for (String name : allNames) {
-            set.add(new ReferenceDataItem(name, name));
+            set.add(new ReferenceDataItem(type, name));
         }
 
         return set;

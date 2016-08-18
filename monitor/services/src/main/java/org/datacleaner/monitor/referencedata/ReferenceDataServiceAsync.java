@@ -26,7 +26,29 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ReferenceDataServiceAsync {
+    /**
+     * Gets reference data -- dictionaries. 
+     * @param tenant
+     */
     void getDictionaries(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
+    
+    /**
+     * Gets reference data -- synonym catalogs. 
+     * @param tenant
+     */
     void getSynonymCatalogs(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
+    
+    /**
+     * Gets reference data -- string patterns.
+     * @param tenant
+     */
     void getStringPatterns(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
+
+    /**
+     * Removes reference data by its type and name.
+     * @param tenant
+     * @param type
+     * @param name
+     */
+    void removeItem(TenantIdentifier tenant, ReferenceDataItem.Type type, String name, AsyncCallback<Boolean> callback);
 }

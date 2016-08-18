@@ -1143,7 +1143,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", excelDatastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
-        return new ExcelDatastore(name, resource, filename);
+        final List<String> customeColumnNames = excelDatastoreType.getCustomColumnName();
+        return new ExcelDatastore(name, resource, filename, customeColumnNames);
     }
 
     private Datastore createDatastore(String name, XmlDatastoreType xmlDatastoreType) {

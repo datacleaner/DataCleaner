@@ -19,28 +19,44 @@
  */
 package org.datacleaner.windows;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
+import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.connection.ExcelDatastore;
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.widgets.AbstractResourceTextField;
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 
 public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
+    private final CustomColumnNamesWidget _columnNamesWidget;
+
 	@Inject
 	protected ExcelDatastoreDialog(@Nullable ExcelDatastore originalDatastore,
 			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
 		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+
+		_columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
 	}
+
+    protected List<Entry<String, JComponent>> getFormElements() {
+        List<Entry<String, JComponent>> res = super.getFormElements();
+        res.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
+        return res;
+    }
 
 	@Override
 	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
@@ -65,7 +81,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 
 	@Override
 	protected ExcelDatastore createDatastore(String name, String filename) {
-		return new ExcelDatastore(name, new FileResource(filename), filename);
+		return new ExcelDatastore(name, new FileResource(filename), filename, _columnNamesWidget.getColumnNames());
 	}
 
 	@Override

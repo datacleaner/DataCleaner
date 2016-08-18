@@ -792,6 +792,10 @@ public class DomConfigurationWriter {
 
         appendElement(ds, "filename", filename);
 
+        if (datastore.getCustomColumnNames() != null && datastore.getCustomColumnNames().size() > 0) {
+            datastore.getCustomColumnNames().forEach(columnName -> appendElement(ds, "custom-column-name", columnName));
+        }
+
         return ds;
     }
 

@@ -17,13 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.wizard.datastore;
+package org.datacleaner.monitor.wizard.referencedata;
 
-import org.datacleaner.monitor.wizard.Wizard;
+import org.datacleaner.monitor.wizard.WizardSession;
 
 /**
- * A pluggable component (plug-in / extension) which provides a wizard in the
- * webapp for creating a datastore in the DC monitor configuration.
+ * Represents the session of creating reference data. 
  */
-public interface DatastoreWizard extends Wizard<DatastoreWizardContext, DatastoreWizardSession> {
+public interface ReferenceDataWizardSession extends WizardSession {
+    @Override
+    ReferenceDataWizardContext getWizardContext();
 }

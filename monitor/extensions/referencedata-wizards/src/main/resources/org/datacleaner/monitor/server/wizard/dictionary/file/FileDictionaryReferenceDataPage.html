@@ -1,0 +1,34 @@
+<div style="min-height: 200px; background-repeat: no-repeat; background-position: bottom right; ">
+    <form action="repository/demo/jobs/multiple_upload" method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td><label for-id="name">Dictionary name</label></td>
+				<td><input type="text" id="name" name="name"/></td>
+			</tr>
+            <tr>
+				<td><label for-id="file">Path to file</label></td>
+				<td><input type="file" id="file" name="file"/></td>
+			</tr>
+            <tr>
+				<td><label for-id="encoding">Encoding</label></td>
+				<td>
+					<select id="encoding" name="encoding">
+						<option>UTF-8</option>
+					</select>
+				</td>
+			</tr>
+            <tr>
+				<td></td>
+				<td>
+					<input type="checkbox" id="caseSensitive" name="caseSensitive"/>
+					<label for-id="caseSensitive">Case-sensitive?</label>
+				</td>
+			</tr>
+			<tr>
+				<td rowspan="2">
+					<input type="submit" value="Save"/>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

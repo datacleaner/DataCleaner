@@ -244,7 +244,12 @@
 			<artifactId>DataCleaner-monitor-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-referencedata-wizards</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>

@@ -24,6 +24,7 @@ import java.util.Set;
 import org.datacleaner.monitor.referencedata.widgets.SectionWidget;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.DictionaryClientConfig;
+import org.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.datacleaner.monitor.util.DCAsyncCallback;
@@ -43,6 +44,7 @@ public class ReferenceDataEntryPoint implements EntryPoint {
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
+        JavaScriptCallbacks.exposeApi();
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final ReferenceDataServiceAsync service = GWT.create(ReferenceDataService.class);
         render(service, clientConfig);

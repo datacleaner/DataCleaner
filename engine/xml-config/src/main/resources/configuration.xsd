@@ -798,6 +798,13 @@
 					<element name="fail-on-inconsistencies" type="boolean" minOccurs="0" />
 					<element name="skip-ebcdic-header" type="boolean" minOccurs="0" />
 					<element name="eol-present" type="boolean" minOccurs="0" />
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</all>
 			</extension>
 		</complexContent>

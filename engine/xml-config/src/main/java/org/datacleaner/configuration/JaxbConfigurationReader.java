@@ -1212,8 +1212,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             for (int i = 0; i < valueWidths.length; i++) {
                 valueWidths[i] = valueWidthsBoxed.get(i);
             }
+
+            List<String> customColumnNames = null;
+            if (fixedWidthDatastore.getCustomColumnNames() != null) {
+                customColumnNames = fixedWidthDatastore.getCustomColumnNames().getColumnName();
+            }
+
             ds = new FixedWidthDatastore(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
-                    eolPresent, headerLineNumber);
+                    eolPresent, headerLineNumber, customColumnNames);
         } else {
             ds = new FixedWidthDatastore(name, filename, encoding, fixedValueWidth, failOnInconsistencies,
                     skipEbcdicHeader, eolPresent, headerLineNumber);

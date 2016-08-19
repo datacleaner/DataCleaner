@@ -488,17 +488,16 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     private void registerColumnNameFields() {
-        _columnNamesWidget.getColumnNameFields().forEach(field -> {
-            if (!_columnNameFields.contains(field)) {
-                field.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        onSettingsUpdated(false, false, getResource());
-                    }
-                });
+        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field)).forEach(
+                field -> {
+                    field.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+                            onSettingsUpdated(false, false, getResource());
+                        }
+                    });
 
-                _columnNameFields.add(field);
-            }
-        });
+                    _columnNameFields.add(field);
+                });
     }
 }

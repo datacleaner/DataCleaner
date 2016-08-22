@@ -48,8 +48,7 @@ public class CustomColumnNamesWidget {
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(e -> {
-            int componentCount = _innerPanel.getComponentCount();
-            if (componentCount > 0) {
+            if (_innerPanel.getComponentCount() > 0) {
                 removeColumnName();
                 _innerPanel.updateUI();
             }
@@ -75,7 +74,7 @@ public class CustomColumnNamesWidget {
     }
 
     private void addColumnName(String columnName, boolean updateUI) {
-        JTextField columnNameField = WidgetFactory.createTextField();
+        final JTextField columnNameField = WidgetFactory.createTextField();
         if (columnName != null) {
             columnNameField.setText(columnName);
         }

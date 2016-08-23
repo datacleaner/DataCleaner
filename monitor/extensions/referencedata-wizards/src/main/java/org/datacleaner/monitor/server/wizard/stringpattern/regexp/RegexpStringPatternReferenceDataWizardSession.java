@@ -21,12 +21,15 @@ package org.datacleaner.monitor.server.wizard.stringpattern.regexp;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.RegexStringPattern;
+import org.datacleaner.reference.StringPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 final class RegexpStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
@@ -35,6 +38,7 @@ final class RegexpStringPatternReferenceDataWizardSession extends AbstractRefere
 
     private String _name;
     private String _expression;
+    private String _matchEntireString;
 
     public RegexpStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
@@ -52,12 +56,13 @@ final class RegexpStringPatternReferenceDataWizardSession extends AbstractRefere
 
     @Override
     protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-        final Element element = doc.createElement("regexp-string-pattern-reference-data");
-        element.setAttribute("name", _name);
-        element.setAttribute("expression", _expression);
+        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
+        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
+        final Element stringPatternsElement = writer.getStringPatternsElement();
+        final StringPattern stringPattern = new RegexStringPattern(_name, _expression, _matchEntireString.equals("on"));
+        stringPatternsElement.appendChild(writer.externalize(stringPattern));
 
-        return element;
+        return stringPatternsElement;
     }
 
     public String getName() {
@@ -74,5 +79,13 @@ final class RegexpStringPatternReferenceDataWizardSession extends AbstractRefere
 
     public void setExpression(final String expression) {
         _expression = expression;
+    }
+
+    public String isMatchEntireString() {
+        return _matchEntireString;
+    }
+
+    public void setMatchEntireString(final String matchEntireString) {
+        _matchEntireString = matchEntireString;
     }
 }

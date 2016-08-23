@@ -28,6 +28,9 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
+    
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_EXPRESSION = "expression";
 
     private final SimpleStringPatternReferenceDataWizardSession _session;
 
@@ -43,6 +46,12 @@ final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizar
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
+        final String name = getString(formParameters, PROPERTY_NAME);
+        final String expression = getString(formParameters, PROPERTY_EXPRESSION);
+
+        _session.setName(name);
+        _session.setExpression(expression);
+
         return null;
     }
 

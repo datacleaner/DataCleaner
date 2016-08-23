@@ -31,7 +31,7 @@ import org.datacleaner.api.Configured;
  * Reference data is typically reusable between jobs which is why it is
  * contained within the configuration. For example you could have a dictionary
  * of valid values for a particular entity type. This dictionary is then
- * resuable both as input to a Dictionary validation filter and an analyzer that
+ * reusable both as input to a Dictionary validation filter and an analyzer that
  * will match values against different dictionaries.
  * 
  * All reference data types ( {@link Dictionary} , {@link SynonymCatalog},
@@ -73,7 +73,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    boolean removeDictionary(String name);
+    boolean removeDictionary(String name);// mytodo: remove
     
     /**
      * Gets the names of all registered {@link SynonymCatalog}.
@@ -106,7 +106,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    boolean removeSynonymCatalog(String name);
+    boolean removeSynonymCatalog(String name);// mytodo: remove
     
     /**
      * Gets the names of all registered {@link StringPattern}s.
@@ -139,5 +139,5 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    boolean removeStringPattern(String name);
+    boolean removeStringPattern(String name);// mytodo: remove
 }

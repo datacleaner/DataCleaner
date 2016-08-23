@@ -6,10 +6,6 @@
 				<td><input type="text" id="name" name="name"/></td>
 			</tr>
 			<tr>
-				<td><label for-id="file">Path to file</label></td>
-				<td><input type="file" id="file" name="file"/></td>
-			</tr>
-			<tr>
 				<td><label for-id="encoding">Encoding</label></td>
 				<td>
 					<select id="encoding" name="encoding">
@@ -25,8 +21,11 @@
 				</td>
 			</tr>
 			<tr>
-				<td rowspan="2">
-					<input type="submit" value="Save"/>
+				<td colspan="2">
+					<div id="reference_data_file">
+						<input type="file" name="reference_data_file"/>
+						<input type="button" value="Upload" onclick="window.uploadFile('reference_data_file');"/>
+					</div>
 				</td>
 			</tr>
 		</table>

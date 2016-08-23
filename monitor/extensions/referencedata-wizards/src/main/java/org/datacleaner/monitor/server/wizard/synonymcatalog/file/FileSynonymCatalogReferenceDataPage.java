@@ -19,46 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.datacleaner.monitor.server.wizard.shared.FileDataPage;
 
-import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
-
-final class FileSynonymCatalogReferenceDataPage extends AbstractFreemarkerWizardPage {
-
-    private final FileSynonymCatalogReferenceDataWizardSession _session;
-
+final class FileSynonymCatalogReferenceDataPage extends FileDataPage {
+    
     public FileSynonymCatalogReferenceDataPage(FileSynonymCatalogReferenceDataWizardSession session) {
-        _session = session;
+        super(session);
     }
-
-    @Override
-    public Integer getPageIndex() {
-        return 0;
-    }
-
-    @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        return null;
-    }
-
+    
     @Override
     protected String getTemplateFilename() {
         return "FileSynonymCatalogReferenceDataPage.html";
-    }
-
-    @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("file", _session.getFile());
-        model.put("encoding", _session.getEncoding());
-        model.put("caseSensitive", _session.getCaseSensitive());
-        
-        return model;
     }
 }

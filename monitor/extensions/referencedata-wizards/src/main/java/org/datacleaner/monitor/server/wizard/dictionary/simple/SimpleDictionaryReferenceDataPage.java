@@ -28,9 +28,12 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPage {
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_VALUES = "values";
+    private static final String PROPERTY_CASE_SENSITIVE = "caseSensitive";
 
     private final SimpleDictionaryReferenceDataWizardSession _session;
-
+    
     public SimpleDictionaryReferenceDataPage(SimpleDictionaryReferenceDataWizardSession session) {
         _session = session;
     }
@@ -43,9 +46,17 @@ final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPa
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
+        final String caseSensitive = getBoolean(formParameters, PROPERTY_CASE_SENSITIVE) ? "on" : "";
+        final String name = getString(formParameters, PROPERTY_NAME);
+        final String values = getString(formParameters, PROPERTY_VALUES);
+        
+        _session.setName(name);
+        _session.setValues(values);
+        _session.setCaseSensitive(caseSensitive);
+        
         return null;
     }
-
+    
     @Override
     protected String getTemplateFilename() {
         return "SimpleDictionaryReferenceDataPage.html";
@@ -54,10 +65,10 @@ final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPa
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("values", _session.getValues());
-        model.put("caseSensitive", _session.getCaseSensitive());
-        
+        model.put(PROPERTY_NAME, _session.getName());
+        model.put(PROPERTY_VALUES, _session.getValues());
+        model.put(PROPERTY_CASE_SENSITIVE, _session.getCaseSensitive());
+
         return model;
     }
 }

@@ -45,9 +45,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
-    private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<SynonymCatalogChangeListener>();
-    private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
+    private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<>();
+    private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<>();
+    private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<>();
     private final ReferenceDataCatalog _immutableDelegate;
     private final LifeCycleHelper _lifeCycleHelper;
     private final DomConfigurationWriter _configurationWriter;
@@ -67,8 +67,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
      * Main constructor for {@link MutableReferenceDataCatalog}.
      * 
      * @param immutableDelegate
-     * @param datastoreCatalog
+     * @param configurationWriter
      * @param userPreferences
+     * @param lifeCycleHelper
      */
     public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate,
             final DomConfigurationWriter configurationWriter, final UserPreferences userPreferences,

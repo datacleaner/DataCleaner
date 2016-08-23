@@ -19,26 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import javax.xml.parsers.DocumentBuilder;
-
+import org.datacleaner.monitor.server.wizard.shared.FileWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
+import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.w3c.dom.Element;
 
-final class FileSynonymCatalogReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
+final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSession {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileSynonymCatalogReferenceDataWizardSession.class);
-
-    private String _name;
-    private String _file;
-    private String _encoding;
-    private String _caseSensitive;
-
-    public FileSynonymCatalogReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public FileSynonymCatalogReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 
@@ -48,51 +38,12 @@ final class FileSynonymCatalogReferenceDataWizardSession extends AbstractReferen
     }
 
     @Override
-    public Integer getPageCount() {
-        return 1;
-    }
+    protected Element addElementToConfiguration() {
+        final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
+        final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, _caseSensitive.equals("on"),
+                _encoding);
+        synonymCatalogsElement.appendChild(_writer.externalize(catalog));
 
-    @Override
-    protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-        final Element element = doc.createElement("file-synonym-catalog-reference-data");
-        element.setAttribute("name", _name);
-        element.setAttribute("file", _file);
-        element.setAttribute("encoding", _encoding);
-        element.setAttribute("case_sensitive", _caseSensitive);
-
-        return element;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(final String name) {
-        _name = name;
-    }
-
-    public String getFile() {
-        return _file;
-    }
-
-    public void setFile(final String file) {
-        _file = file;
-    }
-
-    public String getEncoding() {
-        return _encoding;
-    }
-
-    public void setEncoding(final String encoding) {
-        _encoding = encoding;
-    }
-
-    public String getCaseSensitive() {
-        return _caseSensitive;
-    }
-
-    public void setCaseSensitive(final String caseSensitive) {
-        _caseSensitive = caseSensitive;
+        return synonymCatalogsElement;
     }
 }

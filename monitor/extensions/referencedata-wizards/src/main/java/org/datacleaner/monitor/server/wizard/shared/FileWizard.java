@@ -17,23 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.dictionary.file;
+package org.datacleaner.monitor.server.wizard.shared;
 
-import org.datacleaner.monitor.server.wizard.shared.FileWizard;
+import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
-import org.springframework.stereotype.Component;
 
-@Component
-public class FileDictionaryReferenceDataWizard extends FileWizard {
-
+public abstract class FileWizard implements ReferenceDataWizard {
     @Override
-    public String getDisplayName() {
-        return "File dictionary";
+    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
+        return true;
     }
 
     @Override
-    public ReferenceDataWizardSession start(final ReferenceDataWizardContext context) {
-        return new FileDictionaryReferenceDataWizardSession(context);
+    public int getExpectedPageCount() {
+        return 1;
     }
 }

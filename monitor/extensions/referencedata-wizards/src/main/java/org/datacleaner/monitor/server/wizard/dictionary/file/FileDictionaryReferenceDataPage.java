@@ -19,46 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.datacleaner.monitor.server.wizard.shared.FileDataPage;
 
-import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
-
-final class FileDictionaryReferenceDataPage extends AbstractFreemarkerWizardPage {
-
-    private final FileDictionaryReferenceDataWizardSession _session;
+final class FileDictionaryReferenceDataPage extends FileDataPage {
 
     public FileDictionaryReferenceDataPage(FileDictionaryReferenceDataWizardSession session) {
-        _session = session;
-    }
-
-    @Override
-    public Integer getPageIndex() {
-        return 0;
-    }
-
-    @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        return null;
+        super(session);
     }
 
     @Override
     protected String getTemplateFilename() {
         return "FileDictionaryReferenceDataPage.html";
-    }
-
-    @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("file", _session.getFile());
-        model.put("encoding", _session.getEncoding());
-        model.put("caseSensitive", _session.getCaseSensitive());
-        
-        return model;
     }
 }

@@ -21,12 +21,15 @@ package org.datacleaner.monitor.server.wizard.dictionary.simple;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.SimpleDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 final class SimpleDictionaryReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
@@ -53,13 +56,13 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
 
     @Override
     protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-        final Element element = doc.createElement("simple-dictionary-reference-data");
-        element.setAttribute("name", _name);
-        element.setAttribute("values", _values);
-        element.setAttribute("case_sensitive", _caseSensitive);
-
-        return element;
+        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
+        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
+        final Element dictionariesElement = writer.getDictionariesElement();
+        final Dictionary dictionary = new SimpleDictionary(_name, _caseSensitive.equals("on"), _values.split("\n"));
+        dictionariesElement.appendChild(writer.externalize(dictionary));
+        
+        return dictionariesElement;
     }
 
     public String getName() {

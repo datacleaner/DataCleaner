@@ -28,6 +28,10 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 final class RegexpStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
+    
+    private static final String PROPERTY_MATCH_ENTIRE_STRING = "matchEntireString";
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_EXPRESSION = "expression";
 
     private final RegexpStringPatternReferenceDataWizardSession _session;
 
@@ -43,6 +47,14 @@ final class RegexpStringPatternReferenceDataPage extends AbstractFreemarkerWizar
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
+        final String matchEntireString = getBoolean(formParameters, PROPERTY_MATCH_ENTIRE_STRING) ? "on" : "";
+        final String name = getString(formParameters, PROPERTY_NAME);
+        final String expression = getString(formParameters, PROPERTY_EXPRESSION);
+
+        _session.setName(name);
+        _session.setExpression(expression);
+        _session.setMatchEntireString(matchEntireString);
+        
         return null;
     }
 
@@ -56,6 +68,7 @@ final class RegexpStringPatternReferenceDataPage extends AbstractFreemarkerWizar
         final Map<String, Object> model = new HashMap<>();
         model.put("name", _session.getName());
         model.put("expression", _session.getExpression());
+        model.put("matchEntireString", _session.isMatchEntireString());
         
         return model;
     }

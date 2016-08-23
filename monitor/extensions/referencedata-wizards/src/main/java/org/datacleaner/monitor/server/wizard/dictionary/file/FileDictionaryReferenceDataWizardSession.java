@@ -19,26 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
-import javax.xml.parsers.DocumentBuilder;
-
+import org.datacleaner.monitor.server.wizard.shared.FileWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.TextFileDictionary;
 import org.w3c.dom.Element;
 
-final class FileDictionaryReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
+final class FileDictionaryReferenceDataWizardSession extends FileWizardSession {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileDictionaryReferenceDataWizardSession.class);
-
-    private String _name;
-    private String _file;
-    private String _encoding;
-    private String _caseSensitive;
-
-    public FileDictionaryReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public FileDictionaryReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 
@@ -48,51 +38,11 @@ final class FileDictionaryReferenceDataWizardSession extends AbstractReferenceDa
     }
 
     @Override
-    public Integer getPageCount() {
-        return 1;
-    }
+    protected Element addElementToConfiguration() {
+        final Element dictionariesElement = _writer.getDictionariesElement();
+        final Dictionary dictionary = new TextFileDictionary(_name, _filePath, _encoding, _caseSensitive.equals("on"));
+        dictionariesElement.appendChild(_writer.externalize(dictionary));
 
-    @Override
-    protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-        final Element element = doc.createElement("file-dictionary-reference-data");
-        element.setAttribute("name", _name);
-        element.setAttribute("file", _file);
-        element.setAttribute("encoding", _encoding);
-        element.setAttribute("case_sensitive", _caseSensitive);
-
-        return element;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(final String name) {
-        _name = name;
-    }
-
-    public String getFile() {
-        return _file;
-    }
-
-    public void setFile(final String file) {
-        _file = file;
-    }
-
-    public String getEncoding() {
-        return _encoding;
-    }
-
-    public void setEncoding(final String encoding) {
-        _encoding = encoding;
-    }
-
-    public String getCaseSensitive() {
-        return _caseSensitive;
-    }
-
-    public void setCaseSensitive(final String caseSensitive) {
-        _caseSensitive = caseSensitive;
+        return dictionariesElement;
     }
 }

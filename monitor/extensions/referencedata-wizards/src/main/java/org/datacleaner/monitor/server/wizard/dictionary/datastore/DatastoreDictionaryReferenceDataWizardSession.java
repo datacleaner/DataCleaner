@@ -21,9 +21,13 @@ package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.DatastoreDictionary;
+import org.datacleaner.reference.Dictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -54,7 +58,14 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
 
     @Override
     protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        return null;// mytodo
+        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
+        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
+        final Element dictionariesElement = writer.getDictionariesElement();
+        final String fullColumnName = _schema + "." + _table + "." + _column;
+        final Dictionary dictionary = new DatastoreDictionary(_name, _datastore, fullColumnName);
+        dictionariesElement.appendChild(writer.externalize(dictionary));
+
+        return dictionariesElement;
     }
 
     public String getName() {

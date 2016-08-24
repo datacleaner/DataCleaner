@@ -17,18 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.dictionary.file;
+package org.datacleaner.monitor.server.wizard.shared.file;
 
-import org.datacleaner.monitor.server.wizard.shared.file.FilePage;
+import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
+import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 
-final class FileDictionaryReferenceDataPage extends FilePage {
-
-    public FileDictionaryReferenceDataPage(FileDictionaryReferenceDataWizardSession session) {
-        super(session);
+public abstract class FileWizard implements ReferenceDataWizard {
+    @Override
+    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
+        return true;
     }
 
     @Override
-    protected String getNameLabel() {
-        return "File dictionary name";
+    public int getExpectedPageCount() {
+        return 1;
     }
 }

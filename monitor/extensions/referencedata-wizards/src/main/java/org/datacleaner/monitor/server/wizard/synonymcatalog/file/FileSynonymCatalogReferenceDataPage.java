@@ -19,16 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import org.datacleaner.monitor.server.wizard.shared.FileDataPage;
+import org.datacleaner.monitor.server.wizard.shared.file.FilePage;
 
-final class FileSynonymCatalogReferenceDataPage extends FileDataPage {
+final class FileSynonymCatalogReferenceDataPage extends FilePage {
     
     public FileSynonymCatalogReferenceDataPage(FileSynonymCatalogReferenceDataWizardSession session) {
         super(session);
     }
     
     @Override
-    protected String getTemplateFilename() {
-        return "FileSynonymCatalogReferenceDataPage.html";
+    protected String getNameLabel() {
+        return "File synonym catalog name";
     }
 }

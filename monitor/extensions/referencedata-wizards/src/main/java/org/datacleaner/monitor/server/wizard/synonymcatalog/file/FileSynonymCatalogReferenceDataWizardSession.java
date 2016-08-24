@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import org.datacleaner.monitor.server.wizard.shared.FileWizardSession;
+import org.datacleaner.monitor.server.wizard.shared.file.FileWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.SynonymCatalog;

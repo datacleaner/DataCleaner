@@ -19,28 +19,14 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
-import javax.xml.parsers.DocumentBuilder;
-
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.Dictionary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-final class DatastoreDictionaryReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
-
-    private static final Logger logger = LoggerFactory.getLogger(DatastoreDictionaryReferenceDataWizardSession.class);
-
-    private String _name;
-    private String _datastore;
-    private String _schema;
-    private String _table;
-    private String _column;
+final class DatastoreDictionaryReferenceDataWizardSession extends DatastoreWizardSession {
 
     public DatastoreDictionaryReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
@@ -52,59 +38,12 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
     }
 
     @Override
-    public Integer getPageCount() {
-        return 4;
-    }
-
-    @Override
-    protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
-        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
-        final Element dictionariesElement = writer.getDictionariesElement();
+    protected Element addElementToConfiguration() {
+        final Element dictionariesElement = _writer.getDictionariesElement();
         final String fullColumnName = _schema + "." + _table + "." + _column;
         final Dictionary dictionary = new DatastoreDictionary(_name, _datastore, fullColumnName);
-        dictionariesElement.appendChild(writer.externalize(dictionary));
+        dictionariesElement.appendChild(_writer.externalize(dictionary));
 
         return dictionariesElement;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(final String name) {
-        _name = name;
-    }
-    
-    public String getDatastore() {
-        return _datastore;
-    }
-
-    public void setDatastore(final String datastore) {
-        _datastore = datastore;
-    }
-
-    public String getSchema() {
-        return _schema;
-    }
-
-    public void setSchema(final String schema) {
-        _schema = schema;
-    }
-
-    public String getTable() {
-        return _table;
-    }
-
-    public void setTable(final String table) {
-        _table = table;
-    }
-
-    public String getColumn() {
-        return _column;
-    }
-
-    public void setColumn(final String column) {
-        _column = column;
     }
 }

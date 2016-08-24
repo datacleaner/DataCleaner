@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
-import org.datacleaner.monitor.server.wizard.shared.FileWizard;
+import org.datacleaner.monitor.server.wizard.shared.file.FileWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;

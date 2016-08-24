@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.shared;
+package org.datacleaner.monitor.server.wizard.shared.datastore;
 
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 
-public abstract class FileWizard implements ReferenceDataWizard {
+public abstract class DatastoreWizard implements ReferenceDataWizard {
     @Override
     public boolean isApplicableTo(final ReferenceDataWizardContext context) {
         return true;
@@ -30,6 +30,6 @@ public abstract class FileWizard implements ReferenceDataWizard {
 
     @Override
     public int getExpectedPageCount() {
-        return 1;
+        return 4;
     }
 }

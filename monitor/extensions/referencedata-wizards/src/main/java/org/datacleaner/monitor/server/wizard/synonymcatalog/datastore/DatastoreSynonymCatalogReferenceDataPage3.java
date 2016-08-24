@@ -19,46 +19,25 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage3;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-final class DatastoreSynonymCatalogReferenceDataPage extends AbstractFreemarkerWizardPage {
+final class DatastoreSynonymCatalogReferenceDataPage3 extends DatastorePage3 {
 
-    private final DatastoreSynonymCatalogReferenceDataWizardSession _session;
-
-    public DatastoreSynonymCatalogReferenceDataPage(DatastoreSynonymCatalogReferenceDataWizardSession session) {
-        _session = session;
-    }
-
-    @Override
-    public Integer getPageIndex() {
-        return 0;
+    public DatastoreSynonymCatalogReferenceDataPage3(DatastoreWizardSession session) {
+        super(session);
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        return null;
-    }
+        _session.setTable(getString(formParameters, PROPERTY_TABLE));
 
-    @Override
-    protected String getTemplateFilename() {
-        return "DatastoreSynonymCatalogReferenceDataPage.html";
-    }
-
-    @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("datastore", _session.getDatastore());
-        model.put("termColumn", _session.getTermColumn());
-        model.put("synonymColumn", _session.getSynonymColumn());
-        
-        return model;
+        return new DatastoreSynonymCatalogReferenceDataPage4(_session);
     }
 }

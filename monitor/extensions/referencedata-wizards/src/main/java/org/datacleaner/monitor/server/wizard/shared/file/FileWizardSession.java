@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.shared;
+package org.datacleaner.monitor.server.wizard.shared.file;
 
 import java.io.File;
 
@@ -54,7 +54,7 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     @Override
-    protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
+    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
         copyUploadedFileToReferenceDataDirectory();
         return addElementToConfiguration();
     }

@@ -19,63 +19,25 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.datacleaner.connection.Datastore;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage3;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.WizardPageController;
-import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-final class DatastoreDictionaryReferenceDataPage3 extends AbstractFreemarkerWizardPage {
+final class DatastoreDictionaryReferenceDataPage3 extends DatastorePage3 {
 
-    private final DatastoreDictionaryReferenceDataWizardSession _session;
-
-    public DatastoreDictionaryReferenceDataPage3(DatastoreDictionaryReferenceDataWizardSession session) {
-        _session = session;
-    }
-
-    @Override
-    public Integer getPageIndex() {
-        return 2;
+    public DatastoreDictionaryReferenceDataPage3(DatastoreWizardSession session) {
+        super(session);
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        _session.setTable(getString(formParameters, "table"));
+        _session.setTable(getString(formParameters, PROPERTY_TABLE));
         
         return new DatastoreDictionaryReferenceDataPage4(_session);
-    }
-
-    @Override
-    protected String getTemplateFilename() {
-        return "DatastoreDictionaryReferenceDataPage3.html";
-    }
-
-    @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<>();
-        model.put("table", _session.getTable());
-        model.put("tableOptions", getTableOptions());
-
-        return model;
-    }
-    
-    private String getTableOptions() {
-        final StringBuilder builder = new StringBuilder();
-        final DatastoreIdentifier datastoreId = new DatastoreIdentifier(_session.getDatastore());
-        final Datastore datastore = _session.getWizardContext().getTenantContext().getDatastore(datastoreId);
-        final Schema schema = datastore.openConnection().getSchemaNavigator().getSchemaByName(_session.getSchema());
-        
-        for (Table table : schema.getTables()) {
-            builder.append(String.format("<option value=\"%s\">%s</option>", table.getName(), table.getName()));
-        }
-        
-        return builder.toString();
     }
 }

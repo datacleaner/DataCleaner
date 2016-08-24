@@ -143,7 +143,7 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
 
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-        contentPanel.add(new Label("ReferenceData '" + referenceDataName + "' created! Wizard finished."));
+        contentPanel.add(new Label("New reference data was created! Wizard finished."));
         contentPanel.add(new Label("Click 'Close' to return. "));
         setContent(contentPanel);
         getWizardPanel().getButtonPanel().clear();

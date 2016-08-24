@@ -22,6 +22,9 @@ package org.datacleaner.monitor.server.dao;
 import java.io.Reader;
 
 import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.w3c.dom.Element;
 
 /**
@@ -31,26 +34,43 @@ public interface ReferenceDataDao {
 
     /**
      * Reads/parses a reference data XML element. 
-     * 
+     *
      * @param reader
      * @return
      */
     Element parseReferenceDataElement(Reader reader);
 
     /**
-     * Adds a reference data to a tenant's configuration. 
-     * 
+     * Updates reference data sub section. 
+     *
      * @param tenantContext
-     * @param reference dataElement
-     * @return the name of the reference data that was added
+     * @param updatedReferenceDataSubSection
+     * @return the name of the lastly added element 
      */
-    String addReferenceData(TenantContext tenantContext, Element reference);
+    String updateReferenceDataSubSection(TenantContext tenantContext, Element updatedReferenceDataSubSection);
 
     /**
-     * Removes reference data from a tenant's configuration. 
-     * 
+     * Removes a dictionary from a tenant's configuration. 
+     *
      * @param tenantContext
-     * @param referenceDataName
+     * @param dictionary
      */
-    void removeReferenceData(TenantContext tenantContext, String referenceDataName) throws IllegalArgumentException;
+    void removeDictionary(TenantContext tenantContext, Dictionary dictionary) throws IllegalArgumentException;
+
+    /**
+     * Removes a synonym catalog from a tenant's configuration. 
+     *
+     * @param tenantContext
+     * @param synonymCatalog
+     */
+    void removeSynonymCatalog(TenantContext tenantContext, SynonymCatalog synonymCatalog)
+            throws IllegalArgumentException;
+
+    /**
+     * Removes a string pattern from a tenant's configuration. 
+     *
+     * @param tenantContext
+     * @param stringPattern
+     */
+    void removeStringPattern(TenantContext tenantContext, StringPattern stringPattern) throws IllegalArgumentException;
 }

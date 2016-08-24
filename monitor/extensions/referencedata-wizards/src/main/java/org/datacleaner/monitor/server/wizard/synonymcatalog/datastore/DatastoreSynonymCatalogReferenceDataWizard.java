@@ -19,27 +19,17 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DatastoreSynonymCatalogReferenceDataWizard implements ReferenceDataWizard {
-
-    @Override
-    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
-        return true;
-    }
+public class DatastoreSynonymCatalogReferenceDataWizard extends DatastoreWizard {
 
     @Override
     public String getDisplayName() {
         return "Datastore synonym catalog";
-    }
-
-    @Override
-    public int getExpectedPageCount() {
-        return 1;
     }
 
     @Override

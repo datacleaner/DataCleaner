@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.shared;
+package org.datacleaner.monitor.server.wizard.shared.file;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,17 +29,21 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.util.StringUtils;
 
-public abstract class FileDataPage extends AbstractFreemarkerWizardPage {
-    private static final String PROPERTY_CASE_SENSITIVE = "caseSensitive";
+public abstract class FilePage extends AbstractFreemarkerWizardPage {
+    public static final String TEMPLATE_PACKAGE = "/org/datacleaner/monitor/server/wizard/shared/file/";
+    
     private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_NAME_LABEL = "nameLabel";
     private static final String PROPERTY_ENCODING = "encoding";
+    private static final String PROPERTY_CASE_SENSITIVE = "caseSensitive";
+    private static final String PROPERTY_FILE_PATH = "filePath";
     private static final String PROPERTY_FILE = "reference_data_file";
     private static final String PROPERTY_FILE_NAME = "file_name";
     private static final String PROPERTY_SESSION_KEY = "session_key";
 
     protected final FileWizardSession _session; 
     
-    public FileDataPage(FileWizardSession session) {
+    public FilePage(FileWizardSession session) {
         _session = session;
     }
     
@@ -49,15 +53,24 @@ public abstract class FileDataPage extends AbstractFreemarkerWizardPage {
     }
     
     @Override
+    protected String getTemplateFilename() {
+        _templateConfiguration.setClassForTemplateLoading(this.getClass(), TEMPLATE_PACKAGE);
+        return "FilePage.html";
+    } 
+    
+    @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("filePath", _session.getFilePath());
-        model.put("encoding", _session.getEncoding());
-        model.put("caseSensitive", _session.getCaseSensitive());
+        model.put(PROPERTY_NAME, _session.getName());
+        model.put(PROPERTY_NAME_LABEL, getNameLabel());
+        model.put(PROPERTY_FILE_PATH, _session.getFilePath());
+        model.put(PROPERTY_ENCODING, _session.getEncoding());
+        model.put(PROPERTY_CASE_SENSITIVE, _session.getCaseSensitive());
 
         return model;
     }
+    
+    protected abstract String getNameLabel(); 
     
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)

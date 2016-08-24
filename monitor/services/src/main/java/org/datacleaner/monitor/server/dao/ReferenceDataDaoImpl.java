@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.dao;
 
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,7 +41,9 @@ import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
 import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
 import org.datacleaner.monitor.configuration.TenantContext;
-import org.datacleaner.reference.ReferenceDataCatalog;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.xml.XmlUtils;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
@@ -63,85 +65,58 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     private static final Logger logger = LoggerFactory.getLogger(ReferenceDataDaoImpl.class);
 
     @Override
-    public void removeReferenceData(TenantContext tenantContext, String referenceDataName)
-            throws IllegalArgumentException {
-        if (referenceDataName == null) {
-            throw new IllegalArgumentException("Reference data name can not be null");
-        }
-
-        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
-        final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = confFile.readFile(in -> {
-            return jaxbConfigurationAdaptor.unmarshall(in);
-        });
-
-// mytodo: only dictionaries for now
-        boolean found = false;
-        final List<Object> dictionaries = configuration.getReferenceDataCatalog()
-                .getDictionaries().getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();
-
-        for (Iterator<Object> it = dictionaries.iterator(); it.hasNext(); ) {
-            final String candidateName = getComparableName(it.next());
-            
-            if (referenceDataName.equals(candidateName)) {
-                it.remove();
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            throw new IllegalArgumentException("Could not find reference data with name '" + referenceDataName + "'");
-        }
-
-        confFile.writeFile(out -> {
-            jaxbConfigurationAdaptor.marshall(configuration, out);
-        });
-    }
-    
-    private String getComparableName(Object referenceDataObject) {
-         if (referenceDataObject instanceof SimplePatternType) {
-             return ((SimplePatternType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof RegexPatternType) {
-             return ((RegexPatternType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof TextFileDictionaryType) {
-             return ((TextFileDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof ValueListDictionaryType) {
-             return ((ValueListDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof DatastoreDictionaryType) {
-             return ((DatastoreDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof CustomElementType) {
-             return ((CustomElementType) referenceDataObject).getClassName();
-        } else if (referenceDataObject instanceof TextFileSynonymCatalogType) {
-             return ((TextFileSynonymCatalogType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof DatastoreSynonymCatalogType) {
-             return ((DatastoreSynonymCatalogType) referenceDataObject).getName();
-        }
+    public String updateReferenceDataSubSection(TenantContext tenantContext, Element updatedReferenceDataSubSection) {
+        final Document configurationFileDocument = getConfigurationFileDocument(tenantContext);
+        final Element referenceDataCatalogElement = getReferenceDataElement(configurationFileDocument);
+        removeOldElementIfExists(referenceDataCatalogElement.getChildNodes(), updatedReferenceDataSubSection);
+        final Node importedNode = configurationFileDocument.importNode(updatedReferenceDataSubSection, true);
+        referenceDataCatalogElement.appendChild(importedNode);
+        writeConfiguration(tenantContext, configurationFileDocument);
 
         return "";
     }
     
-    @Override
-    public Element parseReferenceDataElement(Reader reader) {
-        final DocumentBuilder documentBuilder = getDocumentBuilder();
-        final InputSource inputSource = new InputSource(reader);
-        
-        try {
-            final Document referenceDataDocument = documentBuilder.parse(inputSource);
-            return referenceDataDocument.getDocumentElement();
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
+    
+    private void removeOldElementIfExists(NodeList referenceDataNodes, Element updatedReferenceDataSubSection) {
+        Node oldNode = null;
+
+        for (int i = 0; i < referenceDataNodes.getLength(); i++) {
+            if (referenceDataNodes.item(i).getNodeName().equals(updatedReferenceDataSubSection.getNodeName())) {
+                oldNode = referenceDataNodes.item(i);
             }
-            
-            throw new IllegalStateException("Failed to parse referenceData element: " + e.getMessage(), e);
+        }
+
+        if (oldNode != null) {
+            oldNode.getParentNode().removeChild(oldNode);
         }
     }
+    
+    private void writeConfiguration(TenantContext tenantContext, Document configurationFileDocument) {
+        final Transformer transformer = getTransformer();
+        final Source source = new DOMSource(configurationFileDocument);
 
-    @Override
-    public String addReferenceData(TenantContext tenantContext, Element referenceDataElement) {
-        final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Document configurationFileDocument = confFile.readFile(in -> {
+        tenantContext.getConfigurationFile().writeFile(out -> {
+            final Result outputTarget = new StreamResult(out);
+            transformer.transform(source, outputTarget);
+            out.flush();
+        });
+        tenantContext.onConfigurationChanged();
+    }
+
+    private Element getReferenceDataElement(Document configurationFileDocument) {
+        final Element configurationFileDocumentElement = configurationFileDocument.getDocumentElement();
+        final Element referenceDataCatalogElement = DomUtils.getChildElementByTagName(configurationFileDocumentElement,
+                "reference-data-catalog");
+
+        if (referenceDataCatalogElement == null) {
+            throw new IllegalStateException("Could not find <reference-data-catalog> element in configuration file");
+        }
+
+        return referenceDataCatalogElement;
+    }
+
+    private Document getConfigurationFileDocument(TenantContext tenantContext) {
+        final Document configurationFileDocument = tenantContext.getConfigurationFile().readFile(in -> {
             try {
                 return getDocumentBuilder().parse(in);
             } catch (Exception e) {
@@ -149,43 +124,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
             }
         });
 
-        final Element configurationFileDocumentElement = configurationFileDocument.getDocumentElement();
-        final Element referenceDataCatalogElement = DomUtils.getChildElementByTagName(configurationFileDocumentElement,
-                "reference-data-catalog");
-        
-        if (referenceDataCatalogElement == null) {
-            throw new IllegalStateException("Could not find <reference-data-catalog> element in configuration file");
-        }
-
-        final Node importedNode = configurationFileDocument.importNode(referenceDataElement, true);
-        referenceDataCatalogElement.appendChild(importedNode);
-
-        final int referenceDataIndex = DomUtils.getChildElements(referenceDataCatalogElement).size() - 1;
-
-        final Transformer transformer = getTransformer();
-        final Source source = new DOMSource(configurationFileDocument);
-
-        confFile.writeFile(out -> {
-            final Result outputTarget = new StreamResult(out);
-            transformer.transform(source, outputTarget);
-            out.flush();
-        });
-
-        tenantContext.onConfigurationChanged();
-        String referenceDataName = referenceDataElement.getAttribute("name");
-        
-        if (referenceDataName == null) {
-            ReferenceDataCatalog referenceDataCatalog = tenantContext.getConfiguration().getReferenceDataCatalog();
-            String[] referenceDataNames = referenceDataCatalog.getDictionaryNames();
-            
-            try {
-                referenceDataName = referenceDataNames[referenceDataIndex];
-            } catch (IndexOutOfBoundsException e) {
-                logger.warn("Failed to get index {} of reference data names: {}", referenceDataCatalog,
-                        Arrays.toString(referenceDataNames));
-            }
-        }
-        return referenceDataName;
+        return configurationFileDocument;
     }
 
     protected DocumentBuilder getDocumentBuilder() {
@@ -194,5 +133,152 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     protected Transformer getTransformer() {
         return XmlUtils.createTransformer();
+    }
+// mytodo: refactor remove*
+    @Override
+    public Element parseReferenceDataElement(Reader reader) {
+        final DocumentBuilder documentBuilder = getDocumentBuilder();
+        final InputSource inputSource = new InputSource(reader);
+
+        try {
+            final Document referenceDataDocument = documentBuilder.parse(inputSource);
+            return referenceDataDocument.getDocumentElement();
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+
+            throw new IllegalStateException("Failed to parse referenceData element: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void removeDictionary(final TenantContext tenantContext, final Dictionary dictionary)
+            throws IllegalArgumentException {
+        if (dictionary == null) {
+            throw new IllegalArgumentException("String pattern name can not be null");
+        }
+
+        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
+        final RepositoryFile confFile = tenantContext.getConfigurationFile();
+        final Configuration configuration = confFile.readFile(in -> {
+            return jaxbConfigurationAdaptor.unmarshall(in);
+        });
+
+        boolean found = false;
+        final List<Object> dictionaries = configuration.getReferenceDataCatalog()
+                .getDictionaries().getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();
+
+        for (Iterator<Object> it = dictionaries.iterator(); it.hasNext(); ) {
+            final String candidateName = getComparableName(it.next());
+
+            if (dictionary.equals(candidateName)) {
+                it.remove();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException("Could not find string pattern with name '" + dictionary + "'");
+        }
+
+        confFile.writeFile(out -> {
+            jaxbConfigurationAdaptor.marshall(configuration, out);
+        });
+    }
+
+    @Override
+    public void removeSynonymCatalog(final TenantContext tenantContext, final SynonymCatalog synonymCatalog)
+            throws IllegalArgumentException {
+        if (synonymCatalog == null) {
+            throw new IllegalArgumentException("String pattern name can not be null");
+        }
+
+        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
+        final RepositoryFile confFile = tenantContext.getConfigurationFile();
+        final Configuration configuration = confFile.readFile(in -> {
+            return jaxbConfigurationAdaptor.unmarshall(in);
+        });
+
+        boolean found = false;
+        final List<Object> synonymCatalogs = configuration.getReferenceDataCatalog()
+                .getSynonymCatalogs().getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog();
+
+        for (Iterator<Object> it = synonymCatalogs.iterator(); it.hasNext(); ) {
+            final String candidateName = getComparableName(it.next());
+
+            if (synonymCatalog.equals(candidateName)) {
+                it.remove();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException("Could not find string pattern with name '" + synonymCatalog + "'");
+        }
+
+        confFile.writeFile(out -> {
+            jaxbConfigurationAdaptor.marshall(configuration, out);
+        });
+    }
+
+    @Override
+    public void removeStringPattern(final TenantContext tenantContext, final StringPattern stringPattern)
+            throws IllegalArgumentException {
+        if (stringPattern == null) {
+            throw new IllegalArgumentException("String pattern name can not be null");
+        }
+
+        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
+        final RepositoryFile confFile = tenantContext.getConfigurationFile();
+        final Configuration configuration = confFile.readFile(in -> {
+            return jaxbConfigurationAdaptor.unmarshall(in);
+        });
+
+        boolean found = false;
+        final List<Object> stringPatterns = configuration.getReferenceDataCatalog().getStringPatterns()
+                .getRegexPatternOrSimplePattern();
+
+        for (Iterator<Object> it = stringPatterns.iterator(); it.hasNext(); ) {
+            final String candidateName = getComparableName(it.next());
+
+            if (stringPattern.equals(candidateName)) {
+                it.remove();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException("Could not find string pattern with name '" + stringPattern + "'");
+        }
+
+        confFile.writeFile(out -> {
+            jaxbConfigurationAdaptor.marshall(configuration, out);
+        });
+    }
+
+    private String getComparableName(Object referenceDataObject) {
+        if (referenceDataObject instanceof SimplePatternType) {
+            return ((SimplePatternType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof RegexPatternType) {
+            return ((RegexPatternType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof TextFileDictionaryType) {
+            return ((TextFileDictionaryType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof ValueListDictionaryType) {
+            return ((ValueListDictionaryType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof DatastoreDictionaryType) {
+            return ((DatastoreDictionaryType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof CustomElementType) {
+            return ((CustomElementType) referenceDataObject).getClassName();
+        } else if (referenceDataObject instanceof TextFileSynonymCatalogType) {
+            return ((TextFileSynonymCatalogType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof DatastoreSynonymCatalogType) {
+            return ((DatastoreSynonymCatalogType) referenceDataObject).getName();
+        }
+
+        return "";
     }
 }

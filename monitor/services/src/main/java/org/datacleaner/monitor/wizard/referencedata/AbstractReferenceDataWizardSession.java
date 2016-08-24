@@ -52,10 +52,10 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
     public String finished() {
         final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final TenantContext tenantContext = _wizardContext.getTenantContext();
-        final Element referenceDataNode = createReferenceDataElement(documentBuilder);
+        final Element updatedReferenceDataSubSection = getUpdatedReferenceDataSubSection(documentBuilder);
         final ReferenceDataDao referenceDataDao = getReferenceDataDao();
         
-        return referenceDataDao.addReferenceData(tenantContext, referenceDataNode);
+        return referenceDataDao.updateReferenceDataSubSection(tenantContext, updatedReferenceDataSubSection);
     }
 
     protected ReferenceDataDao getReferenceDataDao() {
@@ -63,11 +63,10 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
     }
 
     /**
-     * Creates the final reference data node (to be inserted into conf.xml) as prescribed by the wizard. 
-     * This method will be invoked when no more pages are available and the wizard has ended.
+     * Returns updated reference data sub-section (dictionaries, synonym-catalogs, string-patterns).
      * @param documentBuilder
      * 
      * @return
      */
-    protected abstract Element createReferenceDataElement(DocumentBuilder documentBuilder);
+    protected abstract Element getUpdatedReferenceDataSubSection(DocumentBuilder documentBuilder);
 }

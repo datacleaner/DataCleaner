@@ -55,7 +55,7 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     }
 
     @Override
-    protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
+    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
         final Element dictionariesElement = writer.getDictionariesElement();

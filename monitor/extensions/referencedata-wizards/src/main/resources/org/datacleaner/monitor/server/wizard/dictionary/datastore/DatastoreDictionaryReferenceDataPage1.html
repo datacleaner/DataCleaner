@@ -1,0 +1,18 @@
+<div style="min-height: 200px; background-repeat: no-repeat; background-position: bottom right; ">
+    <form action="repository/demo/jobs/multiple_upload" method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td><label for-id="name">Dictionary name</label></td>
+				<td><input type="text" id="name" name="name"/></td>
+			</tr>
+            <tr>
+				<td><label for-id="datastore">Datastore</label></td>
+				<td>
+					<select id="datastore" name="datastore">
+                        ${datastoreOptions}
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>

@@ -39,7 +39,7 @@ public class DatastoreDictionaryReferenceDataWizard implements ReferenceDataWiza
 
     @Override
     public int getExpectedPageCount() {
-        return 1;
+        return 4;
     }
 
     @Override

@@ -26,7 +26,6 @@ import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardS
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 final class DatastoreDictionaryReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
@@ -35,6 +34,8 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
 
     private String _name;
     private String _datastore;
+    private String _schema;
+    private String _table;
     private String _column;
 
     public DatastoreDictionaryReferenceDataWizardSession(ReferenceDataWizardContext context) {
@@ -43,23 +44,17 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
 
     @Override
     public WizardPageController firstPageController() {
-        return new DatastoreDictionaryReferenceDataPage(this);
+        return new DatastoreDictionaryReferenceDataPage1(this);
     }
 
     @Override
     public Integer getPageCount() {
-        return 1;
+        return 4;
     }
 
     @Override
     protected Element createReferenceDataElement(final DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-        final Element element = doc.createElement("datastore-dictionary-reference-data");
-        element.setAttribute("name", _name);
-        element.setAttribute("datastore", _datastore);
-        element.setAttribute("column", _column);
-
-        return element;
+        return null;// mytodo
     }
 
     public String getName() {
@@ -69,6 +64,30 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
     public void setName(final String name) {
         _name = name;
     }
+    
+    public String getDatastore() {
+        return _datastore;
+    }
+
+    public void setDatastore(final String datastore) {
+        _datastore = datastore;
+    }
+
+    public String getSchema() {
+        return _schema;
+    }
+
+    public void setSchema(final String schema) {
+        _schema = schema;
+    }
+
+    public String getTable() {
+        return _table;
+    }
+
+    public void setTable(final String table) {
+        _table = table;
+    }
 
     public String getColumn() {
         return _column;
@@ -76,13 +95,5 @@ final class DatastoreDictionaryReferenceDataWizardSession extends AbstractRefere
 
     public void setColumn(final String column) {
         _column = column;
-    }
-
-    public String getDatastore() {
-        return _datastore;
-    }
-
-    public void setDatastore(final String datastore) {
-        _datastore = datastore;
     }
 }

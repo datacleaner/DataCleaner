@@ -23,41 +23,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
+import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-final class DatastoreDictionaryReferenceDataPage extends AbstractFreemarkerWizardPage {
+final class DatastoreDictionaryReferenceDataPage4 extends AbstractFreemarkerWizardPage {
 
     private final DatastoreDictionaryReferenceDataWizardSession _session;
 
-    public DatastoreDictionaryReferenceDataPage(DatastoreDictionaryReferenceDataWizardSession session) {
+    public DatastoreDictionaryReferenceDataPage4(DatastoreDictionaryReferenceDataWizardSession session) {
         _session = session;
     }
 
     @Override
     public Integer getPageIndex() {
-        return 0;
+        return 3;
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
+        _session.setColumn(getString(formParameters, "column"));
+        
         return null;
     }
 
     @Override
     protected String getTemplateFilename() {
-        return "DatastoreDictionaryReferenceDataPage.html";
+        return "DatastoreDictionaryReferenceDataPage4.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("datastore", _session.getDatastore());
         model.put("column", _session.getColumn());
-        
+        model.put("columnOptions", getColumnOptions());
+
         return model;
+    }
+    
+    private String getColumnOptions() {
+        final StringBuilder builder = new StringBuilder();
+        final DatastoreIdentifier datastoreId = new DatastoreIdentifier(_session.getDatastore());
+        final Datastore datastore = _session.getWizardContext().getTenantContext().getDatastore(datastoreId);
+        final Schema schema = datastore.openConnection().getSchemaNavigator().getSchemaByName(_session.getSchema());
+        final Table table = schema.getTableByName(_session.getTable());
+        
+        for (Column column : table.getColumns()) {
+            builder.append(String.format("<option value=\"%s\">%s</option>", column.getName(), column.getName()));
+        }
+        
+        return builder.toString();
     }
 }

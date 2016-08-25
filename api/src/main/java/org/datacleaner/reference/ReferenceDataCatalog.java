@@ -68,14 +68,6 @@ public interface ReferenceDataCatalog extends Serializable {
     }
 
     /**
-     * Removes dictionary by name.
-     * 
-     * @param name
-     * @return
-     */
-    boolean removeDictionary(String name);// mytodo: remove
-    
-    /**
      * Gets the names of all registered {@link SynonymCatalog}.
      * 
      * @return
@@ -99,14 +91,6 @@ public interface ReferenceDataCatalog extends Serializable {
     default boolean containsSynonymCatalog(String name) {
         return getSynonymCatalog(name) != null;
     }
-
-    /**
-     * Removes synonym catalog by name.
-     *
-     * @param name
-     * @return
-     */
-    boolean removeSynonymCatalog(String name);// mytodo: remove
     
     /**
      * Gets the names of all registered {@link StringPattern}s.
@@ -132,12 +116,4 @@ public interface ReferenceDataCatalog extends Serializable {
     default boolean containsStringPattern(String name) {
         return getStringPattern(name) != null;
     }
-
-    /**
-     * Removes string pattern by name.
-     *
-     * @param name
-     * @return
-     */
-    boolean removeStringPattern(String name);// mytodo: remove
 }

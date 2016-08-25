@@ -25,6 +25,8 @@ import java.util.Set;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.referencedata.ReferenceDataItem;
 import org.datacleaner.monitor.referencedata.ReferenceDataService;
+import org.datacleaner.monitor.server.dao.ReferenceDataDao;
+import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.springframework.beans.BeansException;
@@ -59,19 +61,27 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
 
     @Override
     public boolean removeItem(final TenantIdentifier tenant, final ReferenceDataItem.Type type, final String name) {
+        final ReferenceDataDao dao = new ReferenceDataDaoImpl();
+
         if (type.equals(ReferenceDataItem.Type.DICTIONARY) &&
                 getReferenceDataCatalog(tenant).containsDictionary(name)) {
-            return getReferenceDataCatalog(tenant).removeDictionary(name);
+            dao.removeDictionary(_contextFactory.getContext(tenant),
+                    getReferenceDataCatalog(tenant).getDictionary(name));
+            return true;
         }
 
         if (type.equals(ReferenceDataItem.Type.SYNONYM_CATALOG) &&
                 getReferenceDataCatalog(tenant).containsSynonymCatalog(name)) {
-            return getReferenceDataCatalog(tenant).removeSynonymCatalog(name);
+            dao.removeSynonymCatalog(_contextFactory.getContext(tenant),
+                    getReferenceDataCatalog(tenant).getSynonymCatalog(name));
+            return true;
         }
 
         if (type.equals(ReferenceDataItem.Type.STRING_PATTERN) &&
                 getReferenceDataCatalog(tenant).containsStringPattern(name)) {
-            return getReferenceDataCatalog(tenant).removeStringPattern(name);
+            dao.removeStringPattern(_contextFactory.getContext(tenant),
+                    getReferenceDataCatalog(tenant).getStringPattern(name));
+            return true;
         }
 
         return false;

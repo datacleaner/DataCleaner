@@ -157,13 +157,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    @Override
-    public boolean removeDictionary(String dictionaryName) {
-        removeDictionary(getDictionary(dictionaryName));
-
-        return true;
-    }
-
     public void removeDictionary(Dictionary dict) {
         removeDictionary(dict, true);
     }
@@ -210,13 +203,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    @Override
-    public boolean removeStringPattern(String stringPatternName) {
-        removeStringPattern(getStringPattern(stringPatternName));
-        
-        return true;
-    }
-    
     public void removeStringPattern(StringPattern sp) {
         removeStringPattern(sp, true);
     }
@@ -281,12 +267,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
     
-    public boolean removeSynonymCatalog(String synonymCatalogName) {
-        removeSynonymCatalog(getSynonymCatalog(synonymCatalogName));
-        
-        return true;
-    }
-
     public void removeSynonymCatalog(SynonymCatalog sc) {
         removeSynonymCatalog(sc, true);
     }

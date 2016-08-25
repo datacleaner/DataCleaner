@@ -37,7 +37,14 @@ final class DatastoreSynonymCatalogReferenceDataPage4 extends DatastorePage4 {
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setColumn(getString(formParameters, PROPERTY_COLUMN));
-
-        return null;
+        final DatastoreSynonymCatalogReferenceDataWizardSession newSession = 
+                new DatastoreSynonymCatalogReferenceDataWizardSession(_session.getWizardContext());
+        newSession.setName(_session.getName());
+        newSession.setDatastore(_session.getDatastore());
+        newSession.setSchema(_session.getSchema());
+        newSession.setTable(_session.getTable());
+        newSession.setColumn(_session.getColumn());
+        
+        return new DatastoreSynonymCatalogReferenceDataPage5(newSession);
     }
 }

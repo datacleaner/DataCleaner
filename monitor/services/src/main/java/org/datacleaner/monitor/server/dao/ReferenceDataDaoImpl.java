@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.dao;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.repository.RepositoryFile;
@@ -134,7 +136,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     protected Transformer getTransformer() {
         return XmlUtils.createTransformer();
     }
-// mytodo: refactor remove*
+
     @Override
     public Element parseReferenceDataElement(Reader reader) {
         final DocumentBuilder documentBuilder = getDocumentBuilder();
@@ -155,96 +157,40 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     @Override
     public void removeDictionary(final TenantContext tenantContext, final Dictionary dictionary)
             throws IllegalArgumentException {
-        if (dictionary == null) {
-            throw new IllegalArgumentException("String pattern name can not be null");
-        }
-
-        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
-        final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = confFile.readFile(in -> {
-            return jaxbConfigurationAdaptor.unmarshall(in);
-        });
-
-        boolean found = false;
-        final List<Object> dictionaries = configuration.getReferenceDataCatalog()
-                .getDictionaries().getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();
-
-        for (Iterator<Object> it = dictionaries.iterator(); it.hasNext(); ) {
-            final String candidateName = getComparableName(it.next());
-
-            if (dictionary.equals(candidateName)) {
-                it.remove();
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            throw new IllegalArgumentException("Could not find string pattern with name '" + dictionary + "'");
-        }
-
-        confFile.writeFile(out -> {
-            jaxbConfigurationAdaptor.marshall(configuration, out);
-        });
+        removeReferenceData(tenantContext, dictionary);
     }
 
     @Override
     public void removeSynonymCatalog(final TenantContext tenantContext, final SynonymCatalog synonymCatalog)
             throws IllegalArgumentException {
-        if (synonymCatalog == null) {
-            throw new IllegalArgumentException("String pattern name can not be null");
-        }
-
-        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
-        final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = confFile.readFile(in -> {
-            return jaxbConfigurationAdaptor.unmarshall(in);
-        });
-
-        boolean found = false;
-        final List<Object> synonymCatalogs = configuration.getReferenceDataCatalog()
-                .getSynonymCatalogs().getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog();
-
-        for (Iterator<Object> it = synonymCatalogs.iterator(); it.hasNext(); ) {
-            final String candidateName = getComparableName(it.next());
-
-            if (synonymCatalog.equals(candidateName)) {
-                it.remove();
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            throw new IllegalArgumentException("Could not find string pattern with name '" + synonymCatalog + "'");
-        }
-
-        confFile.writeFile(out -> {
-            jaxbConfigurationAdaptor.marshall(configuration, out);
-        });
+        removeReferenceData(tenantContext, synonymCatalog);
     }
 
     @Override
     public void removeStringPattern(final TenantContext tenantContext, final StringPattern stringPattern)
             throws IllegalArgumentException {
-        if (stringPattern == null) {
-            throw new IllegalArgumentException("String pattern name can not be null");
+        removeReferenceData(tenantContext, stringPattern);
+    }
+
+    public void removeReferenceData(final TenantContext tenantContext, final ReferenceData referenceData)
+            throws IllegalArgumentException {
+        if (referenceData == null) {
+            throw new IllegalArgumentException("Reference data can not be null");
         }
 
         final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
-        final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = confFile.readFile(in -> {
+        final RepositoryFile configurationFile = tenantContext.getConfigurationFile();
+        final Configuration configuration = configurationFile.readFile(in -> {
             return jaxbConfigurationAdaptor.unmarshall(in);
         });
 
         boolean found = false;
-        final List<Object> stringPatterns = configuration.getReferenceDataCatalog().getStringPatterns()
-                .getRegexPatternOrSimplePattern();
+        final List<Object> referenceDataList = getReferenceDataListByType(configuration, referenceData);
 
-        for (Iterator<Object> it = stringPatterns.iterator(); it.hasNext(); ) {
+        for (Iterator<Object> it = referenceDataList.iterator(); it.hasNext(); ) {
             final String candidateName = getComparableName(it.next());
 
-            if (stringPattern.equals(candidateName)) {
+            if (referenceData.getName().equals(candidateName)) {
                 it.remove();
                 found = true;
                 break;
@@ -252,12 +198,27 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         }
 
         if (!found) {
-            throw new IllegalArgumentException("Could not find string pattern with name '" + stringPattern + "'");
+            throw new IllegalArgumentException("Could not find reference data with name '" + referenceData + "'");
         }
 
-        confFile.writeFile(out -> {
+        configurationFile.writeFile(out -> {
             jaxbConfigurationAdaptor.marshall(configuration, out);
         });
+    }
+
+    private List<Object> getReferenceDataListByType(Configuration configuration, ReferenceData referenceData) {
+        if (referenceData instanceof Dictionary) {
+            return configuration.getReferenceDataCatalog().getDictionaries()
+                    .getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();
+        } else if (referenceData instanceof SynonymCatalog) {
+            return configuration.getReferenceDataCatalog().getSynonymCatalogs()
+                    .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog();
+        } else if (referenceData instanceof StringPattern) {
+            return configuration.getReferenceDataCatalog().getStringPatterns()
+                    .getRegexPatternOrSimplePattern();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     private String getComparableName(Object referenceDataObject) {

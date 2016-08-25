@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -28,7 +31,8 @@ import org.w3c.dom.Element;
 
 final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreWizardSession {
 
-    private String _synonymColumn;
+    private List<String> _synonymColumns = new ArrayList<>();
+    private boolean _addNextSynonymColumn;
     
     public DatastoreSynonymCatalogReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
@@ -43,18 +47,22 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     protected Element addElementToConfiguration() {
         final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
         final String fullColumnName = _schema + "." + _table + "." + _column;
-        // mytodo
-        final SynonymCatalog catalog = new DatastoreSynonymCatalog(_name, _datastore, fullColumnName, new String[] { });
+        final SynonymCatalog catalog = new DatastoreSynonymCatalog(_name, _datastore, fullColumnName, 
+                _synonymColumns.toArray(new String[_synonymColumns.size()]));
         synonymCatalogsElement.appendChild(_writer.externalize(catalog));
 
         return synonymCatalogsElement;
     }
 
-    public String getSynonymColumn() {
-        return _synonymColumn;
+    public List<String> getSynonymColumns() {
+        return _synonymColumns;
     }
 
-    public void setSynonymColumn(final String synonymColumn) {
-        _synonymColumn = synonymColumn;
+    public boolean isAddNextSynonymColumn() {
+        return _addNextSynonymColumn;
+    }
+
+    public void setAddNextSynonymColumn(final boolean addNextSynonymColumn) {
+        _addNextSynonymColumn = addNextSynonymColumn;
     }
 }

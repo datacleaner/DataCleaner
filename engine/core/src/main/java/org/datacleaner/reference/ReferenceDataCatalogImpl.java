@@ -109,11 +109,6 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 		return null;
 	}
 
-	@Override
-	public boolean removeDictionary(final String name) {
-		return removeItem(_dictionaries, name);
-	}
-	
 	private boolean removeItem(Collection collection, String name) {
 		for (Object item : collection) {
 			if (item instanceof HasName && ((HasName)item).getName().equals(name)) {
@@ -143,11 +138,6 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 	}
 
 	@Override
-	public boolean removeSynonymCatalog(final String name) {
-		return removeItem(_synonymCatalogs, name);
-	}
-
-	@Override
 	public StringPattern getStringPattern(String name) {
 		if (name != null) {
 			for (StringPattern sp : _stringPatterns) {
@@ -157,11 +147,6 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public boolean removeStringPattern(final String name) {
-		return removeItem(_stringPatterns, name);
 	}
 
 	@Override

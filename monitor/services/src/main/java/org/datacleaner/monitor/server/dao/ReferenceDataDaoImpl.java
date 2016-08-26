@@ -118,15 +118,13 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     }
 
     private Document getConfigurationFileDocument(TenantContext tenantContext) {
-        final Document configurationFileDocument = tenantContext.getConfigurationFile().readFile(in -> {
+        return tenantContext.getConfigurationFile().readFile(in -> {
             try {
                 return getDocumentBuilder().parse(in);
             } catch (Exception e) {
                 throw new IllegalStateException("Could not parse configuration file", e);
             }
         });
-
-        return configurationFileDocument;
     }
 
     protected DocumentBuilder getDocumentBuilder() {
@@ -215,7 +213,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
                     .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog();
         } else if (referenceData instanceof StringPattern) {
             return configuration.getReferenceDataCatalog().getStringPatterns()
-                    .getRegexPatternOrSimplePattern();
+                    .getRegexPatternOrRegexSwapPatternOrSimplePattern();
         } else {
             return new ArrayList<>();
         }

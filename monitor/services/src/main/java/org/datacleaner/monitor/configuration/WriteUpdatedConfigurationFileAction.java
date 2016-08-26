@@ -26,7 +26,6 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
@@ -71,11 +70,8 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
             if (existingConfigurationFile == null) {
                 existingConfiguration = null;
             } else {
-                existingConfiguration = existingConfigurationFile.readFile(new Func<InputStream, Configuration>() {
-                    @Override
-                    public Configuration eval(InputStream in) {
-                        return unmarshal(in);
-                    }
+                existingConfiguration = existingConfigurationFile.readFile(in -> {
+                    return unmarshal(in);
                 });
             }
         } catch (Exception e) {
@@ -133,9 +129,9 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
                         .setStringPatterns(newConfiguration.getReferenceDataCatalog().getStringPatterns());
             } else {
                 addUniqueValues(currentConfiguration.getReferenceDataCatalog().getStringPatterns()
-                                .getRegexPatternOrSimplePattern(),
+                                .getRegexPatternOrRegexSwapPatternOrSimplePattern(),
                         newConfiguration.getReferenceDataCatalog()
-                                .getStringPatterns().getRegexPatternOrSimplePattern());
+                                .getStringPatterns().getRegexPatternOrRegexSwapPatternOrSimplePattern());
             }
         }
     }

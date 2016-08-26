@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.regexswap;
+package org.datacleaner.reference.regexswap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +41,8 @@ public final class RegexSwapClient {
 	public static final String CATEGORIES_URL = "https://datacleaner.org/ws/categories";
 	public static final String REGEXES_URL = "https://datacleaner.org/ws/regexes";
 
-	private final Map<String, Category> _categories = new HashMap<String, Category>();
-	private final Map<String, Regex> _regexes = new HashMap<String, Regex>();
+	private final Map<String, Category> _categories = new HashMap<>();
+	private final Map<String, Regex> _regexes = new HashMap<>();
 	private final HttpClient _httpClient;
 
 	public RegexSwapClient(HttpClient httpClient) {
@@ -104,7 +104,7 @@ public final class RegexSwapClient {
 		int positiveVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "positiveVotes"));
 		int negativeVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "negativeVotes"));
 		String detailsUrl = HttpXmlUtils.getChildNodeText(regexNode, "detailsUrl");
-		List<Category> categories = new ArrayList<Category>();
+		List<Category> categories = new ArrayList<>();
 		List<Node> categoriesNodes = HttpXmlUtils.getChildNodesByName(regexNode, "categories");
 		if (!categoriesNodes.isEmpty()) {
 			Node categoriesNode = categoriesNodes.get(0);
@@ -131,7 +131,7 @@ public final class RegexSwapClient {
 	}
 
 	public List<Regex> getRegexes(Category category) {
-		List<Regex> regexes = new ArrayList<Regex>();
+		List<Regex> regexes = new ArrayList<>();
 		Node rootNode = HttpXmlUtils.getRootNode(_httpClient, category.getDetailsUrl());
 		List<Node> regexNodes = HttpXmlUtils.getChildNodesByName(rootNode, "regex");
 		for (Node regexNode : regexNodes) {
@@ -148,7 +148,7 @@ public final class RegexSwapClient {
 			List<Category> categories;
 			Regex regex = _regexes.get(name);
 			if (regex == null) {
-				categories = new ArrayList<Category>();
+				categories = new ArrayList<>();
 				regex = new Regex(name, description, expression, author, timestamp, positiveVotes, negativeVotes,
 						detailsUrl, categories);
 			} else {

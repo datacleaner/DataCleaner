@@ -26,7 +26,7 @@ import java.util.Map;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
-import org.datacleaner.regexswap.Category;
+import org.datacleaner.reference.regexswap.Category;
 
 final class RegexSwapStringPatternReferenceDataPage1 extends AbstractFreemarkerWizardPage {
     private static final String PROPERTY_CATEGORY_OPTIONS = "categoryOptions";

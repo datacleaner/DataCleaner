@@ -17,12 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.regexswap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+package org.datacleaner.reference.regexswap;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +26,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.test.TestHelper;
 import org.junit.Assume;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class RegexSwapClientTest {
 

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.regexswap;
+package org.datacleaner.reference.regexswap;
 
 import java.io.Serializable;
 import java.util.List;
@@ -104,8 +104,7 @@ public final class Regex extends BaseObject implements Serializable {
 	}
 
 	public String createWebsiteUrl() {
-		String url = "https://datacleaner.org/regex/" + getName().replaceAll(" ", "%20");
-		return url;
+		return "https://datacleaner.org/regex/" + getName().replaceAll(" ", "%20");
 	}
 
 	@Override

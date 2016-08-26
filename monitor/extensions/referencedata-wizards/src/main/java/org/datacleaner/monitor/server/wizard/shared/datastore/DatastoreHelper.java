@@ -1,3 +1,22 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.monitor.server.wizard.shared.datastore;
 
 import java.util.List;
@@ -35,14 +54,11 @@ public class DatastoreHelper {
 
         for (Object item : objects) {
             final String name = (item instanceof HasName) ? ((HasName)item).getName() : item.toString();
-            builder.append(getOptionHtml(name));
+            final String option = String.format("<option value=\"%s\">%s</option>", name, name);
+            builder.append(option);
         }
 
         return builder.toString();
-    }
-
-    private static String getOptionHtml(final String name) {
-        return String.format("<option value=\"%s\">%s</option>", name, name);
     }
 
     private static Datastore getDatastore(final TenantContext tenantContext, final String datastoreName) {

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.stringpattern.regexpswap;
+package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -26,24 +26,27 @@ import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.RegexStringPattern;
+import org.datacleaner.reference.StringPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-final class RegexpSwapStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
+final class RegexStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegexpSwapStringPatternReferenceDataWizardSession.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegexStringPatternReferenceDataWizardSession.class);
 
-    private String _category;
+    private String _name;
     private String _expression;
+    private String _matchEntireString;
 
-    public RegexpSwapStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public RegexStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new RegexpSwapStringPatternReferenceDataPage(this);
+        return new RegexStringPatternReferenceDataPage(this);
     }
 
     @Override
@@ -56,21 +59,18 @@ final class RegexpSwapStringPatternReferenceDataWizardSession extends AbstractRe
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
         final Element stringPatternsElement = writer.getStringPatternsElement();
-        /*// mytodo
-        Regex regex = new Regex(...);
-        final StringPattern stringPattern = new RegexSwapStringPattern(regex);
+        final StringPattern stringPattern = new RegexStringPattern(_name, _expression, _matchEntireString.equals("on"));
         stringPatternsElement.appendChild(writer.externalize(stringPattern));
-        */
 
         return stringPatternsElement;
     }
 
-    public String getCategory() {
-        return _category;
+    public String getName() {
+        return _name;
     }
 
-    public void setCategory(final String category) {
-        _category = category;
+    public void setName(final String name) {
+        _name = name;
     }
 
     public String getExpression() {
@@ -79,5 +79,13 @@ final class RegexpSwapStringPatternReferenceDataWizardSession extends AbstractRe
 
     public void setExpression(final String expression) {
         _expression = expression;
+    }
+
+    public String getMatchEntireString() {
+        return _matchEntireString;
+    }
+
+    public void setMatchEntireString(final String matchEntireString) {
+        _matchEntireString = matchEntireString;
     }
 }

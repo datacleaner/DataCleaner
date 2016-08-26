@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.stringpattern.regexp;
+package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -25,7 +25,7 @@ import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegexpStringPatternReferenceDataWizard implements ReferenceDataWizard {
+public class RegexSwapStringPatternReferenceDataWizard implements ReferenceDataWizard {
 
     @Override
     public boolean isApplicableTo(final ReferenceDataWizardContext context) {
@@ -34,16 +34,16 @@ public class RegexpStringPatternReferenceDataWizard implements ReferenceDataWiza
 
     @Override
     public String getDisplayName() {
-        return "Regexp string pattern";
+        return "Regex swap string pattern";
     }
 
     @Override
     public int getExpectedPageCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     public ReferenceDataWizardSession start(final ReferenceDataWizardContext context) {
-        return new RegexpStringPatternReferenceDataWizardSession(context);
+        return new RegexSwapStringPatternReferenceDataWizardSession(context);
     }
 }

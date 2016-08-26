@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.stringpattern.regexpswap;
+package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +26,15 @@ import java.util.Map;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.regexswap.Category;
 
-final class RegexpSwapStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
+final class RegexSwapStringPatternReferenceDataPage1 extends AbstractFreemarkerWizardPage {
+    private static final String PROPERTY_CATEGORY_OPTIONS = "categoryOptions";
+    private static final String PROPERTY_CATEGORY = "category";
 
-    private final RegexpSwapStringPatternReferenceDataWizardSession _session;
+    private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexpSwapStringPatternReferenceDataPage(RegexpSwapStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPage1(RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -43,21 +46,34 @@ final class RegexpSwapStringPatternReferenceDataPage extends AbstractFreemarkerW
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-// mytodo
-        return null;
+        _session.setCategory(getString(formParameters, PROPERTY_CATEGORY));
+
+        return new RegexSwapStringPatternReferenceDataPage2(_session);
     }
 
     @Override
     protected String getTemplateFilename() {
-        return "RegexpSwapStringPatternReferenceDataPage.html";
+        return "RegexSwapStringPatternReferenceDataPage1.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put("category", _session.getCategory());
-        model.put("expression", _session.getExpression());
-        
+        model.put(PROPERTY_CATEGORY_OPTIONS, getCategoryOptions());
+        model.put(PROPERTY_CATEGORY, _session.getCategory());
+
         return model;
+    }
+
+    private String getCategoryOptions() {
+        final StringBuilder builder = new StringBuilder();
+
+        for (Category category : _session.getClient().getCategories()) {
+            final String option =
+                    String.format("<option value=\"%s\">%s</option>", category.getName(), category.getName());
+            builder.append(option);
+        }
+
+        return builder.toString();
     }
 }

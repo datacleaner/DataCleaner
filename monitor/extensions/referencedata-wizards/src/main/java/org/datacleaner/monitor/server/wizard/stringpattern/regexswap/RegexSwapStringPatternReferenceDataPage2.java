@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.stringpattern.regexp;
+package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,16 +26,17 @@ import java.util.Map;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.regexswap.Category;
+import org.datacleaner.regexswap.Regex;
+import org.datacleaner.regexswap.RegexSwapClient;
 
-final class RegexpStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
-    
-    private static final String PROPERTY_MATCH_ENTIRE_STRING = "matchEntireString";
+final class RegexSwapStringPatternReferenceDataPage2 extends AbstractFreemarkerWizardPage {
+    private static final String PROPERTY_NAME_OPTIONS = "nameOptions";
     private static final String PROPERTY_NAME = "name";
-    private static final String PROPERTY_EXPRESSION = "expression";
 
-    private final RegexpStringPatternReferenceDataWizardSession _session;
+    private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexpStringPatternReferenceDataPage(RegexpStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPage2(RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -47,29 +48,41 @@ final class RegexpStringPatternReferenceDataPage extends AbstractFreemarkerWizar
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        final String matchEntireString = getBoolean(formParameters, PROPERTY_MATCH_ENTIRE_STRING) ? "on" : "";
-        final String name = getString(formParameters, PROPERTY_NAME);
-        final String expression = getString(formParameters, PROPERTY_EXPRESSION);
+        _session.setName(getString(formParameters, PROPERTY_NAME));
 
-        _session.setName(name);
-        _session.setExpression(expression);
-        _session.setMatchEntireString(matchEntireString);
-        
         return null;
     }
 
     @Override
     protected String getTemplateFilename() {
-        return "RegexpStringPatternReferenceDataPage.html";
+        return "RegexSwapStringPatternReferenceDataPage2.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put("name", _session.getName());
-        model.put("expression", _session.getExpression());
-        model.put("matchEntireString", _session.isMatchEntireString());
-        
+        model.put(PROPERTY_NAME_OPTIONS, getNameOptions());
+        model.put(PROPERTY_NAME, _session.getName());
+
         return model;
+    }
+
+    private String getNameOptions() {
+        final StringBuilder builder = new StringBuilder();
+
+        for (Regex regex : _session.getClient().getRegexes(createCategory())) {
+            final String option =
+                    String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
+            builder.append(option);
+        }
+
+        return builder.toString();
+    }
+
+    private Category createCategory() {
+        final String categoryName = _session.getCategory();
+        final String detailsUrl =
+                String.format("%s/%s", RegexSwapClient.REGEXES_URL, categoryName.replaceAll(" ", "%20"));
+        return new Category(_session.getCategory(), "", detailsUrl);
     }
 }

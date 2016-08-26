@@ -17,41 +17,46 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.stringpattern.regexp;
+package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.http.impl.client.HttpClients;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.regexswap.Regex;
+import org.datacleaner.regexswap.RegexSwapClient;
+import org.datacleaner.regexswap.RegexSwapStringPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-final class RegexpStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
+final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegexpStringPatternReferenceDataWizardSession.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(RegexSwapStringPatternReferenceDataWizardSession.class);
 
+    private String _category;
     private String _name;
-    private String _expression;
-    private String _matchEntireString;
+    private final RegexSwapClient _client;
 
-    public RegexpStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public RegexSwapStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
+        _client = new RegexSwapClient(HttpClients.createSystem());
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new RegexpStringPatternReferenceDataPage(this);
+        return new RegexSwapStringPatternReferenceDataPage1(this);
     }
 
     @Override
     public Integer getPageCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -59,10 +64,23 @@ final class RegexpStringPatternReferenceDataWizardSession extends AbstractRefere
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
         final Element stringPatternsElement = writer.getStringPatternsElement();
-        final StringPattern stringPattern = new RegexStringPattern(_name, _expression, _matchEntireString.equals("on"));
+        final Regex regex = getClient().getRegexByName(_name);
+        final StringPattern stringPattern = new RegexSwapStringPattern(regex);
         stringPatternsElement.appendChild(writer.externalize(stringPattern));
 
         return stringPatternsElement;
+    }
+
+    public RegexSwapClient getClient() {
+        return _client;
+    }
+
+    public String getCategory() {
+        return _category;
+    }
+
+    public void setCategory(final String category) {
+        _category = category;
     }
 
     public String getName() {
@@ -71,21 +89,5 @@ final class RegexpStringPatternReferenceDataWizardSession extends AbstractRefere
 
     public void setName(final String name) {
         _name = name;
-    }
-
-    public String getExpression() {
-        return _expression;
-    }
-
-    public void setExpression(final String expression) {
-        _expression = expression;
-    }
-
-    public String isMatchEntireString() {
-        return _matchEntireString;
-    }
-
-    public void setMatchEntireString(final String matchEntireString) {
-        _matchEntireString = matchEntireString;
     }
 }

@@ -19,9 +19,6 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -31,13 +28,19 @@ import org.w3c.dom.Element;
 
 final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreWizardSession {
 
-    private List<String> _synonymColumns = new ArrayList<>();
-    private boolean _addNextSynonymColumn;
+    private String _synonymColumnList;
+    private String _synonymColumn;
+    private String _addNextSynonymColumn;
     
     public DatastoreSynonymCatalogReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
     }
-
+    
+    @Override
+    public Integer getPageCount() {
+        return 5;
+    }
+    
     @Override
     public WizardPageController firstPageController() {
         return new DatastoreSynonymCatalogReferenceDataPage1(this);
@@ -47,22 +50,54 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     protected Element addElementToConfiguration() {
         final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
         final String fullColumnName = _schema + "." + _table + "." + _column;
-        final SynonymCatalog catalog = new DatastoreSynonymCatalog(_name, _datastore, fullColumnName, 
-                _synonymColumns.toArray(new String[_synonymColumns.size()]));
+        final String[] synonymColumns = createSynonymColumns();
+        final SynonymCatalog catalog = new DatastoreSynonymCatalog(_name, _datastore, fullColumnName, synonymColumns);
         synonymCatalogsElement.appendChild(_writer.externalize(catalog));
 
         return synonymCatalogsElement;
     }
 
-    public List<String> getSynonymColumns() {
-        return _synonymColumns;
+    private String[] createSynonymColumns() {
+        if (_synonymColumnList == null) {
+            return new String[] {};
+        }
+
+        final String[] synonymFullColumns = _synonymColumnList.split(",");
+        final String prefix = _schema + "." + _table + ".";
+        
+        for (int i = 0; i < synonymFullColumns.length; i++) {
+            synonymFullColumns[i] =  prefix + synonymFullColumns[i];
+            i++;
+        }
+        
+        return synonymFullColumns;
     }
 
-    public boolean isAddNextSynonymColumn() {
+    public String getSynonymColumn() {
+        return _synonymColumn;
+    }
+
+    public void setSynonymColumn(final String synonymColumn) {
+        _synonymColumn = synonymColumn;
+    }
+
+    public String getSynonymColumnList() {
+        return _synonymColumnList;
+    }
+
+    public void addToSynonymColumnList(final String synonymColumnList) {
+        if (_synonymColumnList == null) {
+            _synonymColumnList = synonymColumnList;
+        } else {
+            _synonymColumnList = _synonymColumnList + "," + synonymColumnList;
+        }
+    }
+
+    public String getAddNextSynonymColumn() {
         return _addNextSynonymColumn;
     }
 
-    public void setAddNextSynonymColumn(final boolean addNextSynonymColumn) {
+    public void setAddNextSynonymColumn(final String addNextSynonymColumn) {
         _addNextSynonymColumn = addNextSynonymColumn;
     }
 }

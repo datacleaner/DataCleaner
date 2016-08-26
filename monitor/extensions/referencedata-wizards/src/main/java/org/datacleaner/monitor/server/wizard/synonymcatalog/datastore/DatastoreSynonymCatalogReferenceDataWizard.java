@@ -33,6 +33,11 @@ public class DatastoreSynonymCatalogReferenceDataWizard extends DatastoreWizard 
     }
 
     @Override
+    public int getExpectedPageCount() {
+        return 5;
+    }
+
+    @Override
     public ReferenceDataWizardSession start(final ReferenceDataWizardContext context) {
         return new DatastoreSynonymCatalogReferenceDataWizardSession(context);
     }

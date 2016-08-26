@@ -23,13 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage1;
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreSynonymCatalogReferenceDataPage1 extends DatastorePage1 {
 
-    public DatastoreSynonymCatalogReferenceDataPage1(DatastoreWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPage1(DatastoreSynonymCatalogReferenceDataWizardSession session) {
         super(session);
     }
 
@@ -44,6 +43,7 @@ final class DatastoreSynonymCatalogReferenceDataPage1 extends DatastorePage1 {
         _session.setName(getString(formParameters, PROPERTY_NAME));
         _session.setDatastore(getString(formParameters, PROPERTY_DATASTORE));
 
-        return new DatastoreSynonymCatalogReferenceDataPage2(_session);
+        return new DatastoreSynonymCatalogReferenceDataPage2(
+                (DatastoreSynonymCatalogReferenceDataWizardSession) _session);
     }
 }

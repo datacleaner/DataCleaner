@@ -22,23 +22,22 @@ package org.datacleaner.monitor.server.wizard.shared.datastore;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 public abstract class DatastorePage1 extends AbstractFreemarkerWizardPage {
     public static final String TEMPLATE_PACKAGE = "/org/datacleaner/monitor/server/wizard/shared/datastore/";
-    
+
     protected static final String PROPERTY_NAME = "name";
     protected static final String PROPERTY_NAME_LABEL = "nameLabel";
     protected static final String PROPERTY_DATASTORE = "datastore";
     protected static final String PROPERTY_DATASTORE_OPTIONS = "datastoreOptions";
 
-    protected final DatastoreWizardSession _session; 
-    
+    protected final DatastoreWizardSession _session;
+
     public DatastorePage1(DatastoreWizardSession session) {
         _session = session;
     }
-    
+
     @Override
     public Integer getPageIndex() {
         return 0;
@@ -56,20 +55,11 @@ public abstract class DatastorePage1 extends AbstractFreemarkerWizardPage {
         model.put(PROPERTY_NAME, _session.getName());
         model.put(PROPERTY_NAME_LABEL, getNameLabel());
         model.put(PROPERTY_DATASTORE, _session.getDatastore());
-        model.put(PROPERTY_DATASTORE_OPTIONS, getDatastoreOptions());
+        model.put(PROPERTY_DATASTORE_OPTIONS,
+                DatastoreHelper.getDatastoreOptions(_session.getWizardContext().getTenantContext()));
 
         return model;
     }
-    
+
     protected abstract String getNameLabel();
-
-    private String getDatastoreOptions() {
-        final StringBuilder builder = new StringBuilder();
-
-        for (DatastoreIdentifier id : _session.getWizardContext().getTenantContext().getDatastores()) {
-            builder.append(String.format("<option value=\"%s\">%s</option>", id.getName(), id.getName()));
-        }
-
-        return builder.toString();
-    }
 }

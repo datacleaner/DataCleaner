@@ -22,10 +22,6 @@ package org.datacleaner.monitor.server.wizard.shared.datastore;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 public abstract class DatastorePage3 extends AbstractFreemarkerWizardPage {
@@ -53,21 +49,10 @@ public abstract class DatastorePage3 extends AbstractFreemarkerWizardPage {
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
         model.put(PROPERTY_TABLE, _session.getTable());
-        model.put(PROPERTY_TABLE_OPTIONS, getTableOptions());
+        model.put(PROPERTY_TABLE_OPTIONS, 
+                DatastoreHelper.getTableOptions(_session.getWizardContext().getTenantContext(), 
+                        _session.getDatastore(), _session.getSchema()));
 
         return model;
-    }
-
-    private String getTableOptions() {
-        final StringBuilder builder = new StringBuilder();
-        final DatastoreIdentifier datastoreId = new DatastoreIdentifier(_session.getDatastore());
-        final Datastore datastore = _session.getWizardContext().getTenantContext().getDatastore(datastoreId);
-        final Schema schema = datastore.openConnection().getSchemaNavigator().getSchemaByName(_session.getSchema());
-
-        for (Table table : schema.getTables()) {
-            builder.append(String.format("<option value=\"%s\">%s</option>", table.getName(), table.getName()));
-        }
-
-        return builder.toString();
     }
 }

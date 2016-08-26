@@ -22,9 +22,6 @@ package org.datacleaner.monitor.server.wizard.shared.datastore;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Schema;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 public abstract class DatastorePage2 extends AbstractFreemarkerWizardPage {
@@ -52,20 +49,9 @@ public abstract class DatastorePage2 extends AbstractFreemarkerWizardPage {
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
         model.put(PROPERTY_SCHEMA, _session.getSchema());
-        model.put(PROPERTY_SCHEMA_OPTIONS, getSchemaOptions());
+        model.put(PROPERTY_SCHEMA_OPTIONS, DatastoreHelper
+                .getSchemaOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore()));
 
         return model;
-    }
-
-    private String getSchemaOptions() {
-        final StringBuilder builder = new StringBuilder();
-        final DatastoreIdentifier datastoreId = new DatastoreIdentifier(_session.getDatastore());
-        final Datastore datastore = _session.getWizardContext().getTenantContext().getDatastore(datastoreId);
-
-        for (Schema schema : datastore.openConnection().getSchemaNavigator().getSchemas()) {
-            builder.append(String.format("<option value=\"%s\">%s</option>", schema.getName(), schema.getName()));
-        }
-
-        return builder.toString();
     }
 }

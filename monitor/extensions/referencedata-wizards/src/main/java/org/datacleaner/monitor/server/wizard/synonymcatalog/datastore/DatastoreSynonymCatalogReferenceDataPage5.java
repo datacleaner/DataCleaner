@@ -23,12 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.datacleaner.connection.Datastore;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreHelper;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
@@ -40,7 +36,7 @@ final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarker
     private final DatastoreSynonymCatalogReferenceDataWizardSession _session;
 
     public DatastoreSynonymCatalogReferenceDataPage5(DatastoreSynonymCatalogReferenceDataWizardSession session) {
-        _session = session;
+       _session = session;
     }
 
     @Override
@@ -54,37 +50,28 @@ final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarker
     }
 
     @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<>();
-        model.put(PROPERTY_COLUMN_OPTIONS, getColumnOptions());
-
-        return model;
-    }
-
-    private String getColumnOptions() {
-        final StringBuilder builder = new StringBuilder();
-        final DatastoreIdentifier datastoreId = new DatastoreIdentifier(_session.getDatastore());
-        final Datastore datastore = _session.getWizardContext().getTenantContext().getDatastore(datastoreId);
-        final Schema schema = datastore.openConnection().getSchemaNavigator().getSchemaByName(_session.getSchema());
-        final Table table = schema.getTableByName(_session.getTable());
-
-        for (Column column : table.getColumns()) {
-            builder.append(String.format("<option value=\"%s\">%s</option>", column.getName(), column.getName()));
-        }
-
-        return builder.toString();
-    }
-
-    @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        _session.getSynonymColumns().add((getString(formParameters, PROPERTY_SYNONYM_COLUMN)));
-        _session.setAddNextSynonymColumn(getBoolean(formParameters, PROPERTY_ADD_NEXT_SYNONYM_COLUMN));
-        
-        if (_session.isAddNextSynonymColumn()) {
+        _session.setSynonymColumn(getString(formParameters, PROPERTY_SYNONYM_COLUMN));
+        _session.addToSynonymColumnList(_session.getSynonymColumn());
+        _session.setAddNextSynonymColumn(getString(formParameters, PROPERTY_ADD_NEXT_SYNONYM_COLUMN));
+
+        if (_session.getAddNextSynonymColumn() != null && _session.getAddNextSynonymColumn().equals("on")) {
             return new DatastoreSynonymCatalogReferenceDataPage5(_session);
         } else {
             return null;
         }
+    }
+    
+    @Override
+    protected Map<String, Object> getFormModel() {
+        final Map<String, Object> model = new HashMap<>();
+        model.put(PROPERTY_SYNONYM_COLUMN, _session.getSynonymColumn());
+        model.put(PROPERTY_ADD_NEXT_SYNONYM_COLUMN, _session.getAddNextSynonymColumn());
+        model.put(PROPERTY_COLUMN_OPTIONS, 
+                DatastoreHelper.getColumnOptions(_session.getWizardContext().getTenantContext(), 
+                        _session.getDatastore(), _session.getSchema(), _session.getTable()));
+
+        return model;
     }
 }

@@ -1,29 +1,27 @@
 <div style="min-height: 200px; background-repeat: no-repeat; background-position: bottom right; ">
-    <form action="repository/demo/jobs/multiple_upload" method="post" enctype="multipart/form-data">
-        <table>
-            <tr>
-                <td><label for-id="name">${nameLabel}</label></td>
-                <td><input type="text" id="name" name="name"/></td>
-            </tr>
-            <tr>
-                <td><label for-id="encoding">Encoding</label></td>
-                <td><input type="text" id="encoding" name="encoding" value="UTF-8"/></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <input type="checkbox" id="caseSensitive" name="caseSensitive"/>
-                    <label for-id="caseSensitive">Case-sensitive?</label>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div id="reference_data_file">
-                        <input type="file" name="reference_data_file"/> 
-                        <input type="button" value="Upload" onclick="window.uploadFile('reference_data_file');"/>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </form>
+    <table>
+        <tr>
+            <td><label for-id="name">${nameLabel}</label></td>
+            <td><input type="text" id="name" name="name"/></td>
+        </tr>
+        <tr>
+            <td><label for-id="encoding">Encoding</label></td>
+            <td><input type="text" id="encoding" name="encoding" value="UTF-8"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="caseSensitive" name="caseSensitive"/>
+                <label for-id="caseSensitive">Case-sensitive?</label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div id="reference_data_file">
+                    <input type="file" name="reference_data_file"/>
+                    <input type="button" value="Upload" onclick="window.uploadFile('reference_data_file');"/>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>

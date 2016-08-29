@@ -33,15 +33,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.configuration.jaxb.Configuration;
-import org.datacleaner.configuration.jaxb.CustomElementType;
-import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
-import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
-import org.datacleaner.configuration.jaxb.RegexPatternType;
-import org.datacleaner.configuration.jaxb.SimplePatternType;
-import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
-import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
-import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
 import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.WriteUpdatedConfigurationFileAction;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
@@ -186,7 +179,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         final List<Object> referenceDataList = getReferenceDataListByType(configuration, referenceData);
 
         for (Iterator<Object> it = referenceDataList.iterator(); it.hasNext(); ) {
-            final String candidateName = getComparableName(it.next());
+            final String candidateName = WriteUpdatedConfigurationFileAction.getComparableName(it.next());
 
             if (referenceData.getName().equals(candidateName)) {
                 it.remove();
@@ -217,27 +210,5 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         } else {
             return new ArrayList<>();
         }
-    }
-
-    private String getComparableName(Object referenceDataObject) {
-        if (referenceDataObject instanceof SimplePatternType) {
-            return ((SimplePatternType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof RegexPatternType) {
-            return ((RegexPatternType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof TextFileDictionaryType) {
-            return ((TextFileDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof ValueListDictionaryType) {
-            return ((ValueListDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof DatastoreDictionaryType) {
-            return ((DatastoreDictionaryType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof CustomElementType) {
-            return ((CustomElementType) referenceDataObject).getClassName();
-        } else if (referenceDataObject instanceof TextFileSynonymCatalogType) {
-            return ((TextFileSynonymCatalogType) referenceDataObject).getName();
-        } else if (referenceDataObject instanceof DatastoreSynonymCatalogType) {
-            return ((DatastoreSynonymCatalogType) referenceDataObject).getName();
-        }
-
-        return "";
     }
 }

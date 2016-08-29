@@ -672,7 +672,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                                 
                         addVariablePath(name);
                         Regex regex = new Regex(
-                                getStringVariable("name", regexSwapPatternType.getExpression()),
+                                getStringVariable("name", regexSwapPatternType.getName()),
                                 getStringVariable("description", regexSwapPatternType.getDescription()),
                                 getStringVariable("expression", regexSwapPatternType.getExpression()),
                                 getStringVariable("author", regexSwapPatternType.getAuthor()),

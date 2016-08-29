@@ -445,9 +445,9 @@ public class DomConfigurationWriter {
     private Element toElement(RegexSwapStringPattern regexSwapStringPattern) {
         final Element patternElement = getDocument().createElement("regex-swap-pattern");
         final Regex regex = regexSwapStringPattern.getRegex();
-        appendElement(patternElement, "name", regex.getName());
+        patternElement.setAttribute("name", regex.getName());
+        patternElement.setAttribute("description", regex.getDescription());
         appendElement(patternElement, "expression", regex.getExpression());
-        appendElement(patternElement, "description", regex.getDescription());
         appendElement(patternElement, "author", regex.getAuthor());
         appendElement(patternElement, "detailsUrl", regex.getDetailsUrl());
         appendElement(patternElement, "negativeVotes", regex.getNegativeVotes());

@@ -31,6 +31,7 @@ import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RegexSwapPatternType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
 import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
 import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
@@ -155,9 +156,11 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
         }
     }
 
-    private String getComparableName(Object referenceDataObject) {
+    public static String getComparableName(Object referenceDataObject) {
         if (referenceDataObject instanceof SimplePatternType) {
             return ((SimplePatternType) referenceDataObject).getName();
+        } else if (referenceDataObject instanceof RegexSwapPatternType) {
+            return ((RegexSwapPatternType) referenceDataObject).getName();
         } else if (referenceDataObject instanceof RegexPatternType) {
             return ((RegexPatternType) referenceDataObject).getName();
         } else if (referenceDataObject instanceof TextFileDictionaryType) {

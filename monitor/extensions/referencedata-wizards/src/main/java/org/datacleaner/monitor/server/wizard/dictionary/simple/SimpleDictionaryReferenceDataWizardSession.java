@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -59,9 +60,10 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
         final Element dictionariesElement = writer.getDictionariesElement();
-        final Dictionary dictionary = new SimpleDictionary(_name, _caseSensitive.equals("on"), _values.split("\n"));
+        final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
+        final Dictionary dictionary = new SimpleDictionary(_name, caseSensitive, _values.split("\n"));
         dictionariesElement.appendChild(writer.externalize(dictionary));
-        
+
         return dictionariesElement;
     }
 
@@ -70,6 +72,10 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or emtpy. ");
+        }
+
         _name = name;
     }
 
@@ -78,6 +84,10 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     }
 
     public void setValues(final String values) {
+        if (values == null || values.equals("")) {
+            throw new DCUserInputException("Values can not be null or empty. ");
+        }
+
         _values = values;
     }
 
@@ -86,6 +96,10 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     }
 
     public void setCaseSensitive(final String caseSensitive) {
-        _caseSensitive = caseSensitive;
+        if (caseSensitive == null) {
+            _caseSensitive = "off";
+        } else {
+            _caseSensitive = caseSensitive;
+        }
     }
 }

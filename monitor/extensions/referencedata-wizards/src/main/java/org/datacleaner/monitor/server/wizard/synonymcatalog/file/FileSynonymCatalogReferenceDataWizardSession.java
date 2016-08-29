@@ -40,8 +40,8 @@ final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSessi
     @Override
     protected Element addElementToConfiguration() {
         final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
-        final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, _caseSensitive.equals("on"),
-                _encoding);
+        final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
+        final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, caseSensitive, _encoding);
         synonymCatalogsElement.appendChild(_writer.externalize(catalog));
 
         return synonymCatalogsElement;

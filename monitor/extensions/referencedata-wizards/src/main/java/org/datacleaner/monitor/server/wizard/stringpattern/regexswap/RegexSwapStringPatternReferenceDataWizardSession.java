@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -80,6 +81,10 @@ final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractRef
     }
 
     public void setCategory(final String category) {
+        if (category == null || category.equals("")) {
+            throw new DCUserInputException("Category can not be null or empty. ");
+        }
+
         _category = category;
     }
 
@@ -88,6 +93,10 @@ final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractRef
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or empty. ");
+        }
+
         _name = name;
     }
 }

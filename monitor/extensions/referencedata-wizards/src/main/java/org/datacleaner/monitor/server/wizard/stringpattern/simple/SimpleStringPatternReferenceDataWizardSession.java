@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -69,6 +70,10 @@ final class SimpleStringPatternReferenceDataWizardSession extends AbstractRefere
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or empty. ");
+        }
+
         _name = name;
     }
 
@@ -77,6 +82,10 @@ final class SimpleStringPatternReferenceDataWizardSession extends AbstractRefere
     }
 
     public void setExpression(final String expression) {
+        if (expression == null || expression.equals("")) {
+            throw new DCUserInputException("Expression can not be null or empty. ");
+        }
+
         _expression = expression;
     }
 }

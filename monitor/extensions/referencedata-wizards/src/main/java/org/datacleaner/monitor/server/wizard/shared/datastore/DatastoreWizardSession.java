@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.w3c.dom.Element;
@@ -61,6 +62,10 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or empty. ");
+        }
+        
         _name = name;
     }
 
@@ -69,6 +74,10 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     }
 
     public void setDatastore(final String datastore) {
+        if (datastore == null || datastore.equals("")) {
+            throw new DCUserInputException("Datastore can not be null or empty. ");
+        }
+ 
         _datastore = datastore;
     }
 
@@ -77,6 +86,10 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     }
 
     public void setSchema(final String schema) {
+        if (schema == null || schema.equals("")) {
+            throw new DCUserInputException("Schema can not be null or empty. ");
+        }
+ 
         _schema = schema;
     }
 
@@ -85,6 +98,10 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     }
 
     public void setTable(final String table) {
+        if (table == null || table.equals("")) {
+            throw new DCUserInputException("Table can not be null or empty. ");
+        }
+         
         _table = table;
     }
 
@@ -93,6 +110,10 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     }
 
     public void setColumn(final String column) {
+        if (column == null || column.equals("")) {
+            throw new DCUserInputException("Column can not be null or empty. ");
+        }
+         
         _column = column;
     }
 }

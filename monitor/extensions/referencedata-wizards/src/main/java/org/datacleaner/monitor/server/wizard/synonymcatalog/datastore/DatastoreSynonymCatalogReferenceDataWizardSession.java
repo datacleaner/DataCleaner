@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
@@ -31,16 +32,16 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     private String _synonymColumnList;
     private String _synonymColumn;
     private String _addNextSynonymColumn;
-    
+
     public DatastoreSynonymCatalogReferenceDataWizardSession(ReferenceDataWizardContext context) {
         super(context);
     }
-    
+
     @Override
     public Integer getPageCount() {
         return 5;
     }
-    
+
     @Override
     public WizardPageController firstPageController() {
         return new DatastoreSynonymCatalogReferenceDataPage1(this);
@@ -64,12 +65,12 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
 
         final String[] synonymFullColumns = _synonymColumnList.split(",");
         final String prefix = _schema + "." + _table + ".";
-        
+
         for (int i = 0; i < synonymFullColumns.length; i++) {
-            synonymFullColumns[i] =  prefix + synonymFullColumns[i];
+            synonymFullColumns[i] = prefix + synonymFullColumns[i];
             i++;
         }
-        
+
         return synonymFullColumns;
     }
 
@@ -78,6 +79,10 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     }
 
     public void setSynonymColumn(final String synonymColumn) {
+        if (synonymColumn == null || synonymColumn.equals("")) {
+            throw new DCUserInputException("Synonym column can not be null or empty. ");
+        }
+
         _synonymColumn = synonymColumn;
     }
 
@@ -98,6 +103,10 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     }
 
     public void setAddNextSynonymColumn(final String addNextSynonymColumn) {
-        _addNextSynonymColumn = addNextSynonymColumn;
+        if (addNextSynonymColumn == null) {
+            _addNextSynonymColumn = "off";
+        } else {
+            _addNextSynonymColumn = addNextSynonymColumn;
+        }
     }
 }

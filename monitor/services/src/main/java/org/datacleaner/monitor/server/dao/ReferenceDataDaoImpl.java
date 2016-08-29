@@ -141,7 +141,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
                 throw (RuntimeException) e;
             }
 
-            throw new IllegalStateException("Failed to parse referenceData element: " + e.getMessage(), e);
+            throw new IllegalStateException("Failed to parse reference data element: " + e.getMessage(), e);
         }
     }
 

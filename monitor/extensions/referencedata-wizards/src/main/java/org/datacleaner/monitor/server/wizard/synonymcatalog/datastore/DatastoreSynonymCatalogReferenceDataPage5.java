@@ -55,8 +55,10 @@ final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarker
         _session.setSynonymColumn(getString(formParameters, PROPERTY_SYNONYM_COLUMN));
         _session.addToSynonymColumnList(_session.getSynonymColumn());
         _session.setAddNextSynonymColumn(getString(formParameters, PROPERTY_ADD_NEXT_SYNONYM_COLUMN));
-
-        if (_session.getAddNextSynonymColumn() != null && _session.getAddNextSynonymColumn().equals("on")) {
+        final boolean addNextSynonym = (_session.getAddNextSynonymColumn() != null && 
+                _session.getAddNextSynonymColumn().equals("on"));
+        
+        if (_session.getAddNextSynonymColumn() != null && addNextSynonym) {
             return new DatastoreSynonymCatalogReferenceDataPage5(_session);
         } else {
             return null;

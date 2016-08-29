@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -59,7 +60,8 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
         final Element stringPatternsElement = writer.getStringPatternsElement();
-        final StringPattern stringPattern = new RegexStringPattern(_name, _expression, _matchEntireString.equals("on"));
+        final boolean matchEntireString = (_matchEntireString != null && _matchEntireString.equals("on"));
+        final StringPattern stringPattern = new RegexStringPattern(_name, _expression, matchEntireString);
         stringPatternsElement.appendChild(writer.externalize(stringPattern));
 
         return stringPatternsElement;
@@ -70,6 +72,10 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or empty. ");
+        }
+
         _name = name;
     }
 
@@ -78,6 +84,10 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     }
 
     public void setExpression(final String expression) {
+        if (expression == null || expression.equals("")) {
+            throw new DCUserInputException("Expression can not be null or empty. ");
+        }
+
         _expression = expression;
     }
 
@@ -86,6 +96,10 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     }
 
     public void setMatchEntireString(final String matchEntireString) {
-        _matchEntireString = matchEntireString;
+        if (matchEntireString == null) {
+            _matchEntireString = "off";
+        } else {
+            _matchEntireString = matchEntireString;
+        }
     }
 }

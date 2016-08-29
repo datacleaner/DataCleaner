@@ -38,7 +38,7 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     protected String _sessionKey;
     protected String _encoding;
     protected String _caseSensitive;
-    
+
     protected final DomConfigurationWriter _writer;
 
     public FileWizardSession(ReferenceDataWizardContext context) {
@@ -58,18 +58,18 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
         copyUploadedFileToReferenceDataDirectory();
         return addElementToConfiguration();
     }
-    
+
     protected abstract Element addElementToConfiguration();
-    
+
     private void copyUploadedFileToReferenceDataDirectory() {
-        final File tenantHome = getWizardContext().getTenantContext().getConfiguration().getHomeFolder().toFile(); 
+        final File tenantHome = getWizardContext().getTenantContext().getConfiguration().getHomeFolder().toFile();
         final File referenceDataDirectory = new File(tenantHome.getAbsolutePath() + File.separator + "reference-data");
         final File targetFile = new File(referenceDataDirectory.getAbsolutePath() + File.separator + _filePath);
-        
+
         if (!referenceDataDirectory.exists() && !referenceDataDirectory.mkdirs()) {
             throw new DCUserInputException("Could not create directory for file:\n" + targetFile.getAbsolutePath());
         }
-        
+
         if (!referenceDataDirectory.canWrite()) {
             throw new DCUserInputException("Cannot write data to directory of file:\n" + targetFile.getAbsolutePath());
         }
@@ -84,6 +84,10 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     public void setName(final String name) {
+        if (name == null || name.equals("")) {
+            throw new DCUserInputException("Name can not be null or empty. ");
+        }
+
         _name = name;
     }
 
@@ -92,6 +96,10 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     public void setFilePath(final String filePath) {
+        if (filePath == null || filePath.equals("")) {
+            throw new DCUserInputException("File path can not be null or empty. ");
+        }
+
         _filePath = filePath;
     }
 
@@ -100,6 +108,10 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     public void setSessionKey(final String sessionKey) {
+        if (sessionKey == null || sessionKey.equals("")) {
+            throw new DCUserInputException("Session key can not be null or empty. ");
+        }
+
         _sessionKey = sessionKey;
     }
 
@@ -108,6 +120,10 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     public void setEncoding(final String encoding) {
+        if (encoding == null || encoding.equals("")) {
+            throw new DCUserInputException("Encoding can not be null or empty. ");
+        }
+
         _encoding = encoding;
     }
 
@@ -116,6 +132,10 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
     }
 
     public void setCaseSensitive(final String caseSensitive) {
-        _caseSensitive = caseSensitive;
+        if (caseSensitive == null) {
+            _caseSensitive = "off";
+        } else {
+            _caseSensitive = caseSensitive;
+        }
     }
 }

@@ -229,36 +229,6 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
-        assert propertyDescriptor.isInputColumn();
-        if (inputColumn == null) {
-            throw new IllegalArgumentException("InputColumn cannot be null");
-        }
-        if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
-            _escalatingInputColumns.add(inputColumn);
-            return this;
-        } else {
-            return super.addInputColumn(inputColumn, propertyDescriptor);
-        }
-    }
-
-    @Override
-    public AnalyzerComponentBuilder<A> removeInputColumn(InputColumn<?> inputColumn,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
-        assert propertyDescriptor.isInputColumn();
-        if (inputColumn == null) {
-            throw new IllegalArgumentException("InputColumn cannot be null");
-        }
-        if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
-            _escalatingInputColumns.remove(inputColumn);
-            return this;
-        } else {
-            return super.removeInputColumn(inputColumn, propertyDescriptor);
-        }
-    }
-
-    @Override
     public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
         if (isMultipleJobsSupported() && configuredProperty == _escalatingInputProperty) {
             if (_escalatingInputColumns.isEmpty()) {

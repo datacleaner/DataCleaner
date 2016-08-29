@@ -19,13 +19,12 @@
  */
 package org.datacleaner.job.builder;
 
+import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 
-public class MockAnalyzer extends BaseMockAnalyzer {
+public class MultipleJobsAnalyzer extends BaseMockAnalyzer {
     @Configured
-    public InputColumn<?>[] _columns;
-
-    @Configured
+    @ColumnProperty(escalateToMultipleJobs = true)
     public InputColumn<?> _column;
 }

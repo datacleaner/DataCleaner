@@ -19,13 +19,20 @@
  */
 package org.datacleaner.job.builder;
 
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputRow;
 
-public class MockAnalyzer extends BaseMockAnalyzer {
-    @Configured
-    public InputColumn<?>[] _columns;
+public class BaseMockAnalyzer implements Analyzer<AnalyzerResult> {
 
-    @Configured
-    public InputColumn<?> _column;
+    @Override
+    public void run(InputRow row, int distinctCount) {
+        // Do nothing.
+    }
+
+    @Override
+    public AnalyzerResult getResult() {
+        return null;
+    }
+
 }

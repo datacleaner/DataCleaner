@@ -20,6 +20,8 @@
 package org.datacleaner.job.builder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
@@ -49,24 +51,28 @@ public class InputColumnLinkingTest {
 
     @Test
     public void testChangeWithAnalyzer() {
-        final AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
-        final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(mockAnalyzer, "Columns");
-        final ConfiguredPropertyDescriptor columnProperty = getPropertyDescriptor(mockAnalyzer, "Column");
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(analyzer, "Columns");
+        final ConfiguredPropertyDescriptor columnProperty = getPropertyDescriptor(analyzer, "Column");
 
-        mockAnalyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnsProperty);
-        mockAnalyzer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnsProperty);
+        analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnsProperty);
+        analyzer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnsProperty);
 
-        mockAnalyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty);
+        analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty);
 
-        assertEquals(3, mockAnalyzer.getInputColumns().size());
+        assertEquals(3, analyzer.getInputColumns().size());
+        assertEquals(2, analyzer.getComponentInstance()._columns.length);
+        assertNotNull(analyzer.getComponentInstance()._column);
 
         _dateTransformer.removeInputColumn(_dateTransformer.getInputColumns().get(0));
 
-        assertEquals(1, mockAnalyzer.getInputColumns().size());
+        assertEquals(1, analyzer.getInputColumns().size());
+        assertEquals(1, analyzer.getComponentInstance()._columns.length);
+        assertNull(analyzer.getComponentInstance()._column);
     }
 
     private ConfiguredPropertyDescriptor getPropertyDescriptor(
-            final AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzer, final String name) {
+            final AnalyzerComponentBuilder<?> mockAnalyzer, final String name) {
         for (ConfiguredPropertyDescriptor propertyDescriptor : mockAnalyzer.getDescriptor()
                 .getConfiguredPropertiesForInput()) {
             if (propertyDescriptor.getName().equals(name)) {
@@ -88,5 +94,34 @@ public class InputColumnLinkingTest {
         _jobBuilder.removeTransformer(_dateTransformer);
 
         assertEquals(0, stringTransformer.getInputColumns().size());
+    }
+
+    @Test
+    public void testEscalateToMultipleJobs() {
+        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer1 = _jobBuilder.addAnalyzer(
+                MultipleJobsAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnProperty1 = getPropertyDescriptor(analyzer1, "Column");
+
+        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer2 = _jobBuilder.addAnalyzer(
+                MultipleJobsAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnProperty2 = getPropertyDescriptor(analyzer2, "Column");
+
+        analyzer1.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty1);
+        analyzer2.setConfiguredProperty(columnProperty2, _dateTransformer.getOutputColumns().get(0));
+
+        assertEquals(1, analyzer1.getInputColumns().size());
+        assertEquals(1, analyzer2.getInputColumns().size());
+
+        assertNotNull(analyzer1.getComponentInstance()._column);
+        assertNotNull(analyzer2.getComponentInstance()._column);
+
+        _dateTransformer.removeInputColumn(_dateTransformer.getInputColumns().get(0));
+
+        assertEquals(0, analyzer1.getInputColumns().size());
+        assertEquals(0, analyzer2.getInputColumns().size());
+
+        // Validate that the underlying bean has been updated accordingly
+        assertNull(analyzer1.getComponentInstance()._column);
+        assertNull(analyzer2.getComponentInstance()._column);
     }
 }

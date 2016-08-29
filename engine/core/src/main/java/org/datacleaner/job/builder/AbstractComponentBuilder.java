@@ -625,6 +625,10 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             } else {
                 if (inputColumns.getClass().isArray()) {
                     inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);
+
+                    if (!propertyDescriptor.isArray() && Array.getLength(inputColumns) == 0) {
+                        inputColumns = null;
+                    }
                 }
             }
             setConfiguredProperty(propertyDescriptor, inputColumns);

@@ -19,13 +19,22 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizard;
+import org.datacleaner.monitor.wizard.referencedata.DictionaryWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DatastoreDictionaryReferenceDataWizard extends DatastoreWizard {
+public class DatastoreDictionaryReferenceDataWizard implements DictionaryWizard {
+    @Override
+    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
+        return true;
+    }
+
+    @Override
+    public int getExpectedPageCount() {
+        return 4;
+    }
 
     @Override
     public String getDisplayName() {

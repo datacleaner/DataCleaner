@@ -19,17 +19,26 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import org.datacleaner.monitor.server.wizard.shared.file.FileWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
+import org.datacleaner.monitor.wizard.referencedata.SynonymCatalogWizard;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FileSynonymCatalogReferenceDataWizard extends FileWizard {
+public class FileSynonymCatalogReferenceDataWizard implements SynonymCatalogWizard {
+    @Override
+    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
+        return true;
+    }
 
     @Override
     public String getDisplayName() {
         return "File synonym catalog";
+    }
+
+    @Override
+    public int getExpectedPageCount() {
+        return 1;
     }
 
     @Override

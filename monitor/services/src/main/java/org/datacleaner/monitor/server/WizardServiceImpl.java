@@ -44,8 +44,11 @@ import org.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.datacleaner.monitor.wizard.job.JobWizard;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.datacleaner.monitor.wizard.referencedata.DictionaryWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.monitor.wizard.referencedata.StringPatternWizard;
+import org.datacleaner.monitor.wizard.referencedata.SynonymCatalogWizard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -227,16 +230,27 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final TenantIdentifier tenant,
-            String localeString) {
+    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final String referenceDataType, 
+            final TenantIdentifier tenant, final String localeString) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
         final ReferenceDataWizardContext context = new ReferenceDataWizardContextImpl(null, tenantContext, sessionFunc,
                 locale);
         final List<WizardIdentifier> result = new ArrayList<>();
+        Collection wizards;
+        
+        if (referenceDataType.equals("dictionary")) {
+            wizards = _wizardDao.getWizardsOfType(DictionaryWizard.class);
+        } else if (referenceDataType.equals("synonym-catalog")) {
+            wizards = _wizardDao.getWizardsOfType(SynonymCatalogWizard.class);
+        } else if (referenceDataType.equals("string-pattern")) {
+            wizards = _wizardDao.getWizardsOfType(StringPatternWizard.class);
+        } else {
+            wizards = _wizardDao.getWizardsOfType(ReferenceDataWizard.class);
+        }
 
-        for (ReferenceDataWizard datastoreWizard : _wizardDao.getWizardsOfType(ReferenceDataWizard.class)) {
+        for (ReferenceDataWizard datastoreWizard : ((Collection<ReferenceDataWizard>)wizards)) {
             if (datastoreWizard.isApplicableTo(context)) {
                 final WizardIdentifier wizardIdentifier = createReferenceDataWizardIdentifier(datastoreWizard);
                 result.add(wizardIdentifier);

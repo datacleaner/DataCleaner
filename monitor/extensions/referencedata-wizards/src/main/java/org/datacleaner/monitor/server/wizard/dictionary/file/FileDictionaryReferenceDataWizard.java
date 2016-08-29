@@ -19,13 +19,22 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
-import org.datacleaner.monitor.server.wizard.shared.file.FileWizard;
+import org.datacleaner.monitor.wizard.referencedata.DictionaryWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FileDictionaryReferenceDataWizard extends FileWizard {
+public class FileDictionaryReferenceDataWizard implements DictionaryWizard {
+    @Override
+    public boolean isApplicableTo(final ReferenceDataWizardContext context) {
+        return true;
+    }
+
+    @Override
+    public int getExpectedPageCount() {
+        return 1;
+    }
 
     @Override
     public String getDisplayName() {

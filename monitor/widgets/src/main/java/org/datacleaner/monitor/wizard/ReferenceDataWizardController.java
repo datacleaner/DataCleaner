@@ -41,10 +41,12 @@ import com.google.gwt.user.client.ui.RadioButton;
 public class ReferenceDataWizardController extends AbstractWizardController<WizardServiceAsync> {
 
     private int _stepsBeforeWizardPages;
+    private final String _referenceDataType;
 
-    public ReferenceDataWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
+    public ReferenceDataWizardController(String referenceDataType, WizardPanel wizardPanel, TenantIdentifier tenant,
             WizardIdentifier wizardIdentifier, WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
+        _referenceDataType = referenceDataType;
         _stepsBeforeWizardPages = 0;
 
         if (wizardIdentifier == null) {
@@ -75,7 +77,7 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
     private void showWizardSelection() {
         setLoading();
         getWizardPanel().setHeader("Register reference data");
-        getWizardService().getReferenceDataWizardIdentifiers(getTenant(), getLocaleName(),
+        getWizardService().getReferenceDataWizardIdentifiers(_referenceDataType, getTenant(), getLocaleName(),
                 new DCAsyncCallback<List<WizardIdentifier>>() {
                     @Override
                     public void onSuccess(List<WizardIdentifier> wizards) {

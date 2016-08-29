@@ -60,7 +60,8 @@ public interface WizardService extends WizardNavigationService, RemoteService {
             throws IllegalArgumentException;
     
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    List<WizardIdentifier> getReferenceDataWizardIdentifiers(TenantIdentifier tenant, String locale);
+    List<WizardIdentifier> getReferenceDataWizardIdentifiers(String referenceDataType, TenantIdentifier tenant, 
+            String locale);
     
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     WizardPage startReferenceDataWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)

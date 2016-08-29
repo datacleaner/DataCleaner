@@ -227,13 +227,13 @@ public final class JavaScriptCallbacks {
     /**
      * Exports a JS method:
      *
-     * startReferenceDataWizard(wizardName, htmlDivId)
+     * startReferenceDataWizard(referenceDataType, wizardName, htmlDivId)
      */
     public static native void exportStartReferenceDataWizard() /*-{
                                                            if (!$wnd.datacleaner) {
                                                                $wnd.datacleaner = {};
                                                            }
-                                                           $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;);   
+                                                           $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
                                                            }-*/;
     
     /**
@@ -307,18 +307,26 @@ public final class JavaScriptCallbacks {
     /**
      * Starts a reference data wizard based on parameters given from a native JS call.
      *
+     * @param referenceDataType
      * @param wizardDisplayName
      * @param htmlDivId
      */
-    public static void startReferenceDataWizard(final String wizardDisplayName, final String htmlDivId) {
-        GWT.log("JavaScriptCallbacks.startReferenceDataWizard(" + wizardDisplayName + "," + htmlDivId + ")");
+    public static void startReferenceDataWizard(final String referenceDataType, final String wizardDisplayName,
+            final String htmlDivId) {
+        GWT.log("JavaScriptCallbacks.startReferenceDataWizard(" + referenceDataType + "," + wizardDisplayName + ","
+                + htmlDivId + ")");
+
+        System.err.println("refDataType=" + referenceDataType);
+        System.err.println("wizardName=" + wizardDisplayName);
+        System.err.println("htmlDivId=" + htmlDivId);
+
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final WizardIdentifier wizardIdentifier = getWizardIdentifier(wizardDisplayName);
         final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
-        final ReferenceDataWizardController controller = new ReferenceDataWizardController(wizardPanel, tenant,
-                wizardIdentifier, wizardService);
+        final ReferenceDataWizardController controller = new ReferenceDataWizardController(referenceDataType, 
+                wizardPanel, tenant, wizardIdentifier, wizardService);
         GWT.log("Starting reference data wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
         controller.startWizard();
     }

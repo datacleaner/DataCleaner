@@ -19,13 +19,13 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
-import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
+import org.datacleaner.monitor.wizard.referencedata.StringPatternWizard;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegexStringPatternReferenceDataWizard implements ReferenceDataWizard {
+public class RegexStringPatternReferenceDataWizard implements StringPatternWizard {
 
     @Override
     public boolean isApplicableTo(final ReferenceDataWizardContext context) {

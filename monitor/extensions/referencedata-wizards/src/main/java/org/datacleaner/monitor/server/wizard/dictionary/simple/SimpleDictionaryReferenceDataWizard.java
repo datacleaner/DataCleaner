@@ -19,13 +19,13 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.simple;
 
-import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
+import org.datacleaner.monitor.wizard.referencedata.DictionaryWizard;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SimpleDictionaryReferenceDataWizard implements ReferenceDataWizard {
+public class SimpleDictionaryReferenceDataWizard implements DictionaryWizard {
 
     @Override
     public boolean isApplicableTo(final ReferenceDataWizardContext context) {

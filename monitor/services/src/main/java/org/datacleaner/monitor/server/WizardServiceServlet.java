@@ -96,9 +96,9 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final TenantIdentifier tenant,
-            final String locale) {
-        return _delegate.getReferenceDataWizardIdentifiers(tenant, locale);
+    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final String referenceDataType, 
+            final TenantIdentifier tenant, final String locale) {
+        return _delegate.getReferenceDataWizardIdentifiers(referenceDataType, tenant, locale);
     }
 
     @Override

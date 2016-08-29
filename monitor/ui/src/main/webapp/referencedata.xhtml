@@ -13,20 +13,6 @@
 				function showUploadJobForm(button) {
 					$(button).replaceWith($("#UploadFileTemplateDiv"));
 				}
-				
-				var datacleaner = {
-			    	onApiInitialized : function() {
-			    		$(document).ready(function() {
-					    	// check if wizard needs to start immediately
-					    	var hashPartOfUri = window.location.hash;
-					    	
-					    	if (hashPartOfUri == "#startWizard") {
-					    		datacleaner.startReferenceDataWizard();
-					    		window.location.hash = "";
-					    	}
-					    });
-			    	}
-			    }
 				//]]>
 			</script>
 		</c:if>
@@ -35,11 +21,15 @@
 	<ui:define name="content">
 		<div id="ReferenceDataPage" class="container">
 			<c:if test="#{user.configurationEditor}">
-				<div>
-					<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard();">
-						<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New reference data</span>
-					</button>
-				</div>
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('dictionary');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New dictionary</span>
+				</button>
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('synonym-catalog');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New synonym catalog</span>
+				</button>
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('string-pattern');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New string pattern</span>
+				</button>
 				<div class="spacer"></div>
 			</c:if>
 

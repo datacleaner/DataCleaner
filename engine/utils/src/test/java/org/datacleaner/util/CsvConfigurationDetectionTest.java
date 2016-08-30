@@ -20,6 +20,8 @@
 package org.datacleaner.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 
@@ -30,15 +32,27 @@ public class CsvConfigurationDetectionTest extends TestCase {
     public void testDetectMultiLine() throws Exception {
         CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
                 "src/test/resources/csv-detect/csv_multi_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        CsvConfiguration configuration = detection.suggestCsvConfiguration(null);
         assertTrue(configuration.isMultilineValues());
     }
 
     public void testDetectSingleLine() throws Exception {
         CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
                 "src/test/resources/csv-detect/csv_single_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        CsvConfiguration configuration = detection.suggestCsvConfiguration(null);
         assertFalse(configuration.isMultilineValues());
+    }
+
+    public void testColumnNames() throws Exception {
+        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
+                "src/test/resources/csv-detect/csv_single_line.csv"));
+        final List<String> list = new ArrayList<>();
+        list.add("myId"); 
+        list.add("MyName"); 
+        
+        CsvConfiguration configuration = detection.suggestCsvConfiguration(list);
+        assertFalse(configuration.isMultilineValues());
+        assertNotNull(configuration.getColumnNamingStrategy()); 
     }
 
 }

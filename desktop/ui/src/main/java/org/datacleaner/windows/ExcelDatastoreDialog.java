@@ -49,7 +49,11 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
 		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 
-		_columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+		if (originalDatastore != null){
+		    _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+		} else{
+		    _columnNamesWidget = new CustomColumnNamesWidget(null); 
+		}
 	}
 
     protected List<Entry<String, JComponent>> getFormElements() {

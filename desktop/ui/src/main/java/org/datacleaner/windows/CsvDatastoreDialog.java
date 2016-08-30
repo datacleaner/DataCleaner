@@ -24,16 +24,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
@@ -91,8 +88,6 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     private final CustomColumnNamesWidget _columnNamesWidget;
 
     private volatile boolean showPreview = true;
-
-    private Set<JTextField> _columnNameFields = new HashSet<>();
 
     @Inject
     public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore,
@@ -197,8 +192,6 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             SwingUtilities.invokeLater(() -> registerColumnNameFields());
         }));
 
-        registerColumnNameFields();
-
         // add listeners
         _separatorCharField.addItemListener(new ItemListener() {
             @Override
@@ -256,13 +249,14 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
                 final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
                 final CsvConfiguration configuration;
+                final List<String> columnNames = _columnNamesWidget.getColumnNames();
 
                 try {
                     if (autoDetectEncoding) {
-                        configuration = detection.suggestCsvConfiguration();
+                        configuration = detection.suggestCsvConfiguration(columnNames);
                     } else {
                         final String charSet = _encodingComboBox.getSelectedItem();
-                        configuration = detection.suggestCsvConfiguration(charSet);
+                        configuration = detection.suggestCsvConfiguration(charSet, columnNames);
                     }
                 } catch (Exception e) {
                     logger.debug("Failed to auto detect CSV configuration", e);
@@ -488,16 +482,14 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     private void registerColumnNameFields() {
-        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field)).forEach(
-                field -> {
-                    field.addKeyListener(new KeyAdapter() {
-                        @Override
-                        public void keyTyped(KeyEvent e) {
-                            onSettingsUpdated(false, false, getResource());
-                        }
-                    });
+        _columnNamesWidget.getColumnNameFields().stream().forEach(field -> {
+            field.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    onSettingsUpdated(false, false, getResource());
+                }
+            });
 
-                    _columnNameFields.add(field);
-                });
+        });
     }
 }

@@ -188,7 +188,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     }
 
     private String getTablePath(String columnPath) {
-        int columnDelim = columnPath.lastIndexOf('.');
+        final int columnDelim = columnPath.lastIndexOf('.');
         final String tablePath;
 
         if (columnDelim == -1) { // some column paths contain only the column name
@@ -226,9 +226,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         return comboBox;
     }
 
-    private JComboBox createDatastoreCombobox() {
+    private JComboBox<String> createDatastoreCombobox() {
         final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
-        final JComboBox comboBox = new JComboBox<>(comboBoxModel);
+        final JComboBox<String> comboBox = new JComboBox<>(comboBoxModel);
         comboBox.setEditable(false);
         final JDialog parent = this;
         comboBox.addActionListener(e -> {
@@ -236,7 +236,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
                 ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater(parent);
                 comboBoxUpdater.execute();
             } catch (Exception exception) {
-                logger.error(exception.getMessage());
+                final String exceptionMessage = "An unexpected error occurred while updating combo boxes:\n"
+                        + exception.getMessage();
+                logger.error(exceptionMessage);
+                WidgetUtils.showErrorMessage("Unexpected error", exceptionMessage);
             }
         });
 

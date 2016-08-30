@@ -32,14 +32,14 @@ public class CsvConfigurationDetectionTest extends TestCase {
     public void testDetectMultiLine() throws Exception {
         CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
                 "src/test/resources/csv-detect/csv_multi_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration(null);
+        CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertTrue(configuration.isMultilineValues());
     }
 
     public void testDetectSingleLine() throws Exception {
         CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
                 "src/test/resources/csv-detect/csv_single_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration(null);
+        CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertFalse(configuration.isMultilineValues());
     }
 

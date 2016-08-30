@@ -128,6 +128,10 @@ public class CsvConfigurationDetection {
      * @throws IllegalStateException
      *             if an error occurs during auto-detection
      */
+    public CsvConfiguration suggestCsvConfiguration() throws IllegalStateException {
+        return suggestCsvConfiguration(null); 
+    }
+    
     public CsvConfiguration suggestCsvConfiguration(List<String> columnNames) throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         final String encoding = suggestEncoding(sample);

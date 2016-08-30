@@ -90,4 +90,11 @@ public class ComponentBuilderTransformerChangeListener implements TransformerCha
             }
         }
     }
+
+    @Override
+    public boolean equals(Object object) {
+        return (super.equals(object) || (object != null && object instanceof ComponentBuilderTransformerChangeListener
+                && ((ComponentBuilderTransformerChangeListener) object)._componentBuilder == _componentBuilder
+                && ((ComponentBuilderTransformerChangeListener) object)._propertyDescriptor == _propertyDescriptor));
+    }
 }

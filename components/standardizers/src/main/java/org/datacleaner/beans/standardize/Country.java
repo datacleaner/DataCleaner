@@ -139,10 +139,10 @@ public enum Country implements HasName, HasAliases {
 
     COMOROS("KM", "COM", "Comoros"),
 
-    CONGO_BRAZZAVILLE("CG", "COG", "Congo (Brazzaville)"),
+    CONGO_BRAZZAVILLE("CG", "COG", "Congo (Brazzaville)", "Congo", "Congo (the)", "the Republic of the Congo"),
 
-    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)"),
-
+    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)", "Congo, Democratic republic of the", "the Democratic Republic of the Congo", "Congo (the Democratic Republic of the)", "Zaire"), /* Former country name 'Zaire' */
+    
     COOK_ISLANDS("CK", "COK", "Cook Islands"),
 
     COSTA_RICA("CR", "CRI", "Costa Rica"),
@@ -190,7 +190,7 @@ public enum Country implements HasName, HasAliases {
 
     FINLAND("FI", "FIN", "Finland"),
 
-    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise", "Frankrijk"),
+    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise", "Frankrijk", "Corsica"),
 
     FRENCH_GUIANA("GF", "GUF", "French Guiana"),
 
@@ -300,7 +300,7 @@ public enum Country implements HasName, HasAliases {
 
     MACAU("MO", "MAC", "Macau", "China, Macao SAR", "Macao SAR"),
 
-    MACEDONIA("MK", "MKD", "Macedonia", "Macedonie", "Macedonië"),
+    MACEDONIA("MK", "MKD", "Macedonia", "Macedonie", "Macedonië", "Macedonia, the former Yugoslav republic of"),
 
     MADAGASCAR("MG", "MDG", "Madagascar"),
 
@@ -326,7 +326,7 @@ public enum Country implements HasName, HasAliases {
 
     MEXICO("MX", "MEX", "Mexico", "México", "United Mexican States"),
 
-    MICRONESIA("FM", "FSM", "Micronesia", "Micronesia (Federated States of)", "Federated States of Micronesia"),
+    MICRONESIA("FM", "FSM", "Micronesia", "Micronesia (Federated States of)", "Federated States of Micronesia", "Micronesia, Federated States of"),
 
     MOLDOVA("MD", "MDA", "Moldova"),
 
@@ -342,7 +342,7 @@ public enum Country implements HasName, HasAliases {
 
     MOZAMBIQUE("MZ", "MOZ", "Mozambique"),
 
-    MYANMAR("MM", "MMR", "Myanmar"),
+    MYANMAR("MM", "MMR", "Myanmar", "Burma"), /*country changed name from 'Burma'  to 'Maynmar' */
 
     NAMIBIA("NA", "NAM", "Namibia"),
 
@@ -438,7 +438,7 @@ public enum Country implements HasName, HasAliases {
 
     SINGAPORE("SG", "SGP", "Singapore"),
 
-    SINT_MAARTEN("SX", "SXM", "Sint Maarten"),
+    SINT_MAARTEN("SX", "SXM", "Sint Maarten", "St. Maarten", "Sint Maarten (Dutch part)"),
 
     SLOVAKIA("SK", "SVK", "Slovakia", "Slowakije"),
 
@@ -457,6 +457,8 @@ public enum Country implements HasName, HasAliases {
     SRI_LANKA("LK", "LKA", "Sri Lanka"),
 
     SUDAN("SD", "SDN", "Sudan"),
+    
+    SOUTH_SUDAN("SS", "SSD", "South Sudan"),
 
     SURINAME("SR", "SUR", "Suriname"),
 
@@ -478,7 +480,7 @@ public enum Country implements HasName, HasAliases {
 
     THAILAND("TH", "THA", "Thailand"),
 
-    TIMOR_LESTE("TL", "TLS", "Timor-Leste"),
+    TIMOR_LESTE("TL", "TLS", "Timor-Leste", "East Timor"), /*Former name: 'East Timor'*/
 
     TOGO("TG", "TGO", "Togo"),
 
@@ -519,17 +521,17 @@ public enum Country implements HasName, HasAliases {
 
     VANUATU("VU", "VUT", "Vanuatu"),
 
-    VATICAN_CITY("VA", "VAT", "Vatican City"),
+    VATICAN_CITY("VA", "VAT", "Vatican City", "Holy See"),
 
     VENEZUELA("VE", "VEN", "Venezuela", "Bolivarian Republic of Venezuela", "Venezuela (Bolivarian Republic of)"),
 
     VIETNAM("VN", "VNM", "Vietnam", "Viet nam"),
 
-    VIRGIN_ISLANDS_BRITISH("VG", "VGB", "Virgin Islands, British"),
+    VIRGIN_ISLANDS_BRITISH("VG", "VGB", "Virgin Islands, British", "British Virgin Islands"),
 
     VIRGIN_ISLANDS_US("VI", "VIR", "Virgin Islands, U.S.", "United States Virgin Islands"),
 
-    WALLIS_AND_FUTUNA_ISLANDS("WF", "WLF", "Wallis and Futuna Islands"),
+    WALLIS_AND_FUTUNA_ISLANDS("WF", "WLF", "Wallis and Futuna Islands", "Wallis and Futuna"),
 
     WESTERN_SAHARA("EH", "ESH", "Western Sahara"),
 
@@ -677,6 +679,7 @@ public enum Country implements HasName, HasAliases {
         country = replaceAll(country, "STATES ", " ");
         country = replaceAll(country, "STATE ", " ");
         country = replaceAll(country, "OF ", " ");
+        country = country.replaceFirst("THE", " "); 
 
         // remove spaces
         country = replaceAll(country, " ", "");

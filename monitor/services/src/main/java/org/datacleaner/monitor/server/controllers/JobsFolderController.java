@@ -21,6 +21,8 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +66,8 @@ import com.google.common.net.UrlEscapers;
 public class JobsFolderController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobFileController.class);
+    private static final String STATUS_SUCCESS = "Success";
+    private static final String STATUS_FAILURE = "Failure";
 
     @Autowired
     TenantContextFactory _contextFactory;
@@ -73,7 +77,7 @@ public class JobsFolderController {
     public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
         final TenantContext context = _contextFactory.getContext(tenant);
 
-        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> result = new ArrayList<>();
 
         {
             final List<JobIdentifier> jobs = context.getJobs();
@@ -81,7 +85,7 @@ public class JobsFolderController {
                 final JobContext jobContext = context.getJob(job);
                 final RepositoryFile file = jobContext.getJobFile();
 
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
                 map.put("name", job.getName());
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
@@ -98,7 +102,7 @@ public class JobsFolderController {
             @RequestParam(value = "property", required = true) String metadataProperty,
             @RequestParam(value = "value", required = true) String metadataPropertyValue) {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
-        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> result = new ArrayList<>();
         {
             final List<JobIdentifier> jobs = tenantContext.getJobs();
             for (JobIdentifier job : jobs) {
@@ -108,13 +112,13 @@ public class JobsFolderController {
                     final String metadataPropertyResult = jobMetadataProperties.get(metadataProperty);
                     if (metadataPropertyResult.toLowerCase().trim().equals(metadataPropertyValue.toLowerCase()
                             .trim())) {
-                        final Map<String, Object> jobDetails = new HashMap<String, Object>();
+                        final Map<String, Object> jobDetails = new HashMap<>();
                         final RepositoryFile file = jobContext.getJobFile();
                         jobDetails.put("name", job.getName());
                         jobDetails.put("filename", file.getName());
                         jobDetails.put("repository_path", file.getQualifiedPath());
                         jobDetails.put("metadataProperties", jobMetadataProperties);
-                        final List<Map<String, Object>> descriptors = new ArrayList<Map<String, Object>>();
+                        final List<Map<String, Object>> descriptors = new ArrayList<>();
 
                         if (jobContext instanceof DataCleanerJobContext) {
                             final DataCleanerJobContext dcContext = (DataCleanerJobContext) jobContext;
@@ -122,7 +126,7 @@ public class JobsFolderController {
                             final AnalysisJob analysisJob = dcContext.getAnalysisJob();
                             final List<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
                             for (AnalyzerJob analyzerJob : analyzerJobs) {
-                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                final Map<String, Object> jobComponent = new HashMap<>();
                                 jobComponent.put("name", analyzerJob.getName());
                                 jobComponent.put("type", "analyzer");
                                 jobComponent.put("descriptor", analyzerJob.getDescriptor().getDisplayName());
@@ -132,7 +136,7 @@ public class JobsFolderController {
 
                             List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
                             for (TransformerJob transformerJob : transformerJobs) {
-                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                final Map<String, Object> jobComponent = new HashMap<>();
                                 jobComponent.put("name", transformerJob.getName());
                                 jobComponent.put("type", "transformer");
                                 jobComponent.put("descriptor", transformerJob.getDescriptor().getDisplayName());
@@ -142,7 +146,7 @@ public class JobsFolderController {
 
                             List<FilterJob> filterJobs = analysisJob.getFilterJobs();
                             for (FilterJob filterJob : filterJobs) {
-                                final Map<String, Object> jobComponent = new HashMap<String, Object>();
+                                final Map<String, Object> jobComponent = new HashMap<>();
                                 jobComponent.put("name", filterJob.getName());
                                 jobComponent.put("type", "filter");
                                 jobComponent.put("descriptor", filterJob.getDescriptor().getDisplayName());
@@ -157,6 +161,56 @@ public class JobsFolderController {
             }
         }
         return result;
+    }
+
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
+    @RequestMapping(value = "/multiple_upload", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, 
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadMultipleAnalysisJobsToFolderHtml(@PathVariable("tenant") final String tenant,
+            @RequestParam("files") final MultipartFile[] files) {
+        final String[] fileNames = new String[files.length];
+        String status = STATUS_SUCCESS;
+        int i = 0;
+
+        for (MultipartFile singleFile : files) {
+            final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, singleFile);
+            fileNames[i] = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
+            boolean fileWasUploaded = isUploadedFilePresent(tenant, fileNames[i]);
+
+            if (!fileWasUploaded) {
+                status = STATUS_FAILURE;
+                break;
+            }
+
+            if (!outcome.get("status").equals(STATUS_SUCCESS)) {
+                status = outcome.get("status");
+                break;
+            }
+
+            i++;
+        }
+
+        return getRedirectUrl(status, fileNames);
+    }
+    
+    private String getRedirectUrl(String status, String[] fileNames) {
+        final String baseUrl = "redirect:/scheduling";
+        
+        try {
+            final String listOfFiles = URLEncoder.encode(String.join(",", fileNames), "UTF-8");
+            final String parameters = String.format("job_upload=%s&job_filename=%s", status, listOfFiles);
+            return String.format("%s?%s", baseUrl, parameters);
+        } catch (UnsupportedEncodingException e) {
+            return baseUrl;
+        }
+    }
+    
+    private boolean isUploadedFilePresent(String tenant, String fileName) {
+        final TenantContext context = _contextFactory.getContext(tenant);
+        final RepositoryFolder jobsFolder = context.getJobFolder();
+        final RepositoryFile file = jobsFolder.getFile(fileName);
+        
+        return (file != null && file.getSize() > 0);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
@@ -179,15 +233,12 @@ public class JobsFolderController {
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
 
-        final Action<OutputStream> writeCallback = new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final InputStream in = file.getInputStream();
-                try {
-                    FileHelper.copy(in, out);
-                } finally {
-                    FileHelper.safeClose(in);
-                }
+        final Action<OutputStream> writeCallback = out -> {
+            final InputStream in = file.getInputStream();
+            try {
+                FileHelper.copy(in, out);
+            } finally {
+                FileHelper.safeClose(in);
             }
         };
 
@@ -200,8 +251,8 @@ public class JobsFolderController {
         jobFile = jobsFolder.createFile(filename, writeCallback);
         logger.info("Created new job from uploaded file: {}", filename);
 
-        final Map<String, String> result = new HashMap<String, String>();
-        result.put("status", "Success");
+        final Map<String, String> result = new HashMap<>();
+        result.put("status", STATUS_SUCCESS);
         result.put("file_type", jobFile.getType().toString());
         result.put("filename", jobFile.getName());
         result.put("repository_path", jobFile.getQualifiedPath());

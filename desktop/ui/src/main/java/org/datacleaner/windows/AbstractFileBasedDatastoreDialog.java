@@ -85,10 +85,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * Amount of bytes to read for autodetection of encoding, separator and
-     * quotes
+     * Amount of bytes to read for autodetection of encoding, separator and quotes
      */
-    private static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
+    protected static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
 
     /**
      * Max amount of columns to display in the preview table
@@ -123,25 +122,22 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         // add listeners after setting initial values.
         setFileFilters(_filenameField);
-        _filenameField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
-                final File dir;
-                if (file.isDirectory()) {
-                    dir = file;
-                } else {
-                    dir = file.getParentFile();
-                }
-                getUserPreferences().setOpenDatastoreDirectory(dir);
-
-                if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
-                    _datastoreNameTextField.setText(file.getName());
-                }
-
-                validateAndUpdate();
-
-                onFileSelected(file);
+        _filenameField.addFileSelectionListener((filenameTextField, file) -> {
+            final File dir;
+            if (file.isDirectory()) {
+                dir = file;
+            } else {
+                dir = file.getParentFile();
             }
+            getUserPreferences().setOpenDatastoreDirectory(dir);
+
+            if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
+                _datastoreNameTextField.setText(file.getName());
+            }
+
+            validateAndUpdate();
+
+            onFileSelected(file);
         });
 
         if (isDirectoryBased()) {
@@ -162,10 +158,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     /**
-     * Can be overridden by subclasses in order to react to file selection
-     * events.
-     * 
-     * @param file
+     * Can be overridden by subclasses in order to react to file selection events.
+     *
+     * @param file selected file
      */
     protected void onFileSelected(File file) {
     }
@@ -238,9 +233,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> res = super.getFormElements();
         if (isDirectoryBased()) {
-            res.add(new ImmutableEntry<String, JComponent>("Directory", _filenameField));
+            res.add(new ImmutableEntry<>("Directory", _filenameField));
         } else {
-            res.add(new ImmutableEntry<String, JComponent>("Filename", _filenameField));
+            res.add(new ImmutableEntry<>("Filename", _filenameField));
         }
         return res;
     }
@@ -301,7 +296,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         }.execute();
     }
 
-    private final DataSet getPreviewData(String filename) {
+    private DataSet getPreviewData(String filename) {
         if (!isPreviewDataAvailable()) {
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
@@ -320,9 +315,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             final Query q = dc.query().from(table).select(columns).toQuery();
             q.setMaxRows(7);
 
-            final DataSet dataSet = dc.executeQuery(q);
-
-            return dataSet;
+            return dc.executeQuery(q);
         }
     }
 
@@ -392,8 +385,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     protected D getPreviewDatastore(String filename) {
-        D datastore = createDatastore("Preview", filename);
-        return datastore;
+        return createDatastore("Preview", filename);
     }
 
     protected byte[] getSampleBuffer() {

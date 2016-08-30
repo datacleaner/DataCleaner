@@ -324,17 +324,13 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final boolean changed = setConfiguredPropertyIfChanged(configuredProperty, value);
         if (changed) {
             if (configuredProperty.isInputColumn()) {
-                final TransformedInputColumn<?> transformedInputColumn = getTransformedInputColumn(value);
-                if (transformedInputColumn != null) {
-                    // Register change listener on the transformer providing the value used for the input
+                for (TransformedInputColumn<?> transformedInputColumn : getTransformedInputColumns(value)) {
+                    // Register change listener on all transformers providing values used for the input
                     // column.
-                    final TransformerComponentBuilder<?> transformer = getTransformerProvidingColumn(
-                            transformedInputColumn);
-
-                    if (transformer != null) {
-                        transformer.addChangeListener(new ComponentBuilderTransformerChangeListener(
-                                this, configuredProperty));
-                    }
+                    getAnalysisJobBuilder().getTransformerComponentBuilders().stream().filter(
+                            transformer -> (isProvidingColumn(transformedInputColumn, transformer))).forEach(
+                                    transformer -> transformer.addChangeListener(
+                                            new ComponentBuilderTransformerChangeListener(this, configuredProperty)));
                 }
             }
 
@@ -343,32 +339,32 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         return (B) this;
     }
 
-    private TransformerComponentBuilder<?> getTransformerProvidingColumn(
-            final TransformedInputColumn<?> transformedInputColumn) {
-        for (TransformerComponentBuilder<?> transformer : getAnalysisJobBuilder().getTransformerComponentBuilders()) {
-            for (Object outputColumn : transformer.getOutputColumns()) {
-                if (outputColumn.equals(transformedInputColumn)) {
-                    return transformer;
-                }
+    protected boolean isProvidingColumn(final TransformedInputColumn<?> transformedInputColumn,
+            TransformerComponentBuilder<?> transformer) {
+        for (Object outputColumn : transformer.getOutputColumns()) {
+            if (outputColumn.equals(transformedInputColumn)) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    private TransformedInputColumn<?> getTransformedInputColumn(Object value) {
+    private List<TransformedInputColumn<?>> getTransformedInputColumns(Object value) {
+        List<TransformedInputColumn<?>> transformedInputColumns = new ArrayList<>();
+
         if (value != null) {
             if (value.getClass().isArray()) {
                 for (int i = 0; i < Array.getLength(value); i++) {
                     Object valuePart = Array.get(value, i);
                     if (valuePart != null && ReflectionUtils.is(valuePart.getClass(), TransformedInputColumn.class)) {
-                        return (TransformedInputColumn<?>) valuePart;
+                        transformedInputColumns.add((TransformedInputColumn<?>) valuePart);
                     }
                 }
             } else if (ReflectionUtils.is(value.getClass(), TransformedInputColumn.class)) {
-                return (TransformedInputColumn<?>) value;
+                transformedInputColumns.add((TransformedInputColumn<?>) value);
             }
         }
-        return null;
+        return transformedInputColumns;
     }
 
     /**

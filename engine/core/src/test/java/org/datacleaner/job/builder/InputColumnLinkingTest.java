@@ -124,4 +124,26 @@ public class InputColumnLinkingTest {
         assertNull(analyzer1.getComponentInstance()._column);
         assertNull(analyzer2.getComponentInstance()._column);
     }
+
+    @Test
+    public void testMultipleOutputColumns() {
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(analyzer, "Columns");
+
+        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer = _jobBuilder.addTransformer(
+                ConvertToStringTransformer.class);
+
+        stringTransformer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME));
+
+        analyzer.addInputColumn(stringTransformer.getOutputColumns().get(0), columnsProperty);
+        analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnsProperty);
+
+        assertEquals(2, analyzer.getInputColumns().size());
+        assertEquals(2, analyzer.getComponentInstance()._columns.length);
+
+        _jobBuilder.removeTransformer(_dateTransformer);
+
+        assertEquals(1, analyzer.getInputColumns().size());
+        assertEquals(1, analyzer.getComponentInstance()._columns.length);
+    }
 }

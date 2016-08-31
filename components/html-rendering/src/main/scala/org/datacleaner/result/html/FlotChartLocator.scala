@@ -12,47 +12,47 @@ object FlotChartLocator {
   /**
    * Gets the URL for the base flot library, typically named as "jquery.flot.min.js"
    */
-  def getFlotBaseUrl: String = getFlotHome() + "/jquery.flot.min.js";
+  def getFlotBaseUrl: String = getFlotHome() + "/jquery.flot.js";
 
   /**
    * Gets the URL for the flot plugin for pie charts, typically named as "jquery.flot.pie.min.js"
    */
-  def getFlotPieUrl: String = getFlotHome() + "/jquery.flot.pie.min.js";
+  def getFlotPieUrl: String = getFlotHome() + "/jquery.flot.pie.js";
 
   /**
    * Gets the URL for the flot plugin for selecting parts of the plot, typically named as "jquery.flot.selection.min.js"
    */
-  def getFlotSelectionUrl: String = getFlotHome() + "/jquery.flot.selection.min.js";
+  def getFlotSelectionUrl: String = getFlotHome() + "/jquery.flot.selection.js";
   
   /**
    * Gets the URL for the flot plugin for additional point symbols, typically named as "jquery.flot.symbol.min.js"
    */
-  def getFlotSymbolUrl: String = getFlotHome() + "/jquery.flot.symbol.min.js";
+  def getFlotSymbolUrl: String = getFlotHome() + "/jquery.flot.symbol.js";
 
   /**
    * Gets the URL for the flot plugin for "fill between" effect, typically named as "jquery.flot.fillbetween.min.js"
    */
-  def getFlotFillBetweenUrl: String = getFlotHome() + "/jquery.flot.fillbetween.min.js";
+  def getFlotFillBetweenUrl: String = getFlotHome() + "/jquery.flot.fillbetween.js";
 
   /**
    * Gets the URL for the flot plugin for navigating (zoom/pan), typically named as "jquery.flot.navigate.min.js"
    */
-  def getFlotNavigateUrl: String = getFlotHome() + "/jquery.flot.navigate.min.js";
+  def getFlotNavigateUrl: String = getFlotHome() + "/jquery.flot.navigate.js";
 
   /**
    * Gets the URL for the flot plugin for automatically resizing charts, typically named as "jquery.flot.resize.min.js"
    */
-  def getFlotResizeUrl: String = getFlotHome() + "/jquery.flot.resize.min.js";
+  def getFlotResizeUrl: String = getFlotHome() + "/jquery.flot.resize.js";
 
   /**
    * Gets the URL for the flot plugin for stacked charts, typically named as "jquery.flot.stack.min.js"
    */
-  def getFlotStackUrl: String = getFlotHome() + "/jquery.flot.stack.min.js";
+  def getFlotStackUrl: String = getFlotHome() + "/jquery.flot.stack.js";
 
   /**
    * Gets the URL for the flot plugin for threshold effect, typically named as "jquery.flot.threshold.min.js"
    */
-  def getFlotThresholdUrl: String = getFlotHome() + "/jquery.flot.threshold.min.js";
+  def getFlotThresholdUrl: String = getFlotHome() + "/jquery.flot.threshold.js";
 
   /**
    * Gets the URL for the flot plugin for plotting categories instead of numbers on an axis, typically named as "jquery.flot.categories.js"

@@ -9,19 +9,20 @@ import scala.collection.JavaConverters._
 class ScatterAnalyzerChartScriptHeadElement(result: IScatterAnalyzerResult, elementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
+    val dataId = "data" + elementId;
 
     return """<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var """ + dataId + """ = [
         """ +
       result.getGroups.asScala.map(group => """{
         data: [""" + group.getCoordinates.asScala.map(coor => "[" + coor.getLeft + "," + coor.getRight + "]").mkString(",") + """],
         label: """" + group.getName + """"
               }""").mkString(",") + """
     ];
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_scatter_chart('""" + elementId + """', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_scatter_chart('""" + elementId + """', """ + dataId + """, 2);
       });
     });
     //]]>

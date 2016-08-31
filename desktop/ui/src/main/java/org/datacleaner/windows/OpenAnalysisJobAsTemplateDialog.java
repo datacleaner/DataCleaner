@@ -19,26 +19,27 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -55,22 +56,23 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
 /**
- * Dialog for opening a job as a template. This feature allows the user to reuse
- * an existing job but on a new set of columns, typically from a different
- * datastore.
+ * Dialog for opening a job as a template. This feature allows the user to reuse an existing job but on a new set 
+ * of columns, typically from a different datastore.
  */
 public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
-
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobAsTemplateDialog.class);
 
     private static final ImageManager imageManager = ImageManager.get();
 
@@ -83,8 +85,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
     private final Map<String, JXTextField> _variableTextFields;
     private final JButton _openButton;
+    private final JButton _clearButton;
     private final JButton _autoMapButton;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
+    private final LoadingIcon _loadingIcon = createLoadingIcon();
 
     private volatile Datastore _datastore;
 
@@ -97,163 +101,180 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _metadata = metadata;
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _sourceColumnMapping = new SourceColumnMapping(metadata);
-        _variableTextFields = new HashMap<String, JXTextField>();
-
-        _openButton = WidgetFactory.createPrimaryButton("Open job", IconUtils.MODEL_JOB);
-        _openButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JaxbJobReader reader = new JaxbJobReader(_configuration);
-                try {
-                    SourceColumnMapping sourceColumnMapping = getSourceColumnMapping();
-
-                    Map<String, String> variableOverrides = new HashMap<String, String>();
-                    for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
-                        variableOverrides.put(entry.getKey(), entry.getValue().getText());
-                    }
-
-                    final InputStream inputStream = _file.getContent().getInputStream();
-                    final AnalysisJobBuilder ajb;
-                    try {
-                        ajb = reader.create(inputStream, sourceColumnMapping, variableOverrides);
-                    } finally {
-                        FileHelper.safeClose(inputStream);
-                    }
-
-                    final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
-                            .get();
-                    final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
-
-                    OpenAnalysisJobAsTemplateDialog.this.dispose();
-
-                    final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-                    window.open();
-                } catch (Exception e1) {
-                    throw new IllegalStateException(e1);
-                }
-            }
-        });
-
-        final List<String> columnPaths = _metadata.getSourceColumnPaths();
-        _sourceColumnComboBoxes = new HashMap<String, List<SourceColumnComboBox>>();
-        for (String columnPath : columnPaths) {
-            int columnDelim = columnPath.lastIndexOf('.');
-            final String tablePath;
-            if (columnDelim == -1) {
-                // some column path contain only the column name
-                tablePath = _metadata.getDatastoreName();
-            } else {
-                // this tablePath will be used to group together columns from
-                // the same original table
-                // The column's path contains also the table name in the path
-                tablePath = columnPath.substring(0, columnDelim);
-            }
-
-            final SourceColumnComboBox comboBox = new SourceColumnComboBox();
-            comboBox.setEnabled(false);
-            comboBox.setName(columnPath);
-            comboBox.addColumnSelectedListener(new Listener<Column>() {
-
-                @Override
-                public void onItemSelected(Column col) {
-                    if (col != null) {
-                        // make sure all comboboxes in a group use the same
-                        // table
-                        List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tablePath);
-                        for (SourceColumnComboBox sameTableComboBox : comboBoxes) {
-                            sameTableComboBox.setModel(_datastore, col.getTable());
-                        }
-                    }
-                    refreshOpenButtonVisibility();
-                }
-            });
-
-            if (!_sourceColumnComboBoxes.containsKey(tablePath)) {
-                _sourceColumnComboBoxes.put(tablePath, new ArrayList<SourceColumnComboBox>());
-            }
-
-            _sourceColumnComboBoxes.get(tablePath).add(comboBox);
-        }
-
-        for (Entry<String, String> variableEntry : metadata.getVariables().entrySet()) {
-            String id = variableEntry.getKey();
-            String value = variableEntry.getValue();
-            JXTextField textField = WidgetFactory.createTextField("Original: " + value);
-            textField.setText(value);
-            _variableTextFields.put(id, textField);
-        }
-
+        _clearButton = WidgetFactory.createDefaultButton("Clear");
+        _openButton = createOpenButton();
+        _sourceColumnComboBoxes = createSourceColumnComboBoxes();
+        _variableTextFields = createVariableTextFields();
         _openButton.setEnabled(false);
         _datastoreCatalog = configuration.getDatastoreCatalog();
+        _datastoreCombobox = createDatastoreCombobox();
+        _autoMapButton = createAutoMapButton();
+    }
 
-        final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-        // the combobox will contain all datastore names and a null for
-        // "not selected"
-        final String[] comboBoxModel = CollectionUtils.array(new String[1], datastoreNames);
-        _datastoreCombobox = new JComboBox<String>(comboBoxModel);
-        _datastoreCombobox.setEditable(false);
-        _datastoreCombobox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
-                _datastore = _datastoreCatalog.getDatastore(datastoreName);
+    public static LoadingIcon createLoadingIcon() {
+        final LoadingIcon loadingIcon = new LoadingIcon();
+        final int formElementHeight = 32;
+        final Dimension size = new Dimension(formElementHeight, formElementHeight);
+        loadingIcon.setPreferredSize(size);
+        loadingIcon.setBackground(Color.WHITE);
+        loadingIcon.setOpaque(true);
+        loadingIcon.setVisible(false);
 
-                _sourceColumnMapping.setDatastore(_datastore);
+        return loadingIcon;
+    }
 
-                refreshOpenButtonVisibility();
+    private Map<String, JXTextField> createVariableTextFields() {
+        final Map<String, JXTextField> variableTextFields = new HashMap<>();
 
+        for (Entry<String, String> variableEntry : _metadata.getVariables().entrySet()) {
+            final String id = variableEntry.getKey();
+            final String value = variableEntry.getValue();
+            final JXTextField textField = WidgetFactory.createTextField("Original: " + value);
+            textField.setText(value);
+            variableTextFields.put(id, textField);
+        }
+
+        return variableTextFields;
+    }
+
+    private JButton createOpenButton() {
+        final JButton openButton = WidgetFactory.createPrimaryButton("Open job", IconUtils.MODEL_JOB);
+        openButton.addActionListener(event -> {
+            final JaxbJobReader reader = new JaxbJobReader(_configuration);
+
+            try {
+                final SourceColumnMapping sourceColumnMapping = getSourceColumnMapping();
+                final Map<String, String> variableOverrides = new HashMap<>();
+
+                for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
+                    variableOverrides.put(entry.getKey(), entry.getValue().getText());
+                }
+
+                final InputStream inputStream = _file.getContent().getInputStream();
+                final AnalysisJobBuilder analysisJobBuilder;
+
+                try {
+                    analysisJobBuilder = reader.create(inputStream, sourceColumnMapping, variableOverrides);
+                } finally {
+                    FileHelper.safeClose(inputStream);
+                }
+
+                final OpenAnalysisJobActionListener openAnalysisJobActionListener =
+                        _openAnalysisJobActionListenerProvider.get();
+                final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file, analysisJobBuilder);
+                OpenAnalysisJobAsTemplateDialog.this.dispose();
+                final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                window.open();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        });
+
+        return openButton;
+    }
+
+    private Map<String, List<SourceColumnComboBox>> createSourceColumnComboBoxes() {
+        final Map<String, List<SourceColumnComboBox>> sourceColumnComboBoxes = new HashMap<>();
+        final List<String> columnPaths = _metadata.getSourceColumnPaths();
+
+        for (String columnPath : columnPaths) {
+            final String tablePath = getTablePath(columnPath);
+            final SourceColumnComboBox comboBox = createSourceColumnComboBoxForColumn(sourceColumnComboBoxes,
+                    tablePath, columnPath);
+            sourceColumnComboBoxes.get(tablePath).add(comboBox);
+        }
+
+        return sourceColumnComboBoxes;
+    }
+
+    private String getTablePath(String columnPath) {
+        final int columnDelim = columnPath.lastIndexOf('.');
+        final String tablePath;
+
+        if (columnDelim == -1) { // some column paths contain only the column name
+            tablePath = _metadata.getDatastoreName();
+        } else {
+            // this tablePath will be used to group together columns from the same original table
+            // The column's path contains also the table name in the path
+            tablePath = columnPath.substring(0, columnDelim);
+        }
+
+        return tablePath;
+    }
+
+    private SourceColumnComboBox createSourceColumnComboBoxForColumn(Map<String,
+            List<SourceColumnComboBox>> sourceColumnComboBoxes, String tablePath, String columnPath) {
+        final SourceColumnComboBox comboBox = new SourceColumnComboBox();
+        comboBox.setEnabled(false);
+        comboBox.setName(columnPath);
+        comboBox.addColumnSelectedListener(col -> {
+            if (col != null) { // make sure all comboboxes in a group use the same table
+                final List<SourceColumnComboBox> comboBoxes = sourceColumnComboBoxes.get(tablePath);
+
+                for (SourceColumnComboBox sameTableComboBox : comboBoxes) {
+                    sameTableComboBox.setModel(_datastore, col.getTable());
+                }
+            }
+
+            refreshOpenButtonVisibility();
+        });
+
+        if (!sourceColumnComboBoxes.containsKey(tablePath)) {
+            sourceColumnComboBoxes.put(tablePath, new ArrayList<>());
+        }
+
+        return comboBox;
+    }
+
+    private JComboBox<String> createDatastoreCombobox() {
+        final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
+        final JComboBox<String> comboBox = new JComboBox<>(comboBoxModel);
+        comboBox.setEditable(false);
+        final JDialog parent = this;
+        comboBox.addActionListener(e -> {
+            try {
+                ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater(parent);
+                comboBoxUpdater.execute();
+            } catch (Exception exception) {
+                final String exceptionMessage = "An unexpected error occurred while updating combo boxes:\n"
+                        + exception.getMessage();
+                logger.error(exceptionMessage);
+                WidgetUtils.showErrorMessage("Unexpected error", exceptionMessage);
+            }
+        });
+
+        return comboBox;
+    }
+
+    private JButton createAutoMapButton() {
+        final JButton button = WidgetFactory.createDefaultButton("Map automatically");
+        button.setVisible(false);
+        button.addActionListener(e -> {
+            _sourceColumnMapping.autoMap(_datastore);
+
+            for (String path : _sourceColumnMapping.getPaths()) {
                 for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
                     for (SourceColumnComboBox comboBox : comboBoxes) {
-                        comboBox.setModel(_datastore);
-                        if (_datastore == null) {
-                            // no datastore selected
-                            comboBox.setEnabled(false);
-                        } else {
-                            comboBox.setEnabled(true);
-                        }
-                    }
-                }
-
-                if (_datastore == null) {
-                    _autoMapButton.setVisible(false);
-                } else {
-                    _autoMapButton.setVisible(true);
-                }
-            }
-        });
-
-        _autoMapButton = WidgetFactory.createDefaultButton("Map automatically");
-        _autoMapButton.setVisible(false);
-        _autoMapButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _sourceColumnMapping.autoMap(_datastore);
-                Set<String> paths = _sourceColumnMapping.getPaths();
-                for (String path : paths) {
-                    for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
-                        for (SourceColumnComboBox comboBox : comboBoxes) {
-                            if (path.equals(comboBox.getName())) {
-                                comboBox.setSelectedItem(_sourceColumnMapping.getColumn(path));
-                            }
+                        if (path.equals(comboBox.getName())) {
+                            comboBox.setSelectedItem(_sourceColumnMapping.getColumn(path));
                         }
                     }
                 }
             }
         });
+
+        return button;
     }
 
     public void refreshOpenButtonVisibility() {
-        if (_datastore == null) {
-            // no datastore selected
+        if (_datastore == null) { // no datastore selected
             _openButton.setEnabled(false);
             return;
         }
 
         for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
             for (SourceColumnComboBox comboBox : comboBoxes) {
-                if (comboBox.getSelectedItem() == null) {
-                    // not all columns selected
+                if (comboBox.getSelectedItem() == null) { // not all columns selected
                     _openButton.setEnabled(false);
                     return;
                 }
@@ -269,6 +290,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
                 _sourceColumnMapping.setColumn(comboBox.getName(), comboBox.getSelectedItem());
             }
         }
+
         return _sourceColumnMapping;
     }
 
@@ -288,88 +310,169 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     }
 
     @Override
-    protected JComponent getDialogContent() {
-        final DCPanel panel = new DCPanel();
-
-        int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("<html><b>Original value:</b></html>"), panel, 1, row);
-        WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), panel, 2, row);
-
-        row++;
-        WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)), panel,
-                0, row);
-        WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
-
-        DCPanel datastoreButtonPanel = new DCPanel();
-        datastoreButtonPanel.setLayout(new HorizontalLayout(0));
-        datastoreButtonPanel.add(_datastoreCombobox);
-        datastoreButtonPanel.add(Box.createHorizontalStrut(4));
-        datastoreButtonPanel.add(_autoMapButton);
-
-        WidgetUtils.addToGridBag(datastoreButtonPanel, panel, 2, row, GridBagConstraints.WEST);
-
-        Set<String> tableNames = _sourceColumnComboBoxes.keySet();
-        for (final String tableName : tableNames) {
-            row++;
-            final JLabel tableLabel = DCLabel.bright("<html><b>" + tableName + "</b></html>");
-            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL));
-            WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
-
-            final JButton clearButton = WidgetFactory.createDefaultButton("Clear");
-            clearButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);
-                    for (SourceColumnComboBox comboBox : comboBoxes) {
-                        comboBox.setModel(_datastore, false);
-                    }
-                }
-            });
-            final DCPanel clearButtonPanel = new DCPanel();
-            clearButtonPanel.add(clearButton);
-            WidgetUtils.addToGridBag(clearButtonPanel, panel, 2, row, GridBagConstraints.CENTER);
-
-            final List<SourceColumnComboBox> comboBoxes = _sourceColumnComboBoxes.get(tableName);
-            for (SourceColumnComboBox comboBox : comboBoxes) {
-                row++;
-                WidgetUtils.addToGridBag(
-                        new JLabel(imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL)),
-                        panel, 0, row);
-                WidgetUtils.addToGridBag(DCLabel.bright(comboBox.getName()), panel, 1, row, GridBagConstraints.WEST);
-                WidgetUtils.addToGridBag(comboBox, panel, 2, row, GridBagConstraints.WEST);
-            }
-        }
-        row++;
-
-        if (!_variableTextFields.isEmpty()) {
-            final JLabel tableLabel = DCLabel.bright("<html><b>Job-level variables</b></html>");
-            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL));
-            WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
-
-            for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
-                row++;
-                String variableId = entry.getKey();
-                JXTextField textField = entry.getValue();
-
-                WidgetUtils.addToGridBag(
-                        new JLabel(imageManager.getImageIcon("images/model/variable.png", IconUtils.ICON_SIZE_SMALL)),
-                        panel, 0, row);
-                WidgetUtils.addToGridBag(DCLabel.bright(variableId), panel, 1, row, GridBagConstraints.WEST);
-                WidgetUtils.addToGridBag(textField, panel, 2, row, GridBagConstraints.WEST);
-            }
-            row++;
-        }
-
-        final DCPanel openButtonPanel = new DCPanel();
-        openButtonPanel.add(_openButton);
-        WidgetUtils.addToGridBag(openButtonPanel, panel, 2, row, GridBagConstraints.EAST);
-
-        return WidgetUtils.scrolleable(panel);
-    }
-
-    @Override
     public String getWindowTitle() {
         return "Open analysis job as template";
     }
 
+    @Override
+    protected JComponent getDialogContent() {
+        return new DialogContentMaker().make();
+    }
+
+    private class DialogContentMaker {
+        private final DCPanel _panel;
+        private int _row;
+
+        public DialogContentMaker() {
+            _panel = new DCPanel();
+            _row = 0;
+        }
+
+        public JScrollPane make() {
+            addTopLabels();
+            addDatastoreButtonPanel();
+
+            for (final String tableName : _sourceColumnComboBoxes.keySet()) {
+                addTable(tableName);
+            }
+
+            _row++;
+
+            if (!_variableTextFields.isEmpty()) {
+                addJobLevelVariables();
+            }
+
+            addOpenButtonPanel();
+
+            return WidgetUtils.scrolleable(_panel);
+        }
+
+        private void addTopLabels() {
+            WidgetUtils.addToGridBag(DCLabel.bright("<html><b>Original value:</b></html>"), _panel, 1, _row);
+            WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), _panel, 2, _row);
+
+            _row++;
+            WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)),
+                    _panel, 0, _row);
+            WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), _panel, 1, _row,
+                    GridBagConstraints.WEST);
+        }
+
+        private void addDatastoreButtonPanel() {
+            final DCPanel datastoreButtonPanel = new DCPanel();
+            datastoreButtonPanel.setLayout(new HorizontalLayout(0));
+            datastoreButtonPanel.add(_datastoreCombobox);
+            datastoreButtonPanel.add(_loadingIcon);
+            datastoreButtonPanel.add(Box.createHorizontalStrut(4));
+            datastoreButtonPanel.add(_autoMapButton);
+
+            WidgetUtils.addToGridBag(datastoreButtonPanel, _panel, 2, _row, GridBagConstraints.WEST);
+        }
+
+        private void addTable(String tableName) {
+            addTableLabel(tableName);
+            addTableClearButton(tableName);
+
+            for (SourceColumnComboBox comboBox : _sourceColumnComboBoxes.get(tableName)) {
+                addTableSourceColumnComboBox(comboBox);
+            }
+        }
+
+        private void addTableSourceColumnComboBox(SourceColumnComboBox comboBox) {
+            _row++;
+            WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.MODEL_COLUMN,
+                    IconUtils.ICON_SIZE_SMALL)), _panel, 0, _row);
+            WidgetUtils.addToGridBag(DCLabel.bright(comboBox.getName()), _panel, 1, _row, GridBagConstraints.WEST);
+            WidgetUtils.addToGridBag(comboBox, _panel, 2, _row, GridBagConstraints.WEST);
+        }
+
+        private void addTableClearButton(String tableName) {
+            _clearButton.addActionListener(e -> {
+                for (SourceColumnComboBox comboBox : _sourceColumnComboBoxes.get(tableName)) {
+                    comboBox.setModel(_datastore, false);
+                }
+            });
+
+            final DCPanel clearButtonPanel = new DCPanel();
+            clearButtonPanel.add(_clearButton);
+            WidgetUtils.addToGridBag(clearButtonPanel, _panel, 2, _row, GridBagConstraints.CENTER);
+        }
+
+        private void addTableLabel(String tableName) {
+            _row++;
+            final JLabel tableLabel = DCLabel.bright("<html><b>" + tableName + "</b></html>");
+            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL));
+            WidgetUtils.addToGridBag(tableLabel, _panel, 0, _row, 2, 1, GridBagConstraints.WEST);
+        }
+
+        private void addJobLevelVariables() {
+            final JLabel tableLabel = DCLabel.bright("<html><b>Job-level variables</b></html>");
+            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL));
+            WidgetUtils.addToGridBag(tableLabel, _panel, 0, _row, 2, 1, GridBagConstraints.WEST);
+
+            for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
+                _row++;
+                final String variableId = entry.getKey();
+                final JXTextField textField = entry.getValue();
+
+                WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/variable.png",
+                        IconUtils.ICON_SIZE_SMALL)), _panel, 0, _row);
+                WidgetUtils.addToGridBag(DCLabel.bright(variableId), _panel, 1, _row, GridBagConstraints.WEST);
+                WidgetUtils.addToGridBag(textField, _panel, 2, _row, GridBagConstraints.WEST);
+            }
+
+            _row++;
+        }
+
+        private void addOpenButtonPanel() {
+            final DCPanel openButtonPanel = new DCPanel();
+            openButtonPanel.add(_openButton);
+            WidgetUtils.addToGridBag(openButtonPanel, _panel, 2, _row, GridBagConstraints.EAST);
+        }
+    }
+
+    private class ComboBoxUpdater extends SwingWorker<Void, Void> {
+        public ComboBoxUpdater(JDialog parent) {
+            final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
+            _datastore = _datastoreCatalog.getDatastore(datastoreName);
+        }
+
+        private void update() {
+            _sourceColumnMapping.setDatastore(_datastore);
+
+            for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
+                for (SourceColumnComboBox comboBox : comboBoxes) {
+                    comboBox.setModel(_datastore);
+                    boolean datastoreSelected = (_datastore != null);
+                    comboBox.setEnabled(datastoreSelected);
+                }
+            }
+        }
+
+        private void disableGUI() {
+            refreshOpenButtonVisibility();
+            _clearButton.setEnabled(false);
+            _datastoreCombobox.setEnabled(false);
+        }
+
+        private void enableGUI() {
+            boolean datastoreSelected = (_datastore != null);
+            _autoMapButton.setVisible(datastoreSelected);
+            _clearButton.setEnabled(true);
+            _datastoreCombobox.setEnabled(true);
+        }
+
+        protected Void doInBackground() throws Exception {
+            disableGUI();
+            _loadingIcon.setVisible(true);
+            update();
+
+            return null;
+        }
+
+        protected void done() {
+            enableGUI();
+            _loadingIcon.setVisible(false);
+        }
+    }
 }

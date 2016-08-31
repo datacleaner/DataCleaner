@@ -47,6 +47,8 @@ import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Provider;
 import com.google.inject.util.Providers;
@@ -55,6 +57,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class OpenAnalysisJobAsTemplateDialogTest {
+    private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobAsTemplateDialogTest.class);
     private OpenAnalysisJobAsTemplateDialog _dialog;
     
     @Test
@@ -114,7 +117,7 @@ public class OpenAnalysisJobAsTemplateDialogTest {
                 _dialog = new OpenAnalysisJobAsTemplateDialog(windowContext, configuration, file, createMetadata(),
                         providerMock);
             } catch (FileSystemException e) {
-                // ignore
+                logger.error("Problem occurred while creating dialog instance. \n" + e.getMessage());
             }
         }
         

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,42 +63,58 @@ public class OpenAnalysisJobAsTemplateDialogTest {
     
     @Test
     public void testCreateLoadingIcon() throws Exception {
-        assertTrue(getDialog().createLoadingIcon() instanceof LoadingIcon);
+        if (GraphicsEnvironment.isHeadless()) {
+            assertTrue(getDialog().createLoadingIcon() instanceof LoadingIcon);
+        }
     }
 
     @Test
     public void testRefreshOpenButtonVisibility() throws Exception {
-        getDialog().refreshOpenButtonVisibility();
+        if (GraphicsEnvironment.isHeadless()) {
+            getDialog().refreshOpenButtonVisibility();
+        }
     }
 
     @Test
     public void testGetSourceColumnMapping() throws Exception {
-        assertTrue(getDialog().getSourceColumnMapping() instanceof SourceColumnMapping);
+        if (GraphicsEnvironment.isHeadless()) {
+            assertTrue(getDialog().getSourceColumnMapping() instanceof SourceColumnMapping);
+        }
     }
 
     @Test
     public void testGetBannerTitle() throws Exception {
-        assertEquals("Open as template", getDialog().getBannerTitle());
+        if (GraphicsEnvironment.isHeadless()) {
+            assertEquals("Open as template", getDialog().getBannerTitle());
+        }
     }
 
     @Test
     public void testGetDialogWidth() throws Exception {
-        assertEquals(600, getDialog().getDialogWidth());
+        if (GraphicsEnvironment.isHeadless()) {
+            assertEquals(600, getDialog().getDialogWidth());
+        }
     }
 
     @Test
     public void testIsWindowResizable() throws Exception {
-        assertEquals(true, getDialog().isWindowResizable());
+        if (GraphicsEnvironment.isHeadless()) {
+            assertEquals(true, getDialog().isWindowResizable());
+        }
     }
 
     @Test
     public void testGetDialogContent() throws Exception {
-        assertTrue(getDialog().getDialogContent() instanceof JScrollPane);
+        if (GraphicsEnvironment.isHeadless()) {
+            assertTrue(getDialog().getDialogContent() instanceof JScrollPane);
+        }
     }
 
     @Test
     public void testGetWindowTitle() throws Exception {
-        assertEquals("Open analysis job as template", getDialog().getWindowTitle());
+        if (GraphicsEnvironment.isHeadless()) {
+            assertEquals("Open analysis job as template", getDialog().getWindowTitle());
+        }
     }
 
     private OpenAnalysisJobAsTemplateDialog getDialog() {

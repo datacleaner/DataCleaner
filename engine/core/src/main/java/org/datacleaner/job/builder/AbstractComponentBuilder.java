@@ -44,6 +44,7 @@ import org.datacleaner.api.Component;
 import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Renderable;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -423,8 +424,59 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             }
         }
 
+        synchronizeDependentProperties(configuredProperty, value, currentValue);
+
         configuredProperty.setValue(_configurableBean, value);
         return true;
+    }
+
+    private void synchronizeDependentProperties(final ConfiguredPropertyDescriptor property,
+            final Object newValue, final Object currentValue) {
+        if (currentValue != null) {
+            getDescriptor().getConfiguredPropertiesByAnnotation(MappedProperty.class).stream().filter(
+                    dependentProperty -> property.getName().equals(dependentProperty.getAnnotation(MappedProperty.class)
+                            .value())).forEach(dependentProperty -> {
+                                // In case the new value no longer contains everything in the original value,
+                                // the values in the dependent property referring to the removed values need
+                                // to be removed too.
+                                Object dependentValue = dependentProperty.getValue(_configurableBean);
+
+                                if (dependentValue != null) {
+                                    // First build a list containing value and references tuples.
+                                    Map<Object, Object> originalMappings = new HashMap<>();
+
+                                    List<Object> synchronizedDependents = new ArrayList<>();
+
+                                    if (currentValue.getClass().isArray()) {
+                                        for (int i = 0; i < Array.getLength(currentValue); i++) {
+                                            originalMappings.put(Array.get(currentValue, i), Array.get(dependentValue,
+                                                    i));
+                                        }
+
+                                        for (int i = 0; i < Array.getLength(newValue); i++) {
+                                            synchronizedDependents.add(originalMappings.get(Array.get(newValue, i)));
+                                        }
+
+                                        dependentProperty.setValue(_configurableBean, getArray(dependentProperty
+                                                .getBaseType(), synchronizedDependents));
+                                    } else {
+                                        if (newValue == null) {
+                                            dependentProperty.setValue(_configurableBean, null);
+                                        }
+                                    }
+                                }
+                            });
+        }
+    }
+
+    private static <E> E[] getArray(Class<E> clazz, List<?> baseList) {
+        E[] result = (E[]) Array.newInstance(clazz, baseList.size());
+
+        for (int i = 0; i < baseList.size(); i++) {
+            Array.set(result, i, (E) baseList.get(i));
+        }
+
+        return (E[]) result;
     }
 
     @Override

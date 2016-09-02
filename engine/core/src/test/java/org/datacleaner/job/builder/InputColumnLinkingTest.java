@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -145,5 +147,44 @@ public class InputColumnLinkingTest {
 
         assertEquals(1, analyzer.getInputColumns().size());
         assertEquals(1, analyzer.getComponentInstance()._columns.length);
+    }
+
+    /**
+     * Tests if for an analyzer with a field mapped to an {@link InputColumn} through the
+     * {@link MappedProperty} annotation, the value(s) of the field are be synchronized in the same manner as
+     * the value(s) of the input column.
+     */
+    @Test
+    public void testMappedProperties() {
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(analyzer, "Columns");
+        final ConfiguredPropertyDescriptor columnProperty = getPropertyDescriptor(analyzer, "Column");
+
+        analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnsProperty);
+        analyzer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnsProperty);
+        analyzer.setConfiguredProperty("Column names", new String[] {"first", "second"});
+
+        analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty);
+        analyzer.setConfiguredProperty("Column name", "test");
+
+        assertEquals(3, analyzer.getInputColumns().size());
+        assertEquals(2, analyzer.getComponentInstance()._columns.length);
+        assertNotNull(analyzer.getComponentInstance()._column);
+        assertNotNull(analyzer.getComponentInstance()._columnName);
+
+        _dateTransformer.removeInputColumn(_dateTransformer.getInputColumns().get(0));
+
+        assertEquals(1, analyzer.getInputColumns().size());
+        assertEquals(1, analyzer.getComponentInstance()._columns.length);
+        assertEquals(1, analyzer.getComponentInstance()._columnNames.length);
+        assertEquals("second", analyzer.getComponentInstance()._columnNames[0]);
+        assertNull(analyzer.getComponentInstance()._column);
+        assertNull(analyzer.getComponentInstance()._columnName);
+
+        analyzer.removeInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnsProperty);
+
+        assertEquals(0, analyzer.getInputColumns().size());
+        assertEquals(0, analyzer.getComponentInstance()._columns.length);
+        assertEquals(0, analyzer.getComponentInstance()._columnNames.length);
     }
 }

@@ -21,11 +21,20 @@ package org.datacleaner.job.builder;
 
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MappedProperty;
 
 public class MockAnalyzer extends BaseMockAnalyzer {
     @Configured
     public InputColumn<?>[] _columns;
 
     @Configured
+    @MappedProperty("Columns")
+    public String[] _columnNames;
+
+    @Configured
     public InputColumn<?> _column;
+
+    @Configured
+    @MappedProperty("Column")
+    public String _columnName;
 }

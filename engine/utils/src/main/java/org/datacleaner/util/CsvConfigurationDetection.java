@@ -116,7 +116,8 @@ public class CsvConfigurationDetection {
      * @throws IllegalStateException
      *             if an error occurs during auto-detection
      */
-    public CsvConfiguration suggestCsvConfiguration(String encoding, List<String> columnNames) throws IllegalStateException {
+    public CsvConfiguration suggestCsvConfiguration(String encoding, List<String> columnNames)
+            throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         return suggestCsvConfiguration(sample, encoding, columnNames);
     }
@@ -129,9 +130,9 @@ public class CsvConfigurationDetection {
      *             if an error occurs during auto-detection
      */
     public CsvConfiguration suggestCsvConfiguration() throws IllegalStateException {
-        return suggestCsvConfiguration(null); 
+        return suggestCsvConfiguration(null);
     }
-    
+
     public CsvConfiguration suggestCsvConfiguration(List<String> columnNames) throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         final String encoding = suggestEncoding(sample);
@@ -139,7 +140,8 @@ public class CsvConfigurationDetection {
         return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
-    private CsvConfiguration suggestCsvConfiguration(byte[] sample, String encoding, List<String> columnNames) throws IllegalStateException {
+    private CsvConfiguration suggestCsvConfiguration(byte[] sample, String encoding, List<String> columnNames)
+            throws IllegalStateException {
 
         char[] sampleChars = readSampleBuffer(sample, encoding);
 
@@ -218,19 +220,19 @@ public class CsvConfigurationDetection {
                 quoteChar = '"';
             }
         }
-        final ColumnNamingStrategy columnNamingStategy;  
-        if (columnNames != null && columnNames.size() > 0){
-            columnNamingStategy =  new CustomColumnNamingStrategy(columnNames); 
-        }else{
-            columnNamingStategy = null; 
+        final ColumnNamingStrategy columnNamingStategy;
+        if (columnNames != null && columnNames.size() > 0) {
+            columnNamingStategy = new CustomColumnNamingStrategy(columnNames);
+        } else {
+            columnNamingStategy = null;
         }
         // detect if multi line values occur
         boolean multiline = false;
         final CsvConfiguration multiLineConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
                 columnNamingStategy, encoding, separatorChar, quoteChar, escapeChar, false, true);
         try {
-            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
-                    System.currentTimeMillis()), multiLineConfiguration);
+            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample, System
+                    .currentTimeMillis()), multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
             try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
@@ -252,8 +254,8 @@ public class CsvConfigurationDetection {
             return multiLineConfiguration;
         }
 
-        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding, separatorChar, quoteChar,
-                escapeChar, false, multiline);
+        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
+                separatorChar, quoteChar, escapeChar, false, multiline);
     }
 
     private int indexOf(char c, char[] sampleChars) {

@@ -443,18 +443,19 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
                                 if (dependentValue != null) {
                                     // First build a list containing value and references tuples.
-                                    Map<Object, Object> originalMappings = new HashMap<>();
+                                    Map<Integer, Object> originalMappings = new HashMap<>();
 
                                     List<Object> synchronizedDependents = new ArrayList<>();
 
                                     if (currentValue.getClass().isArray()) {
                                         for (int i = 0; i < Array.getLength(currentValue); i++) {
-                                            originalMappings.put(Array.get(currentValue, i), Array.get(dependentValue,
-                                                    i));
+                                            originalMappings.put(Array.get(currentValue, i).hashCode(), Array.get(
+                                                    dependentValue, i));
                                         }
 
                                         for (int i = 0; i < Array.getLength(newValue); i++) {
-                                            synchronizedDependents.add(originalMappings.get(Array.get(newValue, i)));
+                                            synchronizedDependents.add(originalMappings.get(Array.get(newValue, i)
+                                                    .hashCode()));
                                         }
 
                                         dependentProperty.setValue(_configurableBean, getArray(dependentProperty

@@ -21,30 +21,32 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.FixedWidthDatastore;
+import org.datacleaner.util.ImmutableEntry;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -52,17 +54,15 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
-import org.datacleaner.widgets.ResourceTypePresenter;
-import org.jdesktop.swingx.HorizontalLayout;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.jdesktop.swingx.JXTextField;
 
 public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
@@ -80,12 +80,11 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
     private final JButton _addValueWidthButton;
     private final JButton _removeValueWidthButton;
     private final DocumentListener _updatePreviewTableDocumentListener;
-    private final JButton _addColumnNamesButton;
-    private final DCPanel _addColumnNamesPanel;
+    private final CustomColumnNamesWidget _columnNamesWidget;
 
     private volatile boolean showPreview = true;
 
-    private List<String> _columnNames;
+    private Set<JTextField> _columnNameFields = new HashSet<>();
 
     @Inject
     protected FixedWidthDatastoreDialog(@Nullable FixedWidthDatastore originalDatastore,
@@ -112,9 +111,9 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
         _skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
         _eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
-        _addColumnNamesButton = WidgetFactory.createDefaultButton("Add", IconUtils.ACTION_RENAME);
-
         if (originalDatastore != null) {
+            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+
             _encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
             _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
             _skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
@@ -128,17 +127,12 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
             _headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
 
             onSettingsUpdated(false);
-
-            _columnNames = originalDatastore.getCustomColumnNames();
-            _addColumnNamesButton.setEnabled(true);
         } else {
+            _columnNamesWidget = new CustomColumnNamesWidget(null);
 
             addValueWidthTextField();
             addValueWidthTextField();
             addValueWidthTextField();
-
-            _columnNames = null;
-            _addColumnNamesButton.setEnabled(false);
         }
 
         _addValueWidthButton.addActionListener(e -> addValueWidthTextField());
@@ -146,62 +140,13 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
         _encodingComboBox.addListener(item -> onSettingsUpdated(false));
         _headerLineComboBox.addListener(item -> onSettingsUpdated(false));
 
-        _addColumnNamesPanel = new DCPanel();
-        _addColumnNamesPanel.setLayout(new HorizontalLayout());
-        _addColumnNamesButton.addActionListener(new ActionListener() {
+        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
+            onSettingsUpdated(false);
+            SwingUtilities.invokeLater(() -> registerColumnNameFields());
+        }));
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        registerColumnNameFields();
 
-                if (_columnNames == null) {
-                    final FixedWidthDatastore datastore = createDatastore(getDatastoreName(), getFilename());
-                    datastore.openConnection();
-                    _columnNames = datastore.getCustomColumnNames();
-                }
-                final ColumnNamesSetterDialog columnNamesChooserDialog = new ColumnNamesSetterDialog(windowContext,
-                        _columnNames);
-                columnNamesChooserDialog.setVisible(true);
-                columnNamesChooserDialog.addWindowListener(new WindowListener() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        _columnNames = columnNamesChooserDialog.getColumnNames();
-                        onSettingsUpdated(false);
-
-                    }
-
-                    @Override
-                    public void windowActivated(WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeactivated(WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeiconified(WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowIconified(WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowOpened(WindowEvent e) {
-
-                    }
-                });
-            }
-        });
-        _addColumnNamesPanel.add(_addColumnNamesButton, 0);
     }
 
     private JCheckBox createCheckBox(String label, boolean selected) {
@@ -394,7 +339,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
         result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
         result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
         result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
-        result.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
+        result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
         return result;
     }
 
@@ -407,18 +352,6 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
         filenameField.addChoosableFileFilter(FileFilters.DAT);
         filenameField.addChoosableFileFilter(FileFilters.EBC);
         filenameField.setSelectedFileFilter(combinedFilter);
-        filenameField.addListener(new ResourceTypePresenter.Listener() {
-            @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
-                onSettingsUpdated(true);
-                _addColumnNamesButton.setEnabled(true);
-            }
-
-            @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
-                _addColumnNamesButton.setEnabled(true);
-            }
-        });
     }
 
     @Override
@@ -442,7 +375,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
     private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
             boolean skipEbcdicHeader, boolean eolPresent) {
         return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), getValueWidths(true),
-                failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine(), _columnNames);
+                failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine(), _columnNamesWidget
+                        .getColumnNames());
     }
 
     private int[] getValueWidths(boolean failOnMissingValue) {
@@ -487,5 +421,19 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
         } else {
             return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
         }
+    }
+
+    private void registerColumnNameFields() {
+        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field)).forEach(
+                field -> {
+                    field.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+                            onSettingsUpdated(false);
+                        }
+                    });
+
+                    _columnNameFields.add(field);
+                });
     }
 }

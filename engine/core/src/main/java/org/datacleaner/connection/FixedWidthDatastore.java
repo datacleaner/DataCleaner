@@ -29,6 +29,7 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**
@@ -46,7 +47,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     private final boolean _skipEbcdicHeader;
     private final boolean _eolPresent;
     private final int _headerLineNumber;
-    private List<String> _customColumnNames;
+    private final List<String> _customColumnNames;
 
     public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth) {
         this(name, filename, encoding, fixedValueWidth, true, false, true);
@@ -133,10 +134,6 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         }
 
         DataContext dataContext = DataContextFactory.createFixedWidthDataContext(file, configuration);
-
-        if (_customColumnNames == null) {
-            _customColumnNames = Arrays.asList(dataContext.getDefaultSchema().getTable(0).getColumnNames());
-        }
         return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
@@ -188,7 +185,6 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_failOnInconsistencies);
         identifiers.add(_skipEbcdicHeader);
         identifiers.add(_eolPresent);
-        identifiers.add(_customColumnNames);
     }
 
     @Override

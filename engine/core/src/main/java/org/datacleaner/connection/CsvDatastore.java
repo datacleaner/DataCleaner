@@ -234,6 +234,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
         identifiers.add(_failOnInconsistencies);
         identifiers.add(_multilineValues);
         identifiers.add(_headerLineNumber);
+        identifiers.add(_customColumnNames); 
     }
 
     @Override

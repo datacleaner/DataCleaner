@@ -22,6 +22,7 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.datacleaner.util.ReadObjectBuilder;
@@ -42,7 +43,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
 
     private final String _filename;
     private final SerializableRef<Resource> _resourceRef;
-    private final List<String> _customColumnNames;
+    private List<String> _customColumnNames;
 
     public ExcelDatastore(String name, Resource resource, String filename) {
         this(name, resource, filename, null);
@@ -87,6 +88,11 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
         } else {
             dc = new ExcelDataContext(resource, excelConfiguration);
         }
+        
+        if (_customColumnNames == null){
+            _customColumnNames = Arrays.asList(dc.getDefaultSchema().getTable(0).getColumnNames()); 
+        }
+       
         return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
     }
 

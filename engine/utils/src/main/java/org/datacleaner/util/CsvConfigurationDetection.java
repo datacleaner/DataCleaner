@@ -60,6 +60,7 @@ public class CsvConfigurationDetection {
     private static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
 
     private final Resource _resource;
+    private List<String> _columnNames; 
 
     public CsvConfigurationDetection(File file) {
         _resource = new FileResource(file);
@@ -221,6 +222,7 @@ public class CsvConfigurationDetection {
         final ColumnNamingStrategy columnNamingStategy;  
         if (columnNames != null && columnNames.size() > 0){
             columnNamingStategy =  new CustomColumnNamingStrategy(columnNames); 
+            _columnNames = columnNames; 
         }else{
             columnNamingStategy = null; 
         }
@@ -232,6 +234,9 @@ public class CsvConfigurationDetection {
             final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
                     System.currentTimeMillis()), multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
+             if (_columnNames == null){
+                 _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames()); 
+             }
             try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
                     final Row row = dataSet.getRow();
@@ -291,5 +296,8 @@ public class CsvConfigurationDetection {
             }
         }
         return buffer;
+    }
+    public List<String> getColumnNames() {
+        return _columnNames;
     }
 }

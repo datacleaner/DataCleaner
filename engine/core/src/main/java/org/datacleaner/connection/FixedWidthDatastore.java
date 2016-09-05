@@ -29,6 +29,7 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**
@@ -46,6 +47,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 	private final boolean _skipEbcdicHeader;
 	private final boolean _eolPresent;
 	private final int _headerLineNumber;
+    private final List<String> _customColumnNames;
 
 	public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth) {
 		this(name, filename, encoding, fixedValueWidth, true, false, true);
@@ -78,20 +80,28 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 		_skipEbcdicHeader = skipEbcdicHeader;
 		_eolPresent = eolPresent;
 		_headerLineNumber = headerLineNumber;
+		_customColumnNames = null;
 	}
 
 	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
 			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
-		super(name);
-		_filename = filename;
-		_encoding = encoding;
-		_fixedValueWidth = -1;
-		_valueWidths = valueWidths;
-		_failOnInconsistencies = failOnInconsistencies;
-		_skipEbcdicHeader = skipEbcdicHeader;
-		_eolPresent = eolPresent;
-		_headerLineNumber = headerLineNumber;
+        this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
+                headerLineNumber, null);
 	}
+
+    public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
+            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber, List<String> customColumnNames) {
+        super(name);
+        _filename = filename;
+        _encoding = encoding;
+        _fixedValueWidth = -1;
+        _valueWidths = valueWidths;
+        _failOnInconsistencies = failOnInconsistencies;
+        _skipEbcdicHeader = skipEbcdicHeader;
+        _eolPresent = eolPresent;
+        _headerLineNumber = headerLineNumber;
+        _customColumnNames = customColumnNames;
+    }
 
 	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
 		ReadObjectBuilder.create(this, FixedWidthDatastore.class).readObject(stream);
@@ -107,12 +117,19 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 		final File file = new File(_filename);
 		assert file.exists();
 		final FixedWidthConfiguration configuration;
-		
+
 		if (_fixedValueWidth == -1) {
-			configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies, 
-					_skipEbcdicHeader, _eolPresent);
+		    if (_customColumnNames != null && _customColumnNames.size() > 0) {
+                configuration = new EbcdicConfiguration(_headerLineNumber,
+                        // new CustomColumnNamingStrategy(_customColumnNames),
+                        _encoding, _valueWidths, _failOnInconsistencies, _skipEbcdicHeader,
+                        _eolPresent);
+		    } else {
+    			configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies,
+    					_skipEbcdicHeader, _eolPresent);
+		    }
 		} else {
-			configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth, 
+			configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
 					_failOnInconsistencies);
 		}
 
@@ -152,6 +169,10 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 	public boolean isEolPresent() {
 		return _eolPresent;
 	}
+
+    public List<String> getCustomColumnNames() {
+        return _customColumnNames;
+    }
 
 	@Override
 	protected void decorateIdentity(List<Object> identifiers) {

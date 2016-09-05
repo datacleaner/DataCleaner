@@ -792,6 +792,14 @@ public class DomConfigurationWriter {
 
         appendElement(ds, "filename", filename);
 
+        if (datastore.getCustomColumnNames() != null && datastore.getCustomColumnNames().size() > 0) {
+            final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
+            ds.appendChild(customColumnNamesElement);
+
+            datastore.getCustomColumnNames().forEach(columnName -> appendElement(customColumnNamesElement,
+                    "column-name", columnName));
+        }
+
         return ds;
     }
 
@@ -824,6 +832,14 @@ public class DomConfigurationWriter {
         appendElement(datastoreElement, "fail-on-inconsistencies", datastore.isFailOnInconsistencies());
         appendElement(datastoreElement, "multiline-values", datastore.isMultilineValues());
         appendElement(datastoreElement, "header-line-number", datastore.getHeaderLineNumber());
+
+        if (datastore.getCustomColumnNames() != null && datastore.getCustomColumnNames().size() > 0) {
+            final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
+            datastoreElement.appendChild(customColumnNamesElement);
+
+            datastore.getCustomColumnNames().forEach(columnName -> appendElement(customColumnNamesElement,
+                    "column-name", columnName));
+        }
 
         return datastoreElement;
     }

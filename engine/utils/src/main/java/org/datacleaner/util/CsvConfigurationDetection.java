@@ -26,12 +26,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.naming.ColumnNamingStrategy;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.InMemoryResource;
@@ -113,9 +116,10 @@ public class CsvConfigurationDetection {
      * @throws IllegalStateException
      *             if an error occurs during auto-detection
      */
-    public CsvConfiguration suggestCsvConfiguration(String encoding) throws IllegalStateException {
+    public CsvConfiguration suggestCsvConfiguration(String encoding, List<String> columnNames)
+            throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
-        return suggestCsvConfiguration(sample, encoding);
+        return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
     /**
@@ -126,13 +130,18 @@ public class CsvConfigurationDetection {
      *             if an error occurs during auto-detection
      */
     public CsvConfiguration suggestCsvConfiguration() throws IllegalStateException {
+        return suggestCsvConfiguration(null);
+    }
+
+    public CsvConfiguration suggestCsvConfiguration(List<String> columnNames) throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         final String encoding = suggestEncoding(sample);
 
-        return suggestCsvConfiguration(sample, encoding);
+        return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
-    private CsvConfiguration suggestCsvConfiguration(byte[] sample, String encoding) throws IllegalStateException {
+    private CsvConfiguration suggestCsvConfiguration(byte[] sample, String encoding, List<String> columnNames)
+            throws IllegalStateException {
 
         char[] sampleChars = readSampleBuffer(sample, encoding);
 
@@ -211,14 +220,19 @@ public class CsvConfigurationDetection {
                 quoteChar = '"';
             }
         }
-
+        final ColumnNamingStrategy columnNamingStategy;
+        if (columnNames != null && columnNames.size() > 0) {
+            columnNamingStategy = new CustomColumnNamingStrategy(columnNames);
+        } else {
+            columnNamingStategy = null;
+        }
         // detect if multi line values occur
         boolean multiline = false;
         final CsvConfiguration multiLineConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                encoding, separatorChar, quoteChar, escapeChar, false, true);
+                columnNamingStategy, encoding, separatorChar, quoteChar, escapeChar, false, true);
         try {
-            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
-                    System.currentTimeMillis()), multiLineConfiguration);
+            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample, System
+                    .currentTimeMillis()), multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
             try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
@@ -240,8 +254,8 @@ public class CsvConfigurationDetection {
             return multiLineConfiguration;
         }
 
-        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, encoding, separatorChar, quoteChar,
-                escapeChar, false, multiline);
+        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
+                separatorChar, quoteChar, escapeChar, false, multiline);
     }
 
     private int indexOf(char c, char[] sampleChars) {

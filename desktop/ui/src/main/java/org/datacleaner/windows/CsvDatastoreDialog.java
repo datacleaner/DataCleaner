@@ -22,6 +22,8 @@ package org.datacleaner.windows;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -29,6 +31,7 @@ import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
@@ -49,6 +52,7 @@ import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.HeaderLineComboBox;
@@ -81,6 +85,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _multilineValuesCheckBox;
+    private final CustomColumnNamesWidget _columnNamesWidget;
 
     private volatile boolean showPreview = true;
 
@@ -176,7 +181,16 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             _escapeCharField.setSelectedItem(escape);
 
             onSettingsUpdated(false, false, getResource());
+
+            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+        } else {
+            _columnNamesWidget = new CustomColumnNamesWidget(null);
         }
+
+        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
+            onSettingsUpdated(false, false, getResource());
+            SwingUtilities.invokeLater(() -> registerColumnNameFields());
+        }));
 
         // add listeners
         _separatorCharField.addItemListener(new ItemListener() {
@@ -235,13 +249,14 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
                 final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
                 final CsvConfiguration configuration;
+                final List<String> columnNames = _columnNamesWidget.getColumnNames();
 
                 try {
                     if (autoDetectEncoding) {
-                        configuration = detection.suggestCsvConfiguration();
+                        configuration = detection.suggestCsvConfiguration(columnNames);
                     } else {
                         final String charSet = _encodingComboBox.getSelectedItem();
-                        configuration = detection.suggestCsvConfiguration(charSet);
+                        configuration = detection.suggestCsvConfiguration(charSet, columnNames);
                     }
                 } catch (Exception e) {
                     logger.debug("Failed to auto detect CSV configuration", e);
@@ -336,6 +351,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
         result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
+        result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
         return result;
     }
 
@@ -424,7 +440,8 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     private CsvDatastore createDatastore(String name, Resource resource, boolean failOnInconsistentRecords) {
         return new CsvDatastore(name, resource, resource.getQualifiedPath(), getQuoteChar(), getSeparatorChar(),
-                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
+                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine(),
+                _columnNamesWidget.getColumnNames());
     }
 
     public boolean isMultilineValues() {
@@ -461,6 +478,18 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
             }
+        });
+    }
+
+    private void registerColumnNameFields() {
+        _columnNamesWidget.getColumnNameFields().stream().forEach(field -> {
+            field.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    onSettingsUpdated(false, false, getResource());
+                }
+            });
+
         });
     }
 }

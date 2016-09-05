@@ -21,18 +21,24 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -53,6 +59,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
@@ -73,8 +80,11 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	private final JButton _addValueWidthButton;
 	private final JButton _removeValueWidthButton;
 	private final DocumentListener _updatePreviewTableDocumentListener;
+    private final CustomColumnNamesWidget _columnNamesWidget;
 
 	private volatile boolean showPreview = true;
+
+    private Set<JTextField> _columnNameFields = new HashSet<>();
 
 	@Inject
 	protected FixedWidthDatastoreDialog(@Nullable FixedWidthDatastore originalDatastore,
@@ -101,6 +111,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		_eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
 		if (originalDatastore != null) {
+            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
+
 			_encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
 			_failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
 			_skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
@@ -113,17 +125,28 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 			_headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
 
-			onSettingsUpdated(false);
-		} else {
+            onSettingsUpdated(false);
+        } else {
+            _columnNamesWidget = new CustomColumnNamesWidget(null);
+
+            addValueWidthTextField();
 			addValueWidthTextField();
 			addValueWidthTextField();
-			addValueWidthTextField();
-		}
+        }
 
 		_addValueWidthButton.addActionListener(e -> addValueWidthTextField());
 		_removeValueWidthButton.addActionListener(e -> removeValueWidthTextField());
 		_encodingComboBox.addListener(item -> onSettingsUpdated(false));
 		_headerLineComboBox.addListener(item -> onSettingsUpdated(false));
+
+        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
+            onSettingsUpdated(false);
+            SwingUtilities.invokeLater(() -> registerColumnNameFields());
+        }));
+
+        registerColumnNameFields();
+
+
 	}
 
 	private JCheckBox createCheckBox(String label, boolean selected) {
@@ -315,6 +338,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
 		result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
 		result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
+        result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
 		return result;
 	}
 
@@ -349,13 +373,9 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
 			boolean skipEbcdicHeader, boolean eolPresent) {
-		int[] valueWidths = getValueWidths(true);
-		try {
-			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), valueWidths,
-					failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine());
-		} catch (NumberFormatException e) {
-			throw new IllegalStateException("Value width must be a valid number.");
-		}
+        return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), getValueWidths(true),
+                failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine(), _columnNamesWidget
+                        .getColumnNames());
 	}
 
 	private int[] getValueWidths(boolean failOnMissingValue) {
@@ -401,4 +421,18 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 			return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
 		}
 	}
+
+    private void registerColumnNameFields() {
+        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field)).forEach(
+                field -> {
+                    field.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+                            onSettingsUpdated(false);
+                        }
+                    });
+
+                    _columnNameFields.add(field);
+                });
+    }
 }

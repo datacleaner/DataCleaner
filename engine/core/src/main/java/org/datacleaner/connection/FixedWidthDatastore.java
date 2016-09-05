@@ -33,6 +33,7 @@ import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -149,8 +150,13 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         final FixedWidthConfiguration configuration;
 
         if (_fixedValueWidth == -1) {
-            configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies,
-                    _skipEbcdicHeader, _eolPresent);
+            if (_resourceRef.get() instanceof HdfsResource) {
+                configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths,
+                        _failOnInconsistencies);
+            } else {
+                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
+                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+            }
         } else {
             configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
                     _failOnInconsistencies);

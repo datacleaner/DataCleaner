@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,11 +36,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.util.ImmutableEntry;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -50,18 +48,16 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXTextField;
 
 public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatastoreDialog<FixedWidthDatastore> {
@@ -198,23 +194,23 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 	protected byte[] getSampleBuffer() {
 	    
 	    final Resource resource = getResource();
-		final int bufferSize = getBufferSize();
-		byte[] bytes = new byte[bufferSize];
+        final int bufferSize = getBufferSize();
+        byte[] bytes = new byte[bufferSize];
 
-		try (final InputStream fileInputStream = resource.read()) {
-			int startPosition = getStartPosition();
-			fileInputStream.skip(startPosition);
-			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
+        try (final InputStream fileInputStream = resource.read()) {
+            int startPosition = getStartPosition();
+            fileInputStream.skip(startPosition);
+            int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
 
-			if (bytesRead != -1 && bytesRead <= bufferSize) {
-				bytes = Arrays.copyOf(bytes, bytesRead);
-			}
+            if (bytesRead != -1 && bytesRead <= bufferSize) {
+                bytes = Arrays.copyOf(bytes, bytesRead);
+            }
 
-			return bytes;
-		} catch (IOException e) {
-			logger.error("IOException occurred while reading sample buffer", e);
-			return new byte[0];
-		}
+            return bytes;
+        } catch (IOException e) {
+            logger.error("IOException occurred while reading sample buffer", e);
+            return new byte[0];
+        }
 	}
 
 	private int getStartPosition() {

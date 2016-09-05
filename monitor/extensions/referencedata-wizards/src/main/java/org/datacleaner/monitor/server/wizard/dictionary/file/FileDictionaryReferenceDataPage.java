@@ -19,7 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
+import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
 import org.datacleaner.monitor.server.wizard.shared.file.FilePage;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 
 final class FileDictionaryReferenceDataPage extends FilePage {
 
@@ -30,5 +32,11 @@ final class FileDictionaryReferenceDataPage extends FilePage {
     @Override
     protected String getNameLabel() {
         return "File dictionary name";
+    }
+
+    @Override
+    protected void checkUniqueName(final String name) throws DCUserInputException {
+        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
+                .getConfiguration().getReferenceDataCatalog());
     }
 }

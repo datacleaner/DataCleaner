@@ -19,7 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
+import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
 import org.datacleaner.monitor.server.wizard.shared.file.FilePage;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 
 final class FileSynonymCatalogReferenceDataPage extends FilePage {
     
@@ -30,5 +32,11 @@ final class FileSynonymCatalogReferenceDataPage extends FilePage {
     @Override
     protected String getNameLabel() {
         return "File synonym catalog name";
+    }
+
+    @Override
+    protected void checkUniqueName(final String name) throws DCUserInputException {
+        ReferenceDataHelper.checkUniqueSynonymCatalog(name, _session.getWizardContext().getTenantContext()
+            .getConfiguration().getReferenceDataCatalog()); 
     }
 }

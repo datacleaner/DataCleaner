@@ -22,6 +22,7 @@ package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage1;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
@@ -41,8 +42,13 @@ final class DatastoreDictionaryReferenceDataPage1 extends DatastorePage1 {
     @Override
     public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        _session.setName(getString(formParameters, PROPERTY_NAME));
-        _session.setDatastore(getString(formParameters, PROPERTY_DATASTORE));
+        final String name = getString(formParameters, PROPERTY_NAME);
+        final String datastore = getString(formParameters, PROPERTY_DATASTORE);
+        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
+                .getConfiguration().getReferenceDataCatalog());
+        
+        _session.setName(name);
+        _session.setDatastore(datastore);
         
         return new DatastoreDictionaryReferenceDataPage2(_session);
     }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -48,6 +49,8 @@ final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizar
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String expression = getString(formParameters, PROPERTY_EXPRESSION);
+        ReferenceDataHelper.checkUniqueStringPattern(name, _session.getWizardContext().getTenantContext()
+                .getConfiguration().getReferenceDataCatalog()); 
 
         _session.setName(name);
         _session.setExpression(expression);

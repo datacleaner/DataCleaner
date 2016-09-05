@@ -42,7 +42,7 @@ final class RegexSwapStringPatternReferenceDataPage2 extends AbstractFreemarkerW
 
     @Override
     public Integer getPageIndex() {
-        return 0;
+        return 1;
     }
 
     @Override

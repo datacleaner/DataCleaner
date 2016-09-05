@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -33,6 +34,7 @@ import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.SimpleJobEngineManager;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
@@ -49,15 +51,22 @@ public class TestHelper {
     
     public static Map<String, List<String>> getFormParameters() {
         final Map<String, List<String>> formParameters = new HashMap<>();
-        formParameters.put("A", new ArrayList<>());
-        formParameters.put("B", new ArrayList<>());
+        formParameters.put("name", getListWithValue("name-value"));
+        formParameters.put("datastore", getListWithValue("datastore-value"));
         
         return formParameters;
     }
     
+    private static List<String> getListWithValue(String value) {
+        List<String> list = new ArrayList<>();
+        list.add(value);
+ 
+        return list;
+    }
+
     public static ReferenceDataWizardContext getReferenceDataWizardContextMock() {
         final ReferenceDataWizardContext contextMock = EasyMock.createMock(ReferenceDataWizardContext.class);
-        EasyMock.expect(contextMock.getTenantContext()).andReturn(getTenantContextMock());
+        EasyMock.expect(contextMock.getTenantContext()).andReturn(getTenantContextMock()).anyTimes();
         EasyMock.replay(contextMock);
         
         return contextMock;
@@ -66,6 +75,7 @@ public class TestHelper {
     private static TenantContext getTenantContextMock() {
         final TenantContext tenantContextMock = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(tenantContextMock.getConfigurationFile()).andReturn(getConfigurationFileMock());
+        EasyMock.expect(tenantContextMock.getConfiguration()).andReturn(getConfigurationMock());
         EasyMock.replay(tenantContextMock); 
         
         return tenantContextMock;
@@ -79,6 +89,20 @@ public class TestHelper {
         return repositoryFileMock; 
     }
 
+    private static DataCleanerConfiguration getConfigurationMock() {
+        final DataCleanerConfiguration configurationMock = EasyMock.createMock(DataCleanerConfiguration.class);
+        EasyMock.expect(configurationMock.getReferenceDataCatalog()).andReturn(getReferenceDataCatalogMock());
+        EasyMock.replay(configurationMock);
+
+        return configurationMock;
+    }
+    
+    private static ReferenceDataCatalog getReferenceDataCatalogMock() {
+        final ReferenceDataCatalog referenceDataCatalogMock = EasyMock.createMock(ReferenceDataCatalog.class);
+
+        return referenceDataCatalogMock;
+    }
+    
     private static Resource getResourceMock() {
         final Resource resourceMock = EasyMock.createMock(Resource.class);
         EasyMock.expect(resourceMock.read(EasyMock.anyObject(Func.class))).andReturn(null);

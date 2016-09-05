@@ -72,6 +72,8 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
     
     protected abstract String getNameLabel(); 
     
+    protected abstract void checkUniqueName(String name) throws DCUserInputException;
+    
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
@@ -84,6 +86,8 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
         final String caseSensitive = getBoolean(formParameters, PROPERTY_CASE_SENSITIVE) ? "on" : "";
         final String name = getString(formParameters, PROPERTY_NAME);
         final String encoding = getString(formParameters, PROPERTY_ENCODING);
+        
+        checkUniqueName(name);
 
         session.setName(name);
         session.setEncoding(encoding);

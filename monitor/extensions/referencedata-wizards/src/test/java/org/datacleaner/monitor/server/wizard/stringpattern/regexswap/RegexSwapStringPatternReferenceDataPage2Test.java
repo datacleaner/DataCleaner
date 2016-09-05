@@ -29,7 +29,7 @@ public class RegexSwapStringPatternReferenceDataPage2Test {
     @Test
     public void testGetPageIndex() throws Exception {
         RegexSwapStringPatternReferenceDataPage2 page = new RegexSwapStringPatternReferenceDataPage2(null);
-        assertEquals(new Integer(0), page.getPageIndex());
+        assertEquals(new Integer(1), page.getPageIndex());
     }
 
     @Test

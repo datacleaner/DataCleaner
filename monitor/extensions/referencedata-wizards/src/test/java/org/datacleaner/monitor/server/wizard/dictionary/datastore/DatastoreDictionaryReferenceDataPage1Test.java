@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotEquals;
@@ -30,7 +29,8 @@ import static org.junit.Assert.assertNotNull;
 public class DatastoreDictionaryReferenceDataPage1Test {
     @Test
     public void testNextPage() throws Exception {
-        final DatastoreWizardSession sessionMock = EasyMock.createMock(DatastoreWizardSession.class);
+        final DatastoreWizardSession sessionMock = new DatastoreDictionaryReferenceDataWizardSession(
+                TestHelper.getReferenceDataWizardContextMock());
         final DatastoreDictionaryReferenceDataPage1 page = new DatastoreDictionaryReferenceDataPage1(sessionMock);
         assertNotEquals("", page.getNameLabel());
         assertNotNull(page.nextPageController(TestHelper.getFormParameters()));

@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -55,10 +57,14 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
+import org.datacleaner.widgets.ResourceSelector;
+import org.datacleaner.widgets.ResourceTypePresenter;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXTextField;
 
-public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
+public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatastoreDialog<FixedWidthDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -78,8 +84,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	@Inject
 	protected FixedWidthDatastoreDialog(@Nullable FixedWidthDatastore originalDatastore,
-			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,  DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext,configuration, userPreferences);
 		_updatePreviewTableDocumentListener = new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
@@ -146,7 +152,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected void onFileSelected(File file) {
+	protected void onSelected(Resource resource) {
 		onSettingsUpdated(true);
 	}
 
@@ -190,11 +196,12 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
 	@Override
 	protected byte[] getSampleBuffer() {
-		final File file = new File(getFilename());
+	    
+	    final Resource resource = getResource();
 		final int bufferSize = getBufferSize();
 		byte[] bytes = new byte[bufferSize];
 
-		try (final FileInputStream fileInputStream = new FileInputStream(file)) {
+		try (final InputStream fileInputStream = resource.read()) {
 			int startPosition = getStartPosition();
 			fileInputStream.skip(startPosition);
 			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
@@ -236,8 +243,8 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected FixedWidthDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false, _skipEbcdicHeaderCheckBox.isSelected(),
+	protected FixedWidthDatastore getPreviewDatastore(Resource resource) {
+		return createDatastore("Preview", resource, false, _skipEbcdicHeaderCheckBox.isSelected(),
 				_eolPresentCheckBox.isSelected());
 	}
 
@@ -319,17 +326,6 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
-				FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
-		filenameField.addChoosableFileFilter(combinedFilter);
-		filenameField.addChoosableFileFilter(FileFilters.TXT);
-		filenameField.addChoosableFileFilter(FileFilters.DAT);
-		filenameField.addChoosableFileFilter(FileFilters.EBC);
-		filenameField.setSelectedFileFilter(combinedFilter);
-	}
-
-	@Override
 	protected String getBannerTitle() {
 		return "Fixed width file";
 	}
@@ -340,18 +336,19 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected FixedWidthDatastore createDatastore(String name, String filename) {
+	protected FixedWidthDatastore createDatastore(String name, Resource resource) {
 		boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
 		boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
 		boolean eolPresent = _eolPresentCheckBox.isSelected();
-		return createDatastore(name, filename, failOnInconsistencies, skipEbcdicHeader, eolPresent);
+		return createDatastore(name, resource, failOnInconsistencies, skipEbcdicHeader, eolPresent);
+		
 	}
 
-	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
+	private FixedWidthDatastore createDatastore(String name, Resource resource, boolean failOnInconsistencies,
 			boolean skipEbcdicHeader, boolean eolPresent) {
 		int[] valueWidths = getValueWidths(true);
 		try {
-			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), valueWidths,
+			return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(), _encodingComboBox.getSelectedItem(), valueWidths,
 					failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine());
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException("Value width must be a valid number.");
@@ -401,4 +398,25 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 			return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
 		}
 	}
+
+    @Override
+    protected void initializeFileFilters(ResourceSelector resourceSelector) {
+        FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
+                FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
+        resourceSelector.addChoosableFileFilter(combinedFilter);
+        resourceSelector.addChoosableFileFilter(FileFilters.TXT);
+        resourceSelector.addChoosableFileFilter(FileFilters.DAT);
+        resourceSelector.addChoosableFileFilter(FileFilters.EBC);
+        resourceSelector.setSelectedFileFilter(combinedFilter);
+        resourceSelector.addListener(new ResourceTypePresenter.Listener() {
+            @Override
+            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+                onSettingsUpdated(true);
+            }
+
+            @Override
+            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            }
+        });
+    }
 }

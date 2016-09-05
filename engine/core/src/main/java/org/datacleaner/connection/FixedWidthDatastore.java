@@ -146,8 +146,6 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-        final File file = new File(_filename);
-        assert file.exists();
         final FixedWidthConfiguration configuration;
 
         if (_fixedValueWidth == -1) {

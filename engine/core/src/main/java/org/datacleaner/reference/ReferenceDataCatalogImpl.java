@@ -38,7 +38,7 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 	private final Collection<StringPattern> _stringPatterns;
 
 	public ReferenceDataCatalogImpl() {
-		this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		this(new ArrayList<Dictionary>(), new ArrayList<SynonymCatalog>(), new ArrayList<StringPattern>());
 	}
 
 	public ReferenceDataCatalogImpl(Collection<Dictionary> dictionaries, Collection<SynonymCatalog> synonymCatalogs,
@@ -46,7 +46,7 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 		if (dictionaries == null) {
 			throw new IllegalArgumentException("dictionaries cannot be null");
 		}
-		Set<String> uniqueNames = new HashSet<>();
+		Set<String> uniqueNames = new HashSet<String>();
 		for (Dictionary dictionary : dictionaries) {
 			String name = dictionary.getName();
 			if (uniqueNames.contains(name)) {
@@ -107,17 +107,6 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 			}
 		}
 		return null;
-	}
-
-	private boolean removeItem(Collection collection, String name) {
-		for (Object item : collection) {
-			if (item instanceof HasName && ((HasName)item).getName().equals(name)) {
-				collection.remove(item);
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override

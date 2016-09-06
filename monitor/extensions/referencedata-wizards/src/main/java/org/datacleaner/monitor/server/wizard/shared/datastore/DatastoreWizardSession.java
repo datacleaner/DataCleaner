@@ -21,8 +21,6 @@ package org.datacleaner.monitor.server.wizard.shared.datastore;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
@@ -36,13 +34,8 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     protected String _table;
     protected String _column;
     
-    protected final DomConfigurationWriter _writer;
-
     public DatastoreWizardSession(ReferenceDataWizardContext context) {
         super(context);
-
-        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
-        _writer = new DomConfigurationWriter(resource);
     }
 
     @Override

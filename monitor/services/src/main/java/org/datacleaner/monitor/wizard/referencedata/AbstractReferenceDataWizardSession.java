@@ -21,6 +21,8 @@ package org.datacleaner.monitor.wizard.referencedata;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.server.dao.ReferenceDataDao;
 import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
@@ -33,9 +35,12 @@ import org.w3c.dom.Element;
 public abstract class AbstractReferenceDataWizardSession implements ReferenceDataWizardSession {
 
     private final ReferenceDataWizardContext _wizardContext;
+    protected final DomConfigurationWriter _writer;
 
     public AbstractReferenceDataWizardSession(ReferenceDataWizardContext wizardContext) {
         _wizardContext = wizardContext;
+        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
+        _writer = new DomConfigurationWriter(resource);
     }
 
     @Override

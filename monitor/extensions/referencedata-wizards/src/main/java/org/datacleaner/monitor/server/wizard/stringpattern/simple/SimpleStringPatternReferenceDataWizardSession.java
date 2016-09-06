@@ -21,21 +21,15 @@ package org.datacleaner.monitor.server.wizard.stringpattern.simple;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 final class SimpleStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
-
-    private static final Logger logger = LoggerFactory.getLogger(SimpleStringPatternReferenceDataWizardSession.class);
 
     private String _name;
     private String _expression;
@@ -56,11 +50,9 @@ final class SimpleStringPatternReferenceDataWizardSession extends AbstractRefere
 
     @Override
     protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
-        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
-        final Element stringPatternsElement = writer.getStringPatternsElement();
+        final Element stringPatternsElement = _writer.getStringPatternsElement();
         final StringPattern stringPattern = new SimpleStringPattern(_name, _expression);
-        stringPatternsElement.appendChild(writer.externalize(stringPattern));
+        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
 
         return stringPatternsElement;
     }

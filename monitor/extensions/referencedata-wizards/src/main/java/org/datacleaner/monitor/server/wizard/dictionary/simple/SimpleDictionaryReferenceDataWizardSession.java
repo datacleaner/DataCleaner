@@ -21,8 +21,6 @@ package org.datacleaner.monitor.server.wizard.dictionary.simple;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
@@ -57,12 +55,10 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
 
     @Override
     protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
-        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
-        final Element dictionariesElement = writer.getDictionariesElement();
+        final Element dictionariesElement = _writer.getDictionariesElement();
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final Dictionary dictionary = new SimpleDictionary(_name, caseSensitive, _values.split("\n"));
-        dictionariesElement.appendChild(writer.externalize(dictionary));
+        dictionariesElement.appendChild(_writer.externalize(dictionary));
 
         return dictionariesElement;
     }

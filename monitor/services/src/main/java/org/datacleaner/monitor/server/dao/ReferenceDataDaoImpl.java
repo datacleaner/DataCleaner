@@ -57,8 +57,6 @@ import org.xml.sax.InputSource;
 @Component
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReferenceDataDaoImpl.class);
-
     @Override
     public String updateReferenceDataSubSection(TenantContext tenantContext, Element updatedReferenceDataSubSection) {
         final Document configurationFileDocument = getConfigurationFileDocument(tenantContext);

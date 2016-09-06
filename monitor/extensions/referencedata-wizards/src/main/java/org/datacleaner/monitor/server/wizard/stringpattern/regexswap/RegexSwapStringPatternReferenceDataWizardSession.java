@@ -22,8 +22,6 @@ package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.http.impl.client.HttpClients;
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
@@ -32,14 +30,9 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.regexswap.Regex;
 import org.datacleaner.reference.regexswap.RegexSwapClient;
 import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(RegexSwapStringPatternReferenceDataWizardSession.class);
 
     private String _category;
     private String _name;
@@ -62,12 +55,10 @@ final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractRef
 
     @Override
     protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
-        final DomConfigurationWriter writer = new DomConfigurationWriter(resource);
-        final Element stringPatternsElement = writer.getStringPatternsElement();
+        final Element stringPatternsElement = _writer.getStringPatternsElement();
         final Regex regex = getClient().getRegexByName(_name);
         final StringPattern stringPattern = new RegexSwapStringPattern(regex);
-        stringPatternsElement.appendChild(writer.externalize(stringPattern));
+        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
 
         return stringPatternsElement;
     }

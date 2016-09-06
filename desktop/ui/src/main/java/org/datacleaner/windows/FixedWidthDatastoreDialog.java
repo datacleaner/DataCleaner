@@ -176,8 +176,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         int lineLength = StringUtils.indexOf('\n', sampleChars);
         if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
             setStatusWarning("No newline in first " + sampleChars.length + " chars");
-            // don't show the preview if no newlines where found (it may try to
-            // treat the whole file as a single row)
+            // don't show the preview if no newlines were found (it may try to treat the whole file as a single row)
             showPreview = false;
         } else {
             int[] valueWidths = getValueWidths(false);

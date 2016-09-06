@@ -109,7 +109,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
             _skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
             _eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
 
-            int[] valueWidths = originalDatastore.getValueWidths();
+            final int[] valueWidths = originalDatastore.getValueWidths();
             for (int valueWidth : valueWidths) {
                 addValueWidthTextField(valueWidth);
             }
@@ -140,7 +140,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected boolean validateForm() {
-        Object selectedEncoding = _encodingComboBox.getSelectedItem();
+        final Object selectedEncoding = _encodingComboBox.getSelectedItem();
         if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
             setStatusError("Please select a character encoding!");
             return false;
@@ -158,7 +158,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
             return;
         }
 
-        byte[] sampleBuffer = getSampleBuffer();
+        final byte[] sampleBuffer = getSampleBuffer();
         if (sampleBuffer == null || sampleBuffer.length == 0) {
             logger.debug("No bytes read to autodetect settings");
             return;
@@ -173,13 +173,13 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
         char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
-        int lineLength = StringUtils.indexOf('\n', sampleChars);
+        final int lineLength = StringUtils.indexOf('\n', sampleChars);
         if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
             setStatusWarning("No newline in first " + sampleChars.length + " chars");
             // don't show the preview if no newlines were found (it may try to treat the whole file as a single row)
             showPreview = false;
         } else {
-            int[] valueWidths = getValueWidths(false);
+            final int[] valueWidths = getValueWidths(false);
             int totalMappedWidth = 0;
             for (int valueWidth : valueWidths) {
                 totalMappedWidth += valueWidth;
@@ -198,9 +198,9 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         byte[] bytes = new byte[bufferSize];
 
         try (final InputStream fileInputStream = resource.read()) {
-            int startPosition = getStartPosition();
+            final int startPosition = getStartPosition();
             fileInputStream.skip(startPosition);
-            int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
+            final int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
 
             if (bytesRead != -1 && bytesRead <= bufferSize) {
                 bytes = Arrays.copyOf(bytes, bytesRead);
@@ -259,19 +259,22 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     }
 
     private JXTextField addValueWidthTextField(int valueWidth) {
-        JXTextField textField = WidgetFactory.createTextField();
+        final JXTextField textField = WidgetFactory.createTextField();
         textField.setColumns(2);
-        NumberDocument document = new NumberDocument();
+        final NumberDocument document = new NumberDocument();
         document.addDocumentListener(_updatePreviewTableDocumentListener);
         textField.setDocument(document);
         textField.setText(valueWidth + "");
         _valueWidthTextFields.add(textField);
         _valueWidthsPanel.add(textField);
+        
         if (_valueWidthTextFields.size() > 1) {
             _removeValueWidthButton.setEnabled(true);
         }
+        
         _valueWidthsPanel.updateUI();
         onSettingsUpdated(false);
+        
         return textField;
     }
 
@@ -279,7 +282,8 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         if (_valueWidthTextFields.isEmpty()) {
             return null;
         }
-        JXTextField textField = _valueWidthTextFields.get(_valueWidthTextFields.size() - 1);
+        
+        final JXTextField textField = _valueWidthTextFields.get(_valueWidthTextFields.size() - 1);
         _valueWidthTextFields.remove(textField);
         _valueWidthsPanel.remove(textField);
 
@@ -333,16 +337,17 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected FixedWidthDatastore createDatastore(String name, Resource resource) {
-        boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
-        boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
-        boolean eolPresent = _eolPresentCheckBox.isSelected();
+        final boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
+        final boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
+        final boolean eolPresent = _eolPresentCheckBox.isSelected();
+        
         return createDatastore(name, resource, failOnInconsistencies, skipEbcdicHeader, eolPresent);
 
     }
 
     private FixedWidthDatastore createDatastore(String name, Resource resource, boolean failOnInconsistencies,
             boolean skipEbcdicHeader, boolean eolPresent) {
-        int[] valueWidths = getValueWidths(true);
+        final int[] valueWidths = getValueWidths(true);
         try {
             return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(), _encodingComboBox
                     .getSelectedItem(), valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
@@ -353,7 +358,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     }
 
     private int[] getValueWidths(boolean failOnMissingValue) {
-        int[] valueWidths = new int[_valueWidthTextFields.size()];
+        final int[] valueWidths = new int[_valueWidthTextFields.size()];
 
         try {
             for (int i = 0; i < valueWidths.length; i++) {
@@ -382,9 +387,11 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     }
 
     public int getHeaderLine() {
-        Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+        final Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+        
         if (headerLineComboValue != null) {
-            int intComboValue = headerLineComboValue.intValue();
+            final int intComboValue = headerLineComboValue.intValue();
+            
             if (intComboValue < 0) {
                 return FixedWidthConfiguration.NO_COLUMN_NAME_LINE;
             } else {
@@ -398,7 +405,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected void initializeFileFilters(ResourceSelector resourceSelector) {
-        FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
+        final FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
                 FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
         resourceSelector.addChoosableFileFilter(combinedFilter);
         resourceSelector.addChoosableFileFilter(FileFilters.TXT);

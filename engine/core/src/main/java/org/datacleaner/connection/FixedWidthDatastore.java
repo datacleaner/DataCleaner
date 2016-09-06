@@ -50,6 +50,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     private static Logger logger = LoggerFactory.getLogger(FixedWidthDatastore.class);
 
     public static final String EBCDIC_POSTFIX = " (EBCDIC)";
+    private static final String EBCDIC_PREFIX = "IBM";
     
     private final String _filename;
     private final String _encoding;
@@ -151,7 +152,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final FixedWidthConfiguration configuration;
 
-        if (isEbcdicEncoding()) {
+        if (isEbcdic()) {
             if (_fixedValueWidth == -1) {
                 configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
                         _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
@@ -234,13 +235,9 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_eolPresent);
     }
     
-    
-    private boolean isEbcdicEncoding() {
-        final String encoding = getEncoding();
-        if (encoding.contains(EBCDIC_POSTFIX)) {
-            return true;
-        }
-        return false;
+    private boolean isEbcdic() {
+        // This is just a way how to differentiate between EBCDIC and normal FixedWidth configuration. 
+        return getEncoding().startsWith(EBCDIC_PREFIX);
     }
 
     @Override
@@ -249,6 +246,4 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
                 + ", headerLineNumber=" + _headerLineNumber + ", valueWidths=" + Arrays.toString(_valueWidths)
                 + ", fixedValueWidth=" + _fixedValueWidth + "]";
     } 
-    
-   
 }

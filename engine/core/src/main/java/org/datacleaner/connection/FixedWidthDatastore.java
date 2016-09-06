@@ -44,13 +44,12 @@ import org.slf4j.LoggerFactory;
  * Datastore based on fixed width files
  */
 public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore, ResourceDatastore {
-    
-    
+
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(FixedWidthDatastore.class);
 
     public static final String EBCDIC_POSTFIX = " (EBCDIC)";
-    
+
     private final String _filename;
     private final String _encoding;
     private final int _fixedValueWidth;
@@ -233,8 +232,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_skipEbcdicHeader);
         identifiers.add(_eolPresent);
     }
-    
-    
+
     private boolean isEbcdicEncoding() {
         final String encoding = getEncoding();
         if (encoding.contains(EBCDIC_POSTFIX)) {
@@ -248,7 +246,6 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         return "FixedWidthDatastore[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding
                 + ", headerLineNumber=" + _headerLineNumber + ", valueWidths=" + Arrays.toString(_valueWidths)
                 + ", fixedValueWidth=" + _fixedValueWidth + "]";
-    } 
-    
-   
+    }
+
 }

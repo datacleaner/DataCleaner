@@ -66,7 +66,7 @@ public class TestHelper {
 
     public static ReferenceDataWizardContext getReferenceDataWizardContextMock() {
         final ReferenceDataWizardContext contextMock = EasyMock.createMock(ReferenceDataWizardContext.class);
-        EasyMock.expect(contextMock.getTenantContext()).andReturn(getTenantContextMock()).anyTimes();
+        EasyMock.expect(contextMock.getTenantContext()).andReturn(getTenantContextMock()).times(2);
         EasyMock.replay(contextMock);
         
         return contextMock;
@@ -74,8 +74,8 @@ public class TestHelper {
     
     private static TenantContext getTenantContextMock() {
         final TenantContext tenantContextMock = EasyMock.createMock(TenantContext.class);
-        EasyMock.expect(tenantContextMock.getConfigurationFile()).andReturn(getConfigurationFileMock());
-        EasyMock.expect(tenantContextMock.getConfiguration()).andReturn(getConfigurationMock());
+        EasyMock.expect(tenantContextMock.getConfigurationFile()).andReturn(getConfigurationFileMock()).times(2);
+        EasyMock.expect(tenantContextMock.getConfiguration()).andReturn(getConfigurationMock()).times(2);
         EasyMock.replay(tenantContextMock); 
         
         return tenantContextMock;
@@ -83,7 +83,7 @@ public class TestHelper {
     
     private static RepositoryFile getConfigurationFileMock() {
         final RepositoryFile repositoryFileMock = EasyMock.createMock(RepositoryFile.class);
-        EasyMock.expect(repositoryFileMock.toResource()).andReturn(getResourceMock());
+        EasyMock.expect(repositoryFileMock.toResource()).andReturn(getResourceMock()).times(2);
         EasyMock.replay(repositoryFileMock);
 
         return repositoryFileMock; 
@@ -105,7 +105,7 @@ public class TestHelper {
     
     private static Resource getResourceMock() {
         final Resource resourceMock = EasyMock.createMock(Resource.class);
-        EasyMock.expect(resourceMock.read(EasyMock.anyObject(Func.class))).andReturn(null);
+        EasyMock.expect(resourceMock.read(EasyMock.anyObject(Func.class))).andReturn(null).times(2);
         EasyMock.replay(resourceMock);
 
         return resourceMock;

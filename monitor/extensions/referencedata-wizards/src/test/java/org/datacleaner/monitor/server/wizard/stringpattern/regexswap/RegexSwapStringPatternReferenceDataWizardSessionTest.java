@@ -19,23 +19,25 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
+import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RegexSwapStringPatternReferenceDataWizardSessionTest {
     
     @Test
     public void testPageCount() {
         final RegexSwapStringPatternReferenceDataWizardSession session = 
-                new RegexSwapStringPatternReferenceDataWizardSession(null);
+                new RegexSwapStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(2), session.getPageCount());
     }
 
     @Test
     public void testName() {
         final RegexSwapStringPatternReferenceDataWizardSession session =
-                new RegexSwapStringPatternReferenceDataWizardSession(null);
+                new RegexSwapStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         final String name = "name-value";
         assertNull(session.getName());
         session.setName(name);
@@ -45,7 +47,7 @@ public class RegexSwapStringPatternReferenceDataWizardSessionTest {
     @Test
     public void testCategory() {
         final RegexSwapStringPatternReferenceDataWizardSession session =
-                new RegexSwapStringPatternReferenceDataWizardSession(null);
+                new RegexSwapStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         final String category = "category-value";
         assertNull(session.getCategory());
         session.setCategory(category);

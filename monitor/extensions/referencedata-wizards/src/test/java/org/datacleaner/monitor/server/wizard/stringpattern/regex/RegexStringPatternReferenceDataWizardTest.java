@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
+import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -46,6 +47,6 @@ public class RegexStringPatternReferenceDataWizardTest {
     @Test
     public void testStart() throws Exception {
         RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
-        assertNotNull(wizard.start(null));
+        assertNotNull(wizard.start(TestHelper.getReferenceDataWizardContextMock()));
     }
 }

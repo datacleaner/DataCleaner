@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
-import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -47,7 +46,6 @@ public class FileDictionaryReferenceDataWizardTest {
     @Test
     public void testStart() {
         final FileDictionaryReferenceDataWizard wizard = new FileDictionaryReferenceDataWizard();
-        final ReferenceDataWizardContext contextMock = TestHelper.getReferenceDataWizardContextMock();
-        assertNotNull(wizard.start(contextMock));
+        assertNotNull(wizard.start(TestHelper.getReferenceDataWizardContextMock()));
     }
 }

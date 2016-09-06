@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.simple;
 
+import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,19 +30,22 @@ public class SimpleStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testFirstPageController() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session = new SimpleStringPatternReferenceDataWizardSession(null);
+        SimpleStringPatternReferenceDataWizardSession session =
+                new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }
 
     @Test
     public void testGetPageCount() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session = new SimpleStringPatternReferenceDataWizardSession(null);
+        SimpleStringPatternReferenceDataWizardSession session =
+                new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(1), session.getPageCount());
     }
 
     @Test
     public void testGetName() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session = new SimpleStringPatternReferenceDataWizardSession(null);
+        SimpleStringPatternReferenceDataWizardSession session =
+                new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getName());
         session.setName("name-value");
         assertNotNull(session.getName());
@@ -49,7 +53,8 @@ public class SimpleStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testGetExpression() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session = new SimpleStringPatternReferenceDataWizardSession(null);
+        SimpleStringPatternReferenceDataWizardSession session =
+                new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getExpression());
         session.setExpression("expression-value");
         assertNotNull(session.getExpression());

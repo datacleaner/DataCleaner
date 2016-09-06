@@ -44,8 +44,7 @@ import org.slf4j.LoggerFactory;
  * Datastore based on fixed width files
  */
 public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore, ResourceDatastore {
-    
-    
+
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(FixedWidthDatastore.class);
 

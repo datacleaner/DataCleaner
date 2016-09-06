@@ -12,6 +12,18 @@
 			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_data.json
 			</filename>
 		</json-datastore>
+
+		<fixed-width-datastore name="employees-fixed-width-file">
+			<filename>hdfs://bigdatavm:9000/datacleaner/employees-fixed-width.txt
+			</filename>
+			<encoding>UTF-8</encoding>
+			<width-specification>
+				<value-width>19</value-width>
+				<value-width>22</value-width>
+			</width-specification>
+			<header-line-number>1</header-line-number>
+			<fail-on-inconsistencies>false</fail-on-inconsistencies>
+		</fixed-width-datastore>
 	</datastore-catalog>
 
 </configuration>

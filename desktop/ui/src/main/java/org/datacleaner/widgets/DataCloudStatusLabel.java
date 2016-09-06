@@ -60,17 +60,9 @@ public class DataCloudStatusLabel extends JLabel {
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
 
-        final RemoteServerState actualServerStateOfDataCloud =
-                _remoteServerConfiguration.getActualState(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
-        if (actualServerStateOfDataCloud == null) {
-            setIcon(RemoteServerState.State.NOT_CONNECTED);
-            _dataCloudInformationPanel
-                    .setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
-        } else {
-            setIcon(actualServerStateOfDataCloud.getActualState());
-            _dataCloudInformationPanel
-                    .setInformationStatus(actualServerStateOfDataCloud);
-        }
+        setIcon(RemoteServerState.State.NOT_CONNECTED);
+        _dataCloudInformationPanel
+                .setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {

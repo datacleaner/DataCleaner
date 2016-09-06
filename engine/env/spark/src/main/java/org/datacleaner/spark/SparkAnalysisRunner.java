@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -31,6 +32,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -38,6 +40,7 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
 import org.datacleaner.spark.functions.CsvParserFunction;
 import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
+import org.datacleaner.spark.functions.FixedWidthParserFunction;
 import org.datacleaner.spark.functions.JsonParserFunction;
 import org.datacleaner.spark.functions.RowProcessingFunction;
 import org.datacleaner.spark.functions.TuplesToTuplesFunction;
@@ -185,6 +188,31 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new JsonParserFunction(jsonDatastore));
             final JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
+            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
+            return inputRowsRDD;
+        } else if (datastore instanceof FixedWidthDatastore){
+            
+            final FixedWidthDatastore fixedWidthDatastore = (FixedWidthDatastore) datastore; 
+            
+            final Resource resource = fixedWidthDatastore.getResource();
+            final String datastorePath = resource.getQualifiedPath();
+            final FixedWidthConfiguration fixedWidthConfiguration = fixedWidthDatastore.getConfiguration();
+            final JavaRDD<String> rawInput;
+            if (_minPartitions != null) {
+                rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
+            } else {
+                rawInput = _sparkContext.textFile(datastorePath);
+            }
+            
+            final JavaRDD<Object[]> parsedInput = rawInput.map(new FixedWidthParserFunction(fixedWidthConfiguration));
+
+            JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
+
+            if (fixedWidthConfiguration.getColumnNameLineNumber() != FixedWidthConfiguration.NO_COLUMN_NAME_LINE) {
+                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(fixedWidthConfiguration
+                        .getColumnNameLineNumber()));
+            }
+
             final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
             return inputRowsRDD;
         }

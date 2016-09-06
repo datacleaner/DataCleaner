@@ -97,6 +97,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * 
      * @param column
      * @param recordUniqueValues
+     * @param topFrequentValues
+     * @param bottomFrequentValues
      */
     public ValueDistributionAnalyzer(InputColumn<?> column, boolean recordUniqueValues) {
         this(column, null, recordUniqueValues);
@@ -108,6 +110,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * @param column
      * @param groupColumn
      * @param recordUniqueValues
+     * @param topFrequentValues
+     * @param bottomFrequentValues
      */
     public ValueDistributionAnalyzer(InputColumn<?> column, InputColumn<String> groupColumn, boolean recordUniqueValues) {
         this();
@@ -121,7 +125,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * Main constructor
      */
     public ValueDistributionAnalyzer() {
-        _valueDistributionGroups = new TreeMap<>(
+        _valueDistributionGroups = new TreeMap<String, ValueDistributionGroup>(
                 NullTolerableComparator.get(String.class));
     }
 
@@ -178,12 +182,13 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         if (_groupColumn == null) {
             logger.info("getResult() invoked, processing single group");
             final ValueDistributionGroup valueDistributionGroup = getValueDistributionGroup(_column.getName());
-
-            return valueDistributionGroup.createResult(_recordUniqueValues);
+            final SingleValueDistributionResult ungroupedResult = valueDistributionGroup
+                    .createResult(_recordUniqueValues);
+            return ungroupedResult;
         } else {
             logger.info("getResult() invoked, processing {} groups", _valueDistributionGroups.size());
 
-            final SortedSet<SingleValueDistributionResult> groupedResults = new TreeSet<>();
+            final SortedSet<SingleValueDistributionResult> groupedResults = new TreeSet<SingleValueDistributionResult>();
             for (String group : _valueDistributionGroups.keySet()) {
                 final ValueDistributionGroup valueDistributibutionGroup = getValueDistributionGroup(group);
                 final SingleValueDistributionResult result = valueDistributibutionGroup

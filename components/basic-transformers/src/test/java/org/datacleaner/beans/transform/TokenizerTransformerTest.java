@@ -100,7 +100,7 @@ public class TokenizerTransformerTest extends TestCase {
 		InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
 		@SuppressWarnings("unchecked")
-		TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 1);
+		TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
 		transformer.tokenTarget = TokenTarget.ROWS;
 		OutputRowCollector collectorMock = EasyMock.createMock(OutputRowCollector.class);
 		transformer.outputRowCollector = collectorMock;

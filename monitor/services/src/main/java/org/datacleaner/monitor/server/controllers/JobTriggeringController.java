@@ -58,7 +58,8 @@ public class JobTriggeringController {
     @Autowired
     SchedulingService _schedulingService;
 
-    @RequestMapping(produces = "application/json")
+    @RequestMapping(method = { RequestMethod.DELETE, RequestMethod.GET, RequestMethod.HEAD, RequestMethod.OPTIONS,
+            RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.TRACE }, produces = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
@@ -67,7 +68,7 @@ public class JobTriggeringController {
         return handleJob(tenant, jobName, block, timeoutMillis, null);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, 
             consumes = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
@@ -107,7 +108,7 @@ public class JobTriggeringController {
             @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis,
             @RequestBody final Properties overrideProperties) throws Throwable {
-        final boolean blocking = block != null && block;
+        final boolean blocking = block != null && block.booleanValue();
 
         jobName = jobName.replaceAll("\\+", " ");
 
@@ -128,7 +129,7 @@ public class JobTriggeringController {
             }
         }
 
-        final Map<String, String> result = new HashMap<>();
+        final Map<String, String> result = new HashMap<String, String>();
         result.put("status", toString(executionLog.getExecutionStatus()));
         result.put("logOutput", executionLog.getLogOutput());
         result.put("resultId", executionLog.getResultId());
@@ -149,7 +150,10 @@ public class JobTriggeringController {
         if (timeoutMillis == null) {
             return false;
         }
-        return millisWaited > timeoutMillis;
+        if (millisWaited > timeoutMillis.intValue()) {
+            return true;
+        }
+        return false;
     }
 
     private String toString(Object obj) {

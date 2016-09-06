@@ -33,7 +33,6 @@ import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -45,10 +44,13 @@ import org.slf4j.LoggerFactory;
  * Datastore based on fixed width files
  */
 public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore, ResourceDatastore {
-
+    
+    
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(FixedWidthDatastore.class);
 
+    public static final String EBCDIC_POSTFIX = " (EBCDIC)";
+    
     private final String _filename;
     private final String _encoding;
     private final int _fixedValueWidth;
@@ -149,17 +151,22 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final FixedWidthConfiguration configuration;
 
-        if (_fixedValueWidth == -1) {
-            if (_resourceRef.get() instanceof HdfsResource) {
-                configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths,
-                        _failOnInconsistencies);
-            } else {
+        if (isEbcdicEncoding()) {
+            if (_fixedValueWidth == -1) {
                 configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
+                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+            } else {
+                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
                         _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
             }
         } else {
-            configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
-                    _failOnInconsistencies);
+            if (_fixedValueWidth == -1) {
+                configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths,
+                        _failOnInconsistencies);
+            } else {
+                configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
+                        _failOnInconsistencies);
+            }
         }
 
         final Resource resource = _resourceRef.get();
@@ -226,11 +233,22 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_skipEbcdicHeader);
         identifiers.add(_eolPresent);
     }
+    
+    
+    private boolean isEbcdicEncoding() {
+        final String encoding = getEncoding();
+        if (encoding.contains(EBCDIC_POSTFIX)) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
         return "FixedWidthDatastore[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding
                 + ", headerLineNumber=" + _headerLineNumber + ", valueWidths=" + Arrays.toString(_valueWidths)
                 + ", fixedValueWidth=" + _fixedValueWidth + "]";
-    }
+    } 
+    
+   
 }

@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 	private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);
 
 	private static final String[] encodings;
-	private static final String EBCDIC_POSTFIX = " (EBCDIC)";
+	
 
 	static {
 		List<String> list = new ArrayList<>();
@@ -59,7 +60,7 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		}
 
 		for (int i = 1140; i <= 1149; i++) {
-			list.add("IBM0" + i + EBCDIC_POSTFIX);
+			list.add("IBM0" + i + FixedWidthDatastore.EBCDIC_POSTFIX);
 		}
 
 		encodings = list.toArray(new String[list.size()]);
@@ -87,6 +88,6 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 
 	@Override
 	public String getSelectedItem() {
-		return super.getSelectedItem().replace(EBCDIC_POSTFIX, "");
+		return super.getSelectedItem().replace(FixedWidthDatastore.EBCDIC_POSTFIX, "");
 	}
 }

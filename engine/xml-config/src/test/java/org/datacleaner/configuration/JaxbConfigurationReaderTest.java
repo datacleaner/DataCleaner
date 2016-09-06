@@ -617,4 +617,12 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .getSynonymCatalog("synonyms2");
         assertEquals("relative/path/to/synonyms.txt", synonyms2.getFilename());
     }
+    
+
+    public void testReadFixedWidthDatastore() throws Exception {
+        DataCleanerConfiguration configuration = reader.create(new File(
+                "src/test/resources/example-job-fixed-width-datastore.xml"));
+        assertEquals("[employees-hadoop, my fixed width ds]", Arrays.toString(configuration.getDatastoreCatalog().getDatastoreNames()));
+    }
+        
 }

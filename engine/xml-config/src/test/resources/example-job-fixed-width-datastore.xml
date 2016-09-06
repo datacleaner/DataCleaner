@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+  <datastore-catalog>
+<fixed-width-datastore description="bar" name="my fixed width ds">
+  <filename>test.csv</filename>
+  <encoding>UTF-8</encoding>
+  <width-specification>
+    <fixed-value-width>20</fixed-value-width>
+  </width-specification>
+  <header-line-number>1</header-line-number>
+  <fail-on-inconsistencies>false</fail-on-inconsistencies>
+</fixed-width-datastore>
+
+<fixed-width-datastore name="employees-hadoop">
+      <filename>/datacleaner/employees-fixed-width.txt</filename>
+      <encoding>UTF-8</encoding>
+      <width-specification>
+        <value-width>19</value-width>
+        <value-width>22</value-width>
+      </width-specification>
+      <header-line-number>1</header-line-number>
+      <fail-on-inconsistencies>false</fail-on-inconsistencies>
+    </fixed-width-datastore>
+  </datastore-catalog>
+</configuration>

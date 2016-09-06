@@ -101,22 +101,4 @@ public class JavaScriptTransformerTest extends TestCase {
 		assertEquals("3", t.transform(new MockInputRow().put(col, 1.0))[0]);
 		assertEquals("3.5", t.transform(new MockInputRow().put(col, 1.5))[0]);
 	}
-	
-	public void testSimpleScriptParseIntExecution() throws Exception {
-	    JavaScriptTransformer t = new JavaScriptTransformer();
-        t.setSourceCode("function eval() {return parseInt(values[0], 10)}; eval();");
-        InputColumn<String> col = new MockInputColumn<String>("my number",
-                String.class);
-        t.setColumns(new InputColumn[] { col });
-
-        t.init();
-
-        assertEquals("123", t.transform(new MockInputRow().put(col, 123))[0]);
-
-        assertEquals("1", t.transform(new MockInputRow().put(col, 1.0))[0]);
-        assertEquals("1", t.transform(new MockInputRow().put(col, 1.5))[0]);
-        assertEquals("10", t.transform(new MockInputRow().put(col, "010"))[0]);
-        //the Number cannot be parsed because it starts with letter 'O'
-        assertEquals("NaN", t.transform(new MockInputRow().put(col,  "O10"))[0]);
-    }
 }

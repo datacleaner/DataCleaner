@@ -19,14 +19,11 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -38,6 +35,7 @@ import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
+import org.apache.metamodel.util.HasName;
 
 /**
  * Tokenizes values into a configurable amount of tokens.
@@ -109,34 +107,28 @@ public class TokenizerTransformer implements Transformer {
 
     @Override
     public String[] transform(InputRow inputRow) {
-        List<String> allTokens = getTokens(inputRow);
+        String value = inputRow.getValue(column);
+        String[] result = new String[numTokens];
+
+        if (value != null) {
+            int i = 0;
+            StringTokenizer st = new StringTokenizer(value, new String(delimiters));
+            while (i < result.length && st.hasMoreTokens()) {
+                result[i] = st.nextToken();
+                i++;
+            }
+        }
 
         if (tokenTarget == TokenTarget.COLUMNS) {
-            return allTokens.toArray(new String[numTokens]);
+            return result;
         } else {
-            for (String token : allTokens) {
-                outputRowCollector.putValues(token);
+            for (int i = 0; i < result.length; i++) {
+                if (result[i] != null) {
+                    outputRowCollector.putValues(result[i]);
+                }
             }
-            
             return null;
         }
     }
-    
-    private List<String> getTokens(InputRow inputRow) {
-        final String value = inputRow.getValue(column);
-        final List<String> tokens = new ArrayList<>();
-        
-        if (value == null) {
-            return tokens;
-        }
-        
-        StringTokenizer tokenizer = new StringTokenizer(value, new String(delimiters));
-        
-        while (tokenizer.hasMoreTokens()) {
-            final String nextToken = tokenizer.nextToken();
-            tokens.add(nextToken);
-        }
 
-        return tokens;
-    }
 }

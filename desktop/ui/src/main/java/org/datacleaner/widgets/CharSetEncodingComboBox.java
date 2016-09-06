@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,6 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		list.add("UTF-16BE");
 		list.add("UTF-16LE");
 		list.add("ASCII");
-
 		for (int i = 1; i <= 16; i++) {
 			list.add("ISO-8859-" + i);
 		}
@@ -59,7 +59,7 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		}
 
 		for (int i = 1140; i <= 1149; i++) {
-			list.add("IBM0" + i + EBCDIC_POSTFIX);
+			list.add(FixedWidthDatastore.EBCDIC_PREFIX + i + EBCDIC_POSTFIX);
 		}
 
 		encodings = list.toArray(new String[list.size()]);

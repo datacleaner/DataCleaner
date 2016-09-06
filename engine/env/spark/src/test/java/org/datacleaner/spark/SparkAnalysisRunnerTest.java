@@ -19,6 +19,10 @@
  */
 package org.datacleaner.spark;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -50,8 +54,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-
-import static org.junit.Assert.*;
 
 public class SparkAnalysisRunnerTest {
     private static class TestSparkJobLifeCycleListener implements SparkJobLifeCycleListener {
@@ -117,6 +119,16 @@ public class SparkAnalysisRunnerTest {
         assertEquals(7, upperCaseChars);
     }
 
+    @Test
+    public void testFixedWidthJobScenario() throws Exception {
+        final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
+                "src/test/resources/fixed-width-job.analysis.xml"), "fixed-width-job", false);
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+        
+    }
+    
     @Test
     public void testEscalatedValueDistributionScenario() throws Exception {
         final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
@@ -347,6 +359,26 @@ public class SparkAnalysisRunnerTest {
         assertEquals("[brown]", valueDistributionAnalyzerResult.getUniqueValues().toString());
     }
 
+    @Test
+    public void testFixedWidthFiles() throws Exception {
+        final String appName = "DCTest - " + getName();
+        final AnalysisResultFuture result = runAnalysisJob(appName, URI.create(
+                "src/test/resources/fixed-width-job.analysis.xml"), "fixed-width-job", false);
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertNotNull(results);
+        assertEquals(2, results.size());
+        final ValueDistributionAnalyzerResult valueDistributionAnalyzerResult = result.getResults(
+                ValueDistributionAnalyzerResult.class).get(0);
+
+        assertEquals("[[<unique>->6]]", valueDistributionAnalyzerResult.getValueCounts().toString());
+        assertEquals("[Mrs. Foobar Foo, Bar, Foo, John Doe, Asbjørn Leeth, Jane Doe, Sørensen, Kasper]",
+                valueDistributionAnalyzerResult.getUniqueValues().toString());
+
+        final StringAnalyzerResult stringAnalyzerResult = result.getResults(StringAnalyzerResult.class).get(0);
+        assertNotNull(stringAnalyzerResult);
+    }
+    
     @Test
     public void testLifeCycleListener() throws Exception {
         final String appName = "DCTest - " + getName();

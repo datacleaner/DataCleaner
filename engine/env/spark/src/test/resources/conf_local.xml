@@ -10,6 +10,17 @@
 		<json-datastore name="person_data">
 			<filename>src/test/resources/person_data.json</filename>
 		</json-datastore>
+		<fixed-width-datastore name="employees-fixed-width-file">
+			<filename>src/test/resources/employees-fixed-width.txt</filename>
+			<encoding>UTF-8</encoding>
+			<width-specification>
+				<value-width>19</value-width>
+				<value-width>22</value-width>
+			</width-specification>
+			<header-line-number>1</header-line-number>
+			<fail-on-inconsistencies>false</fail-on-inconsistencies>
+		</fixed-width-datastore>
 	</datastore-catalog>
+
 
 </configuration>

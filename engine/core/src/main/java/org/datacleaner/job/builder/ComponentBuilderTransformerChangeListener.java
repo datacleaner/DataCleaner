@@ -20,6 +20,7 @@
 package org.datacleaner.job.builder;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
@@ -96,5 +97,10 @@ public class ComponentBuilderTransformerChangeListener implements TransformerCha
         return (super.equals(object) || (object != null && object instanceof ComponentBuilderTransformerChangeListener
                 && ((ComponentBuilderTransformerChangeListener) object)._componentBuilder == _componentBuilder
                 && ((ComponentBuilderTransformerChangeListener) object)._propertyDescriptor == _propertyDescriptor));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_componentBuilder, _propertyDescriptor);
     }
 }

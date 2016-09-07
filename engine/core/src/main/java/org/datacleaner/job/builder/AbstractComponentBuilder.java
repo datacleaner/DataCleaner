@@ -335,8 +335,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     protected void registerListenerIfLinkedToTransformer(ConfiguredPropertyDescriptor configuredProperty,
             Object value) {
-        // Register change listener on all transformers providing values used for the input
-        // column.
+        // Register change listener on all transformers providing values used for the input column.
         getTransformedInputColumns(value).forEach(transformedInputColumn -> getAnalysisJobBuilder()
                 .getTransformerComponentBuilders().stream().filter(transformer -> (isProvidingColumn(
                         transformedInputColumn, transformer))).forEach(transformer -> transformer.addChangeListener(
@@ -354,12 +353,12 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     private List<TransformedInputColumn<?>> getTransformedInputColumns(Object value) {
-        List<TransformedInputColumn<?>> transformedInputColumns = new ArrayList<>();
+        final List<TransformedInputColumn<?>> transformedInputColumns = new ArrayList<>();
 
         if (value != null) {
             if (value.getClass().isArray()) {
                 for (int i = 0; i < Array.getLength(value); i++) {
-                    Object valuePart = Array.get(value, i);
+                    final Object valuePart = Array.get(value, i);
                     if (valuePart != null && ReflectionUtils.is(valuePart.getClass(), TransformedInputColumn.class)) {
                         transformedInputColumns.add((TransformedInputColumn<?>) valuePart);
                     }
@@ -442,13 +441,13 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                                 // In case the new value no longer contains everything in the original value,
                                 // the values in the dependent property referring to the removed values need
                                 // to be removed too.
-                                Object dependentValue = dependentProperty.getValue(_configurableBean);
+                                final Object dependentValue = dependentProperty.getValue(_configurableBean);
 
                                 if (dependentValue != null) {
                                     // First build a list containing value and references tuples.
-                                    Map<Integer, Object> originalMappings = new HashMap<>();
+                                    final Map<Integer, Object> originalMappings = new HashMap<>();
 
-                                    List<Object> synchronizedDependents = new ArrayList<>();
+                                    final List<Object> synchronizedDependents = new ArrayList<>();
 
                                     if (currentValue.getClass().isArray()) {
                                         for (int i = 0; i < Array.getLength(currentValue); i++) {
@@ -474,7 +473,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     private static <E> E[] getArray(Class<E> clazz, List<?> baseList) {
-        E[] result = (E[]) Array.newInstance(clazz, baseList.size());
+        final E[] result = (E[]) Array.newInstance(clazz, baseList.size());
 
         for (int i = 0; i < baseList.size(); i++) {
             Array.set(result, i, (E) baseList.get(i));

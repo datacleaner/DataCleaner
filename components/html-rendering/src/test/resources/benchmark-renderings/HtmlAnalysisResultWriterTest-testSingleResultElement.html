@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Analysis result</title>  <script type="text/javascript" src="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.js"></script>
-<link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+  <title>Analysis result</title>  <link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.css?load=script" />
 <script type="text/javascript">//<![CDATA[
-  var analysisResult = {};
+var analysisResult = {};
+requirejs = {
+    baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/',
+    shim: {
+        'jquery-ui': {
+            deps: ['jquery']
+        },
+        'jquery.flot': {
+            deps: ['jquery'],
+            exports: '$.plot'
+        },
+        'jquery.flot.selection': {
+            deps: ['jquery.flot']
+        }
+    },
+    paths: {
+        'jquery': 'jquery/2.2.4/jquery.min',
+        'jquery-ui': 'jqueryui/1.12.0/jquery-ui.min',
+        'jquery.flot': 'flot/0.8.3/jquery.flot.min',
+        'jquery.flot.selection': 'flot/0.8.3/jquery.flot.selection.min'
+    }
+};
 //]]>
-</script>
+</script><script data-main="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-v2.js" type="text/javascript"     src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script>
 </head><body>
 <div class="analysisResultContainer">
 <div class="analysisResultHeader"><ul class="analysisResultToc"><li style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAABUklEQVR42mNggAIVFRV2BwcHDkowyAwGdGDRtdbabuPDlZRgkBkYBtvMOhxov+P1f0qwZd2sfD09PRmqG2walX3ayMioYOAN9tn75n/CkXf/Iw6+/e+4k0oGOwMNWnzn8//HH3/8v/Xu+//CUx+oY7Drrjf/9z359v/nz59g3HqBhgYH73/7f/qNz/9nAHHcoXfUM7js9Hs4f87NT8QZ7ADEKcCIarjw8X/asXdAg19jGFxKjsFxh9/9f/ftF1jTg48//6cefU8dg+OBrv30A2Lw408/ga4euQYDw/j991//v/2AhDHI4D2Pv4H534EGtUANBrFBeM4NIg32A2bfSdc+/596/fP/7iuf/gcC02zVmQ9gPgiDsnYkMGtPA7KnXf/0P/fEu0FYCFFksGVWvQrIcLP4wj0gBeRgI2vHvRgGw4ChoWESSJJcrK+v78ZASwAAAGwTryXWdmwAAAAASUVORK5CYII=)"><a href="#analysisResultDescriptorGroup_MockAnalyzer">Mock analyzer</a></li></ul></div><div id="analysisResultDescriptorGroup_MockAnalyzer" class="analysisResultDescriptorGroup MockAnalyzer"><div class="analyzerResult MockAnalyzer"><div class="analyzerResultHeader"><h2>Mock analyzer (CUSTOMERNAME)</h2></div><div class="analyzerResultContent">

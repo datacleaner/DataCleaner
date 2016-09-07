@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Analysis result</title>  <script type="text/javascript" src="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.js"></script>
-<link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+  <title>Analysis result</title>  <link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.css?load=script" />
 <script type="text/javascript">//<![CDATA[
-  var analysisResult = {};
+var analysisResult = {};
+requirejs = {
+    baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/',
+    shim: {
+        'jquery-ui': {
+            deps: ['jquery']
+        },
+        'jquery.flot': {
+            deps: ['jquery'],
+            exports: '$.plot'
+        },
+        'jquery.flot.selection': {
+            deps: ['jquery.flot']
+        }
+    },
+    paths: {
+        'jquery': 'jquery/2.2.4/jquery.min',
+        'jquery-ui': 'jqueryui/1.12.0/jquery-ui.min',
+        'jquery.flot': 'flot/0.8.3/jquery.flot.min',
+        'jquery.flot.selection': 'flot/0.8.3/jquery.flot.selection.min'
+    }
+};
 //]]>
-</script>
+</script><script data-main="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-v2.js" type="text/javascript"     src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script>
 </head><body>
 <div class="analysisResultContainer">
 <div class="analysisResultHeader"><ul class="analysisResultToc"></ul></div></div>

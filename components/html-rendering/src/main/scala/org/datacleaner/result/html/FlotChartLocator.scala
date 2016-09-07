@@ -12,7 +12,7 @@ object FlotChartLocator {
   /**
    * Gets the URL for the base flot library, typically named as "jquery.flot.min.js"
    */
-  def getFlotBaseUrl: String = getFlotHome() + "/jquery.flot.js";
+  def getFlotBaseUrl: String = getFlotHome() + "/jquery.flot.min.js";
 
   /**
    * Gets the URL for the flot plugin for pie charts, typically named as "jquery.flot.pie.min.js"

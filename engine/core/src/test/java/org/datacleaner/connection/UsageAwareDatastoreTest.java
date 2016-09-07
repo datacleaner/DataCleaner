@@ -36,7 +36,7 @@ public class UsageAwareDatastoreTest extends TestCase {
         datastores.add(new DbaseDatastore("dbase", "bar.dbf"));
         datastores.add(new ExcelDatastore("excel", null, "bar.xls"));
         datastores.add(new JdbcDatastore("jdbc", "url"));
-        datastores.add(new FixedWidthDatastore("fixedwidth", "foo.dat", "UTF8", new int[] { 1, 2, 3 }));
+        datastores.add(new FixedWidthDatastore("fixedwidth", "foo.txt", "UTF8", new int[] { 1, 2, 3 }));
         datastores.add(new CompositeDatastore("foo", Arrays.<Datastore> asList(datastores.get(0), datastores.get(1),
                 datastores.get(3))));
 

@@ -1,5 +1,5 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
 
 /**
  * Defines reusable script parts for value distribution results
@@ -7,8 +7,6 @@ import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRendering
 object ValueDistributionReusableScriptHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
-    val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
-
     return """<script type="text/javascript">
 //<![CDATA[
 function draw_value_distribution_bar(chartElement, chartData, retries) {

@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.html.BaseHeadElement;
-import org.datacleaner.result.html.FlotChartLocator;
 import org.datacleaner.result.html.HeadElement;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.apache.metamodel.util.Predicate;
@@ -37,18 +36,9 @@ import org.springframework.stereotype.Component;
 public class HtmlAnalysisResultWriterFactory {
 
     private String resourcesDirectory;
-    private String flotLibraryLocation;
 
     public String getResourcesDirectory() {
         return resourcesDirectory;
-    }
-
-    public String getFlotLibraryLocation() {
-        return flotLibraryLocation;
-    }
-
-    public void setFlotLibraryLocation(String flotLibraryLocation) {
-        this.flotLibraryLocation = flotLibraryLocation;
     }
 
     public void setResourcesDirectory(String resourcesDirectory) {
@@ -60,9 +50,6 @@ public class HtmlAnalysisResultWriterFactory {
             Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
             boolean headers) {
         
-        if (null != flotLibraryLocation) {
-            FlotChartLocator.setFlotHome(flotLibraryLocation);
-        }
         return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate,
                 headers) {
             @Override

@@ -1,6 +1,6 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
 
 /**
  * Head element which defines the necesary script and style elements for scatter charts
@@ -8,8 +8,6 @@ import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRendering
 object ScatterAnalyzerResuableChartHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
-    val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
-    val flotSelectionUrl = FlotChartLocator.getFlotSelectionUrl
 
     return """<script type="text/javascript">
 //<![CDATA[

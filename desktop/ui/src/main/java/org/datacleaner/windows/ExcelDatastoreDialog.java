@@ -67,7 +67,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
             UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 
-        _addColumnNamesButton = WidgetFactory.createDefaultButton("Add", IconUtils.ACTION_RENAME);
+        _addColumnNamesButton = WidgetFactory.createDefaultButton("Change", IconUtils.ACTION_RENAME);
 
         if (originalDatastore != null) {
             _columnNames = originalDatastore.getCustomColumnNames();
@@ -95,6 +95,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
                     public void windowClosed(WindowEvent e) {
                         _columnNames = columnNamesChooserDialog.getColumnNames();
                         onSetingsUpdated();
+                        columnNamesChooserDialog.dispose();
                     }
 
                     @Override
@@ -151,11 +152,13 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
             @Override
             public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
                 _addColumnNamesButton.setEnabled(true);
+                _columnNames = null; 
             }
 
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
-
+                _addColumnNamesButton.setEnabled(true);
+                _columnNames = null; 
             }
         });
     }

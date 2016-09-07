@@ -128,7 +128,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
         setSaveButtonEnabled(false);
         showPreview = true;
-        _addColumnNamesButton = WidgetFactory.createDefaultButton("Add", IconUtils.ACTION_RENAME);
+        _addColumnNamesButton = WidgetFactory.createDefaultButton("Change", IconUtils.ACTION_RENAME);
 
         if (originalDatastore != null) {
             _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
@@ -240,6 +240,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                     public void windowClosed(WindowEvent e) {
                         _columnNames = columnNamesChooserDialog.getColumnNames();
                         onSettingsUpdated(false, false, getResource());
+                        columnNamesChooserDialog.dispose();
 
                     }
 
@@ -285,6 +286,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     @Override
     protected void onSelected(Resource resource) {
+        _columnNames = null; 
         onSettingsUpdated(true, true, resource);
     }
 
@@ -526,6 +528,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                     _separatorCharField.setSelectedItem(SEPARATOR_TAB);
                 }
 
+                _columnNames = null; 
                 onSettingsUpdated(true, true, resource);
                 _addColumnNamesButton.setEnabled(true);
             }
@@ -533,6 +536,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
                 _addColumnNamesButton.setEnabled(true);
+                _columnNames = null; 
             }
         });
     }

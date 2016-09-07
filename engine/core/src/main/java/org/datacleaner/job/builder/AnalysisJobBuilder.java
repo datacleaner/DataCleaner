@@ -49,6 +49,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -411,12 +412,116 @@ public final class AnalysisJobBuilder implements Closeable {
     public AnalysisJobBuilder removeTransformer(TransformerComponentBuilder<?> tjb) {
         final boolean removed = _transformerComponentBuilders.remove(tjb);
         if (removed) {
+            final List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
+            final Collection<ComponentBuilder> componentBuilders = this.getComponentBuilders();
+            removeTransformersOutputColumns(tjb.getAnalysisJobBuilder(),outputColumns, componentBuilders);
+            
             tjb.onRemoved();
 
             // Ajb removal last, so listeners gets triggered
             onComponentRemoved();
         }
         return this;
+    }
+
+    private void removeTransformersOutputColumns(final AnalysisJobBuilder analysisJobBuilder, final List<MutableInputColumn<?>> outputColumns,
+            final Collection<ComponentBuilder> componentBuilders) {
+
+        for (final ComponentBuilder componentBuilder : componentBuilders) {
+            /**
+             * Remove all the output columns from the flow that have anything to
+             * do with the output columns of the transformer being removed Eg.
+             * Username (standardized email) (merged)
+             **/
+            final List<MutableInputColumn<?>> componentOutputColumnsToBeRemoved = new ArrayList<>();
+            componentOutputColumnsToBeRemoved.addAll(outputColumns);
+            int originalSize = componentOutputColumnsToBeRemoved.size(); 
+            if (componentBuilder instanceof TransformerComponentBuilder) {
+               final List<TransformedInputColumn<?>> componentOutputColumns = ((TransformerComponentBuilder) componentBuilder).getOutputColumns();
+                for (final MutableInputColumn<?> outputColumn : componentOutputColumns) {
+                    for (final InputColumn<?> inputColumn : outputColumns) {
+                        if (outputColumn.getName().contains(inputColumn.getName())) {
+                            componentOutputColumnsToBeRemoved.add(outputColumn);
+                        }
+                    }
+                }
+            }
+           
+            /**
+             * Going recursively into the child output stream analyzers job
+             */
+            final List<OutputDataStream> outputDataStreams = componentBuilder.getOutputDataStreams();
+            
+            for (final OutputDataStream outputDataStream : outputDataStreams) {
+                final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(
+                        outputDataStream);
+                final Collection<ComponentBuilder> outputStreamComponentBuilders = outputDataStreamJobBuilder
+                        .getComponentBuilders();
+                //if collection is not empty
+                
+                removeTransformersOutputColumns(outputDataStreamJobBuilder, componentOutputColumnsToBeRemoved, outputStreamComponentBuilders);
+            }
+            
+            if (componentOutputColumnsToBeRemoved.size() > originalSize){
+                removeTransformersOutputColumnsDescriptors(componentOutputColumnsToBeRemoved, componentBuilders);
+            }
+        }
+
+//        /**
+//         * The output columns of the removed transformer may be input columns
+//         * for other component are removed at the end so that the other
+//         * transformer output columns connected in any way with the original
+//         * removed columns can be found in the flow and removed. Eg. Username
+//         * (standardized email) (merged)
+//         */
+        removeSourceColumns(outputColumns, analysisJobBuilder); 
+        removeTransformersOutputColumnsDescriptors(outputColumns, componentBuilders);
+      }
+    
+    private void removeSourceColumns(List<MutableInputColumn<?>> outputColumns, final AnalysisJobBuilder analysisJobBuilder) {
+        for (MutableInputColumn<?> column : outputColumns) {
+            final MetaModelInputColumn sourceColumn = getSourceColumnByName(analysisJobBuilder, column);
+            if (sourceColumn != null) {
+                analysisJobBuilder.removeSourceColumn(sourceColumn);
+            }
+        }
+    }
+
+    private MetaModelInputColumn getSourceColumnByName(final AnalysisJobBuilder analysisJobBuilder, MutableInputColumn<?> column) {
+        final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns(); 
+        for (MetaModelInputColumn sourceColumn : sourceColumns) {
+            if (sourceColumn.getName().equals(column.getName())) {
+                return sourceColumn; 
+             
+            }
+        }
+        return null;
+    }
+
+   
+    /**
+     * Removes the output column of a transformers from every descriptor.
+     * 
+     * @param outputColumns
+     * @param componentBuilders
+     */
+    private void removeTransformersOutputColumnsDescriptors(final List<MutableInputColumn<?>> outputColumns,
+            final Collection<ComponentBuilder> componentBuilders) {
+        for (final ComponentBuilder componentBuilder : componentBuilders) {
+            removeColumnsFromComponentBuilder(outputColumns, componentBuilder);
+        }
+    }
+
+    private void removeColumnsFromComponentBuilder(final List<MutableInputColumn<?>> outputColumns,
+            final ComponentBuilder componentBuilder) {
+        final Set<ConfiguredPropertyDescriptor> descriptors = componentBuilder.getDescriptor()
+                .getConfiguredProperties();
+        for (final InputColumn<?> outputColumn : outputColumns) {
+            for (final ConfiguredPropertyDescriptor propertyDescriptor : descriptors) {
+                componentBuilder.removeInputColumn(outputColumn, propertyDescriptor);
+               
+            }
+        }
     }
 
     public ComponentBuilder addComponent(ComponentDescriptor<?> descriptor,

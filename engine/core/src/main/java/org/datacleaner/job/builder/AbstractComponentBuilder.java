@@ -49,6 +49,7 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.connection.OutputDataStreamDatastore;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -580,15 +581,49 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 inputColumns = null;
             } else {
                 if (inputColumns.getClass().isArray()) {
-                    inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);
+                    if (inputColumns.getClass().getComponentType().equals(String.class)
+                            && inputColumn instanceof TransformedInputColumn) {
+                        inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn.getName());
+                        logger.info("Removed Transformed InputColumn"  + inputColumn.getName());
+                    } else {
+                        inputColumns = removeElements(inputColumns, inputColumn);
+                    }
+                    logger.info("Columns after removal are:" + inputColumns.toString());
                 }
             }
             setConfiguredProperty(propertyDescriptor, inputColumns);
             propertyDescriptor.setValue(getComponentInstance(), inputColumns);
         }
+        
         return (B) this;
     }
 
+    private Object removeElements(Object array, InputColumn<?> elementToRemove) {
+        boolean found = false;
+        final int oldLength = Array.getLength(array);
+        if (oldLength == 0) {
+            return array;
+        }
+        final int newLength = oldLength - 1;
+        final Object result = Array.newInstance(array.getClass().getComponentType(), newLength);
+        int nextIndex = 0;
+        for (int i = 0; i < oldLength; i++) {
+            final Object e = Array.get(array, i);
+            if (elementToRemove.getName().equals(((InputColumn<?>) e).getName())) {
+                found = true;
+            } else {
+                if (nextIndex == newLength) {
+                    break;
+                }
+                Array.set(result, nextIndex, e);
+                nextIndex++;
+            }
+        }
+        if (!found) {
+            return array;
+        }
+        return result;
+    }
     public void setRequirement(FilterComponentBuilder<?, ?> filterComponentBuilder, String category) {
         if (filterComponentBuilder == this) {
             throw new IllegalArgumentException("Requirement source and sink cannot be the same");

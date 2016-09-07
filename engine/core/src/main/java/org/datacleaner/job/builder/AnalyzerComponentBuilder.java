@@ -229,6 +229,40 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
+    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        assert propertyDescriptor.isInputColumn();
+        if (inputColumn == null) {
+            throw new IllegalArgumentException("InputColumn cannot be null");
+        }
+        if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
+            _escalatingInputColumns.add(inputColumn);
+
+            registerListenerIfLinkedToTransformer(propertyDescriptor, _escalatingInputColumns.toArray(
+                    new InputColumn<?>[_escalatingInputColumns.size()]));
+
+            return this;
+        } else {
+            return super.addInputColumn(inputColumn, propertyDescriptor);
+        }
+    }
+
+    @Override
+    public AnalyzerComponentBuilder<A> removeInputColumn(InputColumn<?> inputColumn,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        assert propertyDescriptor.isInputColumn();
+        if (inputColumn == null) {
+            throw new IllegalArgumentException("InputColumn cannot be null");
+        }
+        if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
+            _escalatingInputColumns.remove(inputColumn);
+            return this;
+        } else {
+            return super.removeInputColumn(inputColumn, propertyDescriptor);
+        }
+    }
+
+    @Override
     public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
         if (isMultipleJobsSupported() && configuredProperty == _escalatingInputProperty) {
             if (_escalatingInputColumns.isEmpty()) {
@@ -343,6 +377,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 dummyValue = col;
             }
 
+            final AnalyzerComponentBuilder<A> componentBuilder;
+
             if (configuredProperty.isArray()) {
                 final InputColumn<?>[] inputColumsArray;
                 if (dummyValue == null) {
@@ -350,11 +386,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 } else {
                     inputColumsArray = new InputColumn[] { dummyValue };
                 }
-                return super.setConfiguredProperty(configuredProperty, inputColumsArray);
+                componentBuilder = super.setConfiguredProperty(configuredProperty, inputColumsArray);
             } else {
-                return super.setConfiguredProperty(configuredProperty, dummyValue);
+                componentBuilder = super.setConfiguredProperty(configuredProperty, dummyValue);
             }
 
+            registerListenerIfLinkedToTransformer(configuredProperty, value);
+
+            return componentBuilder;
         } else {
             return super.setConfiguredProperty(configuredProperty, value);
         }

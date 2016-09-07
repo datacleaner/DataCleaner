@@ -34,5 +34,4 @@ public class BaseMockAnalyzer implements Analyzer<AnalyzerResult> {
     public AnalyzerResult getResult() {
         return null;
     }
-
 }

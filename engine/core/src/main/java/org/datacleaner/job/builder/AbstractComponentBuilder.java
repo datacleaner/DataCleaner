@@ -325,19 +325,22 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final boolean changed = setConfiguredPropertyIfChanged(configuredProperty, value);
         if (changed) {
             if (configuredProperty.isInputColumn()) {
-                for (TransformedInputColumn<?> transformedInputColumn : getTransformedInputColumns(value)) {
-                    // Register change listener on all transformers providing values used for the input
-                    // column.
-                    getAnalysisJobBuilder().getTransformerComponentBuilders().stream().filter(
-                            transformer -> (isProvidingColumn(transformedInputColumn, transformer))).forEach(
-                                    transformer -> transformer.addChangeListener(
-                                            new ComponentBuilderTransformerChangeListener(this, configuredProperty)));
-                }
+                registerListenerIfLinkedToTransformer(configuredProperty, value);
             }
 
             onConfigurationChanged();
         }
         return (B) this;
+    }
+
+    protected void registerListenerIfLinkedToTransformer(ConfiguredPropertyDescriptor configuredProperty,
+            Object value) {
+        // Register change listener on all transformers providing values used for the input
+        // column.
+        getTransformedInputColumns(value).forEach(transformedInputColumn -> getAnalysisJobBuilder()
+                .getTransformerComponentBuilders().stream().filter(transformer -> (isProvidingColumn(
+                        transformedInputColumn, transformer))).forEach(transformer -> transformer.addChangeListener(
+                                new ComponentBuilderTransformerChangeListener(this, configuredProperty))));
     }
 
     protected boolean isProvidingColumn(final TransformedInputColumn<?> transformedInputColumn,

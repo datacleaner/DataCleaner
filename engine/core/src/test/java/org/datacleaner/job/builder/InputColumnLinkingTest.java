@@ -73,8 +73,8 @@ public class InputColumnLinkingTest {
         assertNull(analyzer.getComponentInstance()._column);
     }
 
-    private ConfiguredPropertyDescriptor getPropertyDescriptor(
-            final AnalyzerComponentBuilder<?> mockAnalyzer, final String name) {
+    private ConfiguredPropertyDescriptor getPropertyDescriptor(final AnalyzerComponentBuilder<?> mockAnalyzer,
+            final String name) {
         for (ConfiguredPropertyDescriptor propertyDescriptor : mockAnalyzer.getDescriptor()
                 .getConfiguredPropertiesForInput()) {
             if (propertyDescriptor.getName().equals(name)) {
@@ -108,23 +108,19 @@ public class InputColumnLinkingTest {
                 MultipleJobsAnalyzer.class);
         final ConfiguredPropertyDescriptor columnProperty2 = getPropertyDescriptor(analyzer2, "Column");
 
+        analyzer1.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnProperty1);
         analyzer1.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty1);
-        analyzer2.setConfiguredProperty(columnProperty2, _dateTransformer.getOutputColumns().get(0));
 
-        assertEquals(1, analyzer1.getInputColumns().size());
-        assertEquals(1, analyzer2.getInputColumns().size());
+        analyzer2.setConfiguredProperty(columnProperty2, new InputColumn[] { _jobBuilder.getSourceColumnByName(
+                SOURCE_COLUMN_NAME), _dateTransformer.getOutputColumns().get(0) });
 
-        assertNotNull(analyzer1.getComponentInstance()._column);
-        assertNotNull(analyzer2.getComponentInstance()._column);
+        assertEquals(2, analyzer1.getInputColumns().size());
+        assertEquals(2, analyzer2.getInputColumns().size());
 
         _dateTransformer.removeInputColumn(_dateTransformer.getInputColumns().get(0));
 
-        assertEquals(0, analyzer1.getInputColumns().size());
-        assertEquals(0, analyzer2.getInputColumns().size());
-
-        // Validate that the underlying bean has been updated accordingly
-        assertNull(analyzer1.getComponentInstance()._column);
-        assertNull(analyzer2.getComponentInstance()._column);
+        assertEquals(1, analyzer1.getInputColumns().size());
+        assertEquals(1, analyzer2.getInputColumns().size());
     }
 
     @Test
@@ -162,7 +158,7 @@ public class InputColumnLinkingTest {
 
         analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnsProperty);
         analyzer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnsProperty);
-        analyzer.setConfiguredProperty("Column names", new String[] {"first", "second"});
+        analyzer.setConfiguredProperty("Column names", new String[] { "first", "second" });
 
         analyzer.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty);
         analyzer.setConfiguredProperty("Column name", "test");

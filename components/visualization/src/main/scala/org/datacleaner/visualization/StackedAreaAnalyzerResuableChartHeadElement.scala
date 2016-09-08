@@ -1,10 +1,12 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
 
 object StackedAreaAnalyzerResuableChartHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
+    val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
+    val flotSelectionUrl = FlotChartLocator.getFlotSelectionUrl
 
     return """<script type="text/javascript">
 //<![CDATA[

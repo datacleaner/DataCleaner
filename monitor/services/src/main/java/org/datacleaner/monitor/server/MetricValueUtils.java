@@ -35,6 +35,7 @@ import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
@@ -481,6 +482,14 @@ public class MetricValueUtils {
         if (metricDescriptors == null || metricDescriptors.isEmpty()) {
             return null;
         }
+
+        if (componentJob.getDescriptor().getComponentClass() == PatternFinderAnalyzer.class && !(componentJob
+                .getConfiguration().getProperty(componentJob.getDescriptor().getConfiguredProperty(
+                        "Group column")) == null)) {
+            logger.warn("Pattern finder analyzer doesn't support metrics if it has a Group column configured.");
+            return null;
+        }
+
         final String label = LabelUtils.getLabel(componentJob);
         final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(componentJob);
 

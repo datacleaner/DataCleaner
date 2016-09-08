@@ -76,9 +76,10 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private final LazyRef<String> _ticketGrantingTicketRef;
     private String _requestedService;
     private String _casRestServiceUrl;
+    private final String _proxiedHost;
 
     public CASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
-            String monitorBaseUrl) {
+            String monitorBaseUrl, String proxiedHost) {
         _httpClient = client;
         _casServerUrl = casServerUrl;
         _username = username;
@@ -87,6 +88,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         _requestedService = _monitorBaseUrl + "/j_spring_cas_security_check";
         _casRestServiceUrl = _casServerUrl + "/v1/tickets";
         _ticketGrantingTicketRef = createTicketGrantingTicketRef();
+        _proxiedHost = proxiedHost;
 
         logger.debug("Requested service url: {}", _requestedService);
         logger.debug("Using CAS service url: {}", _casRestServiceUrl);
@@ -176,7 +178,11 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
             final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-        parameters.add(new BasicNameValuePair("service", requestedService));
+        String service = requestedService;
+        if(_proxiedHost != null && !_proxiedHost.isEmpty()) {
+            service = requestedService.replaceFirst("tst-nginx.humaninference.com", _proxiedHost);
+        }
+        parameters.add(new BasicNameValuePair("service", service));
         final HttpEntity entity = new UrlEncodedFormEntity(parameters, charset);
         post.setEntity(entity);
 

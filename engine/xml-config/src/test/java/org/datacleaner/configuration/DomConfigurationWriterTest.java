@@ -220,7 +220,7 @@ public class DomConfigurationWriterTest {
     @Test
     public void testExternalizeDataHubDatastoreWithPassword() throws Exception {
         Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", false, false,
-                DataHubSecurityMode.DEFAULT);
+                DataHubSecurityMode.DEFAULT, "tst-cdi2.humaninference.com:8443");
 
         Element externalized = configurationWriter.externalize(datastore);
         StringBuilder expectedConfiguration = new StringBuilder();
@@ -233,6 +233,7 @@ public class DomConfigurationWriterTest {
                 .append("  <https>false</https>\n")//
                 .append("  <acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>\n")//
                 .append("  <datahubsecuritymode>DEFAULT</datahubsecuritymode>\n")//
+                .append("  <proxiedhost>tst-cdi2.humaninference.com:8443</proxiedhost>\n")//
                 .append("</datahub-datastore>\n");//
 
         assertEquals(expectedConfiguration.toString(), transform(externalized));

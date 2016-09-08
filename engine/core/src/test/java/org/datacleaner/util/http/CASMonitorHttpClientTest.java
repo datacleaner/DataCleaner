@@ -35,7 +35,7 @@ public class CASMonitorHttpClientTest {
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {
         try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor", "")) {
 
             doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
             doRequest(
@@ -46,7 +46,7 @@ public class CASMonitorHttpClientTest {
         }
 
         try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor", "")) {
             doRequest(client, new HttpGet(
                     "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
         }

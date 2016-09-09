@@ -1,22 +1,17 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.FlotChartLocator
+import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
 
 object StackedAreaAnalyzerResuableChartHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
     val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
     val flotSelectionUrl = FlotChartLocator.getFlotSelectionUrl
-    
+
     return """<script type="text/javascript">
 //<![CDATA[
 function draw_stacked_area_analyzer_chart(chartElement, chartData, retries) {
-   
-    wait_for_script_load('jQuery', function() {
-        importJS('""" + flotBaseLocation + """', 'jQuery.plot', function() {
-            importJS('""" + flotSelectionUrl + """', 'jQuery.plot.plugins[0]', function() {
+    require(['jquery', 'jquery.flot', 'jquery.flot.selection'], function ($) {
                 var elem = jQuery("#" + chartElement);
                 var options = {
                         series: {
@@ -33,7 +28,7 @@ function draw_stacked_area_analyzer_chart(chartElement, chartData, retries) {
                             mode: "xy"
                         }
                     };
-                
+
                 try {
                     var plot = jQuery.plot(elem, chartData, options);
                     draw_stacked_area_analyzer_chart_buttons(elem, plot, chartData, options, false);
@@ -45,8 +40,6 @@ function draw_stacked_area_analyzer_chart(chartElement, chartData, retries) {
                     }
                 }
             });
-        });
-    });
 }
 
 function draw_stacked_area_analyzer_chart_buttons(elem, plot, chartData, options, zoomed) {
@@ -68,7 +61,7 @@ function draw_stacked_area_analyzer_chart_buttons(elem, plot, chartData, options
         }));
         draw_stacked_area_analyzer_chart_buttons(elem, plot, chartData, options, true);
     });
-            
+
     zoomOutButton.appendTo(elem)
         .click(function (event) {
             event.preventDefault();
@@ -90,7 +83,7 @@ function draw_stacked_area_analyzer_chart_buttons(elem, plot, chartData, options
 <style type="text/css">
 .stackedAreaAnalyzerChart {
     height: 550px;
-    width: 94%;
+    width: 700px;
 }        
 .stackedAreaChartButton {
     cursor: pointer;

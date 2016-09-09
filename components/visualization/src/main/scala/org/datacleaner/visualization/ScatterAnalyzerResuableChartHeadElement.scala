@@ -1,8 +1,6 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.FlotChartLocator
+import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
 
 /**
  * Head element which defines the necesary script and style elements for scatter charts
@@ -12,14 +10,12 @@ object ScatterAnalyzerResuableChartHeadElement extends HeadElement {
   override def toHtml(context: HtmlRenderingContext): String = {
     val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
     val flotSelectionUrl = FlotChartLocator.getFlotSelectionUrl
-    
+
     return """<script type="text/javascript">
 //<![CDATA[
 function draw_scatter_chart(chartElement, chartData, retries) {
-   
-    wait_for_script_load('jQuery', function() {
-        importJS('""" + flotBaseLocation + """', 'jQuery.plot', function() {
-            importJS('""" + flotSelectionUrl + """', 'jQuery.plot.plugins[0]', function() {
+
+    require(['jquery', 'jquery.flot', 'jquery.flot.selection'], function ($) {
                 var elem = jQuery("#" + chartElement);
                 var showLegend = chartData.length > 1
                 
@@ -49,8 +45,6 @@ function draw_scatter_chart(chartElement, chartData, retries) {
                         draw_scatter_analyzer_chart(chartElement, chartData, retries);
                     }
                 }
-            });
-        });
     });
 }
                 

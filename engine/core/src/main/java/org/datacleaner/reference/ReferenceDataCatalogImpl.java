@@ -38,7 +38,7 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 	private final Collection<StringPattern> _stringPatterns;
 
 	public ReferenceDataCatalogImpl() {
-		this(new ArrayList<Dictionary>(), new ArrayList<SynonymCatalog>(), new ArrayList<StringPattern>());
+		this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 
 	public ReferenceDataCatalogImpl(Collection<Dictionary> dictionaries, Collection<SynonymCatalog> synonymCatalogs,
@@ -46,7 +46,7 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 		if (dictionaries == null) {
 			throw new IllegalArgumentException("dictionaries cannot be null");
 		}
-		Set<String> uniqueNames = new HashSet<String>();
+		Set<String> uniqueNames = new HashSet<>();
 		for (Dictionary dictionary : dictionaries) {
 			String name = dictionary.getName();
 			if (uniqueNames.contains(name)) {
@@ -110,6 +110,22 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 	}
 
 	@Override
+	public boolean removeDictionary(final String name) {
+		return removeItem(_dictionaries, name);
+	}
+	
+	private boolean removeItem(Collection collection, String name) {
+		for (Object item : collection) {
+			if (item instanceof HasName && ((HasName)item).getName().equals(name)) {
+				collection.remove(item);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	public String[] getSynonymCatalogNames() {
 		return getNames(_synonymCatalogs);
 	}
@@ -127,6 +143,11 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 	}
 
 	@Override
+	public boolean removeSynonymCatalog(final String name) {
+		return removeItem(_synonymCatalogs, name);
+	}
+
+	@Override
 	public StringPattern getStringPattern(String name) {
 		if (name != null) {
 			for (StringPattern sp : _stringPatterns) {
@@ -136,6 +157,11 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean removeStringPattern(final String name) {
+		return removeItem(_stringPatterns, name);
 	}
 
 	@Override

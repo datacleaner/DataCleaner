@@ -47,7 +47,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * 
      * @return
      */
-    public String[] getDictionaryNames();
+    String[] getDictionaryNames();
 
     /**
      * Gets a {@link Dictionary} by its name.
@@ -55,7 +55,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public Dictionary getDictionary(String name);
+    Dictionary getDictionary(String name);
 
     /**
      * Determines if the catalog contains a particular dictionary
@@ -63,16 +63,24 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsDictionary(String name) {
+    default boolean containsDictionary(String name) {
         return getDictionary(name) != null;
     }
 
+    /**
+     * Removes dictionary by name.
+     * 
+     * @param name
+     * @return
+     */
+    boolean removeDictionary(String name);
+    
     /**
      * Gets the names of all registered {@link SynonymCatalog}.
      * 
      * @return
      */
-    public String[] getSynonymCatalogNames();
+    String[] getSynonymCatalogNames();
 
     /**
      * Gets a {@link SynonymCatalog} by its name.
@@ -80,7 +88,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public SynonymCatalog getSynonymCatalog(String name);
+    SynonymCatalog getSynonymCatalog(String name);
 
     /**
      * Determines if the catalog contains a particular synonym catalog
@@ -88,16 +96,24 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsSynonymCatalog(String name) {
+    default boolean containsSynonymCatalog(String name) {
         return getSynonymCatalog(name) != null;
     }
 
+    /**
+     * Removes synonym catalog by name.
+     *
+     * @param name
+     * @return
+     */
+    boolean removeSynonymCatalog(String name);
+    
     /**
      * Gets the names of all registered {@link StringPattern}s.
      * 
      * @return
      */
-    public String[] getStringPatternNames();
+    String[] getStringPatternNames();
 
     /**
      * Gets a {@link StringPattern} by its name.
@@ -105,7 +121,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public StringPattern getStringPattern(String name);
+    StringPattern getStringPattern(String name);
 
     /**
      * Determines if the catalog contains a particular string pattern
@@ -113,7 +129,15 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsStringPattern(String name) {
+    default boolean containsStringPattern(String name) {
         return getStringPattern(name) != null;
     }
+
+    /**
+     * Removes string pattern by name.
+     *
+     * @param name
+     * @return
+     */
+    boolean removeStringPattern(String name);
 }

@@ -1,0 +1,71 @@
+<ui:composition template="template.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:define name="head">
+		<script type="text/javascript" src="referencedata/referencedata.nocache.js"></script>
+		<c:if test="#{user.scheduleEditor}">
+			<script type="text/javascript">
+				//<![CDATA[
+				function showUploadJobForm(button) {
+					$(button).replaceWith($("#UploadFileTemplateDiv"));
+				}
+				//]]>
+			</script>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="content">
+		<div id="ReferenceDataPage" class="container">
+			<div id="FileUpload">
+				<h:panelGroup rendered="#{param['upload_status'] == 'success'}">
+					<div class="alert alert-success">File upload was successfull.</div>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{param['upload_status'] != null and param['upload_status'] != 'success'}">
+					<div class="alert alert-danger">File upload was not successfull.</div>
+				</h:panelGroup>
+
+				<c:if test="#{user.scheduleEditor}">
+					<div>
+						<form action="repository/#{user.tenant}/referencedata"
+							  method="post" enctype="multipart/form-data" class="form-inline"
+							  style="display: inline;"
+							  id="uploadJobs">
+							<button class="btn btn-default" onclick="showUploadJobForm(this)" type="button">
+								<span class="glyphicon glyphicon-upload" aria-hidden="true"/>
+								<span>Upload new reference data</span>
+							</button>
+						</form>
+					</div>
+					<div class="spacer"></div>
+				</c:if>
+
+				<div style="visibility: hidden; display: none">
+					<div id="UploadFileTemplateDiv" style="display: inline-block;">
+						<div class="input-group">
+							<span class="input-group-btn"> 
+								<span class="btn btn-primary btn-file"> 
+									Browse … 
+									<input type="file" name="file" multiple="multiple"/>
+								</span>
+							</span> 
+							<input type="text" class="form-control" readonly="readonly"/>
+						</div>
+						<button type="submit" class="btn btn-primary"> 
+							<span class="glyphicon glyphicon-upload" aria-hidden="true"/> <span>Upload</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="RootPanelTarget">
+				<div id="Dictionaries"></div>
+				<div id="Synonyms"></div>
+				<div id="Patterns"></div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

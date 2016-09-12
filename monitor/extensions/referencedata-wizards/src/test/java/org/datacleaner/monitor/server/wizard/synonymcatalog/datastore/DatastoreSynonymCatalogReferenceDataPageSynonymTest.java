@@ -17,20 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.dictionary.datastore;
+package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import org.datacleaner.monitor.server.wizard.shared.TestHelper;
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-public class DatastoreDictionaryReferenceDataPage3Test {
+public class DatastoreSynonymCatalogReferenceDataPageSynonymTest {
+
     @Test
-    public void testNextPage() throws Exception {
-        final DatastoreWizardSession sessionMock = EasyMock.createMock(DatastoreWizardSession.class);
-        final DatastoreDictionaryReferenceDataPage3 page = new DatastoreDictionaryReferenceDataPage3(sessionMock);
-        assertNotNull(page.nextPageController(TestHelper.getFormParameters()));
+    public void testGetPageIndex() throws Exception {
+        DatastoreSynonymCatalogReferenceDataPageSynonym page = new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
+        assertEquals(new Integer(4), page.getPageIndex());
+    }
+
+    @Test
+    public void testGetTemplateFilename() throws Exception {
+        DatastoreSynonymCatalogReferenceDataPageSynonym page = new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
+        assertNotEquals("", page.getTemplateFilename());
     }
 }

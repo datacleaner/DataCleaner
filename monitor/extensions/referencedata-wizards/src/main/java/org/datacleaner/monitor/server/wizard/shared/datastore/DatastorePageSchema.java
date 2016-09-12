@@ -24,34 +24,33 @@ import java.util.Map;
 
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-public abstract class DatastorePage3 extends AbstractFreemarkerWizardPage {
-    protected static final String PROPERTY_TABLE = "table";
-    protected static final String PROPERTY_TABLE_OPTIONS = "tableOptions";
+public abstract class DatastorePageSchema extends AbstractFreemarkerWizardPage {
+    protected static final String PROPERTY_SCHEMA = "schema";
+    protected static final String PROPERTY_SCHEMA_OPTIONS = "schemaOptions";
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePage3(DatastoreWizardSession session) {
+    public DatastorePageSchema(DatastoreWizardSession session) {
         _session = session;
     }
 
     @Override
     public Integer getPageIndex() {
-        return 2;
+        return 1;
     }
 
     @Override
     protected String getTemplateFilename() {
-        _templateConfiguration.setClassForTemplateLoading(this.getClass(), DatastorePage1.TEMPLATE_PACKAGE);
-        return "DatastorePage3.html";
+        _templateConfiguration.setClassForTemplateLoading(this.getClass(), DatastorePageDatastore.TEMPLATE_PACKAGE);
+        return "DatastorePageSchema.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put(PROPERTY_TABLE, _session.getTable());
-        model.put(PROPERTY_TABLE_OPTIONS, 
-                DatastoreHelper.getTableOptions(_session.getWizardContext().getTenantContext(), 
-                        _session.getDatastore(), _session.getSchema()));
+        model.put(PROPERTY_SCHEMA, _session.getSchema());
+        model.put(PROPERTY_SCHEMA_OPTIONS, DatastoreHelper
+                .getSchemaOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore()));
 
         return model;
     }

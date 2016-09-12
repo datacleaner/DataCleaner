@@ -27,53 +27,62 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.reference.regexswap.Category;
+import org.datacleaner.reference.regexswap.Regex;
+import org.datacleaner.reference.regexswap.RegexSwapClient;
 
-final class RegexSwapStringPatternReferenceDataPage1 extends AbstractFreemarkerWizardPage {
-    private static final String PROPERTY_CATEGORY_OPTIONS = "categoryOptions";
-    private static final String PROPERTY_CATEGORY = "category";
+final class RegexSwapStringPatternReferenceDataPageName extends AbstractFreemarkerWizardPage {
+    private static final String PROPERTY_NAME_OPTIONS = "nameOptions";
+    private static final String PROPERTY_NAME = "name";
 
     private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexSwapStringPatternReferenceDataPage1(RegexSwapStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPageName(RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
     @Override
     public Integer getPageIndex() {
-        return 0;
+        return 1;
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        _session.setCategory(getString(formParameters, PROPERTY_CATEGORY));
+        _session.setName(getString(formParameters, PROPERTY_NAME));
 
-        return new RegexSwapStringPatternReferenceDataPage2(_session);
+        return null;
     }
 
     @Override
     protected String getTemplateFilename() {
-        return "RegexSwapStringPatternReferenceDataPage1.html";
+        return "RegexSwapStringPatternReferenceDataPageName.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put(PROPERTY_CATEGORY_OPTIONS, getCategoryOptions());
-        model.put(PROPERTY_CATEGORY, _session.getCategory());
+        model.put(PROPERTY_NAME_OPTIONS, getNameOptions());
+        model.put(PROPERTY_NAME, _session.getName());
 
         return model;
     }
 
-    private String getCategoryOptions() {
+    private String getNameOptions() {
         final StringBuilder builder = new StringBuilder();
 
-        for (Category category : _session.getClient().getCategories()) {
+        for (Regex regex : _session.getClient().getRegexes(createCategory())) {
             final String option =
-                    String.format("<option value=\"%s\">%s</option>", category.getName(), category.getName());
+                    String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
             builder.append(option);
         }
 
         return builder.toString();
+    }
+
+    private Category createCategory() {
+        final String categoryName = _session.getCategory();
+        final String detailsUrl =
+                String.format("%s/%s", RegexSwapClient.REGEXES_URL, categoryName.replaceAll(" ", "%20"));
+        return new Category(_session.getCategory(), "", detailsUrl);
     }
 }

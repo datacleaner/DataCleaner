@@ -22,34 +22,22 @@ package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage1;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePageSchema;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 
-final class DatastoreSynonymCatalogReferenceDataPage1 extends DatastorePage1 {
+final class DatastoreSynonymCatalogReferenceDataPageSchema extends DatastorePageSchema {
 
-    public DatastoreSynonymCatalogReferenceDataPage1(DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPageSchema(DatastoreSynonymCatalogReferenceDataWizardSession session) {
         super(session);
-    }
-
-    @Override
-    protected String getNameLabel() {
-        return "Datastore synonym catalog name";
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        final String name = getString(formParameters, PROPERTY_NAME);
-        final String datastore = getString(formParameters, PROPERTY_DATASTORE);
-        ReferenceDataHelper.checkUniqueSynonymCatalog(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
-        
-        _session.setName(name);
-        _session.setDatastore(datastore);
+        _session.setSchema(getString(formParameters, PROPERTY_SCHEMA));
 
-        return new DatastoreSynonymCatalogReferenceDataPage2(
+        return new DatastoreSynonymCatalogReferenceDataPageTable(
                 (DatastoreSynonymCatalogReferenceDataWizardSession) _session);
     }
 }

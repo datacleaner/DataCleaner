@@ -17,18 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
+package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage3;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePageTable;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 
-final class DatastoreSynonymCatalogReferenceDataPage3 extends DatastorePage3 {
+final class DatastoreDictionaryReferenceDataPageTable extends DatastorePageTable {
 
-    public DatastoreSynonymCatalogReferenceDataPage3(DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreDictionaryReferenceDataPageTable(DatastoreWizardSession session) {
         super(session);
     }
 
@@ -36,8 +37,7 @@ final class DatastoreSynonymCatalogReferenceDataPage3 extends DatastorePage3 {
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setTable(getString(formParameters, PROPERTY_TABLE));
-
-        return new DatastoreSynonymCatalogReferenceDataPage4(
-                (DatastoreSynonymCatalogReferenceDataWizardSession) _session);
+        
+        return new DatastoreDictionaryReferenceDataPageColumn(_session);
     }
 }

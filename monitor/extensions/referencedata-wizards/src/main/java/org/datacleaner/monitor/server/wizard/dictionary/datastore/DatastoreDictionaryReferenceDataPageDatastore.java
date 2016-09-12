@@ -22,22 +22,34 @@ package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage2;
+import org.datacleaner.monitor.server.wizard.shared.ReferenceDataHelper;
+import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePageDatastore;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 
-final class DatastoreDictionaryReferenceDataPage2 extends DatastorePage2 {
+final class DatastoreDictionaryReferenceDataPageDatastore extends DatastorePageDatastore {
 
-    public DatastoreDictionaryReferenceDataPage2(DatastoreWizardSession session) {
-        super(session); 
+    public DatastoreDictionaryReferenceDataPageDatastore(DatastoreWizardSession session) {
+        super(session);
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    protected String getNameLabel() {
+        return "Datastore dictonary name";
+    }
+
+    @Override
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        _session.setSchema(getString(formParameters, PROPERTY_SCHEMA));
+        final String name = getString(formParameters, PROPERTY_NAME);
+        final String datastore = getString(formParameters, PROPERTY_DATASTORE);
+        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
+                .getConfiguration().getReferenceDataCatalog());
         
-        return new DatastoreDictionaryReferenceDataPage3(_session);
+        _session.setName(name);
+        _session.setDatastore(datastore);
+        
+        return new DatastoreDictionaryReferenceDataPageSchema(_session);
     }
 }

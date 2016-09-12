@@ -24,17 +24,17 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class RegexSwapStringPatternReferenceDataPage1Test {
+public class RegexSwapStringPatternReferenceDataPageCategoryTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        RegexSwapStringPatternReferenceDataPage1 page = new RegexSwapStringPatternReferenceDataPage1(null);
+        RegexSwapStringPatternReferenceDataPageCategory page = new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        RegexSwapStringPatternReferenceDataPage1 page = new RegexSwapStringPatternReferenceDataPage1(null);
+        RegexSwapStringPatternReferenceDataPageCategory page = new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

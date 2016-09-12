@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-public abstract class DatastorePage1 extends AbstractFreemarkerWizardPage {
+public abstract class DatastorePageDatastore extends AbstractFreemarkerWizardPage {
     public static final String TEMPLATE_PACKAGE = "/org/datacleaner/monitor/server/wizard/shared/datastore/";
 
     protected static final String PROPERTY_NAME = "name";
@@ -34,7 +34,7 @@ public abstract class DatastorePage1 extends AbstractFreemarkerWizardPage {
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePage1(DatastoreWizardSession session) {
+    public DatastorePageDatastore(DatastoreWizardSession session) {
         _session = session;
     }
 
@@ -46,7 +46,7 @@ public abstract class DatastorePage1 extends AbstractFreemarkerWizardPage {
     @Override
     protected String getTemplateFilename() {
         _templateConfiguration.setClassForTemplateLoading(this.getClass(), TEMPLATE_PACKAGE);
-        return "DatastorePage1.html";
+        return "DatastorePageDatastore.html";
     }
 
     @Override

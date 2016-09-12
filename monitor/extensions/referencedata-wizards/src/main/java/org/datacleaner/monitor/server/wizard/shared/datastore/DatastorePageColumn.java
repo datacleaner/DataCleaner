@@ -24,33 +24,34 @@ import java.util.Map;
 
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-public abstract class DatastorePage2 extends AbstractFreemarkerWizardPage {
-    protected static final String PROPERTY_SCHEMA = "schema";
-    protected static final String PROPERTY_SCHEMA_OPTIONS = "schemaOptions";
+public abstract class DatastorePageColumn extends AbstractFreemarkerWizardPage {
+    protected static final String PROPERTY_COLUMN = "column";
+    protected static final String PROPERTY_COLUMN_OPTIONS = "columnOptions";
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePage2(DatastoreWizardSession session) {
+    public DatastorePageColumn(DatastoreWizardSession session) {
         _session = session;
     }
 
     @Override
     public Integer getPageIndex() {
-        return 1;
+        return 3;
     }
 
     @Override
     protected String getTemplateFilename() {
-        _templateConfiguration.setClassForTemplateLoading(this.getClass(), DatastorePage1.TEMPLATE_PACKAGE);
-        return "DatastorePage2.html";
+        _templateConfiguration.setClassForTemplateLoading(this.getClass(), DatastorePageDatastore.TEMPLATE_PACKAGE);
+        return "DatastorePageColumn.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
-        model.put(PROPERTY_SCHEMA, _session.getSchema());
-        model.put(PROPERTY_SCHEMA_OPTIONS, DatastoreHelper
-                .getSchemaOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore()));
+        model.put(PROPERTY_COLUMN, _session.getColumn());
+        model.put(PROPERTY_COLUMN_OPTIONS, DatastoreHelper.getColumnOptions(
+                _session.getWizardContext().getTenantContext(), _session.getDatastore(), _session.getSchema(),
+                _session.getTable()));
 
         return model;
     }

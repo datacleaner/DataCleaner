@@ -34,7 +34,7 @@ final class DatastoreDictionaryReferenceDataWizardSession extends DatastoreWizar
 
     @Override
     public WizardPageController firstPageController() {
-        return new DatastoreDictionaryReferenceDataPage1(this);
+        return new DatastoreDictionaryReferenceDataPageDatastore(this);
     }
 
     @Override

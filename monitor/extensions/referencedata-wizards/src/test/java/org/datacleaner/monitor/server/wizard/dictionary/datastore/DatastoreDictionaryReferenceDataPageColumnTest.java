@@ -26,11 +26,11 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertNull;
 
-public class DatastoreDictionaryReferenceDataPage4Test {
+public class DatastoreDictionaryReferenceDataPageColumnTest {
     @Test
     public void testNextPage() throws Exception {
         final DatastoreWizardSession sessionMock = EasyMock.createMock(DatastoreWizardSession.class);
-        final DatastoreDictionaryReferenceDataPage4 page = new DatastoreDictionaryReferenceDataPage4(sessionMock);
+        final DatastoreDictionaryReferenceDataPageColumn page = new DatastoreDictionaryReferenceDataPageColumn(sessionMock);
         assertNull(page.nextPageController(TestHelper.getFormParameters()));
     }
 }

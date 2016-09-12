@@ -19,25 +19,20 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
-import java.util.List;
-import java.util.Map;
-
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage4;
+import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
-import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.wizard.WizardPageController;
+import org.junit.Test;
 
-final class DatastoreDictionaryReferenceDataPage4 extends DatastorePage4 {
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
-    public DatastoreDictionaryReferenceDataPage4(DatastoreWizardSession session) {
-        super(session);
-    }
-
-    @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        _session.setColumn(getString(formParameters, PROPERTY_COLUMN));
-        
-        return null;
+public class DatastoreDictionaryReferenceDataPageDatastoreTest {
+    @Test
+    public void testNextPage() throws Exception {
+        final DatastoreWizardSession sessionMock = new DatastoreDictionaryReferenceDataWizardSession(
+                TestHelper.getReferenceDataWizardContextMock());
+        final DatastoreDictionaryReferenceDataPageDatastore page = new DatastoreDictionaryReferenceDataPageDatastore(sessionMock);
+        assertNotEquals("", page.getNameLabel());
+        assertNotNull(page.nextPageController(TestHelper.getFormParameters()));
     }
 }

@@ -45,7 +45,7 @@ final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractRef
 
     @Override
     public WizardPageController firstPageController() {
-        return new RegexSwapStringPatternReferenceDataPage1(this);
+        return new RegexSwapStringPatternReferenceDataPageCategory(this);
     }
 
     @Override

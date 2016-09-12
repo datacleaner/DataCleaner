@@ -19,25 +19,15 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import java.util.List;
-import java.util.Map;
+import org.junit.Test;
 
-import org.datacleaner.monitor.server.wizard.shared.datastore.DatastorePage4;
-import org.datacleaner.monitor.shared.model.DCUserInputException;
-import org.datacleaner.monitor.wizard.WizardPageController;
+import static org.junit.Assert.assertNotEquals;
 
-final class DatastoreSynonymCatalogReferenceDataPage4 extends DatastorePage4 {
+public class DatastoreSynonymCatalogReferenceDataPageDatastoreTest {
 
-    public DatastoreSynonymCatalogReferenceDataPage4(DatastoreSynonymCatalogReferenceDataWizardSession session) {
-        super(session);
-    }
-
-    @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        _session.setColumn(getString(formParameters, PROPERTY_COLUMN));
-
-        return new DatastoreSynonymCatalogReferenceDataPage5(
-                (DatastoreSynonymCatalogReferenceDataWizardSession) _session);
+    @Test
+    public void testGetNameLabel() throws Exception {
+        DatastoreSynonymCatalogReferenceDataPageDatastore page = new DatastoreSynonymCatalogReferenceDataPageDatastore(null);
+        assertNotEquals("", page.getNameLabel());
     }
 }

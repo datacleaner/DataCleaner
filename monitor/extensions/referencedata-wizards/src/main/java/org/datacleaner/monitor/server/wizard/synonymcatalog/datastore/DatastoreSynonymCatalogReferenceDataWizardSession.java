@@ -44,7 +44,7 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
 
     @Override
     public WizardPageController firstPageController() {
-        return new DatastoreSynonymCatalogReferenceDataPage1(this);
+        return new DatastoreSynonymCatalogReferenceDataPageDatastore(this);
     }
 
     @Override

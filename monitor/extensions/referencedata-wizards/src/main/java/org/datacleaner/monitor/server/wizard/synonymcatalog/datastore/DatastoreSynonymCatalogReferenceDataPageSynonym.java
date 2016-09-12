@@ -28,14 +28,14 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarkerWizardPage {
+final class DatastoreSynonymCatalogReferenceDataPageSynonym extends AbstractFreemarkerWizardPage {
     protected static final String PROPERTY_SYNONYM_COLUMN = "synonymColumn";
     protected static final String PROPERTY_ADD_NEXT_SYNONYM_COLUMN = "addNextSynonymColumn";
     protected static final String PROPERTY_COLUMN_OPTIONS = "columnOptions";
 
     private final DatastoreSynonymCatalogReferenceDataWizardSession _session;
 
-    public DatastoreSynonymCatalogReferenceDataPage5(DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPageSynonym(DatastoreSynonymCatalogReferenceDataWizardSession session) {
        _session = session;
     }
 
@@ -46,7 +46,7 @@ final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarker
 
     @Override
     protected String getTemplateFilename() {
-        return "DatastoreSynonymCatalogReferenceDataPage5.html";
+        return "DatastoreSynonymCatalogReferenceDataPageSynonym.html";
     }
 
     @Override
@@ -59,7 +59,7 @@ final class DatastoreSynonymCatalogReferenceDataPage5 extends AbstractFreemarker
                 _session.getAddNextSynonymColumn().equals("on"));
         
         if (_session.getAddNextSynonymColumn() != null && addNextSynonym) {
-            return new DatastoreSynonymCatalogReferenceDataPage5(_session);
+            return new DatastoreSynonymCatalogReferenceDataPageSynonym(_session);
         } else {
             return null;
         }

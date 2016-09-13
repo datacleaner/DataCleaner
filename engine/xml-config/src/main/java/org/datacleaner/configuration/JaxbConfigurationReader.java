@@ -53,16 +53,64 @@ import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.jaxb.*;
+import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
+import org.datacleaner.configuration.jaxb.AccessDatastoreType;
+import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;
+import org.datacleaner.configuration.jaxb.CassandraDatastoreType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
+import org.datacleaner.configuration.jaxb.CombinedStorageProviderType;
+import org.datacleaner.configuration.jaxb.CompositeDatastoreType;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
+import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
+import org.datacleaner.configuration.jaxb.CsvDatastoreType;
+import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatahubDatastoreType;
+import org.datacleaner.configuration.jaxb.DatahubsecuritymodeEnum;
+import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
+import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
+import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
+import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
+import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
+import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
+import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
+import org.datacleaner.configuration.jaxb.HadoopClusterType;
+import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
+import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
+import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
+import org.datacleaner.configuration.jaxb.JsonDatastoreType;
+import org.datacleaner.configuration.jaxb.MongodbDatastoreType;
+import org.datacleaner.configuration.jaxb.MultithreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.Neo4JDatastoreType;
+import org.datacleaner.configuration.jaxb.ObjectFactory;
+import org.datacleaner.configuration.jaxb.OpenOfficeDatabaseDatastoreType;
+import org.datacleaner.configuration.jaxb.PojoDatastoreType;
+import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
+import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RemoteComponentServerType;
+import org.datacleaner.configuration.jaxb.RemoteComponentsType;
+import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
+import org.datacleaner.configuration.jaxb.SasDatastoreType;
+import org.datacleaner.configuration.jaxb.ServersType;
+import org.datacleaner.configuration.jaxb.SimplePatternType;
+import org.datacleaner.configuration.jaxb.SinglethreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.StorageProviderType;
+import org.datacleaner.configuration.jaxb.SugarCrmDatastoreType;
+import org.datacleaner.configuration.jaxb.TableTypeEnum;
+import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
+import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
+import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
@@ -701,7 +749,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             } else if (datastoreType instanceof JdbcDatastoreType) {
                 ds = createDatastore(name, (JdbcDatastoreType) datastoreType);
             } else if (datastoreType instanceof FixedWidthDatastoreType) {
-                ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType);
+                ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof SasDatastoreType) {
                 ds = createDatastore(name, (SasDatastoreType) datastoreType);
             } else if (datastoreType instanceof AccessDatastoreType) {
@@ -1177,10 +1225,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new SasDatastore(name, directory);
     }
 
-    private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore) {
-        @SuppressWarnings("deprecation")
-        final String filename = _interceptor.createFilename(getStringVariable("filename", fixedWidthDatastore
-                .getFilename()));
+    private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore, DataCleanerConfiguration configuration) {
+        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());   
+        final Resource resource = _interceptor.createResource(filename, configuration);
         String encoding = getStringVariable("encoding", fixedWidthDatastore.getEncoding());
         if (!StringUtils.isNullOrEmpty(encoding)) {
             encoding = FileHelper.UTF_8_ENCODING;
@@ -1205,12 +1252,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final List<Integer> valueWidthsBoxed = widthSpecification.getValueWidth();
             int[] valueWidths = new int[valueWidthsBoxed.size()];
             for (int i = 0; i < valueWidths.length; i++) {
-                valueWidths[i] = valueWidthsBoxed.get(i);
+                valueWidths[i] = valueWidthsBoxed.get(i).intValue();
             }
-            ds = new FixedWidthDatastore(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
-                    eolPresent, headerLineNumber);
+            ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
+                    eolPresent, headerLineNumber.intValue());
         } else {
-            ds = new FixedWidthDatastore(name, filename, encoding, fixedValueWidth, failOnInconsistencies,
+            ds = new FixedWidthDatastore(name, resource, filename, encoding, fixedValueWidth, failOnInconsistencies,
                     skipEbcdicHeader, eolPresent, headerLineNumber);
         }
         return ds;

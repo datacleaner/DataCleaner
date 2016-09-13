@@ -42,6 +42,8 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 
 	private static final String[] encodings;
 	
+	private static final String EBCDIC_POSTFIX = " (EBCDIC)";
+	
 
 	static {
 		List<String> list = new ArrayList<>();
@@ -60,7 +62,7 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 		}
 
 		for (int i = 1140; i <= 1149; i++) {
-			list.add("IBM0" + i + FixedWidthDatastore.EBCDIC_POSTFIX);
+			list.add(FixedWidthDatastore.EBCDIC_PREFIX + i + EBCDIC_POSTFIX);
 		}
 
 		encodings = list.toArray(new String[list.size()]);
@@ -88,6 +90,6 @@ public class CharSetEncodingComboBox extends DCComboBox<String> {
 
 	@Override
 	public String getSelectedItem() {
-		return super.getSelectedItem().replace(FixedWidthDatastore.EBCDIC_POSTFIX, "");
+		return super.getSelectedItem().replace(EBCDIC_POSTFIX, "");
 	}
 }

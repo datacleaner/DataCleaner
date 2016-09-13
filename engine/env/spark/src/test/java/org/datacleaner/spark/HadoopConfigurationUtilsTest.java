@@ -25,6 +25,7 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.spark.utils.HadoopJobExecutionUtils;
@@ -67,5 +68,13 @@ public class HadoopConfigurationUtilsTest extends TestCase{
         assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(excelDatastore)); 
         final Neo4jDatastore neo4jDatastore = new Neo4jDatastore("neo", "localhost", "me", "password"); 
         assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(neo4jDatastore));
+    }
+
+    public void testFixedWidthDatastore() {
+        final HdfsResource hdfsResource = new HdfsResource("hdfs://datacleaner/employees-fixed-width.txt");
+        int[] widths = new int[] { 19, 22 };
+        final FixedWidthDatastore datastore = new FixedWidthDatastore("My datastore", hdfsResource, hdfsResource
+                .getFilepath(), "UTF-8", widths, false, false, false, 0);
+        assertTrue(HadoopJobExecutionUtils.isValidSourceDatastore(datastore));
     }
 }

@@ -48,8 +48,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(FixedWidthDatastore.class);
 
-    public static final String EBCDIC_POSTFIX = " (EBCDIC)";
-    private static final String EBCDIC_PREFIX = "IBM";
+    public static final String EBCDIC_PREFIX = "IBM0";
     
     private final String _filename;
     private final String _encoding;
@@ -149,9 +148,23 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final FixedWidthConfiguration configuration = getConfiguration();
+
+        final Resource resource = _resourceRef.get();
+        final DataContext dataContext;
+        if (resource == null) {
+            logger.warn("Resource was not available, a local file reference will be created with path: {}", _filename);
+            dataContext = DataContextFactory.createFixedWidthDataContext(new File(_filename), configuration);
+        } else {
+            dataContext = DataContextFactory.createFixedWidthDataContext(resource, configuration);
+        }
+        return new DatastoreConnectionImpl<>(dataContext, this);
+    }
+
+    public FixedWidthConfiguration getConfiguration() {
         final FixedWidthConfiguration configuration;
 
-        if (isEbcdic()) {
+        if (isEbcdicEncoding()) {
             if (_fixedValueWidth == -1) {
                 configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
                         _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
@@ -168,16 +181,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
                         _failOnInconsistencies);
             }
         }
-
-        final Resource resource = _resourceRef.get();
-        final DataContext dataContext;
-        if (resource == null) {
-            logger.warn("Resource was not available, a local file reference will be created with path: {}", _filename);
-            dataContext = DataContextFactory.createFixedWidthDataContext(new File(_filename), configuration);
-        } else {
-            dataContext = DataContextFactory.createFixedWidthDataContext(resource, configuration);
-        }
-        return new DatastoreConnectionImpl<>(dataContext, this);
+        return configuration;
     }
 
     public String getEncoding() {
@@ -233,8 +237,8 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_skipEbcdicHeader);
         identifiers.add(_eolPresent);
     }
-    
-    private boolean isEbcdic() {
+
+    private boolean isEbcdicEncoding() {
         // This is just a way how to differentiate between EBCDIC and normal FixedWidth configuration. 
         return getEncoding().startsWith(EBCDIC_PREFIX);
     }

@@ -49,7 +49,13 @@ public interface WizardServiceAsync extends WizardNavigationServiceAsync {
 
     void startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale,
             AsyncCallback<WizardPage> callback);
-
+    
+    void getReferenceDataWizardIdentifiers(String referenceDataType, TenantIdentifier tenant, String locale,
+            AsyncCallback<List<WizardIdentifier>> callback);
+    
+    void startReferenceDataWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale,
+            AsyncCallback<WizardPage> callback);
+ 
     @Override
     void cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             AsyncCallback<Boolean> callback);

@@ -25,7 +25,5 @@ import org.datacleaner.monitor.wizard.Wizard;
  * A pluggable component (plug-in / extension) which provides a wizard in the
  * webapp for creating a datastore in the DC monitor configuration.
  */
-public interface DatastoreWizard extends
-		Wizard<DatastoreWizardContext, DatastoreWizardSession> {
-
+public interface DatastoreWizard extends Wizard<DatastoreWizardContext, DatastoreWizardSession> {
 }

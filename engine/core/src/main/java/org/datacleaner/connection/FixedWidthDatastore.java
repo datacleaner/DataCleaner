@@ -164,7 +164,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     public FixedWidthConfiguration getConfiguration() {
         final FixedWidthConfiguration configuration;
 
-        if (isEbcdicEncoding()) {
+        if (isEbcdic()) {
             if (_fixedValueWidth == -1) {
                 configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
                         _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
@@ -238,8 +238,9 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         identifiers.add(_eolPresent);
     }
 
-    private boolean isEbcdicEncoding() {
+    private boolean isEbcdic() {
         // This is just a way how to differentiate between EBCDIC and normal FixedWidth configuration. 
+        // Perhaps there is a better way how to do this. 
         return getEncoding().startsWith(EBCDIC_PREFIX);
     }
 

@@ -53,179 +53,179 @@ import org.jdesktop.swingx.HorizontalLayout;
 
 public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final JButton _addColumnNamesButton;
-    private final DCPanel _addColumnNamesPanel;
-    private List<String> _columnNames;
+	private final JButton _addColumnNamesButton;
+	private final DCPanel _addColumnNamesPanel;
+	private List<String> _columnNames;
 
-    private volatile boolean showPreview = true;
+	private volatile boolean showPreview = true;
 
-    @Inject
-    protected ExcelDatastoreDialog(@Nullable ExcelDatastore originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            UserPreferences userPreferences) {
-        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+	@Inject
+	protected ExcelDatastoreDialog(@Nullable ExcelDatastore originalDatastore,
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
+			UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 
-        _addColumnNamesButton = WidgetFactory.createDefaultButton("Change", IconUtils.ACTION_RENAME);
+		_addColumnNamesButton = WidgetFactory.createDefaultButton("Change", IconUtils.ACTION_RENAME);
 
-        if (originalDatastore != null) {
-            _columnNames = originalDatastore.getCustomColumnNames();
-            _addColumnNamesButton.setEnabled(true);
-        } else {
-            _columnNames = null;
-            _addColumnNamesButton.setEnabled(false);
-        }
-        _addColumnNamesPanel = new DCPanel();
-        _addColumnNamesPanel.setLayout(new HorizontalLayout());
-        _addColumnNamesButton.addActionListener(new ActionListener() {
+		if (originalDatastore != null) {
+			_columnNames = originalDatastore.getCustomColumnNames();
+			_addColumnNamesButton.setEnabled(true);
+		} else {
+			_columnNames = null;
+			_addColumnNamesButton.setEnabled(false);
+		}
+		_addColumnNamesPanel = new DCPanel();
+		_addColumnNamesPanel.setLayout(new HorizontalLayout());
+		_addColumnNamesButton.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (_columnNames == null) {
-                    final ExcelDatastore datastore = createDatastore(getDatastoreName(), getFilename());
-                    datastore.openConnection();
-                    _columnNames = datastore.getCustomColumnNames();
-                }
-                final ColumnNamesSetterDialog columnNamesChooserDialog = new ColumnNamesSetterDialog(windowContext,
-                        _columnNames);
-                columnNamesChooserDialog.setVisible(true);
-                columnNamesChooserDialog.addWindowListener(new WindowListener() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        _columnNames = columnNamesChooserDialog.getColumnNames();
-                        onSetingsUpdated();
-                        columnNamesChooserDialog.dispose();
-                    }
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (_columnNames == null) {
+					final ExcelDatastore datastore = createDatastore(getDatastoreName(), getFilename());
+					datastore.openConnection();
+					_columnNames = datastore.getCustomColumnNames();
+				}
+				final ColumnNamesSetterDialog columnNamesChooserDialog = new ColumnNamesSetterDialog(windowContext,
+						_columnNames);
+				columnNamesChooserDialog.setVisible(true);
+				columnNamesChooserDialog.addWindowListener(new WindowListener() {
+					@Override
+					public void windowClosed(WindowEvent e) {
+						_columnNames = columnNamesChooserDialog.getColumnNames();
+						onSetingsUpdated();
+						columnNamesChooserDialog.dispose();
+					}
 
-                    @Override
-                    public void windowActivated(WindowEvent e) {
+					@Override
+					public void windowActivated(WindowEvent e) {
 
-                    }
+					}
 
-                    @Override
-                    public void windowClosing(WindowEvent e) {
+					@Override
+					public void windowClosing(WindowEvent e) {
 
-                    }
+					}
 
-                    @Override
-                    public void windowDeactivated(WindowEvent e) {
+					@Override
+					public void windowDeactivated(WindowEvent e) {
 
-                    }
+					}
 
-                    @Override
-                    public void windowDeiconified(WindowEvent e) {
+					@Override
+					public void windowDeiconified(WindowEvent e) {
 
-                    }
+					}
 
-                    @Override
-                    public void windowIconified(WindowEvent e) {
+					@Override
+					public void windowIconified(WindowEvent e) {
 
-                    }
+					}
 
-                    @Override
-                    public void windowOpened(WindowEvent e) {
+					@Override
+					public void windowOpened(WindowEvent e) {
 
-                    }
-                });
-            }
-        });
-        _addColumnNamesPanel.add(_addColumnNamesButton, 0);
-    }
+					}
+				});
+			}
+		});
+		_addColumnNamesPanel.add(_addColumnNamesButton, 0);
+	}
 
-    protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> res = super.getFormElements();
-        res.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
-        return res;
-    }
+	protected List<Entry<String, JComponent>> getFormElements() {
+		final List<Entry<String, JComponent>> res = super.getFormElements();
+		res.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
+		return res;
+	}
 
-    @Override
-    protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-        FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
-                FileFilters.XLSX);
-        filenameField.addChoosableFileFilter(combinedFilter);
-        filenameField.addChoosableFileFilter(FileFilters.XLS);
-        filenameField.addChoosableFileFilter(FileFilters.XLSX);
-        filenameField.addChoosableFileFilter(FileFilters.ALL);
-        filenameField.setSelectedFileFilter(combinedFilter);
-        filenameField.addListener(new ResourceTypePresenter.Listener() {
-            @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
-                _addColumnNamesButton.setEnabled(true);
-                _columnNames = null;
-            }
+	@Override
+	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
+		final FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
+				FileFilters.XLSX);
+		filenameField.addChoosableFileFilter(combinedFilter);
+		filenameField.addChoosableFileFilter(FileFilters.XLS);
+		filenameField.addChoosableFileFilter(FileFilters.XLSX);
+		filenameField.addChoosableFileFilter(FileFilters.ALL);
+		filenameField.setSelectedFileFilter(combinedFilter);
+		filenameField.addListener(new ResourceTypePresenter.Listener() {
+			@Override
+			public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+				_addColumnNamesButton.setEnabled(true);
+				_columnNames = null;
+			}
 
-            @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
-                _addColumnNamesButton.setEnabled(true);
-                _columnNames = null;
-            }
-        });
-    }
+			@Override
+			public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+				_addColumnNamesButton.setEnabled(true);
+				_columnNames = null;
+			}
+		});
+	}
 
-    @Override
-    protected String getBannerTitle() {
-        return "MS Excel spreadsheet";
-    }
+	@Override
+	protected String getBannerTitle() {
+		return "MS Excel spreadsheet";
+	}
 
-    @Override
-    public String getWindowTitle() {
-        return "Excel spreadsheet | Datastore";
-    }
+	@Override
+	public String getWindowTitle() {
+		return "Excel spreadsheet | Datastore";
+	}
 
-    @Override
-    protected ExcelDatastore createDatastore(String name, String filename) {
-        return new ExcelDatastore(name, new FileResource(filename), filename, _columnNames);
-    }
+	@Override
+	protected ExcelDatastore createDatastore(String name, String filename) {
+		return new ExcelDatastore(name, new FileResource(filename), filename, _columnNames);
+	}
 
-    @Override
-    protected String getDatastoreIconPath() {
-        return IconUtils.EXCEL_IMAGEPATH;
-    }
+	@Override
+	protected String getDatastoreIconPath() {
+		return IconUtils.EXCEL_IMAGEPATH;
+	}
 
-    @Override
-    protected boolean isPreviewTableEnabled() {
-        return true;
-    }
+	@Override
+	protected boolean isPreviewTableEnabled() {
+		return true;
+	}
 
-    @Override
-    protected boolean isPreviewDataAvailable() {
-        return showPreview;
-    }
+	@Override
+	protected boolean isPreviewDataAvailable() {
+		return showPreview;
+	}
 
-    @Override
-    protected ExcelDatastore getPreviewDatastore(String filename) {
-        return createDatastore(getDatastoreName(), getFilename());
-    }
+	@Override
+	protected ExcelDatastore getPreviewDatastore(String filename) {
+		return createDatastore(getDatastoreName(), getFilename());
+	}
 
-    private void onSetingsUpdated() {
-        new SwingWorker<ExcelConfiguration, Void>() {
+	private void onSetingsUpdated() {
+		new SwingWorker<ExcelConfiguration, Void>() {
 
-            @Override
-            protected ExcelConfiguration doInBackground() throws Exception {
-                if (_columnNames != null && _columnNames.size() > 0) {
-                    return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                            new CustomColumnNamingStrategy(_columnNames), true, false);
-                } else {
-                    return new ExcelConfiguration();
-                }
-            }
+			@Override
+			protected ExcelConfiguration doInBackground() throws Exception {
+				if (_columnNames != null && _columnNames.size() > 0) {
+					return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE,
+							new CustomColumnNamingStrategy(_columnNames), true, false);
+				} else {
+					return new ExcelConfiguration();
+				}
+			}
 
-            @Override
-            protected void done() {
-                try {
-                    @SuppressWarnings("unused")
-                    final ExcelConfiguration configuration = get();
-                    showPreview = true;
-                } catch (Exception e) {
-                    final Throwable error = ErrorUtils.unwrapForPresentation(e);
-                    setStatusError(error.getMessage());
-                    showPreview = false;
-                }
-                validateAndUpdate();
-            }
+			@Override
+			protected void done() {
+				try {
+					@SuppressWarnings("unused")
+					final ExcelConfiguration configuration = get();
+					showPreview = true;
+				} catch (Exception e) {
+					final Throwable error = ErrorUtils.unwrapForPresentation(e);
+					setStatusError(error.getMessage());
+					showPreview = false;
+				}
+				validateAndUpdate();
+			}
 
-        }.execute();
+		}.execute();
 
-    }
+	}
 }

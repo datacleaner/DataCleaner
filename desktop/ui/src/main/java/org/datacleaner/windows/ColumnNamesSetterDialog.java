@@ -193,7 +193,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         for (int i = 0; i < values.size(); i++) {
             final JXTextField jxTextField = values.get(i);
             final String text;
-            String valueTextBox = jxTextField.getText().trim();
+            final String valueTextBox = jxTextField.getText().trim();
             if (StringUtils.isNullOrEmpty(valueTextBox)) {
                 text = jxTextField.getPrompt();
             } else {

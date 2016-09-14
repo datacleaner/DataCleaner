@@ -36,160 +36,160 @@ import org.datacleaner.util.ReadObjectBuilder;
  */
 public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final String _filename;
-    private final String _encoding;
-    private final int _fixedValueWidth;
-    private final int[] _valueWidths;
-    private final boolean _failOnInconsistencies;
-    private final boolean _skipEbcdicHeader;
-    private final boolean _eolPresent;
-    private final int _headerLineNumber;
-    private final List<String> _customColumnNames;
+	private final String _filename;
+	private final String _encoding;
+	private final int _fixedValueWidth;
+	private final int[] _valueWidths;
+	private final boolean _failOnInconsistencies;
+	private final boolean _skipEbcdicHeader;
+	private final boolean _eolPresent;
+	private final int _headerLineNumber;
+	private final List<String> _customColumnNames;
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth) {
-        this(name, filename, encoding, fixedValueWidth, true, false, true);
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth) {
+		this(name, filename, encoding, fixedValueWidth, true, false, true);
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths) {
-        this(name, filename, encoding, valueWidths, true, false, true);
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths) {
+		this(name, filename, encoding, valueWidths, true, false, true);
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth,
-            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent) {
-        this(name, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-                FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent) {
+		this(name, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
+				FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
-            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent) {
-        this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-                FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent) {
+		this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
+				FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth,
-            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
-        super(name);
-        _filename = filename;
-        _encoding = encoding;
-        _fixedValueWidth = fixedValueWidth;
-        _valueWidths = new int[0];
-        _failOnInconsistencies = failOnInconsistencies;
-        _skipEbcdicHeader = skipEbcdicHeader;
-        _eolPresent = eolPresent;
-        _headerLineNumber = headerLineNumber;
-        _customColumnNames = null;
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
+		super(name);
+		_filename = filename;
+		_encoding = encoding;
+		_fixedValueWidth = fixedValueWidth;
+		_valueWidths = new int[0];
+		_failOnInconsistencies = failOnInconsistencies;
+		_skipEbcdicHeader = skipEbcdicHeader;
+		_eolPresent = eolPresent;
+		_headerLineNumber = headerLineNumber;
+		_customColumnNames = null;
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
-            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
-        this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-                headerLineNumber, null);
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
+		this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
+				headerLineNumber, null);
+	}
 
-    public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
-            boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber,
-            List<String> customColumnNames) {
-        super(name);
-        _filename = filename;
-        _encoding = encoding;
-        _fixedValueWidth = -1;
-        _valueWidths = valueWidths;
-        _failOnInconsistencies = failOnInconsistencies;
-        _skipEbcdicHeader = skipEbcdicHeader;
-        _eolPresent = eolPresent;
-        _headerLineNumber = headerLineNumber;
-        _customColumnNames = customColumnNames;
-    }
+	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber,
+			List<String> customColumnNames) {
+		super(name);
+		_filename = filename;
+		_encoding = encoding;
+		_fixedValueWidth = -1;
+		_valueWidths = valueWidths;
+		_failOnInconsistencies = failOnInconsistencies;
+		_skipEbcdicHeader = skipEbcdicHeader;
+		_eolPresent = eolPresent;
+		_headerLineNumber = headerLineNumber;
+		_customColumnNames = customColumnNames;
+	}
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        ReadObjectBuilder.create(this, FixedWidthDatastore.class).readObject(stream);
-    }
+	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+		ReadObjectBuilder.create(this, FixedWidthDatastore.class).readObject(stream);
+	}
 
-    @Override
-    public PerformanceCharacteristics getPerformanceCharacteristics() {
-        return new PerformanceCharacteristicsImpl(false, true);
-    }
+	@Override
+	public PerformanceCharacteristics getPerformanceCharacteristics() {
+		return new PerformanceCharacteristicsImpl(false, true);
+	}
 
-    @Override
-    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-        final File file = new File(_filename);
-        assert file.exists();
-        final FixedWidthConfiguration configuration;
+	@Override
+	protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+		final File file = new File(_filename);
+		assert file.exists();
+		final FixedWidthConfiguration configuration;
 
-        if (_fixedValueWidth == -1) {
-            if (_customColumnNames != null && _customColumnNames.size() > 0) {
-                configuration = new EbcdicConfiguration(_headerLineNumber,
-                        // new CustomColumnNamingStrategy(_customColumnNames),
-                        _encoding, _valueWidths, _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
-            } else {
-                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
-                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
-            }
-        } else {
-            configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
-                    _failOnInconsistencies);
-        }
+		if (_fixedValueWidth == -1) {
+			if (_customColumnNames != null && _customColumnNames.size() > 0) {
+				configuration = new EbcdicConfiguration(_headerLineNumber,
+						// new CustomColumnNamingStrategy(_customColumnNames),
+						_encoding, _valueWidths, _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+			} else {
+				configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
+						_failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+			}
+		} else {
+			configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
+					_failOnInconsistencies);
+		}
 
-        DataContext dataContext = DataContextFactory.createFixedWidthDataContext(file, configuration);
-        return new DatastoreConnectionImpl<>(dataContext, this);
-    }
+		DataContext dataContext = DataContextFactory.createFixedWidthDataContext(file, configuration);
+		return new DatastoreConnectionImpl<>(dataContext, this);
+	}
 
-    public String getEncoding() {
-        return _encoding;
-    }
+	public String getEncoding() {
+		return _encoding;
+	}
 
-    public int getFixedValueWidth() {
-        return _fixedValueWidth;
-    }
+	public int getFixedValueWidth() {
+		return _fixedValueWidth;
+	}
 
-    public int[] getValueWidths() {
-        return _valueWidths;
-    }
+	public int[] getValueWidths() {
+		return _valueWidths;
+	}
 
-    public int getHeaderLineNumber() {
-        return _headerLineNumber;
-    }
+	public int getHeaderLineNumber() {
+		return _headerLineNumber;
+	}
 
-    @Override
-    public String getFilename() {
-        return _filename;
-    }
+	@Override
+	public String getFilename() {
+		return _filename;
+	}
 
-    public boolean isFailOnInconsistencies() {
-        return _failOnInconsistencies;
-    }
+	public boolean isFailOnInconsistencies() {
+		return _failOnInconsistencies;
+	}
 
-    public boolean isSkipEbcdicHeader() {
-        return _skipEbcdicHeader;
-    }
+	public boolean isSkipEbcdicHeader() {
+		return _skipEbcdicHeader;
+	}
 
-    public boolean isEolPresent() {
-        return _eolPresent;
-    }
+	public boolean isEolPresent() {
+		return _eolPresent;
+	}
 
-    public List<String> getCustomColumnNames() {
-        return _customColumnNames;
-    }
+	public List<String> getCustomColumnNames() {
+		return _customColumnNames;
+	}
 
-    @Override
-    protected void decorateIdentity(List<Object> identifiers) {
-        super.decorateIdentity(identifiers);
-        identifiers.add(_filename);
-        identifiers.add(_encoding);
-        identifiers.add(_fixedValueWidth);
-        identifiers.add(_valueWidths);
-        identifiers.add(_headerLineNumber);
-        identifiers.add(_failOnInconsistencies);
-        identifiers.add(_skipEbcdicHeader);
-        identifiers.add(_eolPresent);
-    }
+	@Override
+	protected void decorateIdentity(List<Object> identifiers) {
+		super.decorateIdentity(identifiers);
+		identifiers.add(_filename);
+		identifiers.add(_encoding);
+		identifiers.add(_fixedValueWidth);
+		identifiers.add(_valueWidths);
+		identifiers.add(_headerLineNumber);
+		identifiers.add(_failOnInconsistencies);
+		identifiers.add(_skipEbcdicHeader);
+		identifiers.add(_eolPresent);
+	}
 
-    @Override
-    public String toString() {
-        return "FixedWidthDatastore[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding
-                + ", headerLineNumber=" + _headerLineNumber + ", valueWidths=" + Arrays.toString(_valueWidths)
-                + ", fixedValueWidth=" + _fixedValueWidth + "]";
-    }
+	@Override
+	public String toString() {
+		return "FixedWidthDatastore[name=" + getName() + ", filename=" + _filename + ", encoding=" + _encoding
+				+ ", headerLineNumber=" + _headerLineNumber + ", valueWidths=" + Arrays.toString(_valueWidths)
+				+ ", fixedValueWidth=" + _fixedValueWidth + "]";
+	}
 }

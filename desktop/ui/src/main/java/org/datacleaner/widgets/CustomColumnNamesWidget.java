@@ -86,7 +86,7 @@ public class CustomColumnNamesWidget {
     }
 
     private void removeColumnName() {
-        int componentCount = _innerPanel.getComponentCount();
+        final int componentCount = _innerPanel.getComponentCount();
         if (componentCount > 0) {
             _innerPanel.remove(componentCount - 1);
         }

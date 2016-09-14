@@ -731,7 +731,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             } else if (datastoreType instanceof JdbcDatastoreType) {
                 ds = createDatastore(name, (JdbcDatastoreType) datastoreType);
             } else if (datastoreType instanceof FixedWidthDatastoreType) {
-                ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType);
+                ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof SasDatastoreType) {
                 ds = createDatastore(name, (SasDatastoreType) datastoreType);
             } else if (datastoreType instanceof AccessDatastoreType) {
@@ -1207,10 +1207,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new SasDatastore(name, directory);
     }
 
-    private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore) {
-        @SuppressWarnings("deprecation")
-        final String filename = _interceptor.createFilename(getStringVariable("filename", fixedWidthDatastore
-                .getFilename()));
+    private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore, DataCleanerConfiguration configuration) {
+        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());   
+        final Resource resource = _interceptor.createResource(filename, configuration);
         String encoding = getStringVariable("encoding", fixedWidthDatastore.getEncoding());
         if (!StringUtils.isNullOrEmpty(encoding)) {
             encoding = FileHelper.UTF_8_ENCODING;
@@ -1235,12 +1234,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final List<Integer> valueWidthsBoxed = widthSpecification.getValueWidth();
             int[] valueWidths = new int[valueWidthsBoxed.size()];
             for (int i = 0; i < valueWidths.length; i++) {
-                valueWidths[i] = valueWidthsBoxed.get(i);
+                valueWidths[i] = valueWidthsBoxed.get(i).intValue();
             }
-            ds = new FixedWidthDatastore(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
-                    eolPresent, headerLineNumber);
+            ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
+                    eolPresent, headerLineNumber.intValue());
         } else {
-            ds = new FixedWidthDatastore(name, filename, encoding, fixedValueWidth, failOnInconsistencies,
+            ds = new FixedWidthDatastore(name, resource, filename, encoding, fixedValueWidth, failOnInconsistencies,
                     skipEbcdicHeader, eolPresent, headerLineNumber);
         }
         return ds;

@@ -29,7 +29,6 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**

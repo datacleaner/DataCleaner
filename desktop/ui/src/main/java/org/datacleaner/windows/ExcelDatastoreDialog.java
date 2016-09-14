@@ -58,7 +58,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
     private final JButton _addColumnNamesButton;
     private final DCPanel _addColumnNamesPanel;
     private List<String> _columnNames;
-    
+
     private volatile boolean showPreview = true;
 
     @Inject
@@ -152,13 +152,13 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
             @Override
             public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
                 _addColumnNamesButton.setEnabled(true);
-                _columnNames = null; 
+                _columnNames = null;
             }
 
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
                 _addColumnNamesButton.setEnabled(true);
-                _columnNames = null; 
+                _columnNames = null;
             }
         });
     }
@@ -190,9 +190,9 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 
     @Override
     protected boolean isPreviewDataAvailable() {
-        return showPreview; 
+        return showPreview;
     }
-    
+
     @Override
     protected ExcelDatastore getPreviewDatastore(String filename) {
         return createDatastore(getDatastoreName(), getFilename());
@@ -216,11 +216,11 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
                 try {
                     @SuppressWarnings("unused")
                     final ExcelConfiguration configuration = get();
-                    showPreview = true; 
+                    showPreview = true;
                 } catch (Exception e) {
                     final Throwable error = ErrorUtils.unwrapForPresentation(e);
                     setStatusError(error.getMessage());
-                     showPreview = false;
+                    showPreview = false;
                 }
                 validateAndUpdate();
             }

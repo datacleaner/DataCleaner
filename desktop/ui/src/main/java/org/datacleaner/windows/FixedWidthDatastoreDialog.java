@@ -380,28 +380,28 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	private int[] getValueWidths(boolean failOnMissingValue) {
-		int[] valueWidths = new int[_valueWidthTextFields.size()];
+        final int[] valueWidths = new int[_valueWidthTextFields.size()];
 
-		try {
-			for (int i = 0; i < valueWidths.length; i++) {
-				String text = _valueWidthTextFields.get(i).getText();
+        try {
+            for (int i = 0; i < valueWidths.length; i++) {
+                String text = _valueWidthTextFields.get(i).getText();
 
-				if (StringUtils.isNullOrEmpty(text)) {
-					if (failOnMissingValue) {
-						throw new IllegalStateException("Please fill out all column widths.");
-					} else {
-						text = "0";
-					}
-				}
+                if (StringUtils.isNullOrEmpty(text)) {
+                    if (failOnMissingValue) {
+                        throw new IllegalStateException("Please fill out all column widths.");
+                    } else {
+                        text = "0";
+                    }
+                }
 
-				valueWidths[i] = Integer.parseInt(text);
-			}
-		} catch (NumberFormatException e) {
-			throw new IllegalStateException("Please specify all column widths as numbers. ");
-		}
+                valueWidths[i] = Integer.parseInt(text);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Please specify all column widths as numbers. ");
+        }
 
-		return valueWidths;
-	}
+        return valueWidths;
+    }
 
 	@Override
 	protected String getDatastoreIconPath() {

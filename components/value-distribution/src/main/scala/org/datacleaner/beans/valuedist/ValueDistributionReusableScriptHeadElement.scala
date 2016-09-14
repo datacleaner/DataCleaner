@@ -1,10 +1,5 @@
 package org.datacleaner.beans.valuedist
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.ValueCountingAnalyzerResult
-import org.datacleaner.util.LabelUtils
-import org.datacleaner.result.html.FlotChartLocator
+import org.datacleaner.result.html.{FlotChartLocator, HeadElement, HtmlRenderingContext}
 
 /**
  * Defines reusable script parts for value distribution results
@@ -17,11 +12,8 @@ object ValueDistributionReusableScriptHeadElement extends HeadElement {
     return """<script type="text/javascript">
 //<![CDATA[
 function draw_value_distribution_bar(chartElement, chartData, retries) {
-   
-    wait_for_script_load('jQuery', function() {
-        importJS('""" + flotBaseLocation + """', 'jQuery.plot', function() {
+    require(['jquery', 'jquery.flot'], function ($) {
             var elem = document.getElementById(chartElement);
-            
             try {
                 jQuery.plot(elem, chartData, {
                     series: {
@@ -52,10 +44,9 @@ function draw_value_distribution_bar(chartElement, chartData, retries) {
                 // error can sometimes occur due to load time issues
                 if (retries > 0) {
                     retries = retries-1;
-                    draw_value_distribution_bar(chartElement, chartData, retries);
+                    setTimeout(function() {draw_value_distribution_bar(chartElement, chartData, retries)}, 100);
                 }
             }
-        });
     });
 }
 //]]>

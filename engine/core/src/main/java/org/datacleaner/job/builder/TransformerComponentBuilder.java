@@ -334,7 +334,9 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
      *            a new change listener
      */
     public void addChangeListener(TransformerChangeListener listener) {
-        _localChangeListeners.add(listener);
+        if (!_localChangeListeners.contains(listener)) {
+            _localChangeListeners.add(listener);
+        }
     }
 
     /**

@@ -164,7 +164,10 @@ public class GrouperTransformer extends MultiStreamComponent {
             final InputColumn<?> inputColumn = aggregatedValues[i];
             final AggregationType aggregationType = (aggregationTypes.length <= i ? AggregationType.CREATE_LIST
                     : aggregationTypes[i]);
-            aggregationType.addColumnToOutputStream(outputDataStreamBuilder, inputColumn);
+
+            if (aggregationType != null) {
+                aggregationType.addColumnToOutputStream(outputDataStreamBuilder, inputColumn);
+            }
         }
 
         final OutputDataStream stream = outputDataStreamBuilder.toOutputDataStream();

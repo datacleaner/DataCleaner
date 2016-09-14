@@ -237,6 +237,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
             _escalatingInputColumns.add(inputColumn);
+
+            registerListenerIfLinkedToTransformer(propertyDescriptor, _escalatingInputColumns.toArray(
+                    new InputColumn<?>[_escalatingInputColumns.size()]));
+
             return this;
         } else {
             return super.addInputColumn(inputColumn, propertyDescriptor);
@@ -373,6 +377,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 dummyValue = col;
             }
 
+            final AnalyzerComponentBuilder<A> componentBuilder;
+
             if (configuredProperty.isArray()) {
                 final InputColumn<?>[] inputColumsArray;
                 if (dummyValue == null) {
@@ -380,11 +386,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 } else {
                     inputColumsArray = new InputColumn[] { dummyValue };
                 }
-                return super.setConfiguredProperty(configuredProperty, inputColumsArray);
+                componentBuilder = super.setConfiguredProperty(configuredProperty, inputColumsArray);
             } else {
-                return super.setConfiguredProperty(configuredProperty, dummyValue);
+                componentBuilder = super.setConfiguredProperty(configuredProperty, dummyValue);
             }
 
+            registerListenerIfLinkedToTransformer(configuredProperty, value);
+
+            return componentBuilder;
         } else {
             return super.setConfiguredProperty(configuredProperty, value);
         }

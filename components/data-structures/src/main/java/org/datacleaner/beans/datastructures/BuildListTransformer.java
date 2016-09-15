@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @Categorized(DataStructuresCategory.class)
 public class BuildListTransformer implements Transformer {
 
-    private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);
+    private static final Logger logger = LoggerFactory.getLogger(BuildListTransformer.class);
 
     @Inject
     @Configured

@@ -268,12 +268,6 @@
 			<artifactId>hive-jdbc</artifactId>
 		</dependency>
 
-		<!-- Logging -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-
 		<!-- JSF -->
 		<dependency>
 			<groupId>org.glassfish</groupId>

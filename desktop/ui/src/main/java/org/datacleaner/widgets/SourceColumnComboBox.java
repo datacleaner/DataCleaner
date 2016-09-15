@@ -94,11 +94,11 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             setDatastoreConnection(datastore.openConnection());
         }
         if (table == null) {
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
             int selectedIndex = 0;
 
-            List<Column> comboBoxList = new ArrayList<Column>();
+            List<Column> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
             Column[] columns = table.getColumns();
@@ -108,7 +108,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
                     selectedIndex = comboBoxList.size() - 1;
                 }
             }
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             setSelectedIndex(selectedIndex);
         }
@@ -129,14 +129,14 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
 
         if (datastore == null) {
             setDatastoreConnection(null);
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
 
             DatastoreConnection con = setDatastoreConnection(datastore.openConnection());
 
             int selectedIndex = 0;
 
-            List<Object> comboBoxList = new ArrayList<Object>();
+            List<Object> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
             Schema[] schemas = con.getSchemaNavigator().getSchemas();
@@ -168,7 +168,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
                 }
             }
 
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             if (retainSelection) {
                 setSelectedIndex(selectedIndex);
@@ -203,12 +203,9 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
     }
 
     public void addColumnSelectedListener(final DCComboBox.Listener<Column> listener) {
-        super.addListener(new DCComboBox.Listener<Object>() {
-            @Override
-            public void onItemSelected(Object item) {
-                if (item instanceof Column) {
-                    listener.onItemSelected((Column) item);
-                }
+        super.addListener(item -> {
+            if (item instanceof Column) {
+                listener.onItemSelected((Column) item);
             }
         });
     }

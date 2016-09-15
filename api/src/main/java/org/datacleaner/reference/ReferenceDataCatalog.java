@@ -31,7 +31,7 @@ import org.datacleaner.api.Configured;
  * Reference data is typically reusable between jobs which is why it is
  * contained within the configuration. For example you could have a dictionary
  * of valid values for a particular entity type. This dictionary is then
- * resuable both as input to a Dictionary validation filter and an analyzer that
+ * reusable both as input to a Dictionary validation filter and an analyzer that
  * will match values against different dictionaries.
  * 
  * All reference data types ( {@link Dictionary} , {@link SynonymCatalog},
@@ -47,7 +47,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * 
      * @return
      */
-    public String[] getDictionaryNames();
+    String[] getDictionaryNames();
 
     /**
      * Gets a {@link Dictionary} by its name.
@@ -55,7 +55,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public Dictionary getDictionary(String name);
+    Dictionary getDictionary(String name);
 
     /**
      * Determines if the catalog contains a particular dictionary
@@ -63,7 +63,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsDictionary(String name) {
+    default boolean containsDictionary(String name) {
         return getDictionary(name) != null;
     }
 
@@ -72,7 +72,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * 
      * @return
      */
-    public String[] getSynonymCatalogNames();
+    String[] getSynonymCatalogNames();
 
     /**
      * Gets a {@link SynonymCatalog} by its name.
@@ -80,7 +80,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public SynonymCatalog getSynonymCatalog(String name);
+    SynonymCatalog getSynonymCatalog(String name);
 
     /**
      * Determines if the catalog contains a particular synonym catalog
@@ -88,16 +88,16 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsSynonymCatalog(String name) {
+    default boolean containsSynonymCatalog(String name) {
         return getSynonymCatalog(name) != null;
     }
-
+    
     /**
      * Gets the names of all registered {@link StringPattern}s.
      * 
      * @return
      */
-    public String[] getStringPatternNames();
+    String[] getStringPatternNames();
 
     /**
      * Gets a {@link StringPattern} by its name.
@@ -105,7 +105,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public StringPattern getStringPattern(String name);
+    StringPattern getStringPattern(String name);
 
     /**
      * Determines if the catalog contains a particular string pattern
@@ -113,7 +113,7 @@ public interface ReferenceDataCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsStringPattern(String name) {
+    default boolean containsStringPattern(String name) {
         return getStringPattern(name) != null;
     }
 }

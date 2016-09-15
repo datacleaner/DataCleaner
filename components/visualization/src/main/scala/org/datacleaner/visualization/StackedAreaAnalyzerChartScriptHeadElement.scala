@@ -14,6 +14,7 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: IStackedAreaAnalyzerResu
     html.append("""
   <script type="text/javascript">
   //<![CDATA[""");
+    val dataId = "data" + elementId;
 
     val measureColumns = result.getMeasureColumns
     val categories = result.getCategories.asScala
@@ -61,7 +62,9 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: IStackedAreaAnalyzerResu
       html.append("]};\n");
     }
 
-    html.append("\nvar data = [");
+    html.append("\nvar ");
+    html.append(dataId);
+    html.append("= [");
     for (i <- 0 to measureColumns.size - 1) {
       if (i != 0) {
         html.append(",");
@@ -71,12 +74,13 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: IStackedAreaAnalyzerResu
     }
     html.append("];");
 
-    html.append("""
-      wait_for_script_load('jQuery', function() {
-        $(function(){
-          draw_stacked_area_analyzer_chart('reselem_1', data, 2);
+    html.append(
+      """
+        require(['jquery'], function ($) {
+          $(function () {
+            draw_stacked_area_analyzer_chart('""".stripMargin + elementId + """',  """ + dataId + """, 2);
+          });
         });
-      });
   //]]>
   </script>""");
 

@@ -35,6 +35,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
@@ -404,6 +405,47 @@ public class DomConfigurationWriterTest {
         assertEquals(false, regexStringPattern.isMatchEntireString());
     }
 
+    @Test
+    public void testWriteAndReadFixedWidthDatastore() throws Exception {
+        final FileResource fileResource = new FileResource("test.csv");
+        final FixedWidthDatastore fixedWidthDatastore = new FixedWidthDatastore("my fixed width ds", fileResource, fileResource.getName(),"UTF-8", 20, false, true, true, 1); 
+        fixedWidthDatastore.setDescription("bar");
+        
+        final Element externalized = configurationWriter.externalize(fixedWidthDatastore);
+        final String str = transform(externalized);
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds\">\n" + 
+                "  <filename>test.csv</filename>\n" + 
+                "  <encoding>UTF-8</encoding>\n" + 
+                "  <width-specification>\n" + 
+                "    <fixed-value-width>20</fixed-value-width>\n" + 
+                "  </width-specification>\n" + 
+                "  <header-line-number>1</header-line-number>\n" + 
+                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" + 
+                "  <skip-ebcdic-header>true</skip-ebcdic-header>\n" + 
+                "  <eol-present>true</eol-present>\n" +
+                "</fixed-width-datastore>\n", str); 
+
+        
+        final FixedWidthDatastore fixedWidthDatastore2 = new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(),"UTF-8", new int[] {19, 22}, false, false, true, 1, null); 
+        fixedWidthDatastore2.setDescription("bar");
+        
+        final Element externalized2 = configurationWriter.externalize(fixedWidthDatastore2);
+        final String str2 = transform(externalized2);
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds 2\">\n" + 
+                "  <filename>test.csv</filename>\n" + 
+                "  <encoding>UTF-8</encoding>\n" + 
+                "  <width-specification>\n" + 
+                "    <value-width>19</value-width>\n" + 
+                "    <value-width>22</value-width>\n" + 
+                "  </width-specification>\n" + 
+                "  <header-line-number>1</header-line-number>\n" + 
+                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" + 
+                "  <skip-ebcdic-header>false</skip-ebcdic-header>\n" + 
+                "  <eol-present>true</eol-present>\n" +
+                "</fixed-width-datastore>\n", str2); 
+        
+    }
+    
     private String transform(Node elem) throws Exception {
         return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }

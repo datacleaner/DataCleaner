@@ -20,6 +20,7 @@
 package org.datacleaner.configuration;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -36,6 +37,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
@@ -50,6 +52,9 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.reference.regexswap.Category;
+import org.datacleaner.reference.regexswap.Regex;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
@@ -174,6 +179,9 @@ public class DomConfigurationWriter {
         
         if (datastore instanceof JsonDatastore){
             return true; 
+        }
+        if (datastore instanceof FixedWidthDatastore) {
+            return true;
         }
 
         return false;
@@ -340,6 +348,10 @@ public class DomConfigurationWriter {
             final Resource resource = ((JsonDatastore) datastore).getResource();
             final String filename = toFilename(resource);
             elem = toElement((JsonDatastore) datastore, filename);
+        } else if (datastore instanceof FixedWidthDatastore) {
+            final Resource resource = ((FixedWidthDatastore) datastore).getResource();
+            final String filename = toFilename(resource);
+            elem = toElement((FixedWidthDatastore) datastore, filename);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -411,6 +423,8 @@ public class DomConfigurationWriter {
             elem = toElement((SimpleStringPattern) sp);
         } else if (sp instanceof RegexStringPattern) {
             elem = toElement((RegexStringPattern) sp);
+        } else if (sp instanceof RegexSwapStringPattern) {
+            elem = toElement((RegexSwapStringPattern) sp);
         } else {
             throw new UnsupportedOperationException("Non-supported string pattern: " + sp);
         }
@@ -435,7 +449,39 @@ public class DomConfigurationWriter {
 
         return elem;
     }
+    
+    private Element toElement(RegexSwapStringPattern regexSwapStringPattern) {
+        final Element patternElement = getDocument().createElement("regex-swap-pattern");
+        final Regex regex = regexSwapStringPattern.getRegex();
+        patternElement.setAttribute("name", regex.getName());
+        patternElement.setAttribute("description", regex.getDescription());
+        appendElement(patternElement, "expression", regex.getExpression());
+        appendElement(patternElement, "author", regex.getAuthor());
+        appendElement(patternElement, "detailsUrl", regex.getDetailsUrl());
+        appendElement(patternElement, "negativeVotes", regex.getNegativeVotes());
+        appendElement(patternElement, "positiveVotes", regex.getPositiveVotes());
+        appendElement(patternElement, "timestamp", regex.getTimestamp());
+        appendElement(patternElement, "categories", getCSVCategoryList(regex.getCategories()));
 
+        return patternElement;
+    }
+    
+    private String getCSVCategoryList(List<Category> categories) {
+        if (categories == null || categories.size() <= 0) {
+            return "";
+        }
+        
+        final StringBuilder builder = new StringBuilder();
+        
+        for (Category category : categories) {
+            builder.append(category.getName()).append(",");
+        }
+        
+        final String csvList = builder.toString();
+        
+        return csvList.substring(0, csvList.length() - 1); // remove last comma 
+    }
+    
     private Element toElement(SimpleStringPattern sp) {
         final Element elem = getDocument().createElement("simple-pattern");
         elem.setAttribute("name", sp.getName());
@@ -722,6 +768,35 @@ public class DomConfigurationWriter {
         return ds;
     }
 
+    
+    public Element toElement(FixedWidthDatastore datastore, String filename){
+        final Element ds = getDocument().createElement("fixed-width-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+        appendElement(ds, "filename", filename);
+        appendElement(ds, "encoding", datastore.getEncoding());
+
+        final Element widthElement = getDocument().createElement("width-specification");
+        final int fixedValueWidth = datastore.getFixedValueWidth();
+        if (fixedValueWidth > -1) {
+            final String valueOf = String.valueOf(fixedValueWidth);
+            appendElement(widthElement, "fixed-value-width", valueOf);
+        } else {
+            final int[] valueWidths = datastore.getValueWidths();
+            for (int i=0; i<valueWidths.length; i++) {
+                appendElement(widthElement, "value-width", String.valueOf(valueWidths[i]));
+            }
+        }
+        ds.appendChild(widthElement);
+        appendElement(ds, "header-line-number", datastore.getHeaderLineNumber());
+        appendElement(ds, "fail-on-inconsistencies", String.valueOf(datastore.isFailOnInconsistencies()));
+        appendElement(ds, "skip-ebcdic-header", String.valueOf(datastore.isSkipEbcdicHeader()));
+        appendElement(ds, "eol-present", String.valueOf(datastore.isEolPresent()));
+
+        return ds;
+    }
     /**
      * Externalizes a {@link CouchDbDatastore} to an XML element
      * 

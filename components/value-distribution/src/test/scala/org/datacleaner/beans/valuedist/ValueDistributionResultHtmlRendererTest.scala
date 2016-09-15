@@ -1,30 +1,17 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.MockInputRow
-import org.datacleaner.descriptors.ClasspathScanDescriptorProvider
-import org.datacleaner.result.html.DefaultHtmlRenderingContext
-import org.datacleaner.result.renderer.RendererFactory
-import org.junit.Assert
-import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
-import org.datacleaner.result.html.HtmlRenderer
-import org.datacleaner.result.html.HtmlAnalysisResultWriter
-import org.datacleaner.result.SimpleAnalysisResult
-import org.datacleaner.job.ComponentJob
-import org.datacleaner.result.AnalysisResult
-import org.datacleaner.configuration.AnalyzerBeansConfiguration
-import org.datacleaner.api.AnalyzerResult
-import org.datacleaner.job.ImmutableAnalyzerJob
-import org.apache.metamodel.util.FileHelper
 import java.io.File
-import org.datacleaner.descriptors.SimpleDescriptorProvider
-import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.job.ComponentConfiguration
-import org.datacleaner.job.ImmutableComponentConfiguration
-import org.datacleaner.result.renderer.AnnotatedRowsHtmlRenderer
-import org.datacleaner.result.renderer.ListResultHtmlRenderer
+
+import org.apache.metamodel.util.FileHelper
+import org.datacleaner.api.AnalyzerResult
+import org.datacleaner.configuration.{DataCleanerConfigurationImpl, DataCleanerEnvironmentImpl}
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
+import org.datacleaner.descriptors.{ClasspathScanDescriptorProvider, Descriptors, SimpleDescriptorProvider}
+import org.datacleaner.job.{ComponentJob, ImmutableAnalyzerJob, ImmutableComponentConfiguration}
+import org.datacleaner.result.SimpleAnalysisResult
+import org.datacleaner.result.html.{DefaultHtmlRenderingContext, HtmlAnalysisResultWriter}
+import org.datacleaner.result.renderer.{AnnotatedRowsHtmlRenderer, ListResultHtmlRenderer, RendererFactory}
+import org.junit.{Assert, Test}
+import org.scalatest.junit.AssertionsForJUnit
 
 class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
   
@@ -157,12 +144,12 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var datareselem_1 = [
         {label:"kasper", data:[[4,-1]]},{label:"kasper.sorensen", data:[[2,-2]]},{label:"&lt;null&gt;", data:[[1,-3]], color:"#111"},{label:"info", data:[[1,-4]]}
     ];
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_value_distribution_bar('reselem_1', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_value_distribution_bar('reselem_1', datareselem_1, 2);
       });
     });
     //]]>
@@ -171,12 +158,12 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var datareselem_6 = [
         {label:"kasper.sorensen", data:[[1,-1]]},{label:"kaspers", data:[[1,-2]]},{label:"winfried.vanholland", data:[[1,-3]]}
     ];
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_value_distribution_bar('reselem_6', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_value_distribution_bar('reselem_6', datareselem_6, 2);
       });
     });
     //]]>
@@ -241,12 +228,12 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var datareselem_1 = [
         {label:"kasper", data:[[9,-1]]},{label:"kasper.sorensen", data:[[3,-2]]},{label:"&lt;blank&gt;", data:[[2,-3]], color:"#eee"},{label:"info", data:[[1,-4]]}
     ];
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_value_distribution_bar('reselem_1', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_value_distribution_bar('reselem_1', datareselem_1, 2);
       });
     });
     //]]>

@@ -35,7 +35,7 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.regexswap.RegexSwapStringPattern;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 

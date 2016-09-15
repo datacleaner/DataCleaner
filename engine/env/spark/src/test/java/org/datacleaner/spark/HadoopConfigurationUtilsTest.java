@@ -74,7 +74,7 @@ public class HadoopConfigurationUtilsTest extends TestCase{
         final HdfsResource hdfsResource = new HdfsResource("hdfs://datacleaner/employees-fixed-width.txt");
         int[] widths = new int[] { 19, 22 };
         final FixedWidthDatastore datastore = new FixedWidthDatastore("My datastore", hdfsResource, hdfsResource
-                .getFilepath(), "UTF-8", widths, false, false, false, 0);
+                .getFilepath(), "UTF-8", widths, false, false, false, 0, null);
         assertTrue(HadoopJobExecutionUtils.isValidSourceDatastore(datastore));
     }
 }

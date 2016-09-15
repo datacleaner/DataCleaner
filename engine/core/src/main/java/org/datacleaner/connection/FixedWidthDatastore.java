@@ -56,6 +56,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 	private final boolean _skipEbcdicHeader;
 	private final boolean _eolPresent;
 	private final int _headerLineNumber;
+	private final List<String> _customColumnNames;
 	private final SerializableRef<Resource> _resourceRef;
 
 	public FixedWidthDatastore(String name, String filename, String encoding, int fixedValueWidth) {
@@ -99,16 +100,24 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 		_skipEbcdicHeader = skipEbcdicHeader;
 		_eolPresent = eolPresent;
 		_headerLineNumber = headerLineNumber;
+		_customColumnNames = null;
 	}
 
 	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
 			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
+		this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
+				headerLineNumber, null);
+	}
+
+	public FixedWidthDatastore(String name, String filename, String encoding, int[] valueWidths,
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber,
+			List<String> customColumnNames) {
 		this(name, null, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-				headerLineNumber);
+				headerLineNumber, null);
 	}
 
 	public FixedWidthDatastore(String name, Resource resource, String filename, String encoding, int[] valueWidths,
-			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber) {
+			boolean failOnInconsistencies, boolean skipEbcdicHeader, boolean eolPresent, int headerLineNumber, List<String> customColumnNames) {
 		super(name);
 		_filename = filename;
 		if (resource == null) {
@@ -122,6 +131,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 		_skipEbcdicHeader = skipEbcdicHeader;
 		_eolPresent = eolPresent;
 		_headerLineNumber = headerLineNumber;
+		_customColumnNames = customColumnNames;
 	}
 
 	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -147,7 +157,6 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 	@Override
 	protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
 		final FixedWidthConfiguration configuration = getConfiguration();
-
 		final Resource resource = _resourceRef.get();
 		final DataContext dataContext;
 		if (resource == null) {
@@ -221,6 +230,10 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
 	public boolean isEolPresent() {
 		return _eolPresent;
+	}
+
+	public List<String> getCustomColumnNames() {
+		return _customColumnNames;
 	}
 
 	@Override

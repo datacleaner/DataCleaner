@@ -1173,7 +1173,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", excelDatastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
-        return new ExcelDatastore(name, resource, filename);
+
+        List<String> customColumnNames = null;
+        if (excelDatastoreType.getCustomColumnNames() != null) {
+            customColumnNames = excelDatastoreType.getCustomColumnNames().getColumnName();
+        }
+        return new ExcelDatastore(name, resource, filename, customColumnNames);
     }
 
     private Datastore createDatastore(String name, XmlDatastoreType xmlDatastoreType) {
@@ -1236,8 +1241,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             for (int i = 0; i < valueWidths.length; i++) {
                 valueWidths[i] = valueWidthsBoxed.get(i).intValue();
             }
+
+            List<String> customColumnNames = null;
+            if (fixedWidthDatastore.getCustomColumnNames() != null) {
+                customColumnNames = fixedWidthDatastore.getCustomColumnNames().getColumnName();
+            }
+ 
             ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
-                    eolPresent, headerLineNumber.intValue());
+                    eolPresent, headerLineNumber, customColumnNames);
         } else {
             ds = new FixedWidthDatastore(name, resource, filename, encoding, fixedValueWidth, failOnInconsistencies,
                     skipEbcdicHeader, eolPresent, headerLineNumber);
@@ -1312,8 +1323,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             headerLineNumber = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
         }
 
+        List<String> customColumnNames = null;
+        if (csvDatastoreType.getCustomColumnNames() != null) {
+            customColumnNames = csvDatastoreType.getCustomColumnNames().getColumnName();
+        }
+
         return new CsvDatastore(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding,
-                failOnInconsistencies, multilineValues, headerLineNumber);
+                failOnInconsistencies, multilineValues, headerLineNumber, customColumnNames);
     }
 
     private char getChar(String charString, char ifNull, char ifBlank) {

@@ -426,7 +426,7 @@ public class DomConfigurationWriterTest {
                 "</fixed-width-datastore>\n", str); 
 
         
-        final FixedWidthDatastore fixedWidthDatastore2 = new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(),"UTF-8", new int[] {19, 22}, false, false, true, 1); 
+        final FixedWidthDatastore fixedWidthDatastore2 = new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(),"UTF-8", new int[] {19, 22}, false, false, true, 1, null); 
         fixedWidthDatastore2.setDescription("bar");
         
         final Element externalized2 = configurationWriter.externalize(fixedWidthDatastore2);

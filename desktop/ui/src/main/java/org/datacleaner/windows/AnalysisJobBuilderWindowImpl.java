@@ -908,7 +908,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     private void onSourceColumnsChanged() {
-        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty();
+        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty() && _datastore != null;
 
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);

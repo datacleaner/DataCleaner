@@ -35,8 +35,6 @@ import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Named("JavaScript filter")
 @Description("Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
@@ -46,8 +44,6 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     public static enum Category {
         VALID, INVALID;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(JavaScriptFilter.class);
 
     @Configured
     InputColumn<?>[] columns;
@@ -72,7 +68,7 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
             _sharedScope = context.initStandardObjects();
 
-            JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
+            JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
             JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
         } finally {
             Context.exit();

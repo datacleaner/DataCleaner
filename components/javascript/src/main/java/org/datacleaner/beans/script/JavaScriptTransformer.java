@@ -37,8 +37,6 @@ import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A transformer that uses userwritten JavaScript to generate a value
@@ -48,9 +46,6 @@ import org.slf4j.LoggerFactory;
 @Description("Supply your own piece of JavaScript to do a custom transformation")
 @Categorized(ScriptingCategory.class)
 public class JavaScriptTransformer implements Transformer {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(JavaScriptTransformer.class);
 
 	public static enum ReturnType {
 		STRING, NUMBER, BOOLEAN;
@@ -93,11 +88,10 @@ public class JavaScriptTransformer implements Transformer {
 		Context context = _contextFactory.enterContext();
 
 		try {
-			_script = context.compileString(sourceCode, this.getClass()
-					.getSimpleName(), 1, null);
+			_script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
 			_sharedScope = context.initStandardObjects();
 
-			JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
+			JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
 			JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
 		} finally {
 			Context.exit();

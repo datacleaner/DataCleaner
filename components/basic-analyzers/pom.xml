@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-components</artifactId>
-		<version>5.1.2-SNAPSHOT</version>
+		<version>5.1.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-basic-analyzers</artifactId>
 	<build>

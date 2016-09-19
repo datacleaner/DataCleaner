@@ -29,7 +29,6 @@
 					    });
 			    	}
 			    }
-			    
 			//]]>
 			</script>
 		</c:if>
@@ -77,6 +76,15 @@
 									class="btn btn-default btn-sm">
 									<span class="glyphicon glyphicon-download" aria-hidden="true" />
 									<span>Download</span>
+								</button>
+							</h:panelGroup>
+							<h:panelGroup
+								rendered="#{ds.fileDatastore and user.configurationEditor}">
+								<button
+								    onclick="datacleaner.startDatastoreWizard();"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-edit" aria-hidden="true" />
+									<span>Edit</span>
 								</button>
 							</h:panelGroup>
 							<h:panelGroup rendered="#{user.jobEditor and monitorUIPreferences.showWebstartLaunchOptions}">

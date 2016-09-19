@@ -81,6 +81,10 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
                     }
                 }
             });
+            
+            if (_numTokensPropertyWidget != null && _tokenTargetPropertyWidget.getValue() == TokenTarget.ROWS) {
+                _numTokensPropertyWidget.setEnabled(false);
+            }
         } else if ("Number of tokens".equals(propertyName)) {
             _numTokensPropertyWidget = (SingleNumberPropertyWidget) propertyWidget;
         }

@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.beans.standardize.UrlStandardizerTransformer;
 import org.datacleaner.data.MockInputRow;
 
 import junit.framework.TestCase;
@@ -36,7 +35,6 @@ public class UrlStandardizerTransformerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		transformer = new UrlStandardizerTransformer();
-		transformer.init();
 	}
 
 	public void testGetOutputColumns() throws Exception {
@@ -50,7 +48,7 @@ public class UrlStandardizerTransformerTest extends TestCase {
 	}
 
 	public void testTransformValidUrls() throws Exception {
-		String[] result;
+		Object[] result;
 
 		result = transformer
 				.transform("http://www.google.com/search?q=eobjects");
@@ -66,6 +64,18 @@ public class UrlStandardizerTransformerTest extends TestCase {
 		assertEquals("[http, localhost, 8080, null, null]",
 				Arrays.toString(result));
 
+		result = transformer.transform("http://www.yahoo.com/");
+		assertEquals("[http, www.yahoo.com, null, /, null]",
+				Arrays.toString(result));
+
+		result = transformer.transform("http://www.rethe.com/ref=bleh/234-2565344-2354454");
+		assertEquals("[http, www.rethe.com, null, /ref=bleh/234-2565344-2354454, null]",
+				Arrays.toString(result));
+
+		result = transformer.transform("https://www.ghzsffs.com/gswdp/nav/redir.html/ref=some-page");
+		assertEquals("[https, www.ghzsffs.com, null, /gswdp/nav/redir.html/ref=some-page, null]",
+				Arrays.toString(result));
+
 		result = transformer.transform("http://localhost:8080/trac");
 		assertEquals("[http, localhost, 8080, /trac, null]",
 				Arrays.toString(result));
@@ -73,7 +83,7 @@ public class UrlStandardizerTransformerTest extends TestCase {
 		result = transformer
 				.transform("http://eobjects.org/trac/ticket/395#comment:1");
 		assertEquals(
-				"[http, eobjects.org, null, /trac/ticket/395#comment:1, null]",
+				"[http, eobjects.org, null, /trac/ticket/395, null]",
 				Arrays.toString(result));
 
 		result = transformer.transform("http://localhost?string=hello%20world");
@@ -87,12 +97,13 @@ public class UrlStandardizerTransformerTest extends TestCase {
 				Arrays.toString(result));
 
 		result = transformer.transform("ftp://username@hostname/path");
-		assertEquals("[ftp, username@hostname, null, /path, null]",
+		assertEquals("[ftp, hostname, null, /path, null]",
 				Arrays.toString(result));
 	}
 
+	// Best effort
 	public void testInvalidUrls() throws Exception {
-		String[] result;
+		Object[] result;
 
 		// white space is not allowed
 		result = transformer
@@ -104,11 +115,11 @@ public class UrlStandardizerTransformerTest extends TestCase {
 		result = transformer
 				.transform("http://www.google.com;8080/search?q=eobjects");
 		assertEquals(5, result.length);
-		assertEquals("[null, null, null, null, null]", Arrays.toString(result));
+		assertEquals("[http, null, null, /search, q=eobjects]", Arrays.toString(result));
 	}
 
 	public void testTransformNull() throws Exception {
-		String[] result = transformer.transform((InputRow) new MockInputRow());
+		Object[] result = transformer.transform((InputRow) new MockInputRow());
 		assertEquals(5, result.length);
 		assertEquals("[null, null, null, null, null]", Arrays.toString(result));
 	}

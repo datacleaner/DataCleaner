@@ -44,7 +44,7 @@
 	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>5.1.2-SNAPSHOT</version>
+	<version>5.1.4-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
@@ -751,6 +751,11 @@
 				<artifactId>MetaModel-extras-sas</artifactId>
 				<version>${metamodel.extras.version}</version>
 			</dependency>
+			<dependency>
+ 				<groupId>org.apache.metamodel</groupId>
+ 				<artifactId>MetaModel-fixedwidth</artifactId>
+ 				<version>${metamodel.version}</version>
+ 			</dependency>
 			<dependency>
 				<groupId>org.eobjects.metamodel-extras</groupId>
 				<artifactId>MetaModel-extras-dbase</artifactId>

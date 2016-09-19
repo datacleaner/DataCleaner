@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -37,8 +35,8 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.regexswap.RegexSwapDialog;
-import org.datacleaner.regexswap.RegexSwapStringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.StringPatternChangeListener;
 import org.datacleaner.user.UserPreferences;
@@ -101,30 +99,18 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 		final JButton simpleStringPatternButton = createButton(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH,
 				"<html><b>Simple string pattern</b><br/>A string pattern based on simple string tokens, eg. 'Aaaaa 999'.</html>");
-		simpleStringPatternButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true);
-			}
-		});
+		simpleStringPatternButton.addActionListener(
+				e -> new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
 		final JButton regexStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH,
 				"<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, based on regular expressions.</html>");
-		regexStringPatternButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true);
-			}
-		});
+		regexStringPatternButton.addActionListener(
+				e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
 		final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
 				"<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
-		regexSwapStringPatternButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true);
-			}
-		});
+		regexSwapStringPatternButton.addActionListener(
+				e -> new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true));
 
 		final HelpIcon helpIcon = new HelpIcon(
 				"<b>String patterns</b><br>"
@@ -165,40 +151,31 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			editButton.setToolTipText("Edit string pattern");
 
 			if (stringPattern instanceof RegexStringPattern) {
-				editButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
-								_catalog, _windowContext);
-						dialog.setVisible(true);
-					}
-				});
+				editButton.addActionListener(e -> {
+                    RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
+                            _catalog, _windowContext);
+                    dialog.setVisible(true);
+                });
 			} else if (stringPattern instanceof SimpleStringPattern) {
-				editButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
-								(SimpleStringPattern) stringPattern, _catalog, _windowContext);
-						dialog.setVisible(true);
-					}
-				});
+				editButton.addActionListener(e -> {
+                    SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
+                            (SimpleStringPattern) stringPattern, _catalog, _windowContext);
+                    dialog.setVisible(true);
+                });
 			} else {
 				editButton.setEnabled(false);
 			}
 
 			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 			removeButton.setToolTipText("Remove string pattern");
-			removeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
-							"Are you sure you wish to remove the string pattern '" + name + "'?", "Confirm remove",
-							JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						_catalog.removeStringPattern(stringPattern);
-					}
-				}
-			});
+			removeButton.addActionListener(e -> {
+                int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
+                        "Are you sure you wish to remove the string pattern '" + name + "'?", "Confirm remove",
+                        JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    _catalog.removeStringPattern(stringPattern);
+                }
+            });
 
 			final DCPanel stringPatternPanel = new DCPanel();
 			stringPatternPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
@@ -241,22 +218,12 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 	@Override
 	public void onAdd(StringPattern stringPattern) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				updateComponents();
-			}
-		});
+		SwingUtilities.invokeLater(() -> updateComponents());
 	}
 
 	@Override
 	public void onRemove(StringPattern stringPattern) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				updateComponents();
-			}
-		});
+		SwingUtilities.invokeLater(() -> updateComponents());
 	}
 
 	@Override

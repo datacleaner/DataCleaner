@@ -22,12 +22,14 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.excel.ExcelConfiguration;
 import org.apache.metamodel.excel.ExcelDataContext;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
 
@@ -41,11 +43,17 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
 
     private final String _filename;
     private final SerializableRef<Resource> _resourceRef;
+    private List<String> _customColumnNames;
 
     public ExcelDatastore(String name, Resource resource, String filename) {
+        this(name, resource, filename, null);
+    }
+
+    public ExcelDatastore(String name, Resource resource, String filename, List<String> customColumnNames) {
         super(name);
         _resourceRef = new SerializableRef<Resource>(resource);
         _filename = filename;
+        _customColumnNames = customColumnNames;
     }
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -65,16 +73,37 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
         return _filename;
     }
 
+    public List<String> getCustomColumnNames() {
+        return _customColumnNames;
+    }
+
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         final UpdateableDataContext dc;
         final Resource resource = getResource();
+        final ExcelConfiguration excelConfiguration = getExcelConfiguration();
+
         if (resource == null) {
-            dc = new ExcelDataContext(new File(_filename));
+            dc = new ExcelDataContext(new File(_filename), excelConfiguration);
         } else {
-            dc = new ExcelDataContext(resource, new ExcelConfiguration());
+            dc = new ExcelDataContext(resource, excelConfiguration);
         }
+        
+        if (_customColumnNames == null){
+            _customColumnNames = Arrays.asList(dc.getDefaultSchema().getTable(0).getColumnNames()); 
+        }
+       
         return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
+    }
+
+    private ExcelConfiguration getExcelConfiguration() {
+        if (_customColumnNames != null && _customColumnNames.size() > 0) {
+            return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE, new CustomColumnNamingStrategy(
+                    _customColumnNames), true, false);
+        } else {
+            return new ExcelConfiguration();
+        }
+
     }
 
     @Override

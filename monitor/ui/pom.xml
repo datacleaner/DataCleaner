@@ -273,7 +273,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-	
+
 		<!-- JSF -->
 		<dependency>
 			<groupId>org.glassfish</groupId>

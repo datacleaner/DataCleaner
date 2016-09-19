@@ -66,7 +66,7 @@ public class JavaScriptAdvancedTransformer implements Transformer {
     @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
     String sourceCode = "var transformerObj = {\n"
             + "\tinitialize: function() {\n\t\tlogger.info('Initializing advanced JavaScript transformer...');\n\t},\n\n"
-            + "\ttransform: function(columns,values,outputCollector) {\n\t\tlogger.debug('transform({},{}) invoked', columns, values);\n\t\tfor (var i=0;i<columns.length;i++) {\n\t\t\toutputCollector.putValues(columns[i],values[i])\n\t\t}\n\t},\n\n"
+            + "\ttransform: function(columns,values,outputCollector) {\n\t\tlogger.debug('transform({},{},{}) invoked', columns, values, outputCollector);\n\t\tfor (var i=0;i<columns.length;i++) {\n\t\t\toutputCollector.putValues(columns[i],values[i])\n\t\t}\n\t},\n\n"
             + "\tclose: function() {\n\t\tlogger.info('Closing advanced JavaScript transformer...');\n\t}\n}";
 
     @Inject

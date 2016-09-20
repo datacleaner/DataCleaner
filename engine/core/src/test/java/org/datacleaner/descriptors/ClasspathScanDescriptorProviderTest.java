@@ -147,4 +147,18 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertFalse(provider.isClassInPackage("foo/baz/Baz.class", "foo/bar", true));
         assertFalse(provider.isClassInPackage("foo/Baz.class", "foo/bar", true));
     }
+
+    public void testDeadLock() {
+        final ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider();
+
+        provider.addListener(new DescriptorProviderListener() {
+            @Override
+            public void onDescriptorsUpdated(DescriptorProvider descriptorProvider) {
+                descriptorProvider.getAnalyzerDescriptors();
+            }
+        });
+
+        provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(new File[] { new File(
+                "src/test/resources/extensions/DataCleaner-basic-transformers.jar") }), true);
+    }
 }

@@ -338,7 +338,6 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
                     logger.debug("Scanned resources of {}: {}", packageName, count);
                 }
-                notifyListeners();
             }
         };
         _taskRunner.run(task, listener);
@@ -662,6 +661,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
     private void taskDone() {
         int tasks = _tasksPending.decrementAndGet();
+
+        notifyListeners();
+
         if (tasks == 0) {
             synchronized (this) {
                 notifyAll();

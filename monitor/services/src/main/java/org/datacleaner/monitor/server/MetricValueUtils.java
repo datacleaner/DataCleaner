@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -433,9 +434,10 @@ public class MetricValueUtils {
      * @return
      */
     public List<MetricGroup> getMetricGroups(MetricJobContext jobContext, AnalysisJob analysisJob) {
-        final Collection<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
-
-        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
+        final List<MetricGroup> metricGroups = new ArrayList<>();
+        final List<AnalyzerJob> analyzerJobs =
+                analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
+                        .collect(Collectors.toList());
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             final Set<MetricDescriptor> metricDescriptors = analyzerJob.getDescriptor().getResultMetrics();
             final MetricGroup metricGroup = getMetricGroup(jobContext, analyzerJob, metricDescriptors);

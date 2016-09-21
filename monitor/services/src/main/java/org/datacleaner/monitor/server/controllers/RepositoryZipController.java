@@ -19,12 +19,13 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -52,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @Controller
 @RequestMapping("/{tenant}/zip")
 public class RepositoryZipController {
@@ -78,28 +80,62 @@ public class RepositoryZipController {
         FileHelper.safeClose(zipOutput);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.ADMIN)
-    public Map<String, String> uploadRepository(@PathVariable("tenant") final String tenant,
+    public String uploadRepository(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws IOException {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder rootFolder = context.getTenantRootFolder();
-
-        logger.info("Uploading ZIP file for tenant repository: {}", tenant);
-
-        try (final InputStream inputStream = file.getInputStream()) {
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-            decompress(zipInputStream, rootFolder);
+ 
+        if (file.getSize() == 0){
+            return "Failure. The file is empty"; 
+        } 
+        
+        final String contentType = file.getContentType().trim();
+        if ((!contentType.equals("application/zip")) && (!contentType.equals("application/octet-stream"))) {
+            return "Failure. The file isn't a .zip archive";
         }
-
-        final Map<String, String> result = new HashMap<String, String>();
-        result.put("status", "Success");
-        result.put("repository_path", rootFolder.getQualifiedPath());
-
-        return result;
+        
+        logger.info("Uploading ZIP file for tenant repository: {}", tenant);
+        try (final InputStream inputStream = file.getInputStream()) {
+            final ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+            if (isValidRepository(zipInputStream)) {
+                final File oldRepositoryZipFile = createZipfolder(rootFolder);
+                decompress(zipInputStream, rootFolder);
+                return "Success.\nNew repository path: " + rootFolder.getQualifiedPath()
+                        + ".\nOld repository backed up to: " + oldRepositoryZipFile.toString();
+            } else {
+                return "Failure. The repository does not contain a conf.xml file";
+            }
+        }
     }
 
+    private File createZipfolder(RepositoryFolder rootFolder) throws IOException {
+        final long timeInMillis = Calendar.getInstance().getTimeInMillis();
+        final File tempfile = File.createTempFile("repository_" + rootFolder.getName() + "_" + timeInMillis, ".zip");
+        final FileOutputStream fos = new FileOutputStream(tempfile);
+        final ZipOutputStream zipOutput = new ZipOutputStream(fos);
+        compress(rootFolder, zipOutput);
+        logger.info("The old repository has been compressed and uploaded to" + tempfile.getAbsolutePath());
+        FileHelper.safeClose(zipOutput);
+        return tempfile;
+    }
+    
+    /**
+     * The repository is valid if it contains a conf.xml file 
+     * @param zipInputStream
+     * @return
+     * @throws IOException
+     */
+    private boolean isValidRepository(final ZipInputStream zipInputStream) throws IOException {
+        for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+            if (entry.getName().trim().equals("conf.xml")) {
+                return true;
+            }
+        }
+        return false;
+    }
     protected void decompress(final ZipInputStream zipInputStream, final RepositoryFolder rootFolder)
             throws IOException {
         deleteChildren(rootFolder);

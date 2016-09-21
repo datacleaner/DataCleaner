@@ -33,9 +33,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
@@ -149,8 +147,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     public void executeUpdates(List<UpdateData> pendingUpdates) {
-        String uri = _updateConnection.getUpdateUrl(_tenantName);
-        final HttpPost request = new HttpPost(uri);
+        String uri = _updateConnection.getGoldenRecordBatchUrl();
+        final HttpPut request = new HttpPut(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
         request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates),
@@ -165,7 +163,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
      *            The golden records to delete.
      */
     public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
-        final String uri = _updateConnection.getDeleteGoldenRecordUrl();
+        final String uri = _updateConnection.getGoldenRecordBatchUrl();
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
@@ -182,7 +180,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
      *            The batch of sources to delete.
      */
     public void executeSourceDelete(List<SourceRecordIdentifier> pendingSourceDeletes) {
-        final String uri = _updateConnection.getDeleteSourceRecordUrl();
+        final String uri = _updateConnection.getSourceRecordBatchUrl();
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);

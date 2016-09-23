@@ -28,17 +28,27 @@ import junit.framework.TestCase;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.PrefixedIdGenerator;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.job.runner.JobStatus;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -375,5 +385,65 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             assertEquals("CustomNameForIntegerColumn", columnNames[1]);
         }
     }
-    
+
+    public void testConcurrentWriting() {
+        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl();
+        final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
+
+        final CsvDatastore datastore = new CsvDatastore("Customers", "src/test/resources/example_updated.csv");
+        final File excelFile = new File("target/exceltest-concurrentwriting.xlsx");
+
+        jobBuilder.setDatastore(datastore);
+
+        final Table datastoreTableDefinition = datastore.openConnection().getDataContext().getDefaultSchema()
+                .getTables()[0];
+
+        jobBuilder.addSourceColumns(datastoreTableDefinition.getColumns());
+
+        final TransformerComponentBuilder<MultiStreamTransformer> transformer = new TransformerComponentBuilder<>(
+                jobBuilder, new SimpleDescriptorProvider().getTransformerDescriptorForClass(
+                        MultiStreamTransformer.class), new PrefixedIdGenerator());
+
+        transformer.addInputColumns(jobBuilder.getSourceColumns());
+
+        jobBuilder.addTransformer(transformer);
+
+        addWriter(transformer, MultiStreamTransformer.OUTPUT_STREAM_EVEN, datastoreTableDefinition, excelFile);
+        addWriter(transformer, MultiStreamTransformer.OUTPUT_STREAM_UNEVEN, datastoreTableDefinition, excelFile);
+
+        assertTrue(jobBuilder.isConfigured());
+
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+
+        final AnalysisResultFuture firstRunResult = runner.run(analysisJob);
+        firstRunResult.await();
+        firstRunResult.getErrors().forEach(error -> error.printStackTrace());
+
+        assertEquals(JobStatus.SUCCESSFUL, firstRunResult.getStatus());
+
+        final AnalysisResultFuture secondRunResult = runner.run(analysisJob);
+        secondRunResult.await();
+        secondRunResult.getErrors().forEach(error -> error.printStackTrace());
+
+        assertEquals(JobStatus.SUCCESSFUL, secondRunResult.getStatus());
+    }
+
+    private void addWriter(final TransformerComponentBuilder<MultiStreamTransformer> transformer,
+            final String outputStreamName, final Table datastoreTableDefinition, final File excelFile) {
+        final AnalysisJobBuilder jobBuilder = transformer.getOutputDataStreamJobBuilder(outputStreamName);
+
+        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelWriter = new AnalyzerComponentBuilder<>(
+                jobBuilder, new SimpleDescriptorProvider().getAnalyzerDescriptorForClass(
+                        CreateExcelSpreadsheetAnalyzer.class));
+
+        excelWriter.addInputColumns(jobBuilder.getAvailableInputColumns(excelWriter));
+        excelWriter.setConfiguredProperty(AbstractOutputWriterAnalyzer.PROPERTY_FIELD_NAMES, datastoreTableDefinition
+                .getColumnNames());
+        excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_FILE, excelFile);
+        excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_SHEET_NAME, outputStreamName);
+        excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_OVERWRITE_SHEET_IF_EXISTS, true);
+
+        jobBuilder.addAnalyzer(excelWriter);
+    }
 }

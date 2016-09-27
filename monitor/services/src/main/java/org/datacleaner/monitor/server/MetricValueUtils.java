@@ -19,17 +19,8 @@
  */
 package org.datacleaner.monitor.server;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
-
+import de.odysseus.el.ExpressionFactoryImpl;
+import de.odysseus.el.util.SimpleContext;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.Predicate;
@@ -37,18 +28,8 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor;
-import org.datacleaner.descriptors.MetricDescriptor;
-import org.datacleaner.descriptors.MetricParameters;
-import org.datacleaner.descriptors.ResultDescriptor;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.AnalyzerJobHelper;
-import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.descriptors.*;
+import org.datacleaner.job.*;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.datacleaner.monitor.job.MetricJobEngine;
 import org.datacleaner.monitor.shared.model.MetricGroup;
@@ -60,8 +41,11 @@ import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.odysseus.el.ExpressionFactoryImpl;
-import de.odysseus.el.util.SimpleContext;
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MetricValueUtils {
 
@@ -435,9 +419,9 @@ public class MetricValueUtils {
      */
     public List<MetricGroup> getMetricGroups(MetricJobContext jobContext, AnalysisJob analysisJob) {
         final List<MetricGroup> metricGroups = new ArrayList<>();
-        final List<AnalyzerJob> analyzerJobs =
-                analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
-                        .collect(Collectors.toList());
+        final List<AnalyzerJob> analyzerJobs = analysisJob.flattened()
+                .flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream()).collect(Collectors.toList());
+
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             final Set<MetricDescriptor> metricDescriptors = analyzerJob.getDescriptor().getResultMetrics();
             final MetricGroup metricGroup = getMetricGroup(jobContext, analyzerJob, metricDescriptors);

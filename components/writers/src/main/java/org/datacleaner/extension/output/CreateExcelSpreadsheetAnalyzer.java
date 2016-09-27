@@ -137,7 +137,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             }
         }
 
-        if (file.exists() && !overwriteSheetIfExists) {
+        if (!overwriteSheetIfExists && file.exists()) {
             Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (final DatastoreConnection connection = datastore.openConnection()) {
                 final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();

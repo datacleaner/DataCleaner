@@ -29,6 +29,10 @@ import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
 
+/**
+ * Test transformer which produces two output streams one containing the even rows going in and the other one
+ * containing the uneven rows going in.
+ */
 public class MultiStreamTransformer extends MultiStreamComponent {
     @Configured
     InputColumn<?>[] _valueColumns;

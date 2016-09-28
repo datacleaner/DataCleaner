@@ -19,9 +19,7 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridLayout;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -31,9 +29,8 @@ import javax.swing.JLabel;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.widgets.Alignment;
 
-public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> implements ActionListener {
+public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
     private final SingleDatePropertySettingDialog _settingDialog;
     private final JLabel _valueLabel;
@@ -44,24 +41,23 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> imple
             ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
         
-        _settingDialog = new SingleDatePropertySettingDialog();
+        _settingDialog = new SingleDatePropertySettingDialog(this);
         _valueLabel = new JLabel(getCurrentValue().toString());
         _changeButton = new JButton("Change");
-        _changeButton.addActionListener(this);
+        _changeButton.addActionListener(e -> _settingDialog.setVisible(true));
 
         final DCPanel panel = new DCPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _valueLabel, _changeButton), BorderLayout.NORTH);
-
+        panel.setLayout(new GridLayout());
+        panel.add(_valueLabel);
+        panel.add(_changeButton);
         add(panel);
-
-        Date currentValue = getCurrentValue();
-        setValue(currentValue);
+        
+        setValue(getCurrentValue());
     }
     
-    @Override
-    public void actionPerformed(final ActionEvent e) {
-        _settingDialog.setVisible(true);
+    public void updateValue(String newValue) {
+        _valueLabel.setText(newValue);
+        fireValueChanged();
     }
 
     @Override

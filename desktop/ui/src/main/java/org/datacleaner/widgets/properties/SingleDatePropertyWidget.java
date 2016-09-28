@@ -20,73 +20,38 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 
 import javax.inject.Inject;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.convert.NowDate;
-import org.datacleaner.util.convert.ShiftedToday;
-import org.datacleaner.util.convert.TodayDate;
-import org.datacleaner.util.convert.YesterdayDate;
 import org.datacleaner.widgets.Alignment;
-import org.jdesktop.swingx.JXDatePicker;
 
-public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
+public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> implements ActionListener {
 
-    private final JXDatePicker _datePicker;
-    private final JRadioButton _dateCustomRadio;
-    private final JRadioButton _dateNowRadio;
-    private final JRadioButton _dateTodayRadio;
-    private final JRadioButton _dateYesterdayRadio;
-    private final JRadioButton _nowPlusRadio;
-    private final JTextField _nowPlusTextField;
+    private final SingleDatePropertySettingDialog _settingDialog;
+    private final JLabel _valueLabel;
+    private final JButton _changeButton;
 
     @Inject
     public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
             ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
-
-        _datePicker = new JXDatePicker();
-        _datePicker.setFormats("yyyy-MM-dd");
-
-        _nowPlusTextField = new JTextField("+0d +0m +0y");
-
-        _dateCustomRadio = new JRadioButton("Select: ");
-        _dateNowRadio = new JRadioButton("Now");
-        _dateTodayRadio = new JRadioButton("Today");
-        _dateYesterdayRadio = new JRadioButton("Yesterday");
-        _nowPlusRadio = new JRadioButton("Now plus ");
-
-        _datePicker.addActionListener(fireValueChangedActionListener());
-        _dateCustomRadio.addActionListener(fireValueChangedActionListener());
-        _dateNowRadio.addActionListener(fireValueChangedActionListener());
-        _dateTodayRadio.addActionListener(fireValueChangedActionListener());
-        _dateYesterdayRadio.addActionListener(fireValueChangedActionListener());
-        _nowPlusRadio.addActionListener(fireValueChangedActionListener());
-        _nowPlusTextField.addActionListener(fireValueChangedActionListener());
-        _nowPlusTextField.addFocusListener(createFocusListener());
-
-        final ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(_dateCustomRadio);
-        buttonGroup.add(_dateNowRadio);
-        buttonGroup.add(_dateTodayRadio);
-        buttonGroup.add(_dateYesterdayRadio);
-        buttonGroup.add(_nowPlusRadio);
+        
+        _settingDialog = new SingleDatePropertySettingDialog();
+        _valueLabel = new JLabel(getCurrentValue().toString());
+        _changeButton = new JButton("Change");
+        _changeButton.addActionListener(this);
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateCustomRadio, _datePicker), BorderLayout.NORTH);
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _nowPlusRadio, _nowPlusTextField), BorderLayout.CENTER);
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateNowRadio, _dateTodayRadio, _dateYesterdayRadio),
-                BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _valueLabel, _changeButton), BorderLayout.NORTH);
 
         add(panel);
 
@@ -94,50 +59,18 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         setValue(currentValue);
     }
     
-    private FocusListener createFocusListener() {
-        return new FocusListener() {
-            @Override
-            public void focusGained(final FocusEvent e) {
-            }
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        _settingDialog.setVisible(true);
+    }
 
-            @Override
-            public void focusLost(final FocusEvent e) {
-                fireValueChanged();
-            }
-        };
+    @Override
+    protected void setValue(final Date value) {
+        _settingDialog.setValue(value);
     }
 
     @Override
     public Date getValue() {
-        if (_dateNowRadio.isSelected()) {
-            return new NowDate();
-        } else if (_dateTodayRadio.isSelected()) {
-            return new TodayDate();
-        } else if (_dateYesterdayRadio.isSelected()) {
-            return new YesterdayDate();
-        } else if (_nowPlusRadio.isSelected()) {
-            return new ShiftedToday(_nowPlusTextField.getText());
-        } else {
-            return _datePicker.getDate();
-        }
-    }
-
-    @Override
-    protected void setValue(Date value) {
-        if (value instanceof NowDate) {
-            _dateNowRadio.setSelected(true);
-        } else if (value instanceof TodayDate) {
-            _dateTodayRadio.setSelected(true);
-        } else if (value instanceof YesterdayDate) {
-            _dateYesterdayRadio.setSelected(true);
-        } else if (value instanceof ShiftedToday) {
-            _nowPlusRadio.setSelected(true);
-            _nowPlusTextField.setText(((ShiftedToday)value).getInput());
-        } else {
-            _dateCustomRadio.setSelected(true);
-            if (value != null) {
-                _datePicker.setDate(value);
-            }
-        }
+        return _settingDialog.getValue();
     }
 }

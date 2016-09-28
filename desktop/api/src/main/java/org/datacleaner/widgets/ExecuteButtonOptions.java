@@ -50,7 +50,7 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow;
  */
 public class ExecuteButtonOptions {
 
-    interface ExecutionMenuItem {
+    public interface ExecutionMenuItem {
 
         String getText();
 

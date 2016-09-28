@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor</artifactId>
-		<version>5.0.4-SNAPSHOT</version>
+		<version>5.1.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
@@ -26,6 +26,9 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
+						<configuration>
+							<sourceLevel>1.7</sourceLevel> <!-- 1.6 or 1.7 -->
+						</configuration>
 					</execution>
 					<execution>
 						<!-- Run GwtTestCases with the gwt driver -->
@@ -240,7 +243,12 @@
 			<artifactId>DataCleaner-monitor-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-referencedata-wizards</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
@@ -327,6 +335,11 @@
 					<artifactId>asm</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>5.0.3</version>
 		</dependency>
 	</dependencies>
 </project>

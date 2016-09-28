@@ -19,8 +19,6 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static com.google.common.net.UrlEscapers.urlPathSegmentEscaper;
-
 import java.net.URISyntaxException;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -33,12 +31,9 @@ import org.datacleaner.util.http.MonitorHttpClient;
  * Note: Some REST controllers do not need the tenant info. Others do.
  */
 public class DataHubUpdateConnection {
-    public final static String CONTEXT_PATH = "/service/cdi/v1";
-    public final static String GOLDEN_RECORDS_PATH = "/goldenrecords";
-    public final static String SOURCE_RECORDS_PATH = "/sources";
-    public final static String UPDATE_PATH = GOLDEN_RECORDS_PATH + "/batch";
-    public final static String DELETE_GR_PATH = GOLDEN_RECORDS_PATH + "/delete/batch";
-    public final static String DELETE_SR_PATH = SOURCE_RECORDS_PATH + "/delete/batch";
+    public final static String CONTEXT_PATH = "/service/v1";
+    public final static String GOLDEN_RECORDS_PATH = "/goldenrecords/batch";
+    public final static String SOURCE_RECORDS_PATH = "/sourcerecords/batch";
 
     private final DataHubConnection _connection;
 
@@ -46,16 +41,12 @@ public class DataHubUpdateConnection {
         _connection = connection;
     }
 
-    public String getUpdateUrl(String tenantName) {
-        return getContextUrl() + UPDATE_PATH + "/" + urlPathSegmentEscaper().escape(tenantName);
+    public String getGoldenRecordBatchUrl() {
+        return getContextUrl() + GOLDEN_RECORDS_PATH;
     }
 
-    public String getDeleteGoldenRecordUrl() {
-        return getContextUrl() + DELETE_GR_PATH;
-    }
-
-    public String getDeleteSourceRecordUrl() {
-        return getContextUrl() + DELETE_SR_PATH;
+    public String getSourceRecordBatchUrl() {
+        return getContextUrl() + SOURCE_RECORDS_PATH;
     }
 
     public MonitorHttpClient getHttpClient() {

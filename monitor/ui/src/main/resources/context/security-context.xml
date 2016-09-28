@@ -37,6 +37,7 @@
 		<intercept-url pattern="/dashboard" access="ROLE_USER" />
 		<intercept-url pattern="/scheduling" access="ROLE_USER" />
 		<intercept-url pattern="/datastores" access="ROLE_USER" />
+		<intercept-url pattern="/referencedata" access="ROLE_USER" />
 		<intercept-url pattern="/repository" access="ROLE_USER" />
 		<intercept-url pattern="/query" access="ROLE_USER" />
 		

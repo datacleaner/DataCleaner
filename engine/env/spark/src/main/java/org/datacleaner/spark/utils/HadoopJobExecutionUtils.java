@@ -37,6 +37,7 @@ import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
@@ -82,6 +83,12 @@ public class HadoopJobExecutionUtils {
         } else if (datastore instanceof JsonDatastore) {
             final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
             final Resource resource = jsonDatastore.getResource();
+            if (!isHdfsResource(resource)) {
+                return false;
+            }
+        } else if (datastore instanceof FixedWidthDatastore) {
+            final FixedWidthDatastore fixedWidthDatastore = (FixedWidthDatastore) datastore;
+            final Resource resource = fixedWidthDatastore.getResource();
             if (!isHdfsResource(resource)) {
                 return false;
             }

@@ -85,7 +85,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
      * Amount of bytes to read for autodetection of encoding, separator and
      * quotes
      */
-    private static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
+    protected static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
 
     /**
      * Max amount of columns to display in the preview table

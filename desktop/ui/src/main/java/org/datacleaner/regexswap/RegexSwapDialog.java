@@ -21,8 +21,6 @@ package org.datacleaner.regexswap;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -36,8 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -48,6 +44,10 @@ import javax.swing.tree.TreePath;
 import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.regexswap.Category;
+import org.datacleaner.reference.regexswap.Regex;
+import org.datacleaner.reference.regexswap.RegexSwapClient;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -59,7 +59,6 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.table.DCTable;
 import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXTree;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
 import org.joda.time.DateTime;
@@ -78,7 +77,6 @@ public class RegexSwapDialog extends AbstractDialog {
     private final DCTable _regexSelectionTable;
     private final DCLabel _regexDescriptionLabel;
     private final JButton _importRegexButton;
-    private final JButton _viewOnlineButton;
     private final TreeCellRenderer _treeRendererDelegate;
     private final MutableReferenceDataCatalog _referenceDataCatalog;
     private Regex _selectedRegex;
@@ -91,16 +89,14 @@ public class RegexSwapDialog extends AbstractDialog {
         _regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");
 
         _importRegexButton = new JButton("Import regex", imageManager.getImageIcon(IconUtils.ACTION_SAVE_DARK));
-        _importRegexButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                RegexSwapStringPattern stringPattern = new RegexSwapStringPattern(_selectedRegex);
-                if (_referenceDataCatalog.containsStringPattern(stringPattern.getName())) {
-                    JOptionPane.showMessageDialog(RegexSwapDialog.this,
-                            "You already have a string pattern with the name '" + stringPattern.getName() + "'.");
-                } else {
-                    _referenceDataCatalog.addStringPattern(stringPattern);
-                    RegexSwapDialog.this.dispose();
-                }
+        _importRegexButton.addActionListener(e -> {
+            RegexSwapStringPattern stringPattern = new RegexSwapStringPattern(_selectedRegex);
+            if (_referenceDataCatalog.containsStringPattern(stringPattern.getName())) {
+                JOptionPane.showMessageDialog(RegexSwapDialog.this,
+                        "You already have a string pattern with the name '" + stringPattern.getName() + "'.");
+            } else {
+                _referenceDataCatalog.addStringPattern(stringPattern);
+                RegexSwapDialog.this.dispose();
             }
         });
         _importRegexButton.setEnabled(false);
@@ -108,31 +104,15 @@ public class RegexSwapDialog extends AbstractDialog {
         _importRegexButton.setFocusPainted(false);
         _importRegexButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        _viewOnlineButton = new JButton("View online", imageManager.getImageIcon(IconUtils.WEBSITE));
-        _viewOnlineButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent event) {
-                OpenBrowserAction actionListener = new OpenBrowserAction(_selectedRegex.createWebsiteUrl());
-                actionListener.actionPerformed(event);
-            }
-
-        });
-        _viewOnlineButton.setEnabled(false);
-        _viewOnlineButton.setOpaque(false);
-        _viewOnlineButton.setFocusPainted(false);
-        _viewOnlineButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-
         _regexSelectionTable = new DCTable();
-        _regexSelectionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedRow = _regexSelectionTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    String regexName = (String) _regexSelectionTable.getValueAt(selectedRow, 0);
-                    Regex regex = _client.getRegexByName(regexName);
-                    onRegexSelected(regex);
-                } else {
-                    onRegexSelected(null);
-                }
+        _regexSelectionTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = _regexSelectionTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                String regexName = (String) _regexSelectionTable.getValueAt(selectedRow, 0);
+                Regex regex = _client.getRegexByName(regexName);
+                onRegexSelected(regex);
+            } else {
+                onRegexSelected(null);
             }
         });
 
@@ -234,7 +214,6 @@ public class RegexSwapDialog extends AbstractDialog {
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(Box.createHorizontalGlue());
         toolBar.add(_importRegexButton);
-        toolBar.add(_viewOnlineButton);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
@@ -249,20 +228,17 @@ public class RegexSwapDialog extends AbstractDialog {
     }
 
     private void updateCategories() {
-        SharedExecutorService.get().submit(new Runnable() {
-            @Override
-            public void run() {
-                DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
-                _client.refreshCategories();
-                Collection<Category> categories = _client.getCategories();
-                for (Category category : categories) {
-                    DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(category);
-                    rootNode.add(categoryNode);
-                }
-
-                TreeModel treeModel = new DefaultTreeModel(rootNode);
-                _categoryTree.setModel(treeModel);
+        SharedExecutorService.get().submit((Runnable) () -> {
+            DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
+            _client.refreshCategories();
+            Collection<Category> categories = _client.getCategories();
+            for (Category category : categories) {
+                DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(category);
+                rootNode.add(categoryNode);
             }
+
+            TreeModel treeModel = new DefaultTreeModel(rootNode);
+            _categoryTree.setModel(treeModel);
         });
     }
 
@@ -288,7 +264,6 @@ public class RegexSwapDialog extends AbstractDialog {
         _selectedRegex = regex;
         if (regex == null) {
             _importRegexButton.setEnabled(false);
-            _viewOnlineButton.setEnabled(false);
             _regexDescriptionLabel.setText("No regex selected");
         } else {
             StringBuilder sb = new StringBuilder();
@@ -301,7 +276,6 @@ public class RegexSwapDialog extends AbstractDialog {
 
             _regexDescriptionLabel.setText(sb.toString());
             _importRegexButton.setEnabled(true);
-            _viewOnlineButton.setEnabled(true);
         }
     }
 

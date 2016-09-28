@@ -28,6 +28,7 @@ import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
@@ -63,6 +64,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
     private final boolean _failOnInconsistencies;
     private final boolean _multilineValues;
     private final int _headerLineNumber;
+    private final List<String> _customColumnNames;
 
     public CsvDatastore(String name, Resource resource) {
         this(name, resource, resource.getName(), CsvConfiguration.DEFAULT_QUOTE_CHAR,
@@ -105,6 +107,13 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
     public CsvDatastore(String name, Resource resource, String filename, Character quoteChar, Character separatorChar,
             Character escapeChar, String encoding, boolean failOnInconsistencies, boolean multilineValues,
             int headerLineNumber) {
+        this(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding, failOnInconsistencies,
+                multilineValues, headerLineNumber, null);
+    }
+
+    public CsvDatastore(String name, Resource resource, String filename, Character quoteChar, Character separatorChar,
+            Character escapeChar, String encoding, boolean failOnInconsistencies, boolean multilineValues,
+            int headerLineNumber, List<String> customColumnNames) {
         super(name);
         _filename = filename;
         if (resource == null) {
@@ -121,6 +130,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
             headerLineNumber = CsvConfiguration.NO_COLUMN_NAME_LINE;
         }
         _headerLineNumber = headerLineNumber;
+        _customColumnNames = customColumnNames;
 
     }
 
@@ -157,6 +167,10 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
         return _resourceRef.get();
     }
 
+    public List<String> getCustomColumnNames() {
+        return _customColumnNames;
+    }
+
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         final UpdateableDataContext dataContext;
@@ -176,9 +190,14 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
         final char quoteChar = _quoteChar == null ? DEFAULT_QUOTE_CHAR : _quoteChar;
         final char escapeChar = _escapeChar == null ? CsvConfiguration.DEFAULT_ESCAPE_CHAR : _escapeChar;
         final String encoding = _encoding == null ? FileHelper.UTF_8_ENCODING : _encoding;
-        final CsvConfiguration configuration = new CsvConfiguration(_headerLineNumber, encoding, separatorChar,
-                quoteChar, escapeChar, _failOnInconsistencies, _multilineValues);
-        return configuration;
+
+        if (_customColumnNames == null || _customColumnNames.size() == 0) {
+            return new CsvConfiguration(_headerLineNumber, encoding, separatorChar, quoteChar, escapeChar,
+                    _failOnInconsistencies, _multilineValues);
+        } else {
+            return new CsvConfiguration(_headerLineNumber, new CustomColumnNamingStrategy(_customColumnNames), encoding,
+                    separatorChar, quoteChar, escapeChar, _failOnInconsistencies, _multilineValues);
+        }
     }
 
     @Override
@@ -195,7 +214,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
     public boolean isFailOnInconsistencies() {
         return _failOnInconsistencies;
     }
-    
+
     public boolean isMultilineValues() {
         return _multilineValues;
     }
@@ -215,6 +234,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
         identifiers.add(_failOnInconsistencies);
         identifiers.add(_multilineValues);
         identifiers.add(_headerLineNumber);
+        identifiers.add(_customColumnNames); 
     }
 
     @Override

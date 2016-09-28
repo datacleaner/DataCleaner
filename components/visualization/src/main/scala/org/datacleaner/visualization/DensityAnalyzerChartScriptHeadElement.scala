@@ -18,6 +18,7 @@ class DensityAnalyzerChartScriptHeadElement(result: IDensityAnalyzerResult, elem
   });
 
   override def toHtml(context: HtmlRenderingContext): String = {
+    val dataId = "data" + elementId;
 
     val annotations = result.getRowAnnotations
 
@@ -39,7 +40,7 @@ class DensityAnalyzerChartScriptHeadElement(result: IDensityAnalyzerResult, elem
 
     return """<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var """ + dataId + """ = [
         """ +
       series.map(entry => {
         val rgbHex = entry._1
@@ -51,9 +52,9 @@ class DensityAnalyzerChartScriptHeadElement(result: IDensityAnalyzerResult, elem
       }).mkString(",") + """
     ];
 
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_scatter_chart('""" + elementId + """', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_scatter_chart('""" + elementId + """', """ + dataId + """, 2)
       });
     });
     //]]>

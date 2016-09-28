@@ -69,6 +69,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     private final AnalysisJobBuilderWindow _window;
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
+    public boolean _saved; 
 
     @Inject
     protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
@@ -81,6 +82,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
+        _saved = false; 
         final String actionCommand = event.getActionCommand();
 
         _window.setStatusLabelNotice();
@@ -228,5 +230,10 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
         _window.setStatusLabelNotice();
         _window.setStatusLabelText("Saved job to file " + file.getName().getBaseName());
+        _saved = true;
+    } 
+
+    public boolean isSaved() {
+        return _saved;
     }
 }

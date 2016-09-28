@@ -2,49 +2,49 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
-	
+
 	<!-- Spring Security filter -->
-    <filter>
-  		<filter-name>springSecurityFilterChain</filter-name>
-  		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- GWT no cache filter -->
-    <filter>
-  		<filter-name>gwtCacheControlFilter</filter-name>
-  		<filter-class>org.datacleaner.monitor.server.GwtCacheControlFilter</filter-class>
+	<filter>
+		<filter-name>gwtCacheControlFilter</filter-name>
+		<filter-class>org.datacleaner.monitor.server.GwtCacheControlFilter</filter-class>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>gwtCacheControlFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- Ensure access to only one's own tenant in service URL -->
 	<filter>
 		<filter-name>tenantCheckFilter</filter-name>
 		<filter-class>org.datacleaner.monitor.server.security.TenantCheckFilter</filter-class>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>tenantCheckFilter</filter-name>
 		<servlet-name>repository-browser</servlet-name>
 	</filter-mapping>
 
-    <!-- REST API allows CORS -->
-    <filter>
-        <filter-name>cors</filter-name>
-        <filter-class>org.datacleaner.documentation.SimpleCORSFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>cors</filter-name>
-        <url-pattern>/repository/*</url-pattern>
-    </filter-mapping>
+	<!-- REST API allows CORS -->
+	<filter>
+		<filter-name>cors</filter-name>
+		<filter-class>org.datacleaner.documentation.SimpleCORSFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>cors</filter-name>
+		<url-pattern>/repository/*</url-pattern>
+	</filter-mapping>
 
 	<!-- JSF listeners -->
 	<listener>
@@ -64,7 +64,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:context/application-context.xml</param-value>
 	</context-param>
-	
+
 	<!-- Pretty faces URL rewriting -->
 	<listener>
 		<listener-class>org.ocpsoft.rewrite.servlet.impl.RewriteServletRequestListener</listener-class>
@@ -124,7 +124,7 @@
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/repository/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- Image servlet (for plugins) -->
 	<servlet>
 		<servlet-name>ImageServlet</servlet-name>
@@ -134,7 +134,7 @@
 		<servlet-name>ImageServlet</servlet-name>
 		<url-pattern>/util/img/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- File upload servlet (for plugins) -->
 	<servlet>
 		<servlet-name>FileUploadServlet</servlet-name>
@@ -167,6 +167,16 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>ReferenceDataService</servlet-name>
+		<servlet-class>org.datacleaner.monitor.server.ReferenceDataServiceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ReferenceDataService</servlet-name>
+		<url-pattern>/gwtrpc/referenceDataService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>WizardService</servlet-name>
 		<servlet-class>org.datacleaner.monitor.server.WizardServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
@@ -175,7 +185,7 @@
 		<servlet-name>WizardService</servlet-name>
 		<url-pattern>/gwtrpc/wizardService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>DescriptorService</servlet-name>
 		<servlet-class>org.datacleaner.monitor.server.DescriptorServiceServlet</servlet-class>
@@ -185,7 +195,7 @@
 		<servlet-name>DescriptorService</servlet-name>
 		<url-pattern>/gwtrpc/descriptorService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>DatastoreService</servlet-name>
 		<servlet-class>org.datacleaner.monitor.server.DatastoreServiceServlet</servlet-class>

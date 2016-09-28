@@ -44,11 +44,13 @@ import org.datacleaner.api.Component;
 import org.datacleaner.api.HasDistributionAdvice;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Renderable;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.connection.OutputDataStreamDatastore;
+import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -322,9 +324,50 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     public B setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty, Object value) {
         final boolean changed = setConfiguredPropertyIfChanged(configuredProperty, value);
         if (changed) {
+            if (configuredProperty.isInputColumn()) {
+                registerListenerIfLinkedToTransformer(configuredProperty, value);
+            }
+
             onConfigurationChanged();
         }
         return (B) this;
+    }
+
+    protected void registerListenerIfLinkedToTransformer(ConfiguredPropertyDescriptor configuredProperty,
+            Object value) {
+        // Register change listener on all transformers providing values used for the input column.
+        getTransformedInputColumns(value).forEach(transformedInputColumn -> getAnalysisJobBuilder()
+                .getTransformerComponentBuilders().stream().filter(transformer -> (isProvidingColumn(
+                        transformedInputColumn, transformer))).forEach(transformer -> transformer.addChangeListener(
+                                new ComponentBuilderTransformerChangeListener(this, configuredProperty))));
+    }
+
+    protected boolean isProvidingColumn(final TransformedInputColumn<?> transformedInputColumn,
+            TransformerComponentBuilder<?> transformer) {
+        for (Object outputColumn : transformer.getOutputColumns()) {
+            if (outputColumn.equals(transformedInputColumn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<TransformedInputColumn<?>> getTransformedInputColumns(Object value) {
+        final List<TransformedInputColumn<?>> transformedInputColumns = new ArrayList<>();
+
+        if (value != null) {
+            if (value.getClass().isArray()) {
+                for (int i = 0; i < Array.getLength(value); i++) {
+                    final Object valuePart = Array.get(value, i);
+                    if (valuePart != null && ReflectionUtils.is(valuePart.getClass(), TransformedInputColumn.class)) {
+                        transformedInputColumns.add((TransformedInputColumn<?>) valuePart);
+                    }
+                }
+            } else if (ReflectionUtils.is(value.getClass(), TransformedInputColumn.class)) {
+                transformedInputColumns.add((TransformedInputColumn<?>) value);
+            }
+        }
+        return transformedInputColumns;
     }
 
     /**
@@ -383,8 +426,60 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             }
         }
 
+        synchronizeDependentProperties(configuredProperty, value, currentValue);
+
         configuredProperty.setValue(_configurableBean, value);
         return true;
+    }
+
+    private void synchronizeDependentProperties(final ConfiguredPropertyDescriptor property,
+            final Object newValue, final Object currentValue) {
+        if (currentValue != null) {
+            getDescriptor().getConfiguredPropertiesByAnnotation(MappedProperty.class).stream().filter(
+                    dependentProperty -> property.getName().equals(dependentProperty.getAnnotation(MappedProperty.class)
+                            .value())).forEach(dependentProperty -> {
+                                // In case the new value no longer contains everything in the original value,
+                                // the values in the dependent property referring to the removed values need
+                                // to be removed too.
+                                final Object dependentValue = dependentProperty.getValue(_configurableBean);
+
+                                if (dependentValue != null) {
+                                    // First build a list containing value and references tuples.
+                                    final Map<Integer, Object> originalMappings = new HashMap<>();
+
+                                    final List<Object> synchronizedDependents = new ArrayList<>();
+
+                                    if (currentValue.getClass().isArray()) {
+                                        for (int i = 0; i < Array.getLength(currentValue); i++) {
+                                            originalMappings.put(Array.get(currentValue, i).hashCode(), Array.get(
+                                                    dependentValue, i));
+                                        }
+
+                                        for (int i = 0; i < Array.getLength(newValue); i++) {
+                                            synchronizedDependents.add(originalMappings.get(Array.get(newValue, i)
+                                                    .hashCode()));
+                                        }
+
+                                        dependentProperty.setValue(_configurableBean, getArray(dependentProperty
+                                                .getBaseType(), synchronizedDependents));
+                                    } else {
+                                        if (newValue == null) {
+                                            dependentProperty.setValue(_configurableBean, null);
+                                        }
+                                    }
+                                }
+                            });
+        }
+    }
+
+    private static <E> E[] getArray(Class<E> clazz, List<?> baseList) {
+        final E[] result = (E[]) Array.newInstance(clazz, baseList.size());
+
+        for (int i = 0; i < baseList.size(); i++) {
+            Array.set(result, i, (E) baseList.get(i));
+        }
+
+        return (E[]) result;
     }
 
     @Override
@@ -581,6 +676,10 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             } else {
                 if (inputColumns.getClass().isArray()) {
                     inputColumns = CollectionUtils.arrayRemove(inputColumns, inputColumn);
+
+                    if (!propertyDescriptor.isArray() && Array.getLength(inputColumns) == 0) {
+                        inputColumns = null;
+                    }
                 }
             }
             setConfiguredProperty(propertyDescriptor, inputColumns);

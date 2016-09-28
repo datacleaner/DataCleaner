@@ -79,6 +79,7 @@ public final class FileFilters {
 
     public static final ExtensionFilter JAR = new ExtensionFilter("Java Archive (.jar)", ".jar");
     public static final ExtensionFilter HTML = new ExtensionFilter("HTML web page (.html)", ".html");
+    public static final ExtensionFilter EBC = new ExtensionFilter("EBCDIC (.ebc)", ".ebc");
 
     public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)",
             ".analysis.xml");

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
 import org.apache.metamodel.query.FilterItem;
@@ -57,11 +58,11 @@ import org.datacleaner.util.ReflectionUtils;
 @Distributed(true)
 public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Category>, HasLabelAdvice {
 
-    public static enum Category {
-        TRUE, FALSE;
+    public enum Category {
+        TRUE, FALSE
     }
 
-    public static enum Operator implements HasName {
+    public enum Operator implements HasName {
         LESS_THAN("Less than", OperatorType.LESS_THAN),
 
         LESS_THAN_OR_EQUAL("Less than or equal", OperatorType.LESS_THAN_OR_EQUAL),
@@ -69,6 +70,8 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         EQUALS_TO("Equal", OperatorType.EQUALS_TO),
 
         LIKE("Like", OperatorType.LIKE),
+        
+        IN("In", OperatorType.IN),
 
         DIFFERENT_FROM("Not equal", OperatorType.DIFFERENT_FROM),
 
@@ -79,7 +82,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         private final OperatorType _operatorType;
         private final String _name;
 
-        private Operator(String name, OperatorType operatorType) {
+        Operator(String name, OperatorType operatorType) {
             _name = name;
             _operatorType = operatorType;
         }
@@ -175,18 +178,31 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
 
         if (compareColumn != null) {
             sb.append(compareColumn.getName());
-        } else if (compareValue != null) {
-            final Object operand = toOperand(compareValue);
-            if (operand instanceof String) {
-                sb.append('\'');
-                sb.append(operand);
-                sb.append('\'');
-            } else {
-                sb.append(operand);
-            }
+        } else {
+            injectCompareValueLabel(sb);
         }
 
         return sb.toString();
+    }
+    
+    private void injectCompareValueLabel(StringBuilder labelPart) {
+        if (compareValue == null) {
+            return;
+        }
+        
+        final Object operand = toOperand(compareValue);
+
+        if (operand instanceof String[] && operator == Operator.IN) {
+            labelPart.append("('");
+            labelPart.append(StringUtils.join((String[])operand, "','"));
+            labelPart.append("')");
+        } else if (operand instanceof String) {
+            labelPart.append('\'');
+            labelPart.append(operand);
+            labelPart.append('\'');
+        } else {
+            labelPart.append(operand);
+        }
     }
 
     private Object toOperand(Object value) {
@@ -202,10 +218,18 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         } else if (ReflectionUtils.isNumber(dataType)) {
             return ConvertToNumberTransformer.transformValue(value);
         } else if (ReflectionUtils.isString(dataType)) {
-            return ConvertToStringTransformer.transformValue(value);
+            if (operator == Operator.IN && value instanceof String) {
+                return csvStringToArray((String) value);
+            } else {
+                return ConvertToStringTransformer.transformValue(value);
+            }
         } else {
             return value;
         }
+    }
+    
+    private String[] csvStringToArray(String csvString) {
+        return csvString.trim().replaceAll(" *, *", ",").split(",");
     }
 
     @Override

@@ -42,7 +42,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SchedulingService extends RemoteService {
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) throws DCSecurityException;
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) 
+            throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)

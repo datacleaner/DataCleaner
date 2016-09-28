@@ -142,7 +142,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
 
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
-            final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
+            final List<ScheduleDefinition> schedules = service.getSchedules(tenant, true);
 
             // sort to make it deterministic
             Collections.sort(schedules);

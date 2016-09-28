@@ -35,7 +35,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface SchedulingServiceAsync {
 
-    void getSchedules(TenantIdentifier tenant, AsyncCallback<List<ScheduleDefinition>> callback);
+    void getSchedules(TenantIdentifier tenant, boolean loadProperties, 
+            AsyncCallback<List<ScheduleDefinition>> callback);
 
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition,
             AsyncCallback<ScheduleDefinition> callback);

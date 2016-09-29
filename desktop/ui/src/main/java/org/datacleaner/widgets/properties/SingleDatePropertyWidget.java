@@ -19,7 +19,8 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -45,11 +46,15 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         _valueLabel = new JLabel(getCurrentValue().toString());
         _changeButton = new JButton("Change");
         _changeButton.addActionListener(e -> _settingDialog.setVisible(true));
+        final Dimension buttonSize = new Dimension(100, 25);
+        _changeButton.setMinimumSize(buttonSize);
+        _changeButton.setPreferredSize(buttonSize);
+        _changeButton.setMaximumSize(buttonSize);
 
         final DCPanel panel = new DCPanel();
-        panel.setLayout(new GridLayout());
-        panel.add(_valueLabel);
-        panel.add(_changeButton);
+        panel.setLayout(new BorderLayout());
+        panel.add(_valueLabel, BorderLayout.WEST);
+        panel.add(_changeButton, BorderLayout.EAST);
         add(panel);
         
         setValue(getCurrentValue());

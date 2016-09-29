@@ -27,14 +27,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class LicenceAndEditionStatusLabelTest {
-    LicenceAndEditionStatusLabel _label;
+public class CommunityEditionStatusLabelTest {
+    CommunityEditionStatusLabel _label;
 
     @Before
     public void setup() {
         RightInformationPanel rightInformationPanel = mock(RightInformationPanel.class);
 
-        _label = new LicenceAndEditionStatusLabel(rightInformationPanel);
+        _label = new CommunityEditionStatusLabel(rightInformationPanel);
     }
 
     @Test

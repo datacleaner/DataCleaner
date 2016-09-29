@@ -23,47 +23,45 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.datacleaner.Version;
-import org.datacleaner.panels.CommunityEditionInformationPanel;
 import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 
-/**
- * Label that shows the current edition of DataCleaner
+/*
+ * Class that can takes any panel and includes to another panel in other to given it the toogle effect. 
  */
-public class LicenceAndEditionStatusLabel extends JLabel {
+public class PlugableRightPanelLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;
-    private static final String PANEL_NAME = "License and Edition";
-
     private final RightInformationPanel _rightPanel;
+    private final String _labelName;
 
-    public LicenceAndEditionStatusLabel(RightInformationPanel rightPanel) {
-        super(Version.getEdition());
-        _rightPanel = rightPanel;
+    public PlugableRightPanelLabel(RightInformationPanel rightPanel, PlugabblePanel pluggedPanel) {
+        super(pluggedPanel.getName());
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        if (Version.isCommunityEdition()) {
-            final CommunityEditionInformationPanel communityEditionInformationPanel = new CommunityEditionInformationPanel();
-            setIcon(ImageManager.get().getImageIcon("images/editions/community.png", IconUtils.ICON_SIZE_SMALL));
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            _rightPanel.addTabToPane(PANEL_NAME, communityEditionInformationPanel);
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    onMouseClick();
-                }
-            });
-        } else {
-            setIcon(ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
-        }
+        _labelName = pluggedPanel.getName();
+        _rightPanel = rightPanel;
+        _rightPanel.addTabToPane(_labelName, pluggedPanel);
+
+        final ImageIcon imageIcon = ImageManager.get().getImageIcon(pluggedPanel.getImagePath(),
+                IconUtils.ICON_SIZE_SMALL);
+        setIcon(imageIcon);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onMouseClick();
+            }
+        });
     }
 
-    protected void onMouseClick() {
-        _rightPanel.toggleWindow(PANEL_NAME);
+    private void onMouseClick() {
+        _rightPanel.toggleWindow(_labelName);
     }
+
 }

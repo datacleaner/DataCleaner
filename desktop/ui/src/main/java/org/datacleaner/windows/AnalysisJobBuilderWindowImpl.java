@@ -55,6 +55,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -102,12 +103,14 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
+import org.datacleaner.widgets.CommunityEditionStatusLabel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
-import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.NewsChannelStatusLabel;
+import org.datacleaner.widgets.PlugabblePanel;
+import org.datacleaner.widgets.PlugableRightPanelLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -255,6 +258,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
+    
+    public static final List<Func<AnalysisJobBuilderWindowImpl, JComponent>> PLUGGABLE_LABELS_COMPONENTS = new ArrayList<>(0);
 
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
@@ -765,6 +770,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
+        
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
@@ -773,9 +779,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
-
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
-        statusBar.add(statusLabel);
+        
+        if (Version.isCommunityEdition()){
+            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
+            statusBar.add(statusLabel);
+            
+        }
+        for (Func<AnalysisJobBuilderWindowImpl, JComponent> pluggableComponent : PLUGGABLE_LABELS_COMPONENTS) {
+            final JComponent component = pluggableComponent.eval(this);
+            if (component instanceof PlugabblePanel) {
+                final PlugabblePanel panel = (PlugabblePanel) component;
+                final PlugableRightPanelLabel plugableRightPanelLabel = new PlugableRightPanelLabel(
+                        rightInformationPanel, panel);
+                statusBar.add(plugableRightPanelLabel);
+                statusBar.add(Box.createHorizontalStrut(20));
+            }
+        }
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());

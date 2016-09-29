@@ -164,6 +164,10 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     protected Date convertFromString(final String value) {
+        if (value == null) {
+            return null;
+        }
+        
         if ("now()".equalsIgnoreCase(value)) {
             return new NowDate();
         }

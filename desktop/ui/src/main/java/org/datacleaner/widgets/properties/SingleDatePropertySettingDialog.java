@@ -47,6 +47,8 @@ import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXDatePicker;
 
 public class SingleDatePropertySettingDialog extends AbstractDialog implements ActionListener {
+    private static final long serialVersionUID = 1L;
+    
     private static final int DIALOG_WIDTH = 350;
     private static final int DIALOG_HEIGHT = 300;
 

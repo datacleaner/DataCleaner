@@ -34,9 +34,9 @@ public class ShiftedToday extends Date implements ExpressionDate {
 
     public ShiftedToday(String input) {
         _input = validateInput(input);
-        int[] counts = parseCounts();
+        final int[] counts = parseCounts();
 
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

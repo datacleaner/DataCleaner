@@ -21,6 +21,10 @@ package org.datacleaner.widgets;
 
 import org.datacleaner.panels.DCPanel;
 
+/**
+ * DC panel where we can set the image path of the icon that should be used in relation with this panel
+ * {@link org.datacleaner.widgets.PlugableRightPanelLabel}
+ */
 public abstract class PlugabblePanel extends DCPanel {
     
     private static final long serialVersionUID = 1L;

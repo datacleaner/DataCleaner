@@ -31,6 +31,9 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 
+/*
+ * Class that can takes any panel and includes to another panel in other to given it the toogle effect. 
+ */
 public class PlugableRightPanelLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;

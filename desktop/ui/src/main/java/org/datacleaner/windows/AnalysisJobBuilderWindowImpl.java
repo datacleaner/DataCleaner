@@ -259,7 +259,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
     
-    public static final List<Func<AnalysisJobBuilderWindowImpl, JComponent>> PLUGGABLE_LABELS_COMPONENTS = new ArrayList<>(0);
+    public static final List<Func<AnalysisJobBuilderWindow, JComponent>> PLUGGABLE_LABELS_COMPONENTS = new ArrayList<>(0);
 
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
@@ -785,7 +785,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             statusBar.add(statusLabel);
             
         }
-        for (Func<AnalysisJobBuilderWindowImpl, JComponent> pluggableComponent : PLUGGABLE_LABELS_COMPONENTS) {
+        for (Func<AnalysisJobBuilderWindow, JComponent> pluggableComponent : PLUGGABLE_LABELS_COMPONENTS) {
             final JComponent component = pluggableComponent.eval(this);
             if (component instanceof PlugabblePanel) {
                 final PlugabblePanel panel = (PlugabblePanel) component;

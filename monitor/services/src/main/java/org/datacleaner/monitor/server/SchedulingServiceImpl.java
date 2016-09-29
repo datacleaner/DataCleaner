@@ -140,7 +140,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     /**
      * @param repository
      * @param tenantContextFactory
-     * @param schedulingServiceConfiguration
      */
     public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
         this(repository, tenantContextFactory, createDefaultScheduler(), new SchedulingServiceConfiguration());
@@ -192,7 +191,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
                 final String tenantId = tenant.getId();
 
-                final List<ScheduleDefinition> schedules = getSchedules(tenant);
+                final List<ScheduleDefinition> schedules = getSchedules(tenant, true);
                 logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
 
                 for (ScheduleDefinition schedule : schedules) {
@@ -259,14 +258,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final List<JobIdentifier> jobs = context.getJobs();
         final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobs.size());
         for (JobIdentifier job : jobs) {
             try {
-                ScheduleDefinition schedule = getSchedule(tenant, job);
+                final ScheduleDefinition schedule;
+                
+                if (loadProperties) {
+                    schedule = getSchedule(tenant, job);
+                } else {
+                    schedule = getScheduleWithoutProperties(tenant, job);
+                }
+                
                 schedules.add(schedule);
             } catch (Exception e) {
                 logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + job.getName()
@@ -278,11 +284,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        return getSchedule(tenant, jobIdentifier, null);
+        return getScheduleWithProperties(tenant, jobIdentifier, null);
     }
 
-    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
-            final Map<String, String> overrideProperties) {
+    private ScheduleDefinition getScheduleWithProperties(final TenantIdentifier tenant, 
+            final JobIdentifier jobIdentifier, final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -322,7 +328,28 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         return schedule;
     }
+    
+    private ScheduleDefinition getScheduleWithoutProperties(final TenantIdentifier tenant, 
+            final JobIdentifier jobIdentifier) {
+        final JobContext jobContext = getJobContext(tenant, jobIdentifier);
+        final String groupName = jobContext.getGroupName();
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
+        
+        return schedule;
+    }
+    
+    private JobContext getJobContext(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
+        final String jobName = jobIdentifier.getName();
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+        final JobContext jobContext = context.getJob(jobIdentifier);
 
+        if (jobContext == null) {
+            throw new IllegalArgumentException("No such job: " + jobName);
+        }
+        
+        return jobContext;
+    }
+    
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
             final ScheduleDefinition scheduleDefinition) {
@@ -545,7 +572,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             Map<String, String> overrideProperties, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
 
-        final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
+        final ScheduleDefinition schedule = getScheduleWithProperties(tenant, job, overrideProperties);
 
         final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());

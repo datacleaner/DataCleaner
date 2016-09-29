@@ -45,11 +45,11 @@
 		<div id="SchedulingPage" class="container">
 			<h:panelGroup rendered="#{param['job_upload'] == 'Success'}">
 				<div class="alert alert-success">
-					File upload was successfull: #{param['job_filename'].replace("%2C", ", ")} 
+					File upload was successful: #{param['job_filename'].replace("%2C", ", ")} 
 				</div>
 			</h:panelGroup>
 			<h:panelGroup rendered="#{param['job_upload'] != null and param['job_upload'] != 'Success'}">
-				<div class="alert alert-danger">File upload was not successfull. </div>
+				<div class="alert alert-danger">File upload was not successful. </div>
 			</h:panelGroup>
 		
 			<c:if test="#{user.scheduleEditor}">

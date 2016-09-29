@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Metric;
 
 /**
  * A very simple AnalyzerResult that simply holds a list of values
@@ -64,5 +65,10 @@ public class ListResult<E> implements AnalyzerResult {
 			sb.append(value);
 		}
 		return sb.toString();
+	}
+
+	@Metric(order = 1, value = "Row count")
+	public int getTotalRowCount() {
+		return _values.size();
 	}
 }

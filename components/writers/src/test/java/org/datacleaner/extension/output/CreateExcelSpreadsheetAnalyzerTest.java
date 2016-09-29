@@ -375,5 +375,5 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             assertEquals("CustomNameForIntegerColumn", columnNames[1]);
         }
     }
-
+    
 }

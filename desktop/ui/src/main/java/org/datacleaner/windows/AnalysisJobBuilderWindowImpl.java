@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -55,7 +56,6 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -259,8 +259,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
     
-    public static final List<Func<AnalysisJobBuilderWindow, JComponent>> PLUGGABLE_LABELS_COMPONENTS = new ArrayList<>(0);
-
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
@@ -769,7 +767,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
-
         
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
@@ -780,15 +777,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
         
-        if (Version.isCommunityEdition()){
+        if (Version.isCommunityEdition()) {
             final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
             statusBar.add(statusLabel);
-            
-        }
-        for (Func<AnalysisJobBuilderWindow, JComponent> pluggableComponent : PLUGGABLE_LABELS_COMPONENTS) {
-            final JComponent component = pluggableComponent.eval(this);
-            if (component instanceof PlugabblePanel) {
-                final PlugabblePanel panel = (PlugabblePanel) component;
+            statusBar.add(Box.createHorizontalStrut(20));
+        } else {
+            final ServiceLoader<PlugabblePanel> pluggablePanelsLoaders = ServiceLoader.load(PlugabblePanel.class);
+            for (PlugabblePanel panel : pluggablePanelsLoaders) {
                 final PlugableRightPanelLabel plugableRightPanelLabel = new PlugableRightPanelLabel(
                         rightInformationPanel, panel);
                 statusBar.add(plugableRightPanelLabel);

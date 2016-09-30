@@ -32,6 +32,7 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 
 public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
+    private static final String NOT_SET = "Not set! Please, select some date."; 
 
     private final SingleDatePropertySettingDialog _settingDialog;
     private final JLabel _valueLabel;
@@ -43,7 +44,8 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         super(componentBuilder, propertyDescriptor);
         
         _settingDialog = new SingleDatePropertySettingDialog(this);
-        _valueLabel = new JLabel(getCurrentValue().toString());
+        final Date currentValue = getCurrentValue();
+        _valueLabel = new JLabel(currentValue == null ? NOT_SET : currentValue.toString());
         _changeButton = new JButton("Change");
         _changeButton.addActionListener(e -> _settingDialog.setVisible(true));
         final Dimension buttonSize = new Dimension(100, 25);
@@ -56,8 +58,6 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         panel.add(_valueLabel, BorderLayout.WEST);
         panel.add(_changeButton, BorderLayout.EAST);
         add(panel);
-        
-        setValue(getCurrentValue());
     }
     
     public void updateValue(String newValue) {

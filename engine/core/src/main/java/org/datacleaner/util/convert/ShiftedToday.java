@@ -62,7 +62,7 @@ public class ShiftedToday extends Date implements ExpressionDate {
     }
 
     private int[] parseCounts() {
-        final String regexp = "^.*([-+]?[0-9]+)[dD] *([-+]?[0-9]+)[mM] *([-+]?[0-9]+)[yY].*$";
+        final String regexp = "^.*?([-+]?[0-9]+)[dD] *([-+]?[0-9]+)[mM] *([-+]?[0-9]+)[yY].*$";
         final Pattern pattern = Pattern.compile(regexp);
         final Matcher matcher = pattern.matcher(_input);
 

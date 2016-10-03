@@ -27,6 +27,26 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ShiftedTodayTest {
+    @Test
+    public void testOutput() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            Date x = getTodayPlus(i, 0, 0);
+            x.setTime(x.getTime() + i * 10000);
+            System.out.println(x.toString());
+        }
+    }
+    
+    @Test
+    public void testMonthChangeByDays() throws Exception {
+        ShiftedToday shiftedToday = new ShiftedToday("42d0m0y");
+        assertEquals(getTodayPlus(42, 0, 0), shiftedToday);
+    }
+    
+    @Test
+    public void testNegativeShifts() throws Exception {
+        ShiftedToday shiftedToday = new ShiftedToday("-3d-2m-1y");
+        assertEquals(getTodayPlus(-3, -2, -1), shiftedToday);
+    } 
     
     @Test(expected=RuntimeException.class)
     public void testEmpty() throws Exception {

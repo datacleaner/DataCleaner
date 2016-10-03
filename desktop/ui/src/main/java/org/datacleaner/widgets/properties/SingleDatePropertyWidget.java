@@ -30,10 +30,9 @@ import javax.swing.JLabel;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.convert.TodayDate;
 
 public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
-    private static final String NOT_SET = "Not set! Please, select some date."; 
-
     private final SingleDatePropertySettingDialog _settingDialog;
     private final JLabel _valueLabel;
     private final JButton _changeButton;
@@ -44,15 +43,42 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         super(componentBuilder, propertyDescriptor);
         
         _settingDialog = new SingleDatePropertySettingDialog(this);
-        final Date currentValue = getCurrentValue();
-        _valueLabel = new JLabel(currentValue == null ? NOT_SET : currentValue.toString());
-        _changeButton = new JButton("Change");
-        _changeButton.addActionListener(e -> _settingDialog.setVisible(true));
+        _changeButton = createChangeButton();
+        _valueLabel = createValueLabel();
+        createContent();
+    }
+    
+    private JLabel createValueLabel() {
+        final JLabel valueLabel = new JLabel();
+        final Date currentValue;
+        final String labelPrefix;
+        
+        if (getCurrentValue() == null) {
+            currentValue = new TodayDate();
+            labelPrefix = SingleDatePropertySettingDialog.LABEL_TODAY;
+        } else {
+            currentValue = getCurrentValue();
+            labelPrefix = SingleDatePropertySettingDialog.LABEL_PARTICULAR;
+        }
+        
+        setValue(currentValue);
+        valueLabel.setText(_settingDialog.getFormattedString(labelPrefix, currentValue));
+        
+        return valueLabel;
+    }
+    
+    private JButton createChangeButton() {
+        final JButton changeButton = new JButton("Select");
+        changeButton.addActionListener(e -> _settingDialog.setVisible(true));
         final Dimension buttonSize = new Dimension(100, 25);
-        _changeButton.setMinimumSize(buttonSize);
-        _changeButton.setPreferredSize(buttonSize);
-        _changeButton.setMaximumSize(buttonSize);
-
+        changeButton.setMinimumSize(buttonSize);
+        changeButton.setPreferredSize(buttonSize);
+        changeButton.setMaximumSize(buttonSize);
+        
+        return changeButton;
+    }
+    
+    private void createContent() {
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
         panel.add(_valueLabel, BorderLayout.WEST);

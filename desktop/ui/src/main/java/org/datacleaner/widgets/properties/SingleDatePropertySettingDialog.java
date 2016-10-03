@@ -20,15 +20,19 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
@@ -47,8 +51,8 @@ import org.jdesktop.swingx.JXDatePicker;
 public class SingleDatePropertySettingDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
     
-    private static final int DIALOG_WIDTH = 350;
-    private static final int DIALOG_HEIGHT = 300;
+    private static final int DIALOG_WIDTH = 300;
+    private static final int DIALOG_HEIGHT = 380;
 
     private static final String TITLE = "Set date value";
     private static final String IMAGE_PATH = "images/window/banner-tabledef.png";
@@ -186,23 +190,42 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     }
     
     private DCPanel createFormPanel() {
+        final JPanel staticPanel = createStaticPanel();
+        final JPanel dynamicPanel = createDynamicPanel();
         final DCPanel formPanel = new DCPanel();
-        int row = 0;
-        WidgetUtils.addToGridBag(_dateCustomRadio, formPanel, 0, row);
-        WidgetUtils.addToGridBag(_datePicker, formPanel, 1, row);
-        row++;
-        WidgetUtils.addToGridBag(_todayPlusRadio, formPanel, 0, row);
-        WidgetUtils.addToGridBag(_todayPlusTextField, formPanel, 1, row);
-        row++;
-        WidgetUtils.addToGridBag(_dateNowRadio, formPanel, 0, row);
-        row++;
-        WidgetUtils.addToGridBag(_dateTodayRadio, formPanel, 0, row);
-        row++;
-        WidgetUtils.addToGridBag(_dateYesterdayRadio, formPanel, 0, row);
-        
+        WidgetUtils.addToGridBag(staticPanel, formPanel, 0, 1);
+        WidgetUtils.addToGridBag(dynamicPanel, formPanel, 0, 2);
+
         return formPanel;
     }
     
+    private JPanel createStaticPanel() {
+        final JPanel panel = new JPanel(new GridLayout(0, 1));
+        final Border border = BorderFactory.createTitledBorder("Static");
+        panel.setBorder(border);
+        WidgetUtils.addToGridBag(_dateCustomRadio, panel, 0, 0);
+        WidgetUtils.addToGridBag(_datePicker, panel, 1, 0);
+        
+        return panel;
+    }
+    
+    private JPanel createDynamicPanel() {
+        final JPanel panel = new JPanel(new GridLayout(0, 1));
+        final Border border = BorderFactory.createTitledBorder("Dynamic");
+        panel.setBorder(border);
+        int row = 0;
+        WidgetUtils.addToGridBag(_todayPlusRadio, panel, 0, row);
+        WidgetUtils.addToGridBag(_todayPlusTextField, panel, 1, row);
+        row++;
+        WidgetUtils.addToGridBag(_dateNowRadio, panel, 0, row);
+        row++;
+        WidgetUtils.addToGridBag(_dateTodayRadio, panel, 0, row);
+        row++;
+        WidgetUtils.addToGridBag(_dateYesterdayRadio, panel, 0, row);
+        
+        return panel;
+    }
+        
     private void createButtonGroup() {
         final ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(_dateCustomRadio);

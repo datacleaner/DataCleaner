@@ -265,6 +265,12 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
                 return new DataSourceDatastoreConnection(dataSource, getTableTypes(), _catalogName, this);
             } else {
                 final Connection connection = createConnection();
+                try {
+                    connection.setAutoCommit(false);
+                } catch (SQLException e) {
+                    logger.error("Could not set autocommit false '{}'", _datasourceJndiUrl);
+                    throw new IllegalStateException(e);
+                }
                 final UpdateableDataContext dataContext = new JdbcDataContext(connection, getTableTypes(), _catalogName);
                 return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
             }

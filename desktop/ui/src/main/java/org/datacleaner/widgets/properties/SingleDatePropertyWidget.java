@@ -50,19 +50,10 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
     
     private JLabel createValueLabel() {
         final JLabel valueLabel = new JLabel();
-        final Date currentValue;
-        final String labelPrefix;
-        
-        if (getCurrentValue() == null) {
-            currentValue = new TodayDate();
-            labelPrefix = SingleDatePropertySettingDialog.LABEL_TODAY;
-        } else {
-            currentValue = getCurrentValue();
-            labelPrefix = SingleDatePropertySettingDialog.LABEL_PARTICULAR;
-        }
-        
+        final Date currentValue = getCurrentValue() == null ? new TodayDate() : getCurrentValue();
         setValue(currentValue);
-        valueLabel.setText(_settingDialog.getFormattedString(labelPrefix, currentValue));
+        fireValueChanged();
+        valueLabel.setText(_settingDialog.getFormattedString());
         
         return valueLabel;
     }

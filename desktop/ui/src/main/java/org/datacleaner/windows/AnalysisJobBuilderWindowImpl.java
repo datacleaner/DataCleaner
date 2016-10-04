@@ -108,9 +108,9 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
+import org.datacleaner.widgets.InformationPanelDescriptor;
 import org.datacleaner.widgets.NewsChannelStatusLabel;
-import org.datacleaner.widgets.PlugabblePanel;
-import org.datacleaner.widgets.PlugableRightPanelLabel;
+import org.datacleaner.widgets.InformationPanelLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -782,10 +782,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             statusBar.add(statusLabel);
             statusBar.add(Box.createHorizontalStrut(20));
         } else {
-            final ServiceLoader<PlugabblePanel> pluggablePanelsLoaders = ServiceLoader.load(PlugabblePanel.class);
-            for (PlugabblePanel panel : pluggablePanelsLoaders) {
-                final PlugableRightPanelLabel plugableRightPanelLabel = new PlugableRightPanelLabel(
-                        rightInformationPanel, panel);
+            final ServiceLoader<InformationPanelDescriptor> panelsLoaders = ServiceLoader.load(InformationPanelDescriptor.class);
+            for (InformationPanelDescriptor panel : panelsLoaders) {
+                final InformationPanelLabel plugableRightPanelLabel = new InformationPanelLabel(rightInformationPanel, panel);
                 statusBar.add(plugableRightPanelLabel);
                 statusBar.add(Box.createHorizontalStrut(20));
             }

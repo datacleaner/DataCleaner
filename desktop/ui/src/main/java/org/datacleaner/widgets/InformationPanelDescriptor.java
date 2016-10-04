@@ -19,15 +19,14 @@
  */
 package org.datacleaner.widgets;
 
-import org.datacleaner.panels.DCPanel;
+import javax.swing.JComponent;
 
-/**
- * DC panel where we can set the image path of the icon that should be used in relation with this panel
- * {@link org.datacleaner.widgets.PlugableRightPanelLabel}
- */
-public abstract class PlugabblePanel extends DCPanel {
-    
-    private static final long serialVersionUID = 1L;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
-    public abstract String getImagePath(); 
+public interface InformationPanelDescriptor {
+    JComponent createInformationComponent(AnalysisJobBuilderWindow analysisJobBuilderWindow);
+
+    String getLabelImagePath();
+
+    String getLabelText();
 }

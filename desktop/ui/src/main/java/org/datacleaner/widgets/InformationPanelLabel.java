@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.datacleaner.panels.RightInformationPanel;
@@ -34,21 +35,22 @@ import org.datacleaner.util.WidgetUtils;
 /*
  * Class that can takes any panel and includes to another panel in other to given it the toogle effect. 
  */
-public class PlugableRightPanelLabel extends JLabel {
+public class InformationPanelLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;
     private final RightInformationPanel _rightPanel;
     private final String _labelName;
 
-    public PlugableRightPanelLabel(RightInformationPanel rightPanel, PlugabblePanel pluggedPanel) {
-        super(pluggedPanel.getName());
+    public InformationPanelLabel(RightInformationPanel rightPanel, InformationPanelDescriptor labelPanel) {
+        super(labelPanel.getLabelText());
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        _labelName = pluggedPanel.getName();
+        _labelName = labelPanel.getLabelText();
         _rightPanel = rightPanel;
-        _rightPanel.addTabToPane(_labelName, pluggedPanel);
+        final JComponent createInformationComponent = labelPanel.createInformationComponent(null);
+        _rightPanel.addTabToPane(_labelName, createInformationComponent);
 
-        final ImageIcon imageIcon = ImageManager.get().getImageIcon(pluggedPanel.getImagePath(),
+        final ImageIcon imageIcon = ImageManager.get().getImageIcon(labelPanel.getLabelImagePath(),
                 IconUtils.ICON_SIZE_SMALL);
         setIcon(imageIcon);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

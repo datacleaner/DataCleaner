@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -56,6 +57,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     private static final int DIALOG_HEIGHT = 390;
 
     private static final String TITLE = "Set date value";
+    private static final String STATIC_GROUP = "Fixed date";
+    private static final String DYNAMIC_GROUP = "Resolved at execution";
     private static final String IMAGE_PATH = "images/window/banner-tabledef.png";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TODAY_PLUS_DEFAULT_VALUE = "+0d +0m +0y";
@@ -75,8 +78,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     private final JTextField _todayPlusTextField;
     private final JButton _closeButton;
 
-    public SingleDatePropertySettingDialog(final SingleDatePropertyWidget widget) {
-        super(null, ImageManager.get().getImage(IMAGE_PATH));
+    protected SingleDatePropertySettingDialog(WindowContext windowContext, SingleDatePropertyWidget widget) {
+        super(windowContext, ImageManager.get().getImage(IMAGE_PATH));
 
         _widget = widget;
         _buttonGroup = new ButtonGroup();
@@ -207,7 +210,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     
     private JPanel createStaticPanel() {
         final JPanel panel = new JPanel(new GridLayout(0, 1));
-        final Border border = BorderFactory.createTitledBorder("Static");
+        final Border border = BorderFactory.createTitledBorder(STATIC_GROUP);
         panel.setBorder(border);
         WidgetUtils.addToGridBag(new JLabel(LABEL_PARTICULAR), panel, 0, 0);
         WidgetUtils.addToGridBag(_datePicker, panel, 1, 0);
@@ -217,7 +220,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     
     private JPanel createDynamicPanel() {
         final JPanel panel = new JPanel(new GridLayout(0, 1));
-        final Border border = BorderFactory.createTitledBorder("Dynamic");
+        final Border border = BorderFactory.createTitledBorder(DYNAMIC_GROUP);
         panel.setBorder(border);
         int row = 0;
         WidgetUtils.addToGridBag(_todayPlusRadio, panel, 0, row);

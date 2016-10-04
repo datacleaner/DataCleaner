@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -39,13 +40,19 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
     @Inject
     public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+            ComponentBuilder componentBuilder, WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
         
-        _settingDialog = new SingleDatePropertySettingDialog(this);
+        _settingDialog = new SingleDatePropertySettingDialog(windowContext, this);
         _changeButton = createChangeButton();
         _valueLabel = createValueLabel();
         createContent();
+    }
+    
+    @Override
+    protected void onPanelRemove() {
+        super.onPanelRemove();
+        _settingDialog.dispose();
     }
     
     private JLabel createValueLabel() {

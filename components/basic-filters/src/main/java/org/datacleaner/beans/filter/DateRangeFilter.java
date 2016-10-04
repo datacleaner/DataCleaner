@@ -58,12 +58,12 @@ public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
 
     @Override
     public Date getHighestValue() {
-        return highestValue;
+        return getDynamicValue(highestValue);
     }
 
     @Override
     public Date getLowestValue() {
-        return lowestValue;
+        return getDynamicValue(lowestValue);
     }
 
     @Override
@@ -92,6 +92,20 @@ public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
         }
         
         return getDateLabel(lowestValue) + " =< " + column.getName() + " =< " + getDateLabel(highestValue);
+    }
+    
+    private Date getDynamicValue(final Date date) {
+        if (date instanceof NowDate) {
+            return new NowDate();
+        } else if (date instanceof TodayDate){
+            return new TodayDate();
+        } else if (date instanceof YesterdayDate){
+            return new YesterdayDate();
+        } else if (date instanceof ShiftedToday){
+            return new ShiftedToday(((ShiftedToday)date).getInput());
+        } else {
+            return date;
+        }       
     }
 
     private String getDateLabel(final Date date) {

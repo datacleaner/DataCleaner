@@ -2,6 +2,11 @@ sudo: false
 language: java
 jdk:
   - oraclejdk8
+services:
+  - docker
+env:
+  - DOCKER_HOST_NAME=localhost
+script: "mvn clean verify -P integration-test"
 
 after_success:
   - mvn test javadoc:javadoc

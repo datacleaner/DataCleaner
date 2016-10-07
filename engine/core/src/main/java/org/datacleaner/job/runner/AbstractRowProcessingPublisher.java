@@ -162,8 +162,7 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
 
         for (RowProcessingConsumer consumer : getConsumers()) {
             final ComponentJob componentJob = consumer.getComponentJob();
-            final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
-            final ComponentMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics()
+            final ComponentMetrics metrics = new AnalysisJobMetricsImpl(consumer.getAnalysisJob(), publishers)
                     .getComponentMetrics(componentJob);
             analysisListener.componentBegin(getStream().getAnalysisJob(), componentJob, metrics);
 

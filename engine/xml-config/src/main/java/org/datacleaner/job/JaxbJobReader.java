@@ -971,7 +971,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                                     final String path = getPath(columnsTypes, column_id);
                                     if (oldColumn.contains('.' + path)) {
                                         // add the mapped column.
-                                        newInputColumns.add(entry.getValue().getName());
+                                        final InputColumn<?> entryValue = entry.getValue();
+                                        if(entryValue.isPhysicalColumn()) {
+                                            newInputColumns.add(entryValue.getPhysicalColumn().getQualifiedLabel());
+                                        } else {
+                                            newInputColumns.add(entryValue.getName());
+                                        }
                                         found = true;
                                         break;
                                     }

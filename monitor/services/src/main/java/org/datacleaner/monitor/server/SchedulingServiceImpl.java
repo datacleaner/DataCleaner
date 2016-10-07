@@ -647,7 +647,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
                             @Override
                             public ExecutionIdentifier eval(InputStream in) {
-                                return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
+                                try {
+                                    return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
+                                } catch (Exception e) {
+                                    logger.error("The file {} could not be read" + e, file.getQualifiedPath());
+                                    return new ExecutionIdentifier(FilenameUtils.getBaseName(file.getQualifiedPath()));
+                                }
                             }
                         });
                         return result;

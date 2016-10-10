@@ -37,6 +37,7 @@ import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -60,6 +61,12 @@ import com.google.common.collect.Iterators;
 public class HadoopJobExecutionUtils {
 
     public static boolean isValidSourceDatastore(Datastore datastore) {
+        if(!(datastore instanceof FileDatastore)) {
+            // Most types of non-filebased datastore should work given the right configuration.
+            // Or at least, we have no sure-fire way to rule them out.
+            return true;
+        }
+
         if (isHdfsResourcedDatastore(datastore)) {
             if (datastore instanceof CsvDatastore) {
                 final CsvDatastore csvDatastore = (CsvDatastore) datastore;

@@ -19,15 +19,19 @@
  */
 package org.datacleaner.spark;
 
+import java.io.File;
+
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
+import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.spark.utils.HadoopJobExecutionUtils;
 import org.junit.Test;
 
@@ -64,10 +68,10 @@ public class HadoopConfigurationUtilsTest extends TestCase{
     
     @Test
     public void testInvalidDatastore(){
-        final ExcelDatastore excelDatastore = new ExcelDatastore("MyTest", new FileResource("C://test"), "Test");
+        final Datastore excelDatastore = new ExcelDatastore("MyTest", new FileResource("C://test"), "Test");
         assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(excelDatastore)); 
-        final Neo4jDatastore neo4jDatastore = new Neo4jDatastore("neo", "localhost", "me", "password"); 
-        assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(neo4jDatastore));
+        final Datastore sasDatastore = new SasDatastore("sas", new File(File.pathSeparator));
+        assertFalse(HadoopJobExecutionUtils.isValidSourceDatastore(sasDatastore));
     }
 
     public void testFixedWidthDatastore() {

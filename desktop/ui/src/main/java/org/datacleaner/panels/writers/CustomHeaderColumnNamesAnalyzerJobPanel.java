@@ -22,17 +22,21 @@ package org.datacleaner.panels.writers;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
+import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.widgets.properties.MultipleMappedStringsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
-    
+    private static final Logger logger = LoggerFactory.getLogger(CustomHeaderColumnNamesAnalyzerJobPanel.class);
+
     private final MultipleMappedStringsPropertyWidget _mappedWidget;
     private final ConfiguredPropertyDescriptor _inputColumnsProperty;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
@@ -40,9 +44,29 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
     public CustomHeaderColumnNamesAnalyzerJobPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
-
+        
         _inputColumnsProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_COLUMNS);
         _mappedStringsProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_FIELD_NAMES);
+        
+        analyzerJobBuilder.addChangeListener(new AnalyzerChangeListener() {
+            @Override
+            public void onAdd(final AnalyzerComponentBuilder<?> builder) {
+            }
+
+            @Override
+            public void onConfigurationChanged(final AnalyzerComponentBuilder<?> builder) {
+                _mappedWidget.onConfigurationChanged(null);
+                updateFields();
+            }
+
+            @Override
+            public void onRequirementChanged(final AnalyzerComponentBuilder<?> builder) {
+            }
+
+            @Override
+            public void onRemove(final AnalyzerComponentBuilder<?> componentBuilder) {
+            }
+        });
 
         _mappedWidget = new MultipleMappedStringsPropertyWidget(analyzerJobBuilder, _inputColumnsProperty,
                 _mappedStringsProperty) {
@@ -51,6 +75,29 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
                 return inputColumn.getName();
             }
         };
+    }
+    
+    @Override
+    protected void onConfigurationChanged() {
+        updateFields();
+    }
+    
+    private void updateFields() {
+        if (_mappedWidget == null) {
+            return;
+        }
+        
+        final InputColumn<?>[] columns = _mappedWidget.getValue();
+        final String[] newFields = new String[columns.length];
+        
+        for (int i = 0; i < columns.length; i++) {
+            newFields[i] = columns[i].getName();
+        }
+        
+        if (newFields.length > 0) {
+            _mappedWidget.setMappedStrings(newFields);
+            _mappedWidget.fireValueChanged();
+        }
     }
 
     @Override

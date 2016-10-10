@@ -681,7 +681,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFile file = resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML
                 .getExtension());
         if (file == null) {
-            throw new IllegalArgumentException("No execution with result id: " + resultId);
+            logger.error("No execution with result id: " + resultId);
+            return null;
         }
 
         JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);

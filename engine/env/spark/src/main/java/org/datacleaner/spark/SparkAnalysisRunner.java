@@ -102,11 +102,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
                     .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
-            
+
             if (_sparkJobContext.isResultEnabled()) {
                 final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
                         .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
-                
+
                 namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                         _sparkJobContext));
             } else {
@@ -119,13 +119,13 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
             namedAnalyzerResultsRDD = coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(
                     _sparkJobContext));
-            
+
             if (!_sparkJobContext.isResultEnabled()) {
                 // call count() to block and wait for RDD to be fully processed
                 namedAnalyzerResultsRDD.count();
             }
         }
-        
+
         if (!_sparkJobContext.isResultEnabled()) {
             final List<Tuple2<String, AnalyzerResult>> results = Collections.emptyList();
             return new SparkAnalysisResultFuture(results, _sparkJobContext);
@@ -164,6 +164,10 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             } else {
                 rawInput = _sparkContext.textFile(datastorePath);
             }
+
+            System.out.println("**DEBUG** rawInput: " + rawInput.toDebugString());
+            System.out.println("**DEBUG** csvConfiguration: " + csvConfiguration.toString());
+
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
 
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();

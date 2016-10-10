@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -102,12 +103,14 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
+import org.datacleaner.widgets.CommunityEditionStatusLabel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
-import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
+import org.datacleaner.widgets.InformationPanelDescriptor;
 import org.datacleaner.widgets.NewsChannelStatusLabel;
+import org.datacleaner.widgets.InformationPanelLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -255,7 +258,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
-
+    
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
@@ -764,7 +767,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
-
+        
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
@@ -773,9 +776,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
-
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
-        statusBar.add(statusLabel);
+        
+        if (Version.isCommunityEdition()) {
+            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
+            statusBar.add(statusLabel);
+            statusBar.add(Box.createHorizontalStrut(20));
+        } else {
+            final ServiceLoader<InformationPanelDescriptor> panelsLoaders = ServiceLoader.load(InformationPanelDescriptor.class);
+            for (InformationPanelDescriptor panel : panelsLoaders) {
+                final InformationPanelLabel plugableRightPanelLabel = new InformationPanelLabel(rightInformationPanel, panel);
+                statusBar.add(plugableRightPanelLabel);
+                statusBar.add(Box.createHorizontalStrut(20));
+            }
+        }
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());

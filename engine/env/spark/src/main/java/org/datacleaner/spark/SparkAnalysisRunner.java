@@ -150,6 +150,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {
+        logger.warn("Datastore class name: " + datastore.getClass().getName());
+
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
@@ -165,8 +167,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
                 rawInput = _sparkContext.textFile(datastorePath);
             }
 
-            System.out.println("**DEBUG** rawInput: " + rawInput.toDebugString());
-            System.out.println("**DEBUG** csvConfiguration: " + csvConfiguration.toString());
+            logger.warn("rawInput: " + rawInput.toDebugString());
+            logger.warn("csvConfiguration: " + csvConfiguration.toString());
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
 
@@ -207,6 +209,9 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             } else {
                 rawInput = _sparkContext.textFile(datastorePath);
             }
+
+            logger.warn("rawInput: " + rawInput.toDebugString());
+            logger.warn("csvConfiguration: " + fixedWidthConfiguration.toString());
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new FixedWidthParserFunction(fixedWidthConfiguration));
 

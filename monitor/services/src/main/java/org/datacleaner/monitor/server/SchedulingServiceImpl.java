@@ -650,8 +650,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                                 try {
                                     return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
                                 } catch (Exception e) {
-                                    logger.warn("The file " + file.getQualifiedPath() +" could not be read" + e);
-                                    return new ExecutionIdentifier(FilenameUtils.getBaseName(file.getQualifiedPath()));
+                                    logger.warn("The file " + file.getQualifiedPath() +" could not be read or parsed correctly" + e);
+                                    return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file.getQualifiedPath()));
                                 }
                             }
                         });

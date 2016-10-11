@@ -650,7 +650,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                                 try {
                                     return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
                                 } catch (Exception e) {
-                                    logger.error("The file {} could not be read" + e, file.getQualifiedPath());
+                                    logger.warn("The file " + file.getQualifiedPath() +" could not be read" + e);
                                     return new ExecutionIdentifier(FilenameUtils.getBaseName(file.getQualifiedPath()));
                                 }
                             }
@@ -681,7 +681,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFile file = resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML
                 .getExtension());
         if (file == null) {
-            logger.error("No execution with result id: " + resultId);
+            logger.warn("No execution with result id: " + resultId);
             return null;
         }
 

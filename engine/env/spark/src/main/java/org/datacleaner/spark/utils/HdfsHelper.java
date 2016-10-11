@@ -80,6 +80,8 @@ public class HdfsHelper {
 
     private static Configuration getHadoopConfigurationIfYarnMode(JavaSparkContext sparkContext) {
         final String sparkMaster = sparkContext.getConf().get("spark.master");
+
+        logger.warn("spark.master: " + sparkMaster);
         if (Strings.isNullOrEmpty(sparkMaster) || "local".equals(sparkMaster)) {
             return null;
         }

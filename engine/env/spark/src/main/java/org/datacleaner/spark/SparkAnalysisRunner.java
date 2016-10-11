@@ -158,7 +158,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             assert resource != null;
             final String datastorePath = resource.getQualifiedPath();
 
+            logger.warn("datastorePath: " + datastorePath);
+
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
+
+            logger.warn("csvConfiguration: " + csvConfiguration.toString());
 
             final JavaRDD<String> rawInput;
             if (_minPartitions != null) {
@@ -168,7 +172,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             }
 
             logger.warn("rawInput: " + rawInput.toDebugString());
-            logger.warn("csvConfiguration: " + csvConfiguration.toString());
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
 
@@ -202,7 +205,13 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final Resource resource = fixedWidthDatastore.getResource();
             final String datastorePath = resource.getQualifiedPath();
+
+            logger.warn("datastorePath: " + datastorePath);
+
             final FixedWidthConfiguration fixedWidthConfiguration = fixedWidthDatastore.getConfiguration();
+
+            logger.warn("fixedWidthConfiguration: " + fixedWidthConfiguration.toString());
+
             final JavaRDD<String> rawInput;
             if (_minPartitions != null) {
                 rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
@@ -211,7 +220,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             }
 
             logger.warn("rawInput: " + rawInput.toDebugString());
-            logger.warn("csvConfiguration: " + fixedWidthConfiguration.toString());
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new FixedWidthParserFunction(fixedWidthConfiguration));
 

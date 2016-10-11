@@ -162,8 +162,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
 
-            logger.warn("csvConfiguration: " + csvConfiguration.toString());
-
             final JavaRDD<String> rawInput;
             if (_minPartitions != null) {
                 rawInput = _sparkContext.textFile(datastorePath, _minPartitions);
@@ -209,8 +207,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             logger.warn("datastorePath: " + datastorePath);
 
             final FixedWidthConfiguration fixedWidthConfiguration = fixedWidthDatastore.getConfiguration();
-
-            logger.warn("fixedWidthConfiguration: " + fixedWidthConfiguration.toString());
 
             final JavaRDD<String> rawInput;
             if (_minPartitions != null) {

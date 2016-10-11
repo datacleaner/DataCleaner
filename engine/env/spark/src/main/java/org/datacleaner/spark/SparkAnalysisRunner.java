@@ -155,6 +155,9 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
+
+            logger.warn("resource class name: " + resource.getClass().getName());
+
             assert resource != null;
             final String datastorePath = resource.getQualifiedPath();
 
@@ -202,6 +205,9 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final FixedWidthDatastore fixedWidthDatastore = (FixedWidthDatastore) datastore;
 
             final Resource resource = fixedWidthDatastore.getResource();
+
+            logger.warn("resource class name: " + resource.getClass().getName());
+
             final String datastorePath = resource.getQualifiedPath();
 
             logger.warn("datastorePath: " + datastorePath);

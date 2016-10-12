@@ -645,16 +645,17 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     @Override
                     public ExecutionIdentifier eval(final RepositoryFile file) {
                         try {
-                            ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
-                                @Override
-                                public ExecutionIdentifier eval(InputStream in) {
-                                    return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
-                                }
-                            });
+                            final ExecutionIdentifier result = file.readFile(
+                                    new Func<InputStream, ExecutionIdentifier>() {
+                                        @Override
+                                        public ExecutionIdentifier eval(InputStream in) {
+                                            return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
+                                        }
+                                    });
                             return result;
                         } catch (Exception e) {
-                            logger.warn("The file " + file.getQualifiedPath() + " could not be read or parsed correctly"
-                                    + e);
+                            logger.warn("The file " + file.getQualifiedPath()
+                                    + " could not be read or parsed correctly " + e);
                             return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file
                                     .getQualifiedPath()));
                         }

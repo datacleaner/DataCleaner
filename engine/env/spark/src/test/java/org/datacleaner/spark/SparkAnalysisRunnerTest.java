@@ -50,8 +50,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
@@ -84,8 +82,6 @@ public class SparkAnalysisRunnerTest {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(SparkAnalysisRunnerTest.class);
-
     private static final int MIN_PARTITIONS_MULTIPLE = 4;
 
     @Rule
@@ -95,8 +91,6 @@ public class SparkAnalysisRunnerTest {
     public static void init() {
         // use local filesystem as default during tests
         System.setProperty(SystemProperties.DEFAULT_RESOURCE_SCHEME, "file");
-
-        logger.warn("SystemProperties.DEFAULT_RESOURCE_SCHEME (" + SystemProperties.DEFAULT_RESOURCE_SCHEME + ") is \"" + System.getProperty(SystemProperties.DEFAULT_RESOURCE_SCHEME) + "\".");
     }
 
     @Test

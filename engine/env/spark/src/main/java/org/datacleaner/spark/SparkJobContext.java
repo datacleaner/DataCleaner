@@ -146,13 +146,9 @@ public class SparkJobContext implements Serializable {
     }
 
     public AnalysisJobBuilder getAnalysisJobBuilder() {
-        logger.warn("SystemProperties.DEFAULT_RESOURCE_SCHEME (" + SystemProperties.DEFAULT_RESOURCE_SCHEME + ") is \"" + System.getProperty(SystemProperties.DEFAULT_RESOURCE_SCHEME) + "\".");
-
         if (_analysisJobBuilder == null) {
             // set HDFS as default scheme to avoid file resources
             SystemProperties.setIfNotSpecified(SystemProperties.DEFAULT_RESOURCE_SCHEME, HdfsResource.SCHEME_HDFS);
-
-            logger.warn("SystemProperties.DEFAULT_RESOURCE_SCHEME (" + SystemProperties.DEFAULT_RESOURCE_SCHEME + ") is now \"" + System.getProperty(SystemProperties.DEFAULT_RESOURCE_SCHEME) + "\".");
 
             final DataCleanerConfiguration configuration = getConfiguration();
             final JaxbJobReader jobReader = new JaxbJobReader(configuration);
@@ -263,7 +259,7 @@ public class SparkJobContext implements Serializable {
 
     /**
      * Adds a listener for the job life cycle.
-     *
+     * 
      * @param sparkJobLifeCycleListener
      *            The listener to add. Must be serializable.
      */

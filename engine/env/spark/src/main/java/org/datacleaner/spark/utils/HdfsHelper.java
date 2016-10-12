@@ -55,7 +55,7 @@ public class HdfsHelper {
      * {@link HdfsHelper} but may be necessary in executor functions where the
      * {@link JavaSparkContext} is not in scope and not made available by Spark
      * (at least spark's end-user API).
-     *
+     * 
      * @return
      */
     public static HdfsHelper createHelper() {
@@ -102,8 +102,6 @@ public class HdfsHelper {
     }
 
     public String readFile(URI filepath, boolean failOnNoData) {
-        logger.warn("filepath: " + filepath);
-
         final Resource resourceInUse = getResourceToUse(filepath);
         if (failOnNoData && resourceInUse == null) {
             throw new IllegalArgumentException("Could not resolve resource: " + filepath);
@@ -128,10 +126,6 @@ public class HdfsHelper {
         if (resource == null) {
             return null;
         }
-
-        logger.warn("resource class name: " + resource.getClass().getName());
-
-
         if (_hadoopConfiguration == null || resource instanceof HadoopResource) {
             return resource;
         }
@@ -154,12 +148,7 @@ public class HdfsHelper {
         if (path == null) {
             return null;
         }
-
-        logger.warn("_hadoopConfiguration: " + _hadoopConfiguration);
-
         if (_hadoopConfiguration == null) {
-            logger.warn("path.getScheme(): " + path.getScheme());
-
             if ("hdfs".equals(path.getScheme())) {
                 return new HdfsResource(path.toString());
             }

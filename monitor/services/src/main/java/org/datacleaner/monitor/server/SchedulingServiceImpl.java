@@ -634,7 +634,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws IllegalStateException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
         final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML
@@ -644,13 +644,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 new Func<RepositoryFile, ExecutionIdentifier>() {
                     @Override
                     public ExecutionIdentifier eval(final RepositoryFile file) {
-                        ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
-                            @Override
-                            public ExecutionIdentifier eval(InputStream in) {
-                                return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
-                            }
-                        });
-                        return result;
+                        try {
+                            final ExecutionIdentifier result = file.readFile(
+                                    new Func<InputStream, ExecutionIdentifier>() {
+                                        @Override
+                                        public ExecutionIdentifier eval(InputStream in) {
+                                            return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
+                                        }
+                                    });
+                            return result;
+                        } catch (Exception e) {
+                            logger.warn("The file " + file.getQualifiedPath()
+                                    + " could not be read or parsed correctly " + e);
+                            return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file
+                                    .getQualifiedPath()));
+                        }
                     }
                 });
 
@@ -676,7 +684,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFile file = resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML
                 .getExtension());
         if (file == null) {
-            throw new IllegalArgumentException("No execution with result id: " + resultId);
+            logger.warn("No execution with result id: " + resultId);
+            return null;
         }
 
         JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);

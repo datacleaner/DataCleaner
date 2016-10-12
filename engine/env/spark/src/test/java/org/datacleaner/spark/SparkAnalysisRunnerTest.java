@@ -125,7 +125,7 @@ public class SparkAnalysisRunnerTest {
             throw (Exception) result.getErrors().get(0);
         }
     }
-
+    
     @Test
     public void testEscalatedValueDistributionScenario() throws Exception {
         final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
@@ -375,7 +375,7 @@ public class SparkAnalysisRunnerTest {
         final StringAnalyzerResult stringAnalyzerResult = result.getResults(StringAnalyzerResult.class).get(0);
         assertNotNull(stringAnalyzerResult);
     }
-
+    
     @Test
     public void testLifeCycleListener() throws Exception {
         final String appName = "DCTest - " + getName();
@@ -413,12 +413,7 @@ public class SparkAnalysisRunnerTest {
         final AnalysisResultFuture result;
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName(appName);
         try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
-            final URI dataCleanerConfigurationPath = URI.create("src/test/resources/conf_local.xml");
-
-            System.out.println("**DEBUG** dataCleanerConfigurationPath: " + dataCleanerConfigurationPath);
-            System.out.println("**DEBUG** analysisJobXmlPath: " + analysisJobXmlPath);
-
-            final SparkJobContext sparkJobContext = new SparkJobContext(dataCleanerConfigurationPath,
+            final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
                     analysisJobXmlPath, null, sparkContext);
             if (sparkJobLifeCycleListener != null) {
                 sparkJobContext.addSparkJobLifeCycleListener(sparkJobLifeCycleListener);

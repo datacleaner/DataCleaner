@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.scheduling;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -85,10 +86,11 @@ public interface SchedulingService extends RemoteService {
 
     /**
      * Gets all executions of a particular job.
+     * @throws FileNotFoundException 
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
-            throws DCSecurityException, IllegalStateException;
+            throws DCSecurityException, IllegalStateException, FileNotFoundException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException, IllegalStateException, FileNotFoundException {
         return _delegate.getAllExecutions(tenant, job);
     }
 

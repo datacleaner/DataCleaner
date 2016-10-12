@@ -634,7 +634,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws IllegalStateException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
         final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML

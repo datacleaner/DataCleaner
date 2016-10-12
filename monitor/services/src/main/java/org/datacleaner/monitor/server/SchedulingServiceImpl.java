@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -635,7 +634,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws IllegalStateException, FileNotFoundException {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws IllegalStateException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
         final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML
@@ -645,18 +644,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 new Func<RepositoryFile, ExecutionIdentifier>() {
                     @Override
                     public ExecutionIdentifier eval(final RepositoryFile file) {
-                        ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
-                            @Override
-                            public ExecutionIdentifier eval(InputStream in) {
-                                try {
+                        try {
+                            ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
+                                @Override
+                                public ExecutionIdentifier eval(InputStream in) {
                                     return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
-                                } catch (Exception e) {
-                                    logger.warn("The file " + file.getQualifiedPath() +" could not be read or parsed correctly" + e);
-                                    return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file.getQualifiedPath()));
                                 }
-                            }
-                        });
-                        return result;
+                            });
+                            return result;
+                        } catch (Exception e) {
+                            logger.warn("The file " + file.getQualifiedPath() + " could not be read or parsed correctly"
+                                    + e);
+                            return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file
+                                    .getQualifiedPath()));
+                        }
                     }
                 });
 

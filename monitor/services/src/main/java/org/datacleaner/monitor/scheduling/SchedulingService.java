@@ -90,7 +90,7 @@ public interface SchedulingService extends RemoteService {
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
-            throws DCSecurityException, IllegalStateException, FileNotFoundException;
+            throws DCSecurityException, IllegalStateException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)

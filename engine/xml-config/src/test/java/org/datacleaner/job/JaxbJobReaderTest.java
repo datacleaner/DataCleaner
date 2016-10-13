@@ -524,7 +524,7 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("PUBLIC.CUSTOMERS.CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
         assertEquals("CONTACTLASTNAME (Upper case)", units[0].getInputColumnNames()[1]);
     }
 
@@ -544,10 +544,10 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
-        assertEquals("CONTACTFIRSTNAME", units[0].getInputColumnNames()[1]);
-        assertEquals("PHONE", units[1].getInputColumnNames()[0]);
-        assertEquals("CITY", units[1].getInputColumnNames()[1]);
+        assertEquals("PUBLIC.CUSTOMERS.CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("PUBLIC.CUSTOMERS.CONTACTFIRSTNAME", units[0].getInputColumnNames()[1]);
+        assertEquals("PUBLIC.CUSTOMERS.PHONE", units[1].getInputColumnNames()[0]);
+        assertEquals("PUBLIC.CUSTOMERS.CITY", units[1].getInputColumnNames()[1]);
     }
 
     public void testUnionJob() throws Exception {
@@ -567,11 +567,11 @@ public class JaxbJobReaderTest extends TestCase {
                 .getConfiguredProperty("Units");
         final CoalesceUnit[] units = (CoalesceUnit[]) componentBuilder.getConfiguredProperty(
                 configuredPropertyDescriptor);
-        assertEquals("CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
-        assertEquals("LASTNAME", units[0].getInputColumnNames()[1]);
+        assertEquals("PUBLIC.CUSTOMERS.CONTACTLASTNAME", units[0].getInputColumnNames()[0]);
+        assertEquals("PUBLIC.EMPLOYEES.LASTNAME", units[0].getInputColumnNames()[1]);
         assertEquals("CONTACTLASTNAME", units[0].getSuggestedOutputColumnName());
-        assertEquals("CONTACTFIRSTNAME", units[1].getInputColumnNames()[0]);
-        assertEquals("FIRSTNAME", units[1].getInputColumnNames()[1]);
+        assertEquals("PUBLIC.CUSTOMERS.CONTACTFIRSTNAME", units[1].getInputColumnNames()[0]);
+        assertEquals("PUBLIC.EMPLOYEES.FIRSTNAME", units[1].getInputColumnNames()[1]);
         assertEquals("CONTACTFIRSTNAME", units[1].getSuggestedOutputColumnName());
 
         final List<OutputDataStream> outputDataStreams = componentBuilder.getOutputDataStreams();

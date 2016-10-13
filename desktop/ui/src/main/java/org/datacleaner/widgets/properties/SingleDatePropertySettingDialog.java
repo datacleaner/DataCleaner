@@ -97,9 +97,23 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     
     private JButton createCloseButton() {
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_SAVE_BRIGHT);
-        closeButton .addActionListener(e -> dispose());
+        closeButton.addActionListener(e -> {
+            if (isParticularDateSpecified()) {
+                updateWidget();
+            }
+            
+            dispose();
+        });
         
         return closeButton;
+    }
+    
+    private boolean isParticularDateSpecified() {
+        return (!_dateNowRadio.isSelected() &&
+                !_dateTodayRadio.isSelected() &&
+                !_dateYesterdayRadio.isSelected() &&
+                !_todayPlusRadio.isSelected() &&
+                !_datePicker.getEditor().getText().isEmpty());
     }
     
     private JTextField createTodayPlusTextField() {
@@ -163,6 +177,17 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         datePicker.addActionListener(e -> {
             clearRadioGroup();
             updateWidget();
+        });
+        datePicker.getEditor().addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(final FocusEvent e) {
+                clearRadioGroup();
+            }
+
+            @Override
+            public void focusLost(final FocusEvent e) {
+                // this for some reason does not work properly, so value can not be updated here
+            }
         });
         
         return datePicker;

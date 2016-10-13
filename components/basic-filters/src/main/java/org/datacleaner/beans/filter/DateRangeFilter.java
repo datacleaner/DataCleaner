@@ -85,7 +85,7 @@ public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
             return null;
         }
         
-        final InputColumn column = getColumn();
+        final InputColumn<Date> column = getColumn();
         
         if (column == null) {
             return null;

@@ -97,9 +97,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     
     private JButton createCloseButton() {
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_SAVE_BRIGHT);
-        closeButton .addActionListener(e -> {
-            dispose();
-        });
+        closeButton .addActionListener(e -> dispose());
         
         return closeButton;
     }

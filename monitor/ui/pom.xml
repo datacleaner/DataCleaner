@@ -8,6 +8,10 @@
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
 
+	<properties>
+        <dockerTomcatPort>8080</dockerTomcatPort>
+	</properties>
+
 	<build>
 		<testResources>
             <testResource>
@@ -176,18 +180,18 @@
                                 <image>
                                     <name>datacleaner-monitor</name>
                                     <build>
-                                        <dockerFileDir>${project.basedir}/target/test-classes</dockerFileDir>
+                                        <dockerFileDir>${project.build.directory}/test-classes</dockerFileDir>
                                         <assembly>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
+											<descriptor>${project.build.directory}/test-classes/assembly.xml</descriptor>
+	                                    </assembly>
                                     </build>
 
                                     <run>
                                         <ports>
-                                            <port>8080:8080</port>
+                                            <port>${dockerTomcatPort}:8080</port>
                                         </ports>
                                         <wait>
-                                            <url>http://${docker.host.address}:8080</url>
+                                            <url>http://${docker.host.address}:${dockerTomcatPort}</url>
                                             <time>300000</time>
                                         </wait>
                                     </run>
@@ -415,6 +419,12 @@
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>5.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.0.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -17,28 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.dashboard;
-
-import static org.junit.Assert.assertEquals;
+package org.datacleaner.monitor;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Properties;
 
-import org.junit.Test;
+import io.restassured.RestAssured;
 
-public class JobServicesIT {
-    @Test
-    public void testLogin() throws IOException {
-        final Properties testProperties = new Properties();
-        testProperties.load(getClass().getClassLoader().getResourceAsStream("docker.properties"));
+abstract class MonitorBaseIT {
+    protected static final String JOBS_PATH = "/jobs/";
 
-        final URL testURL = new URL(testProperties.getProperty("monitor.url"));
+    protected static final String USER_NAME = "admin";
+    protected static final String USER_PASSWORD = "admin";
 
-        final HttpURLConnection connection = (HttpURLConnection) testURL.openConnection();
-        connection.setRequestMethod("GET");
+    protected void setup() throws IOException {
+        final Properties dockerProperties = new Properties();
+        dockerProperties.load(getClass().getClassLoader().getResourceAsStream("docker.properties"));
 
-        assertEquals(200, connection.getResponseCode());
+        RestAssured.baseURI = dockerProperties.getProperty("monitor.url");
+        RestAssured.basePath = "/repository/demo";
     }
 }

@@ -31,13 +31,13 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.StringPatternChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern> implements
-		StringPatternChangeListener {
+    ReferenceDataChangeListener<StringPattern> {
 
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
@@ -108,7 +108,13 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 	}
 
 	@Override
+	public void onChange(StringPattern oldPattern, StringPattern newPattern) {
+	    editCheckBox(oldPattern, newPattern);
+	    
+	}
+	@Override
 	protected String getNotAvailableText() {
 		return "- no string patterns available - ";
 	}
+
 }

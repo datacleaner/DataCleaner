@@ -48,6 +48,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<>();
     private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<>();
     private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<StringPattern>> _stringPatternV2Listeners = new ArrayList<>();
     private final ReferenceDataCatalog _immutableDelegate;
     private final LifeCycleHelper _lifeCycleHelper;
     private final DomConfigurationWriter _configurationWriter;
@@ -179,6 +180,15 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     public void addStringPattern(StringPattern sp, boolean externalize) {
+        addStringPatternHelper(sp, externalize);
+        for (StringPatternChangeListener listener : _stringPatternListeners) {
+            listener.onAdd(sp);
+        }
+        for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners){
+            listener.onAdd(sp);
+        }
+    }
+    private void addStringPatternHelper(StringPattern sp, boolean externalize) {
         String name = sp.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("StringPattern has no name!");
@@ -191,9 +201,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
         assignProvidedProperties(sp);
         stringPatterns.add(sp);
-        for (StringPatternChangeListener listener : _stringPatternListeners) {
-            listener.onAdd(sp);
-        }
 
         if (externalize) {
             if (_configurationWriter.isExternalizable(sp)) {
@@ -202,6 +209,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             _userPreferences.save();
         }
     }
+
 
     public void removeStringPattern(StringPattern sp) {
         removeStringPattern(sp, true);
@@ -213,6 +221,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (StringPatternChangeListener listener : _stringPatternListeners) {
                 listener.onRemove(sp);
             }
+            for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners){
+                listener.onRemove(sp);
+            }
         }
         if (externalize) {
             _configurationWriter.removeStringPattern(sp.getName());
@@ -220,6 +231,27 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
+    public void changeStringPattern(StringPattern newPattern, StringPattern oldPattern){
+        changeStringPattern(newPattern, oldPattern, true);
+    }
+    
+    public void changeStringPattern(StringPattern newPattern, StringPattern oldPattern, boolean externalize){
+        // The old reference is removed from user preferences and we add a new
+        // patern with the same name but with a
+        // different expression value
+        final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
+        stringPatterns.remove(oldPattern);
+        if (externalize) {
+            _configurationWriter.removeStringPattern(oldPattern.getName());
+            _userPreferences.save();
+        }        
+        addStringPatternHelper(newPattern, externalize);
+
+        for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners) {
+            listener.onChange(oldPattern, newPattern);
+        }
+    }
+    
     @Override
     public Dictionary getDictionary(String name) {
         if (name != null) {
@@ -336,5 +368,13 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     public void removeStringPatternListener(StringPatternChangeListener listener) {
         _stringPatternListeners.remove(listener);
+    }
+    
+    public void addStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
+        _stringPatternV2Listeners.add(listener);
+    }
+    
+    public void removeStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
+        _stringPatternV2Listeners.add(listener);
     }
 }

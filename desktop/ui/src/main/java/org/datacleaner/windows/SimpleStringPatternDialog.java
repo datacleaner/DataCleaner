@@ -157,12 +157,13 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
                             "Please fill out the string expression");
                     return;
                 }
+                final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
                 if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
-                    _catalog.removeStringPattern(_catalog.getStringPattern(_simpleStringPattern.getName()));
+                    _catalog.changeStringPattern(simpleStringPattern, _simpleStringPattern);
+                }else{
+                    _catalog.addStringPattern(simpleStringPattern);
                 }
-                SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
                 _simpleStringPattern = simpleStringPattern;
-                _catalog.addStringPattern(simpleStringPattern);
                 SimpleStringPatternDialog.this.dispose();
             }
         });

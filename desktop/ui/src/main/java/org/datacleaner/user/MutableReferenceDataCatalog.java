@@ -46,6 +46,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     private static final long serialVersionUID = 1L;
 
     private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<Dictionary>> _dictionaryV2Listeners = new ArrayList<>();
     private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<>();
     private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<>();
     private final List<ReferenceDataChangeListener<StringPattern>> _stringPatternV2Listeners = new ArrayList<>();
@@ -134,6 +135,18 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     public void addDictionary(Dictionary dict, boolean externalize) {
+        addDictionaryHelper(dict, externalize);
+        
+        for (DictionaryChangeListener listener : _dictionaryListeners) {
+            listener.onAdd(dict);
+        }
+        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+            listener.onAdd(dict);
+        }
+
+    }
+
+    private void addDictionaryHelper(Dictionary dict, boolean externalize) {
         String name = dict.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Dictionary has no name!");
@@ -146,10 +159,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
         assignProvidedProperties(dict);
         dictionaries.add(dict);
-        for (DictionaryChangeListener listener : _dictionaryListeners) {
-            listener.onAdd(dict);
-        }
-
         if (externalize) {
             if (_configurationWriter.isExternalizable(dict)) {
                 _configurationWriter.externalize(dict);
@@ -168,10 +177,32 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (DictionaryChangeListener listener : _dictionaryListeners) {
                 listener.onRemove(dict);
             }
+            for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+                listener.onRemove(dict);
+            }
         }
         if (externalize) {
             _configurationWriter.removeDictionary(dict.getName());
             _userPreferences.save();
+        }
+    }
+
+    public void changeDictionary(Dictionary oldDictionary, Dictionary newDictionary){
+        changeDictionary(oldDictionary, newDictionary, true);
+    }
+    
+    public void changeDictionary(Dictionary oldDictionary, Dictionary newDictionary, boolean externalize) {
+        final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
+        if (dictionaries.remove(oldDictionary)) {
+            if (externalize) {
+                _configurationWriter.removeDictionary(oldDictionary.getName());
+                _userPreferences.save();
+            }
+        }
+        
+        addDictionaryHelper(newDictionary, externalize);
+        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+            listener.onChange(oldDictionary, newDictionary);
         }
     }
 
@@ -352,6 +383,14 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     public void removeDictionaryListener(DictionaryChangeListener listener) {
         _dictionaryListeners.remove(listener);
+    }
+    
+    public void addDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
+        _dictionaryV2Listeners.add(listener);
+    }
+    
+    public void removeDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
+        _dictionaryV2Listeners.add(listener);
     }
 
     public void addSynonymCatalogListener(SynonymCatalogChangeListener listener) {

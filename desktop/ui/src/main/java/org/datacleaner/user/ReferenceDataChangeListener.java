@@ -6,10 +6,10 @@ package org.datacleaner.user;
  */
 public interface ReferenceDataChangeListener<ReferenceData> {
     
-    public void onAdd(ReferenceData stringPattern);
+    public void onAdd(ReferenceData referenceData);
 
-    public void onChange(ReferenceData oldPattern, ReferenceData newPattern);
+    public void onChange(ReferenceData oldReferenceData, ReferenceData newreferenceData);
     
-    public void onRemove(ReferenceData stringPattern);
+    public void onRemove(ReferenceData referenceData);
 
 }

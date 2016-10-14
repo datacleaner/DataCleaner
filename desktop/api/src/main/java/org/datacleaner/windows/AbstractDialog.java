@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -196,6 +197,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
         panel.setPreferredSize(getDialogWidth(),
                 bannerHeight + dialogContent.getPreferredSize().height + getDialogHeightBuffer());
+
+        setMinimumSize(new Dimension(getDialogWidth(), 200));
 
         return panel;
     }

@@ -55,8 +55,7 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
 
             @Override
             public void onConfigurationChanged(final AnalyzerComponentBuilder<?> builder) {
-                _mappedWidget.onConfigurationChanged(null);
-                updateFields();
+                _mappedWidget.updateMappedStrings();
             }
 
             @Override
@@ -79,27 +78,9 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
     
     @Override
     protected void onConfigurationChanged() {
-        updateFields();
+        _mappedWidget.updateMappedStrings();
     }
     
-    private void updateFields() {
-        if (_mappedWidget == null) {
-            return;
-        }
-        
-        final InputColumn<?>[] columns = _mappedWidget.getValue();
-        final String[] newFields = new String[columns.length];
-        
-        for (int i = 0; i < columns.length; i++) {
-            newFields[i] = columns[i].getName();
-        }
-        
-        if (newFields.length > 0) {
-            _mappedWidget.setMappedStrings(newFields);
-            _mappedWidget.fireValueChanged();
-        }
-    }
-
     @Override
     protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {

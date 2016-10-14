@@ -28,6 +28,10 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.FilterCategory;
+import org.datacleaner.util.convert.NowDate;
+import org.datacleaner.util.convert.ShiftedToday;
+import org.datacleaner.util.convert.TodayDate;
+import org.datacleaner.util.convert.YesterdayDate;
 
 @Named("Date range")
 @Description("A filter that filters out rows where a date value is outside a specified range")
@@ -54,12 +58,12 @@ public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
 
     @Override
     public Date getHighestValue() {
-        return highestValue;
+        return getDynamicValue(highestValue);
     }
 
     @Override
     public Date getLowestValue() {
-        return lowestValue;
+        return getDynamicValue(lowestValue);
     }
 
     @Override
@@ -70,5 +74,51 @@ public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {
     @Override
     public int compare(Date o1, Date o2) {
         return o1.compareTo(o2);
+    }
+
+    @Override
+    public String getSuggestedLabel() {
+        final Date highestValue = getHighestValue();
+        final Date lowestValue = getLowestValue();
+        
+        if (highestValue == null || lowestValue == null) {
+            return null;
+        }
+        
+        final InputColumn<Date> column = getColumn();
+        
+        if (column == null) {
+            return null;
+        }
+        
+        return getDateLabel(lowestValue) + " =< " + column.getName() + " =< " + getDateLabel(highestValue);
+    }
+    
+    private Date getDynamicValue(final Date date) {
+        if (date instanceof NowDate) {
+            return new NowDate();
+        } else if (date instanceof TodayDate){
+            return new TodayDate();
+        } else if (date instanceof YesterdayDate){
+            return new YesterdayDate();
+        } else if (date instanceof ShiftedToday){
+            return new ShiftedToday(((ShiftedToday)date).getInput());
+        } else {
+            return date;
+        }       
+    }
+
+    private String getDateLabel(final Date date) {
+        if (date instanceof NowDate) {
+            return "now";
+        } else if (date instanceof TodayDate){
+            return "today";
+        } else if (date instanceof YesterdayDate){
+            return "yesterday";
+        } else if (date instanceof ShiftedToday){
+            return "today plus [" + ((ShiftedToday)date).getInput() + "]";
+        } else {
+            return date.toString();
+        }
     }
 }

@@ -204,6 +204,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
             listener.onChange(oldDictionary, newDictionary);
         }
+        for (DictionaryChangeListener listener : _dictionaryListeners) {
+            listener.onRemove(oldDictionary);
+            listener.onAdd(newDictionary);
+        }
     }
 
     public void addStringPattern(StringPattern sp) {
@@ -262,11 +266,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    public void changeStringPattern(StringPattern newPattern, StringPattern oldPattern){
-        changeStringPattern(newPattern, oldPattern, true);
+    public void changeStringPattern(StringPattern oldPattern, StringPattern newPattern){
+        changeStringPattern(oldPattern, newPattern, true);
     }
     
-    public void changeStringPattern(StringPattern newPattern, StringPattern oldPattern, boolean externalize){
+    public void changeStringPattern(StringPattern oldPattern, StringPattern newPattern, boolean externalize){
         // The old reference is removed from user preferences and we add a new
         // patern with the same name but with a
         // different expression value
@@ -280,6 +284,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
         for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners) {
             listener.onChange(oldPattern, newPattern);
+        }
+        for (StringPatternChangeListener listener : _stringPatternListeners) {
+            listener.onRemove(oldPattern);
+            listener.onAdd(newPattern);
         }
     }
     

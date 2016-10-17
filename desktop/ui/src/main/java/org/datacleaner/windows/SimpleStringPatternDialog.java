@@ -159,7 +159,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
                 }
                 final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
                 if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
-                    _catalog.changeStringPattern(simpleStringPattern, _simpleStringPattern);
+                    _catalog.changeStringPattern(_simpleStringPattern, simpleStringPattern);
                 } else {
                     _catalog.addStringPattern(simpleStringPattern);
                 }

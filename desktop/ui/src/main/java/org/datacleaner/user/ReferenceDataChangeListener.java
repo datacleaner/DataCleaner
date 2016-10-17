@@ -1,7 +1,7 @@
 package org.datacleaner.user;
 
 /**
- * Interface for changing the value of a Reference
+ * Interface for adding, removing, changing the value of a Reference
  * @param <ReferenceData>
  */
 public interface ReferenceDataChangeListener<ReferenceData> {

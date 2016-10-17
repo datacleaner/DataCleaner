@@ -21,6 +21,11 @@ package org.datacleaner.user;
 
 import org.datacleaner.reference.Dictionary;
 
+
+/**
+ *  Use {@link org.datacleaner.user.ReferenceDataChangeListener} instead
+ */
+@Deprecated
 public interface DictionaryChangeListener {
 
 	public void onAdd(Dictionary dictionary);

@@ -30,8 +30,8 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.user.DictionaryChangeListener;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
@@ -40,8 +40,9 @@ import org.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 import org.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
+
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> implements
-        DictionaryChangeListener {
+ ReferenceDataChangeListener<Dictionary> {
 
     private final DCComboBox<Dictionary> _comboBox;
     private final MutableReferenceDataCatalog _referenceDataCatalog;
@@ -129,5 +130,18 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
     @Override
     public void onRemove(Dictionary dictionary) {
         _comboBox.removeItem(dictionary);
+    }
+
+    @Override
+    public void onChange(Dictionary oldReferenceData, Dictionary newReferenceData) {
+
+        final Dictionary selectedItem = _comboBox.getSelectedItem();
+        _comboBox.removeItem(oldReferenceData);
+        _comboBox.addItem(newReferenceData);
+
+        if (selectedItem.equals(oldReferenceData)) {
+            _comboBox.setSelectedItem(newReferenceData);
+        }
+        fireValueChanged();
     }
 }

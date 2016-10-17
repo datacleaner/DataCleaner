@@ -22,18 +22,19 @@ package org.datacleaner.monitor;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 
-import java.io.IOException;
-
 import org.apache.http.HttpStatus;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 
-public class AuthenticationIT extends MonitorBaseIT {
+public class AuthenticationIT {
+    private static final String JOBS_PATH = "/jobs/";
 
-    @Before
-    public void setup() throws IOException {
-        super.setup();
-    }
+    private static final String USER_NAME = "admin";
+    private static final String USER_PASSWORD = "admin";
+
+    @Rule
+    public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
 
     @Test
     public void testAuthentication() {

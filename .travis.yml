@@ -5,7 +5,7 @@ jdk:
 services:
   - docker
 env:
-  - MAVEN_SKIP_RC=true MAVEN_OPTS="-Xmx2560m -XX:MaxPermSize=512m" DOCKER_HOST_NAME=localhost
+  - MAVEN_SKIP_RC=true MAVEN_OPTS="-Xmx2560m -XX:MaxPermSize=512m"
 script: "mvn clean verify -P integration-test"
 
 after_success:

@@ -28,18 +28,26 @@ import java.net.URISyntaxException;
 
 import org.apache.http.HttpStatus;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 
 import io.restassured.RestAssured;
 
-public class JobServicesIT extends MonitorBaseIT {
+public class JobServicesIT {
+    private static final String JOBS_PATH = "/jobs/";
+
     private static final int ONE_MINUTE = 60000;
     private static final int ONE_SECOND = 1000;
 
+    private static final String USER_NAME = "admin";
+    private static final String USER_PASSWORD = "admin";
+
+    @Rule
+    public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
+
     @Before
     public void setup() throws IOException {
-        super.setup();
-
         RestAssured.authentication = basic(USER_NAME, USER_PASSWORD);
     }
 

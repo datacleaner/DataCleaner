@@ -135,7 +135,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     public void addDictionary(Dictionary dict, boolean externalize) {
-        addDictionaryHelper(dict, externalize);
+        addDictionaryInternal(dict, externalize);
         
         for (DictionaryChangeListener listener : _dictionaryListeners) {
             listener.onAdd(dict);
@@ -146,7 +146,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     }
 
-    private void addDictionaryHelper(Dictionary dict, boolean externalize) {
+    private void addDictionaryInternal(Dictionary dict, boolean externalize) {
         String name = dict.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Dictionary has no name!");
@@ -200,7 +200,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             }
         }
         
-        addDictionaryHelper(newDictionary, externalize);
+        addDictionaryInternal(newDictionary, externalize);
         for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
             listener.onChange(oldDictionary, newDictionary);
         }
@@ -211,7 +211,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     public void addStringPattern(StringPattern sp, boolean externalize) {
-        addStringPatternHelper(sp, externalize);
+        addStringPatternInternal(sp, externalize);
         for (StringPatternChangeListener listener : _stringPatternListeners) {
             listener.onAdd(sp);
         }
@@ -219,7 +219,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             listener.onAdd(sp);
         }
     }
-    private void addStringPatternHelper(StringPattern sp, boolean externalize) {
+    private void addStringPatternInternal(StringPattern sp, boolean externalize) {
         String name = sp.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("StringPattern has no name!");
@@ -276,7 +276,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             _configurationWriter.removeStringPattern(oldPattern.getName());
             _userPreferences.save();
         }   
-        addStringPatternHelper(newPattern, externalize);
+        addStringPatternInternal(newPattern, externalize);
 
         for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners) {
             listener.onChange(oldPattern, newPattern);

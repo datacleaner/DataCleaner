@@ -47,8 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class for traversing dependencies between virtual and physical
- * columns.
+ * Helper class for traversing dependencies between virtual and physical columns.
+ *
+ * For performance reasons this class stores found sources in an internal cache. As there is no mechanism to
+ * invalidate or refresh this cache, instances of this class should not be assigned to fields of other
+ * classes.
  */
 public class SourceColumnFinder {
 

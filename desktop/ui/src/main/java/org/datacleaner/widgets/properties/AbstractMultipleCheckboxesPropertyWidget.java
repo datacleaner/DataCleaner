@@ -184,8 +184,8 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
             checkBox.setSelected(isSelected, true);
             _checkBoxes.put(name, checkBox);
             add(checkBox);
-            // change the value of the component builder. The listener is
-            // activated at the later point
+            /* 'fireValueChanged' changes the value in the component builder. Otherwise the listener is
+            activated at the later point(when the window is opened again) */
             fireValueChanged();
         } else {
             addCheckBox(newValue, true);

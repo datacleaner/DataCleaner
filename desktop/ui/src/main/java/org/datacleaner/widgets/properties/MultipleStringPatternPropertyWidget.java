@@ -110,11 +110,9 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 	@Override
 	public void onChange(StringPattern oldPattern, StringPattern newPattern) {
 	    editCheckBox(oldPattern, newPattern);
-	    
 	}
 	@Override
 	protected String getNotAvailableText() {
 		return "- no string patterns available - ";
 	}
-
 }

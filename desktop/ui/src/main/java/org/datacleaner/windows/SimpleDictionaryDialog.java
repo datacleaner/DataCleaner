@@ -138,7 +138,6 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
                 final SimpleDictionary dict = new SimpleDictionary(name, caseSensitive, values.split("\n"));
 
                 if (_originalDictionary != null) {
-                    // _catalog.removeDictionary(_originalDictionary);
                     _catalog.changeDictionary(_originalDictionary, dict);
                 } else {
                     _catalog.addDictionary(dict);

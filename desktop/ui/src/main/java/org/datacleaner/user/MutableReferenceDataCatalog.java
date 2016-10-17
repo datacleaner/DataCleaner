@@ -275,7 +275,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         if (externalize) {
             _configurationWriter.removeStringPattern(oldPattern.getName());
             _userPreferences.save();
-        }        
+        }   
         addStringPatternHelper(newPattern, externalize);
 
         for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners) {

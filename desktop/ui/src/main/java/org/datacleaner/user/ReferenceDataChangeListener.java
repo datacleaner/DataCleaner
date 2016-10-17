@@ -8,7 +8,7 @@ public interface ReferenceDataChangeListener<ReferenceData> {
     
     public void onAdd(ReferenceData referenceData);
 
-    public void onChange(ReferenceData oldReferenceData, ReferenceData newreferenceData);
+    public void onChange(ReferenceData oldReferenceData, ReferenceData newReferenceData);
     
     public void onRemove(ReferenceData referenceData);
 

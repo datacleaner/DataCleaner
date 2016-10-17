@@ -60,8 +60,9 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     private final ComponentBuilder _componentBuilder;
     private final ComponentScopeButton _componentScopeButton;
-    private boolean _changingScope;
+    private final ChangeRequirementButton _changeRequirementButton;
 
+    private boolean _changingScope;
     private final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> _renderer;
 
     public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
@@ -82,11 +83,15 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
                     final ComponentBuilder osComponentBuilder) {
                 _changingScope = false;
                 _componentScopeButton.updateText(osJobBuilder, osComponentBuilder);
+
+                _changeRequirementButton.updateText();
+                _changeRequirementButton.setVisible(ChangeRequirementMenu.isRelevant(_componentBuilder));
                 initialize();
             }
         };
 
         _componentScopeButton = new ComponentScopeButton(_componentBuilder, menuBuilder);
+        _changeRequirementButton = new ChangeRequirementButton(_componentBuilder);
     }
 
     private static Image getBannerImage(ComponentBuilder componentBuilder) {
@@ -153,9 +158,11 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         }
 
         banner.add(documentationButton);
-        if (ChangeRequirementMenu.isRelevant(_componentBuilder)) {
-            banner.add(new ChangeRequirementButton(_componentBuilder));
-        }
+
+        _changeRequirementButton.setVisible(ChangeRequirementMenu.isRelevant(_componentBuilder));
+        banner.add(_changeRequirementButton);
+
+
         banner.add(renameButton);
 
         return banner;

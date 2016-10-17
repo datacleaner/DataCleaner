@@ -61,8 +61,8 @@ public class SourceColumnFinder {
     private Set<HasFilterOutcomes> _outcomeSources = new HashSet<HasFilterOutcomes>();
     private Set<HasComponentRequirement> _outcomeSinks = new HashSet<HasComponentRequirement>();
 
-    private Map<InputColumn<?>, Set<Column>> originatingColumnsOfInputColumnCache = new HashMap<>();
-    private Map<Object, Set<Column>> originatingColumnsOfSourceCache = new HashMap<>();
+    private final Map<InputColumn<?>, Set<Column>> originatingColumnsOfInputColumnCache = new HashMap<>();
+    private final Map<Object, Set<Column>> originatingColumnsOfSourceCache = new HashMap<>();
 
     private void addSources(Object... sources) {
         for (Object source : sources) {
@@ -297,7 +297,7 @@ public class SourceColumnFinder {
             return cachedOriginatingColumns;
         }
 
-        Set<Column> originatingColumns = new HashSet<>();
+        final Set<Column> originatingColumns = new HashSet<>();
 
         if (inputColumn != null) {
             if (inputColumn.isPhysicalColumn()) {
@@ -325,7 +325,7 @@ public class SourceColumnFinder {
             return cachedOriginatingColumns;
         }
 
-        Set<Column> originatingColumns = new HashSet<>();
+        final Set<Column> originatingColumns = new HashSet<>();
 
         if (source != null) {
             if (source instanceof InputColumnSinkJob) {

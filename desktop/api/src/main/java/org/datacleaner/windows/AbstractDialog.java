@@ -198,7 +198,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         panel.setPreferredSize(getDialogWidth(),
                 bannerHeight + dialogContent.getPreferredSize().height + getDialogHeightBuffer());
 
-        setMinimumSize(new Dimension(getDialogWidth(), 200));
+        setMinimumSize(new Dimension(getDialogWidth(), 300));
 
         return panel;
     }

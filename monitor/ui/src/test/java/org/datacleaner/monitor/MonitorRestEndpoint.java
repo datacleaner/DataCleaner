@@ -20,6 +20,7 @@
 package org.datacleaner.monitor;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.junit.rules.ExternalResource;
@@ -32,8 +33,19 @@ public class MonitorRestEndpoint extends ExternalResource {
         final Properties dockerProperties = new Properties();
         dockerProperties.load(getClass().getClassLoader().getResourceAsStream("docker.properties"));
 
-        RestAssured.baseURI = "http://" + (new URI(System.getenv("DOCKER_HOST"))).getHost() + ":" + dockerProperties
+        RestAssured.baseURI = "http://" + determineHostName() + ":" + dockerProperties
                 .getProperty("monitor.portnumber") + "/" + dockerProperties.getProperty("monitor.contextpath");
         RestAssured.basePath = "/repository/demo";
+    }
+
+    private String determineHostName() throws URISyntaxException {
+        final String dockerHost = System.getenv("DOCKER_HOST");
+
+        if (dockerHost == null) {
+            // If no value is returned for the DOCKER_HOST environment variable fall back to a default.
+            return "localhost";
+        } else {
+            return (new URI(dockerHost)).getHost();
+        }
     }
 }

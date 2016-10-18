@@ -6,7 +6,7 @@ services:
   - docker
 env:
   - MAVEN_SKIP_RC=true MAVEN_OPTS="-Xmx2560m -XX:MaxPermSize=512m"
-script: "mvn clean verify -P integration-test"
+script: "mvn clean verify -e -P integration-test"
 
 after_success:
   - mvn test javadoc:javadoc

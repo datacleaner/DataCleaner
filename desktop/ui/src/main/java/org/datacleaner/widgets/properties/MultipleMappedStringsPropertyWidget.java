@@ -210,15 +210,12 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
             return;
         }
         
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                _alreadyUpdating = true;
-                onConfigurationChanged(null);
-                setMappedStrings(null);
-                _mappedStringsPropertyWidget.fireValueChanged();
-                _alreadyUpdating = false;
-            }
+        SwingUtilities.invokeLater(() -> {
+            _alreadyUpdating = true;
+            onConfigurationChanged(null);
+            setMappedStrings(null);
+            _mappedStringsPropertyWidget.fireValueChanged();
+            _alreadyUpdating = false;
         });
     }
 

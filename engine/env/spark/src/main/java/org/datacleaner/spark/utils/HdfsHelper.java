@@ -175,4 +175,14 @@ public class HdfsHelper {
         // actually we don't know, but most likely it's not a directory
         return false;
     }
+
+    /**
+     * Clears up the statically cached reference to a {@link Configuration} object, which is used an
+     * HdfsHelper is instantiated without an explicit {@link Configuration} object.
+     *
+     * Note: Only use if you want to start fresh and make sure no lingering objects are used.
+     */
+    public static void clear() {
+        _lastKnownConfiguration = null;
+    }
 }

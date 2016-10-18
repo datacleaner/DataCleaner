@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Created with DataCleaner Enterprise edition 5.1.3</job-description>
+        <author>arjans</author>
+        <updated-date>2016-10-13+02:00</updated-date>
+        <metadata-properties>
+            <property name="CoordinatesX.PUBLIC.CUSTOMERS">40</property>
+            <property name="CoordinatesY.PUBLIC.CUSTOMERS">40</property>
+        </metadata-properties>
+    </job-metadata>
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_customernumber" path="CUSTOMERS.CUSTOMERNUMBER" type="INTEGER"/>
+            <column id="col_customername" path="CUSTOMERS.CUSTOMERNAME" type="VARCHAR"/>
+            <column id="col_contactlastname" path="CUSTOMERS.CONTACTLASTNAME" type="VARCHAR"/>
+            <column id="col_contactfirstname" path="CUSTOMERS.CONTACTFIRSTNAME" type="VARCHAR"/>
+            <column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR"/>
+            <column id="col_addressline1" path="CUSTOMERS.ADDRESSLINE1" type="VARCHAR"/>
+            <column id="col_addressline2" path="CUSTOMERS.ADDRESSLINE2" type="VARCHAR"/>
+            <column id="col_city" path="CUSTOMERS.CITY" type="VARCHAR"/>
+            <column id="col_state" path="CUSTOMERS.STATE" type="VARCHAR"/>
+            <column id="col_postalcode" path="CUSTOMERS.POSTALCODE" type="VARCHAR"/>
+            <column id="col_country" path="CUSTOMERS.COUNTRY" type="VARCHAR"/>
+            <column id="col_salesrepemployeenumber" path="CUSTOMERS.SALESREPEMPLOYEENUMBER" type="INTEGER"/>
+            <column id="col_creditlimit" path="CUSTOMERS.CREDITLIMIT" type="NUMERIC"/>
+            <column id="col_jobtitle" path="CUSTOMERS.JOBTITLE" type="VARCHAR"/>
+        </columns>
+    </source>
+    <transformation/>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Completeness analyzer"/>
+            <metadata-properties>
+                <property name="CoordinatesX">40</property>
+                <property name="CoordinatesY">120</property>
+            </metadata-properties>
+            <properties>
+                <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
+                <property name="Evaluation mode" value="ANY_FIELD"/>
+            </properties>
+            <input ref="col_customernumber" name="Values"/>
+            <input ref="col_customername" name="Values"/>
+            <input ref="col_contactlastname" name="Values"/>
+            <input ref="col_contactfirstname" name="Values"/>
+            <input ref="col_phone" name="Values"/>
+            <input ref="col_addressline1" name="Values"/>
+            <input ref="col_addressline2" name="Values"/>
+            <input ref="col_city" name="Values"/>
+            <input ref="col_state" name="Values"/>
+            <input ref="col_postalcode" name="Values"/>
+            <input ref="col_country" name="Values"/>
+            <input ref="col_salesrepemployeenumber" name="Values"/>
+            <input ref="col_creditlimit" name="Values"/>
+            <input ref="col_jobtitle" name="Values"/>
+        </analyzer>
+    </analysis>
+</job>

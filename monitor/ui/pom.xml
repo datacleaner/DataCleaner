@@ -8,7 +8,18 @@
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
 
+	<properties>
+        <dockerTomcatPort>8080</dockerTomcatPort>
+	</properties>
+
 	<build>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -137,6 +148,74 @@
 						<configuration>
 							<draftCompile>true</draftCompile>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>integration-test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.19.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.15.16</version>
+						<configuration>
+							<logDate>default</logDate>
+							<autoPull>true</autoPull>
+							<images>
+								<image>
+									<name>datacleaner-monitor</name>
+									<build>
+										<dockerFileDir>${project.build.directory}/test-classes</dockerFileDir>
+										<assembly>
+											<descriptor>${project.build.directory}/test-classes/assembly.xml</descriptor>
+										</assembly>
+									</build>
+
+									<run>
+										<ports>
+											<port>${dockerTomcatPort}:8080</port>
+										</ports>
+										<wait>
+											<url>http://${docker.host.address}:${dockerTomcatPort}</url>
+											<time>300000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						
+						<executions>
+							<execution>
+								<id>start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -340,6 +419,12 @@
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>5.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.0.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -102,12 +102,12 @@ public class AboutDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 600;
+        return 650;
     }
 
     @Override
     protected boolean isWindowResizable() {
-        return false;
+        return true;
     }
 
     @Override

@@ -104,8 +104,8 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
         textFileDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
-                TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
+                final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
                 dialog.open();
             }
         });
@@ -115,8 +115,8 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
         simpleDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
-                SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
+                final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
                 dialog.open();
             }
         });
@@ -126,8 +126,8 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
         datastoreDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
-                DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
+                final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
                 dialog.open();
             }
         });

@@ -30,7 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -79,6 +81,8 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.user.ReferenceDataChangeListener;
+import org.datacleaner.reference.StringPattern;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -92,6 +96,7 @@ import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -174,6 +179,49 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         public void onRequirementChanged(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
             _graph.refresh();
         }
+    }
+    
+    private class WindowChangeStringPatternListener implements ReferenceDataChangeListener<StringPattern>{
+
+        @Override
+        public void onAdd(StringPattern referenceData) {
+        }
+
+        @Override
+        public void onChange(StringPattern oldReferenceData, StringPattern newReferenceData) {
+          final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
+          for (ComponentBuilder componentBuilder: componentBuilders){
+              final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder.getConfiguredProperties();
+          
+              for (Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
+                  final ConfiguredPropertyDescriptor propertyDeescriptor = entry.getKey();
+                  if (StringPattern.class.isAssignableFrom(propertyDeescriptor.getBaseType())) {
+                      final Object valueObject = entry.getValue();
+                      //In some cases the configured property is an array
+                      if (valueObject.getClass().isArray()) {
+                          final Object[] objects = (Object[]) valueObject;
+                          for (int i = 0; i < objects.length; i++) {
+                              if (oldReferenceData.equals(objects[i])) {
+                                  //change the old value of the pattern in the array with the new value
+                                  objects[i] = newReferenceData;
+                              }
+                          }
+                      } else {
+                          if (oldReferenceData.equals(valueObject)) {
+                              componentBuilder.setConfiguredProperty(propertyDeescriptor,
+                                      newReferenceData);
+                          }
+                      }
+                  }
+              }
+          }
+
+        }
+
+        @Override
+        public void onRemove(StringPattern referenceData) {
+        }
+        
     }
 
     private class WindowTransformerChangeListener implements TransformerChangeListener {
@@ -288,6 +336,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener = new WindowChangeStringPatternListener();
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -295,6 +344,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
     private AnalysisWindowPanelType _currentPanelType;
+    private MutableReferenceDataCatalog _mutableReferenceCatalog;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
@@ -306,7 +356,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
+            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog, MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -318,6 +368,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
+        _mutableReferenceCatalog = mutableReferenceCatalog;
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
                 DEFAULT_WINDOW_HEIGHT);
 
@@ -365,6 +416,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
     }
 
     @Override
@@ -629,6 +681,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _datastoreConnection.close();
         }
         getContentPane().removeAll();
+        _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
     }
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {

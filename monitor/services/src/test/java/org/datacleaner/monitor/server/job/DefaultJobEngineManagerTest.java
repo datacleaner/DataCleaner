@@ -19,9 +19,6 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.job.MetricJobContext;
@@ -37,10 +34,7 @@ public class DefaultJobEngineManagerTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        final File targetDir = new File("target/example_repo");
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-        
+
         if (applicationContext == null) {
             applicationContext  = new ClassPathXmlApplicationContext("context/application-context.xml");
         }

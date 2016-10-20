@@ -27,7 +27,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -37,7 +36,6 @@ import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
@@ -61,14 +59,10 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         if (service == null) {
-            final File targetDir = new File("target/example_repo");
-            FileUtils.deleteDirectory(targetDir);
-            FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-
             final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                     "context/application-context.xml");
 
-            final Repository repository = new FileRepository(targetDir);
+            final FileRepository repository = applicationContext.getBean(FileRepository.class);
             tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
                     new DefaultJobEngineManager(applicationContext));
 
@@ -77,7 +71,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
 
             service.initialize();
 
-            resultDirectory = new File(targetDir, "tenant1/results");
+            resultDirectory = new File(repository.getFile(), "tenant1/results");
         }
     }
 

@@ -47,6 +47,8 @@ import org.quartz.JobDetail;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.common.io.Files;
+
 import junit.framework.TestCase;
 
 public class ExecuteJobTest extends TestCase {
@@ -126,9 +128,9 @@ public class ExecuteJobTest extends TestCase {
      * Testing Hadoop execution in debug mode. The example job from example_hadoop_repo should be modified accordingly. 
      */
     public void ignoreTestHadoopExecution() throws Exception {
-        
-        final File targetDir = new File("target/example_hadoop_repo");
-        FileUtils.deleteDirectory(targetDir);
+
+        final File targetDir = Files.createTempDir();
+        targetDir.deleteOnExit();
         FileUtils.copyDirectory(new File("src/test/resources/example_hadoop_repo"), targetDir);
 
         final Repository repository = new FileRepository(targetDir); 

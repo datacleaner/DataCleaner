@@ -98,7 +98,7 @@
 
 	<complexType name="columnType">
 		<attribute name="id" type="token" use="required" />
-		<attribute name="path" type="normalizedString" use="required">
+		<attribute name="path" use="required">
 			<annotation>
 				<documentation>
 					The path to the column. The path is expected to be

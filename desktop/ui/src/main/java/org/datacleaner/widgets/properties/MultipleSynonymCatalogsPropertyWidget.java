@@ -31,13 +31,13 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.SynonymCatalogChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<SynonymCatalog>
-		implements SynonymCatalogChangeListener {
+		implements ReferenceDataChangeListener<SynonymCatalog> {
 
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
@@ -111,4 +111,9 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheck
 	protected String getNotAvailableText() {
 		return "- no synonym catalogs available - ";
 	}
+
+    @Override
+    public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
+        editCheckBox(oldReferenceData, newReferenceData);
+    }
 }

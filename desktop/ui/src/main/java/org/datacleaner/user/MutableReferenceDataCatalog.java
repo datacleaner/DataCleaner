@@ -48,6 +48,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<>();
     private final List<ReferenceDataChangeListener<Dictionary>> _dictionaryV2Listeners = new ArrayList<>();
     private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<SynonymCatalog>> _synonymCatalogV2Listeners = new ArrayList<>();
     private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<>();
     private final List<ReferenceDataChangeListener<StringPattern>> _stringPatternV2Listeners = new ArrayList<>();
     private final ReferenceDataCatalog _immutableDelegate;
@@ -314,6 +315,16 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     public void addSynonymCatalog(SynonymCatalog sc, boolean externalize) {
+        addSynonymCatalogInternal(sc, externalize);
+        for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+            listener.onAdd(sc);
+        }
+        for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+            listener.onAdd(sc);
+        }
+    }
+
+    private void addSynonymCatalogInternal(SynonymCatalog sc, boolean externalize) {
         String name = sc.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("SynonymCatalog has no name!");
@@ -327,9 +338,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
         assignProvidedProperties(sc);
         synonymCatalogs.add(sc);
-        for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
-            listener.onAdd(sc);
-        }
         if (externalize) {
             if (_configurationWriter.isExternalizable(sc)) {
                 _configurationWriter.externalize(sc);
@@ -348,11 +356,37 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
                 listener.onRemove(sc);
             }
+            for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+                listener.onRemove(sc);
+            }
         }
         if (externalize) {
             _configurationWriter.removeSynonymCatalog(sc.getName());
             _userPreferences.save();
         }
+    }
+
+    public void changeSynonymCatalog(SynonymCatalog oldSynonymcatalog, SynonymCatalog newSynonymCatalog) {
+        changeSynonymCatalog(oldSynonymcatalog, newSynonymCatalog, true);
+    }
+    
+   public void changeSynonymCatalog(SynonymCatalog oldSynonymcatalog, SynonymCatalog newSynonymCatalog, boolean externalize){
+        
+       final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
+       synonymCatalogs.remove(oldSynonymcatalog);
+       if (externalize) {
+           _configurationWriter.removeSynonymCatalog(oldSynonymcatalog.getName());
+           _userPreferences.save();
+       }   
+       addSynonymCatalogInternal(newSynonymCatalog, externalize);
+       
+       for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+           listener.onChange(oldSynonymcatalog, newSynonymCatalog);
+       }
+       for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+           listener.onRemove(oldSynonymcatalog);
+           listener.onAdd(newSynonymCatalog);
+       }
     }
 
     @Override
@@ -398,7 +432,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
     
     public void removeDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
-        _dictionaryV2Listeners.add(listener);
+        _dictionaryV2Listeners.remove(listener);
     }
 
     public void addSynonymCatalogListener(SynonymCatalogChangeListener listener) {
@@ -407,6 +441,14 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     public void removeSynonymCatalogListener(SynonymCatalogChangeListener listener) {
         _synonymCatalogListeners.remove(listener);
+    }
+    
+    public void addSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
+        _synonymCatalogV2Listeners.add(listener); 
+    }
+    
+    public void removeSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
+        _synonymCatalogV2Listeners.remove(listener);
     }
 
     public void addStringPatternListener(StringPatternChangeListener listener) {
@@ -422,6 +464,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
     
     public void removeStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
-        _stringPatternV2Listeners.add(listener);
+        _stringPatternV2Listeners.remove(listener);
     }
 }

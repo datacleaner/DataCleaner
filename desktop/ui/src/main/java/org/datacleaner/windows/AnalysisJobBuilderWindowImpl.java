@@ -85,6 +85,7 @@ import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -181,6 +182,24 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         public void onRequirementChanged(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
             _graph.refresh();
         }
+    }
+    private class WindowChangeSynonymCatalogListener implements ReferenceDataChangeListener<SynonymCatalog>{
+
+        @Override
+        public void onAdd(SynonymCatalog referenceData) {
+            
+        }
+
+        @Override
+        public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
+            changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, SynonymCatalog.class);   
+        }
+
+        @Override
+        public void onRemove(SynonymCatalog referenceData) {
+            
+        }
+        
     }
     
     private class WindowChangeDictionaryListener implements ReferenceDataChangeListener<Dictionary>{
@@ -333,6 +352,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
     private final ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener = new WindowChangeStringPatternListener();
     private final ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener = new WindowChangeDictionaryListener();
+    private final ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener = new WindowChangeSynonymCatalogListener();
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -391,6 +411,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         //Add listeners for ReferenceData classes 
         _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
         _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.addSynonymCatalogListener(_synonymCatalogListener);
 
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
@@ -680,8 +701,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _datastoreConnection.close();
         }
         
+        //Remove the reference data listener
         _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
         _mutableReferenceCatalog.removeDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.removeSynonymCatalogListener(_synonymCatalogListener);
         
         getContentPane().removeAll();
     }

@@ -30,9 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -83,7 +81,6 @@ import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.reference.Dictionary;
-import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
@@ -183,61 +180,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _graph.refresh();
         }
     }
-    private class WindowChangeSynonymCatalogListener implements ReferenceDataChangeListener<SynonymCatalog>{
-
-        @Override
-        public void onAdd(SynonymCatalog referenceData) {
-            
-        }
-
-        @Override
-        public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
-            changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, SynonymCatalog.class);   
-        }
-
-        @Override
-        public void onRemove(SynonymCatalog referenceData) {
-            
-        }
-        
-    }
     
-    private class WindowChangeDictionaryListener implements ReferenceDataChangeListener<Dictionary>{
-
-        @Override
-        public void onAdd(Dictionary referenceData) {
-        }
-
-        @Override
-        public void onChange(Dictionary oldReferenceData, Dictionary newReferenceData) {
-            changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, Dictionary.class);
-        }
-
-        @Override
-        public void onRemove(Dictionary referenceData) {
-            
-        }
-        
-    }
-    private class WindowChangeStringPatternListener implements ReferenceDataChangeListener<StringPattern>{
-
-        @Override
-        public void onAdd(StringPattern referenceData) {
-        }
-
-        @Override
-        public void onChange(StringPattern oldReferenceData, StringPattern newReferenceData) {
-          changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, StringPattern.class);
-        }
-
-       
-
-        @Override
-        public void onRemove(StringPattern referenceData) {
-        }
-        
-    }
-
     private class WindowTransformerChangeListener implements TransformerChangeListener {
 
         @Override
@@ -350,9 +293,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
-    private final ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener = new WindowChangeStringPatternListener();
-    private final ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener = new WindowChangeDictionaryListener();
-    private final ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener = new WindowChangeSynonymCatalogListener();
+    private final ReferenceDataAnalysisJobWindowImplListeners _referenceDataAnalysisJobWindowListeners;
+    private ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener;
+    private ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener;
+    private ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -409,6 +353,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
         //Add listeners for ReferenceData classes 
+        _referenceDataAnalysisJobWindowListeners = new ReferenceDataAnalysisJobWindowImplListeners(_analysisJobBuilder);
+        _stringPatternChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeStringPatternListener();
+        _dictionaryChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeDictionaryListener();
+        _synonymCatalogListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeSynonymCatalogListener();
         _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
         _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
         _mutableReferenceCatalog.addSynonymCatalogListener(_synonymCatalogListener);
@@ -1042,38 +990,5 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public DCModule getDCModule() {
         return _dcModule;
-    }
-    /**
-     * Method used to change the reference data(String Patterns, Dictionaries, Synonyms) components' values in components 
-     * @param oldReferenceData
-     * @param newReferenceData
-     */
-    private void changeReferenceDataValuesInComponents(ReferenceData oldReferenceData,
-            ReferenceData newReferenceData, Class<?> referenceDataClass) {
-        final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
-          for (ComponentBuilder componentBuilder: componentBuilders){
-              final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder.getConfiguredProperties();
-              for (Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
-                  final ConfiguredPropertyDescriptor propertyDescriptor = entry.getKey();
-                  if (referenceDataClass.isAssignableFrom(propertyDescriptor.getBaseType())) {
-                      final Object valueObject = entry.getValue();
-                      //In some cases the configured property is an array
-                      if (valueObject.getClass().isArray()) {
-                          final Object[] objects = (Object[]) valueObject;
-                          for (int i = 0; i < objects.length; i++) {
-                              if (oldReferenceData.equals(objects[i])) {
-                                  //change the old value of the pattern in the array with the new value
-                                  objects[i] = newReferenceData;
-                              }
-                          }
-                      } else {
-                          if (oldReferenceData.equals(valueObject)) {
-                              componentBuilder.setConfiguredProperty(propertyDescriptor,
-                                      newReferenceData);
-                          }
-                      }
-                  }
-              }
-          }
     }
 }

@@ -82,6 +82,8 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.user.ReferenceDataChangeListener;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
@@ -181,6 +183,23 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
     
+    private class WindowChangeDictionaryListener implements ReferenceDataChangeListener<Dictionary>{
+
+        @Override
+        public void onAdd(Dictionary referenceData) {
+        }
+
+        @Override
+        public void onChange(Dictionary oldReferenceData, Dictionary newReferenceData) {
+            changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, Dictionary.class);
+        }
+
+        @Override
+        public void onRemove(Dictionary referenceData) {
+            
+        }
+        
+    }
     private class WindowChangeStringPatternListener implements ReferenceDataChangeListener<StringPattern>{
 
         @Override
@@ -189,34 +208,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         @Override
         public void onChange(StringPattern oldReferenceData, StringPattern newReferenceData) {
-          final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
-          for (ComponentBuilder componentBuilder: componentBuilders){
-              final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder.getConfiguredProperties();
-          
-              for (Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
-                  final ConfiguredPropertyDescriptor propertyDeescriptor = entry.getKey();
-                  if (StringPattern.class.isAssignableFrom(propertyDeescriptor.getBaseType())) {
-                      final Object valueObject = entry.getValue();
-                      //In some cases the configured property is an array
-                      if (valueObject.getClass().isArray()) {
-                          final Object[] objects = (Object[]) valueObject;
-                          for (int i = 0; i < objects.length; i++) {
-                              if (oldReferenceData.equals(objects[i])) {
-                                  //change the old value of the pattern in the array with the new value
-                                  objects[i] = newReferenceData;
-                              }
-                          }
-                      } else {
-                          if (oldReferenceData.equals(valueObject)) {
-                              componentBuilder.setConfiguredProperty(propertyDeescriptor,
-                                      newReferenceData);
-                          }
-                      }
-                  }
-              }
-          }
-
+          changeReferenceDataValuesInComponents(oldReferenceData, newReferenceData, StringPattern.class);
         }
+
+       
 
         @Override
         public void onRemove(StringPattern referenceData) {
@@ -337,6 +332,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
     private final ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener = new WindowChangeStringPatternListener();
+    private final ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener = new WindowChangeDictionaryListener();
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -392,6 +388,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 usageLogger);
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
+        //Add listeners for ReferenceData classes 
+        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
 
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
@@ -416,7 +415,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
-        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
+        
     }
 
     @Override
@@ -680,8 +679,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
-        getContentPane().removeAll();
+        
         _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.removeDictionaryListener(_dictionaryChangeListener);
+        
+        getContentPane().removeAll();
     }
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
@@ -1017,5 +1019,38 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public DCModule getDCModule() {
         return _dcModule;
+    }
+    /**
+     * Method used to change the reference data(String Patterns, Dictionaries, Synonyms) components' values in components 
+     * @param oldReferenceData
+     * @param newReferenceData
+     */
+    private void changeReferenceDataValuesInComponents(ReferenceData oldReferenceData,
+            ReferenceData newReferenceData, Class<?> referenceDataClass) {
+        final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
+          for (ComponentBuilder componentBuilder: componentBuilders){
+              final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder.getConfiguredProperties();
+              for (Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
+                  final ConfiguredPropertyDescriptor propertyDeescriptor = entry.getKey();
+                  if (referenceDataClass.isAssignableFrom(propertyDeescriptor.getBaseType())) {
+                      final Object valueObject = entry.getValue();
+                      //In some cases the configured property is an array
+                      if (valueObject.getClass().isArray()) {
+                          final Object[] objects = (Object[]) valueObject;
+                          for (int i = 0; i < objects.length; i++) {
+                              if (oldReferenceData.equals(objects[i])) {
+                                  //change the old value of the pattern in the array with the new value
+                                  objects[i] = newReferenceData;
+                              }
+                          }
+                      } else {
+                          if (oldReferenceData.equals(valueObject)) {
+                              componentBuilder.setConfiguredProperty(propertyDeescriptor,
+                                      newReferenceData);
+                          }
+                      }
+                  }
+              }
+          }
     }
 }

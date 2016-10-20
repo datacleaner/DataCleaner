@@ -1054,8 +1054,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
           for (ComponentBuilder componentBuilder: componentBuilders){
               final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder.getConfiguredProperties();
               for (Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
-                  final ConfiguredPropertyDescriptor propertyDeescriptor = entry.getKey();
-                  if (referenceDataClass.isAssignableFrom(propertyDeescriptor.getBaseType())) {
+                  final ConfiguredPropertyDescriptor propertyDescriptor = entry.getKey();
+                  if (referenceDataClass.isAssignableFrom(propertyDescriptor.getBaseType())) {
                       final Object valueObject = entry.getValue();
                       //In some cases the configured property is an array
                       if (valueObject.getClass().isArray()) {
@@ -1068,7 +1068,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                           }
                       } else {
                           if (oldReferenceData.equals(valueObject)) {
-                              componentBuilder.setConfiguredProperty(propertyDeescriptor,
+                              componentBuilder.setConfiguredProperty(propertyDescriptor,
                                       newReferenceData);
                           }
                       }

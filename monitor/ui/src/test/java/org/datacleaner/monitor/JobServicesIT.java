@@ -19,9 +19,6 @@
  */
 package org.datacleaner.monitor;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.equalTo;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -33,6 +30,9 @@ import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
 import io.restassured.RestAssured;
+
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class JobServicesIT {
     private static final String JOBS_PATH = "/jobs/";
@@ -51,15 +51,27 @@ public class JobServicesIT {
         RestAssured.authentication = basic(USER_NAME, USER_PASSWORD);
     }
 
-    @Test(timeout = ONE_MINUTE)
-    public void testJobCycle() throws URISyntaxException, InterruptedException {
-        final String jobName = "customer_completeness";
+    @Test(timeout = 5 * ONE_MINUTE)
+    public void testJobs() throws URISyntaxException, InterruptedException {
+        final String[] jobNames = {
+                "customer_completeness",
+                "customer_profiling",
+                "product_profiling",
+                "copy_employees_to_customer_table",
+        };
+        
+        for (String name : jobNames) {
+            testJob(name);
+        }
+    }
+
+    public void testJob(String jobName) throws URISyntaxException, InterruptedException {
         final String jobFileName = jobName + ".analysis.xml";
-
-        given().multiPart(new File(getClass().getClassLoader().getResource(jobFileName).toURI()))
-            .expect().body("file_type", equalTo("ANALYSIS_JOB")).and()
-            .expect().body("status", equalTo("Success")).when().post(JOBS_PATH + jobFileName);
-
+        given().multiPart(
+                new File(getClass().getClassLoader().getResource("jobs" + File.separator + jobFileName).toURI()))
+                .expect().body("file_type", equalTo("ANALYSIS_JOB")).and()
+                .expect().body("status", equalTo("Success")).when().post(JOBS_PATH + jobFileName);
+        
         final String resultPath = "/logs/" + post(JOBS_PATH + jobName + ".trigger").then().extract().path("resultId");
 
         while (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING")) {

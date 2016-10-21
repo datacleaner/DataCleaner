@@ -19,18 +19,16 @@
  */
 package org.datacleaner.user;
 
-import org.datacleaner.reference.StringPattern;
-
-
-/** 
- *  Use {@link org.datacleaner.user.ReferenceDataChangeListener} instead
+/**
+ * Interface for adding, removing, changing the value of a Reference
+ * @param <ReferenceData>
  */
-@Deprecated
-public interface StringPatternChangeListener {
+public interface ReferenceDataChangeListener<ReferenceData> {
+    
+    public void onAdd(ReferenceData referenceData);
 
-    @Deprecated
-	public void onAdd(StringPattern stringPattern);
+    public void onChange(ReferenceData oldReferenceData, ReferenceData newReferenceData);
+    
+    public void onRemove(ReferenceData referenceData);
 
-    @Deprecated
-	public void onRemove(StringPattern stringPattern);
 }

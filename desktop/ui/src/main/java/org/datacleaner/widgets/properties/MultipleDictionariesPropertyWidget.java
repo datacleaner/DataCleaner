@@ -30,14 +30,14 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.user.DictionaryChangeListener;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Dictionary> implements
-		DictionaryChangeListener {
+ ReferenceDataChangeListener<Dictionary> {
 
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
@@ -111,5 +111,10 @@ public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckbox
 	protected String getNotAvailableText() {
 		return "- no dictionaries available -";
 	}
+
+    @Override
+    public void onChange(Dictionary oldDictionary, Dictionary newDictionary) {
+        editCheckBox(oldDictionary, newDictionary);
+    }
 
 }

@@ -38,7 +38,7 @@ import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.SynonymCatalogChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -53,7 +53,7 @@ import org.jdesktop.swingx.VerticalLayout;
 
 import com.google.inject.Injector;
 
-public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
+public final class SynonymCatalogListPanel extends DCPanel implements ReferenceDataChangeListener<SynonymCatalog> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -228,22 +228,12 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	@Override
 	public void onAdd(SynonymCatalog synonymCatalog) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				updateComponents();
-			}
-		});
+	    SwingUtilities.invokeLater(() -> updateComponents());
 	}
 
 	@Override
 	public void onRemove(SynonymCatalog synonymCatalog) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				updateComponents();
-			}
-		});
+	    SwingUtilities.invokeLater(() -> updateComponents());
 	}
 
 	@Override
@@ -251,4 +241,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		super.removeNotify();
 		_catalog.removeSynonymCatalogListener(this);
 	}
+
+    @Override
+    public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
 }

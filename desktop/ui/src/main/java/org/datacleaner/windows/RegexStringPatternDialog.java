@@ -163,12 +163,13 @@ public final class RegexStringPatternDialog extends AbstractDialog {
                             "Please fill out the regular expression");
                     return;
                 }
+                final RegexStringPattern regexStringPattern = new RegexStringPattern(expressionName, expression, true);
                 if (_regexStringPattern != null && _catalog.containsStringPattern(_regexStringPattern.getName())) {
-                    _catalog.removeStringPattern(_catalog.getStringPattern(_regexStringPattern.getName()));
+                    _catalog.changeStringPattern(_regexStringPattern, regexStringPattern);
+                } else {
+                    _catalog.addStringPattern(regexStringPattern);
                 }
-                RegexStringPattern regexStringPattern = new RegexStringPattern(expressionName, expression, true);
                 _regexStringPattern = regexStringPattern;
-                _catalog.addStringPattern(regexStringPattern);
                 RegexStringPatternDialog.this.dispose();
             }
         });

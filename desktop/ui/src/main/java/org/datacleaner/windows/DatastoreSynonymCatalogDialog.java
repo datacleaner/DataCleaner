@@ -184,11 +184,14 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                 Column selectedItem = _masterTermColumnComboBox.getSelectedItem();
                 String[] synonymColumnNames = _synonymColumnsPanel.getColumnNames();
 
-                DatastoreSynonymCatalog dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog(name,
+                final DatastoreSynonymCatalog dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog(name,
                         nameOfDatastore, selectedItem.getQualifiedLabel(), synonymColumnNames);
 
                 if (_originalsynonymCatalog != null) {
-                    _mutableReferenceCatalog.removeSynonymCatalog(_originalsynonymCatalog);
+                    _mutableReferenceCatalog.changeSynonymCatalog(_originalsynonymCatalog,
+                            dataStoreBasedSynonymCatalog);
+                } else {
+                    _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);
                 }
 
                 _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);

@@ -31,7 +31,7 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.SynonymCatalogChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
@@ -41,7 +41,7 @@ import org.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
 public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> implements
-		SynonymCatalogChangeListener {
+ReferenceDataChangeListener<SynonymCatalog> {
 
 	private final DCComboBox<SynonymCatalog> _comboBox;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
@@ -131,4 +131,14 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		_comboBox.removeItem(synonymCatalog);
 	}
 
+    @Override
+    public void onChange(SynonymCatalog oldSynonymCatalog, SynonymCatalog newSynonymCatalog) {
+        final SynonymCatalog selectedItem = _comboBox.getSelectedItem();
+        _comboBox.removeItem(oldSynonymCatalog);
+        _comboBox.addItem(newSynonymCatalog);
+        if (selectedItem.equals(oldSynonymCatalog)){
+            _comboBox.setSelectedItem(newSynonymCatalog);
+        }
+        fireValueChanged();
+    }
 }

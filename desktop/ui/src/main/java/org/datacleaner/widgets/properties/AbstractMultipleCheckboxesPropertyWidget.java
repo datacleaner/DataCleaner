@@ -173,6 +173,27 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
         return checkBox;
     }
 
+    protected void editCheckBox(E oldvalue, E newValue) {
+        final String name = getName(oldvalue);
+        final DCCheckBox<E> checkBox = _checkBoxes.get(name);
+        if (checkBox != null) {
+            _checkBoxes.remove(name);
+            checkBox.addListener(CHANGE_LISTENER);
+            final boolean isSelected = checkBox.isSelected();
+            checkBox.setValue(newValue);
+            checkBox.setSelected(isSelected, true);
+            _checkBoxes.put(name, checkBox);
+            add(checkBox);
+            // 'fireValueChanged' changes the value in the component builder. Otherwise the listener 
+            // is activated at the later point(when the window is opened again) *
+            fireValueChanged();
+        } else {
+            addCheckBox(newValue, true);
+        }
+        updateVisibility();
+        updateUI();
+    }
+
     protected void removeCheckBox(E item) {
         DCCheckBox<E> checkBox = _checkBoxes.remove(getName(item));
         if (checkBox != null) {

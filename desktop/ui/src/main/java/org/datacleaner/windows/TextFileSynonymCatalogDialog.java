@@ -175,9 +175,10 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
                 final TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, path, caseSensitive, encoding);
 
                 if (_originalsynonymCatalog != null) {
-                    _catalog.removeSynonymCatalog(_originalsynonymCatalog);
+                    _catalog.changeSynonymCatalog(_originalsynonymCatalog, sc);
+                } else {
+                    _catalog.addSynonymCatalog(sc);
                 }
-                _catalog.addSynonymCatalog(sc);
                 TextFileSynonymCatalogDialog.this.dispose();
             }
         });

@@ -40,19 +40,22 @@ public class AuthenticationIT {
 
     @Rule
     public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
-    
+
     @Before
     public void setup() throws IOException {
         RestAssured.authentication = RestAssured.DEFAULT_AUTH;
     }
-    
-    @Test
-    public void testAuthentication() {
-        get(JOBS_PATH)
-            .then().statusCode(HttpStatus.SC_UNAUTHORIZED);
 
+    @Test
+    public void testUnauthorized() {
+        get(JOBS_PATH)
+                .then().statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    public void testAuthorized() {
         given().auth().basic(USER_NAME, USER_PASSWORD)
-            .when().get(JOBS_PATH)
-            .then().statusCode(HttpStatus.SC_OK);
+                .when().get(JOBS_PATH)
+                .then().statusCode(HttpStatus.SC_OK);
     }
 }

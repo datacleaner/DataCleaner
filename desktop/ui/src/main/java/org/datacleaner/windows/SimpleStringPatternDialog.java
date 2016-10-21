@@ -157,12 +157,13 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
                             "Please fill out the string expression");
                     return;
                 }
+                final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
                 if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
-                    _catalog.removeStringPattern(_catalog.getStringPattern(_simpleStringPattern.getName()));
+                    _catalog.changeStringPattern(_simpleStringPattern, simpleStringPattern);
+                } else {
+                    _catalog.addStringPattern(simpleStringPattern);
                 }
-                SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
                 _simpleStringPattern = simpleStringPattern;
-                _catalog.addStringPattern(simpleStringPattern);
                 SimpleStringPatternDialog.this.dispose();
             }
         });
@@ -248,8 +249,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         if ("".equals(text)) {
             label.setIcon(null);
         } else {
-            _simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
-            if (_simpleStringPattern.matches(text)) {
+            final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
+            if (simpleStringPattern.matches(text)) {
                 label.setIcon(ICON_SUCCESS);
             } else {
                 label.setIcon(ICON_ERROR);

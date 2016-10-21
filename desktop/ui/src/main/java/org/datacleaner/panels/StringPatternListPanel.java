@@ -38,7 +38,7 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.regexswap.RegexSwapDialog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.StringPatternChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -52,7 +52,7 @@ import org.datacleaner.windows.RegexStringPatternDialog;
 import org.datacleaner.windows.SimpleStringPatternDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class StringPatternListPanel extends DCPanel implements StringPatternChangeListener {
+public class StringPatternListPanel extends DCPanel implements ReferenceDataChangeListener<StringPattern> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -231,4 +231,9 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		super.removeNotify();
 		_catalog.removeStringPatternListener(this);
 	}
+
+    @Override
+    public void onChange(StringPattern oldPattern, StringPattern newPattern) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
 }

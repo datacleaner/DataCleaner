@@ -81,6 +81,10 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.user.ReferenceDataChangeListener;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -94,6 +98,7 @@ import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -179,7 +184,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _graph.refresh();
         }
     }
-
+    
     private class WindowTransformerChangeListener implements TransformerChangeListener {
 
         @Override
@@ -292,6 +297,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final ReferenceDataAnalysisJobWindowImplListeners _referenceDataAnalysisJobWindowListeners;
+    private ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener;
+    private ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener;
+    private ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -299,6 +308,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
     private AnalysisWindowPanelType _currentPanelType;
+    private MutableReferenceDataCatalog _mutableReferenceCatalog;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
@@ -310,7 +320,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
+            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
+            MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -322,6 +333,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
+        _mutableReferenceCatalog = mutableReferenceCatalog;
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
                 DEFAULT_WINDOW_HEIGHT);
 
@@ -347,6 +359,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 usageLogger);
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
+        //Add listeners for ReferenceData classes 
+        _referenceDataAnalysisJobWindowListeners = new ReferenceDataAnalysisJobWindowImplListeners(_analysisJobBuilder);
+        _stringPatternChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeStringPatternListener();
+        _dictionaryChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeDictionaryListener();
+        _synonymCatalogListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeSynonymCatalogListener();
+        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.addSynonymCatalogListener(_synonymCatalogListener);
 
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
@@ -371,6 +391,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+        
     }
 
     @Override
@@ -634,6 +655,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
+        
+        //Remove the reference data listener
+        _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.removeDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.removeSynonymCatalogListener(_synonymCatalogListener);
+        
         getContentPane().removeAll();
     }
 

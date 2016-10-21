@@ -31,7 +31,7 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.StringPatternChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
@@ -41,7 +41,7 @@ import org.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
 public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> implements
-		StringPatternChangeListener {
+		ReferenceDataChangeListener<StringPattern> {
 
 	private final DCComboBox<StringPattern> _comboBox;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
@@ -129,4 +129,16 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 	public void onRemove(StringPattern stringPattern) {
 		_comboBox.removeItem(stringPattern);
 	}
+
+    @Override
+    public void onChange(StringPattern oldStringPattern, StringPattern newStringPattern) {
+        final StringPattern selectedItem = _comboBox.getSelectedItem();
+        _comboBox.removeItem(oldStringPattern);
+        _comboBox.addItem(newStringPattern);
+
+        if (selectedItem.equals(oldStringPattern)) {
+            _comboBox.setSelectedItem(newStringPattern);
+        }
+        fireValueChanged();
+    }
 }

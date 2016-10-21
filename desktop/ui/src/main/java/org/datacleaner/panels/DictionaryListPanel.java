@@ -39,8 +39,8 @@ import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.TextFileDictionary;
-import org.datacleaner.user.DictionaryChangeListener;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -56,7 +56,7 @@ import org.jdesktop.swingx.VerticalLayout;
 
 import com.google.inject.Injector;
 
-public class DictionaryListPanel extends DCPanel implements DictionaryChangeListener {
+public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeListener<Dictionary> {
 
     private static final long serialVersionUID = 1L;
 
@@ -104,8 +104,8 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
         textFileDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
-                TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
+                final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
                 dialog.open();
             }
         });
@@ -115,8 +115,8 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
         simpleDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
-                SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
+                final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
                 dialog.open();
             }
         });
@@ -126,8 +126,8 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
         datastoreDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
-                DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+                final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
+                final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
                 dialog.open();
             }
         });
@@ -262,27 +262,22 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
     @Override
     public void onAdd(Dictionary dictionary) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateComponents();
-            }
-        });
+        SwingUtilities.invokeLater(() -> updateComponents());
     }
 
     @Override
     public void onRemove(Dictionary dictionary) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateComponents();
-            }
-        });
+        SwingUtilities.invokeLater(() -> updateComponents());
     }
 
     @Override
     public void removeNotify() {
         super.removeNotify();
         _catalog.removeDictionaryListener(this);
+    }
+
+    @Override
+    public void onChange(Dictionary oldPattern, Dictionary newPattern) {
+        SwingUtilities.invokeLater(() -> updateComponents());
     }
 }

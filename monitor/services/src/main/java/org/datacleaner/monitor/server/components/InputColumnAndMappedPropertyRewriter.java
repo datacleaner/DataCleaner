@@ -125,7 +125,9 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
             input.data = json.arrayNode().add(mapDataObjectToInputColumnsByName(input.data, inputColProperties));
         }
 
-        input.configuration = new ComponentConfiguration();
+        if(input.configuration == null) {
+            input.configuration = new ComponentConfiguration();
+        }
 
         int i = 1;
         for(ConfiguredPropertyDescriptor inputCol: inputColProperties) {

@@ -133,13 +133,13 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
     }
 
     @Override
-    public void onChange(Dictionary oldReferenceData, Dictionary newReferenceData) {
+    public void onChange(Dictionary oldDictionary, Dictionary newDictionary) {
         final Dictionary selectedItem = _comboBox.getSelectedItem();
-        _comboBox.removeItem(oldReferenceData);
-        _comboBox.addItem(newReferenceData);
+        _comboBox.removeItem(oldDictionary);
+        _comboBox.addItem(newDictionary);
 
-        if (selectedItem.equals(oldReferenceData)) {
-            _comboBox.setSelectedItem(newReferenceData);
+        if (selectedItem.equals(oldDictionary)) {
+            _comboBox.setSelectedItem(newDictionary);
         }
         fireValueChanged();
     }

@@ -316,7 +316,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog, MutableReferenceDataCatalog mutableReferenceCatalog) {
+            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
+            MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;

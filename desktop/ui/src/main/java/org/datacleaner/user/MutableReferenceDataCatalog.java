@@ -41,16 +41,17 @@ import com.google.common.base.Strings;
  * catalog wraps an immutable instance, which typically represents what is
  * configured in datacleaner's xml file.
  */
+@SuppressWarnings("deprecation")
 public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     private static final long serialVersionUID = 1L;
 
     private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<>();
-    private final List<ReferenceDataChangeListener<Dictionary>> _dictionaryV2Listeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<Dictionary>> _dictionaryChangeListeners = new ArrayList<>();
     private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<>();
-    private final List<ReferenceDataChangeListener<SynonymCatalog>> _synonymCatalogV2Listeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<SynonymCatalog>> _synonymCatalogChangeListeners = new ArrayList<>();
     private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<>();
-    private final List<ReferenceDataChangeListener<StringPattern>> _stringPatternV2Listeners = new ArrayList<>();
+    private final List<ReferenceDataChangeListener<StringPattern>> _stringPatternChangeListeners = new ArrayList<>();
     private final ReferenceDataCatalog _immutableDelegate;
     private final LifeCycleHelper _lifeCycleHelper;
     private final DomConfigurationWriter _configurationWriter;
@@ -141,7 +142,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         for (DictionaryChangeListener listener : _dictionaryListeners) {
             listener.onAdd(dict);
         }
-        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
             listener.onAdd(dict);
         }
 
@@ -178,7 +179,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (DictionaryChangeListener listener : _dictionaryListeners) {
                 listener.onRemove(dict);
             }
-            for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+            for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
                 listener.onRemove(dict);
             }
         }
@@ -202,7 +203,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
         
         addDictionaryInternal(newDictionary, externalize);
-        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryV2Listeners){
+        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
             listener.onChange(oldDictionary, newDictionary);
         }
         for (DictionaryChangeListener listener : _dictionaryListeners) {
@@ -220,7 +221,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         for (StringPatternChangeListener listener : _stringPatternListeners) {
             listener.onAdd(sp);
         }
-        for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners){
+        for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners){
             listener.onAdd(sp);
         }
     }
@@ -257,7 +258,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (StringPatternChangeListener listener : _stringPatternListeners) {
                 listener.onRemove(sp);
             }
-            for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners){
+            for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners){
                 listener.onRemove(sp);
             }
         }
@@ -273,8 +274,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     
     public void changeStringPattern(StringPattern oldPattern, StringPattern newPattern, boolean externalize){
         // The old reference is removed from user preferences and we add a new
-        // patern with the same name but with a
-        // different expression value
+        //pattern with the same name but with a different expression value
         final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
         stringPatterns.remove(oldPattern);
         if (externalize) {
@@ -283,7 +283,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }   
         addStringPatternInternal(newPattern, externalize);
 
-        for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternV2Listeners) {
+        for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners) {
             listener.onChange(oldPattern, newPattern);
         }
         for (StringPatternChangeListener listener : _stringPatternListeners) {
@@ -319,7 +319,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
             listener.onAdd(sc);
         }
-        for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+        for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
             listener.onAdd(sc);
         }
     }
@@ -356,7 +356,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
                 listener.onRemove(sc);
             }
-            for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+            for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
                 listener.onRemove(sc);
             }
         }
@@ -380,7 +380,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
        }   
        addSynonymCatalogInternal(newSynonymCatalog, externalize);
        
-       for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogV2Listeners){
+       for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
            listener.onChange(oldSynonymcatalog, newSynonymCatalog);
        }
        for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
@@ -428,11 +428,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
     
     public void addDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
-        _dictionaryV2Listeners.add(listener);
+        _dictionaryChangeListeners.add(listener);
     }
     
     public void removeDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
-        _dictionaryV2Listeners.remove(listener);
+        _dictionaryChangeListeners.remove(listener);
     }
 
     public void addSynonymCatalogListener(SynonymCatalogChangeListener listener) {
@@ -444,11 +444,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
     
     public void addSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
-        _synonymCatalogV2Listeners.add(listener); 
+        _synonymCatalogChangeListeners.add(listener); 
     }
     
     public void removeSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
-        _synonymCatalogV2Listeners.remove(listener);
+        _synonymCatalogChangeListeners.remove(listener);
     }
 
     public void addStringPatternListener(StringPatternChangeListener listener) {
@@ -460,10 +460,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
     
     public void addStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
-        _stringPatternV2Listeners.add(listener);
+        _stringPatternChangeListeners.add(listener);
     }
     
     public void removeStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
-        _stringPatternV2Listeners.remove(listener);
+        _stringPatternChangeListeners.remove(listener);
     }
 }

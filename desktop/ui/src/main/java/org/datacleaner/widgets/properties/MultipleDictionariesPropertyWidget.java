@@ -113,8 +113,8 @@ public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckbox
 	}
 
     @Override
-    public void onChange(Dictionary oldReferenceData, Dictionary newreferenceData) {
-        editCheckBox(oldReferenceData, newreferenceData);
+    public void onChange(Dictionary oldDictionary, Dictionary newDictionary) {
+        editCheckBox(oldDictionary, newDictionary);
     }
 
 }

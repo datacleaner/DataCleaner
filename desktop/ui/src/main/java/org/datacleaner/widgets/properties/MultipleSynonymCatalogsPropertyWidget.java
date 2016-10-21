@@ -113,7 +113,7 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheck
 	}
 
     @Override
-    public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
-        editCheckBox(oldReferenceData, newReferenceData);
+    public void onChange(SynonymCatalog oldSynonymCatalog, SynonymCatalog newSynonymCatalog) {
+        editCheckBox(oldSynonymCatalog, newSynonymCatalog);
     }
 }

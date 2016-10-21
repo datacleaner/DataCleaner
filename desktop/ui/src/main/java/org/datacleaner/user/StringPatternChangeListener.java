@@ -28,7 +28,9 @@ import org.datacleaner.reference.StringPattern;
 @Deprecated
 public interface StringPatternChangeListener {
 
+    @Deprecated
 	public void onAdd(StringPattern stringPattern);
 
+    @Deprecated
 	public void onRemove(StringPattern stringPattern);
 }

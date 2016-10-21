@@ -132,12 +132,12 @@ ReferenceDataChangeListener<SynonymCatalog> {
 	}
 
     @Override
-    public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
+    public void onChange(SynonymCatalog oldSynonymCatalog, SynonymCatalog newSynonymCatalog) {
         final SynonymCatalog selectedItem = _comboBox.getSelectedItem();
-        _comboBox.removeItem(oldReferenceData);
-        _comboBox.addItem(newReferenceData);
-        if (selectedItem.equals(oldReferenceData)){
-            _comboBox.setSelectedItem(newReferenceData);
+        _comboBox.removeItem(oldSynonymCatalog);
+        _comboBox.addItem(newSynonymCatalog);
+        if (selectedItem.equals(oldSynonymCatalog)){
+            _comboBox.setSelectedItem(newSynonymCatalog);
         }
         fireValueChanged();
     }

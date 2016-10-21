@@ -135,7 +135,10 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 
 	protected List<Entry<String, JComponent>> getFormElements() {
 		final List<Entry<String, JComponent>> res = super.getFormElements();
-		res.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
+		 /**
+         * Columns names panel is hidden until release of metamodel 4.5.5
+         */
+		//res.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
 		return res;
 	}
 

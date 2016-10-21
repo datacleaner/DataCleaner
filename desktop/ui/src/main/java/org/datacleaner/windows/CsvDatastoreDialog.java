@@ -407,7 +407,10 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
         result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
-        result.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
+        /**
+         * Columns names panel is hidden until release of metamodel 4.5.5
+         */
+        //result.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
         return result;
     }
 

@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -54,10 +53,11 @@ public class JobServicesIT {
     @Test(timeout = 5 * ONE_MINUTE)
     public void testJobs() throws URISyntaxException, InterruptedException {
         final String[] jobNames = {
-                "customer_completeness",
-                "customer_profiling",
+                "Sample custom job",
+                "Copy employees to customer table",
+                "Customer completeness",
+                "Customer profiling",
                 "product_profiling",
-                "copy_employees_to_customer_table",
         };
         
         for (String name : jobNames) {
@@ -66,12 +66,6 @@ public class JobServicesIT {
     }
 
     public void testJob(String jobName) throws URISyntaxException, InterruptedException {
-        final String jobFileName = jobName + ".analysis.xml";
-        given().multiPart(
-                new File(getClass().getClassLoader().getResource("jobs" + File.separator + jobFileName).toURI()))
-                .expect().body("file_type", equalTo("ANALYSIS_JOB")).and()
-                .expect().body("status", equalTo("Success")).when().post(JOBS_PATH + jobFileName);
-        
         final String resultPath = "/logs/" + post(JOBS_PATH + jobName + ".trigger").then().extract().path("resultId");
 
         while (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING")) {

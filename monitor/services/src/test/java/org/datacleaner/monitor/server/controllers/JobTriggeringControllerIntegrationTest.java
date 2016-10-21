@@ -21,10 +21,8 @@ package org.datacleaner.monitor.server.controllers;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -46,22 +44,17 @@ public class JobTriggeringControllerIntegrationTest {
      * Tests if a job is trigger to run as expected and the override properties
      * are applied. The job can't run successful if the override properties
      * aren't applied, because the standard conf.xml refers to a non-existing
-     * dictionary, which is corrected by the override properties. 
+     * dictionary, which is corrected by the override properties.
      */
     @Test
     public void testPostWithOverrideProperties() throws Throwable {
         final String repositoryName = "example_repo";
         final String tenantName = "tenant5";
         final String jobName = "countries";
-        
-        final File targetDir = new File("target/" + repositoryName);
-        
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/" + repositoryName), targetDir);
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
-        final Repository repository = new FileRepository(targetDir);
+        final Repository repository = applicationContext.getBean(FileRepository.class);;
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
 

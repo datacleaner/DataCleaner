@@ -19,14 +19,12 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.metamodel.util.Action;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -35,7 +33,7 @@ import org.datacleaner.monitor.events.ResultModificationEvent;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
-import org.datacleaner.monitor.server.job.MockJobEngineManager;
+import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.monitor.server.listeners.ResultModificationEventExecutionLogListener;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -43,8 +41,10 @@ import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.repository.file.FileRepository;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ResultModificationControllerTest extends TestCase {
 
@@ -53,13 +53,12 @@ public class ResultModificationControllerTest extends TestCase {
     private Repository repository;
 
     protected void setUp() throws Exception {
-        File targetDir = new File("target/repo_result_modification");
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-        repository = new FileRepository(targetDir);
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml");
+        repository = applicationContext.getBean(FileRepository.class);
 
-        TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
+                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
 
         resultModificationController = new ResultModificationController();
         resultModificationListener = new ResultModificationEventExecutionLogListener(tenantContextFactory);

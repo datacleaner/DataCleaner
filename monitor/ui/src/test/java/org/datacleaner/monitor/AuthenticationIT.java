@@ -19,13 +19,18 @@
  */
 package org.datacleaner.monitor;
 
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
+import java.io.IOException;
 
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
+
+import io.restassured.RestAssured;
+
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
 
 public class AuthenticationIT {
     private static final String JOBS_PATH = "/jobs/";
@@ -36,13 +41,21 @@ public class AuthenticationIT {
     @Rule
     public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
 
-    @Test
-    public void testAuthentication() {
-        get(JOBS_PATH)
-            .then().statusCode(HttpStatus.SC_UNAUTHORIZED);
+    @Before
+    public void setup() throws IOException {
+        RestAssured.authentication = RestAssured.DEFAULT_AUTH;
+    }
 
+    @Test
+    public void testUnauthorized() {
+        get(JOBS_PATH)
+                .then().statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    public void testAuthorized() {
         given().auth().basic(USER_NAME, USER_PASSWORD)
-            .when().get(JOBS_PATH)
-            .then().statusCode(HttpStatus.SC_OK);
+                .when().get(JOBS_PATH)
+                .then().statusCode(HttpStatus.SC_OK);
     }
 }

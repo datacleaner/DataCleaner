@@ -338,7 +338,8 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 		result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
 		result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
 		result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
-		result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
+		// TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
+		//result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
 		return result;
 	}
 

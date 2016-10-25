@@ -59,6 +59,6 @@ public class MetadataDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        return WidgetUtils.scrolleable(new MetadataPanel(_jobBuilder), MAX_HEIGHT);
+        return WidgetUtils.scrollable(new MetadataPanel(_jobBuilder), MAX_HEIGHT);
     }
 }

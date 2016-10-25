@@ -503,7 +503,7 @@ public final class WidgetUtils {
         showErrorMessage(shortMessage, sb.toString(), exception);
     }
 
-    public static JScrollPane scrolleable(final JComponent comp, final int maxHeight) {
+    public static JScrollPane scrollable(final JComponent comp, final int maxHeight) {
         final JScrollPane scrollPane = WidgetUtils.scrolleable(comp);
 
         if (comp.getPreferredSize().getHeight() > maxHeight) {

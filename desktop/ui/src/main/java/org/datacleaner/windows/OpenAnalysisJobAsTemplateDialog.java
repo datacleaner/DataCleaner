@@ -345,7 +345,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
             addOpenButtonPanel();
 
-            return WidgetUtils.scrolleable(_panel, MAX_HEIGHT);
+            return WidgetUtils.scrollable(_panel, MAX_HEIGHT);
         }
 
         private void addTopLabels() {

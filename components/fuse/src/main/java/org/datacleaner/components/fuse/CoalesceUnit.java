@@ -19,6 +19,7 @@
  */
 package org.datacleaner.components.fuse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,6 +81,10 @@ public class CoalesceUnit {
         return _inputColumnNames;
     }
 
+    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
+        return updateInputColumns(allInputColumns, true);
+    }
+
     /**
      * Refreshes the current transient setup of {@link InputColumn}s in the
      * {@link CoalesceUnit}. This is necessary to do before any job execution to
@@ -93,9 +98,9 @@ public class CoalesceUnit {
      *
      * @return A new CoalesceUnit containing the updated columns.
      */
-    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
+    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns, boolean failOnNonExisting) {
         final String[] newInputColumnNames = getInputColumnNames();
-        final InputColumn<?>[] newInputColumns = new InputColumn[newInputColumnNames.length];
+        final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 
         for (int i = 0; i < newInputColumnNames.length; i++) {
             boolean found = false;
@@ -106,7 +111,7 @@ public class CoalesceUnit {
             for (final InputColumn<?> inputColumn : allInputColumns) {
                 if (name.contains(".") && inputColumn.isPhysicalColumn() && name
                         .equals(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
-                    newInputColumns[i] = inputColumn;
+                    newInputColumns.add(inputColumn);
                     found = true;
                 }
             }
@@ -116,7 +121,7 @@ public class CoalesceUnit {
                 for (final InputColumn<?> inputColumn : allInputColumns) {
                     if (name.contains(".") && inputColumn.isPhysicalColumn() && name.trim()
                             .equalsIgnoreCase(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
-                        newInputColumns[i] = inputColumn;
+                        newInputColumns.add(inputColumn);
                         found = true;
                     }
                 }
@@ -125,7 +130,7 @@ public class CoalesceUnit {
             // Legacy: Exact name match round
             for (final InputColumn<?> inputColumn : allInputColumns) {
                 if (name.equals(inputColumn.getName())) {
-                    newInputColumns[i] = inputColumn;
+                    newInputColumns.add(inputColumn);
                     found = true;
                 }
             }
@@ -134,22 +139,25 @@ public class CoalesceUnit {
                 // Legacy: Trimmed and case-insensitive name match round.
                 for (final InputColumn<?> inputColumn : allInputColumns) {
                     if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
-                        newInputColumns[i] = inputColumn;
+                        newInputColumns.add(inputColumn);
                         found = true;
                     }
                 }
             }
 
-            if (!found) {
+            if (!found && failOnNonExisting) {
                 final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
-                throw new IllegalStateException("Column '" + name + "' not found. Available columns: " + names);
+                throw new CoalesceUnitMissingColumnException(this, name, "Column '" + name + "' not found. Available columns: " + names);
             }
         }
 
-        if(Arrays.equals(_inputColumns, newInputColumns)){
+        final InputColumn<?>[] newInputColumnArray = new InputColumn[newInputColumns.size()];
+        if(Arrays.equals(_inputColumns, newInputColumns.toArray(newInputColumnArray))){
             return this;
-        } else {
+        } else if (newInputColumns.size() > 0){
             return new CoalesceUnit(newInputColumns);
+        } else {
+            return null;
         }
     }
 

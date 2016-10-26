@@ -320,7 +320,7 @@ public class DataCloudLogInWindow extends AbstractDialog {
         Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
 
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
-        dontShowAgainCheckBox = new JCheckBox("Don't show after start again.", !showDataCloudDialogBool);
+        dontShowAgainCheckBox = new JCheckBox("Don't show again.", !showDataCloudDialogBool);
         dontShowAgainCheckBox.setOpaque(false);
         final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         final BorderLayout borderLayout = new BorderLayout();

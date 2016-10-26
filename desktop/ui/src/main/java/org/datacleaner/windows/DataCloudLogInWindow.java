@@ -121,13 +121,19 @@ public class DataCloudLogInWindow extends AbstractDialog {
         });
     }
 
-    public static boolean isRelevantToShow(UserPreferences userPreferences, DataCleanerConfiguration configuration) {
+    public static boolean isRelevantToShow(UserPreferences userPreferences, DataCleanerConfiguration configuration,
+            boolean afterStart) {
         final RemoteServerData datacloudConfig = configuration.getEnvironment().getRemoteServerConfiguration()
                 .getServerConfig(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME);
         String showDataCloudDialog = userPreferences.getAdditionalProperties()
                 .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "true");
         Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
-        return datacloudConfig == null && showDataCloudDialogBool;
+        boolean noAccount = datacloudConfig == null;
+        if (afterStart) {
+            return noAccount && showDataCloudDialogBool;
+        } else {
+            return noAccount;
+        }
     }
     
     private JComponent createContentPanel() {
@@ -309,9 +315,12 @@ public class DataCloudLogInWindow extends AbstractDialog {
     }
 
     private DCPanel contentBottom() {
+        String showDataCloudDialog = _userPreferences.getAdditionalProperties()
+                .getOrDefault(SHOW_DATACLOUD_DIALOG_USER_PREFERENCE, "false");
+        Boolean showDataCloudDialogBool = Boolean.parseBoolean(showDataCloudDialog);
 
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
-        dontShowAgainCheckBox = new JCheckBox("Don't show again.", false);
+        dontShowAgainCheckBox = new JCheckBox("Don't show again.", !showDataCloudDialogBool);
         dontShowAgainCheckBox.setOpaque(false);
         final DCPanel result = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         final BorderLayout borderLayout = new BorderLayout();

@@ -22,7 +22,9 @@ package org.datacleaner.panels.fuse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -72,7 +74,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     public StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
-        _unitProperty = unitProperty;
+            _unitProperty = unitProperty;
         _tablePanels = new ArrayList<>();
 
         getAnalysisJobBuilder().addTransformerChangeListener(this);
@@ -155,7 +157,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                 for (CoalesceUnit unit : units) {
                     final List<InputColumn<?>> survivingColumns = new ArrayList<>(unit.getInputColumns().length);
                     for (InputColumn<?> inputColumn : unit.getInputColumns()) {
-                        if (sourceColumnFinder.findOriginatingTable(inputColumn) != null) {
+                        if (allTablesAndColumns.containsKey(inputColumn.getPhysicalColumn().getTable())) {
                             survivingColumns.add(inputColumn);
                         }
                     }
@@ -170,7 +172,14 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                         }
                     }
                 }
-                _unitProperty
+                if (!Arrays.equals(units,
+                        survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
+                    Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
+                    properties.put(getPropertyDescriptor(), getValue());
+                    properties.put(_unitProperty,
+                            survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]));
+                    fireValuesChanged(properties);
+                }
             }
 
             _tablePanels.add(tablePanel);

@@ -124,11 +124,16 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
         for (int i = 0; i < _units.length; i++) {
             // Not necessarily initialized yet, so no _initializedUnits available
-            final CoalesceUnit unit = _units[i].updateInputColumns(_inputs);
-            final Class<?> dataType = unit.getOutputDataType();
-            final String columnName = unit.getSuggestedOutputColumnName();
-            final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
-            builder.withColumn(columnName, columnType);
+            try {
+                final CoalesceUnit unit = _units[i].updateInputColumns(_inputs);
+                final Class<?> dataType = unit.getOutputDataType();
+                final String columnName = unit.getSuggestedOutputColumnName();
+                final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
+                builder.withColumn(columnName, columnType);
+            } catch (CoalesceUnitMissingColumnException e) {
+                logger.warn("Coalesce unit missing columns", e);
+                return new OutputDataStream[0];
+            }
         }
         return new OutputDataStream[] { builder.toOutputDataStream() };
     }

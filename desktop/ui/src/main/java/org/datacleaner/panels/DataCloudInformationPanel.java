@@ -68,7 +68,7 @@ public class DataCloudInformationPanel extends JPanel {
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
-                        if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
+                        if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, false)) {
                             final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
                                     userPreferences, windowContext, owner);
                             dataCloudLogInWindow.open();

@@ -320,6 +320,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     }
 
     private class DialogContentMaker {
+        private static final int MAX_HEIGHT = 800;
         private final DCPanel _panel;
         private int _row;
 
@@ -344,7 +345,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
             addOpenButtonPanel();
 
-            return WidgetUtils.scrolleable(_panel);
+            return WidgetUtils.scrollable(_panel, MAX_HEIGHT);
         }
 
         private void addTopLabels() {

@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.datacleaner.Main;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SampleJobsIT {
@@ -79,17 +78,17 @@ public class SampleJobsIT {
         // the exact numbers when fixing that issue.
         expectedResultSets.put("RESULT: Month distribution (birthdate (as date))",
                 new String[] {"birthdate (as date)",
-                        "January                   4",
-                        "February                  4",
-                        "March                     4",
-                        "April                     4",
-                        "May                       4",
-                        "June                      4",
-                        "July                      4",
-                        "August                    4",
-                        "September                 4",
-                        "October                   4",
-                        "November                  4",
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
                         "December               <null>"});
 
         testJob("Customer age analysis", "rows processed from table: customers.csv", expectedResultSets);
@@ -106,7 +105,80 @@ public class SampleJobsIT {
         testJob("Customer filtering", "rows processed from table: customers.csv", expectedResultSets);
     }
 
-    private void testJob(final String jobName, final String resultStartIndicator,
+    @Test
+    public void testCustomerProfiling() throws Exception {
+        final Map<String, String[]> expectedResultSets = new HashMap<>();
+        expectedResultSets.put("RESULT: Unique key check (id)",
+                new String[] {"Unique key check result:",
+                        "- Row count: 5115",
+                        "- Null count: 0",
+                        "- Unique count: 5100",
+                        "- Non-unique count: 15"});
+
+        expectedResultSets.put("RESULT: Currencies (income_currency)",
+                new String[] {"SingleValueDistributionResult:",
+                        "- Distinct count: 6",
+                        "- Null count: 0",
+                        "- Total count: 5115",
+                        "- Unique count: 0",
+                        "- Value count (GBP): 1771",
+                        "- Value count (EUR): 1511",
+                        "- Value count (USD): 1271",
+                        "- Value count (DKR): 513",
+                        "- Value count (<blank>): 0",
+                        "- Value count (n/a): 12"});
+
+        expectedResultSets.put("RESULT: Gender matcher (gender)",
+               new String[] {"ValueMatchAnalyzerResult:",
+                       "- Null count: 0",
+                       "- Unexpected value count: 67",
+                       "- Value count (M): 2483",
+                       "- Value count (F): 2122",
+                       "- Value count (U): 443"});
+
+        expectedResultSets.put("RESULT: Address completeness (address_line,post_code,city,country)",
+                new String[] {"CompletenessAnalyzerResult:",
+                        "- Row count: 5115",
+                        "- Valid row count: 5053",
+                        "- Invalid row count: 62"});
+
+        expectedResultSets.put("RESULT: Character set distribution (given_name,family_name,company)",
+                new String[] {"given_name family_name     company",
+                        "Arabic                     0           0           0",
+                        "Armenian                   0           0           0",
+                        "Bengali                    0           0           0",
+                        "Cyrillic                   0           0           0",
+                        "Devanagari                 0           0           0",
+                        "Georgian                   0           0           0",
+                        "Greek                      3           3           0",
+                        "Gujarati                   0           0           0",
+                        "Gurmukhi                   0           0           0",
+                        "Han                        4           4           0",
+                        "Hangul                     0           0           0",
+                        "Hebrew                     0           0           0",
+                        "Hiragana                   0           0           0",
+                        "Kannada                    0           0           0",
+                        "Katakana                   0           0           0",
+                        "Latin, ASCII            5104        5106        5108",
+                        "Latin, non-ASCII          59         198          48",
+                        "Malayalam                  0           0           0",
+                        "Oriya                      0           0           0",
+                        "Syriac                     0           0           0",
+                        "Tamil                      0           0           0",
+                        "Telugu                     0           0           0",
+                        "Thaana                     0           0           0",
+                        "Thai                       0           0           0"});
+
+        expectedResultSets.put("RESULT: Names completeness (given_name,family_name,company)",
+                new String[] {"CompletenessAnalyzerResult:",
+                        "- Row count: 5115",
+                        "- Valid row count: 5103",
+                        "- Invalid row count: 12"});
+
+        testJob("Customer profiling", "rows processed from table: customers.csv", expectedResultSets);
+    }
+
+    private static void testJob(final String jobName, final String resultStartIndicator,
             final Map<String, String[]> expectedResultSets) throws Exception {
         final InputStream resultInputStream = runJob(jobName);
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
@@ -149,7 +221,7 @@ public class SampleJobsIT {
         }
     }
 
-    private InputStream runJob(final String jobName) throws Exception {
+    private static InputStream runJob(final String jobName) throws Exception {
         final ProcessBuilder builder = new ProcessBuilder(JAVA_EXECUTABLE, "-cp", System.getProperty("java.class.path"),
                 Main.class.getCanonicalName(), "-job", URLDecoder.decode(new File(
                         "src/main/resources/datacleaner-home/jobs/" + jobName + ".analysis.xml").getPath(), "UTF-8"));

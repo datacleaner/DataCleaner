@@ -89,7 +89,7 @@ public class SampleJobsIT {
                         "September",
                         "October",
                         "November",
-                        "December               <null>"});
+                        "December"});
 
         testJob("Customer age analysis", "rows processed from table: customers.csv", expectedResultSets);
     }
@@ -176,6 +176,16 @@ public class SampleJobsIT {
                         "- Invalid row count: 12"});
 
         testJob("Customer profiling", "rows processed from table: customers.csv", expectedResultSets);
+    }
+
+    @Test
+    public void testDenormalizeOrderTotalsAndPresentAsStackedAreaChart() throws Exception {
+        final Map<String, String[]> expectedResultSets = new HashMap<>();
+        expectedResultSets.put("RESULT: Stacked area plot (13 columns)",
+                new String[] {"JavaStackedAreaAnalyzerResult:",
+                        "(no metrics)"});
+
+        testJob("Denormalize order totals and present as stacked area chart", "rows processed from table: output", expectedResultSets);
     }
 
     private static void testJob(final String jobName, final String resultStartIndicator,

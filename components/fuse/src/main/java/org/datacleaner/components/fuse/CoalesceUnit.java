@@ -22,9 +22,8 @@ package org.datacleaner.components.fuse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.Convertable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
@@ -81,10 +80,6 @@ public class CoalesceUnit {
         return _inputColumnNames;
     }
 
-    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
-        return updateInputColumns(allInputColumns, true);
-    }
-
     /**
      * Refreshes the current transient setup of {@link InputColumn}s in the
      * {@link CoalesceUnit}. This is necessary to do before any job execution to
@@ -94,71 +89,76 @@ public class CoalesceUnit {
      * Not doing this will result in issues such as
      * <a href="https://github.com/datacleaner/DataCleaner/issues/923">issue #923</a>
      * 
-     * @param allInputColumns
-     *
      * @return A new CoalesceUnit containing the updated columns.
      */
-    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns, boolean failOnNonExisting) {
+    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
+        final InputColumn<?>[] newInputColumns = new InputColumn[newInputColumnNames.length];
+
+        for (int i = 0; i < newInputColumnNames.length; i++) {
+            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnNames[i]);
+            if(updatedInputColumn == null) {
+                final List<String> names =
+                        Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
+                throw new IllegalStateException("Column '" + newInputColumnNames[i] + "' not found. Available columns: " + names);
+            }
+            newInputColumns[i] = updatedInputColumn;
+        }
+
+        if(Arrays.equals(_inputColumns, newInputColumns)){
+            return this;
+        } else {
+            return new CoalesceUnit(newInputColumns);
+        }
+    }
+
+    public List<InputColumn<?>> getUpdatedInputColumns(InputColumn<?>[] allInputColumns) {
         final String[] newInputColumnNames = getInputColumnNames();
         final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 
         for (int i = 0; i < newInputColumnNames.length; i++) {
-            boolean found = false;
-
-            final String name = newInputColumnNames[i];
-
-            // Exact match round on path.
-            for (final InputColumn<?> inputColumn : allInputColumns) {
-                if (name.contains(".") && inputColumn.isPhysicalColumn() && name
-                        .equals(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
-                    newInputColumns.add(inputColumn);
-                    found = true;
-                }
+            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnNames[i]);
+            if(updatedInputColumn == null) {
+                final List<String> names =
+                        Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
+                throw new IllegalStateException("Column '" + newInputColumnNames[i] + "' not found. Available columns: " + names);
             }
+            newInputColumns.add(updatedInputColumn);
+        }
+        return newInputColumns;
+    }
 
-            if (!found) {
-                // Trimmed and case-insensitive path match round.
-                for (final InputColumn<?> inputColumn : allInputColumns) {
-                    if (name.contains(".") && inputColumn.isPhysicalColumn() && name.trim()
-                            .equalsIgnoreCase(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
-                        newInputColumns.add(inputColumn);
-                        found = true;
-                    }
-                }
-            }
-
-            // Legacy: Exact name match round
-            for (final InputColumn<?> inputColumn : allInputColumns) {
-                if (name.equals(inputColumn.getName())) {
-                    newInputColumns.add(inputColumn);
-                    found = true;
-                }
-            }
-
-            if (!found) {
-                // Legacy: Trimmed and case-insensitive name match round.
-                for (final InputColumn<?> inputColumn : allInputColumns) {
-                    if (name.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
-                        newInputColumns.add(inputColumn);
-                        found = true;
-                    }
-                }
-            }
-
-            if (!found && failOnNonExisting) {
-                final List<String> names = CollectionUtils.map(allInputColumns, new HasNameMapper());
-                throw new CoalesceUnitMissingColumnException(this, name, "Column '" + name + "' not found. Available columns: " + names);
+    private InputColumn<?> updateInputColumn(final InputColumn<?>[] allInputColumns, final String newInputColumnName) {
+        // Exact match round on path.
+        for (final InputColumn<?> inputColumn : allInputColumns) {
+            if (newInputColumnName.contains(".") && inputColumn.isPhysicalColumn() && newInputColumnName
+                    .equals(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
+                return inputColumn;
             }
         }
 
-        final InputColumn<?>[] newInputColumnArray = new InputColumn[newInputColumns.size()];
-        if(Arrays.equals(_inputColumns, newInputColumns.toArray(newInputColumnArray))){
-            return this;
-        } else if (newInputColumns.size() > 0){
-            return new CoalesceUnit(newInputColumns);
-        } else {
-            return null;
+        // Trimmed and case-insensitive path match round.
+        for (final InputColumn<?> inputColumn : allInputColumns) {
+            if (newInputColumnName.contains(".") && inputColumn.isPhysicalColumn() && newInputColumnName.trim()
+                    .equalsIgnoreCase(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
+                return inputColumn;
+            }
         }
+
+        // Legacy: Exact name match round
+        for (final InputColumn<?> inputColumn : allInputColumns) {
+            if (newInputColumnName.equals(inputColumn.getName())) {
+                return inputColumn;
+            }
+        }
+
+        // Legacy: Trimmed and case-insensitive name match round.
+        for (final InputColumn<?> inputColumn : allInputColumns) {
+            if (newInputColumnName.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
+                return inputColumn;
+            }
+        }
+
+        return null;
     }
 
 

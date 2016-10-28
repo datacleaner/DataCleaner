@@ -188,6 +188,53 @@ public class SampleJobsIT {
         testJob("Denormalize order totals and present as stacked area chart", "rows processed from table: output", expectedResultSets);
     }
 
+    @Test
+    public void testExportOfOrdersDataMart() throws Exception {
+        final Map<String, String[]> expectedResultSets = new HashMap<>();
+        expectedResultSets.put("RESULT: orders_w_dimensions.csv (10 columns)",
+                new String[] {"2996 inserts executed"});
+
+        expectedResultSets.put("RESULT: Lookup customers",
+                new String[] {"CategorizationResult:",
+                        "- Category count (Match):",
+                        "- Category count (Miss): 0",
+                        "- Category count (Cached):"});
+
+        // Because the Country standardizer renders its results in a random order, we can't validate the
+        // actual number for each country.
+        expectedResultSets.put("RESULT: Country standardizer",
+                new String[] {"CountryStandardizationResult:",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count (",
+                        "- Category count ("});
+
+        expectedResultSets.put("RESULT: Lookup products",
+                new String[] {"CategorizationResult:",
+                        "- Category count (Match):",
+                        "- Category count (Miss): 0",
+                        "- Category count (Cached):"});
+
+        testJob("Export of Orders data mart", "rows processed from table: ORDERFACT", expectedResultSets);
+    }
+
     private static void testJob(final String jobName, final String resultStartIndicator,
             final Map<String, String[]> expectedResultSets) throws Exception {
         final InputStream resultInputStream = runJob(jobName);

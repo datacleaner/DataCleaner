@@ -126,7 +126,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         for (final CoalesceUnit _unit : _units) {
             // Not necessarily initialized yet, so no _initializedUnits available
             final InputColumn<?>[] updatedInputColumns = _unit.getUpdatedInputColumns(_inputs, false);
-            if (_unit.getInputColumns().length == updatedInputColumns.length) {
+            if (_unit.getInputColumnNames().length == updatedInputColumns.length) {
                 // Valid Unit
                 foundOutputDataStream = true;
                 final CoalesceUnit unit = _unit.getUpdatedCoalesceUnit(updatedInputColumns);

@@ -109,7 +109,7 @@ public class CoalesceUnitTest {
         Assert.assertArrayEquals(colsB, namesCoalesceUnit.updateInputColumns(colsB).getInputColumns());
 
         // Mixed columns with correct path as well as incorrect path. Makes sure that the correct path is found.
-        Assert.assertArrayEquals(colsB, namesCoalesceUnit.updateInputColumns(mixedCols).getInputColumns());
+        Assert.assertArrayEquals(colsB, pathsCoalesceUnit.updateInputColumns(mixedCols).getInputColumns());
 
         expectedException.expect(IllegalStateException.class);
         pathsCoalesceUnit.updateInputColumns(colsA);

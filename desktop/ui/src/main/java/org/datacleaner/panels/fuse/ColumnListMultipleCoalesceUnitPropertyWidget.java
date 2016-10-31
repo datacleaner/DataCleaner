@@ -36,9 +36,11 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.fuse.CoalesceUnit;
+import org.datacleaner.components.fuse.CoalesceUnitMissingColumnException;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -142,6 +144,16 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         if (componentCount > 1) {
             final int index = componentCount - 1;
             _unitContainerPanel.remove(index);
+            _unitContainerPanel.updateUI();
+            fireBothValuesChanged();
+        }
+        updateUI();
+    }
+
+    private void removeCoalesceUnitPanel(CoalesceUnitPanel coalesceUnitPanel) {
+        final int componentCount = _unitContainerPanel.getComponentCount();
+        if (componentCount > 1) {
+            _unitContainerPanel.remove(coalesceUnitPanel);
             _unitContainerPanel.updateUI();
             fireBothValuesChanged();
         }
@@ -265,8 +277,8 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         }
 
         for (CoalesceUnit unit : units) {
-            final InputColumn<?>[] inputColumns = unit.updateInputColumns(allInputColumns).getInputColumns();
-            Collections.addAll(resultList, inputColumns);
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(allInputColumns, true);
+            Collections.addAll(resultList, updatedInputColumns);
         }
 
         logger.debug("Returning Input.value = {}", resultList);
@@ -367,6 +379,28 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
             outputColumn.addListener(this);
         }
         updateAvailableInputColumns();
+    }
+
+    @Override
+    public void onValueTouched(final InputColumn<?>[] value) {
+        try {
+            super.onValueTouched(value);
+        } catch (CoalesceUnitMissingColumnException e) {
+            logger.warn("Missing input column for coalesce unit", e);
+            final CoalesceUnit failingCoalesceUnit = e.getCoalesceUnit();
+            final CoalesceUnit[] newCoalesceUnits =
+                    (CoalesceUnit[]) ArrayUtils.removeElement(_unitPropertyWidget.getValue(), failingCoalesceUnit);
+            for (InputColumn<?> inputColumn : failingCoalesceUnit.getInputColumns()) {
+                _pickedInputColumns.remove(inputColumn);
+            }
+            getCoalesceUnitPanels().stream()
+                    .filter(coalesceUnitPanel -> coalesceUnitPanel.getCoalesceUnit().equals(failingCoalesceUnit))
+                    .forEach(this::removeCoalesceUnitPanel);
+            _unitPropertyWidget.onValueTouched(newCoalesceUnits);
+            updateAvailableInputColumns();
+            fireBothValuesChanged();
+            updateUI();
+        }
     }
 
     @Override

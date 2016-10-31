@@ -45,7 +45,7 @@ public class SampleJobsIT {
         expectedResultSets.put("RESULT: orderdb - CUSTOMERS (19 columns)",
                 new String[] {"23 inserts executed"});
 
-        testJob("Copy employees to customer table", "rows processed from table: EMPLOYEES", expectedResultSets);
+        testJob("Copy employees to customer table", expectedResultSets);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class SampleJobsIT {
                         "November",
                         "December"});
 
-        testJob("Customer age analysis", "rows processed from table: customers.csv", expectedResultSets);
+        testJob("Customer age analysis", expectedResultSets);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class SampleJobsIT {
         expectedResultSets.put("RESULT: output-Customers-age-null-or-invalid.csv (15 columns) (FilterOutcome[category=HIGHER] OR FilterOutcome[category=NULL])",
                 new String[] { "inserts executed" });
 
-        testJob("Customer filtering", "rows processed from table: customers.csv", expectedResultSets);
+        testJob("Customer filtering", expectedResultSets);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class SampleJobsIT {
                         "- Valid row count: 5103",
                         "- Invalid row count: 12"});
 
-        testJob("Customer profiling", "rows processed from table: customers.csv", expectedResultSets);
+        testJob("Customer profiling", expectedResultSets);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class SampleJobsIT {
                 new String[] {"JavaStackedAreaAnalyzerResult:",
                         "(no metrics)"});
 
-        testJob("Denormalize order totals and present as stacked area chart", "rows processed from table: output", expectedResultSets);
+        testJob("Denormalize order totals and present as stacked area chart", expectedResultSets);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class SampleJobsIT {
                         "- Category count (Miss): 0",
                         "- Category count (Cached):"});
 
-        testJob("Export of Orders data mart", "rows processed from table: ORDERFACT", expectedResultSets);
+        testJob("Export of Orders data mart", expectedResultSets);
     }
 
     @Test
@@ -436,11 +436,32 @@ public class SampleJobsIT {
                         "- Value count (Sales): 5",
                         "- Value count (Marketeer): 4"});
 
-        testJob("Job title analytics", "rows processed from table: customers.csv", expectedResultSets);
+        testJob("Job title analytics", expectedResultSets);
     }
 
-    private void testJob(final String jobName, final String resultStartIndicator,
-            final Map<String, String[]> expectedResultSets) throws Exception {
+    @Test
+    public void testOrderDBCustomersAndEmployeesUnion() throws Exception {
+        final Map<String, String[]> expectedResultSets = new HashMap<>();
+        expectedResultSets.put("RESULT: Unique person identifier check (CUSTOMERNUMBER)",
+                new String[] {"Unique key check result:",
+                        "- Row count: 236",
+                        "- Null count: 0",
+                        "- Unique count: 230",
+                        "- Non-unique count: 6"});
+
+        expectedResultSets.put("RESULT: Completeness analyzer (CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME,JOBTITLE)",
+                new String[] {"CompletenessAnalyzerResult:",
+                        "- Row count: 237",
+                        "- Valid row count: 236",
+                        "- Invalid row count: 1"});
+
+        expectedResultSets.put("RESULT: orderdb-people - incomplete-records (JOBTITLE,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME)",
+                new String[] {"1 inserts executed"});
+
+        testJob("OrderDB Customers and Employees union", expectedResultSets);
+    }
+
+    private void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
         final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobName).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
         final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
@@ -450,12 +471,9 @@ public class SampleJobsIT {
 
             // Read the output line by line until we see an indicator that the interesting part of the output
             // is coming up.
-            while ((resultLine = resultReader.readLine()) != null && !resultLine.endsWith(resultStartIndicator)) {
+            while ((resultLine = resultReader.readLine()) != null && !resultLine.equals("SUCCESS!")) {
                 // Ignore.
             }
-
-            // First check that the job was run successfully.
-            assertEquals("SUCCESS!", resultReader.readLine());
 
             // Now iterate over the different expected result sets and see if they're valid.
             while ((resultLine = resultReader.readLine()) != null) {

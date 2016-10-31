@@ -87,7 +87,7 @@ public class CoalesceUnit {
      * @return New {@link CoalesceUnit} if {@link InputColumn}s has truly changed, otherwise this.
      */
     public CoalesceUnit getUpdatedCoalesceUnit(InputColumn<?>[] newInputColumns) {
-        if(Arrays.equals(_inputColumns, newInputColumns)){
+        if (Arrays.equals(_inputColumns, newInputColumns)) {
             return this;
         } else {
             return new CoalesceUnit(newInputColumns);
@@ -99,10 +99,10 @@ public class CoalesceUnit {
      * {@link CoalesceUnit}. This is necessary to do before any job execution to
      * ensure that the {@link InputColumn} references are intact and don't point
      * to e.g. a copy of the input columns from a cloned job.
-     * 
+     *
      * Not doing this will result in issues such as
      * <a href="https://github.com/datacleaner/DataCleaner/issues/923">issue #923</a>
-     * 
+     *
      * @return A new CoalesceUnit containing the updated columns.
      */
     public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
@@ -116,7 +116,7 @@ public class CoalesceUnit {
         for (final String newInputColumnName : newInputColumnNames) {
             final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnName);
             if (updatedInputColumn == null) {
-                if(exceptionOnMissing) {
+                if (exceptionOnMissing) {
                     final List<String> names =
                             Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
                     throw new CoalesceUnitMissingColumnException(this, newInputColumnName,
@@ -162,7 +162,6 @@ public class CoalesceUnit {
 
         return null;
     }
-
 
     public InputColumn<?>[] getInputColumns() {
         return _inputColumns;

@@ -38,7 +38,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MultiStreamComponent;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
-import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.CompositionCategory;
 import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
@@ -85,11 +84,6 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         }
     }
 
-    @Validate
-    public void validate() {
-        logger.debug("Yes yes");
-    }
-
     /**
      * Configures the transformer using the coalesce units provided
      * 
@@ -132,7 +126,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
         for (final CoalesceUnit _unit : _units) {
             // Not necessarily initialized yet, so no _initializedUnits available
             final InputColumn<?>[] updatedInputColumns = _unit.getUpdatedInputColumns(_inputs, false);
-            if(_unit.getInputColumns().length == updatedInputColumns.length){
+            if (_unit.getInputColumns().length == updatedInputColumns.length) {
                 // Valid Unit
                 foundOutputDataStream = true;
                 final CoalesceUnit unit = _unit.getUpdatedCoalesceUnit(updatedInputColumns);
@@ -144,7 +138,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
                 logger.info("Missing columns detected, skipping coalesce unit");
             }
         }
-        if(!foundOutputDataStream) {
+        if (!foundOutputDataStream) {
             return new OutputDataStream[0];
         }
         return new OutputDataStream[] { builder.toOutputDataStream() };

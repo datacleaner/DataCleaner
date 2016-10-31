@@ -74,7 +74,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     public StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
-            _unitProperty = unitProperty;
+        _unitProperty = unitProperty;
         _tablePanels = new ArrayList<>();
 
         getAnalysisJobBuilder().addTransformerChangeListener(this);
@@ -110,7 +110,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         final AnalysisJobBuilder ajb = getAnalysisJobBuilder();
 
-        InputColumn<?>[] inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
+        final InputColumn<?>[] inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
 
         // TODO: We need a SourceColumnFinder that is aware of also nested jobs
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
@@ -121,7 +121,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         final Multimap<Table, InputColumn<?>> coalescedTablesAndColumns = ArrayListMultimap.create();
 
         for (InputColumn<?> inputColumn : inputColumns) {
-            Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
+            final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
             allTablesAndColumns.put(table, inputColumn);
         }
 

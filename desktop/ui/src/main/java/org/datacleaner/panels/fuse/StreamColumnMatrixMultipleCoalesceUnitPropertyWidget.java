@@ -110,11 +110,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         final AnalysisJobBuilder ajb = getAnalysisJobBuilder();
 
-        InputColumn<?>[] inputColumns = getCurrentValue();
-        if (inputColumns == null) {
-            inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
-        }
-
+        InputColumn<?>[] inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
 
         // TODO: We need a SourceColumnFinder that is aware of also nested jobs
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
@@ -129,6 +125,31 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
             allTablesAndColumns.put(table, inputColumn);
         }
 
+        if (units != null) {
+            final List<CoalesceUnit> survivingCoalesceUnits = new ArrayList<>(units.length);
+            for (CoalesceUnit unit : units) {
+                // Not necessarily initialized yet, so no _initializedUnits available
+                final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(inputColumns, false);
+
+                if (updatedInputColumns.length > 0) {
+                    unit = unit.getUpdatedCoalesceUnit(updatedInputColumns);
+                    survivingCoalesceUnits.add(unit);
+                    for (InputColumn<?> inputColumn : updatedInputColumns) {
+                        final Table originatingTable = sourceColumnFinder.findOriginatingTable(inputColumn);
+                        coalescedTablesAndColumns.put(originatingTable, inputColumn);
+                    }
+                }
+            }
+            if (!Arrays.equals(units,
+                    survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
+                Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
+                properties.put(getPropertyDescriptor(), getValue());
+                properties.put(_unitProperty,
+                        survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]));
+                fireValuesChanged(properties);
+            }
+        }
+
         for (final Table table : allTablesAndColumns.keySet()) {
             final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table,
                     new StreamColumnListPanel.Listener() {
@@ -140,6 +161,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                     });
 
             final Collection<InputColumn<?>> selectedColumns = coalescedTablesAndColumns.get(table);
+
             for (InputColumn<?> inputColumn : selectedColumns) {
                 tablePanel.addInputColumn(inputColumn, true);
             }
@@ -151,36 +173,6 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
             }
 
             tablePanel.refresh();
-
-            if (units != null) {
-                final List<CoalesceUnit> survivingCoalesceUnits = new ArrayList<>(units.length);
-                for (CoalesceUnit unit : units) {
-                    final List<InputColumn<?>> survivingColumns = new ArrayList<>(unit.getInputColumns().length);
-                    for (InputColumn<?> inputColumn : unit.getInputColumns()) {
-                        if (allTablesAndColumns.containsKey(inputColumn.getPhysicalColumn().getTable())) {
-                            survivingColumns.add(inputColumn);
-                        }
-                    }
-                    if (survivingColumns.size() > 0) {
-                        unit = new CoalesceUnit(survivingColumns);
-                        survivingCoalesceUnits.add(unit);
-                        final InputColumn<?>[] coalescedInputColumns =
-                                unit.updateInputColumns(inputColumns).getInputColumns();
-                        for (InputColumn<?> inputColumn : coalescedInputColumns) {
-                            final Table originatingTable = sourceColumnFinder.findOriginatingTable(inputColumn);
-                            coalescedTablesAndColumns.put(originatingTable, inputColumn);
-                        }
-                    }
-                }
-                if (!Arrays.equals(units,
-                        survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
-                    Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
-                    properties.put(getPropertyDescriptor(), getValue());
-                    properties.put(_unitProperty,
-                            survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]));
-                    fireValuesChanged(properties);
-                }
-            }
 
             _tablePanels.add(tablePanel);
             _containerPanel.add(tablePanel);

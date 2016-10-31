@@ -81,6 +81,20 @@ public class CoalesceUnit {
     }
 
     /**
+     * Creates new {@link CoalesceUnit} if {@link InputColumn}s has changed
+     *
+     * @param newInputColumns List of new {@link InputColumn}s
+     * @return New {@link CoalesceUnit} if {@link InputColumn}s has truly changed, otherwise this.
+     */
+    public CoalesceUnit getUpdatedCoalesceUnit(InputColumn<?>[] newInputColumns) {
+        if(Arrays.equals(_inputColumns, newInputColumns)){
+            return this;
+        } else {
+            return new CoalesceUnit(newInputColumns);
+        }
+    }
+
+    /**
      * Refreshes the current transient setup of {@link InputColumn}s in the
      * {@link CoalesceUnit}. This is necessary to do before any job execution to
      * ensure that the {@link InputColumn} references are intact and don't point
@@ -92,39 +106,27 @@ public class CoalesceUnit {
      * @return A new CoalesceUnit containing the updated columns.
      */
     public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
-        final InputColumn<?>[] newInputColumns = new InputColumn[newInputColumnNames.length];
-
-        for (int i = 0; i < newInputColumnNames.length; i++) {
-            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnNames[i]);
-            if(updatedInputColumn == null) {
-                final List<String> names =
-                        Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
-                throw new IllegalStateException("Column '" + newInputColumnNames[i] + "' not found. Available columns: " + names);
-            }
-            newInputColumns[i] = updatedInputColumn;
-        }
-
-        if(Arrays.equals(_inputColumns, newInputColumns)){
-            return this;
-        } else {
-            return new CoalesceUnit(newInputColumns);
-        }
+        return getUpdatedCoalesceUnit(getUpdatedInputColumns(allInputColumns, true));
     }
 
-    public List<InputColumn<?>> getUpdatedInputColumns(InputColumn<?>[] allInputColumns) {
+    public InputColumn<?>[] getUpdatedInputColumns(InputColumn<?>[] allInputColumns, boolean exceptionOnMissing) {
         final String[] newInputColumnNames = getInputColumnNames();
         final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 
-        for (int i = 0; i < newInputColumnNames.length; i++) {
-            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnNames[i]);
-            if(updatedInputColumn == null) {
-                final List<String> names =
-                        Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
-                throw new IllegalStateException("Column '" + newInputColumnNames[i] + "' not found. Available columns: " + names);
+        for (final String newInputColumnName : newInputColumnNames) {
+            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnName);
+            if (updatedInputColumn == null) {
+                if(exceptionOnMissing) {
+                    final List<String> names =
+                            Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
+                    throw new IllegalStateException(
+                            "Column '" + newInputColumnName + "' not found. Available columns: " + names);
+                }
+            } else {
+                newInputColumns.add(updatedInputColumn);
             }
-            newInputColumns.add(updatedInputColumn);
         }
-        return newInputColumns;
+        return newInputColumns.toArray(new InputColumn[newInputColumns.size()]);
     }
 
     private InputColumn<?> updateInputColumn(final InputColumn<?>[] allInputColumns, final String newInputColumnName) {

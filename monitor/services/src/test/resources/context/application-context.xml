@@ -33,10 +33,7 @@
 	
 	<bean class="org.datacleaner.descriptors.SimpleDescriptorProvider" />
 
-	<bean id="repository" class="org.datacleaner.repository.file.FileRepository">
-		<constructor-arg type="java.io.File"
-			value="target/example_repo" />
-	</bean>
+	<bean id="repository" class="org.datacleaner.monitor.server.ExampleFileRepository" />
 
 	<bean id="alertNotificationService" name="alertNotificationService"
 		class="org.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"

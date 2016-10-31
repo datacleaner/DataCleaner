@@ -22,9 +22,11 @@ package org.datacleaner.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,8 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class for traversing dependencies between virtual and physical
- * columns.
+ * Helper class for traversing dependencies between virtual and physical columns.
+ *
+ * For performance reasons this class stores found sources in an internal cache. As there is no mechanism to
+ * invalidate or refresh this cache, instances of this class should not be assigned to fields of other
+ * classes.
  */
 public class SourceColumnFinder {
 
@@ -58,6 +63,9 @@ public class SourceColumnFinder {
     private Set<InputColumnSourceJob> _inputColumnSources = new LinkedHashSet<InputColumnSourceJob>();
     private Set<HasFilterOutcomes> _outcomeSources = new HashSet<HasFilterOutcomes>();
     private Set<HasComponentRequirement> _outcomeSinks = new HashSet<HasComponentRequirement>();
+
+    private final Map<InputColumn<?>, Set<Column>> originatingColumnsOfInputColumnCache = new HashMap<>();
+    private final Map<Object, Set<Column>> originatingColumnsOfSourceCache = new HashMap<>();
 
     private void addSources(Object... sources) {
         for (Object source : sources) {
@@ -198,9 +206,7 @@ public class SourceColumnFinder {
     public Set<Column> findOriginatingColumns(FilterOutcome requirement) {
         HasFilterOutcomes source = findOutcomeSource(requirement);
 
-        HashSet<Column> result = new HashSet<Column>();
-        findOriginatingColumnsOfSource(source, result);
-        return result;
+        return findOriginatingColumnsOfSource(source);
     }
 
     public Table findOriginatingTable(FilterOutcome requirement) {
@@ -288,43 +294,65 @@ public class SourceColumnFinder {
         throw new IllegalStateException("Multiple originating tables (" + sb + ") found for source: " + source);
     }
 
-    private void findOriginatingColumnsOfInputColumn(InputColumn<?> inputColumn, Set<Column> result) {
-        if (inputColumn == null) {
-            return;
+    private Set<Column> findOriginatingColumnsOfInputColumn(InputColumn<?> inputColumn) {
+        final Set<Column> cachedOriginatingColumns = originatingColumnsOfInputColumnCache.get(inputColumn);
+        if (cachedOriginatingColumns != null) {
+            return cachedOriginatingColumns;
         }
-        if (inputColumn.isPhysicalColumn()) {
-            result.add(inputColumn.getPhysicalColumn());
-        } else {
-            InputColumnSourceJob source = findInputColumnSource(inputColumn);
-            findOriginatingColumnsOfSource(source, result);
+
+        final Set<Column> originatingColumns = new HashSet<>();
+
+        if (inputColumn != null) {
+            if (inputColumn.isPhysicalColumn()) {
+                originatingColumns.add(inputColumn.getPhysicalColumn());
+            } else {
+                InputColumnSourceJob source = findInputColumnSource(inputColumn);
+
+                originatingColumns.addAll(findOriginatingColumnsOfSource(source));
+            }
         }
+
+        originatingColumnsOfInputColumnCache.put(inputColumn, originatingColumns);
+
+        return originatingColumns;
     }
 
-    private void findOriginatingColumnsOfOutcome(FilterOutcome requirement, Set<Column> result) {
+    private Set<Column> findOriginatingColumnsOfOutcome(FilterOutcome requirement) {
         final HasFilterOutcomes source = findOutcomeSource(requirement);
-        findOriginatingColumnsOfSource(source, result);
+        return findOriginatingColumnsOfSource(source);
     }
 
-    private void findOriginatingColumnsOfSource(Object source, Set<Column> result) {
-        if (source == null) {
-            return;
+    private Set<Column> findOriginatingColumnsOfSource(Object source) {
+        final Set<Column> cachedOriginatingColumns = originatingColumnsOfSourceCache.get(source);
+        if (cachedOriginatingColumns != null) {
+            return cachedOriginatingColumns;
         }
-        if (source instanceof InputColumnSinkJob) {
-            InputColumn<?>[] input = ((InputColumnSinkJob) source).getInput();
-            if (input != null) {
-                for (InputColumn<?> inputColumn : input) {
-                    findOriginatingColumnsOfInputColumn(inputColumn, result);
+
+        final Set<Column> originatingColumns = new HashSet<>();
+
+        if (source != null) {
+            if (source instanceof InputColumnSinkJob) {
+                InputColumn<?>[] input = ((InputColumnSinkJob) source).getInput();
+                if (input != null) {
+
+                    for (InputColumn<?> inputColumn : input) {
+                        originatingColumns.addAll(findOriginatingColumnsOfInputColumn(inputColumn));
+                    }
+                }
+            }
+            if (source instanceof HasComponentRequirement) {
+                final HasComponentRequirement hasComponentRequirement = (HasComponentRequirement) source;
+                final ComponentRequirement componentRequirement = hasComponentRequirement.getComponentRequirement();
+                final Collection<FilterOutcome> requirements = getProcessingDependencies(componentRequirement);
+                for (FilterOutcome outcome : requirements) {
+                    originatingColumns.addAll(findOriginatingColumnsOfOutcome(outcome));
                 }
             }
         }
-        if (source instanceof HasComponentRequirement) {
-            final HasComponentRequirement hasComponentRequirement = (HasComponentRequirement) source;
-            final ComponentRequirement componentRequirement = hasComponentRequirement.getComponentRequirement();
-            final Collection<FilterOutcome> requirements = getProcessingDependencies(componentRequirement);
-            for (FilterOutcome outcome : requirements) {
-                findOriginatingColumnsOfOutcome(outcome, result);
-            }
-        }
+
+        originatingColumnsOfSourceCache.put(source, originatingColumns);
+
+        return originatingColumns;
     }
 
     private Collection<FilterOutcome> getProcessingDependencies(ComponentRequirement componentRequirement) {
@@ -339,12 +367,9 @@ public class SourceColumnFinder {
     }
 
     public Set<Column> findOriginatingColumns(InputColumn<?> inputColumn) {
-        Set<Column> result = new HashSet<Column>();
-
         // TODO: Detect cyclic dependencies between transformers (A depends on
         // B, B depends on A)
 
-        findOriginatingColumnsOfInputColumn(inputColumn, result);
-        return result;
+        return findOriginatingColumnsOfInputColumn(inputColumn);
     }
 }

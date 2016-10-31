@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.scheduling;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SchedulingService extends RemoteService {
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) throws DCSecurityException;
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) 
+            throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
@@ -84,10 +86,11 @@ public interface SchedulingService extends RemoteService {
 
     /**
      * Gets all executions of a particular job.
+     * @throws FileNotFoundException 
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
-            throws DCSecurityException;
+            throws DCSecurityException, IllegalStateException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)

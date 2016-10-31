@@ -63,7 +63,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;

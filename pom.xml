@@ -752,6 +752,11 @@
 				<version>${metamodel.extras.version}</version>
 			</dependency>
 			<dependency>
+ 				<groupId>org.apache.metamodel</groupId>
+ 				<artifactId>MetaModel-fixedwidth</artifactId>
+ 				<version>${metamodel.version}</version>
+ 			</dependency>
+			<dependency>
 				<groupId>org.eobjects.metamodel-extras</groupId>
 				<artifactId>MetaModel-extras-dbase</artifactId>
 				<version>${metamodel.extras.version}</version>

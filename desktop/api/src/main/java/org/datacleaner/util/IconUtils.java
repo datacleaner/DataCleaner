@@ -532,8 +532,12 @@ public final class IconUtils {
         if (descriptor instanceof AnalyzerDescriptor) {
             return ANALYZER_IMAGEPATH;
         }
-
-        throw new UnsupportedOperationException("Unexpected descriptor type: " + descriptor);
+        /*
+         * DC monitor can run Custom jobs and therefore do not have a
+         * descriptor. We want to be able to render the results, therefore we
+         * return a image
+         */
+        return FILE_FILE;
     }
 
     public static Icon getColumnIcon(InputColumn<?> column, int iconSize) {

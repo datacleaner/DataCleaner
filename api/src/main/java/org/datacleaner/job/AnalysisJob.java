@@ -19,11 +19,13 @@
  */
 package org.datacleaner.job;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Defines a job to be executed by DataCleaner.
@@ -82,4 +84,23 @@ public interface AnalysisJob {
      * @return
      */
     public List<AnalyzerJob> getAnalyzerJobs();
+
+    /**
+     * Get all {@link ComponentJob}s contained in this job.
+     *
+     * @return
+     */
+    default List<ComponentJob> getComponentJobs() {
+        final ArrayList<ComponentJob> componentJobs = new ArrayList<>();
+        componentJobs.addAll(getTransformerJobs());
+        componentJobs.addAll(getAnalyzerJobs());
+        componentJobs.addAll(getFilterJobs());
+        return componentJobs;
+    }
+
+    default Stream<AnalysisJob> flattened() {
+        return Stream.concat(Stream.of(this), getComponentJobs().stream().flatMap(
+                componentJob -> Stream.of(componentJob.getOutputDataStreamJobs()).map(OutputDataStreamJob::getJob))
+                .flatMap(AnalysisJob::flattened));
+    }
 }

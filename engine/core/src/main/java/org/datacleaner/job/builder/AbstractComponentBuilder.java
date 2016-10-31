@@ -445,19 +445,19 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
                                 if (dependentValue != null) {
                                     // First build a list containing value and references tuples.
-                                    final Map<Integer, Object> originalMappings = new HashMap<>();
+                                    final Map<String, Object> originalMappings = new HashMap<>();
 
                                     final List<Object> synchronizedDependents = new ArrayList<>();
 
                                     if (currentValue.getClass().isArray()) {
                                         for (int i = 0; i < Array.getLength(currentValue); i++) {
-                                            originalMappings.put(Array.get(currentValue, i).hashCode(), Array.get(
+                                            originalMappings.put(getKey(Array.get(currentValue, i)), Array.get(
                                                     dependentValue, i));
                                         }
 
                                         for (int i = 0; i < Array.getLength(newValue); i++) {
-                                            synchronizedDependents.add(originalMappings.get(Array.get(newValue, i)
-                                                    .hashCode()));
+                                            synchronizedDependents.add(originalMappings.get(getKey(Array.get(newValue,
+                                                    i))));
                                         }
 
                                         dependentProperty.setValue(_configurableBean, getArray(dependentProperty
@@ -470,6 +470,18 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                                 }
                             });
         }
+    }
+
+    private static String getKey(final Object object) {
+        if (object instanceof InputColumn<?>) {
+            final InputColumn<?> inputColumn = (InputColumn<?>) object;
+
+            if (inputColumn.isVirtualColumn()) {
+                return inputColumn.getName();
+            }
+        }
+
+        return String.valueOf(object.hashCode());
     }
 
     private static <E> E[] getArray(Class<E> clazz, List<?> baseList) {

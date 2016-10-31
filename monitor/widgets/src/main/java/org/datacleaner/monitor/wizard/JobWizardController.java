@@ -194,7 +194,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     }
 
     private void getSchedule(final Runnable runnable, final String jobName) {
-        schedulingService.getSchedules(getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
+        schedulingService.getSchedules(getTenant(), true, new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
                 for (ScheduleDefinition scheduleDefinition : result) {

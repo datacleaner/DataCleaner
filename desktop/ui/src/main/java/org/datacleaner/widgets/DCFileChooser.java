@@ -23,9 +23,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.io.File;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 
@@ -90,6 +92,13 @@ public class DCFileChooser extends JFileChooser {
             }
         }
         component.setBackground(bg);
+    }
+
+    @Override
+    protected JDialog createDialog(final Component parent) throws HeadlessException {
+        JDialog dialog = super.createDialog(parent);
+        dialog.setMinimumSize(new Dimension(400,400));
+        return dialog;
     }
 
     public FileObject getSelectedFileObject() {

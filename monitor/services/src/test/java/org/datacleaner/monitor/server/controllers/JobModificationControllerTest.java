@@ -19,14 +19,12 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -35,14 +33,16 @@ import org.datacleaner.monitor.events.JobModificationEvent;
 import org.datacleaner.monitor.server.dao.ResultDao;
 import org.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.datacleaner.monitor.server.dao.TimelineDaoImpl;
-import org.datacleaner.monitor.server.job.MockJobEngineManager;
+import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.monitor.server.listeners.JobModificationEventRenameResultsListener;
 import org.datacleaner.monitor.server.listeners.JobModificationEventUpdateTimelinesListener;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 public class JobModificationControllerTest extends TestCase {
@@ -54,13 +54,12 @@ public class JobModificationControllerTest extends TestCase {
     private TimelineDaoImpl timelineDao;
 
     protected void setUp() throws Exception {
-        File targetDir = new File("target/repo_job_modification");
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-        repository = new FileRepository(targetDir);
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml");
+        repository = applicationContext.getBean(FileRepository.class);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
 
         final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
         timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);

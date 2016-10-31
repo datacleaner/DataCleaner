@@ -68,8 +68,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
-        return _delegate.getSchedules(tenant);
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) {
+        return _delegate.getSchedules(tenant, loadProperties);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException, IllegalStateException {
         return _delegate.getAllExecutions(tenant, job);
     }
 

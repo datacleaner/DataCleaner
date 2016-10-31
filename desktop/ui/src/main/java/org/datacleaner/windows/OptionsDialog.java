@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -84,6 +85,7 @@ public class OptionsDialog extends AbstractWindow {
             UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
             ExtensionPackagesPanel extensionPackagesPanel, HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
         super(windowContext);
+        setMinimumSize(new Dimension(500,500));
         _userPreferences = userPreferences;
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
@@ -363,6 +365,7 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(_tabbedPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(700, 500);
+
         return panel;
     }
 

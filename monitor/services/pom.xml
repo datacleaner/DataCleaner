@@ -75,7 +75,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-launcher_2.11</artifactId>
 		</dependency>
@@ -113,6 +113,12 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-cas</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>log4j-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<!-- CGLib required by spring to perform proxy injections -->

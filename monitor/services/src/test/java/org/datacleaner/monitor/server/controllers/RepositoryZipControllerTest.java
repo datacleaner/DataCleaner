@@ -31,10 +31,12 @@ import java.util.zip.ZipOutputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
+
+import com.google.common.io.Files;
+
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
 
@@ -50,9 +52,8 @@ public class RepositoryZipControllerTest extends TestCase {
         }
 
         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream("target/test_zipfile.zip"));
-        File targetRepoFolder = new File("target/decompressed_repo");
-        FileUtils.deleteDirectory(targetRepoFolder);
-        targetRepoFolder.mkdirs();
+        final File targetRepoFolder = Files.createTempDir();
+        targetRepoFolder.deleteOnExit();
         RepositoryFolder targetFolder = new FileRepository(targetRepoFolder).createFolder("tenant1");
         targetFolder.createFolder("foobar_removeMe");
         targetFolder.createFile("Yes_remove_me.too", null);

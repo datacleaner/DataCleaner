@@ -28,35 +28,29 @@
     </transformation>
     <analysis>
         <analyzer>
-            <descriptor ref="Insert into table"/>
+            <descriptor ref="Create CSV file"/>
+            <metadata-properties>
+                <property name="CoordinatesY">205</property>
+                <property name="CoordinatesX">354</property>
+            </metadata-properties>
             <properties>
-                <property name="Buffer size" value="TINY"/>
-                <property name="Column names" value="[SALESREPEMPLOYEENUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME,CUSTOMERNUMBER,CUSTOMERNAME,PHONE,ADDRESSLINE1,CITY,COUNTRY]"/>
-                <property name="Datastore" value="orderdb"/>
-                <property name="Error log file location" value="C:/Users/kasper/AppData/Local/Temp"/>
-                <property name="How to handle insertion errors?" value="STOP_JOB"/>
-                <property name="Schema name" value="PUBLIC"/>
-                <property name="Table name" value="CUSTOMERS"/>
-                <property name="Truncate table" value="false"/>
+                <property name="File" value="file://employees.csv"/>
+                <property name="Separator char" value="&amp;#44;"/>
+                <property name="Quote char" value="&amp;quot;"/>
+                <property name="Escape char" value="\"/>
+                <property name="Include header" value="true"/>
+                <property name="Encoding" value="UTF-8"/>
+                <property name="Fields" value="[EMPLOYEENUMBER,LASTNAME,FIRSTNAME,EXTENSION,EMAIL,OFFICECODE,REPORTSTO,JOBTITLE]"/>
+                <property name="Overwrite file if exists" value="true"/>
             </properties>
-            <input ref="col_8" name="Additional error log values"/>
-            <input ref="col_0" name="Additional error log values"/>
-            <input ref="col_1" name="Additional error log values"/>
-            <input ref="col_2" name="Additional error log values"/>
-            <input ref="col_3" name="Additional error log values"/>
-            <input ref="col_4" name="Additional error log values"/>
-            <input ref="col_5" name="Additional error log values"/>
-            <input ref="col_6" name="Additional error log values"/>
-            <input ref="col_7" name="Additional error log values"/>
-            <input ref="col_0" name="Values"/>
-            <input ref="col_1" name="Values"/>
-            <input ref="col_2" name="Values"/>
-            <input ref="col_8" name="Values"/>
-            <input value="My company" name="Values"/>
-            <input value="My phone no" name="Values"/>
-            <input value="My address" name="Values"/>
-            <input value="My city" name="Values"/>
-            <input value="My country" name="Values"/>
+            <input ref="col_0" name="Columns"/>
+            <input ref="col_1" name="Columns"/>
+            <input ref="col_2" name="Columns"/>
+            <input ref="col_3" name="Columns"/>
+            <input ref="col_4" name="Columns"/>
+            <input ref="col_5" name="Columns"/>
+            <input ref="col_6" name="Columns"/>
+            <input ref="col_7" name="Columns"/>
         </analyzer>
     </analysis>
 </job>

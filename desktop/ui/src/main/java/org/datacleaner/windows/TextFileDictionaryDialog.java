@@ -171,9 +171,10 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
                 final TextFileDictionary dict = new TextFileDictionary(name, path, encoding, caseSensitive);
 
                 if (_originalDictionary != null) {
-                    _catalog.removeDictionary(_originalDictionary);
+                    _catalog.changeDictionary(_originalDictionary, dict);
+                } else {
+                    _catalog.addDictionary(dict);
                 }
-                _catalog.addDictionary(dict);
                 TextFileDictionaryDialog.this.dispose();
             }
         });

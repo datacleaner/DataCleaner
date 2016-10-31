@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CoalesceUnitPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(CoalesceUnitPanel.class);
 
     private final ColumnListMultipleCoalesceUnitPropertyWidget _parent;
     private final DCComboBox<InputColumn<?>> _comboBox;
@@ -97,14 +96,10 @@ public class CoalesceUnitPanel extends DCPanel {
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            try  {
-                InputColumn<?>[] inputColumns = unit.updateInputColumns(availableInputColumns
-                        .toArray(new InputColumn[availableInputColumns.size()])).getInputColumns();
-                for (InputColumn<?> inputColumn : inputColumns) {
-                    addInputColumn(inputColumn);
-                }
-            } catch (IllegalStateException e){
-                logger.warn("Could not update columns on component {}", parent.getComponentBuilder().getName(), e);
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(availableInputColumns
+                    .toArray(new InputColumn[availableInputColumns.size()]), false);
+            for (InputColumn<?> inputColumn : updatedInputColumns) {
+                addInputColumn(inputColumn);
             }
         }
     }

@@ -62,7 +62,7 @@ import org.jdesktop.swingx.JXTextField;
  */
 public abstract class AbstractDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
-    private static final String DEFAULT_BANNER_IMAGE = "images/window/banner-datastores.png";
+    static final String DEFAULT_BANNER_IMAGE = "images/window/banner-datastores.png";
 
     private static final long serialVersionUID = 1L;
 

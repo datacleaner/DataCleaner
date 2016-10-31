@@ -209,11 +209,12 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
                     return;
                 }
 
-                DatastoreDictionary dictionary = new DatastoreDictionary(name, datastoreName, columnPath);
+                final DatastoreDictionary dictionary = new DatastoreDictionary(name, datastoreName, columnPath);
                 if (_originalDictionary != null) {
-                    _referenceDataCatalog.removeDictionary(_originalDictionary);
+                    _referenceDataCatalog.changeDictionary(_originalDictionary, dictionary);
+                } else {
+                    _referenceDataCatalog.addDictionary(dictionary);
                 }
-                _referenceDataCatalog.addDictionary(dictionary);
                 DatastoreDictionaryDialog.this.dispose();
             }
         });

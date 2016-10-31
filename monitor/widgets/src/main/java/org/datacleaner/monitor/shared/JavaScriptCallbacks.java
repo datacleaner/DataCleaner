@@ -19,15 +19,12 @@
  */
 package org.datacleaner.monitor.shared;
 
-import org.datacleaner.monitor.shared.ClientConfig;
-import org.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.datacleaner.monitor.shared.WizardService;
-import org.datacleaner.monitor.shared.WizardServiceAsync;
 import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.datacleaner.monitor.wizard.DatastoreWizardController;
 import org.datacleaner.monitor.wizard.JobWizardController;
+import org.datacleaner.monitor.wizard.ReferenceDataWizardController;
 import org.datacleaner.monitor.wizard.WizardPanel;
 import org.datacleaner.monitor.wizard.WizardPanelFactory;
 
@@ -199,6 +196,7 @@ public final class JavaScriptCallbacks {
     public static void exposeApi() {
         exportStartJobWizard();
         exportStartDatastoreWizard();
+        exportStartReferenceDataWizard();
         onApiInitialized();
     }
 
@@ -217,7 +215,7 @@ public final class JavaScriptCallbacks {
     /**
      * Exports a JS method:
      * 
-     * startJobWizard(datastoreName, wizardName, htmlDivId)
+     * startJobWizard(wizardName, htmlDivId)
      */
     public static native void exportStartDatastoreWizard() /*-{
                                                            if (!$wnd.datacleaner) {
@@ -225,7 +223,19 @@ public final class JavaScriptCallbacks {
                                                            }
                                                            $wnd.datacleaner.startDatastoreWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);   
                                                            }-*/;
-
+    
+    /**
+     * Exports a JS method:
+     *
+     * startReferenceDataWizard(referenceDataType, wizardName, htmlDivId)
+     */
+    public static native void exportStartReferenceDataWizard() /*-{
+                                                           if (!$wnd.datacleaner) {
+                                                               $wnd.datacleaner = {};
+                                                           }
+                                                           $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+                                                           }-*/;
+    
     /**
      * Starts a job wizard based on parameters given from a native JS call.
      * 
@@ -292,5 +302,32 @@ public final class JavaScriptCallbacks {
         } else {
             return new WizardIdentifier(wizardDisplayName);
         }
+    }
+
+    /**
+     * Starts a reference data wizard based on parameters given from a native JS call.
+     *
+     * @param referenceDataType
+     * @param wizardDisplayName
+     * @param htmlDivId
+     */
+    public static void startReferenceDataWizard(final String referenceDataType, final String wizardDisplayName,
+            final String htmlDivId) {
+        GWT.log("JavaScriptCallbacks.startReferenceDataWizard(" + referenceDataType + "," + wizardDisplayName + ","
+                + htmlDivId + ")");
+
+        System.err.println("refDataType=" + referenceDataType);
+        System.err.println("wizardName=" + wizardDisplayName);
+        System.err.println("htmlDivId=" + htmlDivId);
+
+        final ClientConfig clientConfig = new DictionaryClientConfig();
+        final WizardIdentifier wizardIdentifier = getWizardIdentifier(wizardDisplayName);
+        final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
+        final WizardServiceAsync wizardService = GWT.create(WizardService.class);
+        final TenantIdentifier tenant = clientConfig.getTenant();
+        final ReferenceDataWizardController controller = new ReferenceDataWizardController(referenceDataType, 
+                wizardPanel, tenant, wizardIdentifier, wizardService);
+        GWT.log("Starting reference data wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
+        controller.startWizard();
     }
 }

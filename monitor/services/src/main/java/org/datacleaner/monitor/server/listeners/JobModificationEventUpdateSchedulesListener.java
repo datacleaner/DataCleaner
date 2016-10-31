@@ -59,7 +59,7 @@ public class JobModificationEventUpdateSchedulesListener implements ApplicationL
         final TenantIdentifier tenant = new TenantIdentifier(event.getTenant());
         _schedulingService.removeSchedule(tenant, new JobIdentifier(oldJobName));
         
-        final List<ScheduleDefinition> schedules = _schedulingService.getSchedules(tenant);
+        final List<ScheduleDefinition> schedules = _schedulingService.getSchedules(tenant, false);
         for (ScheduleDefinition schedule : schedules) {
             boolean update = false;
             if (schedule.getDependentJob() != null) {

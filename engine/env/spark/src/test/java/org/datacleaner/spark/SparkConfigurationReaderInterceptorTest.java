@@ -28,6 +28,7 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.spark.utils.HdfsHelper;
 import org.datacleaner.util.HadoopResource;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +39,11 @@ public class SparkConfigurationReaderInterceptorTest {
         // setup code needed to register the "last known" hadoop configuration
         // in HdfsHelper.
         new HdfsHelper(new Configuration());
+    }
+
+    @After
+    public void tearDown() {
+        HdfsHelper.clear();
     }
 
     @Test

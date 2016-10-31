@@ -66,6 +66,10 @@ public final class ExcelOutputWriterFactory {
 
                 // write the headers
             } else {
+                // Make sure the schemas are refreshed so the getTable method recreates a sheet if it has been
+                // deleted (and that is not yet reflected in the dataContexts map).
+                dataContext.refreshSchemas();
+
                 Table table = getTable(dataContext, sheetName, columnNames);
                 outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
                 counters.get(filename).incrementAndGet();

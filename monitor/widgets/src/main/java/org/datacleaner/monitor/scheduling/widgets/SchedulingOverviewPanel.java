@@ -55,7 +55,7 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     public void initialize(final Runnable listener) {
-        _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
+        _service.getSchedules(_clientConfig.getTenant(), false, new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
 

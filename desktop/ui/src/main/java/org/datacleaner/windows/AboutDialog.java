@@ -102,7 +102,7 @@ public class AboutDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 600;
+        return 650;
     }
 
     @Override

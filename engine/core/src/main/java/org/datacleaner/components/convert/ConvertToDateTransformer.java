@@ -41,6 +41,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.convert.NowDate;
+import org.datacleaner.util.convert.ShiftedToday;
 import org.datacleaner.util.convert.TodayDate;
 import org.datacleaner.util.convert.YesterdayDate;
 import org.joda.time.DateTimeZone;
@@ -163,6 +164,10 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     protected Date convertFromString(final String value) {
+        if (value == null) {
+            return null;
+        }
+        
         if ("now()".equalsIgnoreCase(value)) {
             return new NowDate();
         }
@@ -171,6 +176,9 @@ public class ConvertToDateTransformer implements Transformer {
         }
         if ("yesterday()".equalsIgnoreCase(value)) {
             return new YesterdayDate();
+        }
+        if (value.matches("shifted_today(.+)")) {
+            return new ShiftedToday(value);
         }
 
         for (DateTimeFormatter formatter : _dateTimeFormatters) {
@@ -206,16 +214,15 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     protected Date convertFromNumber(Number value, boolean tryDateTimeFormatters) {
-        final Number numberValue = (Number) value;
-        final long longValue = numberValue.longValue();
+        final long longValue = value.longValue();
 
         final String stringValue = Long.toString(longValue);
 
         if (tryDateTimeFormatters) {
             for (int i = 0; i < _dateTimeFormatters.length; i++) {
                 final String dateMask = dateMasks[i];
-                final boolean isPotentialNumberDateMask = dateMask.indexOf("-") == -1 && dateMask.indexOf(".") == -1
-                        && dateMask.indexOf("/") == -1;
+                final boolean isPotentialNumberDateMask = !dateMask.contains("-") && !dateMask.contains(".")
+                        && !dateMask.contains("/");
                 if (isPotentialNumberDateMask) {
                     final DateTimeFormatter formatter = _dateTimeFormatters[i];
                     try {
@@ -257,7 +264,7 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     private String[] getDefaultDateMasks() {
-        final List<String> defaultDateMasks = new ArrayList<String>();
+        final List<String> defaultDateMasks = new ArrayList<>();
 
         defaultDateMasks.add("yyyy-MM-dd HH:mm:ss.S");
         defaultDateMasks.add("yyyy-MM-dd HH:mm:ss");

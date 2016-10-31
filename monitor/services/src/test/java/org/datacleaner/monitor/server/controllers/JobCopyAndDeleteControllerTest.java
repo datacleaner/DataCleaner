@@ -19,22 +19,22 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.JobCopyEvent;
 import org.datacleaner.monitor.events.JobDeletionEvent;
-import org.datacleaner.monitor.server.job.MockJobEngineManager;
+import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JobCopyAndDeleteControllerTest extends TestCase {
 
@@ -42,12 +42,12 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
     private TenantContextFactoryImpl tenantContextFactory;
 
     protected void setUp() throws Exception {
-        File targetDir = new File("target/repo_job_copy");
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-        repository = new FileRepository(targetDir);
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml");
+        repository = applicationContext.getBean(FileRepository.class);
 
-        tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                new DefaultJobEngineManager(applicationContext));
     }
 
     public void testRenameJobAndResult() throws Exception {

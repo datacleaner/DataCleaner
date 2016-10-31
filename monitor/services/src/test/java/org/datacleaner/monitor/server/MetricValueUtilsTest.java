@@ -19,34 +19,40 @@
  */
 package org.datacleaner.monitor.server;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.metamodel.util.ImmutableRef;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.AnalyzerResultFuture;
-import org.datacleaner.api.AnalyzerResultFutureImpl;
-import org.datacleaner.api.Metric;
-import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.MetricDescriptor;
-import org.datacleaner.descriptors.MetricParameters;
-import org.datacleaner.descriptors.ResultDescriptor;
-import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.api.*;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.*;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.datacleaner.monitor.server.job.DataCleanerJobEngine;
+import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.test.MockAnalyzer;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(EasyMockRunner.class)
 public class MetricValueUtilsTest extends EasyMockSupport {
@@ -126,5 +132,40 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         assertEquals(7, value2);
 
         verifyAll();
+    }
+
+    @Test
+    public void testGetMetricGroupsFromAnalysisJob() throws URISyntaxException, FileNotFoundException {
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+
+        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore(datastore);
+
+            ajb.addSourceColumns("customers.contactfirstname");
+            ajb.addSourceColumns("customers.contactlastname");
+            ajb.addSourceColumns("customers.city");
+
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
+                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+
+            final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
+            analyzer1.setName("analyzer1");
+            analyzer1.addInputColumn(sourceColumns.get(0));
+            final OutputDataStream outputDataStream = analyzer1.getOutputDataStreams().get(0);
+            final AnalysisJobBuilder outputDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(outputDataStream);
+            final List<MetaModelInputColumn> outputDataStreamColumns = outputDataStreamJobBuilder.getSourceColumns();
+
+
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
+                    .addAnalyzer(MockAnalyzer.class);
+            analyzer2.addInputColumns(outputDataStreamColumns);
+            analyzer2.setName("analyzer2");
+
+            final MetricValueUtils metricValueUtils = new MetricValueUtils();
+            final List<MetricGroup> metricGroups = metricValueUtils.getMetricGroups(jobContext, ajb.toAnalysisJob());
+            assertEquals(2, metricGroups.size()); // One from each analyzer
+        }
     }
 }

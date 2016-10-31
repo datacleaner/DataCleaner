@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -79,6 +81,10 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.user.ReferenceDataChangeListener;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -92,6 +98,7 @@ import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -102,12 +109,14 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
+import org.datacleaner.widgets.CommunityEditionStatusLabel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
-import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
+import org.datacleaner.widgets.InformationPanelDescriptor;
 import org.datacleaner.widgets.NewsChannelStatusLabel;
+import org.datacleaner.widgets.InformationPanelLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -175,7 +184,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _graph.refresh();
         }
     }
-
+    
     private class WindowTransformerChangeListener implements TransformerChangeListener {
 
         @Override
@@ -255,7 +264,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
-
+    
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
@@ -288,6 +297,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final ReferenceDataAnalysisJobWindowImplListeners _referenceDataAnalysisJobWindowListeners;
+    private ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener;
+    private ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener;
+    private ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -295,6 +308,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
     private AnalysisWindowPanelType _currentPanelType;
+    private MutableReferenceDataCatalog _mutableReferenceCatalog;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
@@ -306,7 +320,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
+            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
+            MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -318,8 +333,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
+        _mutableReferenceCatalog = mutableReferenceCatalog;
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
                 DEFAULT_WINDOW_HEIGHT);
+
+        setMinimumSize(new Dimension(900, 550));
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -341,6 +359,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 usageLogger);
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
+        //Add listeners for ReferenceData classes 
+        _referenceDataAnalysisJobWindowListeners = new ReferenceDataAnalysisJobWindowImplListeners(_analysisJobBuilder);
+        _stringPatternChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeStringPatternListener();
+        _dictionaryChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeDictionaryListener();
+        _synonymCatalogListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeSynonymCatalogListener();
+        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.addSynonymCatalogListener(_synonymCatalogListener);
 
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
@@ -365,6 +391,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+        
     }
 
     @Override
@@ -628,6 +655,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
+        
+        //Remove the reference data listener
+        _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.removeDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.removeSynonymCatalogListener(_synonymCatalogListener);
+        
         getContentPane().removeAll();
     }
 
@@ -764,7 +797,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
-
+        
         final DataCloudStatusLabel dataCloudStatusLabel =
                 new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
         statusBar.add(dataCloudStatusLabel);
@@ -773,9 +806,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
-
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
-        statusBar.add(statusLabel);
+        
+        if (Version.isCommunityEdition()) {
+            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
+            statusBar.add(statusLabel);
+            statusBar.add(Box.createHorizontalStrut(20));
+        } else {
+            final ServiceLoader<InformationPanelDescriptor> panelsLoaders = ServiceLoader.load(InformationPanelDescriptor.class);
+            for (InformationPanelDescriptor panel : panelsLoaders) {
+                final InformationPanelLabel plugableRightPanelLabel = new InformationPanelLabel(rightInformationPanel, panel);
+                statusBar.add(plugableRightPanelLabel);
+                statusBar.add(Box.createHorizontalStrut(20));
+            }
+        }
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());
@@ -908,7 +951,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     private void onSourceColumnsChanged() {
-        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty();
+        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty() && _datastore != null;
 
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);

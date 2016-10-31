@@ -254,7 +254,7 @@ public final class Bootstrap {
             WidgetUtils.invokeSwingAction(new Runnable() {
                 @Override
                 public void run() {
-                    if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
+                    if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, true)) {
                         final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
                                 userPreferences, windowContext, (AbstractWindow) analysisJobBuilderWindow);
                         dataCloudLogInWindow.open();

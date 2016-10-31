@@ -110,6 +110,7 @@ public class DrillToProfilingResultSelectHandler {
         _popup.addButton(showResultButton);
         _popup.addButton(showResultFullPageButton);
         _popup.addButton(new CancelPopupButton(_popup));
+        _popup.setWidth("900px");
         _popup.center();
         _popup.show();
     }

@@ -41,15 +41,17 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     public static final String SYSTEM_PROPERTY_HIDE_WINDOWS = "DataCleaner.Windows.Hide";
 
     private static final long serialVersionUID = 1L;
+    private static final int MIN_WIDTH = 400;
+    private static final int MIN_HEIGHT = 300;
     private volatile boolean initialized = false;
     private final WindowContext _windowContext;
 
     public AbstractWindow(WindowContext windowContext) {
         _windowContext = windowContext;
+        setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
-
     }
 
     protected boolean maximizeWindow(){

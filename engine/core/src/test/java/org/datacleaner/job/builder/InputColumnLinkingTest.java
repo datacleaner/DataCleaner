@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
@@ -43,7 +44,11 @@ public class InputColumnLinkingTest {
     @Before
     public void setup() {
         _jobBuilder = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
-        _jobBuilder.addSourceColumn(new MutableColumn(SOURCE_COLUMN_NAME));
+
+        final MutableColumn column = new MutableColumn(SOURCE_COLUMN_NAME);
+        column.setTable(new MutableTable("table"));
+
+        _jobBuilder.addSourceColumn(column);
 
         _dateTransformer = _jobBuilder.addTransformer(ConvertToDateTransformer.class);
         _dateTransformer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME));
@@ -182,5 +187,33 @@ public class InputColumnLinkingTest {
         assertEquals(0, analyzer.getInputColumns().size());
         assertEquals(0, analyzer.getComponentInstance()._columns.length);
         assertEquals(0, analyzer.getComponentInstance()._columnNames.length);
+    }
+
+    /**
+     * Tests if all mapped properties are copied correctly when creating a copy of a job and the generated ids
+     * for the input column object identifiers are not in sync with the ones in the source job.
+     */
+    @Test
+    public void testCopyJob() {
+        // Add and remove at transformer to make sure the id's for job copies are out of sync with the source job id's.
+        _jobBuilder.removeTransformer(_jobBuilder.addTransformer(ConvertToStringTransformer.class));
+
+        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer = _jobBuilder.addTransformer(
+                ConvertToStringTransformer.class);
+        stringTransformer.addInputColumn(_dateTransformer.getOutputColumns().get(0));
+
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(analyzer, "Columns");
+
+        analyzer.addInputColumn(stringTransformer.getOutputColumns().get(0), columnsProperty);
+        analyzer.setConfiguredProperty("Column names", new String[] { "first" });
+
+        final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_jobBuilder.getConfiguration(), _jobBuilder
+                .toAnalysisJob(false));
+
+        assertNotNull(((MockAnalyzer) jobBuilderCopy.getAnalyzerComponentBuilders().get(0)
+                .getComponentInstance())._columnNames[0]);
+
+        jobBuilderCopy.close();
     }
 }

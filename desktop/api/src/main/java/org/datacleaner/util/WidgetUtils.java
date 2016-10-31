@@ -503,6 +503,18 @@ public final class WidgetUtils {
         showErrorMessage(shortMessage, sb.toString(), exception);
     }
 
+    public static JScrollPane scrollable(final JComponent comp, final int maxHeight) {
+        final JScrollPane scrollPane = WidgetUtils.scrolleable(comp);
+
+        if (comp.getPreferredSize().getHeight() > maxHeight) {
+            final Dimension preferredSize = comp.getPreferredSize();
+            final Dimension newSize = new Dimension(preferredSize.width, maxHeight);
+            scrollPane.getViewport().setPreferredSize(newSize);
+        }
+
+        return scrollPane;
+    }
+
     public static JScrollPane scrolleable(final JComponent comp) {
         final JScrollPane scroll = new JScrollPane();
         if (comp != null) {

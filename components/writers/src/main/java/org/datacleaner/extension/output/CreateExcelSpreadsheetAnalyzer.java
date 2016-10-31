@@ -137,16 +137,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             }
         }
 
-        if (file.exists()) {
+        if (!overwriteSheetIfExists && file.exists()) {
             Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (final DatastoreConnection connection = datastore.openConnection()) {
                 final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
                     if (tableNames[i].equals(sheetName)) {
-                        if (!overwriteSheetIfExists) {
-                            throw new IllegalStateException("The sheet '" + sheetName
-                                    + "' already exists. Please select another sheet name.");
-                        }
+                        throw new IllegalStateException("The sheet '" + sheetName
+                                + "' already exists. Please select another sheet name.");
                     }
                 }
             }

@@ -19,11 +19,6 @@
  */
 package org.datacleaner.job;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -31,6 +26,12 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Helper class that wraps a collection of {@link AnalyzerJob}s and provides
@@ -48,7 +49,8 @@ public class AnalyzerJobHelper {
     }
 
     public AnalyzerJobHelper(AnalysisJob analysisJob) {
-        this(analysisJob.getAnalyzerJobs());
+        this(analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
+                .collect(Collectors.toList()));
     }
 
     public Collection<AnalyzerJob> getAnalyzerJobs() {

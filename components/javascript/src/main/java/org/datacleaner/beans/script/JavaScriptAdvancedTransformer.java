@@ -42,8 +42,6 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A transformer that uses userwritten JavaScript to generate a transformer
@@ -54,8 +52,6 @@ import org.slf4j.LoggerFactory;
 @Categorized(ScriptingCategory.class)
 @Concurrent(false)
 public class JavaScriptAdvancedTransformer implements Transformer {
-
-    private static final Logger logger = LoggerFactory.getLogger(JavaScriptAdvancedTransformer.class);
 
     @Inject
     @Configured
@@ -107,7 +103,7 @@ public class JavaScriptAdvancedTransformer implements Transformer {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
             _sharedScope = context.initStandardObjects();
 
-            JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
+            JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
             JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
 
             _script.exec(context, _sharedScope);

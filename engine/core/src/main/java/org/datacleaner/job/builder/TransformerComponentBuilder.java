@@ -288,8 +288,6 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         // output changes
         if (isConfigured()) {
             getOutputColumns();
-        } else {
-            _outputColumns.clear();
         }
 
         List<TransformerChangeListener> listeners = getAllListeners();

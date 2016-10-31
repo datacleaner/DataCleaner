@@ -58,6 +58,7 @@
                 <property name="Quote char" value="&amp;quot;"/>
                 <property name="Escape char" value="\"/>
                 <property name="Include header" value="true"/>
+                <property name="Overwrite file if exists" value="true"/>
             </properties>
             <input ref="col_2"/>
             <input ref="col_3"/>

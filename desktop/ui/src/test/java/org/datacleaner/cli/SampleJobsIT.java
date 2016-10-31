@@ -461,6 +461,34 @@ public class SampleJobsIT {
         testJob("OrderDB Customers and Employees union", expectedResultSets);
     }
 
+    @Test
+    public void testUSCustomerSTATECheck() throws Exception {
+        final Map<String, String[]> expectedResultSets = new HashMap<>();
+        expectedResultSets.put("RESULT: Country Completeness (COUNTRY)",
+                new String[] {"CompletenessAnalyzerResult:",
+                        "- Row count: 214",
+                        "- Valid row count: 203",
+                        "- Invalid row count: 11"});
+
+        expectedResultSets.put("RESULT: US-customers-without-state.csv (CUSTOMERNUMBER,CUSTOMERNAME) (STATE is null?=NULL)",
+                new String[] {"11 inserts executed"});
+
+        expectedResultSets.put("RESULT: US state distribution (STATE) (STATE is null?=NOT_NULL)",
+                new String[] {"SingleValueDistributionResult:",
+                        "- Distinct count: 10",
+                        "- Null count: 0",
+                        "- Total count: 41",
+                        "- Unique count: 4",
+                        "- Value count (CA): 13",
+                        "- Value count (MA): 8",
+                        "- Value count (NY): 6",
+                        "- Value count (CT): 4",
+                        "- Value count (California): 3",
+                        "- Value count (PA): 3"});
+
+        testJob("US Customer STATE check", expectedResultSets);
+    }
+
     private void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
         final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobName).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);

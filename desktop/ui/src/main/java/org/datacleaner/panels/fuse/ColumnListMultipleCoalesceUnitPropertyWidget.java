@@ -277,11 +277,8 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         }
 
         for (CoalesceUnit unit : units) {
-            final CoalesceUnit updatedCoalesceUnit = unit.updateInputColumns(allInputColumns);
-            if (updatedCoalesceUnit != null) {
-                final InputColumn<?>[] inputColumns = updatedCoalesceUnit.getInputColumns();
-                Collections.addAll(resultList, inputColumns);
-            }
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(allInputColumns, true);
+            Collections.addAll(resultList, updatedInputColumns);
         }
 
         logger.debug("Returning Input.value = {}", resultList);

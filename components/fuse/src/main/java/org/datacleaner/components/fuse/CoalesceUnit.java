@@ -119,7 +119,7 @@ public class CoalesceUnit {
                 if(exceptionOnMissing) {
                     final List<String> names =
                             Arrays.stream(allInputColumns).map(InputColumn::getName).collect(Collectors.toList());
-                    throw new IllegalStateException(
+                    throw new CoalesceUnitMissingColumnException(this, newInputColumnName,
                             "Column '" + newInputColumnName + "' not found. Available columns: " + names);
                 }
             } else {

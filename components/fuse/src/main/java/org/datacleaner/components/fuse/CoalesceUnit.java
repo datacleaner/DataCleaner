@@ -114,7 +114,7 @@ public class CoalesceUnit {
         final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 
         for (final String newInputColumnName : newInputColumnNames) {
-            final InputColumn<?> updatedInputColumn = updateInputColumn(allInputColumns, newInputColumnName);
+            final InputColumn<?> updatedInputColumn = findInputColumn(allInputColumns, newInputColumnName);
             if (updatedInputColumn == null) {
                 if (exceptionOnMissing) {
                     final List<String> names =
@@ -129,10 +129,10 @@ public class CoalesceUnit {
         return newInputColumns.toArray(new InputColumn[newInputColumns.size()]);
     }
 
-    private InputColumn<?> updateInputColumn(final InputColumn<?>[] allInputColumns, final String newInputColumnName) {
+    private InputColumn<?> findInputColumn(final InputColumn<?>[] allInputColumns, final String inputColumnName) {
         // Exact match round on path.
         for (final InputColumn<?> inputColumn : allInputColumns) {
-            if (newInputColumnName.contains(".") && inputColumn.isPhysicalColumn() && newInputColumnName
+            if (inputColumnName.contains(".") && inputColumn.isPhysicalColumn() && inputColumnName
                     .equals(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
                 return inputColumn;
             }
@@ -140,7 +140,7 @@ public class CoalesceUnit {
 
         // Trimmed and case-insensitive path match round.
         for (final InputColumn<?> inputColumn : allInputColumns) {
-            if (newInputColumnName.contains(".") && inputColumn.isPhysicalColumn() && newInputColumnName.trim()
+            if (inputColumnName.contains(".") && inputColumn.isPhysicalColumn() && inputColumnName.trim()
                     .equalsIgnoreCase(inputColumn.getPhysicalColumn().getQualifiedLabel())) {
                 return inputColumn;
             }
@@ -148,14 +148,14 @@ public class CoalesceUnit {
 
         // Legacy: Exact name match round
         for (final InputColumn<?> inputColumn : allInputColumns) {
-            if (newInputColumnName.equals(inputColumn.getName())) {
+            if (inputColumnName.equals(inputColumn.getName())) {
                 return inputColumn;
             }
         }
 
         // Legacy: Trimmed and case-insensitive name match round.
         for (final InputColumn<?> inputColumn : allInputColumns) {
-            if (newInputColumnName.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
+            if (inputColumnName.trim().equalsIgnoreCase(inputColumn.getName().trim())) {
                 return inputColumn;
             }
         }

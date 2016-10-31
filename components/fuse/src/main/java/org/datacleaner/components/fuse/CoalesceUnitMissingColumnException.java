@@ -20,6 +20,8 @@
 package org.datacleaner.components.fuse;
 
 public class CoalesceUnitMissingColumnException extends IllegalStateException {
+    private static final long serialVersionUID = 1L;
+
     private final CoalesceUnit _coalesceUnit;
     private final String _inputColunmName;
 

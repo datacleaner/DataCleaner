@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CoalesceUnitPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(CoalesceUnitPanel.class);
 
     private final ColumnListMultipleCoalesceUnitPropertyWidget _parent;
     private final DCComboBox<InputColumn<?>> _comboBox;
@@ -97,7 +96,7 @@ public class CoalesceUnitPanel extends DCPanel {
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(availableInputColumns
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(availableInputColumns
                     .toArray(new InputColumn[availableInputColumns.size()]), false);
             for (InputColumn<?> inputColumn : updatedInputColumns) {
                 addInputColumn(inputColumn);

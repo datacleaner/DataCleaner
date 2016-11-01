@@ -384,7 +384,6 @@ public final class JobGraph {
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
-        visualizationViewer.addKeyListener(new JobGraphKeyListener(graphContext, actions));
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
@@ -425,6 +424,7 @@ public final class JobGraph {
         };
         scrollPane.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
+        new JobGraphBindingsManager(graphContext, actions, scrollPane).register();
 
         return scrollPane;
     }

@@ -187,7 +187,7 @@ public class JobGraphBindingsManager {
             }
         });
         // register BACKSPACE key to the same action
-        _component.getInputMap(INPUT_MAP_CONDITION).put(KeyStroke.getKeyStroke(KEY_BACKSPACE), KEY_BACKSPACE);
+        _component.getInputMap(INPUT_MAP_CONDITION).put(KeyStroke.getKeyStroke(KEY_BACKSPACE), KEY_DELETE);
     }
 
     private void registerAction(String actionKey, KeyStroke keyStroke, Action action) {

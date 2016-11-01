@@ -19,26 +19,14 @@
  */
 package org.datacleaner.cli;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.datacleaner.Main;
 import org.junit.Test;
 
 public class SampleJobsIT {
-    private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
-            + File.separator + "java";
-
     @Test
     public void testCopyEmployeesToCustomerTable() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
@@ -492,67 +480,8 @@ public class SampleJobsIT {
         testJob("US Customer STATE check", expectedResultSets);
     }
 
-    private void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
-        final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobName).getBytes());
-        final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
-        final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
-
-        try {
-            String resultLine;
-
-            // Read the output line by line until we see an indicator that the interesting part of the output
-            // is coming up.
-            while ((resultLine = resultReader.readLine()) != null && !resultLine.equals("SUCCESS!")) {
-                // Ignore.
-            }
-
-            // Now iterate over the different expected result sets and see if they're valid.
-            while ((resultLine = resultReader.readLine()) != null) {
-                final String resultKey = resultLine.trim();
-                if (!"".equals(resultKey)) {
-                    String[] expectedResultSet = expectedResultSets.get(resultKey);
-
-                    assertNotNull(expectedResultSet);
-
-                    for (String expectedResult : expectedResultSet) {
-                        // Only check the first part of the line, because numbers at the end may differ based
-                        // on the moment in time the test runs at.
-                        assertThat(resultReader.readLine(), containsString(expectedResult));
-                    }
-                    expectedResultSets.remove(resultKey);
-                }
-            }
-
-            assertEquals(0, expectedResultSets.size());
-        } finally {
-            resultReader.close();
-            resultInputStreamReader.close();
-            resultInputStream.close();
-        }
-    }
-
-    private String runJob(final String jobName) throws Exception {
-        final ProcessBuilder builder = new ProcessBuilder(JAVA_EXECUTABLE, "-cp", System.getProperty("java.class.path"),
-                Main.class.getCanonicalName(), "-job", URLDecoder.decode(new File(
-                        "src/main/resources/datacleaner-home/jobs/" + jobName + ".analysis.xml").getPath(), "UTF-8"));
-
-        final Process process = builder.start();
-
-        final StringBuilder result = new StringBuilder();
-        new Thread(() -> {
-            try {
-                final InputStream is = process.getInputStream();
-                int c;
-                while ((c = is.read()) != -1) {
-                    result.append((char) c);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-        assertEquals(0, process.waitFor());
-
-        return result.toString();
+    private static void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
+        JobTestHelper.testJob(URLDecoder.decode(new File("src/main/resources/datacleaner-home/jobs/" + jobName
+                + ".analysis.xml").getPath(), "UTF-8"), expectedResultSets);
     }
 }

@@ -85,6 +85,28 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>integration-test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.19.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<!-- DataCleaner core / environment -->
 		<dependency>

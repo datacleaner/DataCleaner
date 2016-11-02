@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileDepthSelector;
@@ -38,6 +39,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.VersionComparator;
 import org.datacleaner.user.DemoConfiguration;
+import org.datacleaner.user.DemoConfigurationBasis;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +85,17 @@ public final class DataCleanerHomeUpgrader {
             userPreferencesUpgrader.upgrade();
 
             // Overwrite example jobs
-            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+            final List<String> allFilePaths = new ArrayList<>();
+            if (Version.isCommunityEdition()) {
+                final DemoConfiguration demoConfiguration = new DemoConfiguration();
+                allFilePaths.addAll(demoConfiguration.getAllFilePaths());
+            } else {
+                final ServiceLoader<DemoConfigurationBasis> demoJobsClasses = ServiceLoader.load(
+                        DemoConfigurationBasis.class);
+                for (DemoConfigurationBasis demoClass : demoJobsClasses) {
+                    allFilePaths.addAll(demoClass.getAllFilePaths());
+                }
+            }
             for (String filePath : allFilePaths) {
                 overwriteFileWithDefaults(newFolder, filePath);
             }

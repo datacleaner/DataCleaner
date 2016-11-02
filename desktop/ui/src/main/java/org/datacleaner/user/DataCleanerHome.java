@@ -26,7 +26,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.List;import java.util.ServiceLoader;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -164,8 +165,18 @@ public final class DataCleanerHome {
             if (!upgraded) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, DataCleanerConfigurationImpl.DEFAULT_FILENAME);
-
-                final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+               
+                final List<String> allFilePaths = new ArrayList<>();
+                if (Version.isCommunityEdition()) {
+                    final DemoConfiguration demoConfiguration = new DemoConfiguration();
+                    allFilePaths.addAll(demoConfiguration.getAllFilePaths());
+                } else {
+                    final ServiceLoader<DemoConfiguration> demoJobsClasses = ServiceLoader.load(
+                            DemoConfiguration.class);
+                    for (DemoConfiguration demoClass : demoJobsClasses) {
+                        allFilePaths.addAll(demoClass.getAllFilePaths());
+                    }
+                }
                 for (String filePath : allFilePaths) {
                     copyIfNonExisting(candidate, manager, filePath);
                 }

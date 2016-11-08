@@ -22,8 +22,8 @@ package org.datacleaner.user;
 import java.util.List;
 
 /**
- * Loads all the demo jobs
+ * Contains information about the initial configuration with datastores, jobs etc.
  */
-public interface DemoConfigurationBasis {
+public interface InitialConfiguration {
     List<String> getAllFilePaths();
 }

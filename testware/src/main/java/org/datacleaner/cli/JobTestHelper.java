@@ -30,15 +30,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-import org.datacleaner.Main;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class JobTestHelper {
+    private static final String DATACLEANER_MAIN_CLASS_NAME = "org.datacleaner.Main";
     private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
             + File.separator + "java";
 
-    public static void testJob(final String jobFileName, final Map<String, String[]> expectedResultSets)
-            throws Exception {
-        final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobFileName).getBytes());
+    public static void testJob(final String jobFileName, final Map<String, String[]> expectedResultSets,
+            final String... extraCLIArgs) throws Exception {
+        final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobFileName, extraCLIArgs).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
         final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
 
@@ -76,9 +77,12 @@ public class JobTestHelper {
         }
     }
 
-    private static String runJob(final String jobFileName) throws Exception {
-        final ProcessBuilder builder = new ProcessBuilder(JAVA_EXECUTABLE, "-cp", System.getProperty("java.class.path"),
-                Main.class.getCanonicalName(), "-job", jobFileName);
+    private static String runJob(final String jobFileName, final String... extraCLIArgs) throws Exception {
+        String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
+                "-job", jobFileName }, extraCLIArgs);
+
+        final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
+        builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
         final Process process = builder.start();
 

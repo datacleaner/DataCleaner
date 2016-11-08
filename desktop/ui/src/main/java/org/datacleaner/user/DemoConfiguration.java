@@ -32,7 +32,7 @@ import org.datacleaner.connection.SalesforceDatastore;
  * Contains information about the initial configuration with demo datastores,
  * jobs etc.
  */
-public class DemoConfiguration implements DemoConfigurationBasis {
+public class DemoConfiguration implements InitialConfiguration {
 
     private static final List<String> ALL_FILES = new ArrayList<>();
 

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -47,7 +46,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.Version;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -260,18 +258,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         if (recentJobFiles == null || recentJobFiles.isEmpty()) {
             recentJobFiles = new ArrayList<>();
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
-           
-            final List<String> demoJobPaths = new ArrayList<>();
-            if (Version.isCommunityEdition()) {
-                final DemoConfiguration demoConfiguration = new DemoConfiguration();
-                demoJobPaths.addAll(demoConfiguration.getAllFilePaths());
-            } else {
-                final ServiceLoader<DemoConfiguration> demoJobsClasses = ServiceLoader.load(
-                        DemoConfiguration.class);
-                for (DemoConfiguration demoClass : demoJobsClasses) {
-                    demoJobPaths.addAll(demoClass.getAllFilePaths());
-                }
-            }
+
+            final List<String> demoJobPaths = DataCleanerHome.getAllInitialFiles();
             for (String demoJobPath : demoJobPaths) {
                 recentJobFiles.add(new File(dcHome, demoJobPath));
             }

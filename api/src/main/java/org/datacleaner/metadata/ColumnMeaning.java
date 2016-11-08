@@ -49,6 +49,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PERSON_NAME_FULL("Full name", "Name", "Person name", "Contact", "Contact name"),
 
+    PERSON_TITLE("Person title", "Title", "Salutation"),
+
     PERSON_GENDER("Gender", "Sex"),
 
     PERSON_AGE("Age", "Customer age", "Contact age"),
@@ -57,7 +59,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PERSON_REGISTRATION_NUMBER("Social security number", "Person number", "Person Identifier"),
 
-    PERSON_JOB_TITLE("Job title", "Person job title", "Title", "Employee title", "Employment role"),
+    PERSON_JOB_TITLE("Job title", "Person job title", "Employee title", "Employment role"),
 
     // COMPANY oriented items
 
@@ -107,8 +109,9 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // PHONE oriented items
 
-    PHONE_PHONENUMBER("Phone number", "Phone", "Phone no", "Mobile", "Mobile phone", "Cellphone", "Telefon", "Mobil",
-            "Tel", "Tele", "Mob"),
+    PHONE_PHONENUMBER("Phone number", "Phone", "Phone no", "Telefon", "Tel", "Tele", "Landline"),
+
+    PHONE_MOBILE("Mobile phone", "Mobile", "Cellphone", "Mobil", "Mob"),
 
     PHONE_FAX("Fax number", "Fax", "Faxnummer"),
 

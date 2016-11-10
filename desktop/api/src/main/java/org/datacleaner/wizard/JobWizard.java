@@ -30,17 +30,19 @@ import org.datacleaner.util.IconUtils;
  * DataCleaner
  */
 public interface JobWizard {
-    public static final String BUTTON_NEXT_TEXT = "Next >";
-    public static final String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
+    static final String BUTTON_NEXT_TEXT = "Next >";
+    static final String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
 
-    public boolean isAvailable();
+    boolean isAvailable();
 
-    public Icon getIcon();
+    Icon getIcon();
 
-    public String getTitle();
+    String getTitle();
 
-    public String getDescription();
+    String getDescription();
 
-    public void startWizard(DataCleanerConfiguration configuration, Datastore selectedDatastore,
+    void startWizard(DataCleanerConfiguration configuration, Datastore selectedDatastore,
             JobWizardCallback callback);
+
+    String getCategory();
 }

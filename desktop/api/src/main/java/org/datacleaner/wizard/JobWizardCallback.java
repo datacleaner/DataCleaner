@@ -25,7 +25,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 public interface JobWizardCallback {
 
-    public void setWizardContent(JComponent component);
+    void setWizardContent(JComponent component);
 
-    public void setWizardFinished(AnalysisJobBuilder analysisJobBuilder);
+    void setWizardFinished(AnalysisJobBuilder analysisJobBuilder);
 }

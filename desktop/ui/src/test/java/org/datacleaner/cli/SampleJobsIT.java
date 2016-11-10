@@ -20,13 +20,18 @@
 package org.datacleaner.cli;
 
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class SampleJobsIT {
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
     @Test
     public void testCopyEmployeesToCustomerTable() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
@@ -480,8 +485,9 @@ public class SampleJobsIT {
         testJob("US Customer STATE check", expectedResultSets);
     }
 
-    private static void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
-        JobTestHelper.testJob(URLDecoder.decode(new File("src/main/resources/datacleaner-home/jobs/" + jobName
-                + ".analysis.xml").getPath(), "UTF-8"), expectedResultSets);
+    private void testJob(final String jobName, final Map<String, String[]> expectedResultSets) throws Exception {
+        final File jobTempRepoFolder = this.tempFolder.newFolder();
+        FileUtils.copyDirectory(new File("src/main/resources/datacleaner-home/"), jobTempRepoFolder);
+        JobTestHelper.testJob(jobTempRepoFolder, jobName, expectedResultSets);
     }
 }

@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -37,9 +39,9 @@ public class JobTestHelper {
     private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
             + File.separator + "java";
 
-    public static void testJob(final String jobFileName, final Map<String, String[]> expectedResultSets,
+    public static void testJob(final File repository, final String jobName, final Map<String, String[]> expectedResultSets,
             final String... extraCLIArgs) throws Exception {
-        final InputStream resultInputStream = new ByteArrayInputStream(runJob(jobFileName, extraCLIArgs).getBytes());
+        final InputStream resultInputStream = new ByteArrayInputStream(runJob(repository, jobName, extraCLIArgs).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
         final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
 
@@ -77,10 +79,12 @@ public class JobTestHelper {
         }
     }
 
-    private static String runJob(final String jobFileName, final String... extraCLIArgs) throws Exception {
-        final String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
-                "-job", jobFileName }, extraCLIArgs);
+    private static String runJob(final File repository, final String jobName, final String... extraCLIArgs) throws Exception {
+        final String jobFileName = getAbsoluteFilename(repository, "jobs/" + jobName + ".analysis.xml");
+        final String confFileName = getAbsoluteFilename(repository, "conf.xml");
 
+        final String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
+                "-job", jobFileName, "-conf", confFileName }, extraCLIArgs);
         final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
         builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
@@ -102,5 +106,9 @@ public class JobTestHelper {
         assertEquals(0, process.waitFor());
 
         return result.toString();
+    }
+
+    private static String getAbsoluteFilename(final File repository, String childPath) throws UnsupportedEncodingException {
+        return URLDecoder.decode(new File(repository, childPath).getPath(), "UTF-8");
     }
 }

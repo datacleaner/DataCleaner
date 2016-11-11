@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 
@@ -78,10 +79,8 @@ public class JobTestHelper {
     }
 
     private static String runJob(final File repository, final String jobName) throws Exception {
-        final String jobFileName =
-                URLDecoder.decode(new File(repository, "jobs/" + jobName + ".analysis.xml").getPath(), "UTF-8");
-        final String confFileName =
-                URLDecoder.decode(new File(repository, "conf.xml").getPath(), "UTF-8");
+        final String jobFileName = getAbsoluteFilename(repository, "jobs/" + jobName + ".analysis.xml");
+        final String confFileName = getAbsoluteFilename(repository, "conf.xml");
         final ProcessBuilder builder = new ProcessBuilder(JAVA_EXECUTABLE, "-cp", System.getProperty("java.class.path"),
                 Main.class.getCanonicalName(), "-job", jobFileName, "-conf", confFileName);
 
@@ -103,5 +102,9 @@ public class JobTestHelper {
         assertEquals(0, process.waitFor());
 
         return result.toString();
+    }
+
+    private static String getAbsoluteFilename(final File repository, String childPath) throws UnsupportedEncodingException {
+        return URLDecoder.decode(new File(repository, childPath).getPath(), "UTF-8");
     }
 }

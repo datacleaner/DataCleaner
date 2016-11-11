@@ -61,7 +61,8 @@ public class SampleJobsIT {
                         "Sum",
                         "Mean",
                         "Geometric mean",
-                        "Standard deviation        21.04",
+                        // Really 21.04, but precision can make make the result change a little
+                        "Standard deviation        21.0",
                         "Variance",
                         "Second moment",
                         "Sum of squares",

@@ -60,7 +60,7 @@ public class DemoConfiguration implements InitialConfiguration {
         return false;
     }
 
-    public static String addFile(String filePath) {
+    public static String addFile(final String filePath) {
         ALL_FILES.add(filePath);
         return filePath;
     }

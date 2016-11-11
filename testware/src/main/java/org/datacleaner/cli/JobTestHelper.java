@@ -78,7 +78,7 @@ public class JobTestHelper {
     }
 
     private static String runJob(final String jobFileName, final String... extraCLIArgs) throws Exception {
-        String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
+        final String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
                 "-job", jobFileName }, extraCLIArgs);
 
         final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);

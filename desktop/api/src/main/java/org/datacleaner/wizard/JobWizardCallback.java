@@ -23,9 +23,27 @@ import javax.swing.JComponent;
 
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
+/**
+ * Defines a callback for a JobWizard which contains some logic which may be invoked when or when done using a
+ * {@link JobWizard}.
+ */
 public interface JobWizardCallback {
 
+    /**
+     * Sets the contents of the wizard panel to the given component, which is typically used within the flow
+     * of the wizard for rendering.
+     *
+     * @param component
+     *            {@link JComponent} with content for wizard panel
+     */
     void setWizardContent(JComponent component);
 
+    /**
+     * Indicates the wizard is finished and passed the analysisJobBuilder which has been built using a
+     * {@link JobWizard}.
+     *
+     * @param analysisJobBuilder
+     *            {@link AnalysisJobBuilder} which has been built using the {@link JobWizard}
+     */
     void setWizardFinished(AnalysisJobBuilder analysisJobBuilder);
 }

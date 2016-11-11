@@ -26,23 +26,66 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.util.IconUtils;
 
 /**
- * Defines a wizard on the first screen of the commercial editions of
- * DataCleaner
+ * Defines a wizard which is shown on the DataCleaner welcome screen. The wizard can be used to create a job,
+ * which can either be opened in DataCleaner or be directly run.
  */
 public interface JobWizard {
+    /**
+     * Text for next button in wizard.
+     */
     static final String BUTTON_NEXT_TEXT = "Next >";
+
+    /**
+     * Icon for next button in wizard.
+     */
     static final String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
 
+    /**
+     * Checks if all necessary components to use the wizard are available.
+     *
+     * @return <code>true</code> if the wizard can be used
+     */
     boolean isAvailable();
 
+    /**
+     * Gets the icon which is shown for the wizard on the welcome screen, or <code>null</code> if none is
+     * defined for the wizard.
+     *
+     * @return an {@link Icon}
+     */
     Icon getIcon();
 
+    /**
+     * Gets the title for the wizard.
+     *
+     * @return Title for the wizard
+     */
     String getTitle();
 
+    /**
+     * Gets the description of the wizard. Describes what the wizard can be used for.
+     *
+     * @return description of the wizard
+     */
     String getDescription();
 
-    void startWizard(DataCleanerConfiguration configuration, Datastore selectedDatastore,
-            JobWizardCallback callback);
+    /**
+     * Starts wizard when it is activated from the welcome screen, after a Datastore has been selected to use
+     * with it.
+     *
+     * @param configuration
+     *            {@link DataCleanerConfiguration} passed by DataCleaner
+     * @param selectedDatastore
+     *            {@link Datastore} which is selected to use the wizard with
+     * @param callback
+     *            {@link JobWizardCallback} which contains some signaling logic
+     */
+    void startWizard(DataCleanerConfiguration configuration, Datastore selectedDatastore, JobWizardCallback callback);
 
+    /**
+     * Gets the category the JobWizard belongs to.
+     *
+     * @return A String representing the category
+     */
     String getCategory();
 }

@@ -21,8 +21,21 @@ package org.datacleaner.wizard;
 
 import java.util.List;
 
+/**
+ * Defines a provider which provides wizards which can be used to create a job.
+ */
 public interface WizardProvider {
+    /**
+     * Gets the name of the provider.
+     *
+     * @return a {@link String} representing the name
+     */
     String getName();
 
+    /**
+     * Instantiates and returns a list of {@link JobWizard} objects.
+     *
+     * @return a list of {@link JobWizard} object instances
+     */
     List<JobWizard> getWizards();
 }

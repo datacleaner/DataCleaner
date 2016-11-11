@@ -258,7 +258,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         if (recentJobFiles == null || recentJobFiles.isEmpty()) {
             recentJobFiles = new ArrayList<>();
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
-            final List<String> demoJobPaths = DemoConfiguration.getAllJobFilePaths();
+
+            final List<String> demoJobPaths = DataCleanerHome.getAllInitialFiles();
             for (String demoJobPath : demoJobPaths) {
                 recentJobFiles.add(new File(dcHome, demoJobPath));
             }

@@ -32,15 +32,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 
-import org.datacleaner.Main;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class JobTestHelper {
+    private static final String DATACLEANER_MAIN_CLASS_NAME = "org.datacleaner.Main";
     private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
             + File.separator + "java";
 
-    public static void testJob(final File repository, final String jobName, final Map<String, String[]> expectedResultSets)
-            throws Exception {
-        final InputStream resultInputStream = new ByteArrayInputStream(runJob(repository, jobName).getBytes());
+    public static void testJob(final File repository, final String jobName, final Map<String, String[]> expectedResultSets,
+            final String... extraCLIArgs) throws Exception {
+        final InputStream resultInputStream = new ByteArrayInputStream(runJob(repository, jobName, extraCLIArgs).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
         final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
 
@@ -78,11 +79,14 @@ public class JobTestHelper {
         }
     }
 
-    private static String runJob(final File repository, final String jobName) throws Exception {
+    private static String runJob(final File repository, final String jobName, final String... extraCLIArgs) throws Exception {
         final String jobFileName = getAbsoluteFilename(repository, "jobs/" + jobName + ".analysis.xml");
         final String confFileName = getAbsoluteFilename(repository, "conf.xml");
-        final ProcessBuilder builder = new ProcessBuilder(JAVA_EXECUTABLE, "-cp", System.getProperty("java.class.path"),
-                Main.class.getCanonicalName(), "-job", jobFileName, "-conf", confFileName);
+
+        final String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
+                "-job", jobFileName, "-conf", confFileName }, extraCLIArgs);
+        final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
+        builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
         final Process process = builder.start();
 

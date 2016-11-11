@@ -37,7 +37,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.VersionComparator;
-import org.datacleaner.user.DemoConfiguration;
+import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public final class DataCleanerHomeUpgrader {
             userPreferencesUpgrader.upgrade();
 
             // Overwrite example jobs
-            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+            final List<String> allFilePaths = DataCleanerHome.getAllInitialFiles();
             for (String filePath : allFilePaths) {
                 overwriteFileWithDefaults(newFolder, filePath);
             }

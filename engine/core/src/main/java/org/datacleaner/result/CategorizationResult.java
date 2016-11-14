@@ -93,6 +93,11 @@ public class CategorizationResult implements AnalyzerResult {
         if (annotation == null) {
             return null;
         }
+
+        if (!rowAnnotationFactory.hasSampleRows(annotation)) {
+            return null;
+        }
+
         return new AnnotatedRowsResult(annotation, rowAnnotationFactory);
     }
 

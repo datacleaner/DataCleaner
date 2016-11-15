@@ -22,6 +22,7 @@ package org.datacleaner.monitor;
 import java.io.IOException;
 
 import org.apache.http.HttpStatus;
+import org.datacleaner.test.MonitorRestEndpoint;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

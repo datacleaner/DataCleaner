@@ -61,5 +61,10 @@
 			<artifactId>scalatest_2.11</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

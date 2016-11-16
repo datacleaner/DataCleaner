@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.api.InputColumn;
@@ -45,7 +44,6 @@ import org.jdesktop.swingx.JXTextField;
  * fields.
  */
 public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPropertyWidget {
-    private transient boolean _alreadyUpdating = false;
 
     public class MappedStringsPropertyWidget extends MinimalPropertyWidget<String[]> {
 
@@ -85,7 +83,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 
     /**
      * Constructs the property widget
-     * 
+     *
      * @param componentBuilder
      *            the component builder for the table lookup
      * @param inputColumnsProperty
@@ -139,7 +137,11 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                updateMappedStrings();
+                if (isBatchUpdating()) {
+                    return;
+                }
+                fireValueChanged();
+                _mappedStringsPropertyWidget.fireValueChanged();
             }
         });
         return textField;
@@ -148,7 +150,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
     /**
      * Subclasses can override this method to set a default value for a column
      * when it is selected.
-     * 
+     *
      * @param inputColumn
      * @return
      */
@@ -171,7 +173,16 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
                 updateUI();
             }
         });
-        checkBox.addListener((item, selected) -> updateMappedStrings());
+        checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
+            @Override
+            public void onItemSelected(InputColumn<?> item, boolean selected) {
+                if (isBatchUpdating()) {
+                    return;
+                }
+                _mappedStringsPropertyWidget.fireValueChanged();
+            }
+        });
+
         textField.setVisible(checkBox.isSelected());
 
         final DCPanel panel = new DCPanel();
@@ -203,20 +214,6 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
             }
         }
         return result.toArray(new InputColumn[result.size()]);
-    }
-    
-    public void updateMappedStrings() {
-        if (_alreadyUpdating) {
-            return;
-        }
-        
-        SwingUtilities.invokeLater(() -> {
-            _alreadyUpdating = true;
-            onConfigurationChanged(null);
-            setMappedStrings(null);
-            _mappedStringsPropertyWidget.fireValueChanged();
-            _alreadyUpdating = false;
-        });
     }
 
     public void setMappedStrings(String[] value) {

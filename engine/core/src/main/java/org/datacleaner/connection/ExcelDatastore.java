@@ -22,7 +22,6 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.datacleaner.util.ReadObjectBuilder;
@@ -89,10 +88,6 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
             dc = new ExcelDataContext(resource, excelConfiguration);
         }
         
-        if (_customColumnNames == null){
-            _customColumnNames = Arrays.asList(dc.getDefaultSchema().getTable(0).getColumnNames()); 
-        }
-       
         return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
     }
 

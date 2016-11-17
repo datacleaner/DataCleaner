@@ -22,7 +22,6 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.datacleaner.util.ReadObjectBuilder;

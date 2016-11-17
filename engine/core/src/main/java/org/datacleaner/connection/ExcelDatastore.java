@@ -89,10 +89,6 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
             dc = new ExcelDataContext(resource, excelConfiguration);
         }
         
-        if (_customColumnNames == null){
-            _customColumnNames = Arrays.asList(dc.getDefaultSchema().getTable(0).getColumnNames()); 
-        }
-       
         return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
     }
 

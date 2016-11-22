@@ -468,7 +468,7 @@
 							<goal>checkstyle</goal>
 						</goals>
 						<configuration>
-							<configLocation>google_checks.xml</configLocation>
+							<configLocation>checkstyle.xml</configLocation>
 							<consoleOutput>true</consoleOutput>
 							<encoding>UTF-8</encoding>
 							<failsOnError>true</failsOnError>
@@ -480,6 +480,18 @@
 
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.17</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.puppycrawl.tools</groupId>
+							<artifactId>checkstyle</artifactId>
+							<version>7.2</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 				<plugin>
 					<!-- Ignore instructions for m2e (overrides eclipse warning) -->
 					<groupId>org.eclipse.m2e</groupId>
